@@ -1,0 +1,13 @@
+{
+  "name": "siltstrider-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Morrowind Build Planner & Challenge Run Generator",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}
