@@ -1,5 +1,5 @@
-<!-- aha-release: 32 -->
-<!-- aha-build-id: bmu0fdexh38kbuw5b -->
+<!-- aha-release: 2 -->
+<!-- aha-build-id: bmu0n2fy96eopy8ke -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -626,13 +626,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       <div class="about-legal">
         <p>Silt Strider is an unofficial fan project. It is neither directly nor indirectly affiliated with, endorsed by, or sponsored by Bethesda Softworks, Bethesda Game Studios, or ZeniMax Media.</p>
         <p>It exists as a free reference and planning aid for players of The Elder Scrolls III: Morrowind. It is not intended to infringe upon the copyrights of Bethesda Game Studios or its parent and affiliate companies, and reproduces no game assets, art, audio, or text.</p>
-        <p>Game data is derived from publicly available information, primarily the Unofficial Elder Scrolls Pages (UESP), and from in-game observation.</p>
+        <p>Vanilla game data is derived from the Unofficial Elder Scrolls Pages (UESP) and from in-game observation. Tamriel Rebuilt content follows tamriel-rebuilt.org release changelogs (currently 26.08 Poison Song).</p>
         <p>The Elder Scrolls III: Morrowind® (Tribunal, Bloodmoon) was developed by Bethesda Game Studios LLC, a ZeniMax Media company. ZeniMax, The Elder Scrolls, Morrowind, Tribunal, Bloodmoon, Bethesda Softworks and related logos are registered trademarks or trademarks of ZeniMax Media Inc. in the US and/or other countries. All Rights Reserved.</p>
       </div>
       <div class="about-credits">
         <h3>Credits</h3>
         <p>Typeface: Pelagiad by Isak Larborn, used under the SIL Open Font License 1.1.</p>
-        <p>Game data reference: the Unofficial Elder Scrolls Pages.</p>
+        <p>Vanilla data: Unofficial Elder Scrolls Pages. Tamriel Rebuilt: tamriel-rebuilt.org changelogs (26.08 Poison Song).</p>
         <p>Tamriel Rebuilt and ARCE are community projects by their respective teams; Silt Strider supports them but is not affiliated with either.</p>
         <h3>Colophon</h3>
         <p>The site's code was written with AI assistance. Every restriction, objective, build and gear recommendation was verified by hand against UESP before publication. Corrections are welcome.</p>
@@ -1024,6 +1024,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Roleplay: never refuse a quest",
       "No skill books", "No birthsign powers", "No racial powers"
     ];
+    const VANILLA_POOL = POOL;
     const HARD = [
       "No potions", "No magic", "No melee", "Major skills only", "No armor", "No Magicka — fatigue and potions only",
       "Permadeath — one life", "Ironman — no reloading a save after a fight", "The Atronach and no potions",
@@ -1390,6 +1391,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     ];
     var worldMode = "vanilla";
     var arceOn = false;
+    const VANILLA_MAJORS = MAJORS;
+    const TR_VERSION = "26.08 Poison Song";
+    const ARCE_VERSION = "ARCE";
+    const TR_OBJECTIVES = [];
+    const TR_POOL = [];
     const TR_MAJORS = [
       "Complete Narsis Arena",
       "Acquire Passwall (complete the Narsis Mages Guild)",
@@ -1598,7 +1604,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (tr) tr.style.outline = mode === "tr" ? "2px solid var(--gold)" : "none";
       if (arceBtn) arceBtn.style.display = mode === "tr" ? "block" : "none";
       const badge = document.getElementById("world-badge");
-      if (badge) badge.textContent = mode === "tr" ? (arceOn ? "TR + ARCE" : "TR") : "Vanilla";
+      if (badge) {
+        var ver = (typeof TR_VERSION === "string") ? TR_VERSION.split(" ")[0] : "";
+        badge.textContent = mode === "tr" ? ("Tamriel Rebuilt" + (ver ? " " + ver : "") + (arceOn ? " + ARCE" : "")) : "Vanilla";
+      }
       try { localStorage.setItem("mw-world", mode); } catch (e) {}
       const keepC = (document.getElementById("c-race") || {}).value;
       const keepR = (document.getElementById("r-race") || {}).value;
@@ -1609,7 +1618,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       try { if (typeof fillMajorPool === "function") fillMajorPool(); } catch (e) {}
       try { applyArceLists(); } catch (e) {}
       try { setArce(arceOn); } catch (e) {}
-      if (badge) badge.textContent = worldMode === "tr" ? (arceOn ? "TR + ARCE" : "TR") : "Vanilla";
       const namesNow = Object.keys(typeof raceTable === "function" ? raceTable() : {});
       let note = "";
       if (keepC && namesNow.indexOf(keepC) < 0) note += "Race "+keepC+" needs Tamriel Rebuilt + ARCE. ";
@@ -1632,7 +1640,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       try { localStorage.setItem("mw-arce", arceOn ? "1" : "0"); } catch (e) {}
       try { if (typeof applyArceLists === "function") applyArceLists(); } catch (e) {}
       const badge2 = document.getElementById("world-badge");
-      if (badge2) badge2.textContent = worldMode === "tr" ? (arceOn ? "TR + ARCE" : "TR") : "Vanilla";
+      if (badge2) {
+        var ver2 = (typeof TR_VERSION === "string") ? TR_VERSION.split(" ")[0] : "";
+        badge2.textContent = worldMode === "tr" ? ("Tamriel Rebuilt" + (ver2 ? " " + ver2 : "") + (arceOn ? " + ARCE" : "")) : "Vanilla";
+      }
       if (hashBooted) { try { writeShareHash(); } catch (e) {} }
     }
     document.getElementById("btn-world-vanilla").addEventListener("click", () => setWorld("vanilla"));
@@ -3518,3 +3529,4 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
   </script>
 </body>
 </html>
+
