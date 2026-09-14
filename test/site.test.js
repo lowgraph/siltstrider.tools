@@ -247,6 +247,7 @@ test("TR major objectives stay completable and correctly described", async () =>
   // Passwall is a spell reward, not a retrievable artifact.
   assert.doesNotMatch(joined, /artifact \(Passwall/i);
   assert.ok(trMajors.some((m) => /Passwall spell/i.test(m)), "Passwall objective should name the spell");
+  assert.equal(trMajors.filter((m) => /Passwall/i.test(m)).length, 1, "only one Passwall objective");
   assert.ok(trMajors.every((m) => typeof m === "string" && m.trim().length), "no blank objectives");
   assert.equal(new Set(trMajors).size, trMajors.length, "no duplicate TR objectives");
 });
