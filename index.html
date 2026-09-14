@@ -1411,14 +1411,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Complete the Andothren Hlaalu questline",
       "Complete the Bal Foyen / Firewatch questline",
       "Become a ranking member of House Indoril on the mainland",
-      "Become a ranking member of House Dres on the mainland",
       "Explore the Telvanni isles and finish a Telvanni tower questline",
       "Clear a full Daedric shrine chain on the mainland",
       "Walk from Firewatch to Narsis without using intervention",
       "Finish the Port Telvannis intrigue",
       "Complete the Aimrah / Lake Andaram plot",
-      "Win the favor of the King of Narsis / Hlaalu court",
-      "Retrieve a mainland artifact (Passwall, or a named unique of equal weight)"
+      "Win the favor of the Narsis Hlaalu court",
+      "Earn the Passwall spell from the Narsis Mages Guild (Anti-Magic; needs MWSE or OpenMW Lua, otherwise the reward is Antimagic Curse)"
     ];
     function activeMajors() {
       return (typeof worldMode !== "undefined" && worldMode === "tr") ? MAJORS.concat(TR_MAJORS) : MAJORS;

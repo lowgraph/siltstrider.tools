@@ -235,3 +235,18 @@ test("item locations corrected against UESP stay corrected", async () => {
   assert.match(dom.window.whereToGet("boots of blinding speed"), /northwest of Caldera/i);
   assert.match(dom.window.whereToGet("mentor's ring"), /urn labelled Lord Brinne/i);
 });
+
+test("TR major objectives stay completable and correctly described", async () => {
+  const dom = await loadSite();
+  const trMajors = dom.window.eval("TR_MAJORS");
+  const joined = trMajors.join("\n");
+  // House Dres cannot be joined on the mainland in TR 26.08.
+  assert.doesNotMatch(joined, /House Dres/i, "House Dres is not a joinable faction in TR");
+  // Narsis is run by a Hlaalu council; there is no King of Narsis.
+  assert.doesNotMatch(joined, /King of Narsis/i);
+  // Passwall is a spell reward, not a retrievable artifact.
+  assert.doesNotMatch(joined, /artifact \(Passwall/i);
+  assert.ok(trMajors.some((m) => /Passwall spell/i.test(m)), "Passwall objective should name the spell");
+  assert.ok(trMajors.every((m) => typeof m === "string" && m.trim().length), "no blank objectives");
+  assert.equal(new Set(trMajors).size, trMajors.length, "no duplicate TR objectives");
+});
