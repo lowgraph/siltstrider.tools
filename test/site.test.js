@@ -281,6 +281,29 @@ test("every armor slot row recommends an item for that slot", async () => {
   }
 });
 
+test("Tamriel Rebuilt gear rows extend the vanilla pick with named TR items", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const html = fs.readFileSync(SITE_PATH, "utf8");
+  assert.doesNotMatch(html, /No unverified TR|Also TR:/, "TR rows should name items from the game data, not placeholders");
+  window.eval('worldMode = "tr"');
+  for (const kind of ["Light Armor", "Medium Armor", "Heavy Armor"]) {
+    const base = window.eval(`armorSet(${JSON.stringify(kind)})`);
+    const set = window.eval(`withTrArmor(${JSON.stringify(kind)})`);
+    for (const slot of Object.keys(base)) {
+      for (const phase of ["e", "l"]) {
+        assert.ok(set[slot][phase].startsWith(base[slot][phase]), `${kind} ${slot}: the TR row must keep the vanilla pick first`);
+        assert.ok(set[slot][phase].length < 420, `${kind} ${slot} (${phase}) TR row is too long: ${set[slot][phase]}`);
+      }
+    }
+  }
+  window.eval('worldMode = "vanilla"');
+  const trItems = Object.values(window.eval("ITEM_DATA")).filter((d) => d.world === "tr").map((d) => d.itemName);
+  for (const name of ["Boots of Peace", "Requiem", "Helm of the Savior's Hide", "Witherbrand", "Dragon's Blade"]) {
+    assert.ok(trItems.includes(name), `${name} missing from the TR item data`);
+  }
+});
+
 test("the Daedric Long Bow is recommended, not declared missing", async () => {
   const dom = await loadSite();
   const html = fs.readFileSync(SITE_PATH, "utf8");

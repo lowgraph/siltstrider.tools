@@ -1826,23 +1826,23 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const WEAPONS = {
       "Long Blade": {
         early: "Steel Longsword — a worn one at Telvon Llethan's Hlaalu Weaponsmith in Vivec, repaired there for about 81 gold in all. Not Sword of White Woe: stealing it is harder than Mentor's Ring.",
-        late: "Best practical one-handed option: Hopesfire (Tribunal, taken from Almalexia). Highest-damage two-handed option: Daedric Crescent (Lord Dregas Volar, Magas Volar). Trueflame is a unique main-quest reward, not a universal winner."
+        late: "Best practical one-handed option: Hopesfire (taken from Almalexia at the end of the Tribunal main quest, after The Blade of Nerevar). Highest-damage two-handed option: Daedric Crescent (Lord Dregas Volar, Magas Volar). Trueflame is a unique main-quest reward, not a universal winner."
       },
       "Short Blade": {
         early: "Glass Dagger — buy a worn one from Lucretinaus Olcinius in Vivec and have Savard repair it, about 335 gold in all.",
-        late: "Black Hands Dagger — premier named endgame Short Blade option (Morag Tong Grandmaster). Keening (Odrosal, Tower) is a main-quest tool, not a generic dagger."
+        late: "Black Hands Dagger — premier named endgame Short Blade option (Morag Tong Grandmaster's reward). Keening (Odrosal, Tower) is a main-quest tool, not a generic dagger."
       },
       "Blunt Weapon": {
         early: "Steel Warhammer — a worn one at Telvon Llethan's in Vivec, repaired there for about 81 gold in all.",
-        late: "Sunder (Vemynal, carried by Dagoth Vemyn) — premier main-quest endgame Blunt weapon. Scourge is Blunt (Tel Fyr, Hall of Fyr), never Axe. Mace of Aevar Stone-Singer is a Bloodmoon alternative."
+        late: "Sunder (Vemynal, carried by Dagoth Vemyn) — premier main-quest endgame Blunt weapon. Scourge is Blunt (Tel Fyr, Hall of Fyr), never Axe. Mace of Aevar Stone-Singer (the Skaal's quest reward on Solstheim) is a Bloodmoon alternative."
       },
       "Axe": {
         early: "Steel Battle Axe — a worn one at Alds Baro's in Maar Gan, repaired there for about 100 gold in all.",
-        late: "One-handed unique: Cleaver of St. Felms (Uvoo Llaren's Temple quest, Tureynulal). Strong two-handed alternative: Cloudcleaver. Scourge is Blunt, not Axe."
+        late: "One-handed unique: Cleaver of St. Felms (Uvoo Llaren's Temple quest, Tureynulal). Strong two-handed alternative: Cloudcleaver (Hlormar Wine-Sot's quest). Scourge is Blunt, not Axe."
       },
       "Spear": {
         early: "Silver Spear — a worn one at Goldyn Belaram's pawnshop in Suran, repaired by Garothmuk gro-Muzgub for about 90 gold in all.",
-        late: "Spear of Bitter Mercy — premier unique endgame Spear, valued for Reflect and Storm Atronach. Daedric Spear is the straightforward non-artifact alternative."
+        late: "Spear of Bitter Mercy (Sheogorath's quest) — premier unique endgame Spear, valued for Reflect and Storm Atronach. Daedric Spear is the straightforward non-artifact alternative."
       },
       "Marksman": {
         early: "Long Bow — a worn one from Ashuma-Nud Matluberib in Gnisis, repaired by Mug gro-Dulob for about 49 gold in all.",
@@ -1853,35 +1853,34 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         late: "Theoretical/custom-enchantment optimization: Constant Effect Fortify Hand-to-hand and Strength on clothing/jewelry. Empty hands — do not equip a weapon."
       }
     };
+    // Tamriel Rebuilt weapons that beat the vanilla pick, from Tamriel_Data 26.08 and TR_Mainland 26.08.
+    // Early picks pass the same Mentor's Ring rule in a Tamriel Rebuilt load order.
     const WEAPONS_TR = {
       "Long Blade": {
-        early: " Also TR: Imperial Silver Longsword from Old Ebonheart Legion armory crates (steal, Mentor's-Ring-level).",
-        late: " No unverified TR long-blade unique — keep scored vanilla: Hopesfire (one-hand) vs Daedric Crescent (two-hand)."
+        early: " Tamriel Rebuilt: Redguard Steel Axesword (one-handed, 30 damage) at Anjzhirra's Rare Goods in Old Ebonheart, or Silver Greatsword (two-handed, 30) in the Imperial Consulate basement in Narsis — both steal.",
+        late: " Tamriel Rebuilt uniques: Exalted Ebony Blade (Dravayn Tarethren's quest — Cast When Strikes Absorb Health) or Goujian (Anirwen's quest — CE Fortify Long Blade 25)."
       },
       "Short Blade": {
-        early: " Also TR: Silver Tanto from Firewatch traders (buy) or Old Ebonheart crates (steal).",
-        late: " No unverified TR dagger unique — keep Black Hands Dagger as the scored named pick."
+        early: " Tamriel Rebuilt: Glass Wakizashi (30 damage), in a wooden chest in the Coronati Basin [6, -45].",
+        late: " Tamriel Rebuilt: Dragon's Blade (38 damage) — do the Imperial Cult quest Dragon's Blade first. The Shade of Moraelyn carries it in Raathim Ancestral Tomb, and it hits harder than the Black Hands Dagger (a Morag Tong reward)."
       },
       "Blunt Weapon": {
-        early: " Also TR: Imperial Mace from Old Ebonheart barracks crates (steal).",
-        late: " No unverified TR blunt unique — keep Sunder / Scourge. Scourge is never Axe."
+        early: " Tamriel Rebuilt: Nordic Warhammer (two-handed, 45 damage), lying in the Mephalan Vales [28, -12].",
+        late: " Tamriel Rebuilt two-handed alternative: Shatterwright (70 damage — Cast When Strikes Disintegrate Armor), carried by Xivilai Lotan in Naemunbatashpi. Do the Temple quest The Belt of St. Olms first."
       },
       "Axe": {
-        early: " Also TR: Nordic War Axe from Firewatch crates (steal).",
-        late: " No unverified TR axe unique — keep Cleaver of St. Felms / Cloudcleaver. Scourge is Blunt."
+        early: "",
+        late: " Tamriel Rebuilt: Witherbrand (80 damage — Cast When Strikes Damage Magicka and Absorb Agility), carried by Xivilai Tatho in Yamandalkal — do the Mages Guild quest Yamandalkal first. Orlukh's Cleaver (68, CE Fortify Attack 100 but Drain Agility 90) is Orlukh gro-Othmog's reward for Termination Notice."
       },
       "Spear": {
-        early: " Also TR: Chitin Spear from Bal Foyen dock barrels (steal).",
-        late: " No unverified TR spear unique — keep Spear of Bitter Mercy."
+        early: " Tamriel Rebuilt: Daedric Naginata (40 damage), lying in the Old Caverns of Necrom's catacombs.",
+        late: " Tamriel Rebuilt: Daedric Longspear (50 damage, Uttumilk shrine) — the Spear of Bitter Mercy (Sheogorath's quest) still hits harder."
       },
       "Marksman": {
-        early: " Also TR: Steel Crossbow from Old Ebonheart Legion crates (steal).",
-        late: " No unverified TR bow unique — keep Daedric Long Bow / Auriel's Bow."
+        early: " Tamriel Rebuilt: Dwarven Long Bow (35 damage), random stock that restocks at Ruthrisa Velothren's smithy in Darvonis.",
+        late: " Tamriel Rebuilt crossbow: Sunkindler (50 damage — CE Resist Fire 30% and Resist Common Disease 30%), carried by Darron Marceau in the Armun Ashlands. He's part of Orlukh: Vampire Hunter and Baluath: Hunting the Hunter — do those first."
       },
-      "Hand-to-hand": {
-        early: " Also TR: still empty hands.",
-        late: " Also TR: empty hands; mainland grand souls only for clothing CE."
-      }
+      "Hand-to-hand": { early: "", late: "" }
     };
     const SKILL_SPEC = {
       "Block":"Combat","Armorer":"Combat","Medium Armor":"Combat","Heavy Armor":"Combat","Blunt Weapon":"Combat","Long Blade":"Combat","Axe":"Combat","Spear":"Combat","Athletics":"Combat",
@@ -2070,7 +2069,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           Helm: {e:"Imperial Steel Helmet — buy a worn one from Uulernil in Pelagiad and have him repair it, about 76 gold.", l:"Helm of Oreyn Bearclaw (Malacath's quest — CE Agility 40, Endurance 40) or Daedric Face of God (Tukushapal, Sepulcher)."},
           Cuirass: {e:"Nordic Trollbone Cuirass — sold by Meldor in Balmora.", l:"Dragonbone Cuirass (Mudan, Central Vault — CE Resist Fire 100%) or Lord's Mail (Legion quest — Cast When Used: Cure Poison, Resist Magicka 20–30% for 30s)."},
           Pauldrons: {e:"Imperial Chain Left Pauldron / Imperial Chain Right Pauldron — Moonmoth Legion Fort and Uulernil's shop in Pelagiad (steal).", l:"Daedric Left Pauldron (Norenen-dur) / Daedric Right Pauldron (Castle Karstaag)."},
-          Greaves: {e:"Imperial Steel Greaves — Hodlismod's shop in Caldera (steal).", l:"Daedric Greaves (Dren's Villa, or Therana's Feather-enchanted pair)."},
+          Greaves: {e:"Imperial Steel Greaves — Hodlismod's shop in Caldera (steal).", l:"Daedric Greaves (Dren's Villa, or the Feather-enchanted pair Therana gives for a House Telvanni quest)."},
           Boots: {e:"Imperial Steel Boots — Imperial Commission in Ebonheart (steal).", l:"Daedric Boots (Galom Daeus) for max AR, or Ten Pace Boots (Bal Fell — Cast When Used Speed and Athletics) for mobility."},
           Gauntlets: {e:"Imperial Templar Left Bracer / Imperial Templar Right Bracer — Hodlismod's shop in Caldera (steal).", l:"Fist of Randagulf Left Gauntlet / Fist of Randagulf Rt Gauntlet (Ilunibi, Soul's Rattle)."},
           Shield: {e:"Steel Tower Shield — Saetring's smithy in Molag Mar (steal).", l:"Eleidon's Ward (Ibar-Dad — Cast When Used Restore Health)."}
@@ -2093,7 +2092,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           Cuirass: {e:"Chitin Cuirass — Meldor's shop in Balmora (steal), or the Wolf Cuirass free in Fort Frostmoth's shrine.", l:"Cuirass of the Savior's Hide (Tel Fyr — CE Resist Magicka 60%)."},
           Pauldrons: {e:"Chitin Left Pauldron / Chitin Right Pauldron — Malpenix Blonia sells them in Ald'ruhn.", l:"Glass Left Pauldron / Glass Right Pauldron."},
           Greaves: {e:"Chitin Greaves — Tuveso Beleth's smithy in Ald'ruhn (steal).", l:"Glass Greaves."},
-          Boots: {e:"Heavy Leather Boots — Rothan Ancestral Tomb. Not Boots of Blinding Speed (quest).", l:"Boots of the Apostle (Berandas, Underground — Cast When Used Levitate)."},
+          Boots: {e:"Heavy Leather Boots — Rothan Ancestral Tomb. Not Boots of Blinding Speed (quest).", l:"Boots of the Apostle (Berandas, Underground — Cast When Used Levitate; tied to the Imperial Cult quest Boots of the Apostle)."},
           Gauntlets: {e:"Chitin Left Gauntlet / Chitin Right Gauntlet — Ra'Virr's shop in Balmora (steal).", l:"Left Glass Bracer / Right Glass Bracer."},
           Shield: {e:"Chitin Tower Shield — Tuveso Beleth's smithy in Ald'ruhn (steal).", l:"Glass Tower Shield (Urshilaku, Fragile Burial)."}
         };
@@ -2111,45 +2110,45 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     function trArmorExtra(kind) {
       if (kind === "Heavy Armor") {
         return {
-          Helm: {e:" Also TR: Imperial steel helm from Old Ebonheart / Firewatch Legion crates (steal).", l:" TR alternative (not automatic override): no verified TR helm that beats Oreyn — keep Helm of Oreyn Bearclaw."},
-          Cuirass: {e:" Also TR: Imperial steel cuirass from Old Ebonheart armory (steal).", l:" TR alternative: War Cuirass of Pasoroth (Narsis Second Family Manor Vault 3, UESP). Vanilla Dragonbone / Lord's Mail stay primary."},
-          Pauldrons: {e:" Also TR: Imperial pauldrons, Firewatch barracks crates.", l:" No unverified TR pauldron unique — keep Vanilla Daedric Left / Right Pauldron."},
-          Greaves: {e:" Also TR: Imperial greaves, Old Ebonheart storage.", l:" No unverified TR greave unique — keep Vanilla Daedric Greaves."},
-          Boots: {e:" Also TR option: Imperial boots from mainland Legion forts.", l:" TR alternative: Boots of Peace (Yashazmus, Lord Drekhva Yashaz — hard fight). Vanilla still: Ten Pace Boots vs Daedric Boots."},
-          Gauntlets: {e:" Also TR: Imperial gauntlets, steal from Firewatch.", l:" Also TR option: Daedric gauntlets. Fist of Randagulf Left Gauntlet / Rt Gauntlet remain the unique vanilla pair; Wraithguard is still a special left gauntlet."},
-          Shield: {e:" Also TR: Imperial tower shield, Old Ebonheart armory.", l:" Also TR: TR alternative: Fearstruck (Bal Dushal, Nagoth Daril; Weakness to Fire). Vanilla Eleidon's Ward (Ibar-Dad) stays the heal pick."}
+          Helm: {e:" Tamriel Rebuilt: Nord Steel Helmet (AR 20) — buy a worn one from Agretha Road-Breaker in Othrenis and have Meder Vorethi repair it, about 104 gold.", l:""},
+          Cuirass: {e:" Tamriel Rebuilt: Imperial Ebony Cuirass (AR 55), lying on the Padomaic Ocean floor [42, -31].", l:" Tamriel Rebuilt alternative: War Cuirass of Pasoroth (AR 75 — CE Endurance 20, Agility 20, Heavy Armor 40), Narsis Second Family Manor, Vault 3 (steal)."},
+          Pauldrons: {e:"", l:" Tamriel Rebuilt: Lord Methats' Left Pauldron / Lord Methats' Right Pauldron (AR 80 — CE Athletics 15; Vorthas Uldun), or Saint Veloth's Left Pauldron (AR 80 — CE Reflect 30%; Necrom's catacombs)."},
+          Greaves: {e:"", l:""},
+          Boots: {e:" Tamriel Rebuilt: Nord Steel Boots (AR 20) — sold by Agretha Road-Breaker in Othrenis.", l:" Tamriel Rebuilt: Boots of Peace (AR 80 — CE Acrobatics, Security, Hand-to-hand, Sneak and Athletics 30; Lord Drekhva Yashaz, Yashazmus). Do the Mages Guild quest The Tower of the Enchantress first."},
+          Gauntlets: {e:"", l:""},
+          Shield: {e:" Tamriel Rebuilt: Mages Guild Tourney Shield (AR 25) — the Mages Guild library in Narsis (steal).", l:" Tamriel Rebuilt: Requiem (AR 100 — CE Restore Health 2 and Fatigue 2; The Space Gone Missing) out-heals Eleidon's Ward. Fearstruck (AR 100 — CE Block and Agility 40, Weakness to Fire 100%) is Nagoth Daril's."}
         };
       }
       if (kind === "Medium Armor") {
         return {
-          Helm: {e:" Also TR: Bonemold helm from Almas Thirr Temple storage (steal, watch agro).", l:" No unverified TR House helm unique — keep Vanilla Adamantium Helm if Tribunal."},
-          Cuirass: {e:" Also TR: Bonemold cuirass from Andothren Hlaalu manor crates (steal).", l:" TR alternative: Scales of Nafaalilargus (Old Ebonheart Legion HQ secret safe). Vanilla Ebony Mail stays primary."},
-          Pauldrons: {e:" Also TR: Bonemold pauldrons, Almas Thirr barrels.", l:" No unverified TR House pauldron unique — keep Vanilla Royal Guard Left / Right Pauldron."},
-          Greaves: {e:" Also TR: Bonemold greaves, Andothren storage.", l:" No unverified TR House greave unique — keep Vanilla Ice Armor Greaves."},
-          Boots: {e:" Also TR: Bonemold boots, mainland Redoran / Hlaalu manors.", l:" No unverified TR House boot unique — keep Vanilla Royal Guard Boots."},
-          Gauntlets: {e:" Also TR: Bonemold bracers, steal from Temple / House storage.", l:" No unverified TR House bracer unique — keep Vanilla Royal Guard Left / Right Gauntlet."},
-          Shield: {e:" Also TR: Bonemold shield, Almas Thirr.", l:" TR alternative: Ward of Akavir (Firemoth, Medium, Fortify Luck). Vanilla Ice Shield stays the mixed-set pick."}
+          Helm: {e:" Tamriel Rebuilt: Necrom Indoril Helmet (AR 50), lying in the Sacred Lands [42, -8].", l:" Tamriel Rebuilt: Golden Saint Helm (AR 75, Yamuninisharn shrine)."},
+          Cuirass: {e:"", l:" Tamriel Rebuilt: Golden Saint Cuirass (AR 75, Ashurbalipal shrine) if you skip Ebony Mail, or Scales of Nafaalilargus (AR 43 — CE Resist Normal Weapons 50%)."},
+          Pauldrons: {e:" Tamriel Rebuilt: Dreugh Left Pauldron-Fin (AR 40 — CE Swift Swim 15), lying in the Coronati Basin [0, -41].", l:" Tamriel Rebuilt: Golden Saint Left Pauldron / Golden Saint Right Pauldron (AR 75, worn by Gethan Lloren at Ashurbalipal)."},
+          Greaves: {e:" Tamriel Rebuilt: Dreugh Greaves (AR 40), lying in Vartalit Grotto.", l:""},
+          Boots: {e:" Tamriel Rebuilt: Dwemer Scrap Boots (AR 25) — a crate in Narsis's Canyon Keep (steal).", l:" Tamriel Rebuilt: Golden Saint Boots (AR 75, Veranzaris, Manic Library)."},
+          Gauntlets: {e:" Tamriel Rebuilt: Dwemer Scrap Left Bracer (Marog docks warehouse) / Dwemer Scrap Right Bracer (Hlan Oek sewers) — AR 25, both steal.", l:" Tamriel Rebuilt: Golden Saint Left Gauntlet / Golden Saint Right Gauntlet (AR 75, Deoiridh Blond-Dyed's quest)."},
+          Shield: {e:"", l:" Tamriel Rebuilt: Bug Shield of Vivec (AR 60 — Cast When Used disease resistance and Water Breathing; Number Rooms Temple, Room 270)."}
         };
       }
       if (kind === "Light Armor") {
         return {
-          Helm: {e:" Also TR option: Chitin helm from Bal Foyen crates.", l:" No unverified TR glass-helm unique — mixed vanilla still Glass Helm + Cuirass of the Savior's Hide."},
-          Cuirass: {e:" Also TR option: Chitin cuirass, Bal Foyen docks crates.", l:" No unverified TR cuirass unique that replaces the Cuirass of the Savior's Hide."},
-          Pauldrons: {e:" Also TR: Chitin pauldrons from Bal Foyen.", l:" No unverified TR pauldron unique — keep Vanilla Glass Left / Right Pauldron."},
-          Greaves: {e:" Also TR: Chitin greaves from Bal Foyen.", l:" No unverified TR greave unique — keep Vanilla Glass Greaves."},
-          Boots: {e:" Also TR option: chitin boots from Bal Foyen. BOBS remains early utility / mobility, not max-AR Light.", l:" Vanilla late remains Boots of the Apostle for max-AR Light. Not BOBS."},
-          Gauntlets: {e:" Also TR: Chitin gauntlets from Bal Foyen.", l:" No unverified TR bracer unique — keep Vanilla Left / Right Glass Bracer."},
-          Shield: {e:" Also TR: Chitin shield if Block.", l:" No unverified TR light tower unique. Eleidon is Heavy, not Light."}
+          Helm: {e:" Tamriel Rebuilt: Alit Hide Open Helm (AR 20) — Dralas Vando's shop in Almas Thirr (steal).", l:" Tamriel Rebuilt: Helm of the Savior's Hide (AR 80 — CE Resist Magicka 5%; Ember Keep treasure chamber in Firewatch, steal)."},
+          Cuirass: {e:" Tamriel Rebuilt: Alit Hide Cuirass (AR 20) — Rogeed's hunting shop in Narsis (steal).", l:" Tamriel Rebuilt alternative: Philosopher's Armor (AR 70 — CE Willpower, Strength and Long Blade 20; Brelin Thevur in the Number Rooms Temple)."},
+          Pauldrons: {e:" Tamriel Rebuilt: Kagouti Hide Right Pauldron (AR 25, sold by Ulran Teryon in Bal Foyen) / Kagouti Hide Left Pauldron (Three Treasures Cornerclub in Marog, steal).", l:" Tamriel Rebuilt: L Pauldron of the Savior's Hide / R Pauldron of the Savior's Hide (AR 80, worn by Gamras Silni in Mandaran). Do the Fighters Guild quest Silni's Bounty first."},
+          Greaves: {e:" Tamriel Rebuilt: Alit Hide Greaves (AR 20), in the Morag Tong guildhall basement in Narsis.", l:" Tamriel Rebuilt: Greaves of the Savior's Hide (AR 80, worn by Tarvil Gamaras in Berantus)."},
+          Boots: {e:"", l:" Tamriel Rebuilt: Boots of the Savior's Hide (AR 80 — CE Resist Magicka 5%; Parjho's used armor shop in Helnim, steal)."},
+          Gauntlets: {e:" Tamriel Rebuilt: Kagouti Hide Left Bracer / Kagouti Hide Right Bracer (AR 25) — Ald Marak's northern guard tower (steal).", l:" Tamriel Rebuilt: Left Gauntlet of the Poor / Right Gauntlet of the Poor (AR 80 — CE Resist Magicka 25%; Lord Mhas Vathor, Alta Vathor). Do the Narsis Mages Guild quests (Dead Magic, Anti-Magic, Passwall) first."},
+          Shield: {e:" Tamriel Rebuilt: Alit Hide Shield (AR 20) — The Fighting Chance in Narsis (steal).", l:""}
         };
       }
       return {
-        Helm: {e:" Also TR option: common hats from Narsis clothiers (steal).", l:" Also TR option: custom CE hats with mainland grand souls."},
-        Cuirass: {e:" None. Mainland shirts from Narsis clothiers if pre-enchanted.", l:" Still no armor cuirass — custom clothing only."},
-        Pauldrons: {e:"None.", l:"None."},
-        Greaves: {e:"None.", l:"None."},
-        Boots: {e:" Also TR: common shoes from Narsis. BOBS is Light Armor utility, not part of a pure Unarmored kit.", l:" Custom CE Fortify Unarmored / Speed shoes. Not BOBS."},
-        Gauntlets: {e:"None.", l:" Custom CE gloves with mainland grand souls."},
-        Shield: {e:"None.", l:"None unless you drop Unarmored."}
+        Helm: {e:"", l:""},
+        Cuirass: {e:"", l:""},
+        Pauldrons: {e:"", l:""},
+        Greaves: {e:"", l:""},
+        Boots: {e:"", l:""},
+        Gauntlets: {e:"", l:""},
+        Shield: {e:"", l:""}
       };
     }
     function withTrArmor(kind) {
@@ -2218,8 +2217,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Necromancer's Amulet": "Arch-Mage Trebonius Artorius (Vivec Mages Guild) gives it for his House Telvanni quest; he also wears one. Premier caster amulet.",
       "Mantle of Woe": "Bloodmoon: Tymvaul's quest at Rimhull on Solstheim. Huge magicka, huge weakness.",
       "Ring of Surroundings": "Quest reward from Larrius Varro, or a small chest in Dren Plantation's Tower Shack (30-point lock). Cast When Used Chameleon.",
-      "Marara's Ring": "Worn by Marara in Drethan Ancestral Tomb.",
-      "Ring of Phynaster": "On the corpse of Pop Je in Senim Ancestral Tomb. CE Resist Magicka, Poison and Shock 20% — early-game safe.",
+      "Marara's Ring": "Worn by Marara in Drethan Ancestral Tomb. Tied to The Weary Vampire — do it first.",
+      "Ring of Phynaster": "On the corpse of Pop Je in Senim Ancestral Tomb, which also has a locked inner door. CE Resist Magicka, Resist Poison and Resist Shock 20%.",
+      "Shadowweave Ring": "On the shelf at Irgola's pawnshop in Caldera (owned — steal). Cast When Used Chameleon 20% and Sanctuary 20 for 10s.",
       "Robe of St Roris": "Chest in the Assemanu shrine (75-point lock). Cast When Used Restore Health 15 and Restore Fatigue 15.",
       "Chitin Helm": "Sold by Meldor in Balmora and Malpenix Blonia in Ald'ruhn.",
       "Imperial Steel Helmet": "Buy a worn one from Uulernil in Pelagiad and have him repair it, about 76 gold.",
@@ -2264,41 +2264,43 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       rationale: "Premier Cast When Used Restore Health Heavy tower shield when Block + one-hander.",
       source: "UESP Morrowind:Eleidon's Ward"
     });
-    setItem("Boots of Peace", {
-      world: "tr", phase: "late", slot: "Boots", category: "Heavy Armor",
-      location: "Yashazmus, Telvanni Isles. Carried by Dremora Lord Drekhva Yashaz.",
-      acquisition: "Enemy drop — Tamriel Rebuilt", requirements: "Hard Daedric shrine fight.",
-      rationale: "Verified TR Heavy boots (Fortify Athletics/Acrobatics/H2H/Sneak/Attack). Vanilla Ten Pace / Daedric Boots still compete.",
-      source: "UESP Tamriel Data:Boots of Peace"
-    });
-    setItem("War Cuirass of Pasoroth", {
-      world: "tr", phase: "late", slot: "Cuirass", category: "Heavy Armor",
-      location: "Narsis, Second Family Manor, Vault 3.",
-      acquisition: "Fixed world location — Tamriel Rebuilt", requirements: "Narsis access / manor vault.",
-      rationale: "Verified TR Heavy cuirass (Fortify Endurance/Agility/Heavy Armor). Lord's Mail / Dragonbone remain Vanilla primaries.",
-      source: "UESP Tamriel Data:War Cuirass of Pasoroth"
-    });
-    setItem("Fearstruck", {
-      world: "tr", phase: "late", slot: "Shield", category: "Heavy Armor",
-      location: "Bal Dushal. Carried by Nagoth Daril.",
-      acquisition: "Enemy drop — Tamriel Rebuilt", requirements: "Fight a warlock; 100% Weakness to Fire on the shield.",
-      rationale: "Verified TR Heavy shield (huge Block/Agility, fire weakness). Eleidon's Ward still the heal-oriented Vanilla pick.",
-      source: "UESP Tamriel Data:Fearstruck"
-    });
-    setItem("Scales of Nafaalilargus", {
-      world: "tr", phase: "late", slot: "Cuirass", category: "Medium Armor",
-      location: "Old Ebonheart Imperial Legion HQ, Caecalia Victrix quarters. Secret stone safe behind a locked (80) painting.",
-      acquisition: "Container — Tamriel Rebuilt", requirements: "High lock / stealth or key; Legion HQ.",
-      rationale: "Verified TR Medium cuirass (Resist Normal Weapons 50%). Ebony Mail remains the Vanilla mixed-set chest.",
-      source: "UESP Tamriel Data:Scales of Nafaalilargus"
-    });
-    setItem("Ward of Akavir", {
-      world: "tr", phase: "late", slot: "Shield", category: "Medium Armor",
-      location: "Tamriel Rebuilt reimagining of Fort Firemoth.",
-      acquisition: "Tamriel Rebuilt / Firemoth", requirements: "Firemoth content.",
-      rationale: "Verified TR Medium shield (CE Fortify Luck 25). Ice Shield remains the Vanilla mixed-set shield.",
-      source: "UESP Tamriel Data:Ward of Akavir"
-    });
+    // Tamriel Rebuilt picks named in the TR gear rows, checked against Tamriel_Data 26.08 and TR_Mainland 26.08.
+    [
+      ["Boots of Peace", "Boots", "Heavy Armor", "Yashazmus, Shrine. Carried by Dremora Lord Drekhva Yashaz. Tied to Mages Guild: The Tower of the Enchantress — do it first.", "AR 80, CE Fortify Acrobatics, Security, Hand-to-hand, Sneak and Athletics 30."],
+      ["War Cuirass of Pasoroth", "Cuirass", "Heavy Armor", "Narsis, Second Family Manor, Vault 3 (owned — steal).", "AR 75, CE Fortify Endurance 20, Agility 20 and Heavy Armor 40."],
+      ["Fearstruck", "Shield", "Heavy Armor", "Bal Dushal, Sunken Vaults. Carried by Nagoth Daril.", "AR 100, CE Fortify Block 40 and Agility 40, but Weakness to Fire 100%."],
+      ["Requiem", "Shield", "Heavy Armor", "The Space Gone Missing, Outer Caverns.", "AR 100, CE Restore Health 2 and Restore Fatigue 2."],
+      ["Lord Methats' Left Pauldron", "Pauldrons", "Heavy Armor", "Daedric chest in Vorthas Uldun, Chambers of Methats Uldun.", "AR 80, CE Fortify Athletics 15."],
+      ["Lord Methats' Right Pauldron", "Pauldrons", "Heavy Armor", "Daedric chest in Vorthas Uldun, Chambers of Methats Uldun.", "AR 80, CE Fortify Athletics 15."],
+      ["Saint Veloth's Left Pauldron", "Pauldrons", "Heavy Armor", "Necrom, Catacombs: Ancient Burial.", "AR 80, CE Reflect 30%."],
+      ["Scales of Nafaalilargus", "Cuirass", "Medium Armor", "Ebon Tower, Legion Headquarters — in a secret safe behind a locked (80) painting.", "AR 43, CE Resist Normal Weapons 50%."],
+      ["Ward of Akavir", "Shield", "Medium Armor", "Reward for Caecalia Victrix's Fort Firemoth quest or from Qorinue-Najan; Grurn also carries one in Saros Mine.", "AR 25, CE Fortify Luck 25."],
+      ["Golden Saint Helm", "Helm", "Medium Armor", "Yamuninisharn, Shrine.", "AR 75."],
+      ["Golden Saint Cuirass", "Cuirass", "Medium Armor", "Ashurbalipal, Shrine.", "AR 75."],
+      ["Golden Saint Left Pauldron", "Pauldrons", "Medium Armor", "Worn by Gethan Lloren at the Ashurbalipal shrine.", "AR 75."],
+      ["Golden Saint Right Pauldron", "Pauldrons", "Medium Armor", "Worn by Gethan Lloren at the Ashurbalipal shrine.", "AR 75."],
+      ["Golden Saint Boots", "Boots", "Medium Armor", "Veranzaris, Manic Library.", "AR 75."],
+      ["Golden Saint Left Gauntlet", "Gauntlets", "Medium Armor", "Reward for Deoiridh Blond-Dyed's Divine Intervention quest.", "AR 75."],
+      ["Golden Saint Right Gauntlet", "Gauntlets", "Medium Armor", "Reward for Deoiridh Blond-Dyed's Divine Intervention quest.", "AR 75."],
+      ["Bug Shield of Vivec", "Shield", "Medium Armor", "Number Rooms Temple, Room 270.", "AR 60, Cast When Used Resist Blight and Common Disease, Water Breathing."],
+      ["Helm of the Savior's Hide", "Helm", "Light Armor", "Firewatch, Ember Keep: Treasure Chamber (owned — steal).", "AR 80, CE Resist Magicka 5%."],
+      ["L Pauldron of the Savior's Hide", "Pauldrons", "Light Armor", "Worn by Gamras Silni in Mandaran, Upper Level. Tied to Fighters Guild: Silni's Bounty — do it first.", "AR 80, CE Resist Magicka 5%."],
+      ["R Pauldron of the Savior's Hide", "Pauldrons", "Light Armor", "Worn by Gamras Silni in Mandaran, Upper Level. Tied to Fighters Guild: Silni's Bounty — do it first.", "AR 80, CE Resist Magicka 5%."],
+      ["Greaves of the Savior's Hide", "Greaves", "Light Armor", "Worn by Tarvil Gamaras in Berantus.", "AR 80, CE Resist Magicka 10%."],
+      ["Boots of the Savior's Hide", "Boots", "Light Armor", "Helnim, Parjho: Used Armor and Weapons (owned — steal).", "AR 80, CE Resist Magicka 5%."],
+      ["Left Gauntlet of the Poor", "Gauntlets", "Light Armor", "Worn by Lord Mhas Vathor in Alta Vathor. Tied to the Narsis Mages Guild quests Dead Magic, Anti-Magic and Passwall — do them first.", "AR 80, CE Resist Magicka 25%."],
+      ["Right Gauntlet of the Poor", "Gauntlets", "Light Armor", "Worn by Lord Mhas Vathor in Alta Vathor. Tied to the Narsis Mages Guild quests Dead Magic, Anti-Magic and Passwall — do them first.", "AR 80, CE Resist Magicka 25%."],
+      ["Philosopher's Armor", "Cuirass", "Light Armor", "Worn by Brelin Thevur in the Number Rooms Temple, Room 3333.", "AR 70, CE Fortify Willpower, Strength and Long Blade 20."],
+      ["Exalted Ebony Blade", "Weapon", "Long Blade", "Reward for Dravayn Tarethren's Ebony Blade quest.", "60 damage, Cast When Strikes Absorb Health and Silence."],
+      ["Goujian", "Weapon", "Long Blade", "Reward for Anirwen's perfect sword quest.", "55 damage two-handed, CE Fortify Long Blade 25."],
+      ["Dragon's Blade", "Weapon", "Short Blade", "Carried by the Shade of Moraelyn in Raathim Ancestral Tomb, Hall of Kings Past. Tied to Imperial Cult: Dragon's Blade — do it first.", "38 damage, Cast When Used Fortify Conjuration and Mysticism."],
+      ["Shatterwright", "Weapon", "Blunt Weapon", "Carried by Xivilai Lotan in Naemunbatashpi, Antechamber. Tied to Temple: The Belt of St. Olms — do it first.", "70 damage two-handed, Cast When Strikes Damage Agility and Disintegrate Armor."],
+      ["Witherbrand", "Weapon", "Axe", "Carried by Xivilai Tatho in Yamandalkal, Sanctum. Tied to Mages Guild: Yamandalkal — do it first.", "80 damage two-handed, Cast When Strikes Damage Magicka and Absorb Agility."],
+      ["Orlukh's Cleaver", "Weapon", "Axe", "Reward from Orlukh gro-Othmog for Termination Notice.", "68 damage two-handed, CE Fortify Attack 100 and Drain Agility 90."],
+      ["Sunkindler", "Weapon", "Marksman", "Carried by Darron Marceau in the Armun Ashlands [-3, -22]. Tied to Orlukh: Vampire Hunter and Baluath: Hunting the Hunter — do those first.", "50 damage crossbow, CE Resist Fire 30% and Resist Common Disease 30%."],
+    ].forEach(([name, slot, category, location, rationale]) => setItem(name, {
+      world: "tr", phase: "late", slot, category, location, acquisition: location, requirements: "", rationale, source: "Tamriel Rebuilt 26.08 game data",
+    }));
     function lookupItemLocation(name, text) {
       if (name && ITEM_DATA[name] && ITEM_DATA[name].location) return ITEM_DATA[name].location;
       if (name && ITEM_LOCATIONS[name]) return ITEM_LOCATIONS[name];
@@ -2357,7 +2359,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         ["exquisite", "Exquisite clothes: clothiers stock them (Bivale Teneran in Ald'ruhn, Elegnan in Tel Mora, St. Olms Tailors in Vivec). Buy, then enchant."],
         ["grand-soul", "Grand souls: Golden Saints / Winged Twilights at Daedric ruins, or Azura's Star. Use at an enchanter or yourself."],
         ["mantle of woe", "Mantle of Woe: Bloodmoon — Tymvaul's quest at Rimhull on Solstheim. Huge magicka, huge weakness."],
-        ["robe of the lich", "Robe of the Lich: carried by Gedna Relvel in her tomb in Old Mournhold. Cast When Used: Drain Health 600 and Fortify Magicka 300 for 1s."],
+        ["robe of the lich", "Robe of the Lich: carried by Gedna Relvel in her tomb in Old Mournhold. Cast When Used: Drain Health 600 and Fortify Magicka 300 for 1s. Do the Crimson Plague quest first."],
         ["ring of khajiit", "Ring of Khajiit: Mephala's Daedric quest. Cast When Used Invisibility and Fortify Speed."],
         ["marara", "Marara's Ring: worn by Marara in Drethan Ancestral Tomb. A fight."],
         ["telvanni tower", "Telvanni Tower Ring: loot Telvanni towers and Sadrith Mora mage chests first. Enchanter shops are backup."],
@@ -2494,27 +2496,27 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     const SCORED_WEAPONS = {
       "Long Blade": [
-        { itemName: "Hopesfire", hands: 1, quest: true, text: "Hopesfire (Tribunal, taken from Almalexia) — scored one-hand Long Blade when Block/shield is in play." },
+        { itemName: "Hopesfire", hands: 1, quest: true, text: "Hopesfire (taken from Almalexia after The Blade of Nerevar) — scored one-hand Long Blade when Block/shield is in play." },
         { itemName: "Daedric Crescent", hands: 2, quest: true, text: "Daedric Crescent — scored two-hand Long Blade when you skip a shield." },
         { itemName: "Trueflame", hands: 1, quest: true, text: "Trueflame — main-quest unique, scored below Hopesfire for practical one-hand use." }
       ],
       "Short Blade": [
-        { itemName: "Black Hands Dagger", hands: 1, quest: true, text: "Black Hands Dagger — scored named Short Blade (Morag Tong)." },
+        { itemName: "Black Hands Dagger", hands: 1, quest: true, text: "Black Hands Dagger — scored named Short Blade (Morag Tong reward)." },
         { itemName: "Keening", hands: 1, quest: true, text: "Keening — main-quest tool, not a generic dagger." }
       ],
       "Blunt Weapon": [
-        { itemName: "Sunder", hands: 1, quest: true, text: "Sunder — scored main-quest Blunt (with Wraithguard)." },
+        { itemName: "Sunder", hands: 1, quest: true, text: "Sunder — scored main-quest Blunt (use with Wraithguard, also from the main quest)." },
         { itemName: "Scourge", hands: 1, quest: false, text: "Scourge — scored Blunt mace (Tel Fyr chest), never Axe." }
       ],
       "Axe": [
         { itemName: "Cleaver of St. Felms", hands: 1, quest: false, text: "Cleaver of St. Felms — scored one-hand Axe (Tureynulal)." },
-        { itemName: "Cloudcleaver", hands: 2, quest: false, text: "Cloudcleaver — scored two-hand Axe when you skip a shield." }
+        { itemName: "Cloudcleaver", hands: 2, quest: false, text: "Cloudcleaver (Hlormar Wine-Sot's quest) — scored two-hand Axe when you skip a shield." }
       ],
       "Spear": [
-        { itemName: "Spear of Bitter Mercy", hands: 2, quest: true, text: "Spear of Bitter Mercy — scored unique Spear (Reflect)." }
+        { itemName: "Spear of Bitter Mercy", hands: 2, quest: true, text: "Spear of Bitter Mercy — scored unique Spear (Reflect; Sheogorath's quest)." }
       ],
       "Marksman": [
-        { itemName: "Daedric Long Bow", hands: 2, quest: false, text: "Daedric Long Bow — scored raw-stat Long Bow." },
+        { itemName: "Daedric Long Bow", hands: 2, quest: false, text: "Daedric Long Bow (Dram Bero's reward) — scored raw-stat bow." },
         { itemName: "Auriel's Bow", hands: 2, quest: false, text: "Auriel's Bow — scored Marksman unique (unenchanted in Morrowind)." }
       ]
     };
@@ -2569,29 +2571,30 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         ? "Frosteater Robe (Tel Vos, Services Tower) or Poisoneater Robe (Tel Aruhn) — Cast When Used Spell Absorption. Both owned: steal."
         : "Veloth's Robe (Cast When Used Restore Health 10; Verick Gemain's shop in Caldera, steal), or go without." 
       const robeL = mage
-        ? "Mantle of Woe (Bloodmoon, huge magicka, huge weakness) or Robe of the Lich. Else grand-soul CE Fortify Magicka."
+        ? "Mantle of Woe (Tymvaul's quest on Solstheim — huge magicka, huge weakness) or Robe of the Lich (Gedna Relvel — do the Crimson Plague quest first). Else grand-soul CE Fortify Magicka."
         : "Skip Mantle of Woe and Robe of the Lich. Grand-soul CE Fortify Strength or skip robe."
       const amuE = mage
         ? "Bone Charm (Cast When Used Summon Skeletal Minion; Tel Uvirith, steal) or Amulet of Recall (Verick Gemain's shop in Caldera, steal)."
         : "Amulet of Rest (Cast When Used Restore Fatigue; Heifnir's shop in Dagon Fel, steal) or Amulet of Shield (Cast When Used Shield 5)." 
       const amuL = mage
-        ? "Necromancer's Amulet (CE Intelligence 25, Spell Absorption 25%, Resist Normal Weapons 25%) — premier caster amulet."
-        : "Blood Ring or custom CE Fortify Strength. Skip Necromancer's Amulet."
+        ? "Necromancer's Amulet (Trebonius Artorius's reward for Kill the Telvanni Councilors — CE Intelligence 25, Spell Absorption 25%, Resist Normal Weapons 25%) — premier caster amulet."
+        : "Grand-soul CE Fortify Strength on an amulet. Skip Necromancer's Amulet."
       const ring1E = mage
         ? "Mentor's Ring (Samarys Ancestral Tomb, run past undead). CE INT + WIL — the famous early-game break."
-        : "Ring of Phynaster (Senim Ancestral Tomb — CE Resist Magicka, Poison and Shock 20%). Do not wear Mentor's Ring on pure melee."
+        : "Shadowweave Ring (Cast When Used Chameleon and Sanctuary; Irgola's pawnshop in Caldera, steal). Do not wear Mentor's Ring on pure melee."
       const ring1L = mage
         ? "Keep Mentor's Ring forever unless a grand-soul CE INT ring beats 10/10."
-        : "Grand-soul CE Fortify Strength ring, or keep Ring of Phynaster. Mentor's Ring stays caster-only."
+        : "Ring of Phynaster (Senim Ancestral Tomb — CE Resist Magicka, Resist Poison and Resist Shock 20%), or a grand-soul CE Fortify Strength ring. Mentor's Ring stays caster-only."
       // Named explicitly: both strings mention Mentor's Ring, and the name
       // scanner would otherwise label the melee rows with it.
-      const ring1Name = mage ? "Mentor's Ring" : "Ring of Phynaster";
+      const ring1Name = mage ? "Mentor's Ring" : "Shadowweave Ring";
+      const ring1NameLate = mage ? "Mentor's Ring" : "Ring of Phynaster";
       const ring2E = mage
         ? "Shadowweave Ring (Cast When Used Chameleon and Sanctuary; Irgola's pawnshop in Caldera, steal) or Second Barrier Ring (Cast When Used Shield 10)."
-        : "Second Barrier Ring (Cast When Used Shield 10; Tel Vos, steal) or Shadowweave Ring (Chameleon and Sanctuary)." 
+        : "Second Barrier Ring (Cast When Used Shield 10; Tel Vos, steal) or Ring of Aversion (Cast When Used Invisibility; Verick Gemain's shop in Caldera, steal)." 
       const ring2L = mage
-        ? "Ring of Khajiit (Cast When Used Invisibility and Speed) or Vampiric Ring (Cast When Used absorb on Touch). Prefer CE Fortify Magicka."
-        : "Marara's Ring (Drethan Ancestral Tomb — CE Reflect 20%, Resist Normal Weapons 40%) or Ring of Surroundings (Larrius Varro's quest). Not Khajiit/Mentor.";
+        ? "Ring of Khajiit (Mephala's quest — Cast When Used Invisibility and Speed) or Vampiric Ring (Cast When Used absorb on Touch). Prefer CE Fortify Magicka."
+        : "Marara's Ring (Drethan Ancestral Tomb — CE Reflect 20%, Resist Normal Weapons 40%; do The Weary Vampire first) or Ring of Surroundings (Larrius Varro's quest). Not Khajiit/Mentor.";
       const earlyRows = [];
       const lateRows = [];
       const armShow = arms.filter(function(n, i){ return i === 0 || maj.includes(n); }).slice(0, 2);
@@ -2626,7 +2629,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       lateRows.push(gearItem("Pants", "CE Fortify Endurance so each level still adds health. Exquisite Pants from clothiers."));
       lateRows.push(gearItem("Robe", robeL));
       lateRows.push(gearItem("Amulet", amuL));
-      lateRows.push(gearItem("Ring 1", ring1L, ring1Name));
+      lateRows.push(gearItem("Ring 1", ring1L, ring1NameLate));
       lateRows.push(gearItem("Ring 2", ring2L));
       if (!weps.length) earlyRows.push(gearItem("Weapon", "No weapon skill among your ten skills — empty hands, a staff for flavor, or add Marksman / a melee skill if you want a kit."));
       weps.forEach((w, idx) => {
