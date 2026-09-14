@@ -1665,7 +1665,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       premade.classList.add("hidden");
       goldOutline([document.getElementById("btn-custom")], [document.getElementById("btn-premade")]);
     });
-    const BUILDS = [{"cat": "Pure mage", "name": "Altmer Atronach Spellweaver", "race": "High Elf", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Destruction, Alteration, Mysticism, Enchant, Alchemy", "min": "Illusion, Restoration, Unarmored, Conjuration, Mercantile", "sign": "The Atronach"}, {"cat": "Pure mage", "name": "Breton Apprentice Nuker", "race": "Breton", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Destruction, Restoration, Alteration, Illusion, Mysticism", "min": "Alchemy, Enchant, Conjuration, Unarmored, Speechcraft", "sign": "The Apprentice"}, {"cat": "Pure mage", "name": "Altmer Mage The Mage", "race": "High Elf", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Destruction, Alteration, Restoration, Mysticism, Alchemy", "min": "Illusion, Enchant, Unarmored, Conjuration, Mercantile", "sign": "The Mage"}, {"cat": "Pure mage", "name": "Breton Atronach Scholar", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Personality", "maj": "Mysticism, Enchant, Alchemy, Destruction, Restoration", "min": "Alteration, Illusion, Mercantile, Speechcraft, Unarmored", "sign": "The Atronach"}, {"cat": "Pure mage", "name": "Dunmer Fire Mage", "race": "Dark Elf", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Speed", "maj": "Destruction, Alteration, Mysticism, Athletics, Restoration", "min": "Alchemy, Enchant, Light Armor, Illusion, Mercantile", "sign": "The Mage"}, {"cat": "Battlemage", "name": "Redguard Lady Spellsword", "race": "Redguard", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Long Blade, Heavy Armor, Destruction, Restoration, Athletics", "min": "Block, Armorer, Alteration, Alchemy, Mercantile", "sign": "The Lady"}, {"cat": "Battlemage", "name": "Nord Warrior Axe-Mage", "race": "Nord", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Axe, Medium Armor, Block, Destruction, Restoration", "min": "Athletics, Armorer, Alteration, Alchemy, Speechcraft", "sign": "The Warrior"}, {"cat": "Battlemage", "name": "Orc Lady Crusader-Mage", "race": "Orc", "gender": "Female", "spec": "Combat", "fav": "Endurance, Willpower", "maj": "Blunt Weapon, Heavy Armor, Restoration, Destruction, Block", "min": "Armorer, Athletics, Alteration, Alchemy, Mercantile", "sign": "The Lady"}, {"cat": "Battlemage", "name": "Imperial Knight of Stendarr", "race": "Imperial", "gender": "Male", "spec": "Combat", "fav": "Personality, Endurance", "maj": "Long Blade, Heavy Armor, Restoration, Block, Speechcraft", "min": "Destruction, Athletics, Armorer, Mercantile, Illusion", "sign": "The Lady"}, {"cat": "Battlemage", "name": "Breton Spellsword Lady", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Willpower, Endurance", "maj": "Long Blade, Destruction, Restoration, Alteration, Medium Armor", "min": "Block, Mysticism, Athletics, Alchemy, Enchant", "sign": "The Lady"}, {"cat": "Pure melee", "name": "Orc Endurance Crusher", "race": "Orc", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Blunt Weapon, Heavy Armor, Block, Armorer, Athletics", "min": "Axe, Medium Armor, Spear, Acrobatics, Mercantile", "sign": "The Lady"}, {"cat": "Pure melee", "name": "Nord Warrior Spearman", "race": "Nord", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Spear, Medium Armor, Block, Athletics, Armorer", "min": "Axe, Heavy Armor, Acrobatics, Restoration, Mercantile", "sign": "The Warrior"}, {"cat": "Pure melee", "name": "Redguard Long Blade Duelist", "race": "Redguard", "gender": "Female", "spec": "Combat", "fav": "Strength, Speed", "maj": "Long Blade, Medium Armor, Athletics, Block, Armorer", "min": "Acrobatics, Light Armor, Restoration, Mercantile, Speechcraft", "sign": "The Warrior"}, {"cat": "Pure melee", "name": "Imperial Legionnaire", "race": "Imperial", "gender": "Male", "spec": "Combat", "fav": "Personality, Endurance", "maj": "Long Blade, Heavy Armor, Block, Speechcraft, Athletics", "min": "Armorer, Restoration, Mercantile, Medium Armor, Spear", "sign": "The Lady"}, {"cat": "Pure melee", "name": "Nord Steed Berserker", "race": "Nord", "gender": "Female", "spec": "Combat", "fav": "Strength, Speed", "maj": "Axe, Medium Armor, Athletics, Acrobatics, Block", "min": "Armorer, Restoration, Light Armor, Spear, Mercantile", "sign": "The Steed"}, {"cat": "Assassin", "name": "Khajiit Nightblade", "race": "Khajiit", "gender": "Male", "spec": "Stealth", "fav": "Speed, Agility", "maj": "Short Blade, Sneak, Light Armor, Security, Illusion", "min": "Marksman, Acrobatics, Athletics, Alchemy, Mercantile", "sign": "The Thief"}, {"cat": "Assassin", "name": "Bosmer Archer Assassin", "race": "Wood Elf", "gender": "Female", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Marksman, Sneak, Light Armor, Alchemy, Athletics", "min": "Short Blade, Security, Acrobatics, Illusion, Mercantile", "sign": "The Thief"}, {"cat": "Assassin", "name": "Dunmer Shadowblade", "race": "Dark Elf", "gender": "Female", "spec": "Stealth", "fav": "Speed, Willpower", "maj": "Short Blade, Sneak, Light Armor, Illusion, Destruction", "min": "Marksman, Athletics, Alchemy, Security, Mysticism", "sign": "The Thief"}, {"cat": "Assassin", "name": "Imperial Agent", "race": "Imperial", "gender": "Male", "spec": "Stealth", "fav": "Personality, Agility", "maj": "Short Blade, Speechcraft, Light Armor, Sneak, Mercantile", "min": "Security, Illusion, Athletics, Marksman, Restoration", "sign": "The Lover"}, {"cat": "Assassin", "name": "Khajiit Shadow The Shadow", "race": "Khajiit", "gender": "Female", "spec": "Stealth", "fav": "Speed, Luck", "maj": "Sneak, Short Blade, Light Armor, Security, Acrobatics", "min": "Illusion, Marksman, Athletics, Alchemy, Mercantile", "sign": "The Shadow"}, {"cat": "Archer", "name": "Bosmer Hunter", "race": "Wood Elf", "gender": "Male", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Marksman, Sneak, Light Armor, Athletics, Alchemy", "min": "Short Blade, Acrobatics, Restoration, Mercantile, Security", "sign": "The Thief"}, {"cat": "Archer", "name": "Imperial Scout Bowman", "race": "Imperial", "gender": "Female", "spec": "Stealth", "fav": "Agility, Endurance", "maj": "Marksman, Sneak, Light Armor, Athletics, Restoration", "min": "Sneak, Block, Mercantile, Speechcraft, Armorer", "sign": "The Lady"}, {"cat": "Archer", "name": "Redguard Ranger", "race": "Redguard", "gender": "Male", "spec": "Combat", "fav": "Agility, Strength", "maj": "Marksman, Long Blade, Athletics, Medium Armor, Restoration", "min": "Block, Armorer, Acrobatics, Mercantile, Alchemy", "sign": "The Warrior"}, {"cat": "Archer", "name": "Dunmer Ashlands Archer", "race": "Dark Elf", "gender": "Female", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Marksman, Light Armor, Athletics, Destruction, Sneak", "min": "Short Blade, Alchemy, Restoration, Acrobatics, Mercantile", "sign": "The Thief"}, {"cat": "Thief", "name": "Khajiit Cutpurse", "race": "Khajiit", "gender": "Male", "spec": "Stealth", "fav": "Agility, Personality", "maj": "Security, Sneak, Short Blade, Mercantile, Light Armor", "min": "Speechcraft, Acrobatics, Athletics, Illusion, Marksman", "sign": "The Thief"}, {"cat": "Thief", "name": "Bosmer Guild Rat", "race": "Wood Elf", "gender": "Female", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Sneak, Security, Marksman, Light Armor, Acrobatics", "min": "Short Blade, Mercantile, Athletics, Illusion, Alchemy", "sign": "The Lover"}, {"cat": "Thief", "name": "Imperial Fence", "race": "Imperial", "gender": "Male", "spec": "Stealth", "fav": "Personality, Luck", "maj": "Speechcraft, Mercantile, Security, Sneak, Short Blade", "min": "Light Armor, Illusion, Athletics, Restoration, Acrobatics", "sign": "The Thief"}, {"cat": "Healer", "name": "Breton Temple Healer", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Willpower, Personality", "maj": "Restoration, Mysticism, Alchemy, Speechcraft, Unarmored", "min": "Alteration, Illusion, Mercantile, Destruction, Enchant", "sign": "The Ritual"}, {"cat": "Healer", "name": "Imperial Cult Chaplain", "race": "Imperial", "gender": "Male", "spec": "Magic", "fav": "Personality, Willpower", "maj": "Restoration, Speechcraft, Mercantile, Illusion, Alchemy", "min": "Mysticism, Unarmored, Destruction, Athletics, Enchant", "sign": "The Ritual"}, {"cat": "Healer", "name": "Altmer Restorer", "race": "High Elf", "gender": "Female", "spec": "Magic", "fav": "Willpower, Intelligence", "maj": "Restoration, Alteration, Mysticism, Alchemy, Enchant", "min": "Destruction, Illusion, Unarmored, Mercantile, Speechcraft", "sign": "The Mage"}, {"cat": "Monk", "name": "Redguard Hand-to-Hand", "race": "Redguard", "gender": "Male", "spec": "Stealth", "fav": "Speed, Endurance", "maj": "Hand-to-hand, Unarmored, Acrobatics, Sneak, Light Armor", "min": "Sneak, Light Armor, Alchemy, Speechcraft, Block", "sign": "The Lady"}, {"cat": "Monk", "name": "Argonian Marsh Monk", "race": "Argonian", "gender": "Female", "spec": "Stealth", "fav": "Speed, Agility", "maj": "Hand-to-hand, Unarmored, Acrobatics, Sneak, Athletics", "min": "Sneak, Spear, Acrobatics, Mysticism, Illusion", "sign": "The Lady"}, {"cat": "Monk", "name": "Khajiit Acrobat Monk", "race": "Khajiit", "gender": "Male", "spec": "Stealth", "fav": "Speed, Agility", "maj": "Acrobatics, Hand-to-hand, Unarmored, Athletics, Sneak", "min": "Short Blade, Restoration, Light Armor, Security, Mercantile", "sign": "The Steed"}, {"cat": "Spearman", "name": "Argonian Spear Scout", "race": "Argonian", "gender": "Male", "spec": "Combat", "fav": "Endurance, Speed", "maj": "Spear, Medium Armor, Athletics, Restoration, Alchemy", "min": "Block, Unarmored, Sneak, Acrobatics, Mercantile", "sign": "The Lady"}, {"cat": "Spearman", "name": "Nord Reach Fighter", "race": "Nord", "gender": "Female", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Spear, Heavy Armor, Block, Athletics, Armorer", "min": "Axe, Restoration, Medium Armor, Acrobatics, Mercantile", "sign": "The Warrior"}, {"cat": "Enchanter", "name": "Altmer Soulbinder", "race": "High Elf", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Enchant, Mysticism, Conjuration, Destruction, Alchemy", "min": "Alteration, Restoration, Unarmored, Mercantile, Illusion", "sign": "The Atronach"}, {"cat": "Enchanter", "name": "Breton Artificer", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Personality", "maj": "Enchant, Alchemy, Mysticism, Restoration, Mercantile", "min": "Destruction, Alteration, Illusion, Unarmored, Speechcraft", "sign": "The Mage"}, {"cat": "Alchemist", "name": "Bosmer Poisoner", "race": "Wood Elf", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Agility", "maj": "Alchemy, Restoration, Destruction, Enchant, Illusion", "min": "Light Armor, Destruction, Athletics, Security, Illusion", "sign": "The Thief"}, {"cat": "Alchemist", "name": "Argonian Marsh Mixer", "race": "Argonian", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Speed", "maj": "Alchemy, Restoration, Athletics, Unarmored, Mysticism", "min": "Spear, Alteration, Mercantile, Illusion, Enchant", "sign": "The Mage"}, {"cat": "Conjurer", "name": "Breton Summoner", "race": "Breton", "gender": "Male", "spec": "Magic", "fav": "Willpower, Intelligence", "maj": "Conjuration, Mysticism, Destruction, Restoration, Enchant", "min": "Alteration, Alchemy, Unarmored, Illusion, Mercantile", "sign": "The Apprentice"}, {"cat": "Conjurer", "name": "Dunmer Daedric Binder", "race": "Dark Elf", "gender": "Female", "spec": "Magic", "fav": "Willpower, Speed", "maj": "Conjuration, Destruction, Mysticism, Light Armor, Restoration", "min": "Alteration, Enchant, Alchemy, Athletics, Illusion", "sign": "The Mage"}];
+    const BUILDS = [{"cat": "Pure mage", "name": "Altmer Atronach Spellweaver", "race": "High Elf", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Destruction, Alteration, Mysticism, Enchant, Alchemy", "min": "Illusion, Restoration, Unarmored, Conjuration, Mercantile", "sign": "The Atronach"}, {"cat": "Pure mage", "name": "Breton Apprentice Nuker", "race": "Breton", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Destruction, Restoration, Alteration, Illusion, Mysticism", "min": "Alchemy, Enchant, Conjuration, Unarmored, Speechcraft", "sign": "The Apprentice"}, {"cat": "Pure mage", "name": "Altmer Mage The Mage", "race": "High Elf", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Destruction, Alteration, Restoration, Mysticism, Alchemy", "min": "Illusion, Enchant, Unarmored, Conjuration, Mercantile", "sign": "The Mage"}, {"cat": "Pure mage", "name": "Breton Atronach Scholar", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Personality", "maj": "Mysticism, Enchant, Alchemy, Destruction, Restoration", "min": "Alteration, Illusion, Mercantile, Speechcraft, Unarmored", "sign": "The Atronach"}, {"cat": "Pure mage", "name": "Dunmer Fire Mage", "race": "Dark Elf", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Speed", "maj": "Destruction, Alteration, Mysticism, Athletics, Restoration", "min": "Alchemy, Enchant, Light Armor, Illusion, Mercantile", "sign": "The Mage"}, {"cat": "Battlemage", "name": "Redguard Lady Spellsword", "race": "Redguard", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Long Blade, Heavy Armor, Destruction, Restoration, Athletics", "min": "Block, Armorer, Alteration, Alchemy, Mercantile", "sign": "The Lady"}, {"cat": "Battlemage", "name": "Nord Warrior Axe-Mage", "race": "Nord", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Axe, Medium Armor, Block, Destruction, Restoration", "min": "Athletics, Armorer, Alteration, Alchemy, Speechcraft", "sign": "The Warrior"}, {"cat": "Battlemage", "name": "Orc Lady Crusader-Mage", "race": "Orc", "gender": "Female", "spec": "Combat", "fav": "Endurance, Willpower", "maj": "Blunt Weapon, Heavy Armor, Restoration, Destruction, Block", "min": "Armorer, Athletics, Alteration, Alchemy, Mercantile", "sign": "The Lady"}, {"cat": "Battlemage", "name": "Imperial Knight of Stendarr", "race": "Imperial", "gender": "Male", "spec": "Combat", "fav": "Personality, Endurance", "maj": "Long Blade, Heavy Armor, Restoration, Block, Speechcraft", "min": "Destruction, Athletics, Armorer, Mercantile, Illusion", "sign": "The Lady"}, {"cat": "Battlemage", "name": "Breton Spellsword Lady", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Willpower, Endurance", "maj": "Long Blade, Destruction, Restoration, Alteration, Medium Armor", "min": "Block, Mysticism, Athletics, Alchemy, Enchant", "sign": "The Lady"}, {"cat": "Pure melee", "name": "Orc Endurance Crusher", "race": "Orc", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Blunt Weapon, Heavy Armor, Block, Armorer, Athletics", "min": "Axe, Medium Armor, Spear, Acrobatics, Mercantile", "sign": "The Lady"}, {"cat": "Pure melee", "name": "Nord Warrior Spearman", "race": "Nord", "gender": "Male", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Spear, Medium Armor, Block, Athletics, Armorer", "min": "Axe, Heavy Armor, Acrobatics, Restoration, Mercantile", "sign": "The Warrior"}, {"cat": "Pure melee", "name": "Redguard Long Blade Duelist", "race": "Redguard", "gender": "Female", "spec": "Combat", "fav": "Strength, Speed", "maj": "Long Blade, Medium Armor, Athletics, Block, Armorer", "min": "Acrobatics, Light Armor, Restoration, Mercantile, Speechcraft", "sign": "The Warrior"}, {"cat": "Pure melee", "name": "Imperial Legionnaire", "race": "Imperial", "gender": "Male", "spec": "Combat", "fav": "Personality, Endurance", "maj": "Long Blade, Heavy Armor, Block, Speechcraft, Athletics", "min": "Armorer, Restoration, Mercantile, Medium Armor, Spear", "sign": "The Lady"}, {"cat": "Pure melee", "name": "Nord Steed Berserker", "race": "Nord", "gender": "Female", "spec": "Combat", "fav": "Strength, Speed", "maj": "Axe, Medium Armor, Athletics, Acrobatics, Block", "min": "Armorer, Restoration, Light Armor, Spear, Mercantile", "sign": "The Steed"}, {"cat": "Assassin", "name": "Khajiit Nightblade", "race": "Khajiit", "gender": "Male", "spec": "Stealth", "fav": "Speed, Agility", "maj": "Short Blade, Sneak, Light Armor, Security, Illusion", "min": "Marksman, Acrobatics, Athletics, Alchemy, Mercantile", "sign": "The Thief"}, {"cat": "Assassin", "name": "Bosmer Archer Assassin", "race": "Wood Elf", "gender": "Female", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Marksman, Sneak, Light Armor, Alchemy, Athletics", "min": "Short Blade, Security, Acrobatics, Illusion, Mercantile", "sign": "The Thief"}, {"cat": "Assassin", "name": "Dunmer Shadowblade", "race": "Dark Elf", "gender": "Female", "spec": "Stealth", "fav": "Speed, Willpower", "maj": "Short Blade, Sneak, Light Armor, Illusion, Destruction", "min": "Marksman, Athletics, Alchemy, Security, Mysticism", "sign": "The Thief"}, {"cat": "Assassin", "name": "Imperial Agent", "race": "Imperial", "gender": "Male", "spec": "Stealth", "fav": "Personality, Agility", "maj": "Short Blade, Speechcraft, Light Armor, Sneak, Mercantile", "min": "Security, Illusion, Athletics, Marksman, Restoration", "sign": "The Lover"}, {"cat": "Assassin", "name": "Khajiit Shadow The Shadow", "race": "Khajiit", "gender": "Female", "spec": "Stealth", "fav": "Speed, Luck", "maj": "Sneak, Short Blade, Light Armor, Security, Acrobatics", "min": "Illusion, Marksman, Athletics, Alchemy, Mercantile", "sign": "The Shadow"}, {"cat": "Archer", "name": "Bosmer Hunter", "race": "Wood Elf", "gender": "Male", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Marksman, Sneak, Light Armor, Athletics, Alchemy", "min": "Short Blade, Acrobatics, Restoration, Mercantile, Security", "sign": "The Thief"}, {"cat": "Archer", "name": "Imperial Scout Bowman", "race": "Imperial", "gender": "Female", "spec": "Stealth", "fav": "Agility, Endurance", "maj": "Marksman, Sneak, Light Armor, Athletics, Restoration", "min": "Acrobatics, Block, Mercantile, Speechcraft, Armorer", "sign": "The Lady"}, {"cat": "Archer", "name": "Redguard Ranger", "race": "Redguard", "gender": "Male", "spec": "Combat", "fav": "Agility, Strength", "maj": "Marksman, Long Blade, Athletics, Medium Armor, Restoration", "min": "Block, Armorer, Acrobatics, Mercantile, Alchemy", "sign": "The Warrior"}, {"cat": "Archer", "name": "Dunmer Ashlands Archer", "race": "Dark Elf", "gender": "Female", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Marksman, Light Armor, Athletics, Destruction, Sneak", "min": "Short Blade, Alchemy, Restoration, Acrobatics, Mercantile", "sign": "The Thief"}, {"cat": "Thief", "name": "Khajiit Cutpurse", "race": "Khajiit", "gender": "Male", "spec": "Stealth", "fav": "Agility, Personality", "maj": "Security, Sneak, Short Blade, Mercantile, Light Armor", "min": "Speechcraft, Acrobatics, Athletics, Illusion, Marksman", "sign": "The Thief"}, {"cat": "Thief", "name": "Bosmer Guild Rat", "race": "Wood Elf", "gender": "Female", "spec": "Stealth", "fav": "Agility, Speed", "maj": "Sneak, Security, Marksman, Light Armor, Acrobatics", "min": "Short Blade, Mercantile, Athletics, Illusion, Alchemy", "sign": "The Lover"}, {"cat": "Thief", "name": "Imperial Fence", "race": "Imperial", "gender": "Male", "spec": "Stealth", "fav": "Personality, Luck", "maj": "Speechcraft, Mercantile, Security, Sneak, Short Blade", "min": "Light Armor, Illusion, Athletics, Restoration, Acrobatics", "sign": "The Thief"}, {"cat": "Healer", "name": "Breton Temple Healer", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Willpower, Personality", "maj": "Restoration, Mysticism, Alchemy, Speechcraft, Unarmored", "min": "Alteration, Illusion, Mercantile, Destruction, Enchant", "sign": "The Ritual"}, {"cat": "Healer", "name": "Imperial Cult Chaplain", "race": "Imperial", "gender": "Male", "spec": "Magic", "fav": "Personality, Willpower", "maj": "Restoration, Speechcraft, Mercantile, Illusion, Alchemy", "min": "Mysticism, Unarmored, Destruction, Athletics, Enchant", "sign": "The Ritual"}, {"cat": "Healer", "name": "Altmer Restorer", "race": "High Elf", "gender": "Female", "spec": "Magic", "fav": "Willpower, Intelligence", "maj": "Restoration, Alteration, Mysticism, Alchemy, Enchant", "min": "Destruction, Illusion, Unarmored, Mercantile, Speechcraft", "sign": "The Mage"}, {"cat": "Monk", "name": "Redguard Hand-to-Hand", "race": "Redguard", "gender": "Male", "spec": "Stealth", "fav": "Speed, Endurance", "maj": "Hand-to-hand, Unarmored, Acrobatics, Sneak, Light Armor", "min": "Athletics, Restoration, Alchemy, Speechcraft, Block", "sign": "The Lady"}, {"cat": "Monk", "name": "Argonian Marsh Monk", "race": "Argonian", "gender": "Female", "spec": "Stealth", "fav": "Speed, Agility", "maj": "Hand-to-hand, Unarmored, Acrobatics, Sneak, Athletics", "min": "Restoration, Spear, Light Armor, Mysticism, Illusion", "sign": "The Lady"}, {"cat": "Monk", "name": "Khajiit Acrobat Monk", "race": "Khajiit", "gender": "Male", "spec": "Stealth", "fav": "Speed, Agility", "maj": "Acrobatics, Hand-to-hand, Unarmored, Athletics, Sneak", "min": "Short Blade, Restoration, Light Armor, Security, Mercantile", "sign": "The Steed"}, {"cat": "Spearman", "name": "Argonian Spear Scout", "race": "Argonian", "gender": "Male", "spec": "Combat", "fav": "Endurance, Speed", "maj": "Spear, Medium Armor, Athletics, Restoration, Alchemy", "min": "Block, Unarmored, Sneak, Acrobatics, Mercantile", "sign": "The Lady"}, {"cat": "Spearman", "name": "Nord Reach Fighter", "race": "Nord", "gender": "Female", "spec": "Combat", "fav": "Strength, Endurance", "maj": "Spear, Heavy Armor, Block, Athletics, Armorer", "min": "Axe, Restoration, Medium Armor, Acrobatics, Mercantile", "sign": "The Warrior"}, {"cat": "Enchanter", "name": "Altmer Soulbinder", "race": "High Elf", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Willpower", "maj": "Enchant, Mysticism, Conjuration, Destruction, Alchemy", "min": "Alteration, Restoration, Unarmored, Mercantile, Illusion", "sign": "The Atronach"}, {"cat": "Enchanter", "name": "Breton Artificer", "race": "Breton", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Personality", "maj": "Enchant, Alchemy, Mysticism, Restoration, Mercantile", "min": "Destruction, Alteration, Illusion, Unarmored, Speechcraft", "sign": "The Mage"}, {"cat": "Alchemist", "name": "Bosmer Poisoner", "race": "Wood Elf", "gender": "Female", "spec": "Magic", "fav": "Intelligence, Agility", "maj": "Alchemy, Restoration, Destruction, Enchant, Illusion", "min": "Light Armor, Marksman, Athletics, Security, Sneak", "sign": "The Thief"}, {"cat": "Alchemist", "name": "Argonian Marsh Mixer", "race": "Argonian", "gender": "Male", "spec": "Magic", "fav": "Intelligence, Speed", "maj": "Alchemy, Restoration, Athletics, Unarmored, Mysticism", "min": "Spear, Alteration, Mercantile, Illusion, Enchant", "sign": "The Mage"}, {"cat": "Conjurer", "name": "Breton Summoner", "race": "Breton", "gender": "Male", "spec": "Magic", "fav": "Willpower, Intelligence", "maj": "Conjuration, Mysticism, Destruction, Restoration, Enchant", "min": "Alteration, Alchemy, Unarmored, Illusion, Mercantile", "sign": "The Apprentice"}, {"cat": "Conjurer", "name": "Dunmer Daedric Binder", "race": "Dark Elf", "gender": "Female", "spec": "Magic", "fav": "Willpower, Speed", "maj": "Conjuration, Destruction, Mysticism, Light Armor, Restoration", "min": "Alteration, Enchant, Alchemy, Athletics, Illusion", "sign": "The Mage"}];
 
     function buildBlurb(b) {
       if (b.blurb) return b.blurb;
@@ -1707,7 +1707,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       {cat:"Argonian",name:"Argonian female — Marsh mage",race:"Argonian",gender:"Female",spec:"Magic",fav:"Intelligence, Speed",maj:"Alchemy, Restoration, Athletics, Unarmored, Mysticism",min:"Spear, Alteration, Mercantile, Illusion, Enchant",sign:"The Mage"},
       {cat:"Breton",name:"Breton male — Apprentice nuker",race:"Breton",gender:"Male",spec:"Magic",fav:"Intelligence, Willpower",maj:"Destruction, Restoration, Alteration, Illusion, Mysticism",min:"Alchemy, Enchant, Conjuration, Unarmored, Speechcraft",sign:"The Apprentice"},
       {cat:"Breton",name:"Breton female — Atronach scholar",race:"Breton",gender:"Female",spec:"Magic",fav:"Intelligence, Personality",maj:"Mysticism, Enchant, Alchemy, Destruction, Restoration",min:"Alteration, Illusion, Mercantile, Speechcraft, Unarmored",sign:"The Atronach"},
-      {cat:"Dark Elf",name:"Dark Elf male — Fire battlemage",race:"Dark Elf",gender:"Male",spec:"Magic",fav:"Intelligence, Speed",maj:"Destruction, Restoration, Alteration, Long Blade, Light Armor",min:"Alteration, Alchemy, Enchant, Illusion, Mercantile",sign:"The Mage"},
+      {cat:"Dark Elf",name:"Dark Elf male — Fire battlemage",race:"Dark Elf",gender:"Male",spec:"Magic",fav:"Intelligence, Speed",maj:"Destruction, Restoration, Alteration, Long Blade, Light Armor",min:"Mysticism, Alchemy, Enchant, Illusion, Mercantile",sign:"The Mage"},
       {cat:"Dark Elf",name:"Dark Elf female — Shadowblade",race:"Dark Elf",gender:"Female",spec:"Stealth",fav:"Speed, Willpower",maj:"Short Blade, Sneak, Light Armor, Illusion, Destruction",min:"Marksman, Athletics, Alchemy, Security, Mysticism",sign:"The Thief"},
       {cat:"Imperial",name:"Imperial male — Legion knight",race:"Imperial",gender:"Male",spec:"Combat",fav:"Personality, Endurance",maj:"Long Blade, Heavy Armor, Block, Speechcraft, Athletics",min:"Armorer, Restoration, Mercantile, Medium Armor, Spear",sign:"The Lady"},
       {cat:"Imperial",name:"Imperial female — Agent",race:"Imperial",gender:"Female",spec:"Stealth",fav:"Personality, Agility",maj:"Short Blade, Speechcraft, Light Armor, Sneak, Mercantile",min:"Security, Illusion, Athletics, Marksman, Restoration",sign:"The Lover"},
@@ -1822,33 +1822,34 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       document.getElementById("custom").scrollIntoView({behavior:"smooth", block:"start"});
     }
 
+    // Early picks pass the Mentor's Ring rule in the game data; late picks are the strongest guaranteed options.
     const WEAPONS = {
       "Long Blade": {
-        early: "Steel Longsword from Arrille or Seyda Neen loot. Sword of White Woe (Balmora Eastern Guard Tower closet, steal) only if you accept Mentor's-Ring-level theft.",
-        late: "Best practical one-handed option: Hopesfire (Tribunal). Highest-damage two-handed option: Daedric Crescent. Trueflame is a unique main-quest reward, not a universal winner."
+        early: "Steel Longsword — a worn one at Telvon Llethan's Hlaalu Weaponsmith in Vivec, repaired there for about 81 gold in all. Not Sword of White Woe: stealing it is harder than Mentor's Ring.",
+        late: "Best practical one-handed option: Hopesfire (Tribunal, taken from Almalexia). Highest-damage two-handed option: Daedric Crescent (Lord Dregas Volar, Magas Volar). Trueflame is a unique main-quest reward, not a universal winner."
       },
       "Short Blade": {
-        early: "Steel Tanto from Arrille. Bound Dagger if you already have the spell — not a required buy.",
-        late: "Black Hands Dagger — premier named endgame Short Blade option (Morag Tong Grandmaster). Keening is a main-quest tool, not a generic dagger."
+        early: "Glass Dagger — buy a worn one from Lucretinaus Olcinius in Vivec and have Savard repair it, about 335 gold in all.",
+        late: "Black Hands Dagger — premier named endgame Short Blade option (Morag Tong Grandmaster). Keening (Odrosal, Tower) is a main-quest tool, not a generic dagger."
       },
       "Blunt Weapon": {
-        early: "Steel Warhammer from Arrille or Balmora traders. Skip wood clubs.",
-        late: "Sunder — premier main-quest endgame Blunt weapon, especially if you finish the main quest. Scourge is Blunt (Malacath shrine), never Axe. Mace of Aevar Stone-Singer is a Bloodmoon alternative."
+        early: "Steel Warhammer — a worn one at Telvon Llethan's in Vivec, repaired there for about 81 gold in all.",
+        late: "Sunder (Vemynal, carried by Dagoth Vemyn) — premier main-quest endgame Blunt weapon. Scourge is Blunt (Tel Fyr, Hall of Fyr), never Axe. Mace of Aevar Stone-Singer is a Bloodmoon alternative."
       },
       "Axe": {
-        early: "Steel or Chitin War Axe from Arrille / Seyda Neen loot.",
-        late: "One-handed unique: Cleaver of St. Felms (Tureynulal). Strong two-handed alternative: Cloudcleaver. Scourge is Blunt, not Axe."
+        early: "Steel Battle Axe — a worn one at Alds Baro's in Maar Gan, repaired there for about 100 gold in all.",
+        late: "One-handed unique: Cleaver of St. Felms (Uvoo Llaren's Temple quest, Tureynulal). Strong two-handed alternative: Cloudcleaver. Scourge is Blunt, not Axe."
       },
       "Spear": {
-        early: "Steel Spear from Arrille or early loot.",
+        early: "Silver Spear — a worn one at Goldyn Belaram's pawnshop in Suran, repaired by Garothmuk gro-Muzgub for about 90 gold in all.",
         late: "Spear of Bitter Mercy — premier unique endgame Spear, valued for Reflect and Storm Atronach. Daedric Spear is the straightforward non-artifact alternative."
       },
       "Marksman": {
-        early: "Steel Crossbow and bolts from Balmora. Bound Longbow only if you already have the spell.",
-        late: "Daedric Longbow — top raw-stat Long Bow (Maelkashishi Forgotten Galleries, Dram Bero reward, or Suran pawnbroker). Auriel's Bow is unenchanted in Morrowind — Ralyn Othravel, Tower of Dawn at Ghostgate."
+        early: "Long Bow — a worn one from Ashuma-Nud Matluberib in Gnisis, repaired by Mug gro-Dulob for about 49 gold in all.",
+        late: "Daedric Long Bow — top raw-stat bow (Dram Bero's Vassir-Didanat reward, or Maelkashishi's Forgotten Galleries). Auriel's Bow is unenchanted in Morrowind — Ralyn Othravel, Tower of Dawn at Ghostgate."
       },
       "Hand-to-hand": {
-        early: "Empty hands / basic Hand-to-hand training. No weapon. Fighter Ring is optional Fortify Attack, not a fist weapon.",
+        early: "Empty hands. No weapon.",
         late: "Theoretical/custom-enchantment optimization: Constant Effect Fortify Hand-to-hand and Strength on clothing/jewelry. Empty hands — do not equip a weapon."
       }
     };
@@ -1875,7 +1876,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       },
       "Marksman": {
         early: " Also TR: Steel Crossbow from Old Ebonheart Legion crates (steal).",
-        late: " No unverified TR bow unique — keep Daedric Longbow / Auriel's Bow."
+        late: " No unverified TR bow unique — keep Daedric Long Bow / Auriel's Bow."
       },
       "Hand-to-hand": {
         early: " Also TR: still empty hands.",
@@ -2063,46 +2064,47 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
 
     function armorSet(kind) {
+      // One item per slot. Early picks pass the Mentor's Ring rule in the game data.
       if (kind === "Heavy Armor") {
         return {
-          Helm: {e:"Imperial Steel Helm from Moonmoth / Hawkmoth armory crates (steal, Mentor's-Ring-level).", l:"Max-AR unique helm: Helm of Oreyn Bearclaw (CE Agility / Endurance / Attack)."},
-          Cuirass: {e:"Imperial Steel Cuirass from Legion fort storage (steal).", l:"Dragonbone Cuirass (Mudan Grotto) or Lord's Mail (Legion quest, Ebonheart) — fire resist vs regen / spell absorb."},
-          Pauldrons: {e:"Steel / Imperial pauldrons from fort crates (steal).", l:"Daedric Pauldrons when you want the armor rating; leave empty for a custom enchant if you prefer."},
-          Greaves: {e:"Steel Greaves from Seyda Neen / Balmora storage (steal).", l:"Daedric Greaves for rating, or keep a lighter pair if you care about encumbrance."},
-          Boots: {e:"Steel Boots from crates (steal). Boots of Blinding Speed are Light Armor utility, not Heavy.", l:"Ten Pace Boots — Heavy boots with a strong fixed Speed/Athletics enchantment when you want mobility without leaving Heavy; Daedric Boots if you want max AR and an empty enchant slot instead."},
-          Gauntlets: {e:"Steel Gauntlets from crates (steal).", l:"Fists of Randagulf — unique artifact gauntlets, not generic Daedric. Wraithguard is a special left gauntlet for the main quest, not a pair of ordinary gloves."},
-          Shield: {e:"Steel Tower Shield from crates (steal).", l:"Eleidon's Ward — premier unique Heavy shield (CE Restore Health). Lord's Mail is a cuirass and does not replace a shield."}
+          Helm: {e:"Imperial Steel Helmet — buy a worn one from Uulernil in Pelagiad and have him repair it, about 76 gold.", l:"Helm of Oreyn Bearclaw (Malacath's quest — CE Agility 40, Endurance 40) or Daedric Face of God (Tukushapal, Sepulcher)."},
+          Cuirass: {e:"Nordic Trollbone Cuirass — sold by Meldor in Balmora.", l:"Dragonbone Cuirass (Mudan, Central Vault — CE Resist Fire 100%) or Lord's Mail (Legion quest — Cast When Used: Cure Poison, Resist Magicka 20–30% for 30s)."},
+          Pauldrons: {e:"Imperial Chain Left Pauldron / Imperial Chain Right Pauldron — Moonmoth Legion Fort and Uulernil's shop in Pelagiad (steal).", l:"Daedric Left Pauldron (Norenen-dur) / Daedric Right Pauldron (Castle Karstaag)."},
+          Greaves: {e:"Imperial Steel Greaves — Hodlismod's shop in Caldera (steal).", l:"Daedric Greaves (Dren's Villa, or Therana's Feather-enchanted pair)."},
+          Boots: {e:"Imperial Steel Boots — Imperial Commission in Ebonheart (steal).", l:"Daedric Boots (Galom Daeus) for max AR, or Ten Pace Boots (Bal Fell — Cast When Used Speed and Athletics) for mobility."},
+          Gauntlets: {e:"Imperial Templar Left Bracer / Imperial Templar Right Bracer — Hodlismod's shop in Caldera (steal).", l:"Fist of Randagulf Left Gauntlet / Fist of Randagulf Rt Gauntlet (Ilunibi, Soul's Rattle)."},
+          Shield: {e:"Steel Tower Shield — Saetring's smithy in Molag Mar (steal).", l:"Eleidon's Ward (Ibar-Dad — Cast When Used Restore Health)."}
         };
       }
       if (kind === "Medium Armor") {
         return {
-          Helm: {e:"Orcish Helm from Ghorak Manor crates in Caldera (steal) or Bonemold Helm from Redoran barrels in Ald'ruhn. Both are Medium.", l:"Optimized max-armor mixed-set piece: Adamantium Helm — not a full Adamantium suit."},
-          Cuirass: {e:"Orcish Cuirass from Ghorak Manor crates (steal) or Bonemold from Redoran storage in Ald'ruhn.", l:"Ebony Mail — unique mixed-set cuirass (Tribunal Temple quest from Tholer Saryoni). Intentionally not matching Adamantium."},
-          Pauldrons: {e:"Orcish from Ghorak crates, or Bonemold from Redoran barrels (steal).", l:"Royal Guard Pauldrons — mixed-set pieces."},
-          Greaves: {e:"Orcish or Bonemold Greaves from Caldera / Redoran storage (steal).", l:"Ice Greaves (Bloodmoon) — mixed max-AR Medium."},
-          Boots: {e:"Orcish or Bonemold Boots from Caldera / Redoran storage (steal).", l:"Royal Guard Boots — mixed-set."},
-          Gauntlets: {e:"Orcish or Bonemold Bracers from Caldera / Redoran storage (steal).", l:"Royal Guard Bracers — mixed-set."},
-          Shield: {e:"Bonemold Shield from Redoran barrels (steal).", l:"Ice Shield — mixed Medium, not Adamantium Shield."}
+          Helm: {e:"Imperial Dragonscale Helm — sold by Dandera Selaro or Ergnir in Ald'ruhn.", l:"Adamantium Helm (Old Mournhold, Moril Manor courtyard; Bols Indalen makes one)."},
+          Cuirass: {e:"Imperial Dragonscale Cuirass — Verick Gemain's shop in Caldera (steal).", l:"Ebony Mail (Assarnibibi shrine — CE Resist Fire 75%, Shield 50, Resist Magicka 20%)."},
+          Pauldrons: {e:"Orcish Left Pauldron (lying at Khartag Point) / Gah-Julan Bonemold R Pauldron (Dandera Selaro in Ald'ruhn, steal).", l:"Royal Guard Left Pauldron / Royal Guard Right Pauldron (Mournhold Royal Guard)."},
+          Greaves: {e:"Imperial Chain Greaves — Moonmoth Legion Fort (steal).", l:"Ice Armor Greaves (Bloodmoon Stalhrim quest)."},
+          Boots: {e:"Bonemold Boots — Arobar Manor in Ald'ruhn (steal).", l:"Royal Guard Boots (Mournhold Royal Guard) or Ice Armor Boots."},
+          Gauntlets: {e:"Orcish Right Bracer (sold by Hrundi in Sadrith Mora) / Bonemold Brace of Horny Fist (Tel Vos, steal).", l:"Royal Guard Left Gauntlet / Royal Guard Right Gauntlet (Mournhold Royal Guard)."},
+          Shield: {e:"Dragonscale Tower Shield — Verick Gemain's shop in Caldera (steal).", l:"Ice Shield (Bloodmoon quest from Carnius Magius)."}
         };
       }
       if (kind === "Light Armor") {
         return {
-          Helm: {e:"Chitin Helm from Seyda Neen crates (free loot).", l:"Mixed max-AR Light: Glass Helm. Not a matching full Glass suit. Dark Brotherhood is lighter, not max AR."},
-          Cuirass: {e:"Chitin Cuirass from Seyda Neen crates (free loot).", l:"Savior's Hide — intentional mixed-set cuirass, not Glass."},
-          Pauldrons: {e:"Chitin Pauldrons from Seyda Neen crates.", l:"Glass Pauldrons."},
-          Greaves: {e:"Chitin Greaves from Seyda Neen crates.", l:"Glass Greaves."},
-          Boots: {e:"Utility / Mobility: Boots of Blinding Speed — Pemenie on the Balmora–Caldera road (talk or escort). Blind 100 needs Resist Magicka 100 to see clearly; Breton 50% still leaves Blind 50. Not max-AR Light.", l:"Max-AR Light boots: Boots of the Apostle. Do not treat BOBS as endgame armor rating."},
-          Gauntlets: {e:"Chitin Gauntlets from Seyda Neen crates.", l:"Glass Bracers."},
-          Shield: {e:"Chitin Shield if you use Block.", l:"Glass Tower Shield."}
+          Helm: {e:"Chitin Helm — sold by Meldor in Balmora.", l:"Glass Helm."},
+          Cuirass: {e:"Chitin Cuirass — Meldor's shop in Balmora (steal), or the Wolf Cuirass free in Fort Frostmoth's shrine.", l:"Cuirass of the Savior's Hide (Tel Fyr — CE Resist Magicka 60%)."},
+          Pauldrons: {e:"Chitin Left Pauldron / Chitin Right Pauldron — Malpenix Blonia sells them in Ald'ruhn.", l:"Glass Left Pauldron / Glass Right Pauldron."},
+          Greaves: {e:"Chitin Greaves — Tuveso Beleth's smithy in Ald'ruhn (steal).", l:"Glass Greaves."},
+          Boots: {e:"Heavy Leather Boots — Rothan Ancestral Tomb. Not Boots of Blinding Speed (quest).", l:"Boots of the Apostle (Berandas, Underground — Cast When Used Levitate)."},
+          Gauntlets: {e:"Chitin Left Gauntlet / Chitin Right Gauntlet — Ra'Virr's shop in Balmora (steal).", l:"Left Glass Bracer / Right Glass Bracer."},
+          Shield: {e:"Chitin Tower Shield — Tuveso Beleth's smithy in Ald'ruhn (steal).", l:"Glass Tower Shield (Urshilaku, Fragile Burial)."}
         };
       }
       return {
-        Helm: {e:"Ordinary cloth hat / common robe from Arrille. No custom CE yet." , l:"Custom-enchanted clothing: exquisite hat with Constant Effect Fortify Unarmored and/or attributes. Not a named armor set."},
-        Cuirass: {e:"No armor cuirass. Common shirt or robe only.", l:"Still no Light/Medium/Heavy cuirass. Exquisite shirt or robe with custom CE Fortify Unarmored."},
+        Helm: {e:"None — Morrowind clothing has no hats.", l:"None."},
+        Cuirass: {e:"Common Shirt.", l:"Exquisite Shirt or robe with custom CE Fortify Unarmored."},
         Pauldrons: {e:"None — Unarmored does not use pauldrons.", l:"None."},
         Greaves: {e:"None.", l:"None."},
-        Boots: {e:"Common shoes only. Boots of Blinding Speed are Light Armor — never part of a pure Unarmored kit.", l:"Custom CE Speed / Unarmored shoes. Not Boots of Blinding Speed."},
-        Gauntlets: {e:"None, or common gloves if found.", l:"Custom CE Fortify Unarmored gloves."},
+        Boots: {e:"Common Shoes.", l:"Custom CE Speed / Unarmored shoes."},
+        Gauntlets: {e:"None — bare hands.", l:"Custom CE Fortify Unarmored gloves."},
         Shield: {e:"None.", l:"None if you stay pure Unarmored."}
       };
     }
@@ -2111,10 +2113,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         return {
           Helm: {e:" Also TR: Imperial steel helm from Old Ebonheart / Firewatch Legion crates (steal).", l:" TR alternative (not automatic override): no verified TR helm that beats Oreyn — keep Helm of Oreyn Bearclaw."},
           Cuirass: {e:" Also TR: Imperial steel cuirass from Old Ebonheart armory (steal).", l:" TR alternative: War Cuirass of Pasoroth (Narsis Second Family Manor Vault 3, UESP). Vanilla Dragonbone / Lord's Mail stay primary."},
-          Pauldrons: {e:" Also TR: Imperial pauldrons, Firewatch barracks crates.", l:" No unverified TR pauldron unique — keep Vanilla Daedric Pauldrons."},
+          Pauldrons: {e:" Also TR: Imperial pauldrons, Firewatch barracks crates.", l:" No unverified TR pauldron unique — keep Vanilla Daedric Left / Right Pauldron."},
           Greaves: {e:" Also TR: Imperial greaves, Old Ebonheart storage.", l:" No unverified TR greave unique — keep Vanilla Daedric Greaves."},
           Boots: {e:" Also TR option: Imperial boots from mainland Legion forts.", l:" TR alternative: Boots of Peace (Yashazmus, Lord Drekhva Yashaz — hard fight). Vanilla still: Ten Pace Boots vs Daedric Boots."},
-          Gauntlets: {e:" Also TR: Imperial gauntlets, steal from Firewatch.", l:" Also TR option: Daedric gauntlets. Fists of Randagulf remain the unique vanilla pair; Wraithguard is still a special left gauntlet."},
+          Gauntlets: {e:" Also TR: Imperial gauntlets, steal from Firewatch.", l:" Also TR option: Daedric gauntlets. Fist of Randagulf Left Gauntlet / Rt Gauntlet remain the unique vanilla pair; Wraithguard is still a special left gauntlet."},
           Shield: {e:" Also TR: Imperial tower shield, Old Ebonheart armory.", l:" Also TR: TR alternative: Fearstruck (Bal Dushal, Nagoth Daril; Weakness to Fire). Vanilla Eleidon's Ward (Ibar-Dad) stays the heal pick."}
         };
       }
@@ -2122,21 +2124,21 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         return {
           Helm: {e:" Also TR: Bonemold helm from Almas Thirr Temple storage (steal, watch agro).", l:" No unverified TR House helm unique — keep Vanilla Adamantium Helm if Tribunal."},
           Cuirass: {e:" Also TR: Bonemold cuirass from Andothren Hlaalu manor crates (steal).", l:" TR alternative: Scales of Nafaalilargus (Old Ebonheart Legion HQ secret safe). Vanilla Ebony Mail stays primary."},
-          Pauldrons: {e:" Also TR: Bonemold pauldrons, Almas Thirr barrels.", l:" No unverified TR House pauldron unique — keep Vanilla Royal Guard Pauldrons."},
-          Greaves: {e:" Also TR: Bonemold greaves, Andothren storage.", l:" No unverified TR House greave unique — keep Vanilla Ice Greaves."},
+          Pauldrons: {e:" Also TR: Bonemold pauldrons, Almas Thirr barrels.", l:" No unverified TR House pauldron unique — keep Vanilla Royal Guard Left / Right Pauldron."},
+          Greaves: {e:" Also TR: Bonemold greaves, Andothren storage.", l:" No unverified TR House greave unique — keep Vanilla Ice Armor Greaves."},
           Boots: {e:" Also TR: Bonemold boots, mainland Redoran / Hlaalu manors.", l:" No unverified TR House boot unique — keep Vanilla Royal Guard Boots."},
-          Gauntlets: {e:" Also TR: Bonemold bracers, steal from Temple / House storage.", l:" No unverified TR House bracer unique — keep Vanilla Royal Guard Bracers."},
+          Gauntlets: {e:" Also TR: Bonemold bracers, steal from Temple / House storage.", l:" No unverified TR House bracer unique — keep Vanilla Royal Guard Left / Right Gauntlet."},
           Shield: {e:" Also TR: Bonemold shield, Almas Thirr.", l:" TR alternative: Ward of Akavir (Firemoth, Medium, Fortify Luck). Vanilla Ice Shield stays the mixed-set pick."}
         };
       }
       if (kind === "Light Armor") {
         return {
-          Helm: {e:" Also TR option: Chitin helm from Bal Foyen crates.", l:" No unverified TR glass-helm unique — mixed vanilla still Glass Helm + Savior's Hide."},
-          Cuirass: {e:" Also TR option: Chitin cuirass, Bal Foyen docks crates.", l:" No unverified TR cuirass unique that replaces Savior's Hide."},
-          Pauldrons: {e:" Also TR: Chitin pauldrons from Bal Foyen.", l:" No unverified TR pauldron unique — keep Vanilla Glass Pauldrons."},
+          Helm: {e:" Also TR option: Chitin helm from Bal Foyen crates.", l:" No unverified TR glass-helm unique — mixed vanilla still Glass Helm + Cuirass of the Savior's Hide."},
+          Cuirass: {e:" Also TR option: Chitin cuirass, Bal Foyen docks crates.", l:" No unverified TR cuirass unique that replaces the Cuirass of the Savior's Hide."},
+          Pauldrons: {e:" Also TR: Chitin pauldrons from Bal Foyen.", l:" No unverified TR pauldron unique — keep Vanilla Glass Left / Right Pauldron."},
           Greaves: {e:" Also TR: Chitin greaves from Bal Foyen.", l:" No unverified TR greave unique — keep Vanilla Glass Greaves."},
           Boots: {e:" Also TR option: chitin boots from Bal Foyen. BOBS remains early utility / mobility, not max-AR Light.", l:" Vanilla late remains Boots of the Apostle for max-AR Light. Not BOBS."},
-          Gauntlets: {e:" Also TR: Chitin gauntlets from Bal Foyen.", l:" No unverified TR bracer unique — keep Vanilla Glass Bracers."},
+          Gauntlets: {e:" Also TR: Chitin gauntlets from Bal Foyen.", l:" No unverified TR bracer unique — keep Vanilla Left / Right Glass Bracer."},
           Shield: {e:" Also TR: Chitin shield if Block.", l:" No unverified TR light tower unique. Eleidon is Heavy, not Light."}
         };
       }
@@ -2163,64 +2165,66 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 
     const ITEM_LOCATIONS = {
       "Mentor's Ring": "Samarys Ancestral Tomb, northwest of Seyda Neen. In the urn labelled Lord Brinne, on the altar. Grab and leave. Not sold.",
-      "Amulet of Heartheal": "Heart of Lorkhan amulet. Unique Restore Magicka on Use. Heartwood / related Heart amulet set.",
-      "Amulet of Heartthrum": "Heart of Lorkhan amulet. Unique Restore Fatigue on Use.",
-      "Amulet of Shadows": "Unique 80 Chameleon on Use. Carried on a named NPC / fixed loot.",
-      "Blood Ring": "Generic or unique Fortify Strength ring. Clothiers and loot.",
-      "Robe of Fortitude": "Generic enchanted robe. Fortify Endurance on Use. Clothiers / loot.",
-      "Fighter Ring": "Locked chest in the Balmora Fighters Guild basement (steal). Shop-enchanted rings are a backup only.",
+      "Amulet of Heartheal": "Carried by Dagoth Vemyn in Vemynal. Unique amulet, Cast When Used: Fortify Strength, Hand-to-hand, Shield and Levitate.",
+      "Amulet of Heartthrum": "Carried by Dagoth Tureynul in Tureynulal. Unique amulet, Cast When Used: Fortify Magicka 40, Spell Absorption and Lightning Shield.",
+      "Amulet of Shadows": "Carried by Tavynu Tedran in the West Gash. Cast When Used Chameleon 80% for 60s.",
+      "Blood Ring": "Carried by Dagoth Gilvoth in Dagoth Ur's Lower Facility. Cast When Used: Fortify Health, Fire Shield, Resist Fire and Resist Magicka.",
+      "Fighter Ring": "Quest reward from Angaredhel, or a random roll in rusted chests. Cast When Used Fortify Strength 5 and Endurance 5 for 30s.",
       "Boots of Blinding Speed": "Talk to Pemenie on the road northwest of Caldera, on the way to Ald'ruhn, then escort her west to Gnaar Mok. CE Speed 200 and Blind 100. Utility / mobility — not max-AR Light.",
-      "Boots of the Apostle": "Berandas, a Dunmer stronghold south of Gnisis. On a dead hero in the underground section; also an Imperial Cult quest reward. Unique Light boots (Levitate). Optimized Light Armor boots for the max-AR mixed set.",
+      "Boots of the Apostle": "Berandas, a Dunmer stronghold south of Gnisis. On a dead hero in the underground section. Unique Light boots (Cast When Used Levitate). Optimized Light Armor boots for the max-AR mixed set.",
       "Cuirass of the Savior's Hide": "Tel Fyr, in a locked (level 100) wardrobe on Divayth Fyr's level. No Hircine quest in Morrowind — that is Oblivion and Skyrim. Unique Light cuirass. Intentional mixed-set piece for max-AR Light.",
-      "Savior's Hide": "Tel Fyr, in a locked (level 100) wardrobe on Divayth Fyr's level. Unique Light cuirass.",
-      "Helm of Oreyn Bearclaw": "Malacath's Quest — shrine of Malacath on the long island in the Sheogorad region, west of the Sanctus Shrine island. Unique Heavy helm with CE Agility, Endurance, and Attack.",
-      "Fists of Randagulf": "Ilunibi, northwest of Gnaar Mok — Soul's Rattle section, behind the trough in the large northeastern room by the Sixth House bells. Unique Heavy gauntlets. Not generic Daedric.",
-      "Eleidon's Ward": "Ibar-Dad, northeast of Khuul / west of Urshilaku Camp. Hanging above Mordrin Hanin's skeleton in the innermost crypt. Unique Heavy tower shield with CE Restore Health.",
+      "Helm of Oreyn Bearclaw": "Malacath's Quest — shrine of Malacath on the long island in the Sheogorad region, west of the Sanctus Shrine island. Unique Heavy helm with CE Agility 40 and Endurance 40 (no Attack).",
+      "Fist of Randagulf Left Gauntlet": "Ilunibi, northwest of Gnaar Mok — Soul's Rattle section, behind the trough in the large northeastern room by the Sixth House bells. Unique Heavy gauntlet (CE Fortify Agility 20).",
+      "Fist of Randagulf Rt Gauntlet": "Ilunibi, northwest of Gnaar Mok — Soul's Rattle section, next to the left gauntlet. Unique Heavy gauntlet (CE Fortify Strength 20).",
+      "Eleidon's Ward": "Ibar-Dad, northeast of Khuul / west of Urshilaku Camp. Hanging above Mordrin Hanin's skeleton in the innermost crypt. Unique Heavy tower shield with Cast When Used Restore Health.",
       "Black Hands Dagger": "Morag Tong Grandmaster reward in Vivec (Morag Tong HQ). Premier named endgame Short Blade option.",
-      "Hopesfire": "Tribunal main quest reward from King Helseth in Mournhold. Best practical one-handed Long Blade option.",
-      "Daedric Crescent": "Tribunal, Clockwork City / Sotha Sil related loot. Highest-damage two-handed Long Blade option among common uniques.",
+      "Hopesfire": "Tribunal main quest — carried by Almalexia; take it after the final fight. Best practical one-handed Long Blade option.",
+      "Daedric Crescent": "Carried by Lord Dregas Volar at Magas Volar. Highest-damage two-handed Long Blade option among common uniques.",
       "Trueflame": "Tribunal main quest — restored in Mournhold. Unique Long Blade reward, not a universal winner.",
-      "Sunder": "Main quest, Citadel of Dagoth Ur. Blunt warhammer. Use with Wraithguard. Premier main-quest endgame Blunt weapon.",
-      "Scourge": "Malacath Daedric shrine quest. Blunt mace — never an Axe.",
+      "Sunder": "Main quest — carried by Dagoth Vemyn in Vemynal. Blunt warhammer. Use with Wraithguard. Premier main-quest endgame Blunt weapon.",
+      "Scourge": "Chest in Tel Fyr's Hall of Fyr (100-point lock). Blunt mace — never an Axe.",
       "Mace of Aevar Stone-Singer": "Bloodmoon, Skaal questline on Solstheim. Blunt alternative.",
-      "Cleaver of St. Felms": "Tureynulal, on Red Mountain. One-handed unique Axe.",
-      "Cloudcleaver": "Unique two-handed Axe on Vvardenfell (named world loot).",
+      "Cleaver of St. Felms": "Temple quest from Uvoo Llaren; carried by Mendel Eves in Tureynulal. One-handed unique Axe.",
+      "Cloudcleaver": "Quest from Hlormar Wine-Sot; carried by Sosia Caristiana in the West Gash. Unique two-handed Axe.",
       "Spear of Bitter Mercy": "Sheogorath Daedric quest (Ald Daedroth). Premier unique endgame Spear (Reflect + Storm Atronach).",
       "Auriel's Bow": "Carried by Ralyn Othravel in the Tower of Dawn at Ghostgate (Telvanni quest). Unenchanted in Morrowind.",
-      "Daedric Longbow": "Maelkashishi Forgotten Galleries, Dram Bero's Vassir-Didanat Ebony Mine reward, or the Suran pawnbroker. Not a Daedra drop.",
-      "Dragonbone Cuirass": "Mudan Grotto, underwater south-west of Ebonheart. Unique Heavy cuirass, CE Resist Fire.",
+      "Daedric Long Bow": "Dram Bero's reward for reporting the Vassir-Didanat mine, lying in Maelkashishi's Forgotten Galleries, or carried by Golena Sadri in Old Mournhold. Top raw-stat bow.",
+      "Dragonbone Cuirass": "Mudan, Central Vault — a Dwemer closet behind a 100-point lock. Unique Heavy cuirass, CE Resist Fire 100%.",
       "Lord's Mail": "Imperial Legion quest from Varus Vantinius in Ebonheart, late in the Legion line. Unique Heavy cuirass.",
-      "Ten Pace Boots": "Bal Fell, Inner Shrine — locked chest in front of the statue of Sheogorath. Bal Fell is on an island far east of Vivec. Heavy boots with a strong fixed Speed/Athletics enchantment — pick them when mobility matters more than an empty Daedric enchant slot.",
-      "Daedric Boots": "Daedric shrine offering chests and high manor displays. Clean max-AR / enchantable Heavy boots.",
-      "Daedric Pauldrons": "Daedric shrine offering chests and high manor displays. Strong Heavy shoulders, not the only late pick.",
-      "Daedric Greaves": "Daedric shrine offering chests and high manor displays. Common max-AR Heavy greaves.",
-      "Glass Helm": "Telvanni towers (Tel Naga / Tel Vos) and some manor displays. Mixed max-AR Light helm.",
-      "Glass Pauldrons": "Telvanni towers and manor displays. Mixed max-AR Light.",
-      "Glass Greaves": "Telvanni towers and manor displays. Mixed max-AR Light.",
-      "Glass Bracers": "Telvanni towers and manor displays. Mixed max-AR Light.",
-      "Glass Tower Shield": "Telvanni towers and manor displays. Mixed max-AR Light shield if you Block with a one-hander.",
-      "Adamantium Helm": "Tribunal: Mournhold palace / Craftsmen's Hall; Bols Indalen can craft pieces if you bring ore. Mixed max-AR Medium helm.",
+      "Ten Pace Boots": "Bal Fell, Inner Shrine — locked chest in front of the statue of Sheogorath. Bal Fell is on an island far east of Vivec. Heavy boots with a Cast When Used Speed and Athletics boost (with Drain Fatigue and Slowfall) — pick them when mobility matters more than an empty Daedric enchant slot.",
+      "Daedric Boots": "Galom Daeus entry, or worn by Divayth Fyr in Tel Fyr. Clean max-AR / enchantable Heavy boots.",
+      "Daedric Left Pauldron": "Norenen-dur, The Wailingdelve, or worn by Divayth Fyr. Max-AR Heavy shoulder.",
+      "Daedric Right Pauldron": "Castle Karstaag's tower on Solstheim, or worn by Divayth Fyr. Max-AR Heavy shoulder.",
+      "Daedric Greaves": "Dren's Villa at Dren Plantation (steal), or Therana's Feather-enchanted pair. Max-AR Heavy greaves.",
+      "Glass Helm": "Bal Ur's underground and Ghostgate's Tower of Dusk (owned); Bols Indalen in Mournhold makes one from raw glass. Max-AR Light helm.",
+      "Glass Left Pauldron": "Ghostgate's Tower of Dusk (owned) or Vivec's Hlaalu Vaults; Bols Indalen makes one. Max-AR Light.",
+      "Glass Right Pauldron": "Ghostgate's Tower of Dusk (owned) or Vivec's Hlaalu Vaults; Bols Indalen makes one. Max-AR Light.",
+      "Glass Greaves": "Tureynulal (Kagrenac's Library) and Urshilaku (Laterus Burial); Bols Indalen makes them. Max-AR Light.",
+      "Left Glass Bracer": "Ghostgate's Tower of Dusk or Mournhold's Armory (both owned); Bols Indalen makes one. Max-AR Light.",
+      "Right Glass Bracer": "Ghostgate's Tower of Dusk or Mournhold's Armory (both owned); Bols Indalen makes one. Max-AR Light.",
+      "Glass Tower Shield": "Urshilaku, Fragile Burial, or Vivec's Hlaalu Vaults (owned). Max-AR Light shield if you Block with a one-hander.",
+      "Adamantium Helm": "Tribunal: Old Mournhold, Moril Manor courtyard; Bols Indalen makes one from adamantium ore. Max-AR Medium helm.",
       "Ebony Mail": "Tribunal Temple quest from Tholer Saryoni (Master rank); shrine at Mount Assarnibibi. Unique Medium cuirass. Mixed-set chest.",
-      "Royal Guard Pauldrons": "Tribunal, Mournhold Royal Guard. Mixed Medium shoulders.",
-      "Royal Guard Boots": "Tribunal, Mournhold Royal Guard. Mixed Medium boots.",
-      "Royal Guard Bracers": "Tribunal, Mournhold Royal Guard. Mixed Medium bracers.",
-      "Ice Greaves": "Bloodmoon, Solstheim Ice / Stalhrim. Mixed max-AR Medium greaves.",
-      "Ice Shield": "Bloodmoon, Solstheim Ice / Stalhrim. Mixed Medium shield — not Adamantium Shield.",
-      "Sword of White Woe": "Ebony Broadsword on top of a closet, top floor of the Balmora Eastern Guard Tower (steal). Early Long Blade only if you accept Mentor's-Ring-level theft.",
+      "Royal Guard Left Pauldron": "Tribunal: King Helseth's reward, or worn by Mournhold's Royal Guard. Medium shoulder.",
+      "Royal Guard Right Pauldron": "Tribunal: King Helseth's reward, or worn by Mournhold's Royal Guard. Medium shoulder.",
+      "Royal Guard Boots": "Tribunal: King Helseth's reward, or worn by Mournhold's Royal Guard. Medium boots.",
+      "Royal Guard Left Gauntlet": "Tribunal: King Helseth's reward, or worn by Mournhold's Royal Guard. Medium gauntlet.",
+      "Royal Guard Right Gauntlet": "Tribunal: King Helseth's reward, or worn by Mournhold's Royal Guard. Medium gauntlet.",
+      "Ice Armor Greaves": "Bloodmoon: Stalhrim armor made for you by Carnius Magius or Aenar. Max-AR Medium greaves.",
+      "Ice Shield": "Bloodmoon: reward from Carnius Magius or Falco Galenus. Medium shield — not Adamantium Shield.",
+      "Sword of White Woe": "On top of a closet in Balmora's Eastern Guard Tower, or in Suran's guard tower (steal). Harder than Mentor's Ring, so not early game.",
       "Wraithguard": "Vivec gives it during the main quest (or the back-path from Yagrum Bagarn). Occupies the left gauntlet.",
-      "Keening": "Main quest, Citadel of Dagoth Ur. Short Blade tool — use with Wraithguard.",
-      "Necromancer's Amulet": "Mages Guild reward after the necromancer quest line. Premier caster amulet.",
-      "Mantle of Woe": "Bloodmoon, late Solstheim quest. Huge magicka, huge weakness.",
-      "Ring of Surroundings": "Gnisis — crate in grocer / barracks storage (steal). Unique Chameleon on Use.",
-      "Marara's Ring": "Worn by Marara in Ibar-Dad, northern Bitter Coast / Sheogorad approach.",
-      "Shirt of Life": "Generic enchanted clothing. Restocking clothiers (Balmora Milie Hastien) and random crates.",
-      "Shirt of the Imp": "Generic enchanted. Clothiers and loot. Fortify Strength on Use.",
-      "Robe of St. Roris": "Unique Temple / Mournhold-related robe with Restore Health on Use.",
-      "Pants of the Ranger": "Generic enchanted pants. Fortify Speed on Use. Clothiers and crates.",
-      "Chitin Helm": "Census and Excise warehouse crates in Seyda Neen and barrels behind Arrille's Tradehouse.",
-      "Imperial Steel Helm": "Moonmoth / Hawkmoth Legion fort storage crates (steal, Mentor's-Ring-level).",
-      "Orcish Helm": "Ghorak Manor in Caldera — crates and downstairs storage. Medium Armor, not Heavy.",
-      "Bonemold Helm": "Ald'ruhn Redoran Council Hall underworks and manor storage barrels (steal)."
+      "Keening": "Main quest — Odrosal, Tower. Short Blade tool — use with Wraithguard.",
+      "Necromancer's Amulet": "Arch-Mage Trebonius Artorius (Vivec Mages Guild) gives it for his House Telvanni quest; he also wears one. Premier caster amulet.",
+      "Mantle of Woe": "Bloodmoon: Tymvaul's quest at Rimhull on Solstheim. Huge magicka, huge weakness.",
+      "Ring of Surroundings": "Quest reward from Larrius Varro, or a small chest in Dren Plantation's Tower Shack (30-point lock). Cast When Used Chameleon.",
+      "Marara's Ring": "Worn by Marara in Drethan Ancestral Tomb.",
+      "Ring of Phynaster": "On the corpse of Pop Je in Senim Ancestral Tomb. CE Resist Magicka, Poison and Shock 20% — early-game safe.",
+      "Robe of St Roris": "Chest in the Assemanu shrine (75-point lock). Cast When Used Restore Health 15 and Restore Fatigue 15.",
+      "Chitin Helm": "Sold by Meldor in Balmora and Malpenix Blonia in Ald'ruhn.",
+      "Imperial Steel Helmet": "Buy a worn one from Uulernil in Pelagiad and have him repair it, about 76 gold.",
+      "Orcish Helm": "Garothmuk gro-Muzgub's smithy in Suran (steal) — worth more than the early-game budget. Medium Armor, not Heavy.",
+      "Bonemold Helm": "Ald'ruhn's Guard Tower 2 or Meldor's shop in Balmora (steal)."
     };
     const ITEM_DATA = {};
     Object.keys(ITEM_LOCATIONS).forEach(function(name){
@@ -2250,14 +2254,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       world: "vanilla", phase: "late", slot: "Boots", category: "Heavy Armor",
       location: "Bal Fell, Inner Shrine — locked chest in front of the statue of Sheogorath. Bal Fell is on an island far east of Vivec.",
       acquisition: "Fixed world container", requirements: "Daedric ruin; lockpick or Open spell.",
-      rationale: "Prefer when you want Heavy Armor plus built-in Speed/Athletics. Daedric Boots win if you need max AR and a custom enchant.",
+      rationale: "Prefer when you want Heavy Armor plus a Cast When Used Speed/Athletics boost. Daedric Boots win if you need max AR and a custom enchant.",
       source: "UESP Morrowind:Ten Pace Boots"
     });
     setItem("Eleidon's Ward", {
       world: "vanilla", phase: "late", slot: "Shield", category: "Heavy Armor",
       location: "Ibar-Dad, northeast of Khuul / west of Urshilaku Camp. Hanging above Mordrin Hanin's skeleton in the innermost crypt.",
       acquisition: "Fixed world location", requirements: "Cave crawl; no quest required.",
-      rationale: "Premier CE Restore Health Heavy tower shield when Block + one-hander.",
+      rationale: "Premier Cast When Used Restore Health Heavy tower shield when Block + one-hander.",
       source: "UESP Morrowind:Eleidon's Ward"
     });
     setItem("Boots of Peace", {
@@ -2308,63 +2312,57 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     function whereToGet(text) {
       const t = (text || "").toLowerCase();
       const rows = [
-        ["shirt of life", "Shirt of Life: generic enchanted clothing. Restocking clothiers (Balmora Milie Hastien) and random crates. Restore Health on Use."],
-        ["shirt of the imp", "Shirt of the Imp: generic enchanted. Clothiers and loot lists. Fortify Strength on Use."],
-        ["st. roris", "Robe of St. Roris: unique. Temple / Mournhold-related unique robe with Restore Health on Use."],
-        ["robe of magicka", "Robe of Magicka: generic enchanted robe. Enchanters and clothiers. Fortify Magicka on Use."],
-        ["robe of fortitude", "Robe of Fortitude: generic enchanted. Fortify Endurance on Use. Clothiers / loot."],
-        ["heartheal", "Amulet of Heartheal: unique. Restore Magicka on Use. Fixed world / quest location among the Heart amulets."],
-        ["heartthrum", "Amulet of Heartthrum: unique. Restore Fatigue on Use."],
-        ["amulet of shadows", "Amulet of Shadows: unique. 80 Chameleon on Use. Carried on a named NPC / fixed loot."],
-        ["amulet of health", "Amulet of Health: generic enchanted. Restore Health on Use. Traders and loot."],
-        ["ring of surroundings", "Ring of Surroundings: unique. Chameleon on Use. Gnisis — in a crate in the grocer / barracks storage (steal)."],
-        ["ring of magicka", "Ring of Magicka: generic enchanted. Fortify Magicka on Use. Enchanters and loot."],
-        ["pants of the ranger", "Pants of the Ranger: generic enchanted pants. Fortify Speed on Use. Clothiers and crates."],
+        ["st roris", "Robe of St Roris: chest in the Assemanu shrine (75-point lock). Cast When Used Restore Health 15 and Restore Fatigue 15."],
+        ["heartheal", "Amulet of Heartheal: carried by Dagoth Vemyn in Vemynal. Cast When Used Fortify Strength, Hand-to-hand, Shield and Levitate."],
+        ["heartthrum", "Amulet of Heartthrum: carried by Dagoth Tureynul in Tureynulal. Cast When Used Fortify Magicka 40, Spell Absorption and Lightning Shield."],
+        ["amulet of shadows", "Amulet of Shadows: carried by Tavynu Tedran in the West Gash. Cast When Used Chameleon 80% for 60s."],
+        ["amulet of health", "Amulet of Health: Cast When Used Restore Health 10. In the shrine at Subdun, or a random roll in old chests."],
+        ["ring of surroundings", "Ring of Surroundings: quest reward from Larrius Varro, or a small chest in Dren Plantation's Tower Shack (30-point lock). Cast When Used Chameleon."],
         ["mentor", "Mentor's Ring: Samarys Ancestral Tomb, northwest of Seyda Neen. In the urn labelled Lord Brinne, on the altar. Grab and run. Not sold."],
-        ["fighter", "Fighter Ring: locked chest in the Balmora Fighters Guild basement (steal). Shop enchant is a backup only."],
+        ["fighter", "Fighter Ring: quest reward from Angaredhel, or a random roll in rusted chests. Cast When Used Fortify Strength 5 and Endurance 5 for 30s."],
         ["boots of blinding", "Boots of Blinding Speed: talk to Pemenie on the road northwest of Caldera, on the way to Ald'ruhn, then escort her west to Gnaar Mok. Constant Effect Speed 200 and Blind 100."],
         ["pemenie", "Pemenie: walks the Balmora–Caldera road. Speak to her; pay or escort. No required kill."],
-        ["necromancer", "Necromancer's Amulet: reward from the Mages Guild after the necromancer quest line (Trebonius / later ranks). High-end guild, not a shop item."],
-        ["eleidon", "Eleidon's Ward: Ibar-Dad, northeast of Khuul / west of Urshilaku Camp. Hanging above Mordrin Hanin's skeleton. Unique Heavy shield with Constant Effect Restore Health."],
-        ["dragonbone", "Dragonbone Cuirass: Mudan Grotto, underwater south-west of Ebonheart. Dwemer constructs inside. Constant Effect Resist Fire."],
-        ["lord's mail", "Lord's Mail: Imperial Legion quest from Varus Vantinius in Ebonheart, late in the Legion line. Constant Effect Restore Health and Spell Absorption."],
-        ["oreyn", "Helm of Oreyn Bearclaw: Malacath shrine west of Gnaar Mok (Assurdirapal). Tough Daedra fight."],
+        ["necromancer", "Necromancer's Amulet: Arch-Mage Trebonius Artorius (Vivec Mages Guild) gives it for his House Telvanni quest. Constant Effect Resist Normal Weapons 25%, Intelligence 25, Restore Health 1, Spell Absorption 25%."],
+        ["eleidon", "Eleidon's Ward: Ibar-Dad, northeast of Khuul / west of Urshilaku Camp. Hanging above Mordrin Hanin's skeleton. Unique Heavy shield with Cast When Used Restore Health."],
+        ["dragonbone", "Dragonbone Cuirass: Mudan, Central Vault — a Dwemer closet behind a 100-point lock. Constant Effect Resist Fire 100%."],
+        ["lord's mail", "Lord's Mail: Imperial Legion quest from Varus Vantinius in Ebonheart, late in the Legion line. Cast When Used: Cure Poison, Resist Magicka 20–30% for 30s."],
+        ["oreyn", "Helm of Oreyn Bearclaw: Malacath's quest at his shrine in the Sheogorad region. Tough Daedra fight."],
         ["trueflame", "Trueflame: finish the Tribunal main quest for Helseth / Almalexia line in Mournhold. Unique long blade."],
         ["eltonbrand", "Eltonbrand: complete Boethiah's underwater statue quest near Khartag Point for Goldbrand, then meet the extra piety / donation conditions so it upgrades."],
-        ["chrysamere", "Chrysamere: found at Abanabi, a cave west of Sadrith Mora (Sterdecan / knight path). High-level unique claymore."],
+        ["chrysamere", "Chrysamere: Imperial Legion quest from Varus Vantinius; carried by Draramu Hloran in Abanabi. High-level unique claymore."],
         ["umbra", "Umbra: carried by Umbra, an orc on a hill near Suran. A hard fight. Unique two-hander."],
-        ["fang of haynekhtnamet", "Fang of Haynekhtnamet: reward from the Clavicus Vile Daedric quest (shrine west of Ald'ruhn / fields). Tough."],
-        ["goblin sword", "Goblin Sword: Tribunal goblin caves under Mournhold (Old Mournhold / sewers). Drop from goblin warchiefs."],
-        ["keening", "Keening: main quest Tools of the Conspiracy / Citadel of Dagoth Ur. Must be used with Wraithguard."],
+        ["fang of haynekhtnamet", "Fang of Haynekhtnamet: lying in Mamaea, Shrine of Pitted Dreams. Cast When Strikes Shock Damage 20-40."],
+        ["goblin sword", "Goblin Sword: a random drop from goblins in Old Mournhold's Abandoned Passageway. They respawn, so keep hunting until one carries it."],
+        ["keening", "Keening: main quest — Odrosal, Tower. Must be used with Wraithguard."],
         ["wraithguard", "Wraithguard: Vivec gives it during the main quest (or the back-path from Yagrum). Occupies the left gauntlet."],
-        ["sunder", "Sunder: main quest, Citadel of Dagoth Ur. Blunt unique. Use with Wraithguard."],
+        ["sunder", "Sunder: main quest — carried by Dagoth Vemyn in Vemynal. Blunt unique. Use with Wraithguard."],
         ["molag bal", "Mace of Molag Bal: Molag Bal shrine, northwest Vvardenfell (near the waterfalls / Koal Cave region). Daedric quest."],
-        ["skull crusher", "Skull Crusher: Ilunibi, the Sixth House base west of Gnaar Mok. Tough dungeon. Constant Effect Fortify Attack."],
-        ["stendarr", "Stendarr's Hammer: Tribunal, High Worshiper / temple area in Mournhold. Two-handed spectacle hammer."],
-        ["scourge", "Scourge: Malacath Daedric shrine quest. Blunt mace — never Axe."],
+        ["skull crusher", "Skull Crusher: chest in the Forgotten Vaults of Anudnabia, Forge of Hilbongard (80-point lock). Constant Effect Feather 15 and Fortify Attack 5."],
+        ["stendarr", "Stendarr's Hammer: on display in Mournhold's Museum of Artifacts (owned — steal). Two-handed spectacle hammer."],
+        ["scourge", "Scourge: chest in Tel Fyr's Hall of Fyr (100-point lock). Blunt mace — never Axe."],
         ["auriel", "Auriel's Bow: Ralyn Othravel in the Tower of Dawn at Ghostgate. Unenchanted in Morrowind."],
         ["dark brotherhood", "Dark Brotherhood armor: Tribunal. After you start Tribunal, assassins attack you in bed — loot the full light set from their corpses. Not sold in shops."],
-        ["glass", "Glass: static pieces sit in Telvanni towers (Tel Naga / Tel Vos crates) and some manor display cases. Shops last."],
-        ["daedric", "Daedric: static pieces in Daedric shrine offering chests (Ashalmimilkala, Assurnabitashpi) and high manor display. Bound until then."],
-        ["adamantium", "Adamantium: static Tribunal pieces in Mournhold palace / Craftsmen's Hall storage crates; Bols Indalen crafts if you bring ore."],
+        ["glass", "Glass: pieces in Ghostgate's Tower of Dusk (owned), Bal Ur and Vivec's Hlaalu Vaults; Bols Indalen in Mournhold makes a set from raw glass."],
+        ["daedric", "Daedric: scattered single pieces — Tukushapal (Face of God), Norenen-dur, Galom Daeus, Castle Karstaag — and Divayth Fyr wears a set."],
+        ["adamantium", "Adamantium: Tribunal. Pieces lie around Old Mournhold (Moril Manor courtyard); Bols Indalen makes armor if you bring ore."],
         ["ice cuirass", "Ice / Stalhrim armor: Bloodmoon. Complete the Stalhrim / Skaal quests on Solstheim, then craft or loot Ice pieces."],
         ["nordic mail", "Nordic Mail: Bloodmoon, Solstheim. Quest and high-end loot after the Skaal / Thirsk line."],
         ["indoril", "Indoril armor: worn by Ordinators in Vivec and Mournhold. Taking it makes Ordinators attack on sight."],
         ["orcish", "Orcish: Ghorak Manor in Caldera — crates and the downstairs storage hold a set. Grab it, do not wait on a smith."],
-        ["bonemold", "Bonemold: Ald'ruhn — a full set sits in a barrel / crate in the Redoran Council Hall underworks and in manor storage (Morvayn / Redoran Compound). Steal from the barrel, skip the shop."],
-        ["chitin", "Chitin: Census and Excise warehouse crates in Seyda Neen, plus barrels behind Arrille's Tradehouse. Free day-one set."],
-        ["imperial steel", "Imperial Steel: Moonmoth Legion Fort — storage chests in the interior, and Hawkmoth (Ebonheart) armory crates. Steal the set off the shelf."],
-        ["dragonscale", "Imperial Dragonscale: Hawkmoth Legion Fort armory (Ebonheart) — rare piece in a chest, not a dungeon crawl."],
-        ["steel", "Steel: Seyda Neen Census warehouse crates and Balmora South Wall / Hlaalu Council Manor storage barrels. Grab before buying."],
-        ["exquisite", "Exquisite clothes: dressers in Hlaalu Council Manor (Balmora) and Redoran manors (Ald'ruhn). Steal, then enchant."],
+        ["bonemold", "Bonemold: Ald'ruhn's guard towers and manors hold pieces (owned — steal); Meldor in Balmora has a helm."],
+        ["chitin", "Chitin: Meldor in Balmora and Malpenix Blonia in Ald'ruhn sell pieces; smithies in Ald'ruhn and Balmora have more on the shelves."],
+        ["imperial steel", "Imperial Steel: Uulernil in Pelagiad sells a worn helmet; Pelagiad's South Wall and Hodlismod's shop in Caldera hold owned pieces (steal)."],
+        ["dragonscale", "Imperial Dragonscale: Dandera Selaro and Ergnir sell helms in Ald'ruhn; Verick Gemain's shop in Caldera has a cuirass and tower shield (steal)."],
+        ["steel", "Steel: smiths across Vvardenfell sell it; worn copies at Telvon Llethan's in Vivec repair cheaply."],
+        ["exquisite", "Exquisite clothes: clothiers stock them (Bivale Teneran in Ald'ruhn, Elegnan in Tel Mora, St. Olms Tailors in Vivec). Buy, then enchant."],
         ["grand-soul", "Grand souls: Golden Saints / Winged Twilights at Daedric ruins, or Azura's Star. Use at an enchanter or yourself."],
-        ["mantle of woe", "Mantle of Woe: Bloodmoon, late Solstheim quest (Raven Rock / related dark quest). Huge magicka, huge weakness."],
-        ["robe of the lich", "Robe of the Lich: unique robe, often tied to necromancer / high mage loot. Constant Effect magicka with a drain."],
-        ["ring of khajiit", "Ring of Khajiit: Sanguine's Quest, shrine of Sanguine west of Suran (Threads of the Webspinner). Tough or long quest."],
-        ["marara", "Marara's Ring: worn by Marara in Ibar-Dad, a cave on the northern Bitter Coast / Sheogorad approach. A fight."],
+        ["mantle of woe", "Mantle of Woe: Bloodmoon — Tymvaul's quest at Rimhull on Solstheim. Huge magicka, huge weakness."],
+        ["robe of the lich", "Robe of the Lich: carried by Gedna Relvel in her tomb in Old Mournhold. Cast When Used: Drain Health 600 and Fortify Magicka 300 for 1s."],
+        ["ring of khajiit", "Ring of Khajiit: Mephala's Daedric quest. Cast When Used Invisibility and Fortify Speed."],
+        ["marara", "Marara's Ring: worn by Marara in Drethan Ancestral Tomb. A fight."],
         ["telvanni tower", "Telvanni Tower Ring: loot Telvanni towers and Sadrith Mora mage chests first. Enchanter shops are backup."],
-        ["vampiric ring", "Vampiric Ring: unique on-target absorb. High-end loot / vampire-related; prefer Constant Effect jewelry instead."],
-        ["blood ring", "Blood Ring: unique restore-health style jewelry; high-end loot. Melee alternative to caster amulets."],
+        ["vampiric ring", "Vampiric Ring: carried by a Skeleton War-Wizard in Ald Redaynia's tower. Cast When Used Absorb Health and Absorb Fatigue on Touch."],
+        ["blood ring", "Blood Ring: carried by Dagoth Gilvoth in Dagoth Ur's Lower Facility. Cast When Used Fortify Health, Fire Shield, Resist Fire and Resist Magicka."],
         ["devil", "Devil / Fiend weapons: loot smuggler caves and bandit camps first (often on NPCs). Ra'Virr restock is backup. Cast on Strike Absorb Health."],
         ["bound", "Bound weapons: spells from Mages Guild (Balmora, Caldera) or Temple. Summon, no loot required."],
         ["skip", "Nothing to fetch — leave this slot empty on purpose so the matching skill still trains."],
@@ -2496,7 +2494,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     const SCORED_WEAPONS = {
       "Long Blade": [
-        { itemName: "Hopesfire", hands: 1, quest: true, text: "Hopesfire (Tribunal, Helseth) — scored one-hand Long Blade when Block/shield is in play." },
+        { itemName: "Hopesfire", hands: 1, quest: true, text: "Hopesfire (Tribunal, taken from Almalexia) — scored one-hand Long Blade when Block/shield is in play." },
         { itemName: "Daedric Crescent", hands: 2, quest: true, text: "Daedric Crescent — scored two-hand Long Blade when you skip a shield." },
         { itemName: "Trueflame", hands: 1, quest: true, text: "Trueflame — main-quest unique, scored below Hopesfire for practical one-hand use." }
       ],
@@ -2506,7 +2504,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       ],
       "Blunt Weapon": [
         { itemName: "Sunder", hands: 1, quest: true, text: "Sunder — scored main-quest Blunt (with Wraithguard)." },
-        { itemName: "Scourge", hands: 1, quest: true, text: "Scourge — scored Blunt mace (Malacath), never Axe." }
+        { itemName: "Scourge", hands: 1, quest: false, text: "Scourge — scored Blunt mace (Tel Fyr chest), never Axe." }
       ],
       "Axe": [
         { itemName: "Cleaver of St. Felms", hands: 1, quest: false, text: "Cleaver of St. Felms — scored one-hand Axe (Tureynulal)." },
@@ -2516,8 +2514,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         { itemName: "Spear of Bitter Mercy", hands: 2, quest: true, text: "Spear of Bitter Mercy — scored unique Spear (Reflect)." }
       ],
       "Marksman": [
-        { itemName: "Daedric Longbow", hands: 2, quest: false, text: "Daedric Longbow — scored raw-stat Long Bow." },
-        { itemName: "Auriel's Bow", hands: 2, quest: false, text: "Auriel's Bow — scored enchanted Marksman unique." }
+        { itemName: "Daedric Long Bow", hands: 2, quest: false, text: "Daedric Long Bow — scored raw-stat Long Bow." },
+        { itemName: "Auriel's Bow", hands: 2, quest: false, text: "Auriel's Bow — scored Marksman unique (unenchanted in Morrowind)." }
       ]
     };
     function pickScoredWeaponLine(cat, profile) {
@@ -2562,38 +2560,38 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const mage = profile.role === "magic";
       const slots = withTrArmor(primaryArmor);
       const shirtE = mage
-        ? "Shirt of Life (generic enchanted, Restore Health on Use) or a plain shirt. Named clothes only — no homemade CE."
-        : "Shirt of the Imp (generic Fortify Strength on Use) or plain shirt. No homemade CE." 
+        ? "Common Shirt, or an Exquisite Shirt from a clothier to enchant later. No enchanted shirt passes the early-game rule."
+        : "Common Shirt, or an Exquisite Shirt from a clothier to enchant later. No enchanted shirt passes the early-game rule." 
       const shirtL = mage
         ? "Theoretical/custom-enchantment optimization: grand-soul CE Fortify Magicka on an Exquisite Shirt."
         : "Theoretical/custom-enchantment optimization: grand-soul CE Fortify Strength on an Exquisite Shirt."
       const robeE = mage
-        ? "Robe of St. Roris (unique, Restore Health on Use) or generic Robe of Magicka. No homemade CE."
-        : "Skip robe, or generic Robe of Fortitude (Fortify Endurance on Use)." 
+        ? "Frosteater Robe (Tel Vos, Services Tower) or Poisoneater Robe (Tel Aruhn) — Cast When Used Spell Absorption. Both owned: steal."
+        : "Veloth's Robe (Cast When Used Restore Health 10; Verick Gemain's shop in Caldera, steal), or go without." 
       const robeL = mage
         ? "Mantle of Woe (Bloodmoon, huge magicka, huge weakness) or Robe of the Lich. Else grand-soul CE Fortify Magicka."
         : "Skip Mantle of Woe and Robe of the Lich. Grand-soul CE Fortify Strength or skip robe."
       const amuE = mage
-        ? "Amulet of Heartheal (unique, Restore Magicka on Use) or Amulet of Shadows (Chameleon on Use). No homemade CE."
-        : "Amulet of Heartthrum (unique, Restore Fatigue on Use) or generic Amulet of Health. No homemade CE." 
+        ? "Bone Charm (Cast When Used Summon Skeletal Minion; Tel Uvirith, steal) or Amulet of Recall (Verick Gemain's shop in Caldera, steal)."
+        : "Amulet of Rest (Cast When Used Restore Fatigue; Heifnir's shop in Dagon Fel, steal) or Amulet of Shield (Cast When Used Shield 5)." 
       const amuL = mage
-        ? "Necromancer's Amulet (CE INT + Fortify Magicka + Resist Normal Weapons) — premier caster amulet."
+        ? "Necromancer's Amulet (CE Intelligence 25, Spell Absorption 25%, Resist Normal Weapons 25%) — premier caster amulet."
         : "Blood Ring or custom CE Fortify Strength. Skip Necromancer's Amulet."
       const ring1E = mage
         ? "Mentor's Ring (Samarys Ancestral Tomb, run past undead). CE INT + WIL — the famous early-game break."
-        : "Fighter Ring (CE Attack). Do not wear Mentor's Ring on pure melee."
+        : "Ring of Phynaster (Senim Ancestral Tomb — CE Resist Magicka, Poison and Shock 20%). Do not wear Mentor's Ring on pure melee."
       const ring1L = mage
         ? "Keep Mentor's Ring forever unless a grand-soul CE INT ring beats 10/10."
-        : "Fighter Ring plus grand-soul CE Fortify Strength. Mentor's Ring stays caster-only."
+        : "Grand-soul CE Fortify Strength ring, or keep Ring of Phynaster. Mentor's Ring stays caster-only."
       // Named explicitly: both strings mention Mentor's Ring, and the name
       // scanner would otherwise label the melee rows with it.
-      const ring1Name = mage ? "Mentor's Ring" : "Fighter Ring";
+      const ring1Name = mage ? "Mentor's Ring" : "Ring of Phynaster";
       const ring2E = mage
-        ? "Telvanni Moon & Star is late. Early: Ring of Surroundings (unique, Chameleon on Use) or generic Ring of Magicka."
-        : "Ring of Surroundings (unique, Chameleon on Use) or generic Ring of Wounding / Fortitude. No homemade CE." 
+        ? "Shadowweave Ring (Cast When Used Chameleon and Sanctuary; Irgola's pawnshop in Caldera, steal) or Second Barrier Ring (Cast When Used Shield 10)."
+        : "Second Barrier Ring (Cast When Used Shield 10; Tel Vos, steal) or Shadowweave Ring (Chameleon and Sanctuary)." 
       const ring2L = mage
-        ? "Ring of Khajiit (CE chameleon/speed) or Vampiric Ring only if you accept on-target. Prefer CE Fortify Magicka."
-        : "Marara's Ring (Ibar-Dad) or Ring of Surroundings (Gnisis crate). Not Khajiit/Mentor.";
+        ? "Ring of Khajiit (Cast When Used Invisibility and Speed) or Vampiric Ring (Cast When Used absorb on Touch). Prefer CE Fortify Magicka."
+        : "Marara's Ring (Drethan Ancestral Tomb — CE Reflect 20%, Resist Normal Weapons 40%) or Ring of Surroundings (Larrius Varro's quest). Not Khajiit/Mentor.";
       const earlyRows = [];
       const lateRows = [];
       const armShow = arms.filter(function(n, i){ return i === 0 || maj.includes(n); }).slice(0, 2);
@@ -2619,7 +2617,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         lateRows.push(gearItem("Shield", "Still skip."));
       }
       earlyRows.push(gearItem("Shirt", shirtE));
-      earlyRows.push(gearItem("Pants", "Pants of the Ranger (generic Fortify Speed on Use) or plain pants. No homemade CE."));
+      earlyRows.push(gearItem("Pants", "Common Pants, or Exquisite Pants from Bivale Teneran in Ald'ruhn to enchant later."));
       earlyRows.push(gearItem("Robe", robeE));
       earlyRows.push(gearItem("Amulet", amuE));
       earlyRows.push(gearItem("Ring 1", ring1E, ring1Name));
@@ -2642,9 +2640,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const specHits = maj.filter((s) => SPEC_SKILLS[spec] && SPEC_SKILLS[spec].includes(s)).length;
       let html = "<h3>Full kit by slot</h3>";
       if (specHits < 3) html += "<p>Your "+spec+" specialization is not helping most of these majors. Morrowind gives +5 to the nine "+spec+" skills only.</p>";
-      if (atronach) html += "<p>Atronach tradeoff: Stunted Magicka means Restore Magicka potions and loot do not refill you. Spell Absorption (and Lord's Mail later) is how you refill.</p>";
+      if (atronach) html += "<p>Atronach tradeoff: Stunted Magicka means Restore Magicka potions and loot do not refill you. Spell Absorption (the Necromancer's Amulet gives 25%) is how you refill.</p>";
       if (breton) html += "<p>Breton Resist Magicka 50% still leaves Blind 50 on Boots of Blinding Speed — stack to 100% Resist Magicka to see clearly.</p>";
-      html += "<details><summary>Early game</summary><p class=\"muted\">Obtainable right after Census & Excise — no developed-character dungeon, no major questline, no harder fight than Mentor's Ring.</p>" + gearTable(earlyRows) + "</details>";
+      html += "<details><summary>Early game</summary><p class=\"muted\">Gear a new level 1 character can get with no more trouble than Mentor's Ring: past at most two enemies, none above level 4, nothing locked, and 500 gold or less to buy, steal, or buy worn and repair. Quest rewards and farming don't count.</p>" + gearTable(earlyRows) + "</details>";
       html += "<details><summary>Optimized endgame kit</summary><p class=\"muted\">Genuinely optimized endgame gear. Criterion-aware — not one universal best item.</p>" + gearTable(lateRows) + "</details>";
       html += "<p>Synergy notes: mix armor weights only if you do not care about leveling them. Bound weapons train the skill but steal your enchant slots. Non-Atronach casters can still use potions for Restore Magicka; Atronach cannot.</p>";
       const box = document.getElementById("gear-box");
@@ -2680,7 +2678,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const RACES = {
       "Argonian": {
         M:{Strength:40,Intelligence:40,Willpower:30,Agility:50,Speed:50,Endurance:30,Personality:30,Luck:40},
-        F:{Strength:40,Intelligence:50,Willpower:40,Agility:40,Speed:40,Endurance:30,Personality:40,Luck:40},
+        F:{Strength:40,Intelligence:50,Willpower:40,Agility:40,Speed:40,Endurance:30,Personality:30,Luck:40},
         skills:{"Athletics":15,"Alchemy":5,"Illusion":5,"Medium Armor":5,"Mysticism":5,"Spear":5,"Unarmored":5},
         mag:0,
         abilities:"Resist Poison 100%, Resist Common Disease 75%, Water Breathing (constant).",
@@ -2697,26 +2695,26 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Dark Elf": {
         M:{Strength:40,Intelligence:40,Willpower:30,Agility:40,Speed:50,Endurance:40,Personality:30,Luck:40},
         F:{Strength:40,Intelligence:40,Willpower:30,Agility:40,Speed:50,Endurance:30,Personality:40,Luck:40},
-        skills:{"Destruction":10,"Athletics":5,"Light Armor":5,"Long Blade":5,"Marksman":5,"Mysticism":5,"Short Blade":5},
+        skills:{"Destruction":10,"Short Blade":10,"Athletics":5,"Light Armor":5,"Long Blade":5,"Marksman":5,"Mysticism":5},
         mag:0,
         abilities:"Resist Fire 75%. Power: Ancestor Guardian (Sanctuary 50 pts for 60s).",
-        tip:"Dark Elf: Speed 50. Destruction +10; Athletics, Light Armor, Long Blade, Marksman, Mysticism, Short Blade +5. Fire resist 75%."
+        tip:"Dark Elf: Speed 50. Destruction +10, Short Blade +10; Athletics, Light Armor, Long Blade, Marksman, Mysticism +5. Fire resist 75%."
       },
       "High Elf": {
         M:{Strength:30,Intelligence:50,Willpower:40,Agility:40,Speed:30,Endurance:40,Personality:40,Luck:40},
         F:{Strength:30,Intelligence:50,Willpower:40,Agility:40,Speed:40,Endurance:30,Personality:40,Luck:40},
         skills:{"Alchemy":10,"Alteration":5,"Conjuration":5,"Destruction":10,"Enchant":10,"Illusion":5},
         mag:1.5,
-        abilities:"Fortify Maximum Magicka 1.5. Weakness to Fire 50%, Frost 25%, Shock 25%, Weakness to Magicka 50%. Resist Common Disease 75%.",
+        abilities:"Fortify Maximum Magicka 1.5. Weakness to Fire 50%, Weakness to Frost 25%, Weakness to Shock 25%, Weakness to Magicka 50%. Resist Common Disease 75%.",
         tip:"High Elf: INT 50. Magicka multiplier +1.5. Alchemy/Enchant/Destruction +10, Alteration/Conjuration/Illusion +5. Weakness Fire 50%, Frost/Shock 25%. Resist Common Disease 75%."
       },
       "Imperial": {
         M:{Strength:40,Intelligence:40,Willpower:30,Agility:30,Speed:40,Endurance:40,Personality:50,Luck:40},
         F:{Strength:40,Intelligence:40,Willpower:40,Agility:30,Speed:30,Endurance:40,Personality:50,Luck:40},
-        skills:{"Mercantile":10,"Speechcraft":10,"Blunt Weapon":5,"Hand-to-hand":5,"Light Armor":5,"Long Blade":5},
+        skills:{"Mercantile":10,"Speechcraft":10,"Long Blade":10,"Blunt Weapon":5,"Hand-to-hand":5,"Light Armor":5},
         mag:0,
         abilities:"Powers: Star of the West (Absorb Fatigue 200), Voice of the Emperor (Charm 25–50 for 15s).",
-        tip:"Imperial: Personality 50. Mercantile/Speechcraft +10; Blunt, Hand-to-hand, Light Armor, Long Blade +5."
+        tip:"Imperial: Personality 50. Mercantile/Speechcraft +10, Long Blade +10; Blunt, Hand-to-hand, Light Armor +5."
       },
       "Khajiit": {
         M:{Strength:40,Intelligence:40,Willpower:30,Agility:50,Speed:40,Endurance:30,Personality:40,Luck:40},
@@ -2737,26 +2735,26 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Orc": {
         M:{Strength:45,Intelligence:30,Willpower:50,Agility:35,Speed:30,Endurance:50,Personality:30,Luck:40},
         F:{Strength:45,Intelligence:40,Willpower:45,Agility:35,Speed:30,Endurance:50,Personality:25,Luck:40},
-        skills:{"Armorer":10,"Axe":10,"Block":10,"Heavy Armor":10,"Medium Armor":5},
+        skills:{"Armorer":10,"Block":10,"Heavy Armor":10,"Medium Armor":10,"Axe":5},
         mag:0,
-        abilities:"Resist Magicka 25%. Power: Berserk (Fortify Health 20, Fatigue 200, Attack 100, Drain Agility 100 for 60s).",
-        tip:"Orc: STR 45 END 50. Armorer/Axe/Block/Heavy Armor +10, Medium Armor +5. Magicka resist 25%."
+        abilities:"Resist Magicka 25%. Power: Berserk (Fortify Health 20, Fortify Fatigue 200, Fortify Attack 100, Drain Agility 100 for 60s).",
+        tip:"Orc: STR 45 END 50. Armorer/Block/Heavy Armor/Medium Armor +10, Axe +5. Magicka resist 25%."
       },
       "Redguard": {
         M:{Strength:50,Intelligence:30,Willpower:30,Agility:40,Speed:40,Endurance:50,Personality:30,Luck:40},
         F:{Strength:40,Intelligence:30,Willpower:30,Agility:40,Speed:40,Endurance:50,Personality:40,Luck:40},
-        skills:{"Long Blade":15,"Axe":5,"Blunt Weapon":5,"Heavy Armor":5,"Medium Armor":5,"Athletics":5},
+        skills:{"Long Blade":15,"Axe":5,"Blunt Weapon":5,"Heavy Armor":5,"Medium Armor":5,"Athletics":5,"Short Blade":5},
         mag:0,
-        abilities:"Resist Poison 75%, Resist Common Disease 75%. Power: Adrenaline Rush (Fortify AGI/END/SPD/STR/Health).",
-        tip:"Redguard: male STR 50 END 50. Long Blade +15; Axe, Blunt, Heavy, Medium, Athletics +5. Disease/poison resist 75%."
+        abilities:"Resist Poison 75%, Resist Common Disease 75%. Power: Adrenaline Rush (Fortify Agility 50, Fortify Strength 50, Fortify Speed 50, Fortify Endurance 50, Fortify Health 25 for 60s).",
+        tip:"Redguard: male STR 50 END 50. Long Blade +15; Axe, Blunt, Heavy, Medium, Athletics, Short Blade +5. Disease/poison resist 75%."
       },
       "Wood Elf": {
         M:{Strength:30,Intelligence:40,Willpower:30,Agility:50,Speed:50,Endurance:30,Personality:40,Luck:40},
         F:{Strength:30,Intelligence:40,Willpower:30,Agility:50,Speed:50,Endurance:30,Personality:40,Luck:40},
-        skills:{"Marksman":15,"Sneak":10,"Alchemy":5,"Athletics":5,"Light Armor":5},
+        skills:{"Marksman":15,"Sneak":10,"Light Armor":10,"Alchemy":5,"Acrobatics":5},
         mag:0,
         abilities:"Resist Common Disease 75%. Power: Beast Tongue (Command Creature 5 pts for 600s).",
-        tip:"Wood Elf: AGI/SPD 50. Marksman +15, Sneak +10, Alchemy/Athletics/Light Armor +5. Disease resist 75%."
+        tip:"Wood Elf: AGI/SPD 50. Marksman +15, Sneak +10, Light Armor +10, Alchemy/Acrobatics +5. Disease resist 75%."
       }
     };
     const ARCE_RACES = {
@@ -2915,16 +2913,16 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "The Warrior": {tip:"The Warrior — Fortify Attack 10 pts (constant). No attribute change.", mag:0, attrs:{}, abil:"Fortify Attack 10 (constant)."},
       "The Mage": {tip:"The Mage — Fortify Maximum Magicka 0.5 (constant).", mag:0.5, attrs:{}, abil:"Fortify Maximum Magicka 0.5."},
       "The Thief": {tip:"The Thief — Sanctuary 10 pts (constant). No attribute change.", mag:0, attrs:{}, abil:"Sanctuary 10 (constant)."},
-      "The Ritual": {tip:"The Ritual — Blessed Word (Turn Undead 100 for 30s), Mara's Gift (Restore Health 100). No constant stats.", mag:0, attrs:{}, abil:"Powers: Blessed Word; Mara's Gift."},
-      "The Lover": {tip:"The Lover — Fortify Agility 25 (constant). Lover's Kiss: Paralyze 60s, Drain Fatigue 120 on you.", mag:0, attrs:{Agility:25}, abil:"Fortify Agility 25. Power: Lover's Kiss."},
+      "The Ritual": {tip:"The Ritual — spells Blessed Word (Turn Undead 100 for 30s on Target) and Blessed Touch (Turn Undead 100 for 30s on Touch); power Mara's Gift (Restore Health 100). No constant stats.", mag:0, attrs:{}, abil:"Spells: Blessed Word; Blessed Touch. Power: Mara's Gift."},
+      "The Lover": {tip:"The Lover — Fortify Agility 25 (constant). Lover's Kiss: Paralyze 1 pt for 60s on Target, Damage Fatigue 200 pts for 1s on Self.", mag:0, attrs:{Agility:25}, abil:"Fortify Agility 25. Power: Lover's Kiss (Paralyze 1 pt 60s on Target, Damage Fatigue 200 for 1s on Self)."},
       "The Shadow": {tip:"The Shadow — Moonshadow: Invisibility 60s once per day. No constant stats.", mag:0, attrs:{}, abil:"Power: Invisibility 60s."},
       "The Steed": {tip:"The Steed — Fortify Speed 25 (constant).", mag:0, attrs:{Speed:25}, abil:"Fortify Speed 25."},
       "The Apprentice": {tip:"The Apprentice — Fortify Maximum Magicka 1.5, Weakness to Magicka 50%.", mag:1.5, attrs:{}, abil:"Fortify Maximum Magicka 1.5. Weakness to Magicka 50%."},
       "The Atronach": {tip:"The Atronach — Fortify Maximum Magicka 2.0, Spell Absorption 50, Stunted Magicka.", mag:2.0, attrs:{}, abil:"Fortify Maximum Magicka 2.0, Spell Absorption 50, Stunted Magicka."},
       "The Lady": {tip:"The Lady — Fortify Personality 25, Fortify Endurance 25 (constant). The Endurance does not raise starting Health.", mag:0, attrs:{Personality:25,Endurance:25}, abil:"Fortify Personality 25, Endurance 25. Endurance does not raise starting Health."},
       "The Lord": {tip:"The Lord — Blood of the North (Restore Health 2 pts for 30s, once a day). Trollkin: Weakness to Fire 100%.", mag:0, attrs:{}, abil:"Power: Blood of the North. Ability: Weakness to Fire 100%."},
-      "The Tower": {tip:"The Tower — Beggar's Nose (detect 200 ft 60s), Tower Key (Open 50). No constant stats.", mag:0, attrs:{}, abil:"Powers: Beggar's Nose; Tower Key (Open 50)."},
-      "The Serpent": {tip:"The Serpent — Star-Curse: Poison 3 pts for 30s on Touch, Cure Poison on Self. No constant stats.", mag:0, attrs:{}, abil:"Power: Star-Curse (Poison 3 pts for 30s on Touch, Cure Poison on Self)."}
+      "The Tower": {tip:"The Tower — spell Beggar's Nose (Detect Animal, Detect Enchantment and Detect Key 200 for 60s); power Tower Key (Open 50). No constant stats.", mag:0, attrs:{}, abil:"Spell: Beggar's Nose. Power: Tower Key (Open 50)."},
+      "The Serpent": {tip:"The Serpent — Star-Curse: Poison 3 pts for 30s on Touch, Damage Health 1 pt for 30s on Self. No constant stats.", mag:0, attrs:{}, abil:"Power: Star-Curse (Poison 3 pts for 30s on Touch, Damage Health 1 pt for 30s on Self)."}
     };
     const ATTR_TIP = {
       Strength:"melee damage, encumbrance, starting Fatigue.",
@@ -3186,24 +3184,24 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const VANILLA_CLASS = {
       Acrobat:{spec:"Stealth",fav:["Agility","Endurance"],maj:["Acrobatics","Athletics","Marksman","Sneak","Unarmored"],min:["Speechcraft","Light Armor","Alteration","Spear","Hand-to-hand"]},
       Agent:{spec:"Stealth",fav:["Personality","Agility"],maj:["Speechcraft","Sneak","Acrobatics","Light Armor","Short Blade"],min:["Mercantile","Conjuration","Illusion","Unarmored","Block"]},
-      Archer:{spec:"Combat",fav:["Agility","Strength"],maj:["Marksman","Long Blade","Block","Light Armor","Unarmored"],min:["Sneak","Medium Armor","Restoration","Athletics","Spear"]},
+      Archer:{spec:"Combat",fav:["Agility","Strength"],maj:["Marksman","Long Blade","Block","Athletics","Light Armor"],min:["Unarmored","Spear","Restoration","Sneak","Medium Armor"]},
       Assassin:{spec:"Stealth",fav:["Speed","Intelligence"],maj:["Sneak","Marksman","Light Armor","Short Blade","Acrobatics"],min:["Security","Alchemy","Athletics","Block","Long Blade"]},
-      Barbarian:{spec:"Combat",fav:["Strength","Speed"],maj:["Axe","Medium Armor","Blunt Weapon","Athletics","Block"],min:["Acrobatics","Light Armor","Marksman","Unarmored","Speechcraft"]},
+      Barbarian:{spec:"Combat",fav:["Strength","Speed"],maj:["Axe","Medium Armor","Blunt Weapon","Athletics","Block"],min:["Acrobatics","Light Armor","Armorer","Marksman","Unarmored"]},
       Bard:{spec:"Stealth",fav:["Personality","Intelligence"],maj:["Speechcraft","Alchemy","Acrobatics","Long Blade","Block"],min:["Mercantile","Illusion","Medium Armor","Enchant","Security"]},
       Battlemage:{spec:"Magic",fav:["Intelligence","Strength"],maj:["Alteration","Destruction","Conjuration","Axe","Heavy Armor"],min:["Mysticism","Long Blade","Marksman","Enchant","Alchemy"]},
       Crusader:{spec:"Combat",fav:["Agility","Strength"],maj:["Blunt Weapon","Long Blade","Destruction","Heavy Armor","Block"],min:["Restoration","Armorer","Hand-to-hand","Medium Armor","Alchemy"]},
-      Healer:{spec:"Magic",fav:["Willpower","Personality"],maj:["Restoration","Mysticism","Alteration","Speechcraft","Illusion"],min:["Alchemy","Unarmored","Blunt Weapon","Hand-to-hand","Sneak"]},
-      Knight:{spec:"Combat",fav:["Personality","Strength"],maj:["Long Blade","Axe","Speechcraft","Heavy Armor","Block"],min:["Restoration","Mercantile","Medium Armor","Enchant","Hand-to-hand"]},
+      Healer:{spec:"Magic",fav:["Willpower","Personality"],maj:["Restoration","Mysticism","Alteration","Hand-to-hand","Speechcraft"],min:["Illusion","Alchemy","Unarmored","Light Armor","Blunt Weapon"]},
+      Knight:{spec:"Combat",fav:["Personality","Strength"],maj:["Long Blade","Axe","Speechcraft","Heavy Armor","Block"],min:["Restoration","Mercantile","Medium Armor","Enchant","Armorer"]},
       Mage:{spec:"Magic",fav:["Intelligence","Willpower"],maj:["Mysticism","Destruction","Alteration","Illusion","Restoration"],min:["Enchant","Alchemy","Unarmored","Short Blade","Conjuration"]},
       Monk:{spec:"Stealth",fav:["Agility","Willpower"],maj:["Hand-to-hand","Unarmored","Athletics","Acrobatics","Sneak"],min:["Block","Marksman","Restoration","Light Armor","Blunt Weapon"]},
       Nightblade:{spec:"Magic",fav:["Willpower","Speed"],maj:["Mysticism","Illusion","Alteration","Sneak","Short Blade"],min:["Light Armor","Destruction","Marksman","Security","Unarmored"]},
       Pilgrim:{spec:"Stealth",fav:["Personality","Endurance"],maj:["Speechcraft","Mercantile","Marksman","Restoration","Medium Armor"],min:["Illusion","Hand-to-hand","Short Blade","Block","Alchemy"]},
-      Rogue:{spec:"Combat",fav:["Personality","Speed"],maj:["Short Blade","Axe","Light Armor","Hand-to-hand","Block"],min:["Mercantile","Speechcraft","Athletics","Long Blade","Medium Armor"]},
+      Rogue:{spec:"Combat",fav:["Personality","Speed"],maj:["Short Blade","Mercantile","Axe","Light Armor","Hand-to-hand"],min:["Block","Medium Armor","Speechcraft","Athletics","Long Blade"]},
       Scout:{spec:"Combat",fav:["Speed","Endurance"],maj:["Sneak","Long Blade","Athletics","Block","Medium Armor"],min:["Marksman","Alchemy","Alteration","Light Armor","Unarmored"]},
-      Sorcerer:{spec:"Magic",fav:["Intelligence","Endurance"],maj:["Enchant","Conjuration","Mysticism","Destruction","Alteration"],min:["Illusion","Medium Armor","Marksman","Short Blade","Athletics"]},
+      Sorcerer:{spec:"Magic",fav:["Intelligence","Endurance"],maj:["Enchant","Conjuration","Mysticism","Destruction","Alteration"],min:["Illusion","Medium Armor","Heavy Armor","Marksman","Short Blade"]},
       Spellsword:{spec:"Magic",fav:["Willpower","Endurance"],maj:["Block","Restoration","Long Blade","Destruction","Alteration"],min:["Blunt Weapon","Enchant","Alchemy","Medium Armor","Axe"]},
       Thief:{spec:"Stealth",fav:["Speed","Agility"],maj:["Security","Sneak","Acrobatics","Light Armor","Short Blade"],min:["Marksman","Speechcraft","Hand-to-hand","Athletics","Mercantile"]},
-      Warrior:{spec:"Combat",fav:["Endurance","Strength"],maj:["Long Blade","Block","Athletics","Heavy Armor","Armorer"],min:["Blunt Weapon","Medium Armor","Spear","Marksman","Enchant"]},
+      Warrior:{spec:"Combat",fav:["Endurance","Strength"],maj:["Long Blade","Medium Armor","Heavy Armor","Athletics","Block"],min:["Armorer","Spear","Marksman","Axe","Blunt Weapon"]},
       Witchhunter:{spec:"Magic",fav:["Intelligence","Agility"],maj:["Conjuration","Enchant","Alchemy","Light Armor","Marksman"],min:["Unarmored","Block","Blunt Weapon","Mysticism","Sneak"]}
     };
     const ARCE_CLASS = {

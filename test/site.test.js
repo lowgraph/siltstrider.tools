@@ -218,12 +218,17 @@ test("item locations corrected against UESP stay corrected", async () => {
   const expectations = [
     ["Ten Pace Boots", /Bal Fell/i, /Palansour/i],
     ["Mentor's Ring", /urn labelled Lord Brinne/i, /skeleton/i],
-    ["Savior's Hide", /Tel Fyr/i, /Hircine quest|Ascadian/i],
     ["Cuirass of the Savior's Hide", /Tel Fyr/i, /Ascadian/i],
     ["Helm of Oreyn Bearclaw", /Sheogorad/i, /west of Gnaar Mok/i],
     ["Boots of the Apostle", /south of Gnisis/i, /west of Gnisis/i],
     ["Boots of Blinding Speed", /northwest of Caldera/i, /between Balmora and Caldera/i],
-    ["Fists of Randagulf", /Ilunibi/i, /Kogoruhn/i],
+    ["Fist of Randagulf Left Gauntlet", /Ilunibi/i, /Kogoruhn/i],
+    ["Fist of Randagulf Rt Gauntlet", /Ilunibi/i, /Kogoruhn/i],
+    // Corrected against the game data in the vanilla handoff.
+    ["Keening", /Odrosal/i, /Citadel of Dagoth Ur/i],
+    ["Marara's Ring", /Drethan Ancestral Tomb/i, /Ibar-Dad/i],
+    ["Daedric Crescent", /Magas Volar/i, /Clockwork City/i],
+    ["Daedric Long Bow", /Dram Bero/i, /Daedra drop/i],
   ];
   for (const [item, expected, forbidden] of expectations) {
     const text = locations[item];
@@ -250,4 +255,37 @@ test("TR major objectives stay completable and correctly described", async () =>
   assert.equal(trMajors.filter((m) => /Passwall/i.test(m)).length, 1, "only one Passwall objective");
   assert.ok(trMajors.every((m) => typeof m === "string" && m.trim().length), "no blank objectives");
   assert.equal(new Set(trMajors).size, trMajors.length, "no duplicate TR objectives");
+});
+
+test("no third-party scripts are injected into the page", () => {
+  const html = fs.readFileSync(SITE_PATH, "utf8");
+  assert.doesNotMatch(html, /skycastle|aha-img-guard/i, "strip the aha-img-guard script from exports");
+  assert.doesNotMatch(html, /<script[^>]+src=/i, "the page must not load external scripts");
+});
+
+test("every armor slot row recommends an item for that slot", async () => {
+  const dom = await loadSite();
+  const SLOT_WORDS = {
+    Helm: /Helm|Coif|None/, Cuirass: /Cuirass|Mail|Shirt/, Pauldrons: /Pauldron|None/, Greaves: /Greaves|None/,
+    Boots: /Boots|Shoes/i, Gauntlets: /Gauntlet|Bracer|Brace|hands|gloves/i, Shield: /Shield|Ward|None/,
+  };
+  for (const kind of ["Light Armor", "Medium Armor", "Heavy Armor", "Unarmored"]) {
+    const set = dom.window.eval(`armorSet(${JSON.stringify(kind)})`);
+    for (const [slot, want] of Object.entries(SLOT_WORDS)) {
+      for (const [phase, label] of [["e", "early"], ["l", "late"]]) {
+        const text = set[slot][phase];
+        assert.match(text, want, `${kind} ${slot} (${label}) names no ${slot.toLowerCase()}: ${text}`);
+        assert.ok(text.length < 220, `${kind} ${slot} (${label}) reads like a whole kit: ${text}`);
+      }
+    }
+  }
+});
+
+test("the Daedric Long Bow is recommended, not declared missing", async () => {
+  const dom = await loadSite();
+  const html = fs.readFileSync(SITE_PATH, "utf8");
+  assert.doesNotMatch(html, /No obtainable Daedric Long ?bow/i);
+  const scored = dom.window.eval("SCORED_WEAPONS").Marksman.map((w) => w.itemName);
+  assert.ok(scored.includes("Daedric Long Bow"), `Marksman scored list: ${scored.join(", ")}`);
+  assert.match(dom.window.eval("WEAPONS").Marksman.late, /Daedric Long Bow/);
 });
