@@ -10,17 +10,20 @@ const SITE_PATH = path.join(__dirname, "..", "index.html");
 // Loads the single-file app into a real DOM and runs its inline scripts,
 // the same way a browser would. This lets us call the app's own global
 // functions (including its built-in self-tests) from Node.
-async function loadSite() {
+async function loadSite(url = "https://example.com/") {
   const dom = await JSDOM.fromFile(SITE_PATH, {
     runScripts: "dangerously",
     pretendToBeVisual: true,
-    url: "https://example.com/",
+    url,
   });
   // Inline <script> tags run synchronously as the document is parsed, but
   // give any load-event handlers a turn before we start poking at it.
   await new Promise((resolve) => setTimeout(resolve, 50));
   return dom;
 }
+
+// Copies a value made inside the page into this realm, so deep equality doesn't trip over the page's own prototypes.
+const plain = (x) => JSON.parse(JSON.stringify(x));
 
 test("page loads and exposes the optimizer self-tests", async () => {
   const dom = await loadSite();
@@ -98,12 +101,15 @@ test("the frame image is embedded once and referenced by custom property", () =>
   assert.match(html, /--frame-img: url\("data:image\/png;base64,/);
 });
 
-test("desktop nav wraps instead of crushing the brand", () => {
-  const html = fs.readFileSync(SITE_PATH, "utf8");
-  const media = html.slice(html.indexOf("@media (min-width: 900px)"));
-  assert.match(media.slice(0, 600), /\.topbar \{ flex-wrap: wrap; \}/);
-  assert.match(media.slice(0, 600), /\.brand \{ flex: 1 1 260px; \}/);
-  assert.match(html, /\.brand \{[^}]*word-break: normal;/s);
+test("the desktop header stays on one row without the nav covering the site name", () => {
+  const html = fs.readFileSync(SITE_PATH, "utf8").replace(/\r\n/g, "\n");
+  const desktop = html.slice(html.indexOf("@media (min-width: 900px) {"));
+  const rules = desktop.slice(0, desktop.indexOf("\n    }\n"));
+  assert.match(rules, /\.topbar \{ flex-wrap: nowrap;/);
+  assert.match(rules, /\.brand h1 \{ white-space: nowrap; \}/, "the site name must not break across lines");
+  assert.match(rules, /\.header-tools \{ flex: 0 0 auto; \}/, "the nav and world switches must not shrink under the site name");
+  const narrow = html.slice(html.indexOf("@media (min-width: 900px) and (max-width: 1199px) {"));
+  assert.match(narrow.slice(0, narrow.indexOf("\n    }\n")), /#btn-world-tr::after \{ content: "TR"; \}/, "narrow desktops need the short world labels");
 });
 
 test("late shield matches the build's own armor class", async () => {
@@ -161,29 +167,26 @@ test("a single magic major does not turn a warrior into a caster", async () => {
   assert.ok(picksFor(window, "Ring 1").flat().includes("Mentor's Ring"), "caster lost Mentor's Ring");
 });
 
-test("loading a build does not leak skills from the discarded sheet", async () => {
+test("a build permalink restores the sheet without leaking skills from the discarded one", async () => {
   const dom = await loadSite();
   const { window } = dom;
   const { document } = window;
   document.getElementById("btn-build").click();
   document.getElementById("btn-custom").click();
-
-  const majors = () => [...Array(5)].map((_, i) => document.getElementById("maj" + i).value);
   setSheet(window, {
     maj: ["Long Blade", "Heavy Armor", "Block", "Athletics", "Armorer"],
     min: ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"],
   });
-  document.getElementById("btn-save-code").click();
-  const code = document.getElementById("build-code").value;
-
   setSheet(window, { maj: ["Destruction", "Alteration", "Mysticism", "Enchant", "Alchemy"] });
-  document.getElementById("build-code").value = code;
-  document.getElementById("btn-load-code").click();
-  assert.deepEqual(majors(), ["Long Blade", "Heavy Armor", "Block", "Athletics", "Armorer"]);
+  setSheet(window, { maj: ["Long Blade", "Heavy Armor", "Block", "Athletics", "Armorer"] });
+  const link = window.location.href;
+  assert.match(link, /#builder&build=/);
 
-  // Editing a major now duplicates Block; the swap must hand back Long Blade,
-  // not a skill from the mage sheet that was thrown away.
-  setSheet(window, { maj: ["Block"] });
+  const reopened = (await loadSite(link)).window;
+  const majors = () => [...Array(5)].map((_, i) => reopened.document.getElementById("maj" + i).value);
+  assert.deepEqual(majors(), ["Long Blade", "Heavy Armor", "Block", "Athletics", "Armorer"]);
+  // Editing a major now duplicates Block; the swap must hand back Long Blade, not a skill from a discarded sheet.
+  setSheet(reopened, { maj: ["Block"] });
   assert.deepEqual(majors(), ["Block", "Heavy Armor", "Long Blade", "Athletics", "Armorer"]);
 });
 
@@ -213,7 +216,7 @@ test("randomizing a character keeps the favored-attribute lock in sync", async (
   const f1 = document.getElementById("r-fav1");
   const f2 = document.getElementById("r-fav2");
   for (let i = 0; i < 25; i++) {
-    document.getElementById("btn-rand-char").click();
+    document.getElementById(i % 2 ? "btn-rand-all" : "dice-class").click();
     assert.notEqual(f1.value, f2.value, "randomizer produced duplicate favored attributes");
     const disabledInF1 = [...f1.options].filter((o) => o.disabled).map((o) => o.value);
     const disabledInF2 = [...f2.options].filter((o) => o.disabled).map((o) => o.value);
@@ -361,49 +364,19 @@ test("the gear table names items and places, not sentences", async () => {
   window.eval('worldMode = "vanilla"');
 });
 
-test("the custom builder and the challenge-run panel compute the same sheet", async () => {
+test("Send to Build Optimizer opens the rolled character in the custom builder", async () => {
   const dom = await loadSite();
   const { window } = dom;
   const { document } = window;
-  const split = (s) => s.split(",").map((x) => x.trim());
-  // Attribute, skill, Health, Fatigue and Magicka numbers as each panel renders them.
-  const customNumbers = () => {
-    const out = {};
-    for (const li of document.querySelectorAll("#c-summary details li")) {
-      const m = li.textContent.match(/^(.+?): (\d+) \(/);
-      if (m) out[m[1]] = Number(m[2]);
-    }
-    for (const li of document.querySelectorAll("#c-summary ul li")) {
-      const m = li.textContent.match(/^(Health|Fatigue|Magicka):.*= (\d+)/);
-      if (m) out[m[1]] = Number(m[2]);
-    }
-    return out;
-  };
-  const randNumbers = () => {
-    const out = {};
-    for (const li of document.querySelectorAll("#r-summary li")) {
-      const m = li.textContent.match(/^(.+?): (\d+)$/);
-      if (m) out[m[1]] = Number(m[2]);
-    }
-    const derived = document.getElementById("r-summary").textContent.match(/Health (\d+) · Fatigue (\d+) · Magicka (\d+)/);
-    if (derived) Object.assign(out, { Health: Number(derived[1]), Fatigue: Number(derived[2]), Magicka: Number(derived[3]) });
-    return out;
-  };
-  const builds = [...window.eval("BUILDS.slice(0, 8).concat(RACE_BUILDS.slice(0, 4))")];
-  assert.equal(builds.length, 12);
-  for (const b of builds) {
-    const [fav1, fav2] = split(b.fav);
-    const build = { race: b.race, gender: b.gender, sign: b.sign, spec: b.spec, fav1, fav2, maj: split(b.maj), min: split(b.min) };
-    window.applyBuild(Object.assign({ className: "Custom" }, build));
-    const set = (id, v) => { document.getElementById(id).value = v; };
-    set("r-class", "Custom"); set("r-race", build.race); set("r-gender", build.gender); set("r-sign", build.sign);
-    set("r-spec", build.spec); set("r-fav1", build.fav1); set("r-fav2", build.fav2);
-    build.maj.forEach((s, i) => set("rmaj" + i, s));
-    build.min.forEach((s, i) => set("rmin" + i, s));
-    window.refreshRand();
-    const custom = customNumbers();
-    assert.ok(Object.keys(custom).length >= 11, `${b.name}: the custom sheet did not render`);
-    assert.deepEqual(randNumbers(), custom, `${b.name}: the two panels disagree`);
+  window.Element.prototype.scrollIntoView = function () {};
+  for (let i = 0; i < 12; i++) {
+    document.getElementById("btn-challenge").click();
+    document.getElementById("btn-rand-all").click();
+    const rolled = plain(window.readPanelBuild("r"));
+    const cls = document.getElementById("r-class").value;
+    document.getElementById("btn-to-optimizer").click();
+    assert.deepEqual(plain(window.readPanelBuild("c")), rolled, `the ${cls} character changed on its way to the optimizer`);
+    assert.equal(document.getElementById("c-class").value, cls);
   }
 });
 
@@ -426,47 +399,154 @@ test("a class preset in the custom builder refreshes the duplicate-swap state", 
   assert.equal(document.getElementById("maj4").value, "Medium Armor");
 });
 
-test("challenge-run skill pickers swap duplicates and refresh the sheet", async () => {
+test("the skills cards show the class's skills and roll only for a custom or unrolled class", async () => {
   const dom = await loadSite();
   const { window } = dom;
   const { document } = window;
-  const choose = (id, v) => {
-    const el = document.getElementById(id);
-    el.value = v;
-    el.dispatchEvent(new window.Event("change", { bubbles: true }));
-  };
-  choose("r-class", "Warrior");
-  choose("r-race", "Nord");
-  const majors = () => [...Array(5)].map((_, i) => document.getElementById("rmaj" + i).value);
-  const warrior = majors();
-  // Picking a skill that's already a major swaps the two slots instead of listing it twice.
-  choose("rmaj0", warrior[4]);
-  assert.deepEqual(majors(), [warrior[4], warrior[1], warrior[2], warrior[3], warrior[0]]);
-  // Picking a new skill updates the sheet straight away.
-  assert.doesNotMatch(document.getElementById("r-summary").textContent, /Sneak: /);
-  choose("rmin0", "Sneak");
-  assert.match(document.getElementById("r-summary").textContent, /Sneak: 15/);
-  assert.equal(document.getElementById("rmaj0").getAttribute("aria-label"), "Major skill 1");
+  const $ = (id) => document.getElementById(id);
+  const cardItems = (id) => [...$(id).closest(".sum-row").querySelectorAll("li")].map((li) => li.textContent);
+  const picks = (prefix) => [...Array(5)].map((_, i) => $(prefix + i).value);
+  $("btn-challenge").click();
+
+  // Nothing rolled yet: the skills can roll, and rolling them makes a custom class.
+  assert.equal($("dice-major-skills").disabled, false);
+  assert.equal($("lock-major-skills").disabled, true, "there are no skills to lock before they're rolled");
+  $("dice-major-skills").click();
+  assert.equal(window.eval("challengeRun.cls"), "Custom");
+  assert.deepEqual(cardItems("dice-major-skills"), picks("rmaj"));
+  assert.deepEqual(cardItems("dice-minor-skills"), picks("rmin"));
+  assert.equal(new Set(picks("rmaj").concat(picks("rmin"))).size, 10);
+
+  // A custom class rerolls one card at a time, and locked skills survive Randomize all.
+  const minors = picks("rmin");
+  $("dice-major-skills").click();
+  assert.deepEqual(picks("rmin"), minors, "rolling the major skills changed the minor skills");
+  assert.equal(new Set(picks("rmaj").concat(picks("rmin"))).size, 10);
+  $("lock-minor-skills").click();
+  $("btn-rand-all").click();
+  assert.equal(window.eval("challengeRun.cls"), "Custom", "locked skills must keep their custom class");
+  assert.deepEqual(picks("rmin"), minors, "Randomize all rerolled locked skills");
+  $("lock-minor-skills").click();
+
+  // A rolled class brings its own skills, and the skills cards can't roll over them.
+  let tries = 0;
+  do $("dice-class").click(); while (window.eval("challengeRun.cls") === "Custom" && ++tries < 60);
+  const cls = window.eval("challengeRun.cls");
+  const preset = plain(window.eval(`classTable()[${JSON.stringify(cls)}]`));
+  assert.deepEqual(cardItems("dice-major-skills"), preset.maj);
+  assert.deepEqual(cardItems("dice-minor-skills"), preset.min);
+  assert.equal($("dice-major-skills").disabled, true);
+  assert.equal($("dice-minor-skills").disabled, true);
+  window.eval('rollAspect("min")');
+  assert.deepEqual(picks("rmin"), preset.min, "a skills roll replaced the class's skills");
 });
 
-test("ARCE races, classes and builds match the ARCE 4.1 plugin", async () => {
+test("a challenge-run permalink restores the run and ignores anything that isn't on the site's lists", async () => {
   const dom = await loadSite();
-  const races = dom.window.eval("ARCE_RACES");
-  const classes = dom.window.eval("ARCE_CLASS");
-  assert.equal(Object.keys(races).length, 21, "ARCE adds 21 races on top of the vanilla ten");
-  assert.equal(Object.keys(classes).length, 67, "ARCE adds 67 classes on top of the vanilla 21");
-  for (const name of ["Tsaesci", "Naga", "Ayleid", "Khajiit (Tojay)", "Sea Elf", "Reachman", "Duadri"]) assert.ok(races[name], `${name} missing`);
-  for (const name of ["Kamal", "Tang Mo", "Po Tun", "Maormer", "Suthay-raht"]) assert.ok(!races[name], `${name} isn't a race ARCE adds`);
-  // Tamriel_Data's Tsaesci: Agility 50, Unarmored +15.
-  assert.equal(races.Tsaesci.M.Agility, 50);
-  assert.equal(races.Tsaesci.skills.Unarmored, 15);
-  assert.ok(classes["Wise Woman"] && classes["Lamp Knight"], "vanilla NPC classes and Tamriel_Data classes are both included");
-  const builds = [...dom.window.eval("ARCE_BUILDS")];
-  assert.equal(builds.length, 42, "one male and one female sheet per ARCE race");
-  for (const b of builds) {
-    assert.ok(races[b.race], `${b.name} uses a race ARCE doesn't add`);
-    assert.equal(new Set(b.maj.split(", ").concat(b.min.split(", "))).size, 10, `${b.name} picks a skill twice`);
+  const { window } = dom;
+  const { document } = window;
+  document.getElementById("btn-challenge").click();
+  document.getElementById("btn-rand-all").click();
+  const cards = (doc) => [...doc.querySelectorAll("#run-summary .sum-row")].map((row) =>
+    [...row.querySelectorAll(".sum-kicker, .sum-val, .sum-desc")].map((el) => el.textContent).join(" | "));
+  const link = window.location.href;
+  assert.match(link, /#challenge&run=/);
+  const reopened = (await loadSite(link)).window;
+  assert.deepEqual(cards(reopened.document), cards(document));
+  assert.deepEqual(plain(reopened.readPanelBuild("r")), plain(window.readPanelBuild("r")));
+
+  const evil = '<img src=x onerror="window.pwned=1">';
+  const payload = Buffer.from(JSON.stringify({
+    race: evil, gender: "Female", cls: "Custom", spec: "Magic", fav1: "Luck", fav2: evil,
+    maj: [evil, "Block", "Axe", "Spear", "Sneak"], min: ["Alchemy", "Enchant", "Illusion", "Security", "Unarmored"],
+    major: evil, minors: [evil, "Ride a gondola in Vivec"], rests: ["Hard — No potions", evil, "No magic"],
+  })).toString("base64url");
+  const hostile = (await loadSite("https://example.com/#challenge&run=" + payload)).window;
+  assert.equal(hostile.document.querySelector("#run-summary img"), null, "permalink text was read as HTML");
+  assert.equal(hostile.pwned, undefined);
+  const run = plain(hostile.eval("challengeRun"));
+  assert.equal(run.race, "");
+  assert.equal(run.gender, "Female");
+  assert.equal(run.cls, "", "a custom class with an unknown skill or attribute must be dropped");
+  assert.equal(run.major, "");
+  assert.deepEqual(run.minors.map((o) => o.text), ["Ride a gondola in Vivec"]);
+  assert.deepEqual(run.rests, ["No magic"]);
+});
+
+test("restrictions that repeat or undercut each other don't roll together", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const clash = (a, b) => window.restrictionsClash(a, b);
+  const pool = [...window.eval("POOL")];
+  const pairs = [
+    ["Level 20 cap", "Level 10 cap"],
+    ["No magic", "No spending Magicka"],
+    ["No Magicka — fatigue and potions only", "No spending Magicka"],
+    ["No spending Magicka", "No destruction"],
+    ["No birthsign powers", "No activated birthsign powers"],
+    ["No racial powers", "No activated racial powers"],
+    ["One weapon skill forever", "Only level one weapon skill"],
+    ["Ironman — no quicksaving", "Ironman — no reloading a save after a fight"],
+    ["Permadeath — one life", "One save file — no extra manual saves"],
+    ["No companions or summoned meatshields", "No summons in combat"],
+    ["No armor", "No shields"],
+    ["No potions", "Found potions only — no Alchemy-made potions"],
+    ["No alchemy", "No Fortify Intelligence alchemy loop"],
+    ["Marksman only", "No ranged weapons"],
+    ["No Tribunal or Bloodmoon DLC", "Tribunal and Bloodmoon allowed but main quest first"],
+  ];
+  for (const [a, b] of pairs) {
+    assert.ok(pool.includes(a) && pool.includes(b), `${a} / ${b} must both be restrictions`);
+    assert.ok(clash(a, b) && clash(b, a), `${a} and ${b} can roll together`);
   }
+  // Unrelated restrictions still roll together. "Marksman only" used to count as travel because it contains "mark".
+  for (const [a, b] of [["Marksman only", "No Divine Intervention"], ["No destruction", "No restoration"], ["Level 20 cap", "No potions"]]) {
+    assert.ok(!clash(a, b), `${a} and ${b} should be allowed together`);
+  }
+  for (let i = 0; i < 200; i++) {
+    const picks = [...window.pickCompatibleRestrictions(5, pool, [])];
+    for (const a of picks) for (const b of picks) if (a !== b) assert.ok(!clash(a, b), `rolled ${a} with ${b}`);
+  }
+});
+
+test("starting spells come from the race, the birthsign and the magic skills", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const spells = (b) => plain(window.startingSpells(b, window.computeSheet(b)));
+  const mage = {
+    race: "Breton", gender: "Male", sign: "The Mage", spec: "Magic", fav1: "Intelligence", fav2: "Willpower",
+    maj: ["Destruction", "Alteration", "Conjuration", "Mysticism", "Alchemy"], min: ["Enchant", "Illusion", "Restoration", "Short Blade", "Unarmored"],
+  };
+  // Intelligence 60 rules out Exhausting Touch (75) and Tap Energy (180); Restoration 30 is too low for Feet of Notorgo.
+  assert.deepEqual(spells(mage), {
+    race: [], sign: [],
+    skills: ["Bound Dagger", "Chameleon", "Detect Creature", "Fire Bite", "Hearth Heal", "Sanctuary", "Shield", "Summon Ancestral Ghost", "Water Walking"],
+  });
+  const warrior = {
+    race: "Nord", gender: "Male", sign: "The Warrior", spec: "Combat", fav1: "Strength", fav2: "Endurance",
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Athletics"], min: ["Medium Armor", "Axe", "Spear", "Restoration", "Mercantile"],
+  };
+  assert.deepEqual(spells(warrior), { race: [], sign: [], skills: [] });
+  assert.deepEqual(spells({ ...warrior, race: "Argonian" }).race, ["Water Breathing"]);
+  assert.deepEqual(spells({ ...warrior, race: "Khajiit", sign: "The Ritual" }), { race: ["Eye of Night"], sign: ["Blessed Word", "Blessed Touch"], skills: [] });
+
+  const { document } = window;
+  document.getElementById("btn-build").click();
+  document.getElementById("btn-custom").click();
+  setSheet(window, { race: "Argonian", sign: "The Serpent" });
+  const sheet = document.getElementById("c-summary").textContent;
+  assert.match(sheet, /From your race: Water Breathing/);
+  assert.match(sheet, /From your birthsign: Star-Curse/);
+});
+
+test("the challenge run has no leftovers from the old version", () => {
+  const html = fs.readFileSync(SITE_PATH, "utf8");
+  for (const id of ["inc-aspects", "inc-race", "rand-class", "rand-maj", "btn-rand-char", "r-summary", "challenge-char-editor",
+    "btn-major", "btn-obj", "btn-roll", "major-drawn", "obj-drawn", "drawn", "drawn-note", "btn-about", "btn-changelog", "btn-save-code"]) {
+    assert.doesNotMatch(html, new RegExp(`id="${id}"|getElementById\\("${id}"\\)`), `${id} is left over`);
+  }
+  const start = html.indexOf("const OBJECTIVES = [");
+  assert.doesNotMatch(html.slice(start, html.indexOf("];", start)), /\n\s*\n/, "blank lines in OBJECTIVES");
 });
 
 test("restrictions and objectives name real things and suit the world", async () => {
@@ -513,19 +593,24 @@ test("places show their region, and the early-game note explains Mentor's Ring",
   assert.match(document.querySelector("#gear-box details p.muted").textContent, /Samarys Ancestral Tomb near Seyda Neen/);
   // Region labels stay out of the text the challenge run reads back.
   document.getElementById("btn-challenge").click();
-  document.getElementById("btn-major").click();
+  document.getElementById("dice-major").click();
   const major = window.eval("currentMajorText()");
   assert.ok([...window.eval("activeMajors()")].includes(major), `the major objective text picked up extra words: ${major}`);
+  const card = document.getElementById("dice-major").closest(".sum-row").querySelector(".sum-val");
+  assert.equal(window.plainText(card), major);
 });
 
-test("About lists corrections and support contacts, and the changelog opens", async () => {
+test("About lists corrections and support contacts, and the footer opens the changelog", async () => {
   const dom = await loadSite();
   const { document } = dom.window;
   assert.doesNotMatch(document.getElementById("panel-about").textContent, /verified by hand against UESP/i, "About must not overstate how data was checked");
   assert.ok(document.querySelector('#panel-about a[href="mailto:tmarcalferreira@gmail.com"]'), "corrections email link missing");
   assert.ok(document.querySelector('#panel-about a[href="https://ko-fi.com/tmarcalferreira"]'), "Ko-fi link missing");
-  document.getElementById("btn-changelog").click();
-  assert.ok(document.getElementById("panel-changelog").classList.contains("show"), "the Changelog button should open the changelog");
+  assert.ok(document.querySelector('#panel-about a[href="https://www.paypal.com/ncp/payment/CELX7C97ZJ2D6"]'), "PayPal link missing");
+  document.getElementById("link-changelog-footer").click();
+  assert.ok(document.getElementById("panel-changelog").classList.contains("show"), "the footer link should open the changelog");
   assert.ok(!document.getElementById("panel-about").classList.contains("show"), "opening the changelog should close About");
-  assert.ok(document.querySelectorAll("#panel-changelog time").length >= 2, "changelog entries need dates");
+  document.getElementById("link-about-footer").click();
+  assert.ok(document.getElementById("panel-about").classList.contains("show"), "the footer link should open About");
+  assert.ok(document.querySelectorAll("#panel-changelog time").length >= 3, "changelog entries need dates");
 });

@@ -1,5 +1,5 @@
+<!-- aha-build-id: bmu22bvty2en1rqve -->
 <!-- aha-release: 2 -->
-<!-- aha-build-id: bmu0n2fy96eopy8ke -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,25 +141,32 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     header {
       position: relative;
       z-index: 30;
-      max-width: 880px;
-      margin: 16px auto 0;
+      max-width: none;
+      margin: 16px 0 0;
       width: 100%;
       text-align: left;
     }
     .brand {
-      flex: 1;
+      flex: 0 1 auto;
       min-width: 0;
       padding-right: 12px;
       overflow-wrap: normal;
       word-break: normal;
     }
     header h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin: 0; }
+    .brand-home { color: inherit; text-decoration: none; }
+    .brand-home:hover { color: var(--gold); }
     .kicker {
       letter-spacing: normal;
       text-transform: none;
       font-size: 0.92rem;
       color: #f4ead4;
       margin: 6px 0 0;
+    }
+    .kicker .page-sub {
+      display: block;
+      margin-top: 4px;
+      color: #cfc3aa;
     }
     h1 {
       font-size: clamp(2.4rem, 6vw, 4.4rem);
@@ -177,12 +184,32 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     .actions {
       margin-top: 28px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      justify-content: start;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: stretch;
+      gap: 18px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      float: none;
     }
-    @media (max-width: 560px) { .actions { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) {
+      .actions { display: grid; grid-template-columns: 1fr; justify-content: stretch; }
+    }
+    @media (min-width: 561px) {
+      .home-card {
+        flex: 0 1 280px;
+        width: 280px;
+        max-width: 320px;
+        min-height: 180px;
+        padding: 28px 24px 24px;
+        border-width: 3px;
+        border-color: #f0d48a;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(240, 212, 138, 0.25);
+      }
+      .home-card strong { font-size: 1.35rem; }
+    }
     .home-card {
       display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
       text-align: left; width: 100%; min-width: 0; min-height: 140px;
@@ -222,9 +249,33 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       margin: 28px 0 8px;
       padding: 18px 16px;
       font-size: 1.25rem;
+      background: var(--gold);
+      color: #1a140c;
       border-width: 2px;
-      border-color: #d4b06a;
+      border-color: var(--gold);
     }
+    .build-mode .btn.on, .premade-filters .btn.on {
+      background: var(--gold);
+      color: #1a140c;
+      border-color: var(--gold);
+      box-shadow: none;
+    }
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 24px;
+      margin: 0 0 12px;
+    }
+    .sheet-grid .sheet-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      border-bottom: 1px solid rgba(196,160,86,0.22);
+      padding: 2px 0;
+    }
+    .sheet-grid .sheet-row span { color: #f4ead4; }
+    .sheet-grid .sheet-row strong { color: var(--gold); font-variant-numeric: tabular-nums; }
     .save-row {
       margin-top: 32px;
       padding-top: 16px;
@@ -247,19 +298,62 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     .panel.show { display: block; }
     #panel-home {
-      display: block !important;
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
       background: transparent;
       border: none;
-      text-align: left;
-      max-width: 720px;
-      padding: 8px 0 24px;
+      text-align: center;
+      max-width: none;
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+      padding: 28px 0 24px;
+    }
+    #panel-home > p {
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
     body.view-challenge #panel-home,
     body.view-builder #panel-home { display: none !important; }
     body.view-challenge #panel-challenge { display: block; }
     body.view-builder #panel-build { display: block; }
-    #panel-home h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 8px 0 12px; }
-    #panel-home .actions { justify-content: start; }
+    body.view-challenge #btn-challenge,
+    body.view-builder #btn-build {
+      background: var(--gold);
+      color: #1a140c;
+      border-color: var(--gold);
+    }
+    body.view-challenge #btn-build,
+    body.view-builder #btn-challenge {
+      background: transparent;
+      color: var(--gold);
+      border-color: transparent;
+    }
+    #btn-rand-all {
+      background: var(--gold);
+      color: #1a140c;
+      border-color: var(--gold);
+      width: 100%;
+      flex: 1 1 100%;
+    }
+    .challenge-controls { display: flex; flex-direction: column; gap: 10px; margin: 12px 0 0; }
+    .challenge-controls .row { margin: 0; }
+    @media (max-width: 900px) {
+      .challenge-controls .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .challenge-controls .row .btn {
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 100%;
+        white-space: normal;
+      }
+    }
+    #panel-home h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 8px 0 12px; text-align: center; }
+    #panel-home .actions { display: flex; justify-content: center; }
 
     .panel h2 { font-size: 1.4rem; margin-bottom: 8px; color: var(--gold); }
     .panel p { color: #f4ead4; line-height: 1.5; }
@@ -290,6 +384,133 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       gap: 8px;
       min-height: 44px;
     }
+    .aspect-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+    }
+    .aspect-row label { flex: 1; min-height: 44px; margin: 0; }
+    .icon-btn {
+      width: 1.55em;
+      height: 1.55em;
+      padding: 0;
+      flex: 0 0 1.55em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d4b06a;
+      background: transparent;
+      color: #d4b06a;
+      cursor: pointer;
+      line-height: 1;
+      box-sizing: border-box;
+    }
+    .icon-btn:hover { background: rgba(212,176,106,0.12); }
+    .icon-btn[aria-pressed="true"] {
+      background: rgba(212,176,106,0.22);
+      color: #f3e6c4;
+    }
+    .icon-btn svg { width: 0.85em; height: 0.85em; display: block; }
+    .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; background: transparent; }
+    body.view-challenge #panel-challenge > h2 { display: none; }
+    .run-board { display: block; }
+    #run-summary.summary {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px 12px;
+      align-items: stretch;
+    }
+    #run-summary .sum-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0;
+      padding: 10px 12px;
+      border: 1px solid #8a7344;
+      background: rgba(12,10,8,0.55);
+      min-width: 0;
+      position: relative;
+    }
+    #run-summary .sum-acts {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      height: 1.55em;
+      font-size: 1.35rem;
+      align-items: center;
+      margin: 0;
+    }
+    #run-summary .sum-row.sum-wide { grid-column: span 2; }
+    #run-summary .sum-kicker {
+      display: block;
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+      color: #d4b06a;
+      line-height: 1.55em;
+      min-height: 1.55em;
+      padding-right: 4.4em;
+    }
+    #run-summary .sum-val {
+      display: block;
+      font-size: 1.85rem;
+      line-height: 1.2;
+      color: #f4ead4;
+      overflow-wrap: anywhere;
+    }
+    #run-summary .sum-desc,
+    #run-summary .sum-desc li {
+      font-size: 0.92rem;
+      line-height: 1.35;
+      color: #cfc3aa;
+    }
+    #run-summary .sum-desc { margin: 0; padding-left: 1.1em; }
+    #run-summary .sum-note { display: block; font-size: 0.92rem; line-height: 1.35; color: #cfc3aa; }
+    #run-summary .sum-row.sum-locked {
+      height: 12.5rem;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    #run-summary .sum-row.sum-locked .sum-text {
+      overflow: hidden;
+      min-height: 0;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 4px;
+    }
+    #run-summary .sum-row.sum-locked .sum-desc {
+      overflow: auto;
+      min-height: 0;
+      flex: 1 1 auto;
+      max-height: none;
+    }
+    #run-summary .sum-row > .sum-text { flex: 1; min-width: 0; margin: 0; overflow-wrap: anywhere; }
+    @media (max-width: 900px) {
+      #run-summary.summary { grid-template-columns: 1fr; }
+      #run-summary .sum-row.sum-wide { grid-column: 1 / -1; }
+      #run-summary .sum-kicker { white-space: nowrap; }
+    }
+    /* Four columns get narrow below 1200px: the card titles shrink, and below 1100px the fixed-height cards grow so five skills fit under a two-line title. */
+    @media (min-width: 901px) and (max-width: 1199px) {
+      #run-summary .sum-kicker, #run-summary .sum-acts { font-size: 1.1rem; }
+    }
+    @media (min-width: 901px) and (max-width: 1099px) {
+      #run-summary .sum-row.sum-locked { height: 14rem; }
+    }
+    #panel-challenge,
+    #run-summary {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    #run-summary { overflow-wrap: anywhere; word-break: break-word; }
+    #panel-challenge select { width: 100%; max-width: 100%; box-sizing: border-box; }
+    .sum-row .sum-acts { display: flex; gap: 6px; flex: 0 0 auto; }
     input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
@@ -320,15 +541,44 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     input[type="checkbox"]:disabled::after { color: #8a8680; }
     .chk-grid label:has(input:disabled) { color: #8a8680; }
-    #btn-rand-char {
-      background: linear-gradient(180deg, rgba(90, 58, 28, 0.38) 0%, rgba(12, 8, 4, 0.16) 100%);
-    }
     select:focus-visible, input:focus-visible {
       outline: 3px solid #f0d48a;
       outline-offset: 2px;
     }
-    .drawn { margin-top: 16px; }
-    .drawn li { margin: 8px 0 8px 1.2em; color: var(--paper); }
+    #challenge-advanced .pool {
+      margin: 8px 0 28px;
+      border: 0;
+      padding: 0;
+      background: transparent;
+    }
+    #challenge-advanced .pool summary {
+      cursor: pointer;
+      color: var(--gold);
+      font-size: 1rem;
+      display: inline;
+      list-style: none;
+      border: 0;
+      padding: 0;
+      background: none;
+      width: auto;
+    }
+    #challenge-advanced .pool summary::-webkit-details-marker { display: none; }
+    #challenge-advanced .pool summary::before { content: "▶ "; }
+    #challenge-advanced .pool[open] summary::before { content: "▼ "; }
+    #challenge-advanced .pool summary:hover { text-decoration: underline; }
+    #challenge-advanced h2 { margin-top: 8px; }
+    #challenge-advanced .row { margin: 8px 0 6px; align-items: flex-end; }
+    #challenge-advanced .restrict-toggles {
+      margin: 4px 0 10px;
+      max-width: none;
+    }
+    #challenge-advanced .restrict-toggles.chk-grid {
+      grid-template-columns: repeat(2, minmax(0, 50%));
+      width: 100%;
+      max-width: 520px;
+      margin-top: 4px;
+      gap: 4px 12px;
+    }
     .pool { margin-top: 18px; border: 1px solid #3a3224; padding: 12px 16px; }
     .pool summary { cursor: pointer; color: var(--gold); font-size: 1rem; }
     .pool ul { max-height: 220px; overflow: auto; margin-top: 8px; }
@@ -374,7 +624,18 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     .build-sheet { display: none; margin: 0 0 8px 12px; padding: 12px 14px; border: 1px solid #3a3224; border-radius: 10px; background: #14110d; }
     .build-item.open .build-sheet { display: block; }
     .build-sheet p { margin: 4px 0; font-size: 0.95rem; }
+    .sheet-skills { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.35rem; row-gap: 0.35rem; }
+    .sheet-skills.sheet-vitals { column-gap: 0.75rem; row-gap: 0.2rem; }
+    .sheet-skills strong { margin-right: 0; }
+    .sheet-skill { display: inline-block; min-width: 0; }
     .custom-grid { display: grid; gap: 12px; margin-top: 12px; }
+    #custom .custom-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    #custom .field-span { grid-column: 1 / -1; }
+    #custom .field-left { grid-column: 1; }
+    @media (max-width: 520px) {
+      #custom .custom-grid { grid-template-columns: minmax(0, 1fr); }
+      #custom .field-left { grid-column: 1; }
+    }
     .field label { display: block; color: var(--gold); margin-bottom: 4px; }
     .tip {
       margin-top: 6px; font-size: 0.92rem; color: #cfc3aa; line-height: 1.45;
@@ -434,6 +695,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 
 
     .muted { color: #cfc3aa; font-size: 0.95rem; }
+    a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; }
+    a:hover { color: #f0d48a; }
     .hidden { display: none !important; }
     #gear-box details {
       border-bottom: 1px solid #3a3224;
@@ -487,89 +750,190 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       gap: 12px;
       margin-bottom: 8px;
     }
-    .hamburger {
-      appearance: none;
-      background: transparent;
-      border: 2px solid #d4b06a;
-      border-radius: 0;
-      box-shadow: none;
-      color: #f3e6c8;
-      width: 48px;
-      height: 48px;
-      min-width: 48px;
-      padding: 0;
-      cursor: pointer;
-      font-size: 1.4rem;
-      line-height: 1;
+    .header-tools {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-left: auto;
     }
-    .menu-drawer {
-      display: none;
-      position: absolute;
-      top: 56px;
-      right: 0;
-      left: auto;
-      background: #14110d;
-      border: 1px solid #c9a45a;
-      border-radius: 12px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
-      min-width: min(280px, calc(100vw - 48px));
-      max-width: 340px;
-      max-height: min(90vh, 640px);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      z-index: 50;
-      padding: 10px 12px;
-      text-align: left;
+    .nav-primary { display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
+    body:not(.view-challenge):not(.view-builder) .nav-primary { display: none; }
+    .nav-secondary { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 14px; width: 100%; }
+    .nav-link {
+      appearance: none; background: none; border: 0; padding: 0; margin: 0;
+      color: var(--gold); font-family: inherit; font-size: 0.95rem;
+      cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+      min-height: 0; min-width: 0; box-shadow: none;
     }
-    .menu-drawer.open { display: block; }
-    .menu-drawer .btn { margin: 6px 0; min-width: 0; width: 100%; }
-    .menu-drawer button {
-      display: block;
-      width: 100%;
-      min-width: 0;
+    .nav-link:hover { color: #f0d48a; }
+    .world-bar {
+      display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-end; justify-content: flex-start; gap: 2px;
       margin: 0;
-      text-align: left;
+      white-space: normal;
     }
-    .world-badge {
+    .world-bar .world-label { display: none; }
+    .seg {
+      display: inline-flex; flex-wrap: nowrap; flex: 0 0 auto;
+      border: 1px solid #8a7344; border-radius: 999px; overflow: hidden;
+      white-space: nowrap;
+    }
+    .seg .seg-btn {
+      appearance: none; border: 0; background: transparent; color: #f4ead4;
+      font-family: inherit; font-size: 0.75rem; padding: 4px 8px; cursor: pointer;
+      min-height: 0; min-width: 0; box-shadow: none; border-radius: 0;
+    }
+    .seg .seg-btn + .seg-btn { border-left: 1px solid #8a7344; }
+    .seg .seg-btn.on, .seg .seg-btn[aria-pressed="true"] {
+      background: #3a2a18; color: #f0d48a;
+    }
+    .arce-toggle {
+      appearance: none; border: 1px solid #8a7344; background: transparent;
+      color: #f4ead4; font-family: inherit; font-size: 0.75rem;
+      padding: 4px 8px; border-radius: 999px; cursor: pointer;
+      min-height: 0; box-shadow: none;
+    }
+    .arce-toggle.on { background: #3a2a18; color: #f0d48a; border-color: #c9a45a; }
+    .world-controls {
+      display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-end; justify-content: flex-start; gap: 2px;
+    }
+    .hamburger { display: none !important; }
+    .menu-drawer {
+      display: flex;
+      position: static;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: flex-end;
+      margin-left: auto;
+      gap: 8px;
+      min-width: 0;
+      max-width: none;
+      max-height: none;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+      overflow: visible;
+      z-index: 50;
+      text-align: right;
+    }
+    .menu-drawer.open { display: flex; }
+    .menu-drawer .btn {
+      width: auto;
       display: inline-block;
-      margin-top: 6px;
-      padding: 2px 8px;
-      border: 1px solid #d4b06a;
-      color: #f3e6c8;
-      font-size: 0.85rem;
+      margin: 0;
+      text-align: center;
     }
-    @media (min-width: 900px) {
-      .hamburger { display: none; }
-      /* Nav wraps under the brand rather than squeezing it to a sliver. */
-      .topbar { flex-wrap: wrap; }
-      .brand { flex: 1 1 260px; }
-      .menu-drawer {
-        display: flex;
-        position: static;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 8px;
-        min-width: 0;
-        max-width: none;
-        max-height: none;
-        background: transparent;
-        border: 0;
-        box-shadow: none;
-        padding: 0;
-        overflow: visible;
+    .menu-drawer .seg { display: inline-flex; }
+    .menu-drawer .seg .seg-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: auto; margin: 0;
+    }
+    .menu-drawer .arce-toggle {
+      display: none;
+      width: auto; margin: 0;
+    }
+    body.world-tr .menu-drawer .arce-toggle { display: inline-flex; align-items: center; }
+    .world-badge { display: none; }
+    .topbar { align-items: flex-start; }
+    .topbar .brand h1 { line-height: 1.1; }
+    .header-tools { align-items: flex-start; padding-top: 2px; }
+    #panel-challenge .row { margin: 8px 0 0; }
+    body.view-challenge #panel-challenge {
+      padding-bottom: 10px;
+      margin-bottom: 0;
+    }
+    body.view-challenge #panel-challenge > .row:last-of-type {
+      margin: 10px 0 0;
+    }
+    body.view-challenge #challenge-advanced.hidden { margin: 0; padding: 0; }
+    #panel-about { font-size: 0.92rem; }
+    #panel-about h2 { margin-bottom: 6px; }
+    #panel-about p { margin: 0 0 8px; line-height: 1.35; }
+    #panel-about h3 { margin: 10px 0 4px; font-size: 1.05rem; }
+    @media (min-width: 1080px) {
+      #panel-about { max-height: calc(100vh - 160px); overflow: auto; }
+      .about-legal { margin-bottom: 8px; }
+      .about-credits { margin-top: 8px; padding-top: 8px; }
+    }
+    .seg .seg-btn, .arce-toggle {
+      min-height: 28px;
+      padding: 4px 8px;
+    }
+    @media (max-width: 899px) {
+      .header-tools, .menu-drawer {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        width: 100%;
+        max-width: 100%;
       }
-      .menu-drawer.open { display: flex; }
-      .menu-drawer .btn, .menu-drawer button {
-        width: auto;
-        display: inline-block;
+      .nav-primary {
+        order: 0;
+        width: 100%;
+        justify-content: stretch;
+        flex-wrap: wrap;
+      }
+      .world-bar { order: 1; width: 100%; align-items: flex-end; }
+      .world-bar .world-label { display: none; }
+      .seg { flex-wrap: nowrap; }
+      .seg .seg-btn, .arce-toggle { font-size: 0.75rem; white-space: nowrap; }
+      #btn-world-tr { font-size: 0; }
+      #btn-world-tr::after { content: "TR"; font-size: 0.75rem; }
+      #btn-arce { font-size: 0; }
+      #btn-arce::after { content: "ARCE"; font-size: 0.75rem; }
+      .nav-primary .btn { font-size: 0.75rem; padding: 8px 10px; min-height: 44px; flex: 1 1 auto; }
+      .topbar { flex-wrap: wrap; }
+      #run-summary .sum-row {
+        padding-right: 12px;
+        display: flex;
+        flex-direction: column;
+      }
+      #run-summary .sum-text { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
+      #run-summary .sum-kicker {
+        order: 0;
+        padding-right: 4.4em;
+        line-height: 1.55em;
+        min-height: 1.55em;
+      }
+      #run-summary .sum-acts {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        order: 0;
+        height: 1.55em;
+        font-size: 1.35rem;
+        align-self: auto;
         margin: 0;
       }
-      .menu-drawer .world-label {
-        display: block;
-        width: 100%;
-        flex-basis: 100%;
-        margin: 4px 0 0;
+      #run-summary .sum-val {
+        order: 2;
+        font-size: clamp(1.05rem, 4.2vw, 1.7rem);
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+        word-break: normal;
+        hyphens: none;
       }
+      #run-summary .sum-desc { order: 3; }
+    }
+    @media (min-width: 900px) {
+      .topbar { flex-wrap: nowrap; align-items: flex-start; justify-content: space-between; }
+      .brand { flex: 0 1 auto; min-width: 0; }
+      .brand h1 { white-space: nowrap; }
+      /* The nav and world switches keep their width, so the tagline wraps instead of the nav sliding over the site name. */
+      .header-tools { flex: 0 0 auto; }
+      .world-bar .world-label { display: block; }
+      .seg .seg-btn, .arce-toggle { font-size: 0.8rem; white-space: nowrap; }
+    }
+    /* Below 1200px the full world labels leave the site name no room, so they shorten to TR and ARCE. */
+    @media (min-width: 900px) and (max-width: 1199px) {
+      .nav-primary .btn { font-size: 0.9rem; padding: 8px 12px; min-height: 40px; }
+      #btn-world-tr, #btn-arce { font-size: 0; }
+      #btn-world-tr::after, #btn-arce::after { font-size: 0.8rem; }
+      #btn-world-tr::after { content: "TR"; }
+      #btn-arce::after { content: "ARCE"; }
     }
 
     .site-footer {
@@ -578,7 +942,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       z-index: 2;
       width: 100%;
       max-width: 100%;
-      margin: 28px 0 0;
+      margin: auto 0 0;
       padding: 16px 8px 8px;
       text-align: center;
       font-size: 0.95rem;
@@ -602,29 +966,32 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     <header>
       <div class="topbar">
         <div class="brand">
-          <h1>Silt Strider</h1>
-          <p class="kicker">siltstrider.tools — Morrowind build planner & challenge run generator</p>
-          <span class="world-badge" id="world-badge">Vanilla</span>
+          <h1><a href="#home" class="brand-home" id="link-home">Silt Strider</a></h1>
+          <p class="kicker">siltstrider.tools — Morrowind build planner & challenge run generator<span class="page-sub" id="page-sub">Two tools for Vvardenfell: roll a challenge run, or tune a character sheet.</span></p>
+          <span class="world-badge" id="world-badge" hidden>Vanilla</span>
           <p class="muted" id="world-warn" hidden></p>
         </div>
         <button type="button" class="hamburger" id="btn-menu" aria-label="Open menu" aria-expanded="false" aria-controls="menu-drawer">☰</button>
-        <div class="menu-drawer" id="menu-drawer">
-          <button type="button" class="btn" id="btn-home">Home</button>
-          <button type="button" class="btn" id="btn-challenge">Challenge Runs</button>
-          <button type="button" class="btn" id="btn-build">Build Optimizer</button>
-          <button type="button" class="btn" id="btn-about">About</button>
-          <button type="button" class="btn" id="btn-changelog">Changelog</button>
-          <p class="muted world-label" style="margin:12px 0 6px">World</p>
-          <button type="button" class="btn" id="btn-world-vanilla">Vanilla</button>
-          <button type="button" class="btn" id="btn-world-tr">Tamriel Rebuilt</button>
-          <button type="button" class="btn" id="btn-arce">ARCE (All Races and Classes Enabled) — extra races and classes off</button>
+        <div class="header-tools menu-drawer" id="menu-drawer">
+          <div class="nav-primary">
+            <button type="button" class="btn" id="btn-challenge">Challenge Runs</button>
+            <button type="button" class="btn" id="btn-build">Build Optimizer</button>
+          </div>
+          <div class="nav-secondary world-bar" id="world-bar">
+            <div class="world-controls">
+              <div class="seg" role="group" aria-label="World">
+                <button type="button" class="seg-btn" id="btn-world-vanilla">Vanilla</button>
+                <button type="button" class="seg-btn" id="btn-world-tr" title="Tamriel Rebuilt">Tamriel Rebuilt</button>
+              </div>
+              <button type="button" class="arce-toggle" id="btn-arce" title="ARCE - Extra Races and Classes">ARCE - Extra Races and Classes</button>
+            </div>
+          </div>
         </div>
       </div>
-      <p class="sub" id="page-sub">Two tools for Vvardenfell: roll a challenge run, or tune a character sheet.</p>
     </header>
     <div class="panel show" id="panel-home">
       <h2>Choose a tool</h2>
-      <p>New to Morrowind? Start here: pick Challenge Runs to roll a fun set of limits, or Build Optimizer to see starting skills and a kit. Restrictions are extra rules you choose for a harder playthrough. ARCE (All Races and Classes Enabled) appears after you turn on Tamriel Rebuilt in the menu.</p>
+      <p>New to Morrowind? Start here: pick Challenge Runs to roll a fun set of limits, or Build Optimizer to see starting skills and a kit. Restrictions are extra rules you choose for a harder playthrough. ARCE (All Races and Classes Enabled) appears after you enable Tamriel Rebuilt.</p>
       <div class="actions">
         <button type="button" class="btn home-card" id="btn-go-challenge"><strong>Challenge Runs</strong><span>Roll restrictions, a character, and side goals for this playthrough.</span></button>
         <button type="button" class="btn home-card" id="btn-go-build"><strong>Build Optimizer</strong><span>Open premade sheets or tune a custom class, then pick early and late gear.</span></button>
@@ -635,7 +1002,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       <div class="about-legal">
         <p>Silt Strider is an unofficial fan project. It is neither directly nor indirectly affiliated with, endorsed by, or sponsored by Bethesda Softworks, Bethesda Game Studios, or ZeniMax Media.</p>
         <p>It exists as a free reference and planning aid for players of The Elder Scrolls III: Morrowind. It is not intended to infringe upon the copyrights of Bethesda Game Studios or its parent and affiliate companies, and reproduces no game assets, art, audio, or text.</p>
-        <p>Races, classes, birthsigns, skills and gear are checked against data read straight from the game files: Morrowind, Tribunal and Bloodmoon, and for Tamriel Rebuilt, Tamriel_Data and TR_Mainland (26.08 Poison Song). Restrictions and objectives are written from the Unofficial Elder Scrolls Pages (UESP) and play, and are still being reviewed.</p>
+        <p>Races, classes, birthsigns, skills and gear are checked against data read straight from the game files: Morrowind, Tribunal and Bloodmoon, and for Tamriel Rebuilt, Tamriel_Data and TR_Mainland (26.08 Poison Song). Restrictions and objectives are human curated.</p>
         <p>The Elder Scrolls III: Morrowind® (Tribunal, Bloodmoon) was developed by Bethesda Game Studios LLC, a ZeniMax Media company. ZeniMax, The Elder Scrolls, Morrowind, Tribunal, Bloodmoon, Bethesda Softworks and related logos are registered trademarks or trademarks of ZeniMax Media Inc. in the US and/or other countries. All Rights Reserved.</p>
       </div>
       <div class="about-credits">
@@ -644,15 +1011,39 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <p>Game data: read from Morrowind.esm, Tribunal.esm, Bloodmoon.esm, Tamriel_Data.esm and TR_Mainland.esm. References: the Unofficial Elder Scrolls Pages (UESP) and tamriel-rebuilt.org.</p>
         <p>Tamriel Rebuilt and ARCE are community projects by their respective teams; Silt Strider supports them but is not affiliated with either.</p>
         <h3>Colophon</h3>
-        <p>The site's code was written with AI assistance. Builds and gear recommendations are checked by script against data read from the game files; restrictions and objectives are still being reviewed by hand.</p>
-        <h3>Corrections and support</h3>
+        <p>The site's code was written with AI assistance. Builds and gear recommendations are checked by script against data read from the game files. Restrictions and objectives are human curated.</p>
+        <h3>Corrections</h3>
         <p>Spotted a mistake? Email <a href="mailto:tmarcalferreira@gmail.com">tmarcalferreira@gmail.com</a>.</p>
-        <p>Hosting costs roughly $60/year. If the site is useful to you, a donation helps cover it: <a href="https://ko-fi.com/tmarcalferreira" target="_blank" rel="noopener">Ko-fi</a>, or PayPal to lowgraphrpg@gmail.com.</p>
+        <h3>Support</h3>
+        <p>Hosting and tools cost roughly $60/year. If the site is useful to you, a donation helps cover it: <a href="https://ko-fi.com/tmarcalferreira" target="_blank" rel="noopener">Ko-fi</a>, or <a href="https://www.paypal.com/ncp/payment/CELX7C97ZJ2D6" class="paypal-link" target="_blank" rel="noopener">PayPal</a>.</p>
       </div>
     </div>
     <div class="panel" id="panel-changelog">
       <h2>Changelog</h2>
       <p class="muted">What changed on Silt Strider, newest first.</p>
+      <section class="changelog-day">
+        <h3><time datetime="2026-09-15">September 15, 2026</time></h3>
+        <ul>
+          <li>Every card on a challenge run has its own randomize and lock buttons, and Randomize all rerolls the cards that aren't locked. The What to randomize ticks, Randomize character and the challenge-run character sheet are gone.</li>
+          <li>New Major skills and Minor skills cards sit beside Restrictions. They show the rolled class's skills, and roll on their own only while the class is Custom or not rolled yet: a skills roll makes a custom class with a random specialization and favored attributes. Class rolls can land on Custom too.</li>
+          <li>Copy permalink copies a link that reopens the same run, and Send to Build Optimizer opens the rolled character in the custom builder.</li>
+          <li>The number of objectives and restrictions, the difficulty bands and the full lists moved to Advanced settings.</li>
+          <li>Restrictions that repeat or undercut each other no longer roll together, such as a level 10 and a level 20 cap, No magic and No spending Magicka, or Marksman only and No ranged weapons.</li>
+          <li>New restrictions: Ironman with no quicksaving, only level one weapon skill, no jumping, no spending Magicka, no activated birthsign or racial powers, and a level 10 cap. Removed No companions, No killing named NPCs, No exploits or glitches, the Calm or Frenzy, water-taunting, Restore Health kiting and Acrobatics cheese bans, The Atronach and no potions, No sleeping to recover magicka, No skill books, and no ingredients from named town containers.</li>
+          <li>Naked start is now Easy. The Strength and Intelligence caps and the level 20 cap are Hard instead of Grind.</li>
+          <li>The Fighters, Mages and Thieves Guilds are separate major objectives. Dropped becoming Hortator of all three Houses and completing every quest in one town.</li>
+          <li>The Tamriel Rebuilt guild, Legion, Temple and Imperial Cult major objectives are now to complete all their quests in five mainland cities. Dropped the Telvanni Isles questline.</li>
+          <li>Removed eleven minor objectives, among them leaving skill books unread, talking to every named NPC in Pelagiad and finding your way out of Vivec's sewers.</li>
+          <li>Starting spells lists what a new character begins with: spells from the race and the birthsign, and the starter spells the game gives for strong enough magic skills.</li>
+          <li>Argonian Water Breathing and Khajiit Eye of Night are listed as spells, not a constant effect and a power, and so are The Lord's Blood of the North and The Serpent's Star-Curse.</li>
+          <li>Starting sheet: skills sit in an even grid, and Health, Fatigue and Magicka share a row.</li>
+          <li>The custom builder's fields sit in two columns.</li>
+          <li>Optimize gear no longer shows a “Full kit by slot” heading.</li>
+          <li>Removed Copy this loadout, Save build and build codes. The address bar keeps a link to the current sheet, and Copy link copies it.</li>
+          <li>About and Changelog open from the links at the bottom of the page. About has separate Corrections and Support sections, with Ko-fi and PayPal, and says restrictions and objectives are curated by hand.</li>
+          <li>Fixed the navigation overlapping the site name in desktop windows narrower than 1200 pixels.</li>
+        </ul>
+      </section>
       <section class="changelog-day">
         <h3><time datetime="2026-09-14">September 14, 2026</time></h3>
         <ul>
@@ -686,129 +1077,43 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         </ul>
       </section>
     </div>
-    <script>
-    (function () {
-      function go(name) {
-        document.body.classList.remove("view-challenge", "view-builder");
-        if (name === "challenge") document.body.classList.add("view-challenge");
-        if (name === "builder") document.body.classList.add("view-builder");
-        var ph = document.getElementById("panel-home");
-        var pc = document.getElementById("panel-challenge");
-        var pb = document.getElementById("panel-build");
-        if (ph) { ph.classList.toggle("show", name === "home"); }
-        if (pc) { pc.classList.toggle("show", name === "challenge"); }
-        if (pb) { pb.classList.toggle("show", name === "builder"); }
-        var pa = document.getElementById("panel-about");
-        if (pa) { pa.classList.toggle("show", name === "about"); }
-        var pcl = document.getElementById("panel-changelog");
-        if (pcl) { pcl.classList.toggle("show", name === "changelog"); }
-        var d = document.getElementById("menu-drawer");
-        if (d) d.classList.remove("open");
-      }
-      var menu = document.getElementById("btn-menu");
-      var drawer = document.getElementById("menu-drawer");
-      if (menu && drawer && !menu.getAttribute("data-bound")) {
-        menu.setAttribute("data-bound", "1");
-        menu.addEventListener("click", function () {
-          var open = drawer.classList.toggle("open");
-          menu.setAttribute("aria-expanded", open ? "true" : "false");
-        });
-      }
-      function bind(id, view) {
-        var el = document.getElementById(id);
-        if (el && !el.getAttribute("data-bound")) {
-          el.setAttribute("data-bound", "1");
-          el.addEventListener("click", function () { go(view); });
-        }
-      }
-      /* Nav clicks are bound later via showView so the address bar stays in sync. */
-    })();
-    </script>
     <div class="panel" id="panel-challenge">
       <h2>Run summary</h2>
-      <div class="summary" id="run-summary"><p class="muted">Roll a build and the lists below. This card fills in as you go.</p></div>
-      <div class="row" style="margin:12px 0 24px">
+      <div class="run-board">
+      <div class="summary" id="run-summary"></div>
+      </div>
+      <div class="challenge-controls">
         <button type="button" class="btn" id="btn-rand-all">Randomize all</button>
-        <button type="button" class="btn" id="btn-copy-summary">Copy summary</button>
-      </div>
-      <h2>Build</h2>
-      <p>Tick what to randomize, then roll. Unticked fields stay as you set them. Stats update like the custom builder.</p>
-      <div class="chk-grid">
-        <label><input type="checkbox" id="rand-class" checked /> Class</label>
-        <label><input type="checkbox" id="rand-race" checked /> Race</label>
-        <label><input type="checkbox" id="rand-gender" checked /> Gender</label>
-        <label><input type="checkbox" id="rand-sign" checked /> Birthsign</label>
-        <label><input type="checkbox" id="rand-maj" /> Major skills</label>
-        <label><input type="checkbox" id="rand-min" /> Minor skills</label>
-      </div>
-      <button type="button" class="btn" id="btn-rand-char" style="margin:16px 0">Randomize character</button>
-      <div class="custom-grid">
-        <div class="field">
-          <label for="r-class">Class</label>
-          <select id="r-class">
-            <option>Acrobat</option><option>Agent</option><option>Archer</option><option>Assassin</option><option>Barbarian</option><option>Bard</option><option>Battlemage</option><option>Crusader</option><option>Healer</option><option>Knight</option><option>Mage</option><option>Monk</option><option>Nightblade</option><option>Pilgrim</option><option>Rogue</option><option>Scout</option><option>Sorcerer</option><option>Spellsword</option><option>Thief</option><option selected>Warrior</option><option>Witchhunter</option><option>Custom</option>
-          </select>
+        <div class="row">
+          <button type="button" class="btn" id="btn-copy-summary">Copy summary</button>
+          <button type="button" class="btn" id="btn-copy-permalink">Copy permalink</button>
         </div>
-        <div class="field">
-          <label for="r-race">Race</label>
-          <select id="r-race">
-            <option>Argonian</option><option>Breton</option><option>Dark Elf</option><option>High Elf</option><option>Imperial</option><option>Khajiit</option><option>Nord</option><option>Orc</option><option>Redguard</option><option>Wood Elf</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="r-gender">Gender</label>
-          <select id="r-gender"><option>Male</option><option>Female</option></select>
-        </div>
-        <div class="field">
-          <label for="r-sign">Birthsign</label>
-          <select id="r-sign">
-            <option>The Warrior</option><option>The Mage</option><option>The Thief</option><option>The Ritual</option><option>The Lover</option><option>The Shadow</option><option>The Steed</option><option>The Apprentice</option><option>The Atronach</option><option>The Lady</option><option>The Lord</option><option>The Tower</option><option>The Serpent</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="r-spec">Specialization</label>
-          <select id="r-spec"><option>Combat</option><option>Magic</option><option>Stealth</option></select>
-        </div>
-        <div class="field">
-          <label for="r-fav1">Favored attribute 1</label>
-          <select id="r-fav1" class="rfav"><option>Strength</option><option>Intelligence</option><option>Willpower</option><option>Agility</option><option>Speed</option><option selected>Endurance</option><option>Personality</option><option>Luck</option></select>
-        </div>
-        <div class="field">
-          <label for="r-fav2">Favored attribute 2</label>
-          <select id="r-fav2" class="rfav"><option>Strength</option><option>Intelligence</option><option>Willpower</option><option>Agility</option><option>Speed</option><option selected>Endurance</option><option>Personality</option><option>Luck</option></select>
-        </div>
-        <div class="field">
-          <label>Major skills (5)</label>
-          <div class="skill-grid" id="r-majors">
-            <select id="rmaj0"><option selected>Long Blade</option></select>
-            <select id="rmaj1"><option selected>Heavy Armor</option></select>
-            <select id="rmaj2"><option selected>Block</option></select>
-            <select id="rmaj3"><option selected>Athletics</option></select>
-            <select id="rmaj4"><option selected>Armorer</option></select>
-          </div>
-        </div>
-        <div class="field">
-          <label>Minor skills (5)</label>
-          <div class="skill-grid" id="r-minors">
-            <select id="rmin0"><option selected>Restoration</option></select>
-            <select id="rmin1"><option selected>Medium Armor</option></select>
-            <select id="rmin2"><option selected>Spear</option></select>
-            <select id="rmin3"><option selected>Mercantile</option></select>
-            <select id="rmin4"><option selected>Speechcraft</option></select>
-          </div>
+        <div class="row">
+          <button type="button" class="btn" id="btn-to-optimizer">Send to Build Optimizer</button>
+          <button type="button" class="btn" id="btn-challenge-advanced">Advanced settings</button>
         </div>
       </div>
-      <div class="summary" id="r-summary"></div>
-      <h2 style="margin-top:32px">Major objective</h2>
-      <p>The point of this playthrough. Roll one. Finish this and the run is complete.</p>
-      <button type="button" class="btn" id="btn-major">Randomize major objective</button>
-      <p class="drawn" id="major-drawn" style="margin-top:16px"></p>
+      <!-- The rolled character's whole sheet, for the sheet helpers the custom builder shares. The cards show it. -->
+      <div class="hidden" id="challenge-character">
+        <select id="r-class"></select>
+        <select id="r-race"></select>
+        <select id="r-gender"><option>Male</option><option>Female</option></select>
+        <select id="r-sign"></select>
+        <select id="r-spec"><option>Combat</option><option>Magic</option><option>Stealth</option></select>
+        <select id="r-fav1" class="rfav"></select>
+        <select id="r-fav2" class="rfav"></select>
+        <div id="r-majors"></div>
+        <div id="r-minors"></div>
+      </div>
+      <div id="challenge-advanced" class="hidden">
+      <h2>Major objective</h2>
+      <p>The point of this playthrough. Finish this and the run is complete.</p>
       <details class="pool">
         <summary>See all major objectives</summary>
         <ul id="major-pool"></ul>
       </details>
-      <h2 style="margin-top:32px">Minor objectives</h2>
-      <p>Small world tasks — no main quest, no Great House or guild line required. Pick 1–5, then roll.</p>
+      <h2>Minor objectives</h2>
+      <p>Small world tasks — no main quest, no Great House or guild line required. Pick 1–5.</p>
       <div class="row">
         <label for="obj-count">Number of objectives</label>
         <select id="obj-count">
@@ -819,15 +1124,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <option value="4">4</option>
           <option value="5">5</option>
         </select>
-        <button type="button" class="btn" id="btn-obj">Randomize objectives</button>
       </div>
-      <ol class="drawn" id="obj-drawn"></ol>
       <details class="pool">
         <summary>See all minor objectives</summary>
         <ul id="obj-pool"></ul>
       </details>
-      <h2 style="margin-top:32px">Restrictions</h2>
-      <p>Pick how many modifiers you want (1–5), then roll. Easy is a light limit. Medium changes how you play. Hard is game-changing. Grind is slow, not deadly — walk-only, level caps, tiny carry weight.</p>
+      <h2>Restrictions</h2>
+      <p>Pick how many modifiers you want (1–5). Easy is a light limit. Medium changes how you play. Hard is game-changing. Grind is slow, not deadly — walk-only, level caps, tiny carry weight.</p>
       <div class="row">
         <label for="count">Number of modifiers</label>
         <select id="count">
@@ -838,22 +1141,20 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <option value="4">4</option>
           <option value="5">5</option>
         </select>
-        <button type="button" class="btn" id="btn-roll">Randomize restrictions</button>
       </div>
-      <div class="row" style="margin-top:12px">
-      <div class="chk-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 420px;">
+      <div class="row restrict-toggles">
+      <div class="chk-grid restrict-toggles">
         <label><input type="checkbox" id="tog-easy" checked /> Easy</label>
         <label><input type="checkbox" id="tog-medium" checked /> Medium</label>
         <label><input type="checkbox" id="tog-hard" checked /> Hard</label>
-        <label><input type="checkbox" id="tog-grind" checked /> Grind (time, not danger)</label>
+        <label><input type="checkbox" id="tog-grind" /> Grind (time, not danger)</label>
       </div>
       </div>
-      <ol class="drawn" id="drawn"></ol>
-      <p class="muted" id="drawn-note" hidden></p>
       <details class="pool">
         <summary>See all restrictions</summary>
         <div id="pool"></div>
       </details>
+      </div>
     </div>
     <div class="panel" id="panel-build">
       <h2>Build Optimizer</h2>
@@ -902,7 +1203,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
             <select id="c-sign"></select>
             <div class="tip" id="tip-sign"></div>
           </div>
-          <div class="field">
+          <div class="field field-left">
             <label for="c-spec">Specialization</label>
             <select id="c-spec">
               <option>Combat</option>
@@ -911,7 +1212,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
             </select>
             <div class="tip" id="tip-spec"></div>
           </div>
-          <div class="field">
+          <div class="field" style="grid-column:1">
             <label for="c-fav1">Favored attribute 1</label>
             <select id="c-fav1" class="fav"></select>
           </div>
@@ -920,11 +1221,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
             <select id="c-fav2" class="fav"></select>
             <div class="tip" id="tip-fav"></div>
           </div>
-          <div class="field">
+          <div class="field field-span">
             <label>Major skills (5)</label>
             <div class="skill-grid" id="majors"></div>
           </div>
-          <div class="field">
+          <div class="field field-span">
             <label>Minor skills (5)</label>
             <div class="skill-grid" id="minors"></div>
           </div>
@@ -933,11 +1234,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <div id="gear-box" class="summary hidden" aria-live="polite"></div>
         <div class="summary" id="c-summary" aria-live="polite"></div>
         <div class="save-row">
-          <button type="button" class="btn" id="btn-save-code">Save build</button>
-          <p class="muted">Save makes a code. Paste it later and tap Load to get the same race, sign, and skills back.</p>
-          <textarea id="build-code" rows="3" placeholder="Your build code" style="width:100%;max-width:40rem"></textarea>
-          <button type="button" class="btn" id="btn-load-code">Load build</button>
-          <p class="muted" id="load-code-note"></p>
+          <button type="button" class="btn" id="btn-copy-build-link">Copy link</button>
+          <p class="muted">The address bar keeps this sheet. Copy the link to share or come back later.</p>
         </div>
       </div>
     </div>
@@ -972,7 +1270,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "No Divine Intervention",
       "No Almsivi Intervention",
       "No Recall or Mark",
-      "No companions",
       "No Daedric quests",
       "No Great House membership",
       "No thieves guild",
@@ -993,32 +1290,28 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "No restore health spells",
       "Sleep outdoors only",
       "Never rest in towns",
-      "No killing named NPCs",
       "Pacifist except scripted bosses",
       "Permadeath — one life",
       "Ironman — no reloading a save after a fight",
+      "Ironman — no quicksaving",
       "No Boots of Blinding Speed",
       "No Creeper or Mudcrab merchant",
-      "No exploits or glitches",
       "No console commands",
       "No Fortify Intelligence alchemy loop",
       "No fortify attribute on self via alchemy",
       "No sneak attacks",
       "No Bound weapons or Bound armor",
       "No summons in combat",
-      "No Calm or Frenzy cheese",
-      "No Taunting enemies into water",
-      "No kiting with Restore Health",
       "Unarmored only",
       "Clothing only — no armor pieces",
       "One weapon skill forever",
+      "Only level one weapon skill",
       "Fists only — Hand-to-hand",
       "Marksman only",
-      "No jumping or Acrobatics cheese",
+      "No jumping",
       "Walk only — no running",
       "No Magicka — fatigue and potions only",
-      "The Atronach and no potions",
-      "No sleeping to recover magicka",
+      "No spending Magicka",
       "No shrines or altars",
       "No Tribunal or Bloodmoon DLC",
       "Tribunal and Bloodmoon allowed but main quest first",
@@ -1029,9 +1322,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Lawful — pay every bounty, never murder",
       "Outlaw — never pay a bounty",
       "No trainers — skills from use only",
-      "No skill books",
       "No birthsign powers",
+      "No activated birthsign powers",
       "No racial powers",
+      "No activated racial powers",
       "No enchanted items at all",
       "Cast When Used items only — no Constant Effect",
       "No Intervention spells, Mark, Recall, or Guild Guides",
@@ -1039,13 +1333,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "No flying (levitate or jump stacking)",
       "No water breathing items or spells",
       "Vegetarian — no meat or animal ingredients in alchemy",
-      "No ingredients from named containers in towns",
       "Roleplay: never attack first",
       "Roleplay: never refuse a quest",
       "Encumbrance under 50 at all times",
       "No Strength above starting value",
       "No Intelligence above starting value",
       "Level 20 cap",
+      "Level 10 cap",
       "Never sleep to level up — stay level 1",
       "No companions or summoned meatshields",
       "Naked start — drop your starting clothes",
@@ -1059,34 +1353,34 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "No custom class", "No restoration", "No conjuration", "No illusion", "No mysticism", "No alteration", "No destruction",
       "No shields", "No ranged weapons", "No sneaking", "No lockpicking", "No speechcraft",
       "No thieves guild", "No fighters guild", "No mages guild", "No Tribunal Temple", "No Imperial Cult", "No Imperial Legion", "No Morag Tong",
-      "No companions",
       "No Divine Intervention", "No Almsivi Intervention",
       "No water walking", "No levitate",
       "No Boots of Blinding Speed", "No Creeper or Mudcrab merchant",
-      "No exploits or glitches",
       "No vampire or werewolf", "No stronghold",
       "Silt strider and boat only — no Guild Guide",
       "No fast travel except silt striders and boats",
       "Tribunal and Bloodmoon allowed but main quest first",
       "Roleplay: never refuse a quest",
-      "No skill books", "No birthsign powers", "No racial powers"
+      "No birthsign powers", "No activated birthsign powers", "No racial powers", "No activated racial powers",
+      "Naked start — drop your starting clothes"
     ];
     const VANILLA_POOL = POOL;
     const HARD = [
-      "No potions", "No magic", "No melee", "Major skills only", "No armor", "No Magicka — fatigue and potions only",
-      "Permadeath — one life", "Ironman — no reloading a save after a fight", "The Atronach and no potions",
+      "No potions", "No magic", "No melee", "Major skills only", "No armor", "No Magicka — fatigue and potions only", "No spending Magicka",
+      "Permadeath — one life", "Ironman — no reloading a save after a fight", "Ironman — no quicksaving",
       "Unarmored only", "Clothing only — no armor pieces", "Fists only — Hand-to-hand",
       "No enchanted items at all",
-      "Naked start — drop your starting clothes", "Pacifist except scripted bosses",
+      "Pacifist except scripted bosses",
       "No Tribunal or Bloodmoon DLC", "No artifacts",
       "No looting the NPCs you kill", "Only use gear you enchanted yourself",
       "Found potions only — no Alchemy-made potions",
-      "One save file — no extra manual saves"
+      "One save file — no extra manual saves",
+      "No Strength above starting value", "No Intelligence above starting value", "Level 20 cap", "Level 10 cap"
     ];
     const GRIND = [
       "Walk only — no running",
-      "Never sleep to level up — stay level 1", "Level 20 cap",
-      "No Strength above starting value", "No Intelligence above starting value", "Encumbrance under 50 at all times",
+      "Never sleep to level up — stay level 1",
+      "Encumbrance under 50 at all times",
       "No fast travel of any kind — walk everywhere"
     ];
     function band(item) {
@@ -1099,12 +1393,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const b = band(item);
       const t = String(item||"").toLowerCase();
       const skills = [];
-      try {
+      // A school ban is Hard for a rolled character with that school as a major skill.
+      if (typeof challengeRun !== "undefined" && challengeRun.cls) {
         for (let i = 0; i < 5; i++) {
-          const el = document.getElementById("rmaj"+i) || document.getElementById("maj"+i);
+          const el = document.getElementById("rmaj" + i);
           if (el && el.value) skills.push(el.value.toLowerCase());
         }
-      } catch (e) {}
+      }
       if (/no destruction/.test(t) && skills.indexOf("destruction") >= 0) return "Hard";
       if (/no restoration/.test(t) && skills.indexOf("restoration") >= 0) return "Hard";
       if (/no alteration/.test(t) && skills.indexOf("alteration") >= 0) return "Hard";
@@ -1115,20 +1410,33 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (/no daedric quests/.test(t)) return "Medium";
       return b;
     }
-    function restCluster(item) {
-      const t = String(item||"").toLowerCase();
-      if (/interven|recall|mark|guild guide|fast travel|silt strider and boat|no levitate|no flying/.test(t)) return "travel";
-      if (/no armor|unarmored only|clothing only/.test(t)) return "armor";
-      if (/exploit|alchemy loop|fortify attribute on self|sneak attack|calm or frenzy|taunting enemies|kiting with restore|acrobatics cheese/.test(t)) return "cheese";
-      if (/enchant/.test(t) || /cast when used/.test(t) || /constant-effect/.test(t)) return "enchant";
-      if (/level 20|never sleep to level|no strength above|no intelligence above/.test(t)) return "leveling";
-      if (/no sneaking|no stealth/.test(t)) return "stealth";
-      if (/stolen|stealing/.test(t)) return "theft";
-      if (/no companions/.test(t)) return "companions";
-      if (/permadeath|ironman/.test(t)) return "saves";
-      if (/sleep outdoors|never rest in towns/.test(t)) return "rest";
-      if (/great house|no stronghold/.test(t)) return "house";
-      return "";
+    // The groups a restriction belongs to. Two restrictions in one group repeat or undercut each other, so a run rolls one per group.
+    function restClusters(item) {
+      const t = String(item || "").toLowerCase();
+      const groups = {
+        travel: /interven|recall|\bmark\b|guild guide|fast travel|silt strider and boat|no levitate|no flying/,
+        armor: /no armor|unarmored only|clothing only|no shields/,
+        cheese: /alchemy loop|fortify attribute on self|sneak attack/,
+        enchant: /enchant|cast when used|constant-effect|soul gems/,
+        leveling: /level 20|level 10|never sleep to level|no strength above|no intelligence above/,
+        stealth: /no sneaking|no stealth|sneak attack/,
+        theft: /stolen|stealing/,
+        companions: /no companions|no summons/,
+        saves: /permadeath|ironman|one save file/,
+        rest: /sleep outdoors|never rest in towns/,
+        house: /great house|no stronghold/,
+        magic: /^no magic$|no magicka|no spending magicka/,
+        birthsignPowers: /birthsign powers/,
+        racialPowers: /racial powers/,
+        weapons: /weapon skill|fists only|marksman only/,
+        potions: /no potions|found potions only/,
+        alchemy: /^no alchemy$|found potions only|alchemy loop|via alchemy|in alchemy/,
+        merchants: /no merchants|creeper or mudcrab/,
+        artifacts: /no artifacts|boots of blinding speed/,
+        dlc: /tribunal or bloodmoon dlc|tribunal and bloodmoon allowed/,
+        pacifist: /pacifist|never attack first/
+      };
+      return Object.keys(groups).filter((g) => groups[g].test(t));
     }
     function tagsOf(text) {
       const t = String(text || "").toLowerCase();
@@ -1225,20 +1533,24 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (/fatigue and potions only/i.test(a) && /atronach and no potions/i.test(b)) return true;
       if (/no tribunal or bloodmoon/i.test(a) && /werewolf|bloodmoon/i.test(b)) return true;
       if (/no tribunal or bloodmoon/i.test(b) && /werewolf|bloodmoon/i.test(a)) return true;
+      const either = (x, y) => (x.test(a) && y.test(b)) || (x.test(b) && y.test(a));
+      if (either(/marksman only/i, /no ranged/i) || either(/fists only/i, /no ranged/i) || either(/marksman only/i, /no melee/i)) return true;
+      // No magic, No Magicka and No spending Magicka already rule out any one school or kind of spell.
+      if (either(/^no magic$|no magicka|no spending magicka/i, /^no (restoration|conjuration|illusion|mysticism|alteration|destruction)$|no restore health spells|no bound weapons|no summons in combat/i)) return true;
       return false;
     }
     function restrictionOkForNeeds(rest, needs) {
       const bans = restrictionBans(rest);
       return !needs.some((n) => bans.indexOf(n) >= 0);
     }
+    function restrictionsClash(a, b) {
+      return restrictionConflicts(a, b) || restClusters(a).some((g) => restClusters(b).indexOf(g) >= 0);
+    }
     function currentMajorText() {
-      return plainText(document.getElementById("major-drawn"));
+      return challengeRun.major;
     }
     function currentRestrictionTexts() {
-      return [...document.querySelectorAll("#drawn li")].map((li) => {
-        const t = li.textContent || "";
-        return t.replace(/^(Easy|Medium|Hard|Grind)\s+[—\-]\s+/, "");
-      }).filter((x) => x && x.indexOf("Turn on Easy") === -1);
+      return challengeRun.rests.slice();
     }
     function pickCompatibleRestrictions(n, pool, needs) {
       const ok = pool.filter((x) => restrictionOkForNeeds(x, needs));
@@ -1246,9 +1558,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const bag = shuffle(ok);
       for (let i = 0; i < bag.length && picks.length < n; i++) {
         const item = bag[i];
-        if (picks.some((p) => restrictionConflicts(p, item))) continue;
-        const cl = restCluster(item);
-        if (cl && picks.some((p) => restCluster(p) === cl)) continue;
+        if (picks.some((p) => restrictionsClash(p, item))) continue;
         const next = picks.concat([item]);
         const noDmg = next.filter((x) => /no magic\b/i.test(x)).length && next.filter((x) => /no melee/i.test(x)).length && next.filter((x) => /no ranged/i.test(x)).length;
         if (noDmg) continue;
@@ -1429,14 +1739,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       { kind: "COLLECTION", text: "Find and wear a complete set of chitin" },
       { kind: "COLLECTION", text: "Find and wear a complete set of bonemold" },
       { kind: "SOCIAL", text: "Buy a drink at the Six Fishes in Ebonheart, and at the South Wall and the Eight Plates in Balmora" },
-      { kind: "COLLECTION", text: "Find ten skill books and do not read them" },
       { kind: "ACTION", text: "Kill a slaughterfish bare-handed while underwater" },
       { kind: "COLLECTION", text: "Harvest 20 kwama eggs from any mine" },
       { kind: "COLLECTION", text: "Collect five different alchemy ingredients from the Bitter Coast" },
       { kind: "SOCIAL", text: "Bring a guar hide to a clothier" },
       { kind: "ACTION", text: "Steal exactly one cheap item from a shop without being caught" },
       { kind: "SOCIAL", text: "Pay a bounty you actually earned" },
-      { kind: "SOCIAL", text: "Talk to every named NPC in Pelagiad" },
       { kind: "EXPLORATION", text: "Find Fargoth's hiding place for Hrisskar Flat-Foot in Seyda Neen" },
       { kind: "ROLEPLAY", text: "Leave a gold piece on an altar in a shrine" },
       { kind: "ACTION", text: "Light a torch and explore a cave without magicka light" },
@@ -1452,7 +1760,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       { kind: "SOCIAL", text: "Give 100 gold to a beggar or poor NPC" },
       { kind: "ROLEPLAY", text: "Buy a full set of clothes from a clothier and wear them into a dungeon" },
       { kind: "FLAVOR", text: "Follow a scrib for 60 seconds without attacking it" },
-      { kind: "ACTION", text: "Kill ten cliff racers, then stop hunting them for the session" },
       { kind: "COLLECTION", text: "Find a pearl in a kollop" },
       { kind: "COLLECTION", text: "Mine raw ebony or raw glass yourself and sell it" },
       { kind: "ACTION", text: "Taste (eat) five alchemy ingredients you have never used" },
@@ -1478,8 +1785,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       { kind: "COLLECTION", text: "Collect five different flowers from the Ascadian Isles" },
       { kind: "COLLECTION", text: "Collect five pieces of raw glass or ebony — not both" },
       { kind: "COLLECTION", text: "Wear a full set of Imperial Steel for a town visit" },
-      { kind: "COLLECTION", text: "Wear a full set of Indoril armor without obtaining it as a quest reward" },
-      { kind: "FLAVOR", text: "Hear an NPC mention a murder, then choose not to investigate" },
       { kind: "SOCIAL", text: "Ask three NPCs for latest rumors in one town" },
       { kind: "FLAVOR", text: "Find an item hidden in an unusual piece of furniture" },
       { kind: "ACTION", text: "Pick a locked door, then cast a Lock effect on it" },
@@ -1487,9 +1792,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       { kind: "ACTION", text: "Defeat a town guard using Hand-to-hand without killing them" },
       { kind: "ACTION", text: "Run from a fight you started" },
       { kind: "EXPLORATION", text: "Find a dead adventurer and take only their journal or a note" },
-      { kind: "ROLEPLAY", text: "Return an NPC's stolen amulet by leaving it on a shrine" },
       { kind: "EXPLORATION", text: "Ride a gondola in Vivec" },
-      { kind: "FLAVOR", text: "Get lost in the sewers under Vivec and find your own way out" },
       { kind: "SOCIAL", text: "Buy a seafood or pearl-related item from a coastal merchant" },
       { kind: "ROLEPLAY", text: "Eat ash yam, scrib jelly, and kwama egg in one sitting" },
       { kind: "FLAVOR", text: "Stand at Ghostgate's Tower of Dawn and look at Red Mountain, then leave" },
@@ -1498,16 +1801,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       { kind: "ROLEPLAY", text: "Name a custom enchanted item after a town" },
       { kind: "ACTION", text: "Obtain Mentor's Ring from Samarys Ancestral Tomb" },
       { kind: "SOCIAL", text: "Talk to Creeper in Caldera or the Mudcrab merchant and buy nothing" },
-      { kind: "SOCIAL", text: "Donate to the Imperial Cult or Temple with gold, not a quest" },
+      { kind: "SOCIAL", text: "Donate gold to the Imperial Cult or Temple, not a quest" },
       { kind: "COLLECTION", text: "Find a copy of The Firmament and read the birthsign page" },
-      { kind: "ACTION", text: "Survive a nix-hound pack without armor" },
-      { kind: "ROLEPLAY", text: "Use only a club or chitin dagger until you leave the first town" },
-      { kind: "ACTION", text: "Open ten containers in the wilderness that are not corpses" },
       { kind: "ACTION", text: "Pick a lock of 50 or higher" },
       { kind: "SOCIAL", text: "Raise an NPC from below Disposition 30 to 90 without bribing" },
       { kind: "SOCIAL", text: "Have the Thieves Guild clear a bounty for you" },
       { kind: "SOCIAL", text: "Get thrown out of a faction" },
-      { kind: "FLAVOR", text: "Find a secret in a manor basement in Balmora or Ald'ruhn" },
       { kind: "EXPLORATION", text: "Visit the Puzzle Canal in Vivec and swim a loop" },
       { kind: "ACTION", text: "Flee a blighted creature rather than fight it" },
       { kind: "FLAVOR", text: "Stand at the Ebonheart docks at dusk for 30 seconds" },
@@ -1557,7 +1856,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Complete Bloodmoon",
       "Bring 10 artifacts to the Museum of Artifacts in Mournhold",
       "Collect 10 different Daedric artifacts",
-      "Finish Fighters Guild, Mages Guild, and Thieves Guild",
+      "Finish Fighters Guild",
+      "Finish Mages Guild",
+      "Finish Thieves Guild",
       "Finish the Morag Tong writs through Grandmaster",
       "Finish Imperial Legion",
       "Finish Tribunal Temple",
@@ -1570,10 +1871,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Complete every Daedric Prince quest available on Vvardenfell",
       "Reach level 50",
       "Clear the four Red Mountain citadels: Endusal, Odrosal, Tureynulal and Vemynal",
-      "Become Hortator of all three Houses and Nerevarine",
       "Finish the main quest without joining any faction except the Blades, which it makes you join",
-      "Kill Vivec",
-      "Complete every vanilla quest in one town (Balmora, Ald'ruhn, or Vivec)"
+      "Kill Vivec"
     ];
     var worldMode = "vanilla";
     var arceOn = false;
@@ -1584,19 +1883,18 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const TR_POOL = [];
     const TR_MAJORS = [
       "Fight your way to Ebony Scale in the Narsis Arena",
-      "Complete 20 Fighters Guild quests on the mainland",
-      "Complete 20 Mages Guild quests on the mainland",
-      "Complete 20 Thieves Guild quests on the mainland",
-      "Complete 20 Imperial Legion quests on the mainland",
-      "Complete 20 Tribunal Temple quests on the mainland",
-      "Complete 20 Imperial Cult quests on the mainland",
+      "Complete all quests in five mainland cities for the Fighters Guild",
+      "Complete all quests in five mainland cities for the Mages Guild",
+      "Complete all quests in five mainland cities for the Thieves Guild",
+      "Complete all quests in five mainland cities for the Imperial Legion",
+      "Complete all quests in five mainland cities for the Tribunal Temple",
+      "Complete all quests in five mainland cities for the Imperial Cult",
       "Finish the mainland House Hlaalu, Indoril or Telvanni questline you join",
       "Join the Ja-Natta Syndicate and finish its quests",
       "Finish the East Empire Company quests on the mainland",
       "Join the Ordinators and finish their quests",
       "Enroll at the College of Firewatch and finish its quests",
       "Become a ranking member of House Indoril on the mainland",
-      "Finish a House Telvanni questline on the Telvanni Isles",
       "Complete every quest for one mainland vampire clan: Orlukh or Baluath",
       "Walk from Firewatch to Narsis without using intervention",
       "Finish Intrigue in Port Telvannis",
@@ -1624,79 +1922,38 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       });
     }
     fillMajorPool();
-    document.getElementById("btn-major").addEventListener("click", () => {
-      const list = activeMajors();
-      const item = list[Math.floor(Math.random() * list.length)];
-      document.getElementById("major-drawn").innerHTML = "<strong>" + item + "</strong>" + regionTagHtml(item);
-      const needs = tagsOf(item);
-      const keep = currentRestrictionTexts().filter((r) => restrictionOkForNeeds(r, needs));
-      const drawn = document.getElementById("drawn");
-      if (drawn && keep.length !== currentRestrictionTexts().length) {
-        drawn.innerHTML = "";
-        keep.forEach((r) => {
-          const li = document.createElement("li");
-          li.textContent = bandLive(r) + " — " + r;
-          drawn.appendChild(li);
-        });
-      }
-      fillRunSummary();
-    });
-    document.getElementById("btn-obj").addEventListener("click", () => {
-      const cv = document.getElementById("obj-count").value;
-      const n = cv === "random" ? (1 + Math.floor(Math.random() * 5)) : Math.min(5, Math.max(1, Number(cv) || 1));
-      const picks = pickMixedObjectives(n);
-      const drawn = document.getElementById("obj-drawn");
-      drawn.innerHTML = "";
-      picks.forEach((item) => {
-        const li = document.createElement("li");
-        const extra = [];
-        if (tagsOf(item.text).indexOf("crime") >= 0) extra.push("this is a crime in-game");
-        if (item.kind === "FLAVOR") extra.push("flavor — no hard checkbox");
-        li.textContent = objText(item) + (extra.length ? " (" + extra.join("; ") + ")" : "");
-        appendRegionTags(li, objText(item));
-        drawn.appendChild(li);
-      });
-      fillRunSummary();
-    });
-    function kind(item) {
-      return "rule";
+    // Rolling the run. Each roll only updates challengeRun; the caller redraws the board.
+    function rollCount(id) {
+      const cv = document.getElementById(id).value;
+      return cv === "random" ? 1 + Math.floor(Math.random() * 5) : Math.min(5, Math.max(1, Number(cv) || 1));
     }
-    document.getElementById("btn-roll").addEventListener("click", () => {
-      const cv = document.getElementById("count").value;
-      const n = cv === "random" ? (1 + Math.floor(Math.random() * 5)) : Math.min(5, Math.max(1, Number(cv) || 1));
+    function rollMajor() {
+      const list = activeMajors();
+      challengeRun.major = list[Math.floor(Math.random() * list.length)];
+      // Drop rolled restrictions the new major objective can't be finished under.
+      const needs = tagsOf(challengeRun.major);
+      challengeRun.rests = challengeRun.rests.filter((r) => restrictionOkForNeeds(r, needs));
+    }
+    function rollObjectives() {
+      challengeRun.minors = pickMixedObjectives(rollCount("obj-count"));
+    }
+    function rollRestrictions() {
+      const n = rollCount("count");
       const allow = {
         Easy: document.getElementById("tog-easy").checked,
         Medium: document.getElementById("tog-medium").checked,
         Hard: document.getElementById("tog-hard").checked,
-        Grind: document.getElementById("tog-grind") ? document.getElementById("tog-grind").checked : true
+        Grind: document.getElementById("tog-grind").checked
       };
       const pool = activePool().filter((x) => allow[band(x)]);
-      if (!pool.length) {
-        document.getElementById("drawn").innerHTML = "<li>Turn on Easy, Medium, Hard, or Grind first.</li>";
-        try { fillRunSummary(); } catch (e) {}
-        return;
-      }
-      const needs = tagsOf(currentMajorText());
-      const picks = pickCompatibleRestrictions(n, pool, needs);
-      const drawn = document.getElementById("drawn");
-      drawn.innerHTML = "";
-      picks.forEach((item) => {
-        const li = document.createElement("li");
-        li.textContent = bandLive(item) + " — " + item;
-        drawn.appendChild(li);
-      });
-      const note = document.getElementById("drawn-note");
-      if (note) {
-        if (picks.length < n) {
-          note.hidden = false;
-          note.textContent = "Rolled " + picks.length + " of " + n + " — enable more difficulty bands for a wider pool.";
-        } else { note.hidden = true; note.textContent = ""; }
-      }
-      fillRunSummary();
-    });
+      challengeRun.rests = pool.length ? pickCompatibleRestrictions(n, pool, tagsOf(challengeRun.major)) : [];
+      if (!pool.length) challengeRun.restNote = "Turn on Easy, Medium, Hard or Grind in Advanced settings first.";
+      else if (challengeRun.rests.length < n) challengeRun.restNote = "Rolled " + challengeRun.rests.length + " of " + n + " — turn on more difficulty bands in Advanced settings for a wider pool.";
+      else challengeRun.restNote = "";
+    }
     const c = document.getElementById("btn-challenge");
     const b = document.getElementById("btn-build");
-    const homeBtn = document.getElementById("btn-home");
+    const homeBtn = document.getElementById("link-home");
     const ph = document.getElementById("panel-home");
     const pc = document.getElementById("panel-challenge");
     const pb = document.getElementById("panel-build");
@@ -1718,6 +1975,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       document.body.classList.remove("view-challenge", "view-builder");
       if (name === "challenge") document.body.classList.add("view-challenge");
       if (name === "builder") document.body.classList.add("view-builder");
+      var navC = document.getElementById("btn-challenge");
+      var navB = document.getElementById("btn-build");
+      if (navC) navC.setAttribute("aria-current", name === "challenge" ? "page" : "false");
+      if (navB) navB.setAttribute("aria-current", name === "builder" ? "page" : "false");
       if (ph) ph.classList.toggle("show", name === "home");
       if (pc) pc.classList.toggle("show", name === "challenge");
       if (pb) pb.classList.toggle("show", name === "builder");
@@ -1733,6 +1994,76 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (drawer) drawer.classList.remove("open");
       writeShareHash();
     }
+    var pendingRun = null;
+    var pendingBuild = null;
+    // The rolled challenge run: names from the site's own lists, or "" and [] for cards not rolled yet.
+    // The character's whole sheet lives in the hidden r-* selects, where the shared sheet helpers read it.
+    var challengeRun = { race: "", gender: "", cls: "", sign: "", major: "", minors: [], rests: [], restNote: "" };
+    function toBase64Url(text) {
+      return btoa(unescape(encodeURIComponent(text))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+    function fromBase64Url(s) {
+      s = String(s).replace(/-/g, "+").replace(/_/g, "/");
+      while (s.length % 4) s += "=";
+      return decodeURIComponent(escape(atob(s)));
+    }
+    function encodeRunPayload() {
+      const r = challengeRun, obj = {};
+      if (r.race) obj.race = r.race;
+      if (r.gender) obj.gender = r.gender;
+      if (r.sign) obj.sign = r.sign;
+      if (r.cls) obj.cls = r.cls;
+      if (r.cls === "Custom") {
+        const b = readPanelBuild("r");
+        Object.assign(obj, { spec: b.spec, fav1: b.fav1, fav2: b.fav2, maj: b.maj, min: b.min });
+      }
+      if (r.major) obj.major = r.major;
+      if (r.minors.length) obj.minors = r.minors.map((o) => o.text);
+      if (r.rests.length) obj.rests = r.rests.slice();
+      return Object.keys(obj).length ? toBase64Url(JSON.stringify(obj)) : "";
+    }
+    function decodeRunPayload(s) {
+      try { return JSON.parse(fromBase64Url(s)); } catch (e) { return null; }
+    }
+    // A permalink is untrusted input: keep only names from the site's own lists and drop everything else.
+    function applyRunPayload(obj) {
+      if (!obj || typeof obj !== "object") return;
+      const r = challengeRun;
+      const text = (v) => (typeof v === "string" ? v : "");
+      const known = (v, list) => (list.indexOf(text(v)) >= 0 ? text(v) : "");
+      const set = (id, v) => { document.getElementById(id).value = v; };
+      r.race = known(obj.race, Object.keys(raceTable()));
+      r.gender = known(obj.gender, ["Male", "Female"]);
+      r.sign = known(obj.sign, Object.keys(SIGNS));
+      r.cls = known(obj.cls, ["Custom"].concat(CLASS_NAMES_NOW()));
+      if (r.race) set("r-race", r.race);
+      if (r.gender) set("r-gender", r.gender);
+      if (r.sign) set("r-sign", r.sign);
+      if (r.cls === "Custom") {
+        const maj = Array.isArray(obj.maj) ? obj.maj.map(text) : [];
+        const min = Array.isArray(obj.min) ? obj.min.map(text) : [];
+        const skills = maj.concat(min);
+        const whole = Object.prototype.hasOwnProperty.call(SPEC_SKILLS, text(obj.spec))
+          && ATTRS.indexOf(text(obj.fav1)) >= 0 && ATTRS.indexOf(text(obj.fav2)) >= 0 && obj.fav1 !== obj.fav2
+          && maj.length === 5 && min.length === 5 && skills.every((s) => SKILLS.indexOf(s) >= 0) && new Set(skills).size === 10;
+        if (whole) {
+          set("r-class", "Custom"); set("r-spec", obj.spec); set("r-fav1", obj.fav1); set("r-fav2", obj.fav2);
+          maj.forEach((s, i) => set("rmaj" + i, s));
+          min.forEach((s, i) => set("rmin" + i, s));
+          syncSkillPrev(RAND_SKILL_IDS);
+        } else r.cls = "";
+      } else if (r.cls) {
+        set("r-class", r.cls);
+        applyClassToPanel("r", r.cls);
+      }
+      r.major = known(obj.major, activeMajors());
+      const unique = (list) => list.filter((v, i) => v && list.indexOf(v) === i).slice(0, 5);
+      r.minors = unique(Array.isArray(obj.minors) ? obj.minors.map(text) : []).map((t) => OBJECTIVES.find((o) => o.text === t)).filter(Boolean);
+      r.rests = unique(Array.isArray(obj.rests) ? obj.rests.map(text) : []).filter((t) => activePool().indexOf(t) >= 0);
+      r.restNote = "";
+      lockFavored("r");
+      renderRun();
+    }
     function writeShareHash() {
       try {
         const parts = [];
@@ -1743,6 +2074,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else parts.push("home");
         if (worldMode === "tr") parts.push("TR");
         if (arceOn) parts.push("ARCE");
+        if (parts[0] === "challenge") {
+          const run = encodeRunPayload();
+          if (run) parts.push("run=" + run);
+        }
+        if (parts[0] === "builder" && typeof collectBuild === "function") {
+          try { parts.push("build=" + toBase64Url(JSON.stringify(collectBuild()))); } catch (eB) {}
+        }
         const h = parts[0] === "home"
           ? (parts.slice(1).length ? "#home&" + parts.slice(1).join("&") : "")
           : "#" + parts.join("&");
@@ -1751,9 +2089,15 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     function readShareHash() {
       try {
-        const h = (location.hash || "").toLowerCase();
+        const raw = location.hash || "";
+        const runM = raw.match(/[?&#]run=([^&]+)/i);
+        if (runM) pendingRun = decodeRunPayload(runM[1]);
+        const buildM = raw.match(/[?&#]build=([^&]+)/i);
+        if (buildM) pendingBuild = buildM[1];
+        // Look for view and world words outside the encoded run and build, which can spell anything.
+        const h = raw.replace(/[?&#](run|build)=[^&]*/gi, "").toLowerCase();
         const wantBuild = /builder|optimizer/.test(h);
-        const wantChal = /challenge/.test(h);
+        const wantChal = /challenge/.test(h) || !!pendingRun;
         const wantAbout = /\babout\b/.test(h);
         const wantChangelog = /\bchangelog\b/.test(h);
         const wantHome = (!h || h === "#" || /\bhome\b/.test(h)) && !wantBuild && !wantChal && !wantAbout && !wantChangelog;
@@ -1783,14 +2127,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       el.dataset.navBound = "1";
       el.addEventListener("click", fn);
     }
-    bindOnce(homeBtn, () => showView("home"));
+    bindOnce(homeBtn, (e) => { if (e && e.preventDefault) e.preventDefault(); showView("home"); });
     bindOnce(c, () => showView("challenge"));
     bindOnce(b, () => showView("builder"));
     bindOnce(document.getElementById("btn-go-challenge"), () => showView("challenge"));
     bindOnce(document.getElementById("btn-go-build"), () => showView("builder"));
-    bindOnce(document.getElementById("btn-about"), () => showView("about"));
     bindOnce(document.getElementById("link-about-footer"), (e) => { if (e && e.preventDefault) e.preventDefault(); showView("about"); });
-    bindOnce(document.getElementById("btn-changelog"), () => showView("changelog"));
     bindOnce(document.getElementById("link-changelog-footer"), (e) => { if (e && e.preventDefault) e.preventDefault(); showView("changelog"); });
     var hashBooted = false;
     function setWorld(mode, opts) {
@@ -1799,9 +2141,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const v = document.getElementById("btn-world-vanilla");
       const tr = document.getElementById("btn-world-tr");
       const arceBtn = document.getElementById("btn-arce");
-      if (v) v.style.outline = mode === "vanilla" ? "2px solid var(--gold)" : "none";
-      if (tr) tr.style.outline = mode === "tr" ? "2px solid var(--gold)" : "none";
-      if (arceBtn) arceBtn.style.display = mode === "tr" ? "block" : "none";
+      if (v) { v.classList.toggle("on", mode === "vanilla"); v.setAttribute("aria-pressed", mode === "vanilla" ? "true" : "false"); }
+      if (tr) { tr.classList.toggle("on", mode === "tr"); tr.setAttribute("aria-pressed", mode === "tr" ? "true" : "false"); }
+      document.body.classList.toggle("world-tr", mode === "tr");
       const badge = document.getElementById("world-badge");
       if (badge) {
         var ver = (typeof TR_VERSION === "string") ? TR_VERSION.split(" ")[0] : "";
@@ -1832,9 +2174,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       arceOn = !!on && worldMode === "tr";
       const btn = document.getElementById("btn-arce");
       if (btn) {
-        btn.textContent = arceOn ? "ARCE (All Races and Classes Enabled) — extra races and classes on" : "ARCE (All Races and Classes Enabled) — extra races and classes off";
-        btn.style.outline = arceOn ? "2px solid var(--gold)" : "none";
-        btn.style.display = worldMode === "tr" ? "block" : "none";
+        btn.setAttribute("title", arceOn ? "ARCE - Extra Races and Classes on" : "ARCE - Extra Races and Classes");
+        btn.setAttribute("aria-pressed", arceOn ? "true" : "false");
+        btn.classList.toggle("on", arceOn);
       }
       try { localStorage.setItem("mw-arce", arceOn ? "1" : "0"); } catch (e) {}
       try { if (typeof applyArceLists === "function") applyArceLists(); } catch (e) {}
@@ -1853,8 +2195,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const premade = document.getElementById("premade");
     const custom = document.getElementById("custom");
     function goldOutline(on, off) {
-      on.forEach((el) => { if (el) { el.style.outline = "2px solid var(--gold)"; el.setAttribute("aria-pressed", "true"); } });
-      off.forEach((el) => { if (el) { el.style.outline = ""; el.setAttribute("aria-pressed", "false"); } });
+      on.forEach((el) => { if (el) { el.classList.add("on"); el.setAttribute("aria-pressed", "true"); } });
+      off.forEach((el) => { if (el) { el.classList.remove("on"); el.setAttribute("aria-pressed", "false"); } });
     }
     document.getElementById("btn-premade").addEventListener("click", () => {
       premade.classList.remove("hidden");
@@ -2895,7 +3237,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         lateRows.push(gearRow(label, (scored.length ? scored : WEAPONS[w].late).concat(trPicks(tr.late)), "Weapons"));
       });
       const specHits = maj.filter((s) => SPEC_SKILLS[spec] && SPEC_SKILLS[spec].includes(s)).length;
-      let html = "<h3>Full kit by slot</h3>";
+      let html = "";
       if (specHits < 3) html += "<p>Your "+spec+" specialization is not helping most of these majors. Morrowind gives +5 to the nine "+spec+" skills only.</p>";
       if (atronach) html += "<p>Atronach tradeoff: Stunted Magicka means Restore Magicka potions and loot do not refill you. Spell Absorption (the Necromancer's Amulet gives 25%) is how you refill.</p>";
       if (breton) html += "<p>Breton Resist Magicka 50% still leaves Blind 50 on Boots of Blinding Speed — stack to 100% Resist Magicka to see clearly.</p>";
@@ -2911,10 +3253,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         gearBtn.textContent = "Kit ready";
         setTimeout(() => { gearBtn.textContent = prev; }, 1600);
       }
-      const saveBtn = document.getElementById("btn-save-code");
-      const loadBtn = document.getElementById("btn-load-code");
-      if (saveBtn) saveBtn.textContent = "Save build";
-      if (loadBtn) loadBtn.textContent = "Load build";
+      const copyBuildBtn = document.getElementById("btn-copy-build-link");
+      if (copyBuildBtn) copyBuildBtn.textContent = "Copy link";
       } catch (err) {
         const box = document.getElementById("gear-box");
         if (box) {
@@ -2938,8 +3278,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         F:{Strength:40,Intelligence:50,Willpower:40,Agility:40,Speed:40,Endurance:30,Personality:30,Luck:40},
         skills:{"Athletics":15,"Alchemy":5,"Illusion":5,"Medium Armor":5,"Mysticism":5,"Spear":5,"Unarmored":5},
         mag:0,
-        abilities:"Resist Poison 100%, Resist Common Disease 75%, Water Breathing (constant).",
-        tip:"Argonian: males faster/agile, females more INT/WIL/PER. Resist Poison 100% (immunity), Resist Common Disease 75%, Water Breathing. Skills: Athletics +15; Alchemy, Illusion, Medium Armor, Mysticism, Spear, Unarmored +5."
+        abilities:"Resist Poison 100%, Resist Common Disease 75% (constant). Spell: Water Breathing (Water Breathing for 120s on Self).",
+        tip:"Argonian: males faster/agile, females more INT/WIL/PER. Resist Poison 100% (immunity), Resist Common Disease 75%, and the Water Breathing spell. Skills: Athletics +15; Alchemy, Illusion, Medium Armor, Mysticism, Spear, Unarmored +5."
       },
       "Breton": {
         M:{Strength:40,Intelligence:50,Willpower:50,Agility:30,Speed:30,Endurance:30,Personality:40,Luck:40},
@@ -2978,7 +3318,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         F:{Strength:30,Intelligence:40,Willpower:30,Agility:50,Speed:40,Endurance:40,Personality:40,Luck:40},
         skills:{"Acrobatics":15,"Athletics":5,"Hand-to-hand":5,"Light Armor":5,"Security":5,"Short Blade":5,"Sneak":5},
         mag:0,
-        abilities:"Powers: Eye of Night (Night Eye 50 for 30s), Eye of Fear (Demoralize Humanoid 100 for 30s).",
+        abilities:"Power: Eye of Fear (Demoralize Humanoid 100 for 30s). Spell: Eye of Night (Night Eye 50 for 30s).",
         tip:"Khajiit: Agility 50. Acrobatics +15; Athletics, Hand-to-hand, Light Armor, Security, Short Blade, Sneak +5."
       },
       "Nord": {
@@ -3249,10 +3589,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (rr) { fillSelect(rr, names); if (names.indexOf(keepR) !== -1) rr.value = keepR; else if (names.length) rr.value = names[0]; }
       if (rc) {
         const keepCls = rc.value;
-        const classes = CLASS_NAMES_NOW().concat(["Custom"]);
+        const classes = ["Custom"].concat(CLASS_NAMES_NOW());
         fillSelect(rc, classes);
         if (classes.indexOf(keepCls) !== -1) rc.value = keepCls;
-        else rc.value = "Custom";
+        else { rc.value = CLASS_NAMES[0]; applyClassToPanel("r", CLASS_NAMES[0]); }
       }
       const cc = document.getElementById("c-class");
       if (cc && typeof CLASS_NAMES_NOW === "function") {
@@ -3268,7 +3608,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         fillCatStack(raceStack, arceOn ? RACE_BUILDS.concat(ARCE_BUILDS) : RACE_BUILDS);
       }
       if (typeof refreshCustom === "function") try { refreshCustom(); } catch (e) {}
-      if (typeof refreshRand === "function") try { refreshRand(); } catch (e) {}
+      if (typeof renderRun === "function") try { renderRun(); } catch (e) {}
     }
     const SIGNS = {
       "The Warrior": {tip:"The Warrior — Fortify Attack 10 pts (constant). No attribute change.", mag:0, attrs:{}, abil:"Fortify Attack 10 (constant)."},
@@ -3281,10 +3621,47 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "The Apprentice": {tip:"The Apprentice — Fortify Maximum Magicka 1.5, Weakness to Magicka 50%.", mag:1.5, attrs:{}, abil:"Fortify Maximum Magicka 1.5. Weakness to Magicka 50%."},
       "The Atronach": {tip:"The Atronach — Fortify Maximum Magicka 2.0, Spell Absorption 50, Stunted Magicka.", mag:2.0, attrs:{}, abil:"Fortify Maximum Magicka 2.0, Spell Absorption 50, Stunted Magicka."},
       "The Lady": {tip:"The Lady — Fortify Personality 25, Fortify Endurance 25 (constant). The Endurance does not raise starting Health.", mag:0, attrs:{Personality:25,Endurance:25}, abil:"Fortify Personality 25, Endurance 25. Endurance does not raise starting Health."},
-      "The Lord": {tip:"The Lord — Blood of the North (Restore Health 2 pts for 30s, once a day). Trollkin: Weakness to Fire 100%.", mag:0, attrs:{}, abil:"Power: Blood of the North. Ability: Weakness to Fire 100%."},
+      "The Lord": {tip:"The Lord — spell Blood of the North (Restore Health 2 pts for 30s on Self). Trollkin: Weakness to Fire 100%.", mag:0, attrs:{}, abil:"Spell: Blood of the North. Ability: Weakness to Fire 100%."},
       "The Tower": {tip:"The Tower — spell Beggar's Nose (Detect Animal, Detect Enchantment and Detect Key 200 for 60s); power Tower Key (Open 50). No constant stats.", mag:0, attrs:{}, abil:"Spell: Beggar's Nose. Power: Tower Key (Open 50)."},
-      "The Serpent": {tip:"The Serpent — Star-Curse: Poison 3 pts for 30s on Touch, Damage Health 1 pt for 30s on Self. No constant stats.", mag:0, attrs:{}, abil:"Power: Star-Curse (Poison 3 pts for 30s on Touch, Damage Health 1 pt for 30s on Self)."}
+      "The Serpent": {tip:"The Serpent — spell Star-Curse: Poison 3 pts for 30s on Touch, Damage Health 1 pt for 30s on Self. No constant stats.", mag:0, attrs:{}, abil:"Spell: Star-Curse (Poison 3 pts for 30s on Touch, Damage Health 1 pt for 30s on Self)."}
     };
+    // Spells a new character starts with, read from Morrowind.esm. Tribunal, Bloodmoon, Tamriel_Data, Tamriel Rebuilt and ARCE
+    // add no starter spells and change none of the settings used below.
+    const RACE_SPELLS = {
+      "Argonian": ["Water Breathing"], "Khajiit": ["Eye of Night"],
+      "Tsaesci": ["Immortal Endurance", "Immortal Restoration"], "Naga": ["Water Breathing"], "Ayleid": ["Light"],
+      "Khajiit (Cathay)": ["Eye of Night"], "Khajiit (Cathay-raht)": ["Eye of Night"], "Khajiit (Dagi-raht)": ["Tree-Dweller's Landing", "Eye of Night"],
+      "Khajiit (Ohmes)": ["Eye of Night"], "Khajiit (Ohmes-raht)": ["Eye of Night"], "Khajiit (Suthay)": ["Eye of Night"],
+      "Khajiit (Tojay)": ["Eye of Night", "Wild Open", "Vigor"], "Duadri": ["Tava's Gale"]
+    };
+    const SIGN_SPELLS = { "The Ritual": ["Blessed Word", "Blessed Touch"], "The Lord": ["Blood of the North"], "The Tower": ["Beggar's Nose"], "The Serpent": ["Star-Curse"] };
+    // The spells flagged for new players. The game gives each one a new character can cast reliably (OpenMW's rule, which
+    // matches the original): its cost fits in Intelligence × fPCbaseMagickaMult (1), 2 × the school's skill − cost + Willpower / 5
+    // + Luck / 10 reaches fAutoPCSpellChance (50), and a spell that fortifies an attribute needs that attribute at
+    // iAutoSpellAttSkillMin (70). Only base values count: race, specialization, class and favored bonuses, not birthsign fortifies.
+    const PC_START_SPELLS = [
+      { name: "Bound Dagger", school: "Conjuration", cost: 6 },
+      { name: "Chameleon", school: "Illusion", cost: 15 },
+      { name: "Detect Creature", school: "Mysticism", cost: 19 },
+      { name: "Exhausting Touch", school: "Destruction", cost: 75 },
+      { name: "Feet of Notorgo", school: "Restoration", cost: 45, attribute: "Speed" },
+      { name: "Fire Bite", school: "Destruction", cost: 6 },
+      { name: "Hearth Heal", school: "Restoration", cost: 13 },
+      { name: "Sanctuary", school: "Illusion", cost: 15 },
+      { name: "Shield", school: "Alteration", cost: 15 },
+      { name: "Summon Ancestral Ghost", school: "Conjuration", cost: 21 },
+      { name: "Tap Energy", school: "Mysticism", cost: 180 },
+      { name: "Water Walking", school: "Alteration", cost: 9 }
+    ];
+    function startingSpells(b, sheet) {
+      const race = (RACE_SPELLS[b.race] || []).slice();
+      const base = (a) => sheet.attrs[a].v - (sheet.sign.attrs[a] || 0);
+      // In tenths, so the Willpower and Luck terms stay whole numbers.
+      const chance10 = (s) => 20 * sheet.skills[s.school].v - 10 * s.cost + 2 * base("Willpower") + base("Luck");
+      const skills = PC_START_SPELLS.filter((s) => race.indexOf(s.name) < 0 && s.cost <= base("Intelligence")
+        && chance10(s) >= 500 && (!s.attribute || base(s.attribute) >= 70)).map((s) => s.name);
+      return { race, sign: (SIGN_SPELLS[b.sign] || []).slice(), skills };
+    }
     const ATTR_TIP = {
       Strength:"melee damage, encumbrance, starting Fatigue.",
       Intelligence:"Magicka = Intelligence × (1 + Fortify Maximum Magicka).",
@@ -3302,6 +3679,44 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         const o = document.createElement("option");
         o.value = n; o.textContent = n;
         sel.appendChild(o);
+      });
+    }
+    function skillSlotKind(id) {
+      const s = String(id || "");
+      if (s.indexOf("maj") >= 0) return "Major";
+      if (s.indexOf("min") >= 0) return "Minor";
+      return "";
+    }
+    function fillSkillSelect(sel) {
+      if (!sel) return;
+      const keep = sel.value;
+      sel.innerHTML = "";
+      ["Combat", "Magic", "Stealth"].forEach((spec) => {
+        const g = document.createElement("optgroup");
+        g.label = spec;
+        (SPEC_SKILLS[spec] || []).forEach((n) => {
+          const o = document.createElement("option");
+          o.value = n;
+          o.textContent = n;
+          g.appendChild(o);
+        });
+        sel.appendChild(g);
+      });
+      if (keep) sel.value = keep;
+      labelSkillOptions(sel);
+    }
+    function labelSkillOptions(sel) {
+      if (!sel) return;
+      const pool = (sel.dataset.pool === "rand") ? RAND_SKILL_IDS : SKILL_IDS;
+      const taken = {};
+      pool.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el || el === sel || !el.value) return;
+        taken[el.value] = skillSlotKind(id);
+      });
+      Array.from(sel.options).forEach((o) => {
+        const tag = taken[o.value];
+        o.textContent = tag ? (o.value + " (" + tag + ")") : o.value;
       });
     }
     const SKILL_IDS = ["maj0","maj1","maj2","maj3","maj4","min0","min1","min2","min3","min4"];
@@ -3348,10 +3763,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const slot = s.dataset.pool === "rand" ? id.slice(1) : id;
       const n = parseInt(slot.slice(3), 10) + 1;
       s.setAttribute("aria-label", (slot.indexOf("maj") === 0 ? "Major skill " : "Minor skill ") + n);
-      fillSelect(s, SKILLS);
+      fillSkillSelect(s);
+      s.addEventListener("focus", () => labelSkillOptions(s));
+      s.addEventListener("mousedown", () => labelSkillOptions(s));
       s.addEventListener("change", () => {
         swapDuplicateSkill(s);
-        if (s.dataset.pool === "rand") { lockFavored("r"); refreshRand(); } else refreshCustom();
+        const pool = (s.dataset.pool === "rand") ? RAND_SKILL_IDS : SKILL_IDS;
+        pool.forEach((id) => labelSkillOptions(document.getElementById(id)));
+        if (s.dataset.pool === "rand") { lockFavored("r"); renderRun(); } else refreshCustom();
       });
       return s;
     }
@@ -3461,48 +3880,43 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
       function skillNote(sk) {
         const extra = [];
-        const rb = race.skills[sk] || 0;
-        if (rb) extra.push("+" + rb + " race");
         if (sign.skills && sign.skills[sk]) extra.push("+" + sign.skills[sk] + " " + signName);
         return extra.length ? " (" + extra.join(", ") + ")" : "";
       }
-      function skillBits(list) {
-        return list.map((sk) => sk + " " + skillVal[sk] + skillNote(sk)).join(" · ");
+      function skillGrid(list) {
+        return "<div class='sheet-grid'>" + list.map((sk) => "<div class='sheet-row'><span>" + sk + skillNote(sk) + "</span><strong>" + skillVal[sk] + "</strong></div>").join("") + "</div>";
       }
       let html = "<h3>Starting sheet</h3>";
-      html += "<p><strong>Attributes</strong> — race table, +10 favored, birthsign fortify</p><p>";
-      ATTRS.forEach((a, i) => {
-        const note = noteBits(attrs[a].parts, [attrs[a].parts[0]]);
-        html += a + " <strong>" + attrs[a].v + "</strong>" + note + (i % 2 === 1 ? "<br>" : " ");
+      html += "<p><strong>Attributes</strong> — race table, +10 favored, birthsign fortify</p>";
+      html += "<div class='sheet-grid'>";
+      ATTRS.forEach((a) => {
+        const note = noteBits(attrs[a].parts, [attrs[a].parts[0], "+10 favored"]);
+        html += "<div class='sheet-row'><span>" + a + note + "</span><strong>" + attrs[a].v + "</strong></div>";
       });
-      html += "</p><p><strong>Derived</strong></p><ul>";
-      html += "<li>Health: floor((STR " + strForHp + " + END " + endForHp + ") / 2) = <strong>" + health + "</strong>" + ((sign.attrs.Endurance || sign.attrs.Strength) ? " (birthsign Fortify Endurance/Strength does not raise starting Health)" : "") + "</li>";
-      html += "<li>Fatigue: STR+WIL+AGI+END = <strong>" + fatigue + "</strong></li>";
-      html += "<li>Magicka: INT " + intel + " × (1 + race " + race.mag + " + sign " + sign.mag + ") = <strong>" + magicka + "</strong></li>";
-      html += "</ul>";
+      html += "</div>";
       const otherSk = SKILLS.filter((sk) => !maj.includes(sk) && !min.includes(sk) && (skillVal[sk] !== 5 || race.skills[sk]));
-      html += "<p><strong>Majors</strong> " + skillBits(maj) + "</p>";
-      html += "<p><strong>Minors</strong> " + skillBits(min) + "</p>";
-      if (otherSk.length) html += "<p><strong>Other</strong> " + skillBits(otherSk) + "</p>";
+      html += "<p class='sheet-skills sheet-vitals'><strong>Health</strong> <span class='sheet-skill'><strong>" + health + "</strong></span> <strong>Fatigue</strong> <span class='sheet-skill'><strong>" + fatigue + "</strong></span> <strong>Magicka</strong> <span class='sheet-skill'><strong>" + magicka + "</strong></span></p>";
+      html += "<p><strong>Majors</strong></p>" + skillGrid(maj);
+      html += "<p><strong>Minors</strong></p>" + skillGrid(min);
+      if (otherSk.length) html += "<p><strong>Other</strong></p>" + skillGrid(otherSk);
       html += "<details><summary>Show the math</summary><ul>";
       ATTRS.forEach((a) => { html += "<li>" + a + ": " + attrs[a].v + " (" + attrs[a].parts.join(" ") + ")</li>"; });
+      html += "<li>Health: floor((STR " + strForHp + " + END " + endForHp + ") / 2) = " + health + ((sign.attrs.Endurance || sign.attrs.Strength) ? " (birthsign Fortify Endurance/Strength does not raise starting Health)" : "") + "</li>";
+      html += "<li>Fatigue: STR+WIL+AGI+END = " + fatigue + "</li>";
+      html += "<li>Magicka: INT " + intel + " × (1 + race " + race.mag + " + sign " + sign.mag + ") = " + magicka + "</li>";
       SKILLS.slice().sort((a,b)=>skillVal[b]-skillVal[a]).forEach((sk) => {
         if (skillVal[sk] !== 5 || race.skills[sk]) html += "<li>" + sk + ": " + skillVal[sk] + " (" + skillWhy[sk] + ")</li>";
       });
+      html += "<li>Starting spells from skills: each starter spell whose cost fits in your Intelligence and whose cast chance, 2 × school skill − cost + Willpower ÷ 5 + Luck ÷ 10, reaches 50. Birthsign bonuses don't count, and Feet of Notorgo also needs Speed 70.</li>";
       html += "</ul></details>";
+      const spells = startingSpells(b, sheet);
+      const spellRows = [["From your race", spells.race], ["From your birthsign", spells.sign], ["From your skills", spells.skills]].filter((row) => row[1].length);
+      html += "<p><strong>Starting spells</strong></p>";
+      html += spellRows.length ? spellRows.map((row) => "<p>" + row[0] + ": " + row[1].join(" · ") + "</p>").join("") : "<p class='muted'>None.</p>";
       html += "<p><strong>Abilities</strong></p><p>" + race.abilities + "</p><p>" + sign.abil + "</p>";
       html += sheetWarnings(sheet, b);
-      html += "<p><button type='button' class='btn' id='btn-copy-sheet'>Copy this loadout</button></p>";
       document.getElementById("c-summary").innerHTML = html;
-      const copyBtn = document.getElementById("btn-copy-sheet");
-      if (copyBtn && copyBtn.dataset.bound !== "1") {
-        copyBtn.dataset.bound = "1";
-        copyBtn.addEventListener("click", () => {
-          const text = raceName + " " + gender + " / " + signName + " / " + spec + "\nFavored: " + f1 + ", " + f2 + "\nMajor: " + maj.join(", ") + "\nMinor: " + min.join(", ");
-          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text);
-          copyBtn.textContent = "Copied";
-        });
-      }
+      if (hashBooted) { try { writeShareHash(); } catch (e) {} }
     }
     function collectBuild() {
       const b = readPanelBuild("c");
@@ -3536,32 +3950,24 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (typeof syncCustomClassLock === "function") syncCustomClassLock();
       else refreshCustom();
     }
-    document.getElementById("btn-save-code").addEventListener("click", () => {
-      const raw = JSON.stringify(collectBuild());
-      const code = "MW1-" + btoa(unescape(encodeURIComponent(raw)));
-      const ta = document.getElementById("build-code");
-      ta.value = code;
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code);
-      document.getElementById("btn-save-code").textContent = "Code copied";
-      setTimeout(() => { document.getElementById("btn-save-code").textContent = "Save build"; }, 1600);
-    });
-    document.getElementById("btn-load-code").addEventListener("click", () => {
-      const ta = document.getElementById("build-code");
-      let s = (ta.value || "").trim();
+    function applyPendingBuild() {
+      if (!pendingBuild) return;
       try {
-        if (s.indexOf("MW1-") === 0) s = s.slice(4);
-        const b = JSON.parse(decodeURIComponent(escape(atob(s))));
-        applyBuild(b);
-        document.getElementById("btn-load-code").textContent = applyBuild._note ? "Loaded (world changed)" : "Loaded";
-        setTimeout(() => { document.getElementById("btn-load-code").textContent = "Load build"; }, 1600);
-        const noteEl = document.getElementById("load-code-note");
-        if (noteEl) noteEl.textContent = (applyBuild._note || "").trim();
-      } catch (e) {
-        document.getElementById("btn-load-code").textContent = "Bad code";
-        const noteEl = document.getElementById("load-code-note");
-        if (noteEl) noteEl.textContent = "";
-      }
-    });
+        applyBuild(JSON.parse(fromBase64Url(pendingBuild)));
+      } catch (e) {}
+      pendingBuild = null;
+    }
+    applyPendingBuild();
+    const copyBuildBtn = document.getElementById("btn-copy-build-link");
+    if (copyBuildBtn) {
+      copyBuildBtn.addEventListener("click", () => {
+        try { writeShareHash(); } catch (e) {}
+        const url = location.href;
+        const done = () => { copyBuildBtn.textContent = "Copied link"; setTimeout(() => { copyBuildBtn.textContent = "Copy link"; }, 1600); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(() => { done(); });
+        else done();
+      });
+    }
     ["c-race","c-gender","c-sign","c-spec","c-fav1","c-fav2"].forEach((id) => {
       document.getElementById(id).addEventListener("change", refreshCustom);
     });
@@ -3714,70 +4120,230 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     function pickN(arr, n) {
       return shuffle(arr).slice(0, n);
     }
-    fillSelect(document.getElementById("r-class"), CLASS_NAMES.concat(["Custom"]));
+    fillSelect(document.getElementById("r-class"), ["Custom"].concat(CLASS_NAMES));
     fillSelect(document.getElementById("r-race"), Object.keys(RACES));
     fillSelect(document.getElementById("r-sign"), Object.keys(SIGNS));
     document.querySelectorAll(".rfav").forEach((s) => fillSelect(s, ATTRS));
-    document.getElementById("r-fav2").value = "Endurance";
-    const rMaj = document.getElementById("r-majors");
-    const rMin = document.getElementById("r-minors");
-    // The page ships placeholder selects; rebuild them so they swap duplicates and refresh the sheet like the custom builder's.
-    if (rMaj && rMin) {
-      rMaj.innerHTML = ""; rMin.innerHTML = "";
-      for (let i = 0; i < 5; i++) {
-        rMaj.appendChild(skillSelect("rmaj"+i, "rand"));
-        rMin.appendChild(skillSelect("rmin"+i, "rand"));
-      }
+    for (let i = 0; i < 5; i++) {
+      document.getElementById("r-majors").appendChild(skillSelect("rmaj" + i, "rand"));
+      document.getElementById("r-minors").appendChild(skillSelect("rmin" + i, "rand"));
     }
-    applyClassToPanel("r", "Warrior");
-    function refreshRand() {
-      const b = readPanelBuild("r");
-      const sheet = computeSheet(b);
-      if (!sheet) return;
-      const race = sheet.race, sign = sheet.sign, attrs = sheet.attrs;
-      const skillVal = {};
-      SKILLS.forEach((sk) => { skillVal[sk] = sheet.skills[sk].v; });
-      const health = sheet.health, fatigue = sheet.fatigue, magicka = sheet.magicka;
-      let html = "<h3>" + document.getElementById("r-class").value + " — starting sheet</h3><ul>";
-      ATTRS.forEach((a) => { html += "<li>" + a + ": <strong>" + attrs[a].v + "</strong></li>"; });
-      html += "</ul><p>Health <strong>"+health+"</strong> · Fatigue <strong>"+fatigue+"</strong> · Magicka <strong>"+magicka+"</strong></p><ul>";
-      SKILLS.slice().sort((a,b)=>skillVal[b]-skillVal[a]).forEach((sk) => {
-        if (skillVal[sk] !== 5 || race.skills[sk]) html += "<li>"+sk+": <strong>"+skillVal[sk]+"</strong></li>";
-      });
-      html += "</ul><p>"+race.abilities+"</p><p>"+sign.abil+"</p>";
-      html += sheetWarnings(sheet, b);
-      document.getElementById("r-summary").innerHTML = html;
-      fillRunSummary();
+    // Until the class is rolled the character holds the first class's sheet, so a link or the optimizer always gets a whole one.
+    document.getElementById("r-class").value = CLASS_NAMES[0];
+    applyClassToPanel("r", CLASS_NAMES[0]);
+    const aspectLocks = { race: false, gender: false, cls: false, sign: false, major: false, obj: false, rest: false, maj: false, min: false };
+    const ASPECT_LABELS = { race: "race", gender: "gender", cls: "class", sign: "birthsign", major: "major objective", obj: "minor objectives", rest: "restrictions", maj: "major skills", min: "minor skills" };
+    const CARD_IDS = { cls: "class", maj: "major-skills", min: "minor-skills" };
+    const DICE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>';
+    const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+    function isLocked(key) { return !!aspectLocks[key]; }
+    function setLock(key, on) {
+      aspectLocks[key] = !!on;
+      renderRun();
     }
-    function fillRunSummary() {
+    const pickOne = (list) => list[Math.floor(Math.random() * list.length)];
+    function setPick(id, value) { document.getElementById(id).value = value; }
+    // Skills roll on their own only while the class is Custom or not rolled; a rolled class brings its own.
+    function skillsOpen() {
+      return !challengeRun.cls || challengeRun.cls === "Custom";
+    }
+    // A custom class: random specialization, favored attributes and ten skills.
+    function rollCustomClass() {
+      challengeRun.cls = "Custom";
+      setPick("r-class", "Custom");
+      setPick("r-spec", pickOne(Object.keys(SPEC_SKILLS)));
+      const favored = pickN(ATTRS, 2);
+      setPick("r-fav1", favored[0]);
+      setPick("r-fav2", favored[1]);
+      pickN(SKILLS, 10).forEach((s, i) => setPick((i < 5 ? "rmaj" : "rmin") + (i % 5), s));
+      syncSkillPrev(RAND_SKILL_IDS);
+    }
+    // A class roll can land on Custom too, as when making a character in the game.
+    function rollClass() {
+      aspectLocks.maj = aspectLocks.min = false;
+      const name = pickOne(["Custom"].concat(CLASS_NAMES_NOW()));
+      if (name === "Custom") return rollCustomClass();
+      challengeRun.cls = name;
+      setPick("r-class", name);
+      applyClassToPanel("r", name);
+    }
+    // The first skills roll makes the class a custom one; after that each card rerolls its own five skills.
+    function rollSkills(group) {
+      if (!skillsOpen()) return;
+      if (challengeRun.cls !== "Custom") return rollCustomClass();
+      const own = group === "maj" ? "rmaj" : "rmin", other = group === "maj" ? "rmin" : "rmaj";
+      const taken = [0, 1, 2, 3, 4].map((i) => document.getElementById(other + i).value);
+      pickN(SKILLS.filter((s) => taken.indexOf(s) < 0), 5).forEach((s, i) => setPick(own + i, s));
+      syncSkillPrev(RAND_SKILL_IDS);
+    }
+    function rollOne(key) {
+      if (isLocked(key)) return;
+      const r = challengeRun;
+      if (key === "race") { r.race = pickOne(Object.keys(raceTable())); setPick("r-race", r.race); }
+      else if (key === "gender") { r.gender = pickOne(["Male", "Female"]); setPick("r-gender", r.gender); }
+      else if (key === "sign") { r.sign = pickOne(Object.keys(SIGNS)); setPick("r-sign", r.sign); }
+      else if (key === "cls") rollClass();
+      else if (key === "maj" || key === "min") rollSkills(key);
+      else if (key === "major") rollMajor();
+      else if (key === "obj") rollObjectives();
+      else if (key === "rest") rollRestrictions();
+    }
+    function rollAspect(key) {
+      rollOne(key);
+      lockFavored("r");
+      renderRun();
+    }
+    // Rerolls every card that isn't locked. Locked skills keep their custom class, and a locked custom class rerolls its skills.
+    function randomizeAll() {
+      ["race", "gender", "sign"].forEach((key) => rollOne(key));
+      const skillsKept = challengeRun.cls === "Custom" && (isLocked("maj") || isLocked("min"));
+      if (!isLocked("cls") && !skillsKept) rollOne("cls");
+      else if (challengeRun.cls === "Custom") { rollOne("maj"); rollOne("min"); }
+      // The major objective first, since restrictions avoid what it needs, then objectives, which avoid what restrictions ban.
+      ["major", "rest", "obj"].forEach((key) => rollOne(key));
+      lockFavored("r");
+      renderRun();
+    }
+    // Draws the run board from challengeRun. Everything rolled is set as text, never as HTML, since a permalink can carry anything.
+    function renderRun() {
       const box = document.getElementById("run-summary");
       if (!box) return;
-      const clsRaw = document.getElementById("r-class").value;
-      let cls = clsRaw || "Custom";
-      try {
-        const names = (typeof CLASS_NAMES_NOW === "function" ? CLASS_NAMES_NOW() : CLASS_NAMES) || [];
-        if (names.indexOf(clsRaw) < 0 && clsRaw !== "Custom") cls = clsRaw;
-        else if (names.indexOf(clsRaw) < 0) cls = "Custom";
-        else cls = clsRaw;
-      } catch (e) {}
-      const race = document.getElementById("r-race").value;
-      const gender = document.getElementById("r-gender").value;
-      const major = plainText(document.getElementById("major-drawn")) || "Not rolled";
-      const minors = [...document.querySelectorAll("#obj-drawn li")].map(plainText);
-      const rests = [...document.querySelectorAll("#drawn li")].map((li) => li.textContent).filter(function(x){ return x && x.indexOf("Turn on Easy") === -1 && x.indexOf("Rolled ") !== 0; });
-      let html = "<p><strong>" + race + "</strong> " + gender + " · <strong>" + cls + "</strong></p>";
-      html += "<p><strong>Major objective</strong> — " + major + "</p>";
-      html += "<p><strong>Minor objectives</strong></p>";
-      html += minors.length ? "<ul>" + minors.map((m)=>"<li>"+m+"</li>").join("") + "</ul>" : "<p class='muted'>None yet</p>";
-      html += "<p><strong>Restrictions</strong></p>";
-      html += rests.length ? "<ul>" + rests.map((m)=>"<li>"+m+"</li>").join("") + "</ul>" : "<p class='muted'>None yet</p>";
-      box.innerHTML = html;
+      const r = challengeRun;
+      // Drop picks the current world doesn't offer, such as an ARCE race after ARCE is turned off.
+      if (r.race && !raceTable()[r.race]) r.race = "";
+      if (r.cls && r.cls !== "Custom" && !classTable()[r.cls]) r.cls = "";
+      if (r.major && activeMajors().indexOf(r.major) < 0) r.major = "";
+      r.rests = r.rests.filter((x) => activePool().indexOf(x) >= 0);
+      const focused = box.contains(document.activeElement) ? document.activeElement.id : "";
+      const b = readPanelBuild("r");
+      box.textContent = "";
+      const add = (parent, tag, className, text) => {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (text != null) el.textContent = text;
+        parent.appendChild(el);
+        return el;
+      };
+      // A card with its randomize and lock buttons. Returns the element that holds the card's content.
+      const card = (key, title, extraClass, opts) => {
+        opts = opts || {};
+        const row = add(box, "div", "sum-row" + (extraClass ? " " + extraClass : ""));
+        const content = add(row, "div", "sum-text");
+        add(content, "span", "sum-kicker", title);
+        const acts = add(row, "span", "sum-acts");
+        const label = ASPECT_LABELS[key], id = CARD_IDS[key] || key;
+        const dice = add(acts, "button", "icon-btn");
+        dice.type = "button";
+        dice.id = "dice-" + id;
+        dice.innerHTML = DICE_SVG;
+        dice.setAttribute("aria-label", "Randomize " + label);
+        dice.title = opts.rollBlocked || "Randomize " + label;
+        dice.disabled = !!opts.rollBlocked;
+        dice.addEventListener("click", () => rollAspect(key));
+        const lock = add(acts, "button", "icon-btn");
+        lock.type = "button";
+        lock.id = "lock-" + id;
+        lock.innerHTML = LOCK_SVG;
+        lock.setAttribute("aria-label", "Lock " + label);
+        lock.setAttribute("aria-pressed", isLocked(key) ? "true" : "false");
+        lock.title = (isLocked(key) ? "Unlock " : "Lock ") + label;
+        lock.disabled = !!opts.lockBlocked;
+        lock.addEventListener("click", () => setLock(key, !isLocked(key)));
+        return content;
+      };
+      const value = (content, v, withRegions) => {
+        const el = add(content, "span", "sum-val", v || "Not rolled");
+        if (v && withRegions) appendRegionTags(el, v);
+      };
+      const list = (content, items) => {
+        if (!items.length) return value(content, "");
+        const ul = add(content, "ul", "sum-desc");
+        items.forEach((item) => {
+          const li = add(ul, "li", "", item.text);
+          if (item.regionsOf) appendRegionTags(li, item.regionsOf);
+        });
+      };
+      value(card("race", "Race"), r.race);
+      value(card("gender", "Gender"), r.gender);
+      const cls = card("cls", "Class");
+      value(cls, r.cls);
+      if (r.cls === "Custom") add(cls, "span", "sum-note", b.spec + " · favored " + b.fav1 + " and " + b.fav2);
+      value(card("sign", "Birthsign"), r.sign);
+      value(card("major", "Major objective", "sum-wide sum-locked"), r.major, true);
+      list(card("obj", "Minor objectives", "sum-wide sum-locked"), r.minors.map((o) => {
+        const extra = [];
+        if (tagsOf(o.text).indexOf("crime") >= 0) extra.push("this is a crime in-game");
+        if (o.kind === "FLAVOR") extra.push("flavor — no hard checkbox");
+        return { text: o.text + (extra.length ? " (" + extra.join("; ") + ")" : ""), regionsOf: o.text };
+      }));
+      const rests = card("rest", "Restrictions", "sum-wide sum-locked");
+      list(rests, r.rests.map((x) => ({ text: bandLive(x) + " — " + x })));
+      if (r.restNote) add(rests, "span", "sum-note", r.restNote);
+      const skillOpts = { rollBlocked: skillsOpen() ? "" : "The " + r.cls + " class sets these skills", lockBlocked: r.cls !== "Custom" };
+      list(card("maj", "Major skills", "sum-locked", skillOpts), r.cls ? b.maj.map((s) => ({ text: s })) : []);
+      list(card("min", "Minor skills", "sum-locked", skillOpts), r.cls ? b.min.map((s) => ({ text: s })) : []);
+      if (focused) {
+        const el = document.getElementById(focused);
+        if (el && !el.disabled) el.focus();
+      }
+      if (hashBooted) { try { writeShareHash(); } catch (e) {} }
     }
-    document.getElementById("btn-rand-all").addEventListener("click", () => {
-      document.getElementById("btn-rand-char").click();
-      document.getElementById("btn-major").click();
-      document.getElementById("btn-roll").click();
-      document.getElementById("btn-obj").click();
+    document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
+    document.getElementById("btn-challenge-advanced").addEventListener("click", () => {
+      const box = document.getElementById("challenge-advanced");
+      if (!box) return;
+      box.classList.toggle("hidden");
+      document.getElementById("btn-challenge-advanced").textContent = box.classList.contains("hidden") ? "Advanced settings" : "Hide advanced settings";
+      if (!box.classList.contains("hidden")) box.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    function sendChallengeToOptimizer() {
+      const b = readPanelBuild("r");
+      const raceMap = {"High Elf":"High Elf","Wood Elf":"Wood Elf","Dark Elf":"Dark Elf"};
+      const cr = document.getElementById("c-race");
+      if (cr) cr.value = raceMap[b.race] || b.race;
+      const cg = document.getElementById("c-gender"); if (cg) cg.value = b.gender;
+      const cs = document.getElementById("c-sign"); if (cs) cs.value = b.sign;
+      const csp = document.getElementById("c-spec"); if (csp) csp.value = b.spec;
+      const f1 = document.getElementById("c-fav1"); if (f1) f1.value = b.fav1;
+      const f2 = document.getElementById("c-fav2"); if (f2) f2.value = b.fav2;
+      const cc = document.getElementById("c-class");
+      const rcls = (document.getElementById("r-class") || {}).value || "Custom";
+      if (cc) {
+        const names = ["Custom"].concat(typeof CLASS_NAMES_NOW === "function" ? CLASS_NAMES_NOW() : CLASS_NAMES);
+        cc.value = names.indexOf(rcls) >= 0 ? rcls : "Custom";
+      }
+      for (let i = 0; i < 5; i++) {
+        const mj = document.getElementById("maj" + i); if (mj && b.maj[i]) mj.value = b.maj[i];
+        const mn = document.getElementById("min" + i); if (mn && b.min[i]) mn.value = b.min[i];
+      }
+      if (typeof syncSkillPrev === "function") syncSkillPrev();
+      if (cc && cc.value !== "Custom" && typeof applyClassToPanel === "function") applyClassToPanel("c", cc.value);
+      if (typeof lockSkillSelects === "function") lockSkillSelects(cc && cc.value !== "Custom");
+      const premade = document.getElementById("premade");
+      const custom = document.getElementById("custom");
+      if (premade) premade.classList.add("hidden");
+      if (custom) custom.classList.remove("hidden");
+      goldOutline([document.getElementById("btn-custom")], [document.getElementById("btn-premade")]);
+      if (typeof refreshCustom === "function") refreshCustom();
+      showView("builder");
+    }
+    document.getElementById("btn-to-optimizer").addEventListener("click", sendChallengeToOptimizer);
+    document.getElementById("btn-copy-permalink").addEventListener("click", () => {
+      try { writeShareHash(); } catch (e) {}
+      const url = location.href;
+      const btn = document.getElementById("btn-copy-permalink");
+      const done = () => { btn.textContent = "Copied link"; setTimeout(() => { btn.textContent = "Copy permalink"; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(done).catch(done);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch (e) {}
+        document.body.removeChild(ta);
+        done();
+      }
     });
     document.getElementById("btn-copy-summary").addEventListener("click", () => {
       const box = document.getElementById("run-summary");
@@ -3796,25 +4362,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         done();
       }
     });
-    function syncSkillToggles() {
-      const lock = document.getElementById("rand-class").checked;
-      ["rand-maj","rand-min"].forEach((id) => {
-        const el = document.getElementById(id);
-        el.disabled = lock;
-        if (lock) el.checked = false;
-      });
-    }
-    document.getElementById("rand-class").addEventListener("change", syncSkillToggles);
-    document.getElementById("r-class").addEventListener("change", () => {
-      applyClassToPanel("r", document.getElementById("r-class").value);
-      syncSkillToggles();
-      lockFavored("r");
-      refreshRand();
-    });
-    ["r-race","r-gender","r-sign","r-spec","r-fav1","r-fav2"].forEach((id) => {
-      document.getElementById(id).addEventListener("change", () => { lockFavored("r"); refreshRand(); });
-    });
-    try { lockFavored("r"); } catch (e) {}
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && drawer && drawer.classList.contains("open")) {
         drawer.classList.remove("open");
@@ -3828,62 +4375,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       drawer.classList.remove("open");
       if (menuBtn) menuBtn.setAttribute("aria-expanded", "false");
     });
-    document.getElementById("btn-rand-char").addEventListener("click", () => {
-      if (document.getElementById("rand-class").checked) {
-        const pool = CLASS_NAMES_NOW();
-        const name = pool[Math.floor(Math.random()*pool.length)];
-        document.getElementById("r-class").value = name;
-        applyClassToPanel("r", name);
-      }
-      if (document.getElementById("rand-race").checked) {
-        const names = Object.keys(raceTable());
-        document.getElementById("r-race").value = names[Math.floor(Math.random()*names.length)];
-      }
-      if (document.getElementById("rand-gender").checked) {
-        document.getElementById("r-gender").value = Math.random() < 0.5 ? "Male" : "Female";
-      }
-      if (document.getElementById("rand-sign").checked) {
-        const names = Object.keys(SIGNS);
-        document.getElementById("r-sign").value = names[Math.floor(Math.random()*names.length)];
-      }
-      const classLocked = document.getElementById("rand-class").checked;
-      if (!classLocked && (document.getElementById("rand-maj").checked || document.getElementById("rand-min").checked)) {
-        if (document.getElementById("rand-maj").checked) pickN(SKILLS, 5).forEach((s,i)=>document.getElementById("rmaj"+i).value=s);
-        if (document.getElementById("rand-min").checked) {
-          const used = new Set([...Array(5)].map((_,i)=>document.getElementById("rmaj"+i).value));
-          pickN(SKILLS.filter((s)=>!used.has(s)), 5).forEach((s,i)=>document.getElementById("rmin"+i).value=s);
-        }
-        document.getElementById("r-class").value = "Custom";
-        syncSkillPrev(RAND_SKILL_IDS);
-      }
-      syncSkillToggles();
-      lockFavored("r");
-      refreshRand();
-    });
-    syncSkillToggles();
-    try { refreshRand(); } catch (e) {}
-    try { if (typeof applyArceLists === "function") applyArceLists(); } catch (e) {}
-    try {
-      const rc = document.getElementById("r-class");
-      if (rc && !rc.options.length && typeof CLASS_NAMES !== "undefined") fillSelect(rc, CLASS_NAMES.concat(["Custom"]));
-      const rr = document.getElementById("r-race");
-      if (rr && !rr.options.length) fillSelect(rr, Object.keys(RACES));
-      const rs = document.getElementById("r-sign");
-      if (rs && !rs.options.length) fillSelect(rs, Object.keys(SIGNS));
-      document.querySelectorAll(".rfav").forEach((s) => { if (!s.options.length) fillSelect(s, ATTRS); });
-      const rMaj = document.getElementById("r-majors");
-      const rMin = document.getElementById("r-minors");
-      if (rMaj && !rMaj.children.length) {
-        for (let i = 0; i < 5; i++) {
-          rMaj.appendChild(skillSelect("rmaj"+i, "rand"));
-          rMin.appendChild(skillSelect("rmin"+i, "rand"));
-        }
-        applyClassToPanel("r", "Warrior");
-      }
-    } catch (e) {}
-
+    lockFavored("r");
+    try { applyArceLists(); } catch (e) {}
+    renderRun();
+    if (pendingRun) {
+      applyRunPayload(pendingRun);
+      pendingRun = null;
+    }
 
   </script>
 </body>
 </html>
-
