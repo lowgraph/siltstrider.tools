@@ -92,13 +92,38 @@ function picksFor(window, slot) {
 // An item cell should hold a name, not a sentence ("St. Felms" is fine; "X — sold by Y." is not).
 const readsLikeSentence = (name) => name.length > 90 || / — |: |\.$/.test(name);
 
-test("the frame image is embedded once and referenced by custom property", () => {
-  const html = fs.readFileSync(SITE_PATH, "utf8");
-  const payloads = html.match(/base64,[A-Za-z0-9+/=]{1000,}/g) || [];
-  const pngPayloads = payloads.filter((p) => p.length > 100000);
-  assert.equal(pngPayloads.length, 1, "the border-image PNG must be embedded exactly once");
-  assert.equal((html.match(/border-image: var\(--frame-img\)/g) || []).length, 3);
-  assert.match(html, /--frame-img: url\("data:image\/png;base64,/);
+test("Morrowind's borders are embedded once each and drawn pixel for pixel", () => {
+  const html = fs.readFileSync(SITE_PATH, "utf8").replace(/\r\n/g, "\n");
+  assert.doesNotMatch(html, /--frame-img/, "the old ornate frame image should be gone");
+  for (const name of ["mw-border", "mw-bevel", "mw-groove"]) {
+    const found = [...html.matchAll(new RegExp(`--${name}: url\\("data:image\\/png;base64,([A-Za-z0-9+/=]+)"\\)`, "g"))];
+    assert.equal(found.length, 1, `the --${name} texture must be embedded exactly once`);
+    const png = Buffer.from(found[0][1], "base64");
+    assert.equal(png.toString("latin1", 1, 4), "PNG");
+    assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [128, 128], `--${name} is 128px square`);
+  }
+  const rule = (selector) => {
+    const start = html.indexOf("\n    " + selector + " {");
+    assert.ok(start >= 0, `no ${selector} rule`);
+    return html.slice(start, html.indexOf("}", start));
+  };
+  // A slice as wide as the border puts one texture pixel on each screen pixel; stretching would smooth the grain away.
+  const uses = {
+    "mw-border": [[".hero", 6], ["#run-summary .sum-row", 6], [".panel", 6], [".cat-row", 6], [".build-sheet", 6]],
+    "mw-bevel": [[".btn", 4], [".icon-btn", 4], [".seg", 4], [".arce-toggle", 4], ["select", 4]],
+    "mw-groove": [[".hero::after", 2], [".vital-bar", 2]],
+  };
+  for (const [name, list] of Object.entries(uses)) {
+    for (const [selector, width] of list) {
+      const css = rule(selector);
+      assert.match(css, new RegExp(`border: ${width}px solid transparent;[\\s\\S]*border-image: var\\(--${name}\\) ${width} repeat;`), `${selector} should draw --${name} at ${width}px`);
+      assert.doesNotMatch(css, /border-radius: (?!0)/, `${selector} should keep square corners`);
+    }
+  }
+  assert.match(rule(".btn.home-card"), /border-width: 6px;[\s\S]*border-image: var\(--mw-border\) 6 repeat;/, "home cards are cards, with the window frame");
+  assert.match(rule(".save-row"), /border-top: 2px solid transparent;[\s\S]*border-image: var\(--mw-groove\) 2 \/ 2px 0 0 0 repeat;/);
+  assert.match(rule("select"), /appearance: none;/, "dropdowns draw their own arrow");
+  assert.doesNotMatch(html, /border-image: var\(--mw-[a-z]+\)[^;]*stretch/, "no border may stretch its texture");
 });
 
 test("the desktop header stays on one row without the nav covering the site name", () => {
@@ -613,4 +638,23 @@ test("About lists corrections and support contacts, and the footer opens the cha
   document.getElementById("link-about-footer").click();
   assert.ok(document.getElementById("panel-about").classList.contains("show"), "the footer link should open About");
   assert.ok(document.querySelectorAll("#panel-changelog time").length >= 3, "changelog entries need dates");
+});
+
+test("the starting sheet shows Health, Magicka and Fatigue as the game's coloured bars", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const { document } = window;
+  document.getElementById("btn-build").click();
+  document.getElementById("btn-custom").click();
+  setSheet(window, { race: "Breton", sign: "The Mage", spec: "Magic" });
+  const sheet = window.computeSheet(window.readPanelBuild("c"));
+  const bars = [...document.querySelectorAll("#c-summary .vital")].map((row) => {
+    const bar = row.querySelector(".vital-bar");
+    return [row.querySelector(".vital-label").textContent, bar.className, bar.textContent];
+  });
+  assert.deepEqual(bars, [
+    ["Health", "vital-bar vital-health", `${sheet.health}/${sheet.health}`],
+    ["Magicka", "vital-bar vital-magicka", `${sheet.magicka}/${sheet.magicka}`],
+    ["Fatigue", "vital-bar vital-fatigue", `${sheet.fatigue}/${sheet.fatigue}`],
+  ]);
 });
