@@ -260,6 +260,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       background: var(--gold);
       color: #1a140c;
     }
+    .gear-toggles { display: flex; flex-wrap: wrap; gap: 4px 24px; margin: 24px 0 0; }
+    .gear-toggles label { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+    .gear-toggles label:has(input:disabled) { color: #8a8680; }
+    .gear-toggles + #btn-gear { margin-top: 8px; }
     .build-mode .btn.on, .premade-filters .btn.on {
       background: var(--gold);
       color: #1a140c;
@@ -682,6 +686,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     #gear-box table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     #gear-box th, #gear-box td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #3a3224; vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
     #gear-box th { color: var(--gold); font-weight: 600; }
+    #gear-box td:first-child { overflow-wrap: normal; word-break: normal; }
     #gear-box .gear-name { display: block; font-weight: 600; }
     #gear-box .gear-note { display: block; margin-top: 2px; color: #cfc3aa; font-size: 0.9em; }
     #gear-box .gear-tag { display: inline-block; margin-bottom: 2px; padding: 0 5px; border: 1px solid #8a7344; color: var(--gold); font-size: 0.72em; letter-spacing: 0.05em; text-transform: uppercase; }
@@ -1063,8 +1068,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <li>The number of objectives and restrictions, the difficulty bands and the full lists moved to Advanced settings.</li>
           <li>Restrictions that repeat or undercut each other no longer roll together, such as a level 10 and a level 20 cap, No magic and No spending Magicka, or Marksman only and No ranged weapons.</li>
           <li>New restrictions: Ironman with no quicksaving, only level one weapon skill, no jumping, no spending Magicka, no activated birthsign or racial powers, and a level 10 cap. Removed No companions, No killing named NPCs, No exploits or glitches, the Calm or Frenzy, water-taunting, Restore Health kiting and Acrobatics cheese bans, The Atronach and no potions, No sleeping to recover magicka, No skill books, and no ingredients from named town containers.</li>
-          <li>Naked start is now Easy. The Strength and Intelligence caps and the level 20 cap are Hard instead of Grind.</li>
-          <li>The Fighters, Mages and Thieves Guilds are separate major objectives. Dropped becoming Hortator of all three Houses and completing every quest in one town.</li>
+          <li>The Strength and Intelligence caps and the level 20 cap are Hard instead of Grind.</li>
+          <li>Faction major objectives name each faction's top rank, such as Master of the Fighters Guild, Arch-Mage of the Mages Guild or Patriarch of the Tribunal Temple, and the three guilds are separate objectives. Dropped becoming Hortator of all three Houses and completing every quest in one town.</li>
           <li>The Tamriel Rebuilt guild, Legion, Temple and Imperial Cult major objectives are now to complete all their quests in five mainland cities. Dropped the Telvanni Isles questline.</li>
           <li>Removed eleven minor objectives, among them leaving skill books unread, talking to every named NPC in Pelagiad and finding your way out of Vivec's sewers.</li>
           <li>Starting spells lists what a new character begins with: spells from the race and the birthsign, and the starter spells the game gives for strong enough magic skills.</li>
@@ -1077,6 +1082,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <li>Fixed the navigation overlapping the site name in desktop windows narrower than 1200 pixels.</li>
           <li>The page frame and cards have the game's rough parchment window border, and buttons and dropdowns look like its Name, Race, Class and Sign buttons, drawn pixel for pixel in the colours of its character sheet.</li>
           <li>The starting sheet shows Health, Magicka and Fatigue as red, blue and green bars, like the game's character sheet.</li>
+          <li>The gear optimizer knows beast races can't wear boots, shoes or helmets that cover the whole head: Argonians, Khajiit and ARCE's beast races get open helmets and no footwear.</li>
+          <li>Every armor pick in the gear tables shows its armor rating.</li>
+          <li>Clearer gear locations: the Bonemold Boots are in Arobar Manor's bedrooms, the Glass Dagger comes from Suran's pawnbroker, and Telvon Llethan's smithy is in Vivec's Hlaalu Canton.</li>
+          <li>Removed the Naked start restriction, which was too easy, and the vague Ghostfence walk objective. No alteration and No lockpicking no longer roll together, and neither do finding Fargoth's hiding place and taking nothing in Seyda Neen.</li>
+          <li>Minor objectives no longer carry a “flavor — no hard checkbox” label.</li>
+          <li>Early-game gear can be stolen at any value when the theft is easy; the 500-gold limit now only covers buying. Medium armor's early kit takes Dreugh and Orcish pieces from Meldor's shop in Balmora, Ralds Oril's in Suran and a crate in Creeper's house in Caldera.</li>
+          <li>The Build Optimizer has two early-game toggles: Steal early gear, on by default, and Endgame gear early, which adds endgame pieces you can steal as easily as Mentor's Ring, such as Stendarr's Hammer from Mournhold's Museum of Artifacts or, in Tamriel Rebuilt, Boots of the Savior's Hide from a shop in Helnim. With Steal off, each row falls back to gear you can buy, repair or pick up.</li>
+          <li>Early gear starts with the closest source in or around Seyda Neen, Pelagiad, Balmora, Caldera, Ald'ruhn, Vivec, Suran and Ebonheart (and Old Ebonheart with Tamriel Rebuilt), even if it costs more, and an “or” row adds a stronger piece from farther away. Buying and repairing in one place beats running between two, and a repair elsewhere names where. Shield builds get one-handed weapons, and Arrille's Tradehouse in Seyda Neen now counts.</li>
         </ul>
       </section>
       <section class="changelog-day">
@@ -1265,6 +1278,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
             <div class="skill-grid" id="minors"></div>
           </div>
         </div>
+        <div class="gear-toggles" role="group" aria-label="Early-game gear">
+          <label><input type="checkbox" id="gear-steal" checked /> Steal early gear</label>
+          <label><input type="checkbox" id="gear-endgame" /> Endgame gear early</label>
+        </div>
         <button type="button" class="btn" id="btn-gear">Optimize gear</button>
         <div id="gear-box" class="summary hidden" aria-live="polite"></div>
         <div class="summary" id="c-summary" aria-live="polite"></div>
@@ -1377,7 +1394,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Level 10 cap",
       "Never sleep to level up — stay level 1",
       "No companions or summoned meatshields",
-      "Naked start — drop your starting clothes",
       "No looting the NPCs you kill",
       "Only use gear you enchanted yourself",
       "No fast travel of any kind — walk everywhere",
@@ -1396,8 +1412,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "No fast travel except silt striders and boats",
       "Tribunal and Bloodmoon allowed but main quest first",
       "Roleplay: never refuse a quest",
-      "No birthsign powers", "No activated birthsign powers", "No racial powers", "No activated racial powers",
-      "Naked start — drop your starting clothes"
+      "No birthsign powers", "No activated birthsign powers", "No racial powers", "No activated racial powers"
     ];
     const VANILLA_POOL = POOL;
     const HARD = [
@@ -1469,7 +1484,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         merchants: /no merchants|creeper or mudcrab/,
         artifacts: /no artifacts|boots of blinding speed/,
         dlc: /tribunal or bloodmoon dlc|tribunal and bloodmoon allowed/,
-        pacifist: /pacifist|never attack first/
+        pacifist: /pacifist|never attack first/,
+        locks: /^no alteration$|no lockpicking/
       };
       return Object.keys(groups).filter((g) => groups[g].test(t));
     }
@@ -1789,7 +1805,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       { kind: "ACTION", text: "Fill a soul gem with a creature no larger than a rat" },
       { kind: "ACTION", text: "Summon a creature and let the spell expire without killing it" },
       { kind: "ACTION", text: "Jump from the top of the Vivec Foreign Quarter canton into the water" },
-      { kind: "FLAVOR", text: "Walk toward another section of the Ghostfence without fast travel" },
       { kind: "EXPLORATION", text: "Visit every level of Vivec's Foreign Quarter: Plaza, Upper and Lower Waistworks, Canalworks and Underworks" },
       { kind: "ACTION", text: "Find a locked chest in the wilderness and pick it" },
       { kind: "SOCIAL", text: "Give 100 gold to a beggar or poor NPC" },
@@ -1853,6 +1868,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     function objKind(item) {
       return (item && item.kind) ? item.kind : "WILDCARD";
     }
+    // Minor objectives that can't both be done in one run.
+    const OBJECTIVE_CONFLICTS = [
+      ["Find Fargoth's hiding place for Hrisskar Flat-Foot in Seyda Neen", "Take nothing in Seyda Neen except what the Census and Excise Office hands you"]
+    ];
+    function objectivesClash(a, b) {
+      return OBJECTIVE_CONFLICTS.some((pair) => (pair[0] === a && pair[1] === b) || (pair[0] === b && pair[1] === a));
+    }
     function pickMixedObjectives(n) {
       const rests = currentRestrictionTexts();
       const bans = [];
@@ -1868,8 +1890,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const used = new Set();
       for (let i = 0; i < n; i++) {
         const preferred = order[i] || order[Math.floor(Math.random() * order.length)];
-        let bag = (buckets[preferred] || []).filter((o) => !used.has(o.text));
-        if (!bag.length) bag = allowed.filter((o) => !used.has(o.text));
+        const fits = (o) => !used.has(o.text) && !picks.some((p) => objectivesClash(p.text, o.text));
+        let bag = (buckets[preferred] || []).filter(fits);
+        if (!bag.length) bag = allowed.filter(fits);
         if (!bag.length) break;
         const item = bag[Math.floor(Math.random() * bag.length)];
         used.add(item.text);
@@ -1891,13 +1914,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Complete Bloodmoon",
       "Bring 10 artifacts to the Museum of Artifacts in Mournhold",
       "Collect 10 different Daedric artifacts",
-      "Finish Fighters Guild",
-      "Finish Mages Guild",
-      "Finish Thieves Guild",
-      "Finish the Morag Tong writs through Grandmaster",
-      "Finish Imperial Legion",
-      "Finish Tribunal Temple",
-      "Finish Imperial Cult",
+      "Become Master of the Fighters Guild",
+      "Become Arch-Mage of the Mages Guild",
+      "Become Master Thief of the Thieves Guild",
+      "Become Grandmaster of the Morag Tong",
+      "Become Knight of the Imperial Dragon in the Imperial Legion",
+      "Become Patriarch of the Tribunal Temple",
+      "Become Primate of the Imperial Cult",
       "Become leader of House Telvanni",
       "Become leader of House Hlaalu",
       "Become leader of House Redoran",
@@ -2093,7 +2116,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
       r.major = known(obj.major, activeMajors());
       const unique = (list) => list.filter((v, i) => v && list.indexOf(v) === i).slice(0, 5);
-      r.minors = unique(Array.isArray(obj.minors) ? obj.minors.map(text) : []).map((t) => OBJECTIVES.find((o) => o.text === t)).filter(Boolean);
+      r.minors = unique(Array.isArray(obj.minors) ? obj.minors.map(text) : []).map((t) => OBJECTIVES.find((o) => o.text === t)).filter(Boolean)
+        .filter((o, i, list) => !list.slice(0, i).some((p) => objectivesClash(p.text, o.text)));
       r.rests = unique(Array.isArray(obj.rests) ? obj.rests.map(text) : []).filter((t) => activePool().indexOf(t) >= 0);
       r.restNote = "";
       lockFavored("r");
@@ -2406,9 +2430,354 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       return { item: item, location: location || "", note: note || "" };
     }
     // Early picks pass the Mentor's Ring rule in the game data; late picks are the strongest guaranteed options.
+    // Early armor and weapons by closeness, from the game data: for each row, items with their closest route of each kind
+    // (bought, repaired, picked up, carried or stolen). s is the armor rating or top damage; near means in or around Seyda Neen,
+    // Pelagiad, Balmora, Caldera, Ald'ruhn, Vivec, Suran or Ebonheart (and Old Ebonheart with Tamriel Rebuilt), within two map squares;
+    // rank is the distance from Seyda Neen in map squares. The page picks from these under the early-game toggles.
+    const EARLY_GEAR = {
+      "vanilla": {
+        armor: {
+          "Light Armor": {
+            Helm: [
+              {"item":"Redoran Watchman's Helm","location":"Sold by Ergnir in Ald'ruhn, base price 24 gold.","s":11,"near":1,"rank":15.5},
+              {"item":"Velothian Helm","location":"Sold by Miun-Gei in Vivec's Foreign Quarter, base price 75 gold.","s":10,"near":1,"rank":5},
+              {"item":"Colovian Fur Helm","location":"Sold by Tiras Sadus in Ald'ruhn, base price 25 gold.","s":7,"near":1,"rank":15.5}
+            ],
+            Cuirass: [
+              {"item":"Chitin Cuirass","location":"Sold by Arrille in Seyda Neen, base price 45 gold.","s":10,"near":1,"rank":0.5},
+              {"item":"Wolf Cuirass","location":"A cloth sack in Imperial Cult Shrine in Fort Frostmoth, free to take.","s":15,"near":0,"rank":33.2}
+            ],
+            Greaves: [
+              {"item":"Chitin Greaves","location":"Sold by Sirollus Saccus in Ebonheart, base price 29 gold.","s":10,"near":1,"rank":4.6},
+              {"item":"Wolf Greaves","location":"A cloth sack in Imperial Cult Shrine in Fort Frostmoth, free to take.","s":15,"near":0,"rank":33.2}
+            ],
+            Boots: [
+              {"item":"Chitin Boots","location":"Sold by Arrille in Seyda Neen, base price 13 gold.","s":10,"near":1,"rank":0.5},
+              {"item":"Heavy Leather Boots","location":"Lying in Rothan Ancestral Tomb near Maar Gan, free to take.","s":50,"near":0,"rank":21.7,"note":"Not Boots of Blinding Speed: they're a quest reward."}
+            ],
+            Shield: [
+              {"item":"Veloth's Tower Shield","location":"Sold by Miun-Gei in Vivec's Foreign Quarter, base price 150 gold.","s":12,"near":1,"rank":5}
+            ],
+            Pauldrons: [
+              {"item":"Chitin Left Pauldron / Chitin Right Pauldron","location":"Sold by Arrille in Seyda Neen, base price 16 gold.","s":10,"near":1,"rank":0.5},
+              {"item":"Glass Left Pauldron / Glass Right Pauldron","location":"Armory in Mournhold (steal).","s":50,"near":0,"rank":999,"note":"Reach Mournhold after Tribunal's Dark Brotherhood attack.","endgame":1}
+            ],
+            Gauntlets: [
+              {"item":"Chitin Left Gauntlet / Chitin Right Gauntlet","location":"Sold by Arrille in Seyda Neen, base price 9 gold.","s":10,"near":1,"rank":0.5},
+              {"item":"Left Glass Bracer / Right Glass Bracer","location":"Armory in Mournhold (steal).","s":50,"near":0,"rank":999,"note":"Reach Mournhold after Tribunal's Dark Brotherhood attack.","endgame":1}
+            ],
+          },
+          "Medium Armor": {
+            Helm: [
+              {"item":"Dreugh Helm","location":"Meldor's shop in Balmora (steal).","s":40,"near":1,"rank":7.6},
+              {"item":"Imperial Dragonscale Helm","location":"Sold by Ergnir in Ald'ruhn, base price 130 gold.","s":20,"near":1,"rank":15.5},
+              {"item":"Native Armun-An Bonemold Helm","location":"Sold by Meldor in Balmora, base price 150 gold.","s":18,"near":1,"rank":7.6}
+            ],
+            Cuirass: [
+              {"item":"Dreugh Cuirass","location":"Redoran Smith in Vivec's Redoran Canton (steal).","s":40,"near":1,"rank":5.2},
+              {"item":"Gah-Julan Bonemold Cuirass","location":"Sold by Ergnir in Ald'ruhn, base price 360 gold.","s":17,"near":1,"rank":15.5},
+              {"item":"Bonemold Cuirass","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 350 gold.","s":16,"near":1,"rank":5.6},
+              {"item":"Imperial Dragonscale Cuirass","location":"Sold by Galen Berer in Tel Branora, base price 340 gold.","s":20,"near":0,"rank":17.4}
+            ],
+            Greaves: [
+              {"item":"Orcish Greaves","location":"A crate in Ghorak Manor, Creeper's house in Caldera (steal).","s":30,"near":1,"rank":11.5},
+              {"item":"Imperial Chain Greaves","location":"Lying in Fort Pelagiad in Pelagiad, free to take.","s":20,"near":1,"rank":3.2}
+            ],
+            Boots: [
+              {"item":"Orcish Boots","location":"Meldor's shop in Balmora (steal).","s":30,"near":1,"rank":7.6},
+              {"item":"Bonemold Boots","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 100 gold.","s":15,"near":1,"rank":5.6}
+            ],
+            Shield: [
+              {"item":"Dreugh Shield","location":"Meldor's shop in Balmora (steal).","s":40,"near":1,"rank":7.6},
+              {"item":"Bonemold Tower Shield","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 250 gold.","s":17,"near":1,"rank":5.6},
+              {"item":"Dragonscale Tower Shield","location":"Sold by Aryne Telnim in Tel Aruhn, base price 230 gold.","s":22,"near":0,"rank":22.3}
+            ],
+            Pauldrons: [
+              {"item":"Orcish Left Pauldron / Orcish Right Pauldron","location":"A crate in Ghorak Manor, Creeper's house in Caldera (steal).","s":30,"near":1,"rank":11.5},
+              {"item":"Gah-Julan Bonemold L Pauldron / Gah-Julan Bonemold R Pauldron","location":"Sold by Ergnir in Ald'ruhn, base price 140 gold.","s":17,"near":1,"rank":15.5},
+              {"item":"Orcish Left Pauldron / Gah-Julan Bonemold R Pauldron","location":"Left: Lying in Khartag Point, free to take. Right: Sold by Ergnir in Ald'ruhn, base price 140 gold.","s":23.5,"near":0,"rank":22.5}
+            ],
+            Gauntlets: [
+              {"item":"Bonemold Left Bracer / Bonemold Right Bracer","location":"Uulernil's shop in Pelagiad (steal).","s":15,"near":1,"rank":3.2},
+              {"item":"Bonemold Left Bracer / Orcish Right Bracer","location":"Left: Uulernil's shop in Pelagiad (steal). Right: Sold by Hrundi in Sadrith Mora, base price 400 gold.","s":22.5,"near":0,"rank":23.8},
+              {"item":"Bonemold Left Bracer / Bonemold Right Bracer","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 50 gold.","s":15,"near":1,"rank":5.6},
+              {"item":"Bonemold Left Bracer / Orcish Right Bracer","location":"Left: Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 50 gold. Right: Sold by Hrundi in Sadrith Mora, base price 400 gold.","s":22.5,"near":0,"rank":26.8}
+            ],
+          },
+          "Heavy Armor": {
+            Helm: [
+              {"item":"Nordic Trollbone Helm","location":"Meldor's shop in Balmora (steal).","s":18,"near":1,"rank":7.6},
+              {"item":"Imperial Silver Helm","location":"Sold by Sirollus Saccus in Ebonheart, base price 120 gold.","s":17,"near":1,"rank":4.6},
+              {"item":"Helm of Wounding","location":"Tower of Dusk Lower Level in Ghostgate (steal).","s":20,"near":0,"rank":14.1},
+              {"item":"Imperial Steel Helmet","location":"A worn one at Uulernil's in Pelagiad, repaired there for about 76 gold in all.","s":16,"near":1,"rank":3.2},
+              {"item":"Nordic Trollbone Helm","location":"Sold by Hannabi Zabynatus in Gnisis, base price 65 gold.","s":18,"near":0,"rank":22}
+            ],
+            Cuirass: [
+              {"item":"Dwemer Cuirass","location":"A chest in Helvi's Shack in Dren Plantation (steal).","s":20,"near":1,"rank":4.7},
+              {"item":"Nordic Trollbone Cuirass","location":"Sold by Meldor in Balmora, base price 165 gold.","s":18,"near":1,"rank":7.6}
+            ],
+            Greaves: [
+              {"item":"Imperial Steel Greaves","location":"Hodlismod's shop in Caldera (steal).","s":16,"near":1,"rank":11.5},
+              {"item":"Steel Greaves","location":"Sold by Arrille in Seyda Neen, base price 88 gold.","s":15,"near":1,"rank":0.5},
+              {"item":"Imperial Steel Greaves","location":"Sold by Yambagorn gor-Shulor in Buckmoth Legion Fort, base price 98 gold.","s":16,"near":1,"rank":14.5}
+            ],
+            Boots: [
+              {"item":"Imperial Steel Boots","location":"Imperial Commission in Ebonheart (steal).","s":16,"near":1,"rank":4.6},
+              {"item":"Steel Boots","location":"Hlaalu Pawnbroker in Vivec's Hlaalu Canton (steal).","s":15,"near":1,"rank":4.3},
+              {"item":"Steel Boots","location":"Sold by Alusaron in Vivec's Foreign Quarter, base price 40 gold.","s":15,"near":1,"rank":5},
+              {"item":"Imperial Steel Boots","location":"Sold by Yambagorn gor-Shulor in Buckmoth Legion Fort, base price 50 gold.","s":16,"near":1,"rank":14.5}
+            ],
+            Shield: [
+              {"item":"Steel Tower Shield","location":"Sold by Mebestian Ence in Pelagiad, base price 100 gold.","s":18,"near":1,"rank":3.2},
+              {"item":"Dwemer Shield","location":"Buy a worn one from Fonas Retheran in Ghostgate and have Dronos Llervu repair it there, about 460 gold in all.","s":20,"near":0,"rank":14.1}
+            ],
+            Pauldrons: [
+              {"item":"Imperial Chain Left Pauldron / Imperial Chain Right Pauldron","location":"Sold by Uulernil in Pelagiad, base price 28 gold.","s":20,"near":1,"rank":3.2}
+            ],
+            Gauntlets: [
+              {"item":"Imperial Templar Left Bracer / Imperial Templar Right Bracer","location":"Hodlismod's shop in Caldera (steal).","s":18,"near":1,"rank":11.5},
+              {"item":"Imperial Templar Left Bracer / Dwemer Right Bracer","location":"Left: Hodlismod's shop in Caldera (steal). Right: Central Tower in Tel Vos (steal).","s":19,"near":0,"rank":28.5},
+              {"item":"Imperial Templar Left Bracer / Ebony Right Bracer","location":"Left: Hodlismod's shop in Caldera (steal). Right: Goldyn Belaram's shop in Suran (steal).","s":39,"near":1,"rank":20.4,"endgame":1},
+              {"item":"Imperial Steel Left Gauntlet / Imperial Steel Right Gauntlet","location":"Left: Buy a worn one from Naspis Apinia in Moonmoth Legion Fort and have Erla repair it there, about 33 gold in all. Right: A worn one at Erla's in Moonmoth Legion Fort, repaired there for about 33 gold in all.","s":16,"near":1,"rank":6.6},
+              {"item":"Steel Left Gauntlet / Steel Right Gauntlet","location":"Sold by Arrille in Seyda Neen, base price 28 gold.","s":15,"near":1,"rank":0.5}
+            ],
+          },
+        },
+        weapons: {
+          "Long Blade": [
+            {"item":"Nordic Claymore","location":"Garothmuk gro-Muzgub's shop in Suran (steal).","s":30,"near":1,"rank":8.4,"note":"Two-handed, 30 damage.","hands":2},
+            {"item":"Steel Dai-katana","location":"Sold by Mebestian Ence in Pelagiad, base price 240 gold.","s":27,"near":1,"rank":3.2,"note":"Two-handed, 27 damage.","hands":2},
+            {"item":"Nordic Claymore","location":"Sold by Hodlismod in Caldera, base price 180 gold.","s":30,"near":1,"rank":11.5,"note":"Two-handed, 30 damage.","hands":2},
+            {"item":"Silver Longsword","location":"Sold by Mebestian Ence in Pelagiad, base price 160 gold.","s":20,"near":1,"rank":3.2,"note":"One-handed, 20 damage.","hands":1},
+            {"item":"Iron Longsword","location":"Sold by Arrille in Seyda Neen, base price 40 gold.","s":18,"near":1,"rank":0.5,"note":"One-handed, 18 damage.","hands":1},
+            {"item":"Sword of White Woe","location":"Eastern Guard Tower in Balmora (steal).","s":26,"near":1,"rank":7.5,"note":"One-handed, 26 damage.","endgame":1,"hands":1}
+          ],
+          "Short Blade": [
+            {"item":"Glass Dagger","location":"Buy a worn one from Goldyn Belaram in Suran and have Garothmuk gro-Muzgub repair it there, about 355 gold in all.","s":15,"near":1,"rank":8.4,"note":"One-handed, 15 damage.","hands":1},
+            {"item":"Dwemer Jinksword","location":"Sold by Wayn in Balmora, base price 350 gold.","s":14,"near":1,"rank":7.6,"note":"One-handed, 14 damage.","hands":1}
+          ],
+          "Blunt Weapon": [
+            {"item":"Steel Warhammer","location":"Sold by Mebestian Ence in Pelagiad, base price 80 gold.","s":32,"near":1,"rank":3.2,"note":"Two-handed, 32 damage.","hands":2},
+            {"item":"Stendarr's Hammer","location":"Museum of Artifacts in Mournhold (steal).","s":100,"near":0,"rank":999,"note":"Two-handed, 100 damage. Reach Mournhold after Tribunal's Dark Brotherhood attack.","endgame":1,"hands":2},
+            {"item":"Steel Mace","location":"Sold by Mebestian Ence in Pelagiad, base price 48 gold.","s":14,"near":1,"rank":3.2,"note":"One-handed, 14 damage.","hands":1},
+            {"item":"Dwarven Mace","location":"Sold by Fonas Retheran in Ghostgate, base price 360 gold.","s":17,"near":0,"rank":14.1,"note":"One-handed, 17 damage.","hands":1}
+          ],
+          "Axe": [
+            {"item":"Steel Battle Axe","location":"Sold by Mebestian Ence in Pelagiad, base price 100 gold.","s":36,"near":1,"rank":3.2,"note":"Two-handed, 36 damage.","hands":2},
+            {"item":"Ebony War Axe","location":"Hlaalu Weaponsmith in Vivec's Hlaalu Canton (steal).","s":37,"near":1,"rank":4.3,"note":"One-handed, 37 damage.","endgame":1,"hands":1},
+            {"item":"Dwarven War Axe","location":"Sold by Thanelen Velas in Balmora, base price 450 gold.","s":24,"near":1,"rank":6.6,"note":"One-handed, 24 damage.","hands":1},
+            {"item":"Huntsman War Axe","location":"A cloth sack in Imperial Cult Shrine in Fort Frostmoth, free to take.","s":30,"near":0,"rank":33.2,"note":"One-handed, 30 damage.","hands":1}
+          ],
+          "Spear": [
+            {"item":"Steel Halberd","location":"Sold by Mebestian Ence in Pelagiad, base price 80 gold.","s":23,"near":1,"rank":3.2,"note":"Two-handed, 23 damage.","hands":2},
+            {"item":"Dwarven Halberd","location":"Big Head's Shack near Vas (steal).","s":28,"near":0,"rank":33.5,"note":"Two-handed, 28 damage.","hands":2}
+          ],
+          "Marksman": [
+            {"item":"Bonemold Long Bow","location":"Sold by Sirollus Saccus in Ebonheart, base price 250 gold.","s":30,"near":1,"rank":4.6,"note":"Ranged, 30 damage.","hands":0}
+          ],
+        },
+      },
+      "tr": {
+        armor: {
+          "Light Armor": {
+            Helm: [
+              {"item":"Diviner Helm","location":"High Chambers in Palace, Ebon Tower (steal).","s":15,"near":1,"rank":11.7,"tr":1},
+              {"item":"Ebonweave Helm","location":"Ducal Chambers in Riverkeep (steal).","s":40,"near":0,"rank":44.2,"tr":1},
+              {"item":"Glass Closed Helm","location":"Tower of Contemplation in Monastery of St. Felms (steal).","s":50,"near":0,"rank":13.8,"endgame":1,"tr":1},
+              {"item":"Redoran Watchman's Helm","location":"Sold by Ergnir in Ald'ruhn, base price 24 gold.","s":11,"near":1,"rank":15.5},
+              {"item":"Velothian Helm","location":"Sold by Miun-Gei in Vivec's Foreign Quarter, base price 75 gold.","s":10,"near":1,"rank":5},
+              {"item":"Alit Hide Open Helm","location":"Sold by Benera Sav in Gorne, base price 155 gold.","s":20,"near":0,"rank":21.5,"tr":1},
+              {"item":"Alit Hide Open Helm","location":"Dralas Vando's shop in Almas Thirr (steal).","s":20,"near":0,"rank":19.8,"tr":1},
+              {"item":"Glass Helm","location":"Crossing of Lamps in Roa Dyr (steal).","s":50,"near":0,"rank":20.7,"endgame":1},
+              {"item":"Colovian Tiger Helm","location":"A chest in the cabin of the ship Prince Helseth, free to take.","s":10,"near":1,"rank":10.4,"tr":1}
+            ],
+            Cuirass: [
+              {"item":"Alit Hide Cuirass","location":"Sold by Ophelie Vilifiene in Old Ebonheart, base price 375 gold.","s":20,"near":1,"rank":12.4,"tr":1},
+              {"item":"Kagouti Hide Cuirass","location":"Black Hand Hall in Roa Dyr (steal).","s":25,"near":0,"rank":20.2,"tr":1},
+              {"item":"Glass Cuirass","location":"Private Quarters in Seventh Family Manor, Narsis (steal).","s":50,"near":0,"rank":42.5,"endgame":1}
+            ],
+            Greaves: [
+              {"item":"Orc Leather Greaves","location":"Orsinium Mission in Ebon Tower (steal).","s":12,"near":1,"rank":11.7,"tr":1},
+              {"item":"Alit Hide Greaves","location":"Sold by Benera Sav in Gorne, base price 240 gold.","s":20,"near":0,"rank":21.5,"tr":1},
+              {"item":"Chitin Greaves","location":"Sold by Sirollus Saccus in Ebonheart, base price 29 gold.","s":10,"near":1,"rank":4.6}
+            ],
+            Boots: [
+              {"item":"Heavy Leather Boots","location":"Sold by Ophelie Vilifiene in Old Ebonheart, base price 100 gold.","s":50,"near":1,"rank":12.4,"note":"Not Boots of Blinding Speed: they're a quest reward."},
+              {"item":"Boots of the Savior's Hide","location":"Parjho's shop in Helnim (steal).","s":80,"near":0,"rank":29,"note":"CE Resist Magicka 5%.","endgame":1,"tr":1}
+            ],
+            Shield: [
+              {"item":"Goblin Buckler","location":"Top Floor in Imperial Archaeological Society, Old Ebonheart (steal).","s":20,"near":1,"rank":12.4},
+              {"item":"Glass Tower Shield","location":"Gallery of our Forefathers in Catacombs, Narsis (steal).","s":55,"near":0,"rank":43.2,"endgame":1},
+              {"item":"Veloth's Tower Shield","location":"Sold by Miun-Gei in Vivec's Foreign Quarter, base price 150 gold.","s":12,"near":1,"rank":5},
+              {"item":"Alit Hide Tower Shield","location":"Sold by Ilvor Telnis in Vhul, base price 275 gold.","s":20,"near":0,"rank":18.8,"tr":1}
+            ],
+            Pauldrons: [
+              {"item":"Orc Leather Left Pauldron / Kagouti Hide Right Pauldron","location":"Left: Orsinium Mission in Ebon Tower (steal). Right: Sold by Ophelie Vilifiene in Old Ebonheart, base price 450 gold.","s":18.5,"near":1,"rank":12.7,"tr":1},
+              {"item":"Kagouti Hide Left Pauldron / Kagouti Hide Right Pauldron","location":"Sold by Ulran Teryon in Bal Foyen, base price 450 gold.","s":25,"near":0,"rank":7.6,"tr":1},
+              {"item":"Glass Left Pauldron / Glass Right Pauldron","location":"Armory in Mournhold (steal).","s":50,"near":0,"rank":999,"note":"Reach Mournhold after Tribunal's Dark Brotherhood attack.","endgame":1},
+              {"item":"Chitin Left Pauldron / Kagouti Hide Right Pauldron","location":"Left: Sold by Arrille in Seyda Neen, base price 16 gold. Right: Sold by Ophelie Vilifiene in Old Ebonheart, base price 450 gold.","s":17.5,"near":1,"rank":13.3,"tr":1}
+            ],
+            Gauntlets: [
+              {"item":"Orc Leather Left Gauntlet / Kagouti Hide Right Bracer","location":"Left: Orsinium Mission in Ebon Tower (steal). Right: Sold by Ophelie Vilifiene in Old Ebonheart, base price 165 gold.","s":18.5,"near":1,"rank":12.7,"tr":1},
+              {"item":"Dark Brotherhood Left Gauntlet / Kagouti Hide Right Bracer","location":"Left: The Corpse in Basement in Morag Tong Guildhall, Narsis (steal). Right: Sold by Ophelie Vilifiene in Old Ebonheart, base price 165 gold.","s":27.5,"near":0,"rank":43.4,"tr":1},
+              {"item":"Left Glass Bracer / Right Glass Bracer","location":"Armory in Mournhold (steal).","s":50,"near":0,"rank":999,"note":"Reach Mournhold after Tribunal's Dark Brotherhood attack.","endgame":1},
+              {"item":"Chitin Left Gauntlet / Kagouti Hide Right Bracer","location":"Left: Sold by Arrille in Seyda Neen, base price 9 gold. Right: Sold by Ophelie Vilifiene in Old Ebonheart, base price 165 gold.","s":17.5,"near":1,"rank":13.3,"tr":1},
+              {"item":"Kagouti Hide Left Bracer / Kagouti Hide Right Bracer","location":"Sold by Ulran Teryon in Bal Foyen, base price 165 gold.","s":25,"near":0,"rank":7.6,"tr":1}
+            ],
+          },
+          "Medium Armor": {
+            Helm: [
+              {"item":"Dreugh Helm","location":"Meldor's shop in Balmora (steal).","s":40,"near":1,"rank":7.6},
+              {"item":"Necrom Indoril Helmet","location":"Lying in Sacred Lands Region [42, -8], free to take.","s":50,"near":0,"rank":44,"endgame":1,"tr":1},
+              {"item":"Imperial Dragonscale Helm","location":"Sold by Ergnir in Ald'ruhn, base price 130 gold.","s":20,"near":1,"rank":15.5},
+              {"item":"Native Armun-An Bonemold Helm","location":"Sold by Meldor in Balmora, base price 150 gold.","s":18,"near":1,"rank":7.6},
+              {"item":"Dreugh Helm","location":"Lying in Aisle of Dusk in Emmurbalpitu, free to take.","s":40,"near":0,"rank":12.9}
+            ],
+            Cuirass: [
+              {"item":"Dreugh Cuirass","location":"Redoran Smith in Vivec's Redoran Canton (steal).","s":40,"near":1,"rank":5.2},
+              {"item":"Gah-Julan Bonemold Cuirass","location":"Sold by Ergnir in Ald'ruhn, base price 360 gold.","s":17,"near":1,"rank":15.5},
+              {"item":"Bonemold Cuirass","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 350 gold.","s":16,"near":1,"rank":5.6},
+              {"item":"Imperial Dragonscale Cuirass","location":"Sold by Galen Berer in Tel Branora, base price 340 gold.","s":20,"near":0,"rank":17.4}
+            ],
+            Greaves: [
+              {"item":"Orcish Greaves","location":"A crate in Ghorak Manor, Creeper's house in Caldera (steal).","s":30,"near":1,"rank":11.5},
+              {"item":"Indoril Greaves","location":"Tower of Contemplation in Monastery of St. Felms (steal).","s":45,"near":0,"rank":13.8,"tr":1},
+              {"item":"Imperial Chain Greaves","location":"Lying in Fort Pelagiad in Pelagiad, free to take.","s":20,"near":1,"rank":3.2},
+              {"item":"Dreugh Greaves","location":"Lying in Vartalit Grotto near Hlan Oek, free to take.","s":40,"near":0,"rank":22.9,"tr":1}
+            ],
+            Boots: [
+              {"item":"Orcish Boots","location":"Meldor's shop in Balmora (steal).","s":30,"near":1,"rank":7.6},
+              {"item":"Dreugh Boots","location":"Tiralos Uval's shop in Hlan Oek (steal).","s":40,"near":0,"rank":22.7,"tr":1},
+              {"item":"Necrom Indoril Boots","location":"Watch Barracks in Necrom (steal).","s":50,"near":0,"rank":46,"endgame":1,"tr":1},
+              {"item":"Bonemold Boots","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 100 gold.","s":15,"near":1,"rank":5.6},
+              {"item":"Dwemer Scrap Boots","location":"Sold by Ruthrisa Velothren in Darvonis, base price 150 gold.","s":25,"near":0,"rank":25.5,"tr":1}
+            ],
+            Shield: [
+              {"item":"Black Ironwood Shield","location":"Hold in Skaarling Queen near Old Ebonheart (steal).","s":46,"near":1,"rank":12.4,"tr":1},
+              {"item":"Necrom Indoril Shield","location":"A chest in Watch Barracks in Necrom (steal).","s":50,"near":0,"rank":46,"endgame":1,"tr":1},
+              {"item":"Bonemold Tower Shield","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 250 gold.","s":17,"near":1,"rank":5.6},
+              {"item":"Dragonscale Tower Shield","location":"Sold by Aryne Telnim in Tel Aruhn, base price 230 gold.","s":22,"near":0,"rank":22.3}
+            ],
+            Pauldrons: [
+              {"item":"Orcish Left Pauldron / Orcish Right Pauldron","location":"A crate in Ghorak Manor, Creeper's house in Caldera (steal).","s":30,"near":1,"rank":11.5},
+              {"item":"Dreugh Left Pauldron-Fin / Dreugh Right Pauldron","location":"Left: Lying in Coronati Basin Region [0, -41], free to take. Right: A crate in Kartus Reconius' House in Narsis (steal).","s":40,"near":0,"rank":44.1,"tr":1},
+              {"item":"Gah-Julan Bonemold L Pauldron / Gah-Julan Bonemold R Pauldron","location":"Sold by Ergnir in Ald'ruhn, base price 140 gold.","s":17,"near":1,"rank":15.5},
+              {"item":"Dreugh Left Pauldron-Fin / Imperial Dragonscale R Pauldron","location":"Left: Lying in Coronati Basin Region [0, -41], free to take. Right: Sold by Ridar in Tel Muthada, base price 140 gold.","s":30,"near":0,"rank":74.3,"tr":1}
+            ],
+            Gauntlets: [
+              {"item":"Native Gah'Kogo Left Gauntlet / Native Gah'Kogo Right Gauntlet","location":"High Chambers in Palace, Ebon Tower (steal).","s":19,"near":1,"rank":11.7,"tr":1},
+              {"item":"Dreugh Left Bracer / Dreugh Right Bracer","location":"Ulran Teryon's shop in Bal Foyen (steal).","s":40,"near":0,"rank":7.6,"tr":1},
+              {"item":"Bonemold Left Bracer / Bonemold Right Bracer","location":"Sold by Mevel Fererus in Vivec's St. Delyn Canton, base price 50 gold.","s":15,"near":1,"rank":5.6},
+              {"item":"Orcish Left Bracer / Orcish Right Bracer","location":"Sold by Orzuk gro-Gum in Menaan, base price 400 gold.","s":30,"near":0,"rank":10.5}
+            ],
+          },
+          "Heavy Armor": {
+            Helm: [
+              {"item":"Dwemer Helm","location":"Coast Guard Keep in Ebon Tower (steal).","s":20,"near":1,"rank":11.7},
+              {"item":"Nordic Trollbone Helm","location":"Meldor's shop in Balmora (steal).","s":18,"near":1,"rank":7.6},
+              {"item":"War Helm of Pasoroth","location":"Grandmaster Quarters in Second Family Manor, Narsis (steal).","s":75,"near":0,"rank":42.3,"endgame":1,"tr":1},
+              {"item":"Dwemer Helm","location":"Lying in Briricca Private Bank in Old Ebonheart, free to take.","s":20,"near":1,"rank":12.4},
+              {"item":"Imperial Silver Helm","location":"Sold by Sirollus Saccus in Ebonheart, base price 120 gold.","s":17,"near":1,"rank":4.6},
+              {"item":"Nord Steel Helmet","location":"Buy a worn one from Agretha Road-Breaker in Othrenis and have Meder Vorethi repair it there, about 104 gold in all.","s":20,"near":0,"rank":25.9,"tr":1},
+              {"item":"Nordic Trollbone Helm","location":"Sold by Arnulf in Old Ebonheart, base price 65 gold.","s":18,"near":1,"rank":13.1}
+            ],
+            Cuirass: [
+              {"item":"Dwemer Cuirass","location":"A chest in Helvi's Shack in Dren Plantation (steal).","s":20,"near":1,"rank":4.7},
+              {"item":"Imperial Ebony Cuirass","location":"Lying in Padomaic Ocean [42, -31], free to take.","s":55,"near":0,"rank":49,"endgame":1,"tr":1},
+              {"item":"Nordic Trollbone Cuirass","location":"Sold by Meldor in Balmora, base price 165 gold.","s":18,"near":1,"rank":7.6},
+              {"item":"Duchess' Guard Silver Cuirass","location":"Sold by Athrelos Guralin in Firewatch, base price 250 gold.","s":20,"near":0,"rank":31,"tr":1}
+            ],
+            Greaves: [
+              {"item":"Imperial Silver Greaves","location":"A crate in Smithy in Legion, Ebon Tower (steal).","s":18,"near":1,"rank":11.7,"tr":1},
+              {"item":"Dwemer Greaves","location":"Rinori Bales's shop in Othrenis (steal).","s":20,"near":0,"rank":25.9},
+              {"item":"Nordic Trollbone Greaves","location":"Sold by Arnulf in Old Ebonheart, base price 105 gold.","s":18,"near":1,"rank":13.1,"tr":1}
+            ],
+            Boots: [
+              {"item":"Dwemer Boots","location":"Briricca Private Bank in Old Ebonheart (steal).","s":20,"near":1,"rank":12.4},
+              {"item":"Imperial Silver Boots","location":"Lying in the cabin of the ship Prince Helseth, free to take.","s":18,"near":1,"rank":10.4,"tr":1},
+              {"item":"Ebony Boots","location":"Ulran Teryon's shop in Bal Foyen (steal).","s":60,"near":0,"rank":7.6,"endgame":1},
+              {"item":"Dwemer Boots","location":"Buy a worn one from Tonisi Rethri in Marog and have Ulmo Veran repair it there, about 326 gold in all.","s":20,"near":0,"rank":25.2}
+            ],
+            Shield: [
+              {"item":"Steel Tower Shield","location":"Sold by Mebestian Ence in Pelagiad, base price 100 gold.","s":18,"near":1,"rank":3.2},
+              {"item":"Mages Guild Tourney Shield","location":"Arcane Library in Guild of Mages, Narsis (steal).","s":25,"near":0,"rank":43.4,"tr":1},
+              {"item":"Saint's Shield","location":"Lleresia Himnu's shop in Othrenis (steal).","s":60,"near":0,"rank":25.9,"endgame":1},
+              {"item":"Dwemer Shield","location":"Buy a worn one from Fonas Retheran in Ghostgate and have Dronos Llervu repair it there, about 460 gold in all.","s":20,"near":0,"rank":14.1}
+            ],
+            Pauldrons: [
+              {"item":"Imperial Chain Left Pauldron / Imperial Chain Right Pauldron","location":"Sold by Uulernil in Pelagiad, base price 28 gold.","s":20,"near":1,"rank":3.2},
+              {"item":"Daedric Left Pauldron / Imperial Chain Right Pauldron","location":"Left: Lying in Depths in Catacombs, Necrom, free to take. Right: Sold by Uulernil in Pelagiad, base price 28 gold.","s":50,"near":0,"rank":46.4,"endgame":1}
+            ],
+            Gauntlets: [
+              {"item":"Dwemer Left Bracer / Dwemer Right Bracer","location":"Left: Basement in Guild of Mages, Old Ebonheart (steal). Right: Tower in Fort Pelagius, Old Ebonheart (steal).","s":20,"near":1,"rank":13.4},
+              {"item":"Imperial Templar Left Bracer / Imperial Templar Right Bracer","location":"Hodlismod's shop in Caldera (steal).","s":18,"near":1,"rank":11.5},
+              {"item":"Imperial Templar Left Bracer / Dwemer Right Bracer","location":"Left: Hodlismod's shop in Caldera (steal). Right: Tower in Fort Pelagius, Old Ebonheart (steal).","s":19,"near":1,"rank":33.4},
+              {"item":"Dwemer Left Bracer / Ebony Right Bracer","location":"Left: Basement in Guild of Mages, Old Ebonheart (steal). Right: Goldyn Belaram's shop in Suran (steal).","s":40,"near":1,"rank":20.4,"endgame":1},
+              {"item":"Imperial Templar Left Bracer / Ebony Right Bracer","location":"Left: Hodlismod's shop in Caldera (steal). Right: Goldyn Belaram's shop in Suran (steal).","s":39,"near":1,"rank":20.4,"endgame":1},
+              {"item":"Imperial Steel Left Gauntlet / Imperial Steel Right Gauntlet","location":"Left: Buy a worn one from Naspis Apinia in Moonmoth Legion Fort and have Erla repair it there, about 33 gold in all. Right: A worn one at Erla's in Moonmoth Legion Fort, repaired there for about 33 gold in all.","s":16,"near":1,"rank":6.6},
+              {"item":"Steel Left Gauntlet / Steel Right Gauntlet","location":"Sold by Arrille in Seyda Neen, base price 28 gold.","s":15,"near":1,"rank":0.5},
+              {"item":"Dwemer Left Bracer / Dwemer Right Bracer","location":"Lying in Nuzunch Hall in Manrizache, free to take.","s":20,"near":0,"rank":39.2}
+            ],
+          },
+        },
+        weapons: {
+          "Long Blade": [
+            {"item":"Orcish Claymore","location":"Orsinium Mission in Ebon Tower (steal).","s":36,"near":1,"rank":11.7,"note":"Two-handed, 36 damage.","tr":1,"hands":2},
+            {"item":"Sword of the Hero","location":"Private Quarters in Hleryn Estate, Hlerynhul (steal).","s":45,"near":0,"rank":34.6,"note":"Two-handed, 45 damage.","endgame":1,"tr":1,"hands":2},
+            {"item":"Nordic Claymore","location":"Sold by Hodlismod in Caldera, base price 180 gold.","s":30,"near":1,"rank":11.5,"note":"Two-handed, 30 damage.","hands":2},
+            {"item":"Steel Dai-katana","location":"Sold by Mebestian Ence in Pelagiad, base price 240 gold.","s":27,"near":1,"rank":3.2,"note":"Two-handed, 27 damage.","hands":2},
+            {"item":"Adamantium Saber","location":"Undercroft in Grand Chapel of Talos, Old Ebonheart (steal).","s":33,"near":1,"rank":12.4,"note":"One-handed, 33 damage.","tr":1,"hands":1},
+            {"item":"Redguard Steel Axesword","location":"Sold by Hamal in Old Ebonheart, base price 110 gold.","s":30,"near":1,"rank":12.4,"note":"One-handed, 30 damage.","tr":1,"hands":1},
+            {"item":"Daedric Longsword","location":"Shrine of Sharmat's Debt in Necrom (steal).","s":44,"near":0,"rank":46.1,"note":"One-handed, 44 damage.","endgame":1,"tr":1,"hands":1}
+          ],
+          "Short Blade": [
+            {"item":"Glass Shortsword","location":"Iela Free-Bear's Exotic Weapons in Old Ebonheart (steal).","s":16,"near":1,"rank":12.4,"note":"One-handed, 16 damage.","tr":1,"hands":1},
+            {"item":"Glass Dagger","location":"Buy a worn one from Goldyn Belaram in Suran and have Garothmuk gro-Muzgub repair it there, about 355 gold in all.","s":15,"near":1,"rank":8.4,"note":"One-handed, 15 damage.","hands":1},
+            {"item":"Glass Wakizashi","location":"A wooden chest in Coronati Basin Region [6, -45], free to take.","s":30,"near":0,"rank":36.4,"note":"One-handed, 30 damage.","tr":1,"hands":1},
+            {"item":"Dwemer Jinksword","location":"Sold by Wayn in Balmora, base price 350 gold.","s":14,"near":1,"rank":7.6,"note":"One-handed, 14 damage.","hands":1}
+          ],
+          "Blunt Weapon": [
+            {"item":"Orc Warhammer","location":"Orsinium Mission in Ebon Tower (steal).","s":42,"near":1,"rank":11.7,"note":"Two-handed, 42 damage.","hands":2},
+            {"item":"Nordic Warhammer","location":"Lying in Mephalan Vales Region [28, -12], free to take.","s":45,"near":0,"rank":30.1,"note":"Two-handed, 45 damage.","tr":1,"hands":2},
+            {"item":"Stendarr's Hammer","location":"Museum of Artifacts in Mournhold (steal).","s":100,"near":0,"rank":999,"note":"Two-handed, 100 damage. Reach Mournhold after Tribunal's Dark Brotherhood attack.","endgame":1,"hands":2},
+            {"item":"Steel Warhammer","location":"Sold by Mebestian Ence in Pelagiad, base price 80 gold.","s":32,"near":1,"rank":3.2,"note":"Two-handed, 32 damage.","hands":2},
+            {"item":"Silver Morningstar","location":"Sold by Ophelie Vilifiene in Old Ebonheart, base price 120 gold.","s":17,"near":1,"rank":12.4,"note":"One-handed, 17 damage.","tr":1,"hands":1},
+            {"item":"Indoril Mace","location":"Warrior's Hall in Roa Dyr (steal).","s":20,"near":0,"rank":20.2,"note":"One-handed, 20 damage.","tr":1,"hands":1},
+            {"item":"Glass Mace","location":"Iela Free-Bear's Exotic Weapons in Old Ebonheart (steal).","s":23,"near":1,"rank":12.4,"note":"One-handed, 23 damage.","endgame":1,"tr":1,"hands":1},
+            {"item":"Ebony Mace","location":"Southern Lighthouse in Almas Thirr (steal).","s":26,"near":0,"rank":20.2,"note":"One-handed, 26 damage.","endgame":1,"hands":1},
+            {"item":"Adamantium Mace","location":"Lying in Second Chamber in Catacombs, Necrom, free to take.","s":20,"near":0,"rank":45,"note":"One-handed, 20 damage.","hands":1}
+          ],
+          "Axe": [
+            {"item":"Steel Battle Axe","location":"Sold by Mebestian Ence in Pelagiad, base price 100 gold.","s":36,"near":1,"rank":3.2,"note":"Two-handed, 36 damage.","hands":2},
+            {"item":"Ebony War Axe","location":"Hlaalu Weaponsmith in Vivec's Hlaalu Canton (steal).","s":37,"near":1,"rank":4.3,"note":"One-handed, 37 damage.","endgame":1,"hands":1},
+            {"item":"Thoricles' Bane","location":"Vermilius Vendicci's Coach near Bal Foyen (steal).","s":40,"near":0,"rank":6.6,"note":"Two-handed, 40 damage.","endgame":1,"tr":1,"hands":2},
+            {"item":"Huntsman War Axe","location":"Imperial Archaeological Society in Old Ebonheart (steal).","s":30,"near":1,"rank":12.4,"note":"One-handed, 30 damage.","hands":1},
+            {"item":"Nordic Steel War Axe","location":"Grass Market in Othrenis (steal).","s":35,"near":0,"rank":25.9,"note":"One-handed, 35 damage.","tr":1,"hands":1},
+            {"item":"Dwarven War Axe","location":"Sold by Thanelen Velas in Balmora, base price 450 gold.","s":24,"near":1,"rank":6.6,"note":"One-handed, 24 damage.","hands":1},
+            {"item":"Huntsman War Axe","location":"A cloth sack in Imperial Cult Shrine in Fort Frostmoth, free to take.","s":30,"near":0,"rank":33.2,"note":"One-handed, 30 damage.","hands":1}
+          ],
+          "Spear": [
+            {"item":"Orcish Halberd","location":"Orsinium Mission in Ebon Tower (steal).","s":37,"near":1,"rank":11.7,"note":"Two-handed, 37 damage.","tr":1,"hands":2},
+            {"item":"Muatra","location":"Eight-Bones Temple in Narsis (steal).","s":70,"near":0,"rank":42.3,"note":"Two-handed, 70 damage.","endgame":1,"tr":1,"hands":2},
+            {"item":"Silver Longspear","location":"Sold by Ophelie Vilifiene in Old Ebonheart, base price 90 gold.","s":29,"near":1,"rank":12.4,"note":"Two-handed, 29 damage.","tr":1,"hands":2}
+          ],
+          "Marksman": [
+            {"item":"Adamantium Long Bow","location":"Southeast Tower in Palace, Ebon Tower (steal).","s":37,"near":1,"rank":11.7,"note":"Ranged, 37 damage.","tr":1,"hands":0},
+            {"item":"Ebony Longbow","location":"Upper in Council Spire Ruby, Narsis (steal).","s":45,"near":0,"rank":41.5,"note":"Ranged, 45 damage.","endgame":1,"tr":1,"hands":0},
+            {"item":"Bonemold Long Bow","location":"Sold by Sirollus Saccus in Ebonheart, base price 250 gold.","s":30,"near":1,"rank":4.6,"note":"Ranged, 30 damage.","hands":0},
+            {"item":"Dwarven Long Bow","location":"Sold by Ruthrisa Velothren in Darvonis, base price 420 gold.","s":35,"near":0,"rank":25.5,"note":"Ranged, 35 damage.","tr":1,"hands":0}
+          ],
+        },
+      },
+    };
+    function earlyEntries(world, group, key, slot) {
+      const byKey = ((EARLY_GEAR[world] || {})[group] || {})[key];
+      const list = slot ? (byKey || {})[slot] : byKey;
+      return (list || []).map((e) => Object.assign(pick(e.item, e.location, e.note || ""), { s: e.s, near: !!e.near, rank: e.rank, endgame: !!e.endgame, tr: !!e.tr, hands: e.hands }));
+    }
     const WEAPONS = {
       "Long Blade": {
-        early: [pick("Steel Longsword", "A worn one at Telvon Llethan's Hlaalu Weaponsmith in Vivec, repaired there for about 81 gold in all.", "Not Sword of White Woe: stealing it is harder than Mentor's Ring.")],
+        early: earlyEntries("vanilla", "weapons", "Long Blade"),
         late: [
           pick("Hopesfire", "", "Taken from Almalexia after The Blade of Nerevar."),
           pick("Daedric Crescent", "", "The highest-damage two-handed option among common uniques."),
@@ -2416,26 +2785,26 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         ]
       },
       "Short Blade": {
-        early: [pick("Glass Dagger", "Buy a worn one from Lucretinaus Olcinius in Vivec and have Savard repair it, about 335 gold in all.")],
+        early: earlyEntries("vanilla", "weapons", "Short Blade"),
         late: [pick("Black Hands Dagger"), pick("Keening", "", "A main-quest tool, not a generic dagger. Use it with Wraithguard.")]
       },
       "Blunt Weapon": {
-        early: [pick("Steel Warhammer", "A worn one at Telvon Llethan's in Vivec, repaired there for about 81 gold in all.")],
+        early: earlyEntries("vanilla", "weapons", "Blunt Weapon"),
         late: [pick("Sunder", "", "Use it with Wraithguard, also from the main quest."), pick("Scourge"), pick("Mace of Aevar Stone-Singer", "", "Tied to The Skaal Test of Loyalty.")]
       },
       "Axe": {
-        early: [pick("Steel Battle Axe", "A worn one at Alds Baro's in Maar Gan, repaired there for about 100 gold in all.")],
+        early: earlyEntries("vanilla", "weapons", "Axe"),
         late: [pick("Cleaver of St. Felms", "", "One-handed."), pick("Cloudcleaver", "", "Two-handed.")]
       },
       "Spear": {
-        early: [pick("Silver Spear", "A worn one at Goldyn Belaram's pawnshop in Suran, repaired by Garothmuk gro-Muzgub for about 90 gold in all.")],
+        early: earlyEntries("vanilla", "weapons", "Spear"),
         late: [
           pick("Spear of Bitter Mercy", "", "Reflect and Storm Atronach."),
           pick("Daedric Spear", "Lying in Berandas's underground section, or Dram Bero's reward for reporting the Vassir-Didanat mine.", "The straightforward non-artifact alternative.")
         ]
       },
       "Marksman": {
-        early: [pick("Long Bow", "A worn one from Ashuma-Nud Matluberib in Gnisis, repaired by Mug gro-Dulob for about 49 gold in all.")],
+        early: earlyEntries("vanilla", "weapons", "Marksman"),
         late: [pick("Daedric Long Bow", "", "Top raw-stat bow."), pick("Auriel's Bow", "", "Unenchanted in Morrowind.")]
       },
       "Hand-to-hand": {
@@ -2447,21 +2816,18 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     // Early picks pass the same Mentor's Ring rule in a Tamriel Rebuilt load order.
     const WEAPONS_TR = {
       "Long Blade": {
-        early: [
-          pick("Redguard Steel Axesword", "Anjzhirra's Rare Goods in Old Ebonheart (steal).", "One-handed, 30 damage."),
-          pick("Silver Greatsword", "The Imperial Consulate basement in Narsis (steal).", "Two-handed, 30 damage.")
-        ],
+        early: [],
         late: [
           pick("Exalted Ebony Blade", "", "Cast When Strikes Absorb Health."),
           pick("Goujian", "", "CE Fortify Long Blade 25.")
         ]
       },
       "Short Blade": {
-        early: [pick("Glass Wakizashi", "A wooden chest in the Coronati Basin [6, -45].", "30 damage.")],
+        early: [],
         late: [pick("Dragon's Blade", "Carried by the Shade of Moraelyn in Raathim Ancestral Tomb.", "38 damage — hits harder than the Black Hands Dagger. Do the Imperial Cult quest Dragon's Blade first.")]
       },
       "Blunt Weapon": {
-        early: [pick("Nordic Warhammer", "Lying in the Mephalan Vales [28, -12].", "Two-handed, 45 damage.")],
+        early: [],
         late: [pick("Shatterwright", "Carried by Xivilai Lotan in Naemunbatashpi.", "Two-handed, 70 damage — Cast When Strikes Disintegrate Armor. Do the Temple quest The Belt of St. Olms first.")]
       },
       "Axe": {
@@ -2472,11 +2838,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         ]
       },
       "Spear": {
-        early: [pick("Daedric Naginata", "Lying in the Old Caverns of Necrom's catacombs.", "40 damage.")],
+        early: [],
         late: [pick("Daedric Longspear", "The Uttumilk shrine.", "50 damage. The Spear of Bitter Mercy still hits harder.")]
       },
       "Marksman": {
-        early: [pick("Dwarven Long Bow", "Ruthrisa Velothren's smithy in Darvonis — random stock that restocks.", "35 damage.")],
+        early: [],
         late: [pick("Sunkindler", "Carried by Darron Marceau in the Armun Ashlands.", "Crossbow, 50 damage — CE Resist Fire 30% and Resist Common Disease 30%. Do Orlukh: Vampire Hunter and Baluath: Hunting the Hunter first.")]
       },
       "Hand-to-hand": { early: [], late: [] }
@@ -2661,36 +3027,62 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       return p.armRanked.map(function(r){ return r.n; });
     }
 
+    // Beast races can't wear anything that covers the feet or the whole head; helmets that only cover the hair are fine.
+    // The game files flag Argonians and Khajiit, and ARCE adds the Naga and the Cathay-raht and Dagi-raht Khajiit.
+    const BEAST_RACES = ["Argonian", "Khajiit", "Naga", "Khajiit (Cathay-raht)", "Khajiit (Dagi-raht)"];
+    // Every helmet the kits recommend, sorted by the body parts it covers in the game data.
+    const CLOSED_HELMS = ["Redoran Watchman's Helm", "Velothian Helm", "Native Armun-An Bonemold Helm", "Helm of Wounding", "Ebonweave Helm", "Dwemer Helm", "Glass Closed Helm", "War Helm of Pasoroth", "Chitin Helm", "Daedric Face of God", "Necrom Indoril Helmet"];
+    const OPEN_HELMS = ["Nordic Trollbone Helm", "Imperial Silver Helm", "Diviner Helm", "Colovian Tiger Helm", "Dreugh Helm", "Imperial Steel Helmet", "Helm of Oreyn Bearclaw", "Imperial Dragonscale Helm", "Adamantium Helm", "Glass Helm", "Colovian Fur Helm", "Nord Steel Helmet", "Golden Saint Helm", "Alit Hide Open Helm", "Helm of the Savior's Hide"];
+    // The best open helmet for a beast race where every pick in the row covers the whole head.
+    const BEAST_HELMS = {
+      "Light Armor": { e: pick("Colovian Fur Helm", "Sold by Tiras Sadus in Ald'ruhn, base price 25 gold.", "The Chitin Helm covers a beast's whole head.") }
+    };
+    function armorFor(kind, beast) {
+      const set = withTrArmor(kind);
+      if (!beast) return set;
+      const out = {};
+      Object.keys(set).forEach((sl) => {
+        out[sl] = { e: set[sl].e, l: set[sl].l };
+        ["e", "l"].forEach((phase) => {
+          if (sl === "Boots") out[sl][phase] = [pick("None", "", "Beast races can't wear boots or shoes.")];
+          if (sl !== "Helm") return;
+          const open = set[sl][phase].filter((p) => CLOSED_HELMS.indexOf(p.item) < 0);
+          const fallback = BEAST_HELMS[kind] && BEAST_HELMS[kind][phase];
+          out[sl][phase] = open.length ? open : [fallback || pick("None", "", "Every helmet here covers a beast's whole head.")];
+        });
+      });
+      return out;
+    }
     function armorSet(kind) {
       // Picks per slot, best first. Early picks pass the Mentor's Ring rule in the game data.
       if (kind === "Heavy Armor") {
         return {
           Helm: {
-            e: [pick("Imperial Steel Helmet")],
+            e: earlyEntries("vanilla", "armor", kind, "Helm"),
             l: [pick("Helm of Oreyn Bearclaw", "", "CE Agility 40 and Endurance 40."), pick("Daedric Face of God", "Tukushapal, Sepulcher.")]
           },
           Cuirass: {
-            e: [pick("Nordic Trollbone Cuirass", "Sold by Meldor in Balmora.")],
+            e: earlyEntries("vanilla", "armor", kind, "Cuirass"),
             l: [pick("Dragonbone Cuirass", "", "CE Resist Fire 100%."), pick("Lord's Mail", "", "Cast When Used: Cure Poison, Resist Magicka 20–30% for 30s.")]
           },
           Pauldrons: {
-            e: [pick("Imperial Chain Left Pauldron / Imperial Chain Right Pauldron", "Moonmoth Legion Fort and Uulernil's shop in Pelagiad (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Pauldrons"),
             l: [pick("Daedric Left Pauldron / Daedric Right Pauldron", "Left: Norenen-dur, The Wailingdelve. Right: Castle Karstaag's tower on Solstheim. Divayth Fyr wears both.")]
           },
           Greaves: {
-            e: [pick("Imperial Steel Greaves", "Hodlismod's shop in Caldera (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Greaves"),
             l: [pick("Daedric Greaves")]
           },
           Boots: {
-            e: [pick("Imperial Steel Boots", "Imperial Commission in Ebonheart (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Boots"),
             l: [pick("Daedric Boots", "", "For the highest armor rating."), pick("Ten Pace Boots", "", "Cast When Used Speed and Athletics, for mobility.")]
           },
           Gauntlets: {
-            e: [pick("Imperial Templar Left Bracer / Imperial Templar Right Bracer", "Hodlismod's shop in Caldera (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Gauntlets"),
             l: [pick("Fist of Randagulf Left Gauntlet / Fist of Randagulf Rt Gauntlet", "Ilunibi, northwest of Gnaar Mok — Soul's Rattle section, behind the trough in the large northeastern room by the Sixth House bells. The two lie together.", "CE Agility 20 (left) and Strength 20 (right).")]
           },
           Shield: {
-            e: [pick("Steel Tower Shield", "Saetring's smithy in Molag Mar (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Shield"),
             l: [pick("Eleidon's Ward", "", "Cast When Used Restore Health.")]
           }
         };
@@ -2698,31 +3090,31 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (kind === "Medium Armor") {
         return {
           Helm: {
-            e: [pick("Imperial Dragonscale Helm", "Sold by Dandera Selaro or Ergnir in Ald'ruhn.")],
+            e: earlyEntries("vanilla", "armor", kind, "Helm"),
             l: [pick("Adamantium Helm")]
           },
           Cuirass: {
-            e: [pick("Imperial Dragonscale Cuirass", "Verick Gemain's shop in Caldera (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Cuirass"),
             l: [pick("Ebony Mail", "", "CE Resist Fire 75%, Shield 50, Resist Magicka 20%.")]
           },
           Pauldrons: {
-            e: [pick("Orcish Left Pauldron / Gah-Julan Bonemold R Pauldron", "Left: lying at Khartag Point. Right: Dandera Selaro in Ald'ruhn (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Pauldrons"),
             l: [pick("Royal Guard Left Pauldron / Royal Guard Right Pauldron")]
           },
           Greaves: {
-            e: [pick("Imperial Chain Greaves", "Moonmoth Legion Fort (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Greaves"),
             l: [pick("Ice Armor Greaves")]
           },
           Boots: {
-            e: [pick("Bonemold Boots", "Arobar Manor in Ald'ruhn (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Boots"),
             l: [pick("Royal Guard Boots"), pick("Ice Armor Boots", "Bloodmoon: Stalhrim armor made for you by Carnius Magius or Aenar.")]
           },
           Gauntlets: {
-            e: [pick("Orcish Right Bracer / Bonemold Brace of Horny Fist", "Orcish: sold by Hrundi in Sadrith Mora. Bonemold: Tel Vos (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Gauntlets"),
             l: [pick("Royal Guard Left Gauntlet / Royal Guard Right Gauntlet")]
           },
           Shield: {
-            e: [pick("Dragonscale Tower Shield", "Verick Gemain's shop in Caldera (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Shield"),
             l: [pick("Ice Shield")]
           }
         };
@@ -2730,31 +3122,31 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (kind === "Light Armor") {
         return {
           Helm: {
-            e: [pick("Chitin Helm")],
+            e: earlyEntries("vanilla", "armor", kind, "Helm"),
             l: [pick("Glass Helm")]
           },
           Cuirass: {
-            e: [pick("Chitin Cuirass", "Meldor's shop in Balmora (steal)."), pick("Wolf Cuirass", "A cloth sack in Fort Frostmoth's Imperial Cult shrine, free to take.")],
+            e: earlyEntries("vanilla", "armor", kind, "Cuirass"),
             l: [pick("Cuirass of the Savior's Hide", "", "CE Resist Magicka 60%.")]
           },
           Pauldrons: {
-            e: [pick("Chitin Left Pauldron / Chitin Right Pauldron", "Sold by Malpenix Blonia in Ald'ruhn.")],
+            e: earlyEntries("vanilla", "armor", kind, "Pauldrons"),
             l: [pick("Glass Left Pauldron / Glass Right Pauldron")]
           },
           Greaves: {
-            e: [pick("Chitin Greaves", "Tuveso Beleth's smithy in Ald'ruhn (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Greaves"),
             l: [pick("Glass Greaves")]
           },
           Boots: {
-            e: [pick("Heavy Leather Boots", "Rothan Ancestral Tomb.", "Not Boots of Blinding Speed: they're a quest reward.")],
+            e: earlyEntries("vanilla", "armor", kind, "Boots"),
             l: [pick("Boots of the Apostle", "", "Cast When Used Levitate. Do the Imperial Cult quest Boots of the Apostle first.")]
           },
           Gauntlets: {
-            e: [pick("Chitin Left Gauntlet / Chitin Right Gauntlet", "Ra'Virr's shop in Balmora (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Gauntlets"),
             l: [pick("Left Glass Bracer / Right Glass Bracer")]
           },
           Shield: {
-            e: [pick("Chitin Tower Shield", "Tuveso Beleth's smithy in Ald'ruhn (steal).")],
+            e: earlyEntries("vanilla", "armor", kind, "Shield"),
             l: [pick("Glass Tower Shield")]
           }
         };
@@ -2782,31 +3174,31 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (kind === "Heavy Armor") {
         return {
           Helm: {
-            e: [pick("Nord Steel Helmet", "Buy a worn one from Agretha Road-Breaker in Othrenis and have Meder Vorethi repair it, about 104 gold.", "AR 20.")],
+            e: [],
             l: []
           },
           Cuirass: {
-            e: [pick("Imperial Ebony Cuirass", "Lying on the Padomaic Ocean floor [42, -31].", "AR 55.")],
-            l: [pick("War Cuirass of Pasoroth", "", "AR 75 — CE Endurance 20, Agility 20, Heavy Armor 40.")]
+            e: [],
+            l: [pick("War Cuirass of Pasoroth", "", "CE Endurance 20, Agility 20, Heavy Armor 40.")]
           },
           Pauldrons: {
             e: [],
             l: [
-              pick("Lord Methats' Left Pauldron / Lord Methats' Right Pauldron", "", "AR 80 — CE Athletics 15."),
-              pick("Saint Veloth's Left Pauldron", "", "AR 80 — CE Reflect 30%.")
+              pick("Lord Methats' Left Pauldron / Lord Methats' Right Pauldron", "", "CE Athletics 15."),
+              pick("Saint Veloth's Left Pauldron", "", "CE Reflect 30%.")
             ]
           },
           Greaves: { e: [], l: [] },
           Boots: {
-            e: [pick("Nord Steel Boots", "Sold by Agretha Road-Breaker in Othrenis.", "AR 20.")],
-            l: [pick("Boots of Peace", "Carried by Lord Drekhva Yashaz in Yashazmus.", "AR 80 — CE Acrobatics, Security, Hand-to-hand, Sneak and Athletics 30. Do the Mages Guild quest The Tower of the Enchantress first.")]
+            e: [],
+            l: [pick("Boots of Peace", "Carried by Lord Drekhva Yashaz in Yashazmus.", "CE Acrobatics, Security, Hand-to-hand, Sneak and Athletics 30. Do the Mages Guild quest The Tower of the Enchantress first.")]
           },
           Gauntlets: { e: [], l: [] },
           Shield: {
-            e: [pick("Mages Guild Tourney Shield", "The Mages Guild library in Narsis (steal).", "AR 25.")],
+            e: [],
             l: [
-              pick("Requiem", "", "AR 100 — CE Restore Health 2 and Fatigue 2. Out-heals Eleidon's Ward."),
-              pick("Fearstruck", "", "AR 100 — CE Block and Agility 40, but Weakness to Fire 100%.")
+              pick("Requiem", "", "CE Restore Health 2 and Fatigue 2. Out-heals Eleidon's Ward."),
+              pick("Fearstruck", "", "CE Block and Agility 40, but Weakness to Fire 100%.")
             ]
           }
         };
@@ -2814,66 +3206,66 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (kind === "Medium Armor") {
         return {
           Helm: {
-            e: [pick("Necrom Indoril Helmet", "Lying in the Sacred Lands [42, -8].", "AR 50.")],
-            l: [pick("Golden Saint Helm", "", "AR 75.")]
+            e: [],
+            l: [pick("Golden Saint Helm", "")]
           },
           Cuirass: {
             e: [],
             l: [
-              pick("Golden Saint Cuirass", "", "AR 75, if you skip Ebony Mail."),
-              pick("Scales of Nafaalilargus", "", "AR 43 — CE Resist Normal Weapons 50%.")
+              pick("Golden Saint Cuirass", "", "If you skip Ebony Mail."),
+              pick("Scales of Nafaalilargus", "", "CE Resist Normal Weapons 50%.")
             ]
           },
           Pauldrons: {
-            e: [pick("Dreugh Left Pauldron-Fin", "Lying in the Coronati Basin [0, -41].", "AR 40 — CE Swift Swim 15.")],
-            l: [pick("Golden Saint Left Pauldron / Golden Saint Right Pauldron", "", "AR 75.")]
+            e: [],
+            l: [pick("Golden Saint Left Pauldron / Golden Saint Right Pauldron", "")]
           },
           Greaves: {
-            e: [pick("Dreugh Greaves", "Lying in Vartalit Grotto.", "AR 40.")],
+            e: [],
             l: []
           },
           Boots: {
-            e: [pick("Dwemer Scrap Boots", "A crate in Narsis's Canyon Keep (steal).", "AR 25.")],
-            l: [pick("Golden Saint Boots", "", "AR 75.")]
+            e: [],
+            l: [pick("Golden Saint Boots", "")]
           },
           Gauntlets: {
-            e: [pick("Dwemer Scrap Left Bracer / Dwemer Scrap Right Bracer", "Left: Marog docks warehouse. Right: Hlan Oek sewers. Both steal.", "AR 25.")],
-            l: [pick("Golden Saint Left Gauntlet / Golden Saint Right Gauntlet", "", "AR 75.")]
+            e: [],
+            l: [pick("Golden Saint Left Gauntlet / Golden Saint Right Gauntlet", "")]
           },
           Shield: {
             e: [],
-            l: [pick("Bug Shield of Vivec", "", "AR 60 — Cast When Used disease resistance and Water Breathing.")]
+            l: [pick("Bug Shield of Vivec", "", "Cast When Used disease resistance and Water Breathing.")]
           }
         };
       }
       if (kind === "Light Armor") {
         return {
           Helm: {
-            e: [pick("Alit Hide Open Helm", "Dralas Vando's shop in Almas Thirr (steal).", "AR 20.")],
-            l: [pick("Helm of the Savior's Hide", "", "AR 80 — CE Resist Magicka 5%.")]
+            e: [],
+            l: [pick("Helm of the Savior's Hide", "", "CE Resist Magicka 5%.")]
           },
           Cuirass: {
-            e: [pick("Alit Hide Cuirass", "Rogeed's hunting shop in Narsis (steal).", "AR 20.")],
-            l: [pick("Philosopher's Armor", "", "AR 70 — CE Willpower, Strength and Long Blade 20.")]
+            e: [],
+            l: [pick("Philosopher's Armor", "", "CE Willpower, Strength and Long Blade 20.")]
           },
           Pauldrons: {
-            e: [pick("Kagouti Hide Left Pauldron / Kagouti Hide Right Pauldron", "Left: Three Treasures Cornerclub in Marog (steal). Right: sold by Ulran Teryon in Bal Foyen.", "AR 25.")],
-            l: [pick("L Pauldron of the Savior's Hide / R Pauldron of the Savior's Hide", "Worn by Gamras Silni in Mandaran.", "AR 80. Do the Fighters Guild quest Silni's Bounty first.")]
+            e: [],
+            l: [pick("L Pauldron of the Savior's Hide / R Pauldron of the Savior's Hide", "Worn by Gamras Silni in Mandaran.", "Do the Fighters Guild quest Silni's Bounty first.")]
           },
           Greaves: {
-            e: [pick("Alit Hide Greaves", "The Morag Tong guildhall basement in Narsis.", "AR 20.")],
-            l: [pick("Greaves of the Savior's Hide", "", "AR 80.")]
+            e: [],
+            l: [pick("Greaves of the Savior's Hide", "")]
           },
           Boots: {
             e: [],
-            l: [pick("Boots of the Savior's Hide", "", "AR 80 — CE Resist Magicka 5%.")]
+            l: [pick("Boots of the Savior's Hide", "", "CE Resist Magicka 5%.")]
           },
           Gauntlets: {
-            e: [pick("Kagouti Hide Left Bracer / Kagouti Hide Right Bracer", "Ald Marak's northern guard tower (steal).", "AR 25.")],
-            l: [pick("Left Gauntlet of the Poor / Right Gauntlet of the Poor", "Worn by Lord Mhas Vathor in Alta Vathor.", "AR 80 — CE Resist Magicka 25%. Do the Narsis Mages Guild quests Dead Magic, Anti-Magic and Passwall first.")]
+            e: [],
+            l: [pick("Left Gauntlet of the Poor / Right Gauntlet of the Poor", "Worn by Lord Mhas Vathor in Alta Vathor.", "CE Resist Magicka 25%. Do the Narsis Mages Guild quests Dead Magic, Anti-Magic and Passwall first.")]
           },
           Shield: {
-            e: [pick("Alit Hide Shield", "The Fighting Chance in Narsis (steal).", "AR 20.")],
+            e: [],
             l: []
           }
         };
@@ -2891,7 +3283,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const out = {};
       Object.keys(base).forEach((sl) => {
         const more = extra[sl] || { e: [], l: [] };
-        out[sl] = { e: base[sl].e.concat(trPicks(more.e)), l: base[sl].l.concat(trPicks(more.l)) };
+        const early = ((EARLY_GEAR.tr.armor || {})[kind] || {})[sl] ? earlyEntries("tr", "armor", kind, sl) : base[sl].e.concat(trPicks(more.e));
+        out[sl] = { e: early, l: base[sl].l.concat(trPicks(more.l)) };
       });
       return out;
     }
@@ -3042,6 +3435,43 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const parts = p.item.split(" / ").map((n) => ITEM_LOCATIONS[n]).filter(Boolean);
       return parts.filter((t, i) => parts.indexOf(t) === i).join(" ");
     }
+    // The armor rating of every armor piece the kits recommend, from the game data.
+    const ARMOR_RATINGS = {
+      "Redoran Watchman's Helm": 11, "Velothian Helm": 10, "Chitin Boots": 10, "Veloth's Tower Shield": 12, "Native Armun-An Bonemold Helm": 18, "Gah-Julan Bonemold Cuirass": 17, "Bonemold Cuirass": 16, "Bonemold Tower Shield": 17, "Gah-Julan Bonemold L Pauldron": 17, "Bonemold Right Bracer": 15, "Nordic Trollbone Helm": 18, "Imperial Silver Helm": 17, "Helm of Wounding": 20, "Dwemer Cuirass": 20, "Steel Greaves": 15, "Steel Boots": 15, "Dwemer Right Bracer": 20, "Steel Left Gauntlet": 15, "Steel Right Gauntlet": 15, "Diviner Helm": 15, "Ebonweave Helm": 40, "Colovian Tiger Helm": 10, "Kagouti Hide Cuirass": 25, "Glass Cuirass": 50, "Orc Leather Greaves": 12, "Goblin Buckler": 20, "Alit Hide Tower Shield": 20, "Orc Leather Left Pauldron": 12, "Orc Leather Left Gauntlet": 12, "Dark Brotherhood Left Gauntlet": 30, "Indoril Greaves": 45, "Dreugh Boots": 40, "Black Ironwood Shield": 46, "Dreugh Right Pauldron": 40, "Imperial Dragonscale R Pauldron": 20, "Native Gah'Kogo Left Gauntlet": 19, "Native Gah'Kogo Right Gauntlet": 19, "Dreugh Left Bracer": 40, "Dreugh Right Bracer": 40, "Orcish Left Bracer": 30, "Dwemer Helm": 20, "Duchess' Guard Silver Cuirass": 20, "Imperial Silver Greaves": 18, "Dwemer Greaves": 20, "Nordic Trollbone Greaves": 18, "Dwemer Boots": 20, "Imperial Silver Boots": 18, "Ebony Boots": 60, "Saint's Shield": 60, "Dwemer Left Bracer": 20,
+      "Wolf Greaves": 15, "Bonemold Left Bracer": 15, "Ebony Right Bracer": 60, "Imperial Steel Left Gauntlet": 16, "Imperial Steel Right Gauntlet": 16, "Dwemer Shield": 20, "Glass Closed Helm": 50, "Alandro's Shield": 32, "Necrom Indoril Boots": 50, "Necrom Indoril Shield": 50, "War Helm of Pasoroth": 75, "Shield of the Emperor": 28,
+      "Dreugh Cuirass": 40, "Dreugh Helm": 40, "Dreugh Shield": 40, "Orcish Boots": 30, "Orcish Greaves": 30, "Orcish Right Pauldron": 30,
+      "Adamantium Helm": 70, "Alit Hide Cuirass": 20, "Alit Hide Greaves": 20, "Alit Hide Open Helm": 20, "Alit Hide Shield": 20,
+      "Bonemold Boots": 15, "Bonemold Brace of Horny Fist": 15, "Boots of Peace": 80, "Boots of the Apostle": 80,
+      "Boots of the Savior's Hide": 80, "Bug Shield of Vivec": 60, "Chitin Cuirass": 10, "Chitin Greaves": 10, "Chitin Helm": 10,
+      "Chitin Left Gauntlet": 10, "Chitin Left Pauldron": 10, "Chitin Right Gauntlet": 10, "Chitin Right Pauldron": 10,
+      "Chitin Tower Shield": 12, "Colovian Fur Helm": 7, "Cuirass of the Savior's Hide": 80, "Daedric Boots": 80,
+      "Daedric Face of God": 80, "Daedric Greaves": 80, "Daedric Left Pauldron": 80, "Daedric Right Pauldron": 80,
+      "Dragonbone Cuirass": 100, "Dragonscale Tower Shield": 22, "Dreugh Greaves": 40, "Dreugh Left Pauldron-Fin": 40,
+      "Dwemer Scrap Boots": 25, "Dwemer Scrap Left Bracer": 25, "Dwemer Scrap Right Bracer": 25, "Ebony Mail": 100,
+      "Eleidon's Ward": 100, "Fearstruck": 100, "Fist of Randagulf Left Gauntlet": 90, "Fist of Randagulf Rt Gauntlet": 90,
+      "Gah-Julan Bonemold R Pauldron": 17, "Glass Greaves": 50, "Glass Helm": 50, "Glass Left Pauldron": 50, "Glass Right Pauldron": 50,
+      "Glass Tower Shield": 55, "Golden Saint Boots": 75, "Golden Saint Cuirass": 75, "Golden Saint Helm": 75,
+      "Golden Saint Left Gauntlet": 75, "Golden Saint Left Pauldron": 75, "Golden Saint Right Gauntlet": 75,
+      "Golden Saint Right Pauldron": 75, "Greaves of the Savior's Hide": 80, "Heavy Leather Boots": 50, "Helm of Oreyn Bearclaw": 90,
+      "Helm of the Savior's Hide": 80, "Ice Armor Boots": 50, "Ice Armor Greaves": 50, "Ice Shield": 50, "Imperial Chain Greaves": 20,
+      "Imperial Chain Left Pauldron": 20, "Imperial Chain Right Pauldron": 20, "Imperial Dragonscale Cuirass": 20,
+      "Imperial Dragonscale Helm": 20, "Imperial Ebony Cuirass": 55, "Imperial Steel Boots": 16, "Imperial Steel Greaves": 16,
+      "Imperial Steel Helmet": 16, "Imperial Templar Left Bracer": 18, "Imperial Templar Right Bracer": 18,
+      "Kagouti Hide Left Bracer": 25, "Kagouti Hide Left Pauldron": 25, "Kagouti Hide Right Bracer": 25,
+      "Kagouti Hide Right Pauldron": 25, "L Pauldron of the Savior's Hide": 80, "Left Gauntlet of the Poor": 80, "Left Glass Bracer": 50,
+      "Lord Methats' Left Pauldron": 80, "Lord Methats' Right Pauldron": 80, "Lord's Mail": 100, "Mages Guild Tourney Shield": 25,
+      "Necrom Indoril Helmet": 50, "Nord Steel Boots": 20, "Nord Steel Helmet": 20, "Nordic Trollbone Cuirass": 18,
+      "Orcish Left Pauldron": 30, "Orcish Right Bracer": 30, "Philosopher's Armor": 70, "R Pauldron of the Savior's Hide": 80,
+      "Requiem": 100, "Right Gauntlet of the Poor": 80, "Right Glass Bracer": 50, "Royal Guard Boots": 50,
+      "Royal Guard Left Gauntlet": 55, "Royal Guard Left Pauldron": 55, "Royal Guard Right Gauntlet": 55,
+      "Royal Guard Right Pauldron": 55, "Saint Veloth's Left Pauldron": 80, "Scales of Nafaalilargus": 43, "Steel Tower Shield": 18,
+      "Ten Pace Boots": 80, "War Cuirass of Pasoroth": 75, "Wolf Cuirass": 15
+    };
+    // "AR 30", or "AR 30 and 25" for a pair whose halves differ; "" for anything that isn't armor.
+    function armorRatingText(item) {
+      const found = String(item || "").split(" / ").map((n) => ARMOR_RATINGS[n]).filter((r) => r != null);
+      return found.length ? "AR " + found.filter((r, i) => found.indexOf(r) === i).join(" and ") : "";
+    }
     function gearRow(slot, picks, group) {
       return { slot: slot, picks: picks, group: group || "" };
     }
@@ -3056,7 +3486,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         }
         r.picks.forEach((p, i) => {
           const tag = p.tr ? "<span class=\"gear-tag\">Tamriel Rebuilt</span>" : "";
-          const note = p.note ? "<span class=\"gear-note\">" + p.note + "</span>" : "";
+          const rating = armorRatingText(p.item);
+          const text = rating && p.note ? rating + " — " + p.note : rating ? rating + "." : p.note;
+          const note = text ? "<span class=\"gear-note\">" + text + "</span>" : "";
           h += "<tr" + (i ? " class=\"gear-alt\"" : "") + "><td>" + (i ? "or" : r.slot) + "</td>"
             + "<td>" + tag + "<span class=\"gear-name\">" + p.item + "</span>" + note + "</td>"
             + "<td>" + (pickWhere(p) || "—") + regionTagHtml(pickWhere(p)) + "</td></tr>";
@@ -3200,6 +3632,46 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         }
       };
     }
+    // The early-game toggles. Stealing is on by default; endgame pieces stolen early need both toggles on.
+    // A skill's early weapons for this world; a build that carries a shield keeps one-handed and ranged weapons.
+    function earlyWeapons(skill, shield) {
+      const trOn = typeof worldMode !== "undefined" && worldMode === "tr";
+      const list = trOn && EARLY_GEAR.tr.weapons[skill] ? earlyEntries("tr", "weapons", skill) : (WEAPONS[skill] ? WEAPONS[skill].early : []);
+      const oneHanded = list.filter((p) => p.hands !== 2);
+      return shield && oneHanded.length ? oneHanded : list;
+    }
+    function earlyGearOptions() {
+      const steal = document.getElementById("gear-steal");
+      const endgame = document.getElementById("gear-endgame");
+      const canSteal = !steal || steal.checked;
+      if (endgame) endgame.disabled = !canSteal;
+      return { steal: canSteal, endgame: canSteal && !!endgame && endgame.checked };
+    }
+    const stolenPick = (p) => /\bsteal\b/i.test(pickWhere(p));
+    // Places in or around the starting towns, for hand-picked rows that have no closeness data.
+    const NEAR_PLACES = /Seyda Neen|Samarys|Pelagiad|Balmora|Moonmoth|Caldera|Ald'ruhn|Buckmoth|Vivec|Suran|Ebonheart/;
+    // What an early row shows under the toggles. Nothing stolen without Steal, endgame pieces only with both toggles.
+    // Rows from the closeness data start with the closest nearby source among those within 10% of the strongest nearby
+    // one (within a map square of the closest, buying or picking up beats stealing, then the stronger piece wins), and add
+    // an "or" when something farther away beats every nearby option by more than 10%.
+    function earlyPicks(picks, options) {
+      const shown = picks.filter((p) => !p.fallback && (p.endgame ? options.endgame : options.steal || !stolenPick(p)));
+      if (!shown.length) return [pick("None", "", "Nothing worth having this early without stealing.")];
+      if (shown.some((p) => p.s == null)) {
+        const near = (p) => NEAR_PLACES.test(pickWhere(p));
+        return shown.filter(near).concat(shown.filter((p) => !near(p)));
+      }
+      const byStrength = (a, b) => b.s - a.s || a.rank - b.rank || stolenPick(a) - stolenPick(b);
+      const byCloseness = (a, b) => a.rank - b.rank || stolenPick(a) - stolenPick(b) || b.s - a.s;
+      const near = shown.filter((p) => p.near).sort(byStrength);
+      const far = shown.filter((p) => !p.near).sort(byStrength);
+      if (!near.length) return far.slice(0, 1);
+      const close = near.filter((p) => p.s >= near[0].s * 0.9).sort(byCloseness);
+      const tied = close.filter((p) => p.rank <= close[0].rank + 1);
+      const first = tied.sort((a, b) => stolenPick(a) - stolenPick(b) || b.s - a.s || a.rank - b.rank)[0];
+      const better = far.find((p) => p.s * 0.9 > near[0].s);
+      return better ? [first, better] : [first];
+    }
     function optimizeGear() {
       try {
       if (typeof skillSelect === "function") ensureCustomSkills();
@@ -3228,7 +3700,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const atronach = sign === "The Atronach";
       const breton = race === "Breton";
       const mage = profile.role === "magic";
-      const slots = withTrArmor(primaryArmor);
+      const beast = BEAST_RACES.indexOf(race) >= 0;
+      const slots = armorFor(primaryArmor, beast);
       const cloth = clothingPicks(mage);
       const trOn = typeof worldMode !== "undefined" && worldMode === "tr";
       const kitTag = "Shield, clothing and jewelry";
@@ -3236,7 +3709,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const lateRows = [];
       const armShow = arms.filter(function(n, i){ return i === 0 || maj.includes(n); }).slice(0, 2);
       armShow.forEach(function(armName, idx) {
-        const set = withTrArmor(armName);
+        const set = armorFor(armName, beast);
         const tag = idx === 0 ? "Primary armor ("+armName+")" : "Alternative set — choose one ("+armName+")";
         ["Helm","Cuirass","Pauldrons","Greaves","Boots","Gauntlets"].forEach((sl) => {
           earlyRows.push(gearRow(sl, set[sl].e, tag));
@@ -3268,15 +3741,22 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         const tr = trOn && WEAPONS_TR[w] ? WEAPONS_TR[w] : { early: [], late: [] };
         const scored = pickScoredWeapons(w, profile);
         const label = idx === 0 ? "Primary weapon ("+w+")" : (idx === 1 ? "Secondary viable option ("+w+")" : "Also invested ("+w+")");
-        earlyRows.push(gearRow(label, WEAPONS[w].early.concat(trPicks(tr.early)), "Weapons"));
+        earlyRows.push(gearRow(label, earlyWeapons(w, useShield), "Weapons"));
         lateRows.push(gearRow(label, (scored.length ? scored : WEAPONS[w].late).concat(trPicks(tr.late)), "Weapons"));
       });
+      const options = earlyGearOptions();
+      earlyRows.forEach((r) => { r.picks = earlyPicks(r.picks, options); });
+      const nearRule = "Each row starts with the closest source in or around Seyda Neen, Pelagiad, Balmora, Caldera, Ald'ruhn, Vivec, Suran" + (trOn ? ", Ebonheart or Old Ebonheart" : " or Ebonheart") + ", even if it costs more; an \"or\" row adds a stronger piece from farther away.";
+      const stealRule = !options.steal ? "No stealing: every pick is bought, repaired or free to take."
+        : options.endgame ? "Stealing has no price limit when the theft is that easy, and endgame pieces you can steal that easily come first."
+        : "Stealing has no price limit when the theft is that easy. Endgame pieces (armor rated 50 or more and worth 2,000 gold or more, or anything worth 10,000 gold or more) wait for Endgame gear early.";
       const specHits = maj.filter((s) => SPEC_SKILLS[spec] && SPEC_SKILLS[spec].includes(s)).length;
       let html = "";
       if (specHits < 3) html += "<p>Your "+spec+" specialization is not helping most of these majors. Morrowind gives +5 to the nine "+spec+" skills only.</p>";
       if (atronach) html += "<p>Atronach tradeoff: Stunted Magicka means Restore Magicka potions and loot do not refill you. Spell Absorption (the Necromancer's Amulet gives 25%) is how you refill.</p>";
       if (breton) html += "<p>Breton Resist Magicka 50% still leaves Blind 50 on Boots of Blinding Speed — stack to 100% Resist Magicka to see clearly.</p>";
-      html += "<details><summary>Early game</summary><p class=\"muted\">Gear a new level 1 character can get with no more trouble than Mentor's Ring, a ring lying in Samarys Ancestral Tomb near Seyda Neen past two weak undead: at most two enemies on the way, none above level 4, nothing locked, and 500 gold or less to buy, steal, or buy worn and repair. Quest rewards and farming don't count.</p>" + gearTable(earlyRows) + "</details>";
+      if (beast) html += "<p>Beast races can't wear boots, shoes or helmets that cover the whole head, so this kit leaves them out.</p>";
+      html += "<details><summary>Early game</summary><p class=\"muted\">Gear a new level 1 character can get with no more trouble than Mentor's Ring, a ring lying in Samarys Ancestral Tomb near Seyda Neen past two weak undead: at most two enemies on the way, none above level 4, nothing locked, and 500 gold or less to buy, or buy worn and repair. " + stealRule + " Quest rewards and farming don't count. " + nearRule + "</p>" + gearTable(earlyRows) + "</details>";
       html += "<details><summary>Optimized endgame kit</summary><p class=\"muted\">Genuinely optimized endgame gear. Criterion-aware — not one universal best item.</p>" + gearTable(lateRows) + "</details>";
       html += "<p>Synergy notes: mix armor weights only if you do not care about leveling them. Bound weapons train the skill but steal your enchant slots. Non-Atronach casters can still use potions for Restore Magicka; Atronach cannot.</p>";
       const box = document.getElementById("gear-box");
@@ -3299,6 +3779,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
     }
     document.getElementById("btn-gear").addEventListener("click", optimizeGear);
+    ["gear-steal", "gear-endgame"].forEach((id) => {
+      document.getElementById(id).addEventListener("change", () => {
+        earlyGearOptions();
+        const box = document.getElementById("gear-box");
+        if (box && !box.classList.contains("hidden") && box.querySelector("table")) optimizeGear();
+      });
+    });
+    earlyGearOptions();
 
     const ATTRS = ["Strength","Intelligence","Willpower","Agility","Speed","Endurance","Personality","Luck"];
     const SKILLS = ["Block","Armorer","Medium Armor","Heavy Armor","Blunt Weapon","Long Blade","Axe","Spear","Athletics","Enchant","Destruction","Alteration","Illusion","Conjuration","Mysticism","Restoration","Alchemy","Unarmored","Security","Sneak","Acrobatics","Light Armor","Short Blade","Marksman","Mercantile","Speechcraft","Hand-to-hand"];
@@ -4310,7 +4798,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       list(card("obj", "Minor objectives", "sum-wide sum-locked"), r.minors.map((o) => {
         const extra = [];
         if (tagsOf(o.text).indexOf("crime") >= 0) extra.push("this is a crime in-game");
-        if (o.kind === "FLAVOR") extra.push("flavor — no hard checkbox");
         return { text: o.text + (extra.length ? " (" + extra.join("; ") + ")" : ""), regionsOf: o.text };
       }));
       const rests = card("rest", "Restrictions", "sum-wide sum-locked");

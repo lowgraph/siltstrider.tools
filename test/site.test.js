@@ -328,16 +328,21 @@ test("Tamriel Rebuilt gear rows add named TR picks after the vanilla ones", asyn
   const html = fs.readFileSync(SITE_PATH, "utf8");
   assert.doesNotMatch(html, /No unverified TR|Also TR:/, "TR rows should name items from the game data, not placeholders");
   window.eval('worldMode = "tr"');
+  const settings = [{ steal: true, endgame: false }, { steal: true, endgame: true }, { steal: false, endgame: false }];
   for (const kind of ["Light Armor", "Medium Armor", "Heavy Armor"]) {
     const base = window.eval(`armorSet(${JSON.stringify(kind)})`);
     const set = window.eval(`withTrArmor(${JSON.stringify(kind)})`);
     for (const slot of Object.keys(base)) {
-      for (const phase of ["e", "l"]) {
-        const vanilla = [...base[slot][phase]].map((p) => p.item);
-        const all = [...set[slot][phase]];
-        assert.deepEqual(all.slice(0, vanilla.length).map((p) => p.item), vanilla, `${kind} ${slot}: the vanilla picks must come first`);
-        assert.ok(all.slice(vanilla.length).every((p) => p.tr), `${kind} ${slot}: added picks must be marked Tamriel Rebuilt`);
-        assert.ok(all.length <= 4, `${kind} ${slot} (${phase}) lists too many picks: ${all.map((p) => p.item).join(", ")}`);
+      const vanilla = [...base[slot].l].map((p) => p.item);
+      const all = [...set[slot].l];
+      assert.deepEqual(all.slice(0, vanilla.length).map((p) => p.item), vanilla, `${kind} ${slot}: the vanilla picks must come first`);
+      assert.ok(all.slice(vanilla.length).every((p) => p.tr), `${kind} ${slot}: added picks must be marked Tamriel Rebuilt`);
+      assert.ok(all.length <= 4, `${kind} ${slot} (late) lists too many picks: ${all.map((p) => p.item).join(", ")}`);
+      // Early rows come from the Tamriel Rebuilt closeness data: the closest pick, and at most one stronger "or" from farther away.
+      for (const options of settings) {
+        const shown = [...window.earlyPicks(set[slot].e, options)];
+        assert.ok(shown.length >= 1 && shown.length <= 2, `${kind} ${slot} (early) shows ${shown.length} picks`);
+        if (shown.length === 2) assert.ok(shown[0].near && !shown[1].near && shown[1].s > shown[0].s, `${kind} ${slot}: the "or" should be a stronger piece from farther away`);
       }
     }
   }
@@ -657,4 +662,194 @@ test("the starting sheet shows Health, Magicka and Fatigue as the game's coloure
     ["Magicka", "vital-bar vital-magicka", `${sheet.magicka}/${sheet.magicka}`],
     ["Fatigue", "vital-bar vital-fatigue", `${sheet.fatigue}/${sheet.fatigue}`],
   ]);
+});
+
+test("beast races get no footwear and only helmets that leave the head open", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const { document } = window;
+  const races = Object.keys(window.eval("Object.assign({}, RACES, ARCE_RACES)"));
+  const beasts = [...window.eval("BEAST_RACES")];
+  assert.deepEqual(beasts, ["Argonian", "Khajiit", "Naga", "Khajiit (Cathay-raht)", "Khajiit (Dagi-raht)"]);
+  for (const race of beasts) assert.ok(races.includes(race), `${race} isn't a race on the site`);
+  const closed = [...window.eval("CLOSED_HELMS")], open = [...window.eval("OPEN_HELMS")];
+  document.getElementById("btn-build").click();
+  document.getElementById("btn-custom").click();
+  const kits = [
+    { spec: "Combat", maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"], min: ["Athletics", "Axe", "Spear", "Restoration", "Mercantile"] },
+    { spec: "Stealth", maj: ["Marksman", "Light Armor", "Sneak", "Security", "Short Blade"], min: ["Acrobatics", "Athletics", "Alchemy", "Medium Armor", "Blunt Weapon"] },
+    { spec: "Magic", maj: ["Destruction", "Alteration", "Mysticism", "Unarmored", "Enchant"], min: ["Illusion", "Restoration", "Conjuration", "Alchemy", "Short Blade"] },
+  ];
+  for (const world of ["vanilla", "tr"]) {
+    window.eval(`worldMode = ${JSON.stringify(world)}`);
+    for (const race of ["Argonian", "Khajiit", "Nord"]) {
+      for (const kit of kits) {
+        setSheet(window, { race, ...kit });
+        document.getElementById("btn-gear").click();
+        const helms = picksFor(window, "Helm"), boots = picksFor(window, "Boots").flat();
+        const label = `${world} ${race} ${kit.maj[1]}`;
+        assert.ok(helms.length && boots.length, `${label}: no helmet or boots rows`);
+        for (const name of helms.flat()) assert.ok(name === "None" || open.includes(name) || closed.includes(name), `${name} isn't sorted into open or closed helmets`);
+        const note = /Beast races can't wear boots, shoes or helmets/.test(document.getElementById("gear-box").textContent);
+        if (race === "Nord") {
+          assert.ok(boots.some((name) => name !== "None"), `${label}: lost its boots`);
+          assert.equal(note, false);
+          continue;
+        }
+        assert.equal(note, true, `${label}: the kit should say why boots and closed helmets are missing`);
+        assert.deepEqual([...new Set(boots)], ["None"], `${label} was offered footwear: ${boots.join(", ")}`);
+        assert.ok(!helms.flat().some((name) => closed.includes(name)), `${label} was offered a helmet that covers the head: ${helms.flat().join(", ")}`);
+        // Chitin covers a beast's head, so the early light-armor row falls back to the Colovian Fur Helm; in Tamriel Rebuilt the
+        // Diviner Helm in Old Ebonheart comes first, and the stronger open Alit Hide helm from farther away is the "or".
+        if (kit.maj[1] === "Light Armor") assert.deepEqual(helms[0], world === "tr" ? ["Diviner Helm", "Alit Hide Open Helm"] : ["Colovian Fur Helm"]);
+      }
+    }
+  }
+  window.eval('worldMode = "vanilla"');
+});
+
+test("every armor pick shows its armor rating once", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const { document } = window;
+  const ratings = plain(window.eval("ARMOR_RATINGS"));
+  // Every armor piece in every kit has a rating from the game data.
+  for (const world of ["vanilla", "tr"]) {
+    window.eval(`worldMode = ${JSON.stringify(world)}`);
+    for (const kind of ["Light Armor", "Medium Armor", "Heavy Armor", "Unarmored"]) {
+      const set = plain(window.eval(`withTrArmor(${JSON.stringify(kind)})`));
+      for (const [slot, phases] of Object.entries(set)) {
+        for (const p of phases.e.concat(phases.l)) {
+          if (p.item === "None" || /Shoes|Glove/.test(p.item)) continue;
+          for (const name of p.item.split(" / ")) assert.ok(name in ratings, `${kind} ${slot}: no armor rating for ${name}`);
+          assert.doesNotMatch(p.note || "", /\bAR \d/, `${p.item}: the table adds the rating, so the note shouldn't repeat it`);
+        }
+      }
+    }
+  }
+  window.eval('worldMode = "vanilla"');
+  document.getElementById("btn-build").click();
+  document.getElementById("btn-custom").click();
+  setSheet(window, { race: "Nord", spec: "Combat", maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"], min: ["Athletics", "Axe", "Spear", "Restoration", "Light Armor"] });
+  document.getElementById("btn-gear").click();
+  let slot = "";
+  let checked = 0;
+  for (const tr of document.querySelectorAll("#gear-box table tbody tr")) {
+    if (tr.children.length < 3) continue;
+    if (!tr.classList.contains("gear-alt")) slot = tr.children[0].textContent.trim();
+    if (!/^(Helm|Cuirass|Pauldrons|Greaves|Boots|Gauntlets|Shield)$/.test(slot)) continue;
+    const name = tr.querySelector(".gear-name").textContent;
+    if (name === "None") continue;
+    const note = (tr.querySelector(".gear-note") || { textContent: "" }).textContent;
+    assert.match(note, /^AR \d+/, `${slot} ${name}: no armor rating`);
+    assert.equal((note.match(/\bAR \d/g) || []).length, 1, `${slot} ${name}: the rating appears twice: ${note}`);
+    checked++;
+  }
+  assert.ok(checked > 20, `only ${checked} armor rows checked`);
+});
+
+test("list fixes: removed entries, top-rank majors, and objectives and restrictions that can't roll together", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const html = fs.readFileSync(SITE_PATH, "utf8");
+  const pool = [...window.eval("POOL")];
+  const objectives = [...window.eval("OBJECTIVES")].map((o) => o.text);
+  const majors = [...window.eval("MAJORS")];
+  assert.ok(!pool.some((r) => /Naked start/.test(r)), "Naked start is too easy");
+  assert.ok(!objectives.some((o) => /Ghostfence/.test(o)), "the Ghostfence walk was too vague");
+  window.eval('challengeRun.minors = OBJECTIVES.filter((o) => o.kind === "FLAVOR"); renderRun()');
+  assert.doesNotMatch(window.document.getElementById("run-summary").textContent, /flavor|no hard checkbox/, "minor objectives shouldn't carry the flavor label");
+  for (const old of ["Finish Fighters Guild", "Finish Mages Guild", "Finish Thieves Guild", "Finish Imperial Legion", "Finish Tribunal Temple", "Finish Imperial Cult"]) assert.ok(!majors.includes(old), `${old} should name the faction's top rank`);
+  for (const rank of ["Become Master of the Fighters Guild", "Become Arch-Mage of the Mages Guild", "Become Master Thief of the Thieves Guild", "Become Grandmaster of the Morag Tong", "Become Knight of the Imperial Dragon in the Imperial Legion", "Become Patriarch of the Tribunal Temple", "Become Primate of the Imperial Cult"]) {
+    assert.ok(majors.includes(rank), `${rank} is missing`);
+  }
+  assert.ok(window.restrictionsClash("No alteration", "No lockpicking") && window.restrictionsClash("No lockpicking", "No alteration"), "with neither, locks can't be opened");
+  assert.ok(!window.restrictionsClash("No alteration", "No destruction"));
+  const fargoth = "Find Fargoth's hiding place for Hrisskar Flat-Foot in Seyda Neen";
+  const nothing = "Take nothing in Seyda Neen except what the Census and Excise Office hands you";
+  assert.ok(objectives.includes(fargoth) && objectives.includes(nothing));
+  assert.ok(window.objectivesClash(fargoth, nothing) && window.objectivesClash(nothing, fargoth));
+  window.eval("challengeRun.rests = []");
+  for (let i = 0; i < 400; i++) {
+    const texts = [...window.pickMixedObjectives(5)].map((o) => o.text);
+    assert.ok(!(texts.includes(fargoth) && texts.includes(nothing)), "rolled both Seyda Neen objectives");
+  }
+  // Clearer locations, with early gear from the closest source: the Glass Dagger is bought and repaired in Suran rather than
+  // across two of Vivec's cantons, Vivec's cantons are named, and Seyda Neen's tradehouse sells chitin.
+  const firstEarly = (list) => window.eval(`earlyPicks(${list}, { steal: true, endgame: false })[0]`);
+  const dagger = firstEarly('WEAPONS["Short Blade"].early');
+  assert.equal(dagger.item, "Glass Dagger");
+  assert.match(dagger.location, /in Suran\b/);
+  assert.match(firstEarly('armorSet("Medium Armor").Cuirass.e').location, /Vivec's Redoran Canton/);
+  const chitin = firstEarly('armorSet("Light Armor").Cuirass.e');
+  assert.equal(chitin.item, "Chitin Cuirass");
+  assert.match(chitin.location, /Arrille in Seyda Neen/);
+  // Easy thefts count at any value: the Orcish pauldrons and greaves in the crate in Creeper's house.
+  const pauldrons = firstEarly('armorSet("Medium Armor").Pauldrons.e');
+  assert.match(pauldrons.item, /Orcish Left Pauldron \/ Orcish Right Pauldron/);
+  assert.match(pauldrons.location, /^A crate in Ghorak Manor, Creeper's house in Caldera/, "both pauldrons come from the same crate");
+  assert.match(firstEarly('armorSet("Medium Armor").Greaves.e').location, /Ghorak Manor, Creeper's house in Caldera/);
+});
+
+test("the Steal and Endgame toggles shape the early-game kit", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const { document } = window;
+  const steal = document.getElementById("gear-steal"), endgame = document.getElementById("gear-endgame");
+  assert.equal(steal.checked, true, "stealing is on by default");
+  assert.equal(endgame.checked, false, "endgame gear early starts off");
+  const toggle = (el, on) => { el.checked = on; el.dispatchEvent(new window.Event("change", { bubbles: true })); };
+  const early = () => document.querySelectorAll("#gear-box details")[0];
+  const rows = () => [...early().querySelectorAll("tbody tr")].filter((tr) => tr.children.length === 3);
+  const slots = () => rows().filter((tr) => !tr.classList.contains("gear-alt")).map((tr) => tr.children[0].textContent.trim());
+  document.getElementById("btn-build").click();
+  document.getElementById("btn-custom").click();
+  const sheets = [
+    { race: "Nord", spec: "Combat", maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"], min: ["Athletics", "Axe", "Spear", "Restoration", "Light Armor"] },
+    { race: "Wood Elf", spec: "Stealth", maj: ["Marksman", "Light Armor", "Sneak", "Security", "Short Blade"], min: ["Acrobatics", "Athletics", "Alchemy", "Hand-to-hand", "Blunt Weapon"] },
+    { race: "Breton", spec: "Magic", maj: ["Destruction", "Alteration", "Mysticism", "Unarmored", "Enchant"], min: ["Illusion", "Restoration", "Conjuration", "Alchemy", "Short Blade"] },
+  ];
+  for (const world of ["vanilla", "tr"]) {
+    window.eval(`worldMode = ${JSON.stringify(world)}`);
+    for (const sheet of sheets) {
+      const label = `${world} ${sheet.maj[1]}`;
+      setSheet(window, sheet);
+      toggle(steal, true);
+      toggle(endgame, false);
+      document.getElementById("btn-gear").click();
+      assert.match(early().querySelector("p.muted").textContent, /500 gold or less to buy, or buy worn and repair\. Stealing has no price limit/);
+      const withStealing = slots();
+      toggle(steal, false);
+      assert.equal(endgame.disabled, true, "endgame gear early needs stealing");
+      assert.match(early().querySelector("p.muted").textContent, /No stealing/);
+      for (const tr of rows()) assert.doesNotMatch(tr.children[2].textContent, /\bsteal\b/i, `${label}: ${tr.querySelector(".gear-name").textContent} is stolen with Steal off`);
+      assert.deepEqual(slots(), withStealing, `${label}: a slot lost every pick with Steal off`);
+      toggle(steal, true);
+      assert.equal(endgame.disabled, false);
+    }
+  }
+  // Steal off falls back to gear you can buy or pick up; Endgame gear early lets endgame thefts into their rows.
+  const names = () => rows().map((tr) => tr.querySelector(".gear-name").textContent);
+  const firstInRow = (slot) => rows().filter((tr) => !tr.classList.contains("gear-alt") && tr.children[0].textContent.trim() === slot).map((tr) => tr.querySelector(".gear-name").textContent);
+  window.eval('worldMode = "vanilla"');
+  setSheet(window, sheets[0]);
+  toggle(endgame, false);
+  toggle(steal, false);
+  document.getElementById("btn-gear").click();
+  assert.ok(names().includes("Imperial Dragonscale Cuirass"), `medium armor's cuirass without stealing: ${names().join(", ")}`);
+  toggle(steal, true);
+  assert.ok(!names().includes("Imperial Templar Left Bracer / Ebony Right Bracer"), "endgame bracers need the Endgame toggle");
+  toggle(endgame, true);
+  // The Ebony bracer is in Suran, one of the nearby towns, so the endgame pair leads its row.
+  assert.ok(firstInRow("Gauntlets").includes("Imperial Templar Left Bracer / Ebony Right Bracer"), `heavy armor's endgame bracers should lead their row: ${firstInRow("Gauntlets").join(", ")}`);
+  window.eval('worldMode = "tr"');
+  setSheet(window, sheets[1]);
+  document.getElementById("btn-gear").click();
+  assert.ok(names().includes("Boots of the Savior's Hide"), `Tamriel Rebuilt light armor's endgame boots: ${names().join(", ")}`);
+  toggle(steal, false);
+  assert.ok(endgame.checked && endgame.disabled);
+  assert.ok(!names().includes("Boots of the Savior's Hide"), "endgame gear early does nothing without stealing");
+  toggle(steal, true);
+  toggle(endgame, false);
+  window.eval('worldMode = "vanilla"');
 });
