@@ -1,5 +1,3 @@
-<!-- aha-build-id: bmu4notestcopy -->
-<!-- aha-release: 2 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,6 +90,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     h1, h2, h3, .brand h1, .kicker {
       font-family: "Pelagiad", Georgia, serif;
+    }
+    table, .sheet-grid, #gear-box table,
+    input[type="number"], input[type="text"] {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
     }
     .hero {
       min-height: 100vh;
@@ -218,7 +220,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       padding: 20px 18px 18px;
       background: linear-gradient(180deg, rgba(58, 40, 22, 0.55) 0%, rgba(8, 6, 4, 0.28) 100%);
       cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      box-sizing: border-box;
     }
+    a.home-card:hover { background: linear-gradient(180deg, rgba(90, 58, 28, 0.62) 0%, rgba(12, 8, 4, 0.32) 100%); transform: translateY(-1px); }
+    a.home-card:active { transform: translateY(0); }
     .home-card:focus-visible { outline-offset: 4px; }
     .home-card strong { display: block; font-size: 1.15rem; color: #f3e6c8; }
     .home-card span { color: #f0e6d0; font-size: 0.95rem; line-height: 1.4; }
@@ -274,6 +281,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       grid-template-columns: 1fr 1fr;
       gap: 4px 24px;
       margin: 0 0 12px;
+      line-height: 1.55;
     }
     .sheet-grid .sheet-row {
       display: flex;
@@ -281,7 +289,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       gap: 12px;
       align-items: baseline;
       border-bottom: 1px solid rgba(196,160,86,0.22);
-      padding: 2px 0;
+      padding: 4px 0;
     }
     .sheet-grid .sheet-row span { color: #f4ead4; }
     .sheet-grid .sheet-row strong { color: var(--gold); font-variant-numeric: tabular-nums; flex-shrink: 0; white-space: nowrap; overflow-wrap: normal; word-break: normal; }
@@ -587,6 +595,27 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     #run-summary { overflow-wrap: anywhere; word-break: break-word; }
     #panel-challenge select { width: 100%; max-width: 100%; box-sizing: border-box; }
+    #challenge-advanced select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      color-scheme: dark;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 1rem;
+      padding: 8px 12px;
+      min-height: 44px;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 0;
+      border: 4px solid #8a6a28;
+      background: #14110d;
+      color: #d4b06a;
+    }
+    #challenge-advanced select option,
+    #challenge-advanced select optgroup {
+      background: #14110d;
+      color: #d4b06a;
+    }
     .sum-row .sum-acts { display: flex; gap: 6px; flex: 0 0 auto; }
     input[type="checkbox"] {
       appearance: none;
@@ -621,6 +650,20 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     select:focus-visible, input:focus-visible {
       outline: 3px solid #f0d48a;
       outline-offset: 2px;
+    }
+    #challenge-advanced #adv-search {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 1rem;
+      padding: 8px 12px;
+      min-height: 44px;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 0;
+      border: 4px solid #8a6a28;
+      background: #14110d;
+      color: #d4b06a;
     }
     #challenge-advanced .pool {
       margin: 8px 0 28px;
@@ -741,7 +784,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     #panel-alchemy .alc-dd-btn {
       appearance: none;
       -webkit-appearance: none;
-      font-family: inherit;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       font-size: 1rem;
       padding: 8px 12px;
       min-height: 44px;
@@ -754,6 +797,15 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       background-clip: padding-box;
       color: #d4b06a;
     }
+    .calc-you {
+      margin: 12px 0 16px;
+      padding: 14px 14px 10px;
+      background: rgba(20, 17, 13, 0.42);
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.38);
+      border: 1px solid rgba(138, 115, 68, 0.4);
+    }
+    .calc-you > .enc-row-3,
+    .calc-you > .enc-row-2 { margin-top: 0; }
     #panel-enchant .enc-row-2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; }
     #panel-enchant .enc-row-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
     #panel-enchant .enc-est-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; align-items: center; }
@@ -792,8 +844,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     .field, .tip, .summary, #c-summary, #custom p { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
     @media (max-width: 520px) { .skill-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
     #gear-box { max-width: 100%; }
-    #gear-box table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    #gear-box th, #gear-box td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #3a3224; vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
+    #gear-box table { width: 100%; border-collapse: collapse; font-size: 0.9rem; line-height: 1.55; }
+    #gear-box tbody tr:nth-child(even) { background: rgba(201, 162, 39, 0.12); }
+    #gear-box tbody tr:nth-child(odd) { background: rgba(20, 17, 13, 0.55); }
+    #gear-box th, #gear-box td { text-align: left; padding: 8px 8px; border-bottom: 1px solid #3a3224; vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
     #gear-box th { color: var(--gold); font-weight: 600; }
     #gear-box td:first-child { overflow-wrap: normal; word-break: normal; }
     #gear-box .gear-name { display: block; font-weight: 600; }
@@ -810,8 +864,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       .row .btn { width: auto; flex: 1 1 calc(50% - 8px); }
       #gear-box table, #gear-box thead, #gear-box tbody, #gear-box tr, #gear-box th, #gear-box td { display: block; width: 100%; max-width: 100%; box-sizing: border-box; }
       #gear-box thead { display: none; }
-      #gear-box td { border-bottom: none; padding: 4px 0; }
-      #gear-box tr { padding: 10px 0; border-bottom: 1px solid #3a3224; }
+      #gear-box td { border-bottom: none; padding: 4px 8px; }
+      #gear-box tr { padding: 12px 0; border-bottom: 3px solid #8a7344; }
     }
     .summary { margin-top: 16px; padding-top: 12px; border-top: 1px solid #3a3224; }
     #c-summary ul, #gear-box ul, .summary ul {
@@ -1108,8 +1162,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
   </style>
 </head>
 <body>
-  <a class="skip" href="#panel-home">Skip to tools</a>
-  <section class="hero" role="main">
+  <a class="skip" href="#main-tools">Skip to tools</a>
+  <section class="hero" role="main" id="main-tools" tabindex="-1">
     <header>
       <div class="topbar">
         <div class="brand">
@@ -1276,6 +1330,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <div id="r-minors"></div>
       </div>
       <div id="challenge-advanced" class="hidden">
+      <label for="adv-search" class="field" style="display:block;margin:0 0 16px">Search lists
+        <input type="text" id="adv-search" name="silt-adv-filter" placeholder="Filter objectives and restrictions" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" />
+      </label>
       <h2>Major objective</h2>
       <p>The point of this playthrough. Finish this and the run is complete.</p>
       <details class="pool">
@@ -1437,6 +1494,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     <div class="panel" id="panel-alchemy">
       <h2>Alchemy calculator</h2>
       <p class="muted">Mortar is required; other tools can be none.</p>
+      <div class="calc-you">
       <div class="enc-row-3" style="margin-top:12px">
         <div class="field">
           <label for="alc-skill">Alchemy</label>
@@ -1450,6 +1508,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <label for="alc-luck">Luck</label>
           <input id="alc-luck" type="number" min="0" max="1000" value="40" />
         </div>
+      </div>
       </div>
       <div class="enc-row-3">
         <div class="field">
@@ -1481,6 +1540,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     <div class="panel" id="panel-spell">
       <h2>Spellmaking calculator</h2>
       <p class="muted">Magicka cost follows OpenMW player spellmaking. Tamriel Rebuilt effects appear when that world is on.</p>
+      <div class="calc-you">
       <div class="enc-row-3" style="margin-top:12px">
         <div class="field">
           <label for="spl-alt">Alteration</label>
@@ -1515,6 +1575,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <input id="spl-luck" type="number" min="0" max="1000" value="40" />
         </div>
       </div>
+      </div>
       <h3>Effects</h3>
       <label class="muted" style="display:flex;align-items:center;gap:8px;margin:0 0 10px"><input type="checkbox" id="spl-search-toggle"> Search effects</label>
       <div id="spl-effects"></div>
@@ -1527,8 +1588,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <label for="spl-vendor">Spellmaker</label>
         <select id="spl-vendor"></select>
         <input id="spl-vendor-q" type="text" list="spl-vendor-dl" placeholder="Type to search spellmakers" style="display:none" autocomplete="off" />
-        <datalist id="spl-vendor-dl"></datalist>
+          <datalist id="spl-vendor-dl"></datalist>
       </div>
+      <div class="calc-you">
       <div class="enc-row-3" style="margin-top:12px">
         <div class="field">
           <label for="spl-merc">Your Mercantile</label>
@@ -1542,6 +1604,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <label for="spl-disp">Disposition</label>
           <input id="spl-disp" type="number" min="0" max="100" value="50" />
         </div>
+      </div>
       </div>
       <div class="summary" id="spl-barter-out" aria-live="polite"></div>
     </div>
@@ -1558,6 +1621,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <input id="enc-soul" type="number" min="1" max="9999" value="400" />
         </div>
       </div>
+      <div class="calc-you">
       <div class="enc-row-3" style="margin-top:12px">
         <div class="field">
           <label for="enc-skill">Enchant skill</label>
@@ -1571,6 +1635,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <label for="enc-luck">Luck</label>
           <input id="enc-luck" type="number" min="0" max="1000" value="40" />
         </div>
+      </div>
       </div>
       <div class="field" style="margin-top:12px">
         <label for="enc-type">Enchant type</label>
@@ -1592,8 +1657,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <label for="enc-vendor">Enchanter</label>
         <select id="enc-vendor"></select>
         <input id="enc-vendor-q" type="text" list="enc-vendor-dl" placeholder="Type to search enchanters" style="display:none" autocomplete="off" />
-        <datalist id="enc-vendor-dl"></datalist>
+          <datalist id="enc-vendor-dl"></datalist>
       </div>
+      <div class="calc-you">
       <div class="enc-row-3" style="margin-top:12px">
         <div class="field">
           <label for="enc-merc">Your Mercantile</label>
@@ -1607,6 +1673,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <label for="enc-disp">Disposition</label>
           <input id="enc-disp" type="number" min="0" max="100" value="50" />
         </div>
+      </div>
       </div>
       <div class="summary" id="enc-barter-out" aria-live="polite"></div>
     </div>
@@ -7697,7 +7764,21 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     readShareHash();
     window.addEventListener("hashchange", readShareHash);
 
+
+    (function bindAdvancedListFilter() {
+      const input = document.getElementById("adv-search");
+      const box = document.getElementById("challenge-advanced");
+      if (!input || !box) return;
+      input.addEventListener("input", () => {
+        const query = input.value.trim().toLowerCase();
+        box.querySelectorAll("details li").forEach((item) => {
+          item.hidden = !!query && !item.textContent.toLowerCase().includes(query);
+        });
+        if (query) box.querySelectorAll("details").forEach((details) => {
+          details.open = Array.from(details.querySelectorAll("li")).some((item) => !item.hidden);
+        });
+      });
+    })();
   </script>
 </body>
 </html>
-
