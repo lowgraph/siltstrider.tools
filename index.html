@@ -1278,6 +1278,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <li>Tamriel Rebuilt runs no longer roll “No Tribunal or Bloodmoon DLC”: Tamriel Rebuilt needs both.</li>
           <li>The custom builder and the challenge-run character now share one sheet calculation, so a skill picked twice no longer counts twice on the challenge sheet, and both warn when a skill or favored attribute is picked twice.</li>
           <li>Fixed the custom builder's skill pickers swapping in a skill from before a class preset.</li>
+          <li>Added versioned Character and Challenge Run snapshots, with validated restore paths that preserve existing build and challenge links.</li>
           <li>Fixed the challenge-run skill pickers, which didn't swap a skill picked twice or update the sheet.</li>
           <li>Gear tables list one item per row, with where to get it and a short note. Alternatives appear as "or" rows, and Tamriel Rebuilt picks are labelled.</li>
           <li>Every clothing and jewelry pick now names a shop or place. The early caster kit no longer suggests the Bone Charm: it only turns up in Tel Uvirith's tower, which isn't built until the Telvanni stronghold quests.</li>
@@ -2348,11 +2349,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     ];
     // Tamriel Rebuilt needs Tribunal and Bloodmoon, so a Tamriel Rebuilt run can't skip them.
     const TR_EXCLUDED_POOL = ["No Tribunal or Bloodmoon DLC"];
-    function activePool() {
-      return (typeof worldMode !== "undefined" && worldMode === "tr") ? POOL.filter((x) => TR_EXCLUDED_POOL.indexOf(x) < 0) : POOL;
+    function activePool(mode = worldMode) {
+      return mode === "tr" ? POOL.filter((x) => TR_EXCLUDED_POOL.indexOf(x) < 0) : POOL;
     }
-    function activeMajors() {
-      return (typeof worldMode !== "undefined" && worldMode === "tr") ? MAJORS.concat(TR_MAJORS) : MAJORS;
+    function activeMajors(mode = worldMode) {
+      return mode === "tr" ? MAJORS.concat(TR_MAJORS) : MAJORS;
     }
     function fillMajorPool() {
       const majorPool = document.getElementById("major-pool");
@@ -2474,18 +2475,60 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       while (s.length % 4) s += "=";
       return decodeURIComponent(escape(atob(s)));
     }
-    function encodeRunPayload() {
-      const r = challengeRun, obj = {};
+    function getCurrentChallengeRun() {
+      return { version: 1, character: getCurrentCharacter("r"),
+        rolled: { race: !!challengeRun.race, gender: !!challengeRun.gender,
+          className: !!challengeRun.cls, sign: !!challengeRun.sign },
+        major: challengeRun.major, minors: challengeRun.minors.map((o) => o.text),
+        restrictions: challengeRun.rests.slice() };
+    }
+    function normalizeChallengeRun(run) {
+      if (!run || Array.isArray(run) || run.version !== 1) throw new Error("Unsupported challenge version");
+      const character = normalizeCharacter(run.character);
+      const rolled = {};
+      for (const key of ["race", "gender", "className", "sign"]) {
+        if (!run.rolled || typeof run.rolled[key] !== "boolean") throw new Error("Invalid rolled state");
+        rolled[key] = run.rolled[key];
+      }
+      if (run.major !== "" && !activeMajors(character.world).includes(run.major)) throw new Error("Invalid major objective");
+      const list = (items, allowed) => {
+        if (!Array.isArray(items) || items.length > 5 || new Set(items).size !== items.length
+            || Array.from(items).some((item) => typeof item !== "string" || !allowed.includes(item))) throw new Error("Invalid challenge choices");
+        return items.slice();
+      };
+      const minors = list(run.minors, OBJECTIVES.map((o) => o.text));
+      if (minors.some((item, i) => minors.slice(0, i).some((other) => objectivesClash(other, item)))) throw new Error("Conflicting minor objectives");
+      return { version: 1, character, rolled, major: run.major, minors,
+        restrictions: list(run.restrictions, activePool(character.world)) };
+    }
+    function loadChallengeRun(run) {
+      const state = normalizeChallengeRun(run); // No controls/preferences change on invalid input.
+      restoreState(() => {
+        restoreCharacterWorld(state.character);
+        writeCharacterControls(state.character, "r");
+        const ch = state.character, rolled = state.rolled;
+        Object.assign(challengeRun, { race: rolled.race ? ch.race : "", gender: rolled.gender ? ch.gender : "",
+          cls: rolled.className ? ch.className : "", sign: rolled.sign ? ch.sign : "",
+          major: state.major, minors: state.minors.map((t) => OBJECTIVES.find((o) => o.text === t)),
+          rests: state.restrictions.slice(), restNote: "" });
+        renderRun();
+      });
+    }
+    function encodeRunPayload(run = getCurrentChallengeRun()) {
+      const ch = run.character, flags = run.rolled;
+      const r = { race: flags.race ? ch.race : "", gender: flags.gender ? ch.gender : "",
+        sign: flags.sign ? ch.sign : "", cls: flags.className ? ch.className : "",
+        major: run.major, minors: run.minors, rests: run.restrictions }, obj = {};
       if (r.race) obj.race = r.race;
       if (r.gender) obj.gender = r.gender;
       if (r.sign) obj.sign = r.sign;
       if (r.cls) obj.cls = r.cls;
       if (r.cls === "Custom") {
-        const b = readPanelBuild("r");
+        const b = ch;
         Object.assign(obj, { spec: b.spec, fav1: b.fav1, fav2: b.fav2, maj: b.maj, min: b.min });
       }
       if (r.major) obj.major = r.major;
-      if (r.minors.length) obj.minors = r.minors.map((o) => o.text);
+      if (r.minors.length) obj.minors = r.minors.slice();
       if (r.rests.length) obj.rests = r.rests.slice();
       return Object.keys(obj).length ? toBase64Url(JSON.stringify(obj)) : "";
     }
@@ -2494,11 +2537,15 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     // A permalink is untrusted input: keep only names from the site's own lists and drop everything else.
     function applyRunPayload(obj) {
-      if (!obj || typeof obj !== "object") return;
-      const r = challengeRun;
+      if (!obj || typeof obj !== "object" || Array.isArray(obj)) return;
+      const r = {};
+      const character = getCurrentCharacter("r");
       const text = (v) => (typeof v === "string" ? v : "");
       const known = (v, list) => (list.indexOf(text(v)) >= 0 ? text(v) : "");
-      const set = (id, v) => { document.getElementById(id).value = v; };
+      const set = (id, v) => {
+        if (/^r(maj|min)\d$/.test(id)) character[id.slice(1, 4)][Number(id.slice(4))] = v;
+        else character[id === "r-class" ? "className" : id.slice(2)] = v;
+      };
       r.race = known(obj.race, Object.keys(raceTable()));
       r.gender = known(obj.gender, ["Male", "Female"]);
       r.sign = known(obj.sign, Object.keys(SIGNS));
@@ -2517,20 +2564,20 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           set("r-class", "Custom"); set("r-spec", obj.spec); set("r-fav1", obj.fav1); set("r-fav2", obj.fav2);
           maj.forEach((s, i) => set("rmaj" + i, s));
           min.forEach((s, i) => set("rmin" + i, s));
-          syncSkillPrev(RAND_SKILL_IDS);
         } else r.cls = "";
       } else if (r.cls) {
         set("r-class", r.cls);
-        applyClassToPanel("r", r.cls);
+        const cls = classTable()[r.cls];
+        Object.assign(character, { spec: cls.spec, fav1: cls.fav[0], fav2: cls.fav[1], maj: cls.maj.slice(), min: cls.min.slice() });
       }
       r.major = known(obj.major, activeMajors());
       const unique = (list) => list.filter((v, i) => v && list.indexOf(v) === i).slice(0, 5);
       r.minors = unique(Array.isArray(obj.minors) ? obj.minors.map(text) : []).map((t) => OBJECTIVES.find((o) => o.text === t)).filter(Boolean)
         .filter((o, i, list) => !list.slice(0, i).some((p) => objectivesClash(p.text, o.text)));
       r.rests = unique(Array.isArray(obj.rests) ? obj.rests.map(text) : []).filter((t) => activePool().indexOf(t) >= 0);
-      r.restNote = "";
-      lockFavored("r");
-      renderRun();
+      loadChallengeRun({ version: 1, character,
+        rolled: { race: !!r.race, gender: !!r.gender, className: !!r.cls, sign: !!r.sign },
+        major: r.major, minors: r.minors.map((o) => o.text), restrictions: r.rests });
     }
     function writeShareHash() {
       if (!hashBooted || restoringHash) return;
@@ -4875,29 +4922,81 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       document.getElementById("c-summary").innerHTML = html;
       if (hashBooted) { try { writeShareHash(); } catch (e) {} }
     }
-    function collectBuild() {
-      const b = readPanelBuild("c");
-      return { v: 1, race: b.race, gender: b.gender, sign: b.sign, className: (document.getElementById("c-class") || {}).value || "Custom", spec: b.spec, fav1: b.fav1, fav2: b.fav2, maj: b.maj, min: b.min };
+    // Serialization boundary only: controls remain the live sheet/calculation source.
+    function getCurrentCharacter(panel = "c") {
+      if (panel !== "c" && panel !== "r") throw new Error("Unknown character panel");
+      return Object.assign({ version: 1, world: worldMode, arce: arceOn,
+        className: document.getElementById(panel + "-class").value }, readPanelBuild(panel));
     }
-    function applyBuild(b) {
+    function collectBuild() {
+      const { version, world, arce, ...b } = getCurrentCharacter();
+      return Object.assign({ v: version }, b); // Preserve the existing URL payload.
+    }
+    function normalizeCharacter(b) {
       // Validate the whole payload before changing any controls.
       if (!b || typeof b !== "object" || Array.isArray(b)) throw new Error("Invalid build");
-      const className = b.className || "Custom", gender = b.gender || "Male";
-      const skills = Array.isArray(b.maj) && Array.isArray(b.min) ? b.maj.concat(b.min) : [];
-      if (!Object.keys(raceTable()).includes(b.race) || !["Male", "Female"].includes(gender)
+      if (b.version !== 1 || !["vanilla", "tr"].includes(b.world) || typeof b.arce !== "boolean"
+          || (b.arce && b.world !== "tr")) throw new Error("Unsupported character version or world");
+      const className = b.className, gender = b.gender;
+      const races = b.arce ? Object.assign({}, RACES, ARCE_RACES) : RACES;
+      const classes = b.arce ? Object.assign({}, VANILLA_CLASS, ARCE_CLASS) : VANILLA_CLASS;
+      const skills = Array.isArray(b.maj) && Array.isArray(b.min) ? Array.from(b.maj).concat(Array.from(b.min)) : [];
+      if (!Object.keys(races).includes(b.race) || !["Male", "Female"].includes(gender)
           || !Object.keys(SIGNS).includes(b.sign) || !Object.keys(SPEC_SKILLS).includes(b.spec)
-          || !["Custom"].concat(CLASS_NAMES_NOW()).includes(className)
+          || !["Custom"].concat(Object.keys(classes)).includes(className)
           || !ATTRS.includes(b.fav1) || !ATTRS.includes(b.fav2) || b.fav1 === b.fav2
           || !Array.isArray(b.maj) || !Array.isArray(b.min) || b.maj.length !== 5 || b.min.length !== 5
           || skills.some((skill) => !SKILLS.includes(skill)) || new Set(skills).size !== 10) {
         throw new Error("Invalid or unsupported build choices");
       }
+      return { version: 1, world: b.world, arce: b.arce, race: b.race, gender,
+        className, sign: b.sign, spec: b.spec, fav1: b.fav1, fav2: b.fav2,
+        maj: b.maj.slice(), min: b.min.slice() };
+    }
+    // Suppress intermediate permalink writes while existing world/list refreshes run.
+    function restoreState(action) {
+      const previous = restoringHash;
+      restoringHash = true;
+      try { action(); } finally { restoringHash = previous; }
+      if (!previous) writeShareHash();
+    }
+    function restoreCharacterWorld(b) {
+      if (worldMode !== b.world) setWorld(b.world, { restoreArce: false });
+      if (arceOn !== b.arce) setArce(b.arce);
+    }
+    function writeCharacterControls(b, panel) {
+      const className = b.className, gender = b.gender;
       const fields = { race: b.race, gender, class: className, sign: b.sign, spec: b.spec, fav1: b.fav1, fav2: b.fav2 };
-      Object.keys(fields).forEach((key) => { document.getElementById("c-" + key).value = fields[key]; });
-      b.maj.forEach((skill, i) => { document.getElementById("maj" + i).value = skill; });
-      b.min.forEach((skill, i) => { document.getElementById("min" + i).value = skill; });
-      syncSkillPrev();
-      syncCustomClassLock();
+      Object.keys(fields).forEach((key) => { document.getElementById(panel + "-" + key).value = fields[key]; });
+      const prefix = panel === "r" ? "r" : "";
+      b.maj.forEach((skill, i) => { document.getElementById(prefix + "maj" + i).value = skill; });
+      b.min.forEach((skill, i) => { document.getElementById(prefix + "min" + i).value = skill; });
+      syncSkillPrev(panel === "r" ? RAND_SKILL_IDS : SKILL_IDS);
+      lockFavored(panel);
+    }
+    function loadCharacter(character, panel = "c") {
+      if (panel !== "c" && panel !== "r") throw new Error("Unknown character panel");
+      const b = normalizeCharacter(character);
+      restoreState(() => {
+        restoreCharacterWorld(b);
+        writeCharacterControls(b, panel);
+        if (panel === "c") { lockSkillSelects(b.className !== "Custom"); refreshCustom(); }
+        else {
+          Object.assign(challengeRun, { race: b.race, gender: b.gender, cls: b.className, sign: b.sign });
+          renderRun();
+        }
+      });
+    }
+    function applyBuild(b) {
+      if (!b || typeof b !== "object" || Array.isArray(b) || (b.v !== undefined && b.v !== 1)) throw new Error("Invalid build");
+      const character = normalizeCharacter(Object.assign({}, b, { version: 1, world: worldMode, arce: arceOn,
+        className: b.className || "Custom", gender: b.gender || "Male" }));
+      // Legacy named-class links have always reapplied the current class definition.
+      if (character.className !== "Custom") {
+        const cls = classTable()[character.className];
+        Object.assign(character, { spec: cls.spec, fav1: cls.fav[0], fav2: cls.fav[1], maj: cls.maj.slice(), min: cls.min.slice() });
+      }
+      loadCharacter(character);
       document.getElementById("premade").classList.add("hidden");
       document.getElementById("custom").classList.remove("hidden");
       goldOutline([document.getElementById("btn-custom")], [document.getElementById("btn-premade")]);
