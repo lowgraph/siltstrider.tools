@@ -768,6 +768,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     .sheet-skills strong { margin-right: 0; }
     .sheet-skill { display: inline-block; min-width: 0; }
     .custom-grid { display: grid; gap: 12px; margin-top: 12px; }
+    #saved-character-name,
     #panel-enchant input[type="number"],
     #panel-enchant input[type="text"],
     #panel-enchant .enc-eff-search,
@@ -868,6 +869,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       #gear-box tr { padding: 12px 0; border-bottom: 3px solid #8a7344; }
     }
     .summary { margin-top: 16px; padding-top: 12px; border-top: 1px solid #3a3224; }
+    #local-characters .row { align-items: stretch; }
+    @media (max-width: 520px) {
+      #local-characters .row .btn { flex-basis: 100%; }
+    }
     #c-summary ul, #gear-box ul, .summary ul {
       margin: 8px 0 12px;
       padding-left: 1.4em;
@@ -1405,6 +1410,29 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       </div>
       <div id="custom" class="hidden">
         <p>Fill race, class, and skills below. Each field explains itself when you tap it. When the sheet looks right, tap Optimize gear for early and late kits.</p>
+        <details class="summary" id="local-characters">
+          <summary>Local characters</summary>
+          <p class="muted">Saved only in this browser. Clearing site data removes these saves. Loading restores the saved world and ARCE settings across the site.</p>
+          <div class="field">
+            <label for="saved-character-list">Saved characters</label>
+            <select id="saved-character-list"><option value="">Choose a saved character</option></select>
+          </div>
+          <p class="muted" id="saved-character-info"></p>
+          <div class="field">
+            <label for="saved-character-name">Save name</label>
+            <input type="text" id="saved-character-name" maxlength="100" autocomplete="off" placeholder="Name this character" />
+          </div>
+          <div class="row">
+            <button type="button" class="btn" id="saved-character-new">Save as new</button>
+            <button type="button" class="btn" id="saved-character-load" disabled>Load</button>
+            <button type="button" class="btn" id="saved-character-update" disabled>Overwrite with current sheet</button>
+            <button type="button" class="btn" id="saved-character-rename" disabled>Rename</button>
+            <button type="button" class="btn" id="saved-character-delete" disabled>Delete</button>
+            <button type="button" class="btn" id="saved-character-refresh">Refresh list</button>
+          </div>
+          <p id="saved-character-status" role="status" aria-live="polite"></p>
+          <p class="muted" id="saved-character-warning" role="status"></p>
+        </details>
         <div class="custom-grid">
           <div class="field">
             <label for="c-race">Race</label>
@@ -7863,6 +7891,207 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     readShareHash();
     window.addEventListener("hashchange", readShareHash);
 
+
+    // Local record version and canonical Character version evolve independently.
+    const SAVED_CHARACTERS_KEY = "siltstrider-saved-characters";
+    function savedCharacterName(name) {
+      if (typeof name !== "string" || !name.trim() || name.trim().length > 100) {
+        throw new Error("Enter a save name of 1–100 characters.");
+      }
+      return name.trim();
+    }
+    function normalizeSavedCharacter(record) {
+      if (!record || typeof record !== "object" || Array.isArray(record) || record.version !== 1
+          || typeof record.id !== "string" || !/^[A-Za-z0-9_-]{1,100}$/.test(record.id)) {
+        throw new Error("Unsupported saved character record.");
+      }
+      for (const key of ["createdAt", "updatedAt"]) {
+        const value = record[key];
+        if (typeof value !== "string" || !Number.isFinite(Date.parse(value))
+            || new Date(value).toISOString() !== value) throw new Error("Invalid save date.");
+      }
+      if (Date.parse(record.updatedAt) < Date.parse(record.createdAt)) throw new Error("Invalid save date order.");
+      return { id: record.id, version: 1, name: savedCharacterName(record.name),
+        createdAt: record.createdAt, updatedAt: record.updatedAt,
+        character: normalizeCharacter(record.character) };
+    }
+    function readSavedCharacterCollection() {
+      let raw;
+      try { raw = localStorage.getItem(SAVED_CHARACTERS_KEY); }
+      catch (e) { throw new Error("Browser storage is unavailable. Local saves could not be read."); }
+      let entries;
+      try { entries = raw === null ? [] : JSON.parse(raw); }
+      catch (e) { throw new Error("Local save data is unreadable. It has been kept unchanged; saving is blocked to protect it."); }
+      if (!Array.isArray(entries)) throw new Error("This local save format is unsupported. It has been kept unchanged.");
+      const counts = new Map();
+      entries.forEach((entry) => { if (entry && typeof entry.id === "string") counts.set(entry.id, (counts.get(entry.id) || 0) + 1); });
+      const records = [];
+      entries.forEach((entry) => {
+        try {
+          const record = normalizeSavedCharacter(entry);
+          if (counts.get(record.id) === 1) records.push(record);
+        } catch (e) { /* Preserve invalid/future records verbatim, but never offer them for loading. */ }
+      });
+      const skipped = entries.length - records.length;
+      return { entries, records, warning: skipped ? skipped + " invalid, duplicate, or unsupported save record(s) hidden. Their stored data has been kept." : "" };
+    }
+    function loadSavedCharacters() {
+      const { records, warning } = readSavedCharacterCollection();
+      return { records, warning };
+    }
+    function getSavedCharacter(id) {
+      const record = loadSavedCharacters().records.find((record) => record.id === id);
+      if (!record) throw new Error("That saved character is no longer available. Select another save.");
+      return record;
+    }
+    function writeSavedCharacterCollection(entries) {
+      try { localStorage.setItem(SAVED_CHARACTERS_KEY, JSON.stringify(entries)); }
+      catch (e) { throw new Error("Could not save changes. Browser storage may be full or blocked. Existing saves were not changed."); }
+    }
+    function withSavedCharacterLock(change) {
+      if (!navigator.locks || typeof navigator.locks.request !== "function") {
+        return Promise.reject(new Error("Safe local saving is unavailable in this browser. Open the site over HTTPS in a browser with Web Locks support. Existing saves can still be loaded."));
+      }
+      // All tabs on this origin use the same exclusive lock around read + write.
+      return navigator.locks.request(SAVED_CHARACTERS_KEY, { mode: "exclusive" }, change);
+    }
+    async function saveCharacter(name, character) {
+      name = savedCharacterName(name);
+      character = normalizeCharacter(character); // Capture before waiting for another tab.
+      return withSavedCharacterLock(() => {
+        const collection = readSavedCharacterCollection();
+        let id;
+        do {
+          if (typeof crypto.randomUUID === "function") id = crypto.randomUUID();
+          else {
+            const bytes = crypto.getRandomValues(new Uint8Array(16));
+            id = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+          }
+        } while (collection.entries.some((record) => record && record.id === id));
+        const now = new Date().toISOString();
+        const record = normalizeSavedCharacter({ id, version: 1, name, createdAt: now, updatedAt: now, character });
+        writeSavedCharacterCollection(collection.entries.concat([record]));
+        return record;
+        });
+    }
+    // Reject stale edits as well as serializing writes to unrelated records.
+    async function changeSavedCharacter(id, change, expectedUpdatedAt) {
+      const expected = expectedUpdatedAt === undefined ? getSavedCharacter(id).updatedAt : expectedUpdatedAt;
+      return withSavedCharacterLock(() => {
+        const collection = readSavedCharacterCollection();
+        const record = collection.records.find((entry) => entry.id === id);
+        if (!record) throw new Error("That saved character is no longer available. Select another save.");
+        if (record.updatedAt !== expected) throw new Error("This save changed in another tab. Use Refresh list to review the latest save before editing or deleting it.");
+        const replacement = change(record);
+        const entries = collection.entries.slice();
+        const index = entries.findIndex((entry) => entry && entry.id === id);
+        if (replacement === null) entries.splice(index, 1);
+        else entries[index] = normalizeSavedCharacter({ ...replacement, id: record.id, version: 1,
+          createdAt: record.createdAt, updatedAt: new Date(Math.max(Date.now(), Date.parse(record.updatedAt) + 1)).toISOString() });
+        writeSavedCharacterCollection(entries);
+        return replacement === null ? null : entries[index];
+        });
+    }
+    async function updateSavedCharacter(id, name, character, expectedUpdatedAt) {
+      name = savedCharacterName(name);
+      character = normalizeCharacter(character);
+      return changeSavedCharacter(id, (record) => ({ ...record, name, character }), expectedUpdatedAt);
+    }
+    async function renameSavedCharacter(id, name, expectedUpdatedAt) {
+      name = savedCharacterName(name);
+      return changeSavedCharacter(id, (record) => ({ ...record, name }), expectedUpdatedAt);
+    }
+    function deleteSavedCharacter(id, expectedUpdatedAt) {
+      return changeSavedCharacter(id, () => null, expectedUpdatedAt);
+    }
+    (function bindLocalCharacters() {
+      const list = document.getElementById("saved-character-list");
+      const name = document.getElementById("saved-character-name");
+      const status = document.getElementById("saved-character-status");
+      const warning = document.getElementById("saved-character-warning");
+      const info = document.getElementById("saved-character-info");
+      const actions = ["load", "update", "rename", "delete"];
+      let records = [];
+      let busy = false;
+      function selection() {
+        const record = records.find((entry) => entry.id === list.value);
+        actions.forEach((action) => { document.getElementById("saved-character-" + action).disabled = busy || !record; });
+        if (record) name.value = record.name;
+        info.textContent = record ? record.character.race + " · " + record.character.className + " · "
+          + (record.character.world === "tr" ? "Tamriel Rebuilt" : "Vanilla") + (record.character.arce ? " + ARCE" : "") : "";
+      }
+      function refresh(selected = list.value) {
+        try {
+          const result = loadSavedCharacters();
+          records = result.records;
+          warning.textContent = result.warning;
+        } catch (e) { records = []; warning.textContent = e.message; }
+        list.replaceChildren(new Option(records.length ? "Choose a saved character" : "No saved characters", ""));
+        records.forEach((record) => list.add(new Option(record.name, record.id)));
+        list.value = records.some((record) => record.id === selected) ? selected : "";
+        selection();
+      }
+      function action(suffix, fn) {
+        document.getElementById("saved-character-" + suffix).addEventListener("click", async () => {
+          if (busy) return;
+          busy = true;
+          list.disabled = name.disabled = true;
+          ["new", "refresh", ...actions].forEach((action) => { document.getElementById("saved-character-" + action).disabled = true; });
+          try { await fn(); } catch (e) { status.textContent = e.message; }
+          finally {
+            busy = false; list.disabled = name.disabled = false;
+            document.getElementById("saved-character-new").disabled = false;
+            document.getElementById("saved-character-refresh").disabled = false;
+            const selected = records.some((entry) => entry.id === list.value);
+            actions.forEach((action) => { document.getElementById("saved-character-" + action).disabled = !selected; });
+          }
+        });
+      }
+      function selectedRecord() {
+        const record = records.find((entry) => entry.id === list.value);
+        if (!record) throw new Error("Select a saved character first.");
+        return record;
+      }
+      list.addEventListener("change", () => { refresh(list.value); status.textContent = ""; });
+      action("refresh", () => { refresh(); status.textContent = "Save list refreshed."; });
+      action("new", async () => {
+        const record = await saveCharacter(name.value, getCurrentCharacter());
+        refresh(record.id); status.textContent = "Saved “" + record.name + "” in this browser.";
+      });
+      action("load", () => {
+        const record = getSavedCharacter(list.value);
+        loadCharacter(record.character);
+        refresh(record.id); status.textContent = "Loaded “" + record.name + "” and restored its world/ARCE settings.";
+      });
+      action("update", async () => {
+        const record = selectedRecord();
+        const nextName = savedCharacterName(name.value);
+        if (!window.confirm("Overwrite “" + record.name + "” with the current character sheet?")) return;
+        const updated = await updateSavedCharacter(record.id, nextName, getCurrentCharacter(), record.updatedAt);
+        refresh(updated.id); status.textContent = "Updated “" + updated.name + "”.";
+      });
+      action("rename", async () => {
+        const selected = selectedRecord();
+        const record = await renameSavedCharacter(selected.id, name.value, selected.updatedAt);
+        refresh(record.id); status.textContent = "Renamed to “" + record.name + "”.";
+      });
+      action("delete", async () => {
+        const record = selectedRecord();
+        if (!window.confirm("Delete local save “" + record.name + "”? This cannot be undone.")) return;
+        await deleteSavedCharacter(record.id, record.updatedAt); refresh(""); name.value = "";
+        status.textContent = "Deleted “" + record.name + "”. The current sheet is unchanged.";
+      });
+      window.addEventListener("storage", (event) => {
+        if (event.key !== SAVED_CHARACTERS_KEY && event.key !== null) return;
+        // Keep the selected revision and draft name until the user reviews it.
+        if (list.value || busy) warning.textContent = "Local saves changed in another tab. Use Refresh list to review the latest saves.";
+        else refresh();
+      });
+      document.getElementById("local-characters").addEventListener("toggle", () => {
+        if (document.getElementById("local-characters").open) refresh();
+      });
+      refresh(); // List saves after initialization; never auto-load a character.
+    })();
 
     (function bindAdvancedListFilter() {
       const input = document.getElementById("adv-search");
