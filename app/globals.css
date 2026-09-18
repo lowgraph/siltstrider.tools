@@ -2,3 +2,4 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 /* No preflight during the compatibility checkpoint. */
+.game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }

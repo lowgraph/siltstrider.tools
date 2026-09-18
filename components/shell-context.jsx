@@ -7,6 +7,6 @@ const getServerSnapshot=()=>initial;
 const ShellContext=createContext(null);
 export function ShellProvider({children}) {
   const state=useSyncExternalStore(subscribe,getSnapshot,getServerSnapshot);
-  return <ShellContext.Provider value={{...state,navigate:view=>window.siltShell?.navigate(view),setProfile:profile=>window.siltShell?.setProfile(profile)}}>{children}</ShellContext.Provider>;
+  return <ShellContext.Provider value={{...state,navigate:view=>window.siltShell?.navigate(view),setProfile:profile=>{Promise.resolve(window.siltShell?.setProfile(profile)).catch(()=>{});}}}>{children}</ShellContext.Provider>;
 }
 export function useShell(){const shell=useContext(ShellContext);if(!shell)throw new Error('ShellProvider required');return shell;}

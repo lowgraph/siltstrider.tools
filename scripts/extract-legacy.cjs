@@ -47,7 +47,9 @@ function extract(html) {
     if(!runtime.includes(lookup))throw new Error('Missing profile listener '+id);
     runtime=runtime.replace(lookup,'document.getElementById("'+id+'")?.addEventListener');
   }
+  runtime=require('./connect-character-runtime.cjs')(runtime);
   runtime+='\n'+fs.readFileSync(path.join(ROOT,'migration/shell-bridge.js'),'utf8');
+  runtime+='\n'+fs.readFileSync(path.join(ROOT,'migration/character-bridge.js'),'utf8');
   const css=styles.map(s=>s[1]).join('\n').replaceAll('#btn-world-tr','#react-world-tr').replaceAll('#btn-arce','#react-arce').replaceAll('#btn-challenge','#react-nav-challenge').replaceAll('#btn-build','#react-nav-build');
   return {body,runtime,data,css,assets,
     manifest:{sourceSha256:crypto.createHash('sha256').update(html).digest('hex'),revision:crypto.createHash('sha256').update(body+runtime+data+css).digest('hex'),tables:declarations.flatMap(n=>n.declarations.map(d=>d.id.name)),assetCount:assets.size}};

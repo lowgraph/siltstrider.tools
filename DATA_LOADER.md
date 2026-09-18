@@ -38,7 +38,7 @@ Import `useGameData` from `components/use-game-data.jsx`. The hook follows the
 shared profile. It immediately hides previous-profile data when the profile
 changes, and ignores late responses for an obsolete request. Retry reattempts
 failed requests; valid cached categories are retained. Keep the hook disabled for
-hidden tools. The existing legacy calculators have not been rewired to this data.
+hidden tools. The character builder and challenge generator now consume the character adapter below.
 
 Outside React, create a loader and call `loadCatalog` or `loadFeature` directly.
 Returned records are deeply frozen and retain provenance. Copy before editing.
@@ -66,3 +66,26 @@ SQL databases. Gear rows use a separate contract and need their own adapter.
 `node --test test/bundle-loader.test.js` uses in-memory synthetic manifests and
 responses. The full regression suite remains `npm test`. No test rebuilds real
 game data. No production deployment is performed by the loader or staging script.
+
+## Character integration
+
+The character-catalogs adapter supplies playable races/classes, birthsigns, skills
+and attributes to existing calculations. It also loads Spells to resolve racial
+and birthsign abilities, starting spells, and the existing magicka and birthsign
+attribute bonuses. Canonical keys and source records are retained. Distinct
+Khajiit variants keep their established display labels.
+
+The transitional classic runtime requires character data at initialization,
+including on the home view. It loads the selected profile's character group plus
+Spells before enabling controls; equipment and other feature groups remain lazy.
+Profile switches wait for verified data, retain the previous profile on failure,
+and offer retry. Late obsolete transitions cannot replace a newer selection.
+
+Existing v1 saves and links keep their display-name format. Canonical IDs are
+accepted by the compatibility adapter, but this does not migrate the save schema.
+Authored premade builds, challenge rules and calculation formulas remain separate.
+Legacy tables remain compatibility fixtures/fallbacks for standalone HTML tests.
+
+The character-catalogs tests check calculation parity, changed source facts,
+identity mapping, profile failures, and asynchronous restores using synthetic
+records. Full extractions are never run by these tests.

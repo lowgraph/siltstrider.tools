@@ -83,4 +83,8 @@ and navigation checks. This checkpoint has not been published.
 
 The on-demand loader and React hook are ready. See [DATA_LOADER.md](DATA_LOADER.md)
 for feature groups, local staging, caching, and integration. This adds the data
-access layer; existing calculator adapters still use their verified legacy tables.
+access layer. Character catalogs now feed the builder and challenge generator through
+the character adapter and bridge; other tools still use their legacy tables.
+Character data and linked spells load before initialization, with profile switching
+and saved restores waiting for the matching profile. Existing save/link formats
+and calculation formulas remain compatible.

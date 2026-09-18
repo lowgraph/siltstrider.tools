@@ -25,7 +25,8 @@
     navigate(view){if(!Object.values(views).includes(view))throw new Error('Unknown view');showView(view);},
     setProfile(profile){
       if(!['vanilla','tr','tr_arce'].includes(profile))throw new Error('Unknown profile');
-      depth++;try{setWorld(profile==='vanilla'?'vanilla':'tr');setArce(profile==='tr_arce');}finally{if(--depth===0)publish();}
+      const apply=()=>{depth++;try{setWorld(profile==='vanilla'?'vanilla':'tr');setArce(profile==='tr_arce');}finally{if(--depth===0)publish();}};
+      return window.siltCharacterTransition?window.siltCharacterTransition(profile,apply):apply();
     }
   });
   publish();
