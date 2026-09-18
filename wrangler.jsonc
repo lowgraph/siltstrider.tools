@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "plain-disk-78e6",
+  "account_id": "4653c1ab885ae65ebea83b3804643010",
+  "compatibility_date": "2026-09-17",
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [{ "pattern": "siltstrider.tools", "custom_domain": true }],
+  "assets": { "directory": "./.next-export", "html_handling": "auto-trailing-slash", "not_found_handling": "404-page" }
+}

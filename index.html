@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Deployment supplies only the public Clerk key. Empty keeps the standalone file offline. -->
+  <meta name="clerk-publishable-key" content="" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Morrowind Build Planner & Challenge Run Generator | Silt Strider</title>
   <meta name="description" content="Silt Strider — Morrowind build planner and challenge run generator at siltstrider.tools." />
@@ -1156,6 +1158,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       color: var(--paper);
     }
     .site-footer a { color: var(--gold); }
+    .account-bar { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin: 8px 0 16px; }
+    .account-bar .btn { min-width: 0; padding: 8px 14px; min-height: 44px; }
+    .account-bar [hidden] { display: none !important; }
+    #account-status { margin: 0; font-size: 0.9rem; }
     @media (max-width: 640px) {
       .site-footer { margin-top: 20px; padding: 20px 4px 12px; font-size: 1rem; }
     }
@@ -1193,6 +1199,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
             </div>
           </div>
         </div>
+      </div>
+      <div class="account-bar" aria-label="Account">
+        <span id="account-status" class="muted" role="status" aria-live="polite"></span>
+        <button type="button" class="btn" id="account-sign-in">Sign in</button>
+        <button type="button" class="btn" id="account-sign-up">Sign up</button>
+        <div id="account-user" aria-label="Your account" hidden></div>
       </div>
     </header>
     <div class="panel show" id="panel-home">
@@ -8091,6 +8103,106 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         if (document.getElementById("local-characters").open) refresh();
       });
       refresh(); // List saves after initialization; never auto-load a character.
+    })();
+
+    // Authentication is independent of the editor and local saves. This is not
+    // backend authorization: the future cloud API must verify the session token.
+    (function bindClerkAccount() {
+      const key = document.querySelector('meta[name="clerk-publishable-key"]').content;
+      const signIn = document.getElementById("account-sign-in");
+      const signUp = document.getElementById("account-sign-up");
+      const userButton = document.getElementById("account-user");
+      const status = document.getElementById("account-status");
+      let ready = null, mounted = false, listening = false;
+      const failMessage = "Sign-in is unavailable. You can still use the tools and local saves. Try again when connected.";
+      function navigateAccount(to, { windowNavigate }) {
+        const target = new URL(to, location.href);
+        // Clerk's default hard navigation signals unloading even for a hash-only
+        // redirect. Keep same-document returns in our router so setActive can
+        // finish and emit the signed-in session without losing unsaved edits.
+        if (target.origin === location.origin && target.pathname === location.pathname && target.search === location.search) {
+          if (target.hash !== location.hash) {
+            history.replaceState(null, "", target.href);
+            readShareHash();
+          }
+          return;
+        }
+        return windowNavigate(target.href);
+      }
+      function render(clerk, state = clerk) {
+        const signedIn = !!(state.user && state.session);
+        signIn.hidden = signUp.hidden = signedIn;
+        userButton.hidden = !signedIn;
+        status.textContent = signedIn ? "Signed in" : "";
+        if (signedIn && !mounted) { clerk.mountUserButton(userButton); mounted = true; }
+        if (!signedIn && mounted) { clerk.unmountUserButton(userButton); mounted = false; }
+      }
+      function script(src, sdk) {
+        return new Promise((resolve, reject) => {
+          const el = document.createElement("script");
+          const timer = setTimeout(() => finish(false), 15000);
+          function finish(ok) {
+            clearTimeout(timer); el.onload = el.onerror = null;
+            if (ok) resolve(); else { el.remove(); reject(new Error(failMessage)); }
+          }
+          el.async = true; el.crossOrigin = "anonymous";
+          if (sdk) el.dataset.clerkPublishableKey = key;
+          el.onload = () => finish(true); el.onerror = () => finish(false);
+          el.src = src; document.head.appendChild(el);
+        });
+      }
+      function initialize() {
+        if (ready) return ready;
+        ready = (async () => {
+          if (!key) throw new Error("Account sign-in is not configured here. Tools and local saves remain available.");
+          if (!/^pk_(test|live)_[A-Za-z0-9_-]+$/.test(key)) throw new Error(failMessage);
+          const decoded = atob(key.split("_").slice(2).join("_"));
+          const domain = decoded.slice(0, -1);
+          if (!decoded.endsWith("$") || !/^[a-z0-9]+(?:[.-][a-z0-9]+)*\.[a-z]{2,}$/i.test(domain)) throw new Error(failMessage);
+          if (key.startsWith("pk_test_") && !["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) {
+            throw new Error("Account sign-in needs production configuration. Tools and local saves remain available.");
+          }
+          if (!["http:", "https:"].includes(location.protocol)) throw new Error(failMessage);
+          signIn.disabled = signUp.disabled = true;
+          status.textContent = "Connecting to sign-in…";
+          try {
+            if (!window.__internal_ClerkUICtor) await script("https://" + domain + "/npm/@clerk/ui@1/dist/ui.browser.js", false);
+            if (!window.Clerk) await script("https://" + domain + "/npm/@clerk/clerk-js@6/dist/clerk.browser.js", true);
+            let timer;
+            try {
+              await Promise.race([
+                window.Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor }, routerPush: navigateAccount, routerReplace: navigateAccount }),
+                new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(failMessage)), 15000); })
+              ]);
+            } finally { clearTimeout(timer); }
+            // Use the emitted resources: instance getters may still describe the
+            // previous session while Clerk delivers a session-change event.
+            if (!listening) { window.Clerk.addListener(state => render(window.Clerk, state)); listening = true; }
+            render(window.Clerk);
+            return window.Clerk;
+          } finally { signIn.disabled = signUp.disabled = false; }
+        })().catch((error) => {
+          ready = null;
+          const message = /^(Account sign-in is not configured here\.|Account sign-in needs production configuration\.)/.test(error.message) ? error.message : failMessage;
+          status.textContent = message;
+          throw new Error(message);
+        });
+        return ready;
+      }
+      async function open(mode) {
+        try {
+          const clerk = await initialize();
+          const options = { forceRedirectUrl: location.href };
+          if (mode === "in") clerk.openSignIn(options); else clerk.openSignUp(options);
+        } catch (error) { status.textContent = /^(Account sign-in|Sign-in is unavailable)/.test(error.message) ? error.message : failMessage; }
+      }
+      signIn.addEventListener("click", () => open("in"));
+      signUp.addEventListener("click", () => open("up"));
+      window.siltStriderAuth = Object.freeze({
+        ready: initialize,
+        async getToken() { const clerk = await initialize(); return clerk.session ? clerk.session.getToken() : null; }
+      });
+      if (key) initialize().catch(() => {});
     })();
 
     (function bindAdvancedListFilter() {

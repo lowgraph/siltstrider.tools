@@ -5,9 +5,29 @@
   "description": "Morrowind Build Planner & Challenge Run Generator",
   "type": "commonjs",
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "dev": "next dev --hostname 127.0.0.1 --port 8765",
+    "test": "node --test test/*.test.js",
+    "dev:legacy": "node --env-file-if-exists=.env.local scripts/dev-server.cjs",
+    "predev": "node scripts/extract-legacy.cjs",
+    "prebuild": "node scripts/extract-legacy.cjs",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 8765",
+    "extract:legacy": "node scripts/extract-legacy.cjs",
+    "build:cloudflare": "node scripts/build-cloudflare.cjs",
+    "deploy:cloudflare": "npm run build:cloudflare && wrangler deploy"
   },
   "devDependencies": {
-    "jsdom": "^25.0.1"
+    "@tailwindcss/postcss": "^4.3.3",
+    "acorn": "^8.18.0",
+    "jsdom": "^25.0.1",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.3",
+    "wrangler": "^4.134.0"
+  },
+  "dependencies": {
+    "@clerk/backend": "^3.18.1",
+    "next": "^16.3.5",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   }
 }
