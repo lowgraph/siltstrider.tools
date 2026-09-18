@@ -13,3 +13,6 @@ public/legacy/
 migration/generated/
 .next-export/
 public/game-data/
+
+# Local agent instructions
+AGENTS.md
