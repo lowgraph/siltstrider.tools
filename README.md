@@ -1,3 +1,15 @@
+# Two repositories
+
+The game data this app serves is built in a separate repository, and the bundle
+under `public/game-data/` is the only interface between them. Read
+[COORDINATION.md](COORDINATION.md) before changing anything that touches it:
+`lib/bundle-loader.mjs`, `scripts/stage-game-data.mjs`, or the contract those two
+hold up. `test/bundle-contract.test.js` pins which bundle changes must keep
+loading and which must fail.
+
+Do not edit the data repository from here, and do not open a SQLite database or
+run an extractor in this one.
+
 # Next.js migration checkpoint
 
 The working app now has a Next.js App Router entrypoint. Run `npm run dev` and
