@@ -8,7 +8,7 @@ Run `npm run dev` and open http://localhost:8765/.
 `npm run dev:legacy` still runs the original single-file preview on that port;
 stop one server before starting the other. Using the same origin preserves local
 storage and Clerk localhost settings. Existing hash links keep their format.
-Production hosting and the Cloudflare Worker have not been changed.
+The production checkpoint is deployed as a static export on Cloudflare (see below).
 
 ## Files
 
@@ -60,3 +60,27 @@ Never put a Clerk secret key into this variable. Local preview still uses
 `manifest` emits file hashes and sizes; `upload` reads a short-lived upload session
 from stdin and emits its completion token. Treat that output as confidential.
 It does not deploy a version itself or store credentials.
+
+## React shell checkpoint
+
+`components/site-header.jsx` owns the brand, primary navigation and profile
+controls. `ShellProvider` exposes `useShell()` with `profile`, `world`, `arce`,
+`view`, `ready`, `navigate()` and `setProfile()` to new React tools.
+The extracted header contains a portal slot; legacy calculators keep their own
+DOM, and the Clerk account area and profile warning remain legacy-owned.
+
+`migration/shell-bridge.js` publishes immutable snapshots after legacy profile,
+navigation and restore operations, batching nested changes. Legacy functions
+remain the source of calculator behavior during this transition. The React
+header uses separate IDs so legacy code never mutates its controls.
+The original HTML reference remains unchanged. Generated resource URLs use
+a revision covering the transformed markup, runtime, data and CSS.
+
+Validation: 82 fixture tests, static production build, and local browser profile
+and navigation checks. This checkpoint has not been published.
+
+## Game-data loader
+
+The on-demand loader and React hook are ready. See [DATA_LOADER.md](DATA_LOADER.md)
+for feature groups, local staging, caching, and integration. This adds the data
+access layer; existing calculator adapters still use their verified legacy tables.

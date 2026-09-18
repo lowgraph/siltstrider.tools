@@ -31,10 +31,26 @@ function extract(html) {
   let runtime=source;
   for (const n of [...declarations].reverse()) runtime=runtime.slice(0,n.start)+'\n/* Literal data moved to legacy-data.js. */\n'+runtime.slice(n.end);
   const data=declarations.map(n=>source.slice(n.start,n.end)).join('\n\n');
-  const body=replaced.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1].replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
+  let body=replaced.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1].replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
   if (!body) throw new Error('Missing body');
-  return {body,runtime,data,css:styles.map(s=>s[1]).join('\n'),assets,
-    manifest:{sourceSha256:crypto.createHash('sha256').update(html).digest('hex'),tables:declarations.flatMap(n=>n.declarations.map(d=>d.id.name)),assetCount:assets.size}};
+  // Header controls are now React-owned. Legacy lookups retain null guards.
+  const {JSDOM}=require('jsdom');
+  const dom=new JSDOM(body);
+  const topbar=dom.window.document.querySelector('header .topbar');
+  if(!topbar) throw new Error('Expected legacy topbar');
+  const slot=dom.window.document.createElement('div');slot.id='react-header-slot';
+  topbar.replaceWith(slot);
+  const warn=dom.window.document.createElement('p');warn.id='world-warn';warn.className='muted';warn.hidden=true;slot.after(warn);
+  body=dom.window.document.body.innerHTML;dom.window.close();
+  for(const id of ['btn-world-vanilla','btn-world-tr','btn-arce']) {
+    const lookup='document.getElementById("'+id+'").addEventListener';
+    if(!runtime.includes(lookup))throw new Error('Missing profile listener '+id);
+    runtime=runtime.replace(lookup,'document.getElementById("'+id+'")?.addEventListener');
+  }
+  runtime+='\n'+fs.readFileSync(path.join(ROOT,'migration/shell-bridge.js'),'utf8');
+  const css=styles.map(s=>s[1]).join('\n').replaceAll('#btn-world-tr','#react-world-tr').replaceAll('#btn-arce','#react-arce').replaceAll('#btn-challenge','#react-nav-challenge').replaceAll('#btn-build','#react-nav-build');
+  return {body,runtime,data,css,assets,
+    manifest:{sourceSha256:crypto.createHash('sha256').update(html).digest('hex'),revision:crypto.createHash('sha256').update(body+runtime+data+css).digest('hex'),tables:declarations.flatMap(n=>n.declarations.map(d=>d.id.name)),assetCount:assets.size}};
 }
 function write() {
   const result=extract(fs.readFileSync(path.join(ROOT,'index.html'),'utf8'));

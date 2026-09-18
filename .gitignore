@@ -12,3 +12,4 @@ out/
 public/legacy/
 migration/generated/
 .next-export/
+public/game-data/

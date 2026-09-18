@@ -45,3 +45,28 @@ test('extracted code retains optimizer, state and profile behavior',async()=>{
     assert.equal(b.location.hash,a.location.hash);
   } finally { legacy.window.close();migrated.window.close(); }
 });
+
+test('shared shell profiles and navigation follow legacy restores without replacing editor state',async()=>{
+ const dom=loadExtracted();
+ try{
+  await new Promise(r=>setTimeout(r,60));
+  const w=dom.window,shell=w.siltShell;
+  assert.ok(shell.getSnapshot().ready);
+  assert.equal(w.document.getElementById('btn-world-tr'),null);
+  let calls=0;const unsubscribe=shell.subscribe(()=>calls++);
+  shell.setProfile('tr_arce');
+  assert.equal(calls,1);assert.equal(shell.getSnapshot().profile,'tr_arce');
+  assert.equal(w.getCurrentCharacter().world,'tr');
+  shell.setProfile('vanilla');
+  assert.equal(shell.getSnapshot().arce,false);
+  shell.navigate('alchemy');assert.equal(shell.getSnapshot().view,'alchemy');
+  assert.ok(w.document.getElementById('panel-alchemy').classList.contains('show'));
+  const character=plain(w.getCurrentCharacter());
+  shell.setProfile('tr_arce');w.loadCharacter(character);
+  assert.equal(shell.getSnapshot().profile,'vanilla');
+  w.location.hash='#home&world=tr&arce=1';w.readShareHash();
+  assert.equal(shell.getSnapshot().profile,'tr_arce');assert.equal(shell.getSnapshot().view,'home');
+  const before=shell.getSnapshot();assert.throws(()=>shell.setProfile('bad'));assert.equal(shell.getSnapshot(),before);
+  unsubscribe();const count=calls;shell.navigate('travel');assert.equal(calls,count);
+ }finally{dom.window.close();}
+});
