@@ -1263,13 +1263,34 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       #run-summary .sum-desc { order: 3; }
     }
     @media (min-width: 900px) {
-      .topbar { flex-wrap: nowrap; align-items: flex-start; justify-content: space-between; }
+      .topbar { flex-wrap: nowrap; align-items: center; justify-content: space-between; }
       .brand { flex: 0 1 auto; min-width: 0; }
       .brand h1 { white-space: nowrap; }
       /* The nav and world switches keep their width, so the tagline wraps instead of the nav sliding over the site name. */
       .header-tools { flex: 0 0 auto; }
+      .nav-primary .btn { font-size: 0.88rem; padding: 6px 12px; min-height: 36px; }
       .world-bar .world-label { display: block; }
       .seg .seg-btn, .arce-toggle { font-size: 0.8rem; white-space: nowrap; }
+      .world-controls { flex-direction: row; align-items: center; gap: 6px; }
+      .arce-toggle {
+        font-size: 0; min-height: 32px; padding: 4px 10px; white-space: nowrap;
+      }
+      .arce-toggle::after { content: "+ ARCE"; font-size: 0.8rem; }
+      .account-bar {
+        margin: 8px 0 0;
+        padding-top: 8px;
+        border-top: 1px solid rgba(212, 176, 106, 0.2);
+      }
+      .account-bar::before {
+        content: "Account & Cloud Saves:";
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #c4a056;
+        margin-right: 4px;
+      }
     }
     /* Below 1200px the full world labels leave the site name no room, so they shorten to TR and ARCE. */
     @media (min-width: 900px) and (max-width: 1199px) {
@@ -1432,7 +1453,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
                 More <span class="dropdown-caret" aria-hidden="true">▾</span>
               </button>
               <div class="nav-dropdown-menu" id="dropdown-more-menu" role="menu" aria-label="More pages" hidden>
-                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-home">Choose a Tool</button>
                 <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-about">About Silt Strider</button>
                 <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-changelog">Changelog</button>
               </div>
@@ -2888,7 +2908,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (navC) navC.setAttribute("aria-current", name === "challenge" ? "page" : "false");
       if (navB) navB.setAttribute("aria-current", name === "builder" ? "page" : "false");
       var calcViews = ["enchanting", "spellmaking", "alchemy", "travel"];
-      var moreViews = ["home", "about", "changelog"];
+      var moreViews = ["about", "changelog"];
       var bdc = document.getElementById("btn-dropdown-calc");
       var bdm = document.getElementById("btn-dropdown-more");
       if (bdc) bdc.classList.toggle("on", calcViews.includes(name));
@@ -2898,7 +2918,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         ["btn-desk-spell", "spellmaking"],
         ["btn-desk-alchemy", "alchemy"],
         ["btn-desk-travel", "travel"],
-        ["btn-desk-home", "home"],
         ["btn-desk-about", "about"],
         ["btn-desk-changelog", "changelog"]
       ];
@@ -3182,7 +3201,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     bindOnce(document.getElementById("btn-desk-spell"), () => showView("spellmaking"));
     bindOnce(document.getElementById("btn-desk-alchemy"), () => showView("alchemy"));
     bindOnce(document.getElementById("btn-desk-travel"), () => showView("travel"));
-    bindOnce(document.getElementById("btn-desk-home"), () => showView("home"));
     bindOnce(document.getElementById("btn-desk-about"), () => showView("about"));
     bindOnce(document.getElementById("btn-desk-changelog"), () => showView("changelog"));
     bindOnce(document.getElementById("link-about-footer"), (e) => { if (e && e.preventDefault) e.preventDefault(); showView("about"); });

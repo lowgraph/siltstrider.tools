@@ -720,12 +720,52 @@ body.view-builder .hero {
     display: flex !important;
     position: static !important;
     flex-direction: row !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
     gap: 8px !important;
+  }
+  #react-header-slot .nav-primary .btn {
+    font-size: 0.88rem !important;
+    padding: 6px 12px !important;
+    min-height: 36px !important;
+  }
+  #react-header-slot .topbar {
+    align-items: center !important;
+  }
+  #react-header-slot .world-controls {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  #react-header-slot .arce-toggle,
+  #react-header-slot #react-arce {
+    font-size: 0 !important;
+    min-height: 32px !important;
+    padding: 4px 10px !important;
+    white-space: nowrap !important;
+  }
+  #react-header-slot .arce-toggle::after,
+  #react-header-slot #react-arce::after {
+    content: "+ ARCE" !important;
+    font-size: 0.8rem !important;
+  }
+  .account-bar {
+    margin: 8px 0 0 !important;
+    padding-top: 8px !important;
+    border-top: 1px solid rgba(212, 176, 106, 0.2) !important;
+  }
+  .account-bar::before {
+    content: "Account & Cloud Saves:";
+    font-family: var(--font-serif);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #c4a056;
+    margin-right: 4px;
   }
 }
 

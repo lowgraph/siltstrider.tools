@@ -15,7 +15,7 @@ const descriptions = {
 };
 
 const CALC_VIEWS = ['enchanting', 'spellmaking', 'alchemy', 'travel'];
-const MORE_VIEWS = ['about', 'changelog', 'home'];
+const MORE_VIEWS = ['about', 'changelog'];
 
 export default function SiteHeader({ shell: propShell } = {}) {
   let contextShell = null;
@@ -286,15 +286,6 @@ export default function SiteHeader({ shell: propShell } = {}) {
                 aria-label="More pages"
                 onKeyDown={e => handleMenuKeyDown(e, moreMenuRef, moreBtnRef, () => setMoreOpen(false))}
               >
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'home' ? ' on' : '')}
-                  aria-current={shell.view === 'home' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'home')}
-                >
-                  Choose a Tool
-                </button>
                 <button
                   type="button"
                   role="menuitem"
