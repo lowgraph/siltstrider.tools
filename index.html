@@ -2919,7 +2919,20 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (bdm) { bdm.setAttribute("aria-expanded", "false"); var sm = bdm.querySelector(".dropdown-caret"); if (sm) sm.textContent = "▾"; }
       if (ph) ph.classList.toggle("show", name === "home");
       if (pc) pc.classList.toggle("show", name === "challenge");
-      if (pb) pb.classList.toggle("show", name === "builder");
+      if (pb) {
+        pb.classList.toggle("show", name === "builder");
+        if (name === "builder") {
+          var premEl = document.getElementById("premade");
+          var custEl = document.getElementById("custom");
+          if (premEl && custEl && premEl.classList.contains("hidden") && custEl.classList.contains("hidden")) {
+            custEl.classList.remove("hidden");
+            var bc = document.getElementById("btn-custom");
+            var bp = document.getElementById("btn-premade");
+            if (bc) { bc.classList.add("on"); bc.setAttribute("aria-pressed", "true"); }
+            if (bp) { bp.classList.remove("on"); bp.setAttribute("aria-pressed", "false"); }
+          }
+        }
+      }
       if (pa) pa.classList.toggle("show", name === "about");
       if (pcl) pcl.classList.toggle("show", name === "changelog");
       if (pe) pe.classList.toggle("show", name === "enchanting");

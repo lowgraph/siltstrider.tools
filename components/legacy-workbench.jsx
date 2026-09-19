@@ -21,12 +21,24 @@ function ActiveViewOverlay() {
 }
 
 export default function LegacyWorkbench({html,revision}){
- const [dataReady,setDataReady]=useState(false),[slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null),[catalogReady,setCatalogReady]=useState(false),[booted,setBooted]=useState(false);
+ const isClient = typeof window !== 'undefined';
+ const [dataReady,setDataReady]=useState(()=>isClient&&Boolean(window.POOL||window.MAJORS));
+ const [slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null);
+ const [catalogReady,setCatalogReady]=useState(()=>isClient&&Boolean(window.siltCharacters?.active));
+ const [booted,setBooted]=useState(()=>isClient&&Boolean(window.siltShell));
  const [enchantSlot,setEnchantSlot]=useState(null),[spellSlot,setSpellSlot]=useState(null),[alchemySlot,setAlchemySlot]=useState(null),[travelSlot,setTravelSlot]=useState(null);
- const [status,setStatus]=useState({status:'loading'}),[attempt,setAttempt]=useState(0);
+ const [status,setStatus]=useState(()=>(isClient&&window.siltCharacters?.active)?{status:'ready'}:{status:'loading'}),[attempt,setAttempt]=useState(0);
  useEffect(()=>{
   setSlot(document.getElementById('react-header-slot'));
   setMainSlot(document.getElementById('panel-build') || document.getElementById('main-tools'));
+  if (isClient) {
+    if (window.POOL || window.MAJORS) setDataReady(true);
+    if (window.siltShell) setBooted(true);
+    if (window.siltCharacters?.active) {
+      setCatalogReady(true);
+      setStatus({ status: 'ready' });
+    }
+  }
 
   function getOrCreateSlot(panelId, slotId) {
     const panel = document.getElementById(panelId);
@@ -59,7 +71,7 @@ export default function LegacyWorkbench({html,revision}){
   service.prepare(profile).then(()=>{if(current){service.activate(profile);setCatalogReady(true);setStatus({status:'ready'});}},error=>{if(current)setStatus({status:'error',message:error.message});});
   return ()=>{current=false;window.removeEventListener('silt-character-status',update);};
  },[attempt]);
- const busy=!booted||status.status==='loading';
+ const busy=(!booted&&(!isClient||!window.siltShell))||status.status==='loading';
  const retry=()=>{if(status.retry)Promise.resolve(status.retry()).catch(()=>{});else setAttempt(n=>n+1);};
  return <ShellProvider>
   <CharacterProvider>
@@ -74,7 +86,7 @@ export default function LegacyWorkbench({html,revision}){
     {alchemySlot&&createPortal(<AlchemyHud/>,alchemySlot)}
     {travelSlot&&createPortal(<TravelHud/>,travelSlot)}
     <Script id="legacy-data" src={'/legacy/legacy-data.js?v='+revision} strategy="afterInteractive" onReady={()=>setDataReady(true)}/>
-    {dataReady&&catalogReady&&<Script id="legacy-runtime" src={'/legacy/legacy-runtime.js?v='+revision} strategy="afterInteractive" onReady={()=>setBooted(true)} onError={()=>setStatus({status:'error',message:'Application code failed to load. Reload this page.'})}/>}
+    {(dataReady||(isClient&&Boolean(window.POOL)))&&(catalogReady||(isClient&&Boolean(window.siltCharacters?.active)))&&<Script id="legacy-runtime" src={'/legacy/legacy-runtime.js?v='+revision} strategy="afterInteractive" onReady={()=>setBooted(true)} onError={()=>setStatus({status:'error',message:'Application code failed to load. Reload this page.'})}/>}
   </CharacterProvider>
  </ShellProvider>;
 }
