@@ -90,8 +90,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       overflow-wrap: anywhere;
       word-break: break-word;
     }
-    h1, h2, h3, .brand h1, .kicker {
-      font-family: "Pelagiad", Georgia, serif;
+    h1, h2, h3, h4, .brand h1, .kicker, .btn {
+      font-family: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
     }
     table, .sheet-grid, #gear-box table,
     input[type="number"], input[type="text"] {
@@ -237,7 +237,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       border-image: var(--mw-bevel) 4 repeat;
       border-radius: 0;
       cursor: pointer;
-      font-family: inherit;
+      font-family: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
       font-size: 1rem;
       padding: 12px 16px;
       min-width: 0;
@@ -405,7 +405,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     select {
       appearance: none;
       -webkit-appearance: none;
-      font-family: inherit;
+      font-family: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
       font-size: 1rem;
       padding: 8px 34px 8px 12px;
       min-height: 44px;
@@ -416,6 +416,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       background-clip: padding-box;
       color: #d4b06a;
       cursor: pointer;
+    }
+    select option, select optgroup {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background-color: #120f0a;
+      color: #f3e6c8;
     }
     select:disabled { cursor: not-allowed; }
     .chk-grid {
@@ -722,7 +727,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       border: none;
       border-bottom: 1px solid #3a3224;
       padding: 12px 16px;
-      font-family: inherit;
+      font-family: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
       font-size: 1.08rem;
       cursor: pointer;
     }

@@ -1,6 +1,13 @@
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --font-serif: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 /* No preflight during the compatibility checkpoint. */
 .game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
 
@@ -80,7 +87,7 @@ body.view-builder .hero {
   background-position: right 12px center !important;
   background-clip: padding-box !important;
   color: #f3e6c8 !important;
-  font-family: inherit;
+  font-family: var(--font-serif) !important;
   cursor: pointer;
   padding-right: 32px !important;
 }
@@ -103,6 +110,7 @@ body.view-builder .hero {
 .mw-select optgroup {
   background-color: #120f0a;
   color: #f3e6c8;
+  font-family: var(--font-sans) !important;
 }
 
 /* Authentic Morrowind Bevel Buttons */
@@ -112,7 +120,7 @@ body.view-builder .hero {
   border-image: var(--mw-bevel) 4 repeat !important;
   background: linear-gradient(180deg, rgba(62, 42, 22, 0.52) 0%, rgba(8, 6, 4, 0.22) 100%) !important;
   color: #d4b06a !important;
-  font-family: inherit;
+  font-family: var(--font-serif) !important;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -212,7 +220,7 @@ body.view-builder .hero {
   border-bottom: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
   color: #f3e6c8 !important;
-  font-family: "Pelagiad", Georgia, serif !important;
+  font-family: var(--font-serif) !important;
   font-size: 1.3rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.04em !important;
@@ -265,7 +273,7 @@ body.view-builder .hero {
 
 #local-characters label {
   display: block;
-  font-family: "Pelagiad", Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 0.875rem;
   font-weight: bold;
   color: #d4b06a;
@@ -307,7 +315,7 @@ body.view-builder .hero {
   border-image: var(--mw-bevel) 4 repeat !important;
   background: linear-gradient(180deg, rgba(62, 42, 22, 0.52) 0%, rgba(8, 6, 4, 0.22) 100%) !important;
   color: #d4b06a !important;
-  font-family: "Pelagiad", Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 0.8125rem;
   font-weight: bold;
   cursor: pointer;
@@ -335,7 +343,7 @@ body.view-builder .hero {
   font-size: 0.8125rem;
   color: #d4b06a;
   margin-top: 8px;
-  font-family: monospace;
+  font-family: var(--font-mono);
 }
 
 #local-characters #saved-character-warning {
@@ -353,7 +361,7 @@ body.view-builder .hero {
 
 .gear-results-container thead th,
 #gear-box thead th {
-  font-family: "Pelagiad", Georgia, serif !important;
+  font-family: var(--font-serif) !important;
   font-size: 0.9rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
@@ -367,7 +375,7 @@ body.view-builder .hero {
 
 .gear-results-container th[colspan],
 #gear-box th[colspan] {
-  font-family: "Pelagiad", Georgia, serif !important;
+  font-family: var(--font-serif) !important;
   font-size: 0.95rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
@@ -389,7 +397,7 @@ body.view-builder .hero {
 
 .gear-results-container td:first-child,
 #gear-box td:first-child {
-  font-family: "Pelagiad", Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 0.95rem;
   white-space: nowrap !important;
   word-break: normal !important;
@@ -420,7 +428,7 @@ body.view-builder .hero {
   display: inline-flex;
   align-items: center;
   padding: 1px 7px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -435,7 +443,7 @@ body.view-builder .hero {
 .gear-results-container .gear-name,
 #gear-box .gear-name {
   display: block;
-  font-family: "Pelagiad", Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 1.05rem;
   font-weight: 700;
   color: #f3e6c8;
@@ -464,7 +472,7 @@ body.view-builder .hero {
   display: inline-block;
   margin-bottom: 3px;
   padding: 1px 6px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -479,7 +487,7 @@ body.view-builder .hero {
   display: inline-block;
   margin: 2px 0 0 4px;
   padding: 1px 5px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -514,7 +522,7 @@ body.view-builder .hero {
   border-bottom: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
   color: #f3e6c8 !important;
-  font-family: "Pelagiad", Georgia, serif !important;
+  font-family: var(--font-serif) !important;
   font-size: 1.3rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.04em !important;
