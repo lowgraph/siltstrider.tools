@@ -853,3 +853,93 @@ test("the Steal and Endgame toggles shape the early-game kit", async () => {
   toggle(endgame, false);
   window.eval('worldMode = "vanilla"');
 });
+
+test("mobile drawer and top bar provide access to all pages and harmonized controls", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const { document } = window;
+  const menuBtn = document.getElementById("btn-menu");
+  const drawer = document.getElementById("menu-drawer");
+  const accountBar = document.querySelector(".account-bar");
+
+  assert.ok(menuBtn, "hamburger button exists");
+  assert.ok(drawer, "menu drawer exists");
+  assert.ok(accountBar, "account bar exists");
+
+  // Initial state: closed
+  assert.equal(menuBtn.getAttribute("aria-expanded"), "false");
+  assert.equal(menuBtn.textContent.trim(), "☰");
+  assert.equal(drawer.classList.contains("open"), false);
+  assert.equal(accountBar.classList.contains("drawer-open"), false);
+
+  // Click hamburger: opens drawer, toggles glyph, aria-expanded, aria-label, and drawer-open
+  menuBtn.click();
+  assert.equal(drawer.classList.contains("open"), true);
+  assert.equal(menuBtn.getAttribute("aria-expanded"), "true");
+  assert.equal(menuBtn.getAttribute("aria-label"), "Close menu");
+  assert.equal(menuBtn.textContent.trim(), "✕");
+  assert.equal(accountBar.classList.contains("drawer-open"), true);
+
+  // All 9 pages are accessible from the navigation controls
+  const navTargets = [
+    { id: "btn-nav-enchant", view: "enchanting", panel: "panel-enchant" },
+    { id: "btn-nav-spell", view: "spellmaking", panel: "panel-spell" },
+    { id: "btn-nav-alchemy", view: "alchemy", panel: "panel-alchemy" },
+    { id: "btn-nav-travel", view: "travel", panel: "panel-travel" },
+    { id: "btn-nav-about", view: "about", panel: "panel-about" },
+    { id: "btn-nav-changelog", view: "changelog", panel: "panel-changelog" },
+    { id: "btn-challenge", view: "challenge", panel: "panel-challenge" },
+    { id: "btn-build", view: "builder", panel: "panel-build" },
+    { id: "btn-nav-home", view: "home", panel: "panel-home" },
+  ];
+
+  for (const { id, view, panel } of navTargets) {
+    const btn = document.getElementById(id);
+    assert.ok(btn, `nav button #${id} exists`);
+    // Open drawer if closed
+    if (!drawer.classList.contains("open")) menuBtn.click();
+    btn.click();
+    assert.equal(document.getElementById(panel).classList.contains("show"), true, `panel #${panel} is shown for view ${view}`);
+    // Navigating should close the drawer and reset hamburger button
+    assert.equal(drawer.classList.contains("open"), false, `drawer closed after navigating to ${view}`);
+    assert.equal(menuBtn.textContent.trim(), "☰");
+    assert.equal(menuBtn.getAttribute("aria-expanded"), "false");
+    assert.equal(accountBar.classList.contains("drawer-open"), false);
+  }
+
+  // Clicking inside accountBar must NOT close the drawer
+  menuBtn.click();
+  assert.equal(drawer.classList.contains("open"), true);
+  accountBar.click();
+  assert.equal(drawer.classList.contains("open"), true, "clicking inside account-bar preserves open drawer");
+
+  // Escape key closes open drawer
+  document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  assert.equal(drawer.classList.contains("open"), false);
+  assert.equal(menuBtn.textContent.trim(), "☰");
+
+  // Desktop dropdown navigation in standalone index.html
+  const dropCalcBtn = document.getElementById("btn-dropdown-calc");
+  const dropCalcMenu = document.getElementById("dropdown-calc-menu");
+  assert.ok(dropCalcBtn, "desktop calculators dropdown button exists");
+  assert.ok(dropCalcMenu, "desktop calculators dropdown menu exists");
+  assert.equal(dropCalcMenu.hidden, true);
+
+  dropCalcBtn.click();
+  assert.equal(dropCalcMenu.hidden, false, "clicking dropdown button opens menu");
+  assert.equal(dropCalcBtn.getAttribute("aria-expanded"), "true");
+
+  const deskSpellBtn = document.getElementById("btn-desk-spell");
+  assert.ok(deskSpellBtn, "btn-desk-spell exists");
+  deskSpellBtn.click();
+  assert.equal(document.getElementById("panel-spell").classList.contains("show"), true, "panel-spell is shown");
+  assert.equal(dropCalcMenu.hidden, true, "dropdown menu closes on item navigate");
+  assert.equal(dropCalcBtn.classList.contains("on"), true, "calculators dropdown button marked on when on spellmaking");
+
+  // Escape closes open desktop dropdown
+  dropCalcBtn.click();
+  assert.equal(dropCalcMenu.hidden, false);
+  document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  assert.equal(dropCalcMenu.hidden, true, "Escape closes desktop dropdown menu");
+});
+

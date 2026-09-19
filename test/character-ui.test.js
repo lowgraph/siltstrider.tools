@@ -73,3 +73,82 @@ test('early game uses optimizer table columns and warnings; clears during profil
   assert.match(document.body.textContent,/Loading early-game equipment/);
  }finally{await act(async()=>root.unmount());dom.window.close();}
 });
+
+test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns with all views',async()=>{
+ const dom=new JSDOM('<div id="root"></div><div class="account-bar"></div>',{url:'http://localhost/'});
+ global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+ const navigated=[];
+ const shell={
+   ready:true,world:'vanilla',arce:false,profile:'vanilla',view:'home',
+   navigate:(view)=>navigated.push(view),
+   setProfile:()=>{}
+ };
+ const SiteHeader=component('components/site-header.jsx');
+ const root=createRoot(document.getElementById('root'));
+ try{
+  await act(async()=>root.render(React.createElement(SiteHeader,{shell})));
+
+  const hamburger=document.querySelector('.hamburger');
+  const drawer=document.querySelector('#react-menu-drawer');
+  assert.ok(hamburger);assert.ok(drawer);
+  assert.equal(hamburger.textContent,'☰');
+  assert.equal(drawer.classList.contains('open'),false);
+
+  // Click hamburger opens drawer and sets drawer-open class on account-bar
+  await act(async()=>hamburger.click());
+  assert.equal(hamburger.textContent,'✕');
+  assert.equal(drawer.classList.contains('open'),true);
+  assert.equal(document.querySelector('.account-bar').classList.contains('drawer-open'),true);
+
+  // Mobile drawer contains all sections
+  assert.match(drawer.textContent,/Character Planners/);
+  assert.match(drawer.textContent,/Calculators/);
+  assert.match(drawer.textContent,/Reference & Site/);
+  assert.match(drawer.textContent,/Game World Profile/);
+
+  // Click a drawer calculator button (e.g. Enchanting)
+  const enchantBtn=[...drawer.querySelectorAll('button')].find(b=>b.textContent==='Enchanting');
+  assert.ok(enchantBtn);
+  await act(async()=>enchantBtn.click());
+  assert.deepEqual(navigated,['enchanting']);
+  assert.equal(hamburger.textContent,'☰');
+  assert.equal(drawer.classList.contains('open'),false);
+
+  // Re-open drawer: clicking inside account-bar must NOT close the drawer
+  await act(async()=>hamburger.click());
+  assert.equal(drawer.classList.contains('open'),true);
+  const accountBar=document.querySelector('.account-bar');
+  await act(async()=>accountBar.dispatchEvent(new window.MouseEvent('click',{bubbles:true})));
+  assert.equal(drawer.classList.contains('open'),true,'clicking inside account-bar preserves open drawer');
+
+  // Clicking outside both drawer and accountBar closes the drawer
+  await act(async()=>document.body.dispatchEvent(new window.MouseEvent('click',{bubbles:true})));
+  assert.equal(drawer.classList.contains('open'),false,'clicking outside closes the drawer');
+
+  // Desktop Calculators dropdown
+  const calcDropdownBtn=document.querySelector('.nav-dropdown-wrap button');
+  assert.ok(calcDropdownBtn);
+  assert.match(calcDropdownBtn.textContent,/Calculators/);
+  await act(async()=>calcDropdownBtn.click());
+  let dropdownMenu=document.querySelector('.nav-dropdown-menu');
+  assert.ok(dropdownMenu);
+  assert.match(dropdownMenu.textContent,/Spellmaking/);
+
+  // Clicking brand (within topbar, but outside dropdown) closes dropdown
+  const brand=document.querySelector('.brand');
+  await act(async()=>brand.dispatchEvent(new window.MouseEvent('click',{bubbles:true})));
+  assert.equal(document.querySelector('.nav-dropdown-menu'),null,'clicking inside topbar outside dropdown closes it');
+
+  // Re-open dropdown and test Escape restores focus to calcDropdownBtn
+  await act(async()=>calcDropdownBtn.click());
+  dropdownMenu=document.querySelector('.nav-dropdown-menu');
+  assert.ok(dropdownMenu);
+  const firstItem=dropdownMenu.querySelector('[role="menuitem"]');
+  firstItem.focus();
+  assert.equal(document.activeElement,firstItem);
+  await act(async()=>document.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true})));
+  assert.equal(document.querySelector('.nav-dropdown-menu'),null);
+  assert.equal(document.activeElement,calcDropdownBtn,'Escape restores focus to dropdown button');
+ }finally{await act(async()=>root.unmount());dom.window.close();assert.equal(document.querySelector?.('.account-bar')?.classList.contains('drawer-open')||false,false,'unmount removes drawer-open');}
+});
+

@@ -1,35 +1,442 @@
 "use client";
-import {useEffect,useRef,useState} from 'react';
-import {useShell} from './shell-context';
-const descriptions={home:'Pick a planner for this playthrough.',challenge:'Roll a character, a major goal, side tasks, and restrictions.',builder:'Premade sheets and a custom class builder. Optimize gear when you are ready.',about:'About this unofficial fan project.',changelog:'What changed on the site, newest first.',enchanting:'Effects, souls, and named enchanters.',spellmaking:'Magicka, cast chance, and spellmaker gold.',alchemy:'Apparatus, ingredients, and brew numbers.',travel:'Fewest hops between towns.'};
-export default function SiteHeader(){
- const shell=useShell(),[open,setOpen]=useState(false),root=useRef(null),menu=useRef(null);
- useEffect(()=>setOpen(false),[shell.view]);
- useEffect(()=>{
-  const key=e=>{if(e.key==='Escape'&&open){setOpen(false);menu.current?.focus();}};
-  const outside=e=>{if(!root.current?.contains(e.target))setOpen(false);};
-  document.addEventListener('keydown',key);document.addEventListener('click',outside);
-  return ()=>{document.removeEventListener('keydown',key);document.removeEventListener('click',outside);};
- },[open]);
- const navigate=(e,view)=>{e.preventDefault();shell.navigate(view);setOpen(false);};
- return <div className="topbar" ref={root}>
-  <div className="brand"><h1><a href="#home" className="brand-home" onClick={e=>navigate(e,'home')}>Silt Strider</a></h1>
-   <p className="kicker">siltstrider.tools — Morrowind build planner &amp; challenge run generator<span className="page-sub">{descriptions[shell.view]}</span></p>
-  </div>
-  <button ref={menu} type="button" className="hamburger" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} aria-controls="react-menu-drawer" onClick={()=>setOpen(!open)}>{open ? '✕' : '☰'}</button>
-  <div className={'header-tools menu-drawer'+(open?' open':'')} id="react-menu-drawer">
-   <div className="nav-primary">
-    <button type="button" id="react-nav-challenge" className={'btn'+(shell.view==='challenge'?' on':'')} disabled={!shell.ready} aria-current={shell.view==='challenge'?'page':undefined} onClick={e=>navigate(e,'challenge')}>Challenge Runs</button>
-    <button type="button" id="react-nav-build" className={'btn'+(shell.view==='builder'?' on':'')} disabled={!shell.ready} aria-current={shell.view==='builder'?'page':undefined} onClick={e=>navigate(e,'builder')}>Build Optimizer</button>
-   </div>
-   <div className="nav-secondary world-bar"><div className="world-controls">
-    <span className="drawer-label">Game World Profile</span>
-    <div className="seg" role="group" aria-label="World">
-     <button type="button" className={'seg-btn'+(shell.world==='vanilla'?' on':'')} disabled={!shell.ready} aria-pressed={shell.world==='vanilla'} onClick={()=>shell.setProfile('vanilla')}>Vanilla</button>
-     <button type="button" className={'seg-btn'+(shell.world==='tr'?' on':'')} id="react-world-tr" title="Tamriel Rebuilt" disabled={!shell.ready} aria-pressed={shell.world==='tr'} onClick={()=>shell.setProfile(shell.arce?'tr_arce':'tr')}>Tamriel Rebuilt</button>
+import { useEffect, useRef, useState } from 'react';
+import { useShell } from './shell-context';
+
+const descriptions = {
+  home: 'Pick a planner for this playthrough.',
+  challenge: 'Roll a character, a major goal, side tasks, and restrictions.',
+  builder: 'Premade sheets and a custom class builder. Optimize gear when you are ready.',
+  about: 'About this unofficial fan project.',
+  changelog: 'What changed on the site, newest first.',
+  enchanting: 'Effects, souls, and named enchanters.',
+  spellmaking: 'Magicka, cast chance, and spellmaker gold.',
+  alchemy: 'Apparatus, ingredients, and brew numbers.',
+  travel: 'Fewest hops between towns.'
+};
+
+const CALC_VIEWS = ['enchanting', 'spellmaking', 'alchemy', 'travel'];
+const MORE_VIEWS = ['about', 'changelog', 'home'];
+
+export default function SiteHeader({ shell: propShell } = {}) {
+  let contextShell = null;
+  try { contextShell = useShell(); } catch {}
+  const shell = propShell || contextShell;
+  if (!shell) throw new Error('Shell required');
+  const [open, setOpen] = useState(false);
+  const [calcOpen, setCalcOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const root = useRef(null);
+  const menu = useRef(null);
+  const calcDropdownRef = useRef(null);
+  const moreDropdownRef = useRef(null);
+  const calcBtnRef = useRef(null);
+  const moreBtnRef = useRef(null);
+  const calcMenuRef = useRef(null);
+  const moreMenuRef = useRef(null);
+
+  useEffect(() => {
+    setOpen(false);
+    setCalcOpen(false);
+    setMoreOpen(false);
+  }, [shell.view]);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.querySelector('.account-bar')?.classList.toggle('drawer-open', open);
+      document.querySelector('header')?.classList.toggle('drawer-open', open);
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.querySelector('.account-bar')?.classList.remove('drawer-open');
+        document.querySelector('header')?.classList.remove('drawer-open');
+      }
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const key = e => {
+      if (e.key === 'Escape') {
+        if (calcOpen) {
+          setCalcOpen(false);
+          calcBtnRef.current?.focus();
+        } else if (moreOpen) {
+          setMoreOpen(false);
+          moreBtnRef.current?.focus();
+        } else if (open) {
+          setOpen(false);
+          menu.current?.focus();
+        }
+      }
+    };
+    const outside = e => {
+      const accountBar = typeof document !== 'undefined' ? document.querySelector('.account-bar') : null;
+      if (calcOpen && !calcDropdownRef.current?.contains(e.target)) {
+        setCalcOpen(false);
+      }
+      if (moreOpen && !moreDropdownRef.current?.contains(e.target)) {
+        setMoreOpen(false);
+      }
+      if (open && !root.current?.contains(e.target) && !accountBar?.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('keydown', key);
+    document.addEventListener('click', outside);
+    return () => {
+      document.removeEventListener('keydown', key);
+      document.removeEventListener('click', outside);
+    };
+  }, [open, calcOpen, moreOpen]);
+
+  const handleDropdownBtnKeyDown = (e, type) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (type === 'calc') {
+        setCalcOpen(true);
+        setMoreOpen(false);
+        setTimeout(() => {
+          const items = calcMenuRef.current?.querySelectorAll('[role="menuitem"]');
+          if (items?.length) {
+            const target = e.key === 'ArrowDown' ? items[0] : items[items.length - 1];
+            target.focus();
+          }
+        }, 0);
+      } else if (type === 'more') {
+        setMoreOpen(true);
+        setCalcOpen(false);
+        setTimeout(() => {
+          const items = moreMenuRef.current?.querySelectorAll('[role="menuitem"]');
+          if (items?.length) {
+            const target = e.key === 'ArrowDown' ? items[0] : items[items.length - 1];
+            target.focus();
+          }
+        }, 0);
+      }
+    }
+  };
+
+  const handleMenuKeyDown = (e, menuRef, btnRef, closeMenu) => {
+    if (e.key === 'Tab') {
+      closeMenu();
+      return;
+    }
+    const items = Array.from(menuRef.current?.querySelectorAll('[role="menuitem"]') || []);
+    const idx = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const next = (idx + 1) % items.length;
+      items[next]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = (idx - 1 + items.length) % items.length;
+      items[prev]?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      items[0]?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      items[items.length - 1]?.focus();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      closeMenu();
+      btnRef.current?.focus();
+    }
+  };
+
+  const navigate = (e, view) => {
+    e.preventDefault();
+    shell.navigate(view);
+    setOpen(false);
+    setCalcOpen(false);
+    setMoreOpen(false);
+  };
+
+  const isCalcActive = CALC_VIEWS.includes(shell.view);
+  const isMoreActive = MORE_VIEWS.includes(shell.view);
+
+  return (
+    <div className="topbar" ref={root}>
+      <div className="brand">
+        <h1><a href="#home" className="brand-home" onClick={e => navigate(e, 'home')}>Silt Strider</a></h1>
+        <p className="kicker">siltstrider.tools — Morrowind build planner &amp; challenge run generator<span className="page-sub">{descriptions[shell.view]}</span></p>
+      </div>
+      <button
+        ref={menu}
+        type="button"
+        className="hamburger"
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
+        aria-controls="react-menu-drawer"
+        onClick={() => setOpen(!open)}
+      >
+        {open ? '✕' : '☰'}
+      </button>
+      <div className={'header-tools menu-drawer' + (open ? ' open' : '')} id="react-menu-drawer">
+        <div className="nav-primary">
+          <span className="drawer-label drawer-only">Character Planners</span>
+          <button
+            type="button"
+            id="react-nav-challenge"
+            className={'btn' + (shell.view === 'challenge' ? ' on' : '')}
+            disabled={!shell.ready}
+            aria-current={shell.view === 'challenge' ? 'page' : undefined}
+            onClick={e => navigate(e, 'challenge')}
+          >
+            Challenge Runs
+          </button>
+          <button
+            type="button"
+            id="react-nav-build"
+            className={'btn' + (shell.view === 'builder' ? ' on' : '')}
+            disabled={!shell.ready}
+            aria-current={shell.view === 'builder' ? 'page' : undefined}
+            onClick={e => navigate(e, 'builder')}
+          >
+            Build Optimizer
+          </button>
+
+          {/* Desktop Dropdowns */}
+          <div className="nav-dropdown-wrap desktop-only" ref={calcDropdownRef}>
+            <button
+              ref={calcBtnRef}
+              type="button"
+              id="react-btn-dropdown-calc"
+              className={'btn nav-dropdown-btn' + (isCalcActive ? ' on' : '')}
+              disabled={!shell.ready}
+              aria-haspopup="true"
+              aria-expanded={calcOpen}
+              aria-controls="react-calc-dropdown-menu"
+              aria-label="Calculators menu"
+              onClick={() => { setCalcOpen(!calcOpen); setMoreOpen(false); }}
+              onKeyDown={e => handleDropdownBtnKeyDown(e, 'calc')}
+            >
+              Calculators <span className="dropdown-caret" aria-hidden="true">{calcOpen ? '▴' : '▾'}</span>
+            </button>
+            {calcOpen && (
+              <div
+                ref={calcMenuRef}
+                id="react-calc-dropdown-menu"
+                className="nav-dropdown-menu"
+                role="menu"
+                aria-label="Calculators"
+                onKeyDown={e => handleMenuKeyDown(e, calcMenuRef, calcBtnRef, () => setCalcOpen(false))}
+              >
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'enchanting' ? ' on' : '')}
+                  aria-current={shell.view === 'enchanting' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'enchanting')}
+                >
+                  Enchanting
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'spellmaking' ? ' on' : '')}
+                  aria-current={shell.view === 'spellmaking' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'spellmaking')}
+                >
+                  Spellmaking
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'alchemy' ? ' on' : '')}
+                  aria-current={shell.view === 'alchemy' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'alchemy')}
+                >
+                  Alchemy
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'travel' ? ' on' : '')}
+                  aria-current={shell.view === 'travel' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'travel')}
+                >
+                  Travel Optimizer
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="nav-dropdown-wrap desktop-only" ref={moreDropdownRef}>
+            <button
+              ref={moreBtnRef}
+              type="button"
+              id="react-btn-dropdown-more"
+              className={'btn nav-dropdown-btn' + (isMoreActive ? ' on' : '')}
+              disabled={!shell.ready}
+              aria-haspopup="true"
+              aria-expanded={moreOpen}
+              aria-controls="react-more-dropdown-menu"
+              aria-label="More pages menu"
+              onClick={() => { setMoreOpen(!moreOpen); setCalcOpen(false); }}
+              onKeyDown={e => handleDropdownBtnKeyDown(e, 'more')}
+            >
+              More <span className="dropdown-caret" aria-hidden="true">{moreOpen ? '▴' : '▾'}</span>
+            </button>
+            {moreOpen && (
+              <div
+                ref={moreMenuRef}
+                id="react-more-dropdown-menu"
+                className="nav-dropdown-menu"
+                role="menu"
+                aria-label="More pages"
+                onKeyDown={e => handleMenuKeyDown(e, moreMenuRef, moreBtnRef, () => setMoreOpen(false))}
+              >
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'home' ? ' on' : '')}
+                  aria-current={shell.view === 'home' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'home')}
+                >
+                  Choose a Tool
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'about' ? ' on' : '')}
+                  aria-current={shell.view === 'about' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'about')}
+                >
+                  About Silt Strider
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'changelog' ? ' on' : '')}
+                  aria-current={shell.view === 'changelog' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'changelog')}
+                >
+                  Changelog
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Drawer Sections (< 900px) */}
+        <div className="drawer-sections-mobile drawer-only">
+          <div className="drawer-group">
+            <span className="drawer-label">Calculators</span>
+            <div className="drawer-grid grid-2">
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'enchanting' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'enchanting' ? 'page' : undefined}
+                onClick={e => navigate(e, 'enchanting')}
+              >
+                Enchanting
+              </button>
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'spellmaking' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'spellmaking' ? 'page' : undefined}
+                onClick={e => navigate(e, 'spellmaking')}
+              >
+                Spellmaking
+              </button>
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'alchemy' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'alchemy' ? 'page' : undefined}
+                onClick={e => navigate(e, 'alchemy')}
+              >
+                Alchemy
+              </button>
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'travel' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'travel' ? 'page' : undefined}
+                onClick={e => navigate(e, 'travel')}
+              >
+                Travel
+              </button>
+            </div>
+          </div>
+
+          <div className="drawer-group">
+            <span className="drawer-label">Reference &amp; Site</span>
+            <div className="drawer-grid grid-3">
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'home' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'home' ? 'page' : undefined}
+                onClick={e => navigate(e, 'home')}
+              >
+                Home
+              </button>
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'about' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'about' ? 'page' : undefined}
+                onClick={e => navigate(e, 'about')}
+              >
+                About
+              </button>
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'changelog' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'changelog' ? 'page' : undefined}
+                onClick={e => navigate(e, 'changelog')}
+              >
+                Changelog
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Game World Profile */}
+        <div className="nav-secondary world-bar">
+          <div className="world-controls">
+            <span className="drawer-label">Game World Profile</span>
+            <div className="seg" role="group" aria-label="World">
+              <button
+                type="button"
+                className={'seg-btn' + (shell.world === 'vanilla' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-pressed={shell.world === 'vanilla'}
+                onClick={() => shell.setProfile('vanilla')}
+              >
+                Vanilla
+              </button>
+              <button
+                type="button"
+                className={'seg-btn' + (shell.world === 'tr' ? ' on' : '')}
+                id="react-world-tr"
+                title="Tamriel Rebuilt"
+                disabled={!shell.ready}
+                aria-pressed={shell.world === 'tr'}
+                onClick={() => shell.setProfile(shell.arce ? 'tr_arce' : 'tr')}
+              >
+                Tamriel Rebuilt
+              </button>
+            </div>
+            {shell.world === 'tr' && (
+              <button
+                type="button"
+                id="react-arce"
+                className={'arce-toggle' + (shell.arce ? ' on' : '')}
+                title="ARCE - Extra Races and Classes"
+                aria-pressed={shell.arce}
+                onClick={() => shell.setProfile(shell.arce ? 'tr' : 'tr_arce')}
+              >
+                ARCE - Extra Races and Classes
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
-    {shell.world==='tr'&&<button type="button" id="react-arce" className={'arce-toggle'+(shell.arce?' on':'')} title="ARCE - Extra Races and Classes" aria-pressed={shell.arce} onClick={()=>shell.setProfile(shell.arce?'tr':'tr_arce')}>ARCE - Extra Races and Classes</button>}
-   </div></div>
-  </div>
- </div>;
+  );
 }

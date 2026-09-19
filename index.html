@@ -1012,8 +1012,64 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-end; justify-content: flex-start; gap: 2px;
     }
     .hamburger { display: none; }
+    .drawer-label { display: none; }
+    .drawer-sections-mobile { display: none; }
+    .drawer-only { display: none; }
+    .desktop-only { display: inline-flex; }
+    .nav-dropdown-wrap { position: relative; display: inline-flex; }
+    .nav-dropdown-btn { display: inline-flex; align-items: center; gap: 5px; }
+    .dropdown-caret { font-size: 0.8rem; color: #d4b06a; line-height: 1; pointer-events: none; }
+    .nav-dropdown-menu {
+      position: absolute; top: calc(100% + 4px); right: 0; min-width: 175px;
+      background: #14100a; background-clip: padding-box;
+      border: 4px solid transparent; border-image: var(--mw-bevel) 4 repeat;
+      padding: 6px; display: flex; flex-direction: column; gap: 3px; z-index: 100;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), inset 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+    .nav-dropdown-menu[hidden] { display: none !important; }
+    .dropdown-item {
+      appearance: none; border: none; background: transparent; color: #f4ead4;
+      font-family: inherit; font-size: 0.9rem; padding: 8px 12px; text-align: left;
+      cursor: pointer; border-radius: 0; width: 100%; text-decoration: none;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .dropdown-item:hover, .dropdown-item:focus-visible { background: rgba(212, 176, 106, 0.2); color: #f0d48a; outline: none; }
+    .dropdown-item.on, .dropdown-item[aria-current="page"] { background: #3a2a18; color: #f0d48a; font-weight: 700; border-left: 3px solid #d4b06a; padding-left: 9px; }
     @media (max-width: 899px) {
-      .hamburger { display: inline-flex; }
+      .hamburger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        min-width: 44px;
+        min-height: 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: 0;
+        border: 4px solid transparent;
+        border-image: var(--mw-bevel) 4 repeat;
+        background: linear-gradient(180deg, rgba(62, 42, 22, 0.75) 0%, rgba(18, 14, 9, 0.6) 100%);
+        color: #d4b06a;
+        font-family: inherit;
+        font-size: 1.35rem;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .hamburger:hover, .hamburger:active {
+        background: linear-gradient(180deg, rgba(82, 56, 30, 0.85) 0%, rgba(28, 20, 12, 0.7) 100%);
+        color: #f3e6c8;
+      }
+      .hamburger[aria-expanded="true"] {
+        background: #3a2d1d;
+        color: #f3e6c8;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
+      }
+      .hamburger:focus-visible {
+        outline: 2px solid #d4b06a;
+        outline-offset: 2px;
+      }
     }
     .menu-drawer {
       display: flex;
@@ -1078,28 +1134,101 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       padding: 4px 8px;
     }
     @media (max-width: 899px) {
+      .desktop-only { display: none !important; }
+      .drawer-only { display: block; }
       .header-tools, .menu-drawer {
+        display: none;
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
         width: 100%;
         max-width: 100%;
       }
+      .menu-drawer.open {
+        display: flex;
+        background: #14100a;
+        background-clip: padding-box;
+        border: 4px solid transparent;
+        border-image: var(--mw-bevel) 4 repeat;
+        padding: 14px 16px;
+        margin-top: 8px;
+        gap: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), inset 0 0 12px 2px rgba(0, 0, 0, 0.7);
+        z-index: 50;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+      }
       .nav-primary {
         order: 0;
         width: 100%;
         justify-content: stretch;
-        flex-wrap: wrap;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
       }
-      .world-bar { order: 1; width: 100%; align-items: flex-end; }
+      .drawer-sections-mobile {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+      }
+      .drawer-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-top: 1px solid rgba(212, 176, 106, 0.25);
+        padding-top: 10px;
+        gap: 6px;
+      }
+      .drawer-grid.grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+      }
+      .drawer-grid.grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        width: 100%;
+      }
+      .drawer-grid .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 42px;
+        padding: 8px 10px;
+        font-size: 0.88rem;
+        letter-spacing: 0.02em;
+        text-align: center;
+      }
+      .world-bar { order: 1; width: 100%; align-items: stretch; border-top: 1px solid rgba(212, 176, 106, 0.25); padding-top: 10px; gap: 6px; }
       .world-bar .world-label { display: none; }
-      .seg { flex-wrap: nowrap; }
-      .seg .seg-btn, .arce-toggle { font-size: 0.75rem; white-space: nowrap; }
+      .drawer-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #d4b06a;
+        margin-bottom: 4px;
+      }
+      .world-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 6px;
+      }
+      .seg { display: flex; width: 100%; flex-wrap: nowrap; }
+      .seg .seg-btn { flex: 1 1 50%; min-height: 38px; font-size: 0.85rem; text-align: center; }
+      .arce-toggle { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 38px; font-size: 0.85rem; text-align: center; }
       #btn-world-tr { font-size: 0; }
       #btn-world-tr::after { content: "TR"; font-size: 0.75rem; }
       #btn-arce { font-size: 0; }
       #btn-arce::after { content: "ARCE"; font-size: 0.75rem; }
-      .nav-primary .btn { font-size: 0.75rem; padding: 8px 10px; min-height: 44px; flex: 1 1 auto; }
+      .nav-primary .btn { font-size: 0.95rem; padding: 10px 14px; min-height: 44px; display: flex; align-items: center; justify-content: center; width: 100%; }
       .topbar { flex-wrap: wrap; }
       #run-summary .sum-row {
         padding-right: 12px;
@@ -1165,10 +1294,101 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       color: var(--paper);
     }
     .site-footer a { color: var(--gold); }
-    .account-bar { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin: 8px 0 16px; }
-    .account-bar .btn { min-width: 0; padding: 8px 14px; min-height: 44px; }
+    .account-bar {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0 12px;
+    }
+    .account-bar .btn {
+      min-width: 0;
+      min-height: 32px;
+      padding: 4px 14px;
+      font-size: 0.82rem;
+      letter-spacing: 0.03em;
+      border: 4px solid transparent;
+      border-image: var(--mw-bevel) 4 repeat;
+      background: linear-gradient(180deg, rgba(62, 42, 22, 0.65) 0%, rgba(18, 14, 9, 0.45) 100%);
+      color: #f3e6c8;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      transition: background 0.12s ease, color 0.12s ease, transform 0.1s ease;
+    }
+    .account-bar .btn:hover {
+      background: linear-gradient(180deg, rgba(90, 58, 28, 0.8) 0%, rgba(28, 20, 12, 0.6) 100%);
+      color: #f0d48a;
+      transform: translateY(-1px);
+    }
+    .account-bar .btn:active { transform: translateY(0); }
+    .account-bar .btn:focus-visible { outline: 2px solid #d4b06a; outline-offset: 2px; }
     .account-bar [hidden] { display: none !important; }
-    #account-status { margin: 0; font-size: 0.9rem; }
+    #account-status { margin: 0 4px 0 0; font-size: 0.82rem; color: #c4a056; font-style: italic; }
+    #account-user { display: inline-flex; align-items: center; border: 2px solid #8a7344; padding: 2px; background: #14100a; }
+    @media (max-width: 899px) {
+      header:not(.drawer-open):not(:has(.menu-drawer.open)) .account-bar {
+        display: none !important;
+      }
+      header.drawer-open .account-bar,
+      header:has(.menu-drawer.open) .account-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        background: #14100a !important;
+        border: 4px solid transparent !important;
+        border-image: var(--mw-bevel) 4 repeat !important;
+        padding: 12px 16px !important;
+        margin-top: 8px !important;
+        gap: 8px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), inset 0 0 12px 2px rgba(0, 0, 0, 0.7) !important;
+        z-index: 50 !important;
+      }
+      header.drawer-open .account-bar::before,
+      header:has(.menu-drawer.open) .account-bar::before {
+        content: "Account & Cloud Saves";
+        display: block;
+        font-family: var(--font-serif);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #d4b06a;
+        margin-bottom: 2px;
+      }
+      header.drawer-open .account-bar .btn:not([hidden]),
+      header:has(.menu-drawer.open) .account-bar .btn:not([hidden]) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        min-height: 44px !important;
+        padding: 10px 14px !important;
+        font-size: 0.95rem !important;
+        border: 4px solid transparent !important;
+        border-image: var(--mw-bevel) 4 repeat !important;
+        background: linear-gradient(180deg, rgba(62, 42, 22, 0.65) 0%, rgba(18, 14, 9, 0.45) 100%) !important;
+        color: #f3e6c8 !important;
+      }
+      header.drawer-open .account-bar #account-status,
+      header:has(.menu-drawer.open) .account-bar #account-status {
+        text-align: center !important;
+        font-size: 0.85rem !important;
+        color: #d4b06a !important;
+        margin: 4px 0 !important;
+      }
+      header.drawer-open .account-bar #account-user:not([hidden]),
+      header:has(.menu-drawer.open) .account-bar #account-user:not([hidden]) {
+        display: flex !important;
+        justify-content: center !important;
+        padding: 6px 0 !important;
+      }
+      .account-bar [hidden],
+      header.drawer-open .account-bar [hidden],
+      header:has(.menu-drawer.open) .account-bar [hidden] {
+        display: none !important;
+      }
+    }
     @media (max-width: 640px) {
       .site-footer { margin-top: 20px; padding: 20px 4px 12px; font-size: 1rem; }
     }
@@ -1193,11 +1413,53 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <button type="button" class="hamburger" id="btn-menu" aria-label="Open menu" aria-expanded="false" aria-controls="menu-drawer">☰</button>
         <div class="header-tools menu-drawer" id="menu-drawer">
           <div class="nav-primary">
+            <span class="drawer-label">Character Planners</span>
             <button type="button" class="btn" id="btn-challenge">Challenge Runs</button>
             <button type="button" class="btn" id="btn-build">Build Optimizer</button>
+            <div class="nav-dropdown-wrap desktop-only" id="calc-dropdown-wrap">
+              <button type="button" class="btn nav-dropdown-btn" id="btn-dropdown-calc" aria-haspopup="true" aria-expanded="false" aria-controls="dropdown-calc-menu" aria-label="Calculators menu">
+                Calculators <span class="dropdown-caret" aria-hidden="true">▾</span>
+              </button>
+              <div class="nav-dropdown-menu" id="dropdown-calc-menu" role="menu" aria-label="Calculators" hidden>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-enchant">Enchanting</button>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-spell">Spellmaking</button>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-alchemy">Alchemy</button>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-travel">Travel Optimizer</button>
+              </div>
+            </div>
+            <div class="nav-dropdown-wrap desktop-only" id="more-dropdown-wrap">
+              <button type="button" class="btn nav-dropdown-btn" id="btn-dropdown-more" aria-haspopup="true" aria-expanded="false" aria-controls="dropdown-more-menu" aria-label="More pages menu">
+                More <span class="dropdown-caret" aria-hidden="true">▾</span>
+              </button>
+              <div class="nav-dropdown-menu" id="dropdown-more-menu" role="menu" aria-label="More pages" hidden>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-home">Choose a Tool</button>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-about">About Silt Strider</button>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-changelog">Changelog</button>
+              </div>
+            </div>
+          </div>
+          <div class="drawer-sections-mobile">
+            <div class="drawer-group">
+              <span class="drawer-label">Calculators</span>
+              <div class="drawer-grid grid-2">
+                <button type="button" class="btn" id="btn-nav-enchant">Enchanting</button>
+                <button type="button" class="btn" id="btn-nav-spell">Spellmaking</button>
+                <button type="button" class="btn" id="btn-nav-alchemy">Alchemy</button>
+                <button type="button" class="btn" id="btn-nav-travel">Travel</button>
+              </div>
+            </div>
+            <div class="drawer-group">
+              <span class="drawer-label">Reference &amp; Site</span>
+              <div class="drawer-grid grid-3">
+                <button type="button" class="btn" id="btn-nav-home">Home</button>
+                <button type="button" class="btn" id="btn-nav-about">About</button>
+                <button type="button" class="btn" id="btn-nav-changelog">Changelog</button>
+              </div>
+            </div>
           </div>
           <div class="nav-secondary world-bar" id="world-bar">
             <div class="world-controls">
+              <span class="drawer-label">Game World Profile</span>
               <div class="seg" role="group" aria-label="World">
                 <button type="button" class="seg-btn" id="btn-world-vanilla">Vanilla</button>
                 <button type="button" class="seg-btn" id="btn-world-tr" title="Tamriel Rebuilt">Tamriel Rebuilt</button>
@@ -2499,8 +2761,119 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         menuBtn.addEventListener("click", () => {
           const open = drawer.classList.toggle("open");
           menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+          menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+          menuBtn.textContent = open ? "✕" : "☰";
+          document.querySelector(".account-bar")?.classList.toggle("drawer-open", open);
+          document.querySelector("header")?.classList.toggle("drawer-open", open);
         });
       }
+      const calcWrap = document.getElementById("calc-dropdown-wrap");
+      const moreWrap = document.getElementById("more-dropdown-wrap");
+      const btnDropCalc = document.getElementById("btn-dropdown-calc");
+      const btnDropMore = document.getElementById("btn-dropdown-more");
+      const calcMenu = document.getElementById("dropdown-calc-menu");
+      const moreMenu = document.getElementById("dropdown-more-menu");
+
+      function toggleDesktopDropdown(type) {
+        if (type === "calc") {
+          const opening = calcMenu ? calcMenu.hidden : false;
+          if (calcMenu) calcMenu.hidden = !opening;
+          if (moreMenu) moreMenu.hidden = true;
+          if (btnDropCalc) {
+            btnDropCalc.setAttribute("aria-expanded", opening ? "true" : "false");
+            const sc = btnDropCalc.querySelector(".dropdown-caret");
+            if (sc) sc.textContent = opening ? "▴" : "▾";
+          }
+          if (btnDropMore) {
+            btnDropMore.setAttribute("aria-expanded", "false");
+            const sm = btnDropMore.querySelector(".dropdown-caret");
+            if (sm) sm.textContent = "▾";
+          }
+        } else if (type === "more") {
+          const opening = moreMenu ? moreMenu.hidden : false;
+          if (moreMenu) moreMenu.hidden = !opening;
+          if (calcMenu) calcMenu.hidden = true;
+          if (btnDropMore) {
+            btnDropMore.setAttribute("aria-expanded", opening ? "true" : "false");
+            const sm = btnDropMore.querySelector(".dropdown-caret");
+            if (sm) sm.textContent = opening ? "▴" : "▾";
+          }
+          if (btnDropCalc) {
+            btnDropCalc.setAttribute("aria-expanded", "false");
+            const sc = btnDropCalc.querySelector(".dropdown-caret");
+            if (sc) sc.textContent = "▾";
+          }
+        }
+      }
+
+      function closeDesktopDropdowns() {
+        if (calcMenu) calcMenu.hidden = true;
+        if (moreMenu) moreMenu.hidden = true;
+        if (btnDropCalc) {
+          btnDropCalc.setAttribute("aria-expanded", "false");
+          const sc = btnDropCalc.querySelector(".dropdown-caret");
+          if (sc) sc.textContent = "▾";
+        }
+        if (btnDropMore) {
+          btnDropMore.setAttribute("aria-expanded", "false");
+          const sm = btnDropMore.querySelector(".dropdown-caret");
+          if (sm) sm.textContent = "▾";
+        }
+      }
+
+      if (btnDropCalc && !btnDropCalc.dataset.bound) {
+        btnDropCalc.dataset.bound = "1";
+        btnDropCalc.addEventListener("click", () => toggleDesktopDropdown("calc"));
+      }
+      if (btnDropMore && !btnDropMore.dataset.bound) {
+        btnDropMore.dataset.bound = "1";
+        btnDropMore.addEventListener("click", () => toggleDesktopDropdown("more"));
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (calcMenu && !calcMenu.hidden) {
+            closeDesktopDropdowns();
+            btnDropCalc?.focus();
+            return;
+          }
+          if (moreMenu && !moreMenu.hidden) {
+            closeDesktopDropdowns();
+            btnDropMore?.focus();
+            return;
+          }
+          if (drawer && drawer.classList.contains("open")) {
+            drawer.classList.remove("open");
+            if (menuBtn) {
+              menuBtn.setAttribute("aria-expanded", "false");
+              menuBtn.setAttribute("aria-label", "Open menu");
+              menuBtn.textContent = "☰";
+              menuBtn.focus();
+            }
+            document.querySelector(".account-bar")?.classList.remove("drawer-open");
+            document.querySelector("header")?.classList.remove("drawer-open");
+          }
+        }
+      });
+      document.addEventListener("click", (e) => {
+        const accountBar = document.querySelector(".account-bar");
+        if (calcWrap && !calcWrap.contains(e.target) && calcMenu && !calcMenu.hidden) {
+          closeDesktopDropdowns();
+        }
+        if (moreWrap && !moreWrap.contains(e.target) && moreMenu && !moreMenu.hidden) {
+          closeDesktopDropdowns();
+        }
+        if (drawer && drawer.classList.contains("open") && !drawer.contains(e.target) && !menuBtn?.contains(e.target) && !accountBar?.contains(e.target)) {
+          drawer.classList.remove("open");
+          if (menuBtn) {
+            menuBtn.setAttribute("aria-expanded", "false");
+            menuBtn.setAttribute("aria-label", "Open menu");
+            menuBtn.textContent = "☰";
+          }
+          accountBar?.classList.remove("drawer-open");
+          document.querySelector("header")?.classList.remove("drawer-open");
+        }
+      });
     } catch (e) {}
     function showView(name) {
       document.body.classList.remove("view-challenge", "view-builder", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel");
@@ -2514,6 +2887,36 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       var navB = document.getElementById("btn-build");
       if (navC) navC.setAttribute("aria-current", name === "challenge" ? "page" : "false");
       if (navB) navB.setAttribute("aria-current", name === "builder" ? "page" : "false");
+      var calcViews = ["enchanting", "spellmaking", "alchemy", "travel"];
+      var moreViews = ["home", "about", "changelog"];
+      var bdc = document.getElementById("btn-dropdown-calc");
+      var bdm = document.getElementById("btn-dropdown-more");
+      if (bdc) bdc.classList.toggle("on", calcViews.includes(name));
+      if (bdm) bdm.classList.toggle("on", moreViews.includes(name));
+      var deskNavIds = [
+        ["btn-desk-enchant", "enchanting"],
+        ["btn-desk-spell", "spellmaking"],
+        ["btn-desk-alchemy", "alchemy"],
+        ["btn-desk-travel", "travel"],
+        ["btn-desk-home", "home"],
+        ["btn-desk-about", "about"],
+        ["btn-desk-changelog", "changelog"]
+      ];
+      for (var di = 0; di < deskNavIds.length; di++) {
+        var dEl = document.getElementById(deskNavIds[di][0]);
+        if (dEl) {
+          var isMatch = name === deskNavIds[di][1];
+          dEl.classList.toggle("on", isMatch);
+          if (isMatch) dEl.setAttribute("aria-current", "page");
+          else dEl.removeAttribute("aria-current");
+        }
+      }
+      var cm = document.getElementById("dropdown-calc-menu");
+      var mm = document.getElementById("dropdown-more-menu");
+      if (cm) cm.hidden = true;
+      if (mm) mm.hidden = true;
+      if (bdc) { bdc.setAttribute("aria-expanded", "false"); var sc = bdc.querySelector(".dropdown-caret"); if (sc) sc.textContent = "▾"; }
+      if (bdm) { bdm.setAttribute("aria-expanded", "false"); var sm = bdm.querySelector(".dropdown-caret"); if (sm) sm.textContent = "▾"; }
       if (ph) ph.classList.toggle("show", name === "home");
       if (pc) pc.classList.toggle("show", name === "challenge");
       if (pb) pb.classList.toggle("show", name === "builder");
@@ -2534,7 +2937,16 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else if (name === "travel") pageSub.textContent = "Fewest hops between towns.";
         else pageSub.textContent = "Premade sheets and a custom class builder. Optimize gear when you are ready.";
       }
-      if (drawer) drawer.classList.remove("open");
+      if (drawer) {
+        drawer.classList.remove("open");
+        if (menuBtn) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuBtn.setAttribute("aria-label", "Open menu");
+          menuBtn.textContent = "☰";
+        }
+        document.querySelector(".account-bar")?.classList.remove("drawer-open");
+        document.querySelector("header")?.classList.remove("drawer-open");
+      }
       if (["enchanting", "spellmaking", "alchemy"].includes(name) && typeof syncCharacterStatsToCalculators === "function") {
         syncCharacterStatsToCalculators(false);
       }
@@ -2746,6 +3158,20 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     bindOnce(document.getElementById("btn-go-spell"), () => showView("spellmaking"));
     bindOnce(document.getElementById("btn-go-alchemy"), () => showView("alchemy"));
     bindOnce(document.getElementById("btn-go-travel"), () => showView("travel"));
+    bindOnce(document.getElementById("btn-nav-enchant"), () => showView("enchanting"));
+    bindOnce(document.getElementById("btn-nav-spell"), () => showView("spellmaking"));
+    bindOnce(document.getElementById("btn-nav-alchemy"), () => showView("alchemy"));
+    bindOnce(document.getElementById("btn-nav-travel"), () => showView("travel"));
+    bindOnce(document.getElementById("btn-nav-home"), () => showView("home"));
+    bindOnce(document.getElementById("btn-nav-about"), () => showView("about"));
+    bindOnce(document.getElementById("btn-nav-changelog"), () => showView("changelog"));
+    bindOnce(document.getElementById("btn-desk-enchant"), () => showView("enchanting"));
+    bindOnce(document.getElementById("btn-desk-spell"), () => showView("spellmaking"));
+    bindOnce(document.getElementById("btn-desk-alchemy"), () => showView("alchemy"));
+    bindOnce(document.getElementById("btn-desk-travel"), () => showView("travel"));
+    bindOnce(document.getElementById("btn-desk-home"), () => showView("home"));
+    bindOnce(document.getElementById("btn-desk-about"), () => showView("about"));
+    bindOnce(document.getElementById("btn-desk-changelog"), () => showView("changelog"));
     bindOnce(document.getElementById("link-about-footer"), (e) => { if (e && e.preventDefault) e.preventDefault(); showView("about"); });
     bindOnce(document.getElementById("link-changelog-footer"), (e) => { if (e && e.preventDefault) e.preventDefault(); showView("changelog"); });
     var hashBooted = false;
@@ -6618,19 +7044,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const box = document.getElementById("run-summary");
       const text = box ? (box.innerText || box.textContent || "").trim() : "";
       copyText(document.getElementById("btn-copy-summary"), text, "Copy summary", "Copied");
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && drawer && drawer.classList.contains("open")) {
-        drawer.classList.remove("open");
-        if (menuBtn) menuBtn.setAttribute("aria-expanded", "false");
-      }
-    });
-    document.addEventListener("click", (e) => {
-      if (!drawer || !drawer.classList.contains("open")) return;
-      const t = e.target;
-      if (drawer.contains(t) || (menuBtn && menuBtn.contains(t))) return;
-      drawer.classList.remove("open");
-      if (menuBtn) menuBtn.setAttribute("aria-expanded", "false");
     });
     (function setupAlchemy() {
       const INGREDIENTS = [
