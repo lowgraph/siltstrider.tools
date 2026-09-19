@@ -18,7 +18,7 @@ export default function CharacterOverviewCard({
   return (
     <div className="character-overview-card border border-[#3a2e1d] bg-[#14100a] p-4 text-[#f3e6c8]">
       {/* Header bar */}
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#2a2215]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-[#2a2215] gap-2.5">
         <div>
           <span className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
             Character Identity

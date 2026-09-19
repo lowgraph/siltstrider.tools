@@ -18,7 +18,7 @@ export default function RunSummarySheet({
   return (
     <div className="run-summary-sheet border border-[#4a3a22] bg-[#17120a] p-5 text-[#f3e6c8] space-y-5 shadow-2xl relative">
       {/* Title & Sheet Kicker */}
-      <div className="flex items-center justify-between border-b border-[#3a2e1d] pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#3a2e1d] pb-3 gap-2">
         <div>
           <span className="text-[11px] uppercase tracking-widest text-[#9b8b6a] font-serif">
             Character Dossier
@@ -29,11 +29,11 @@ export default function RunSummarySheet({
         </div>
 
         {run?.seed && (
-          <div className="text-right">
+          <div className="sm:text-right">
             <span className="text-[10px] uppercase tracking-wider text-[#8e7e65] block font-serif">
               Seed Active
             </span>
-            <span className="text-xs font-mono font-bold text-[#d4b06a]">
+            <span className="text-xs font-mono font-bold text-[#d4b06a] break-all">
               {run.seed}
             </span>
           </div>
