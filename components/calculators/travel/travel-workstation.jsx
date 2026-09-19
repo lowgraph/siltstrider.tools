@@ -220,7 +220,7 @@ export default function TravelWorkstation() {
               id="travel-origin-select"
               value={origin}
               onChange={(e) => handleOriginChange(e.target.value)}
-              className="w-full mw-select p-2 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+              className="w-full mw-select mw-scrollbar p-2 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
               size={filteredOriginStops.length > 8 ? 6 : Math.max(3, filteredOriginStops.length)}
             >
               {filteredOriginStops.map((stop) => (
@@ -254,7 +254,7 @@ export default function TravelWorkstation() {
               id="travel-destination-select"
               value={destination}
               onChange={(e) => handleDestinationChange(e.target.value)}
-              className="w-full mw-select p-2 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+              className="w-full mw-select mw-scrollbar p-2 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
               size={filteredDestStops.length > 8 ? 6 : Math.max(3, filteredDestStops.length)}
             >
               {filteredDestStops.map((stop) => (

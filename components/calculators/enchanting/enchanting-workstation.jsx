@@ -526,7 +526,7 @@ export default function EnchantingWorkstation() {
               />
             </div>
 
-            <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 border border-[#2a2114] p-1 bg-[#100d08]">
+            <div className="max-h-48 overflow-y-auto mw-scrollbar space-y-1.5 pr-1 border border-[#2a2114] p-1 bg-[#100d08]">
               {filteredEnchanters.slice(0, 15).map((enc) => (
                 <div
                   key={enc.id}

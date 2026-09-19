@@ -8,6 +8,134 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+/* ==========================================================================
+   Global Dark Scheme & Authentic CRPG Scrollbars
+   ========================================================================== */
+:root {
+  color-scheme: dark;
+  --mw-scroll-thumb: #4e3c23;
+  --mw-scroll-thumb-hover: #785d37;
+  --mw-scroll-track: #14100a;
+}
+
+html,
+body {
+  color-scheme: dark;
+  scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track);
+  scrollbar-width: thin;
+}
+
+/* Global scrollbars across all scrollable containers and form elements */
+*,
+*::before,
+*::after {
+  scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track);
+  scrollbar-width: thin;
+}
+
+select,
+input,
+textarea {
+  color-scheme: dark;
+}
+
+/* WebKit / Chromium / Blink / Safari custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #14100a;
+  border: 1px solid #231b11;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4e3c23;
+  border: 1px solid #332717;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #785d37;
+  border-color: #d4b06a;
+}
+
+::-webkit-scrollbar-corner {
+  background: #14100a;
+}
+
+.mw-scrollbar {
+  scrollbar-color: var(--mw-scroll-thumb, #4e3c23) var(--mw-scroll-track, #14100a);
+  scrollbar-width: thin;
+}
+
+.mw-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.mw-scrollbar::-webkit-scrollbar-track {
+  background: var(--mw-scroll-track, #14100a);
+  border: 1px solid #231b11;
+}
+
+.mw-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--mw-scroll-thumb, #4e3c23);
+  border: 1px solid #332717;
+}
+
+.mw-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--mw-scroll-thumb-hover, #785d37);
+}
+
+/* Specific styling for <select size> listboxes */
+select[size] {
+  color-scheme: dark;
+  scrollbar-color: #4e3c23 #14100a;
+  scrollbar-width: thin;
+  background-color: #0c0906 !important;
+  color: #f3e6c8 !important;
+}
+
+select[size]::-webkit-scrollbar {
+  width: 10px;
+}
+
+select[size]::-webkit-scrollbar-track {
+  background: #14100a;
+  border-left: 1px solid #2a2114;
+}
+
+select[size]::-webkit-scrollbar-thumb {
+  background: #4e3c23;
+  border: 1px solid #332717;
+}
+
+select[size]::-webkit-scrollbar-thumb:hover {
+  background: #785d37;
+}
+
+select[size] option {
+  padding: 4px 8px;
+  background-color: #0c0906;
+  color: #f3e6c8;
+}
+
+select[size] option:hover,
+select[size] option:focus,
+select[size] option:checked {
+  background-color: #2a2114 !important;
+  color: #d4b06a !important;
+}
+
+/* Listbox override for selects with size > 1 */
+.mw-select[size]:not([size="1"]) {
+  background-image: none !important;
+  padding-right: 4px !important;
+  cursor: default;
+}
+
 /* No preflight during the compatibility checkpoint. */
 .game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
 

@@ -51,8 +51,8 @@ export default function AlchemyWorkstation() {
   const [retortId, setRetortId] = useState("none");
 
   // Ingredients in the 4 crucible slots
-  const [slot1, setSlot1] = useState(FALLBACK_INGREDIENTS[0]); // Ash Yam
-  const [slot2, setSlot2] = useState(FALLBACK_INGREDIENTS[1]); // Bloat
+  const [slot1, setSlot1] = useState(null);
+  const [slot2, setSlot2] = useState(null);
   const [slot3, setSlot3] = useState(null);
   const [slot4, setSlot4] = useState(null);
 
@@ -64,6 +64,18 @@ export default function AlchemyWorkstation() {
   const [search2, setSearch2] = useState("");
   const [search3, setSearch3] = useState("");
   const [search4, setSearch4] = useState("");
+
+  const handleClearAllIngredients = () => {
+    setSlot1(null);
+    setSlot2(null);
+    setSlot3(null);
+    setSlot4(null);
+    setSearch1("");
+    setSearch2("");
+    setSearch3("");
+    setSearch4("");
+    setCustomPotionName("");
+  };
 
   const allIngredients = useMemo(() => {
     if (typeof window !== "undefined" && Array.isArray(window.INGREDIENTS) && window.INGREDIENTS.length > 0) {
@@ -286,6 +298,22 @@ export default function AlchemyWorkstation() {
 
           {/* 4 Crucible Slots */}
           <div className="space-y-3">
+            <div className="flex items-center justify-between border-b border-[#3a2e1d] pb-1.5">
+              <h4 className="text-xs uppercase font-serif font-bold text-[#d4b06a] tracking-wider">
+                Crucible Ingredients
+              </h4>
+              {(slot1 || slot2 || slot3 || slot4) && (
+                <button
+                  type="button"
+                  className="mw-btn px-2.5 py-0.5 text-xs font-serif font-bold"
+                  onClick={handleClearAllIngredients}
+                  title="Remove all ingredients from the crucible slots"
+                >
+                  Clear All Ingredients
+                </button>
+              )}
+            </div>
+
             {slotsData.map(({ slotIndex, current, setSlot, search, setSearch }) => {
               const pool = getPoolForSlot(slotIndex, search);
 
@@ -299,8 +327,12 @@ export default function AlchemyWorkstation() {
                     {current && (
                       <button
                         type="button"
-                        className="text-xs text-[#a03017] hover:text-[#e29381] font-serif"
-                        onClick={() => setSlot(null)}
+                        className="mw-btn px-2 py-0.5 text-[11px] font-serif"
+                        onClick={() => {
+                          setSlot(null);
+                          setSearch("");
+                        }}
+                        title={`Clear Slot ${slotIndex + 1}`}
                       >
                         Clear
                       </button>
