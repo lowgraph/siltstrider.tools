@@ -149,7 +149,7 @@ export default function CharacterBuilderRoot() {
           </div>
 
           {/* Decoupled Gear Advisor */}
-          <GearAdvisor build={{...build, world:shell.world, arce:shell.arce}} />
+      <GearAdvisor attrs={Object.fromEntries(Object.entries(sheet?.attrs||{}).map(([key,value])=>[key,value.v]))} beast={Boolean(catalogs?.races?.[build.race]?.beast)} build={{...build, world:shell.world, arce:shell.arce}} />
         </>
       )}
     </div>

@@ -59,11 +59,34 @@ required for Web Crypto. Old release entries remain browser-managed; no cache
 cleanup runs against a release another open tab may be using. Metadata currently
 requires connectivity on a new page session; this is not a full offline mode.
 
-The loader does not fetch locations, world SQLite, book prose, journal or travel
-SQL databases. Gear rows need their own adapter. The pipeline can publish a
-`GearRows` catalog, but the currently staged release does not contain it. Staging
-validates the release manifest; it does not generate missing catalogs or
-automatically switch the optimizer to a new data source.
+The loader does not fetch world SQLite, book prose, journal or travel SQL databases.
+`GearRows` is loaded only when the user clicks Optimize Gear. The staged
+release `05c8e35f088e181ca115d94c` supplies 424 rows per profile (TR+ARCE inherits TR).
+`loadFeature` returns verified envelope fields in `metadata` alongside `catalogs`;
+inherited metadata retains its source profile, while the feature retains the
+selected profile. No extra payload request is needed for metadata.
+
+The existing optimizer's Early game section uses `makeBuildProfile` for the same
+race, attribute, specialization and skill priorities as the endgame optimizer.
+It loads GearRows, Armor and Clothing on demand. Primary armor and one major-skill
+alternative set are grouped separately. Bracers and gauntlets share one slot;
+clothing gloves and shoes are omitted when either displayed armor set occupies
+those slots. A recommended shield restricts weapons to one-handed choices; if
+only a two-handed primary is available the shield is removed. Unarmored and
+unarmed builds retain their corresponding empty equipment slots.
+
+Beast compatibility uses catalog bodyParts: OpenMW rejects head (0) and foot
+(15/16) parts. Hair-only helmets remain eligible; a compatible published alternative
+can replace an incompatible primary. Missing compatibility data is never guessed.
+Only the published primary/alternative candidates can be selected; a lower-ranked
+compatible item may exist outside those rows. Source: OpenMW Armor::canBeEquipped
+and components/esm3/loadarmo.hpp.
+
+The interface keeps Slot / Item / Where, 'or' rows, the shared Optimize Gear action,
+and three independent policy toggles. Broken equipment requires repair before use;
+condition-scaled values are not merchant quotes. A ring row establishes one copy,
+not a guaranteed pair. Late-game and constant-effect ranking remain in the existing
+optimizer. These changes never reevaluate acquisition policy or run extraction.
 
 ## Checks
 

@@ -146,3 +146,20 @@ test('REJECTS an ARCE delta that claims a base other than its profile base',asyn
  b.profile('tr_arce').files.Classes.base='vanilla';
  await assert.rejects(loadAll(b.publish()),/invalid file kind\/base/);
 });
+
+
+test('gear feature preserves verified policy metadata and ARCE inheritance without duplicate downloads',async()=>{
+ const b=bundle().catalog('GearRows',{payloadField:'coverage'}).catalog('Armor').catalog('Clothing').publish(),hits=[];
+ const {createBundleLoader}=await modulePromise;
+ const loader=createBundleLoader({baseUrl:ROOT,crypto:webcrypto,cacheStorage:null,fetcher:async url=>{
+   hits.push(url);return new Response(b.routes.get(url));
+ }});
+ const data=await loader.loadFeature('tr_arce','gear');
+ assert.equal(data.profile,'tr_arce');assert.equal(data.metadata.GearRows.profile.id,'tr');
+ assert.equal(data.metadata.GearRows.coverage,'future');
+ assert.equal(data.metadata.GearRows.records,undefined);
+ assert.ok(Object.isFrozen(data.metadata.GearRows));
+ assert.equal(hits.filter(u=>u.endsWith('/GearRows.json')).length,1);
+ assert.ok(!hits.some(u=>u.endsWith('/Races.json')));
+ assert.equal((await loader.loadFeature('vanilla','gear')).metadata.GearRows.profile.id,'vanilla');
+});
