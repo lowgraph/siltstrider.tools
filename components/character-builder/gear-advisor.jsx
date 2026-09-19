@@ -56,7 +56,7 @@ export default function GearAdvisor({ build }) {
 
   return (
     <div
-      className="gear-advisor mt-6 p-5 space-y-5 text-sm w-full max-w-[1280px] mx-auto"
+      className="gear-advisor mt-6 px-8 sm:px-10 py-6 space-y-5 text-sm w-full"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",

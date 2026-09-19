@@ -48,7 +48,7 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
 
   return (
     <div
-      className="premade-browser p-5 space-y-5 text-sm"
+      className="premade-browser px-8 sm:px-10 py-6 space-y-5 text-sm"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",

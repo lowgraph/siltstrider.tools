@@ -117,7 +117,7 @@ export default function Configurator({
 
   return (
     <div
-      className="configurator p-6 sm:p-7 space-y-6 text-sm"
+      className="configurator px-8 sm:px-10 py-6 sm:py-7 space-y-6 text-sm"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",

@@ -59,7 +59,7 @@ export default function CharacterBuilderRoot() {
   const handleSelectClassPreset = selectClassPreset;
 
   return (
-    <div className="character-builder-root w-full max-w-[1280px] mx-auto px-3 sm:px-6 py-6 space-y-6">
+    <div className="character-builder-root w-full mx-auto space-y-6">
       {/* Top Mode Bar */}
       <div className="mode-bar flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3 flex-wrap">

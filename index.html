@@ -4009,7 +4009,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         r.picks.forEach((p, i) => {
           const tag = p.tr ? "<span class=\"gear-tag\">Tamriel Rebuilt</span>" : "";
           const rating = armorRatingText(p.item);
-          const text = rating && p.note ? rating + " — " + p.note : rating ? rating + "." : p.note;
+          const ratingTag = rating ? "<span class=\"gear-ar-tag\">" + rating + "</span>" : "";
+          const noteText = p.note ? "<span class=\"gear-note-text\">" + p.note + "</span>" : "";
+          const text = ratingTag && noteText ? ratingTag + " — " + noteText : ratingTag ? ratingTag + "." : noteText;
           const note = text ? "<span class=\"gear-note\">" + text + "</span>" : "";
           h += "<tr" + (i ? " class=\"gear-alt\"" : "") + "><td>" + (i ? "or" : r.slot) + "</td>"
             + "<td>" + tag + "<span class=\"gear-name\">" + p.item + "</span>" + note + "</td>"

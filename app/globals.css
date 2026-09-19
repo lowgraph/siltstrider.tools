@@ -4,17 +4,27 @@
 /* No preflight during the compatibility checkpoint. */
 .game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
 
-/* Modern React Character Builder takes over #panel-build */
+/* Modern React Character Builder takes over #panel-build inside an authentic master window frame */
 body.view-builder #panel-build {
   display: block !important;
   width: 100% !important;
   max-width: 1280px !important;
-  margin: 0 auto !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  margin: 16px auto 32px !important;
+  padding: 24px 28px !important;
+  background: var(--surface, #181510) !important;
+  background-clip: padding-box !important;
+  border: 6px solid transparent !important;
+  border-image: var(--mw-border) 6 repeat !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 0 16px 2px rgba(0, 0, 0, 0.85) !important;
   align-self: center !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 767px) {
+  body.view-builder #panel-build {
+    padding: 12px 10px !important;
+    margin: 8px auto 16px !important;
+  }
 }
 
 /* Hide legacy DOM children inside #panel-build while preserving modern React container */
@@ -36,7 +46,7 @@ body.view-builder .hero {
 .cb-dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1.25rem;
   align-items: start;
   width: 100%;
 }
@@ -242,15 +252,53 @@ body.view-builder .hero {
   margin-top: 4px;
 }
 
-/* Gear Recommendations Table: prevent slot/category wrapping and alternate row backgrounds */
+/* Gear Recommendations Table: authentic CRPG face lift */
 .gear-results-container table,
 #gear-box table {
   width: 100%;
   border-collapse: collapse;
 }
 
+.gear-results-container thead th,
+#gear-box thead th {
+  font-family: "Pelagiad", Georgia, serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: #d4b06a !important;
+  background: #14100a !important;
+  border-bottom: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  padding: 8px 12px !important;
+}
+
+.gear-results-container th[colspan],
+#gear-box th[colspan] {
+  font-family: "Pelagiad", Georgia, serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: #d4b06a !important;
+  background: linear-gradient(90deg, rgba(62, 42, 22, 0.75) 0%, rgba(18, 14, 9, 0.45) 100%) !important;
+  border-top: 2px solid transparent !important;
+  border-bottom: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  padding: 8px 12px !important;
+}
+
+.gear-results-container td,
+#gear-box td {
+  padding: 8px 12px !important;
+  border-bottom: 1px solid #2a2216 !important;
+  vertical-align: middle !important;
+}
+
 .gear-results-container td:first-child,
 #gear-box td:first-child {
+  font-family: "Pelagiad", Georgia, serif;
+  font-size: 0.95rem;
   white-space: nowrap !important;
   word-break: normal !important;
   overflow-wrap: normal !important;
@@ -273,6 +321,79 @@ body.view-builder .hero {
 .gear-results-container tbody tr:hover,
 #gear-box tbody tr:hover {
   background: rgba(201, 162, 39, 0.16) !important;
+}
+
+/* Distinct CRPG Armor Rating Badge */
+.gear-ar-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #f3e6c8;
+  background: linear-gradient(180deg, #2d2215 0%, #171109 100%);
+  border: 1px solid #9e7f45;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.7), 0 1px 2px rgba(0, 0, 0, 0.4);
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.gear-results-container .gear-name,
+#gear-box .gear-name {
+  display: block;
+  font-family: "Pelagiad", Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f3e6c8;
+  letter-spacing: 0.01em;
+}
+
+.gear-results-container .gear-note,
+#gear-box .gear-note {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  color: #c4b598;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.gear-note-text {
+  color: #b8a585;
+  font-size: 0.825rem;
+}
+
+.gear-results-container .gear-tag,
+#gear-box .gear-tag {
+  display: inline-block;
+  margin-bottom: 3px;
+  padding: 1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #d4b06a;
+  background: #1e170d;
+  border: 1px solid #7a6338;
+}
+
+.gear-results-container .region-tag,
+#gear-box .region-tag {
+  display: inline-block;
+  margin: 2px 0 0 4px;
+  padding: 1px 5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #d4b06a;
+  background: #18120b;
+  border: 1px solid #6b5327;
 }
 
 @media (max-width: 640px) {
