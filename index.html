@@ -2106,7 +2106,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "Marksman only",
       "No jumping",
       "Walk only — no running",
-      "No Magicka — fatigue and potions only",
+      "No Magicka",
       "No spending Magicka",
       "No shrines or altars",
       "No Tribunal or Bloodmoon DLC",
@@ -2124,13 +2124,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       "No activated racial powers",
       "No enchanted items at all",
       "Cast When Used items only — no Constant Effect",
-      "No Intervention spells, Mark, Recall, or Guild Guides",
+      "No guild guides, recall or intervention",
       "Silt strider and boat only — no Guild Guide",
       "No flying (levitate or jump stacking)",
       "No water breathing items or spells",
       "Vegetarian — no meat or animal ingredients in alchemy",
       "Roleplay: never attack first",
       "Roleplay: never refuse a quest",
+      "Join no factions until you have visited five settlements",
       "Encumbrance under 50 at all times",
       "No Strength above starting value",
       "No Intelligence above starting value",
@@ -2160,7 +2161,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     ];
     const VANILLA_POOL = POOL;
     const HARD = [
-      "No potions", "No magic", "No melee", "Major skills only", "No armor", "No Magicka — fatigue and potions only", "No spending Magicka",
+      "No potions", "No magic", "No melee", "Major skills only", "No armor", "No Magicka", "No spending Magicka",
+      "No merchants except to pay for training",
       "Permadeath — one life", "Ironman — no reloading a save after a fight", "Ironman — no quicksaving",
       "Unarmored only", "Clothing only — no armor pieces", "Fists only — Hand-to-hand",
       "No enchanted items at all",
@@ -2260,7 +2262,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (/marksman only|no ranged/.test(t)) add("ranged");
       if (/no magic\b|no magicka/.test(t)) add("magic");
       if (/no potions/.test(t) || /atronach and no potions/.test(t)) add("potions");
-      if (/fatigue and potions only/.test(t)) add("potions");
+      if (/reach level/i.test(t)) add("level");
       if (/no enchanted items|cast when used/.test(t)) add("enchant");
       if (/lawful|never murder|no stealing/.test(t)) add("lawful");
       if (/outlaw/.test(t)) add("outlaw");
@@ -2280,6 +2282,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     function restrictionBans(text) {
       const t = String(text || "").toLowerCase();
       const bans = tagsOf(text);
+      if (/level 20 cap|level 10 cap|never sleep to level|stay level 1/.test(t)) bans.push("level");
       if (/no great house/.test(t)) return ["greathouse", "stronghold"];
       if (/no stronghold/.test(t)) return ["stronghold"];
       if (/no artifacts/.test(t)) return bans.concat(["artifact", "mainquest"]);
@@ -2300,14 +2303,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (/fists only/.test(t)) return ["ranged", "magic"];
       if (/marksman only/.test(t)) return ["melee"];
       if (/no potions/.test(t) || /atronach and no potions/.test(t)) return ["potions"];
-      if (/fatigue and potions only/.test(t)) return ["magic", "potions"];
-      if (/no magic\b/.test(t)) return ["magic"];
+      if (/no magic\b|no magicka/.test(t)) return ["magic"];
       if (/no ranged/.test(t)) return ["ranged"];
       if (/no enchanted items/.test(t)) return ["enchant"];
       if (/no armor|unarmored only|clothing only/.test(t)) return ["armor"];
       if (/no stealth|no sneaking/.test(t)) return ["stealth"];
       if (/no lockpicking/.test(t)) return ["lock"];
-      if (/no fast travel|walk only|walk everywhere|no interven|no recall|silt strider and boat only/.test(t)) return ["travel"];
+      if (/no fast travel|walk only|walk everywhere|no interven|no recall|silt strider and boat only|guild guide/.test(t)) return ["travel"];
       if (/no creeper or mudcrab/.test(t)) return ["merchant"];
       if (/no alchemy/.test(t)) return ["potions"];
       return bans;
@@ -2322,10 +2324,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (/marksman only/i.test(a) && /fists only/i.test(b)) return true;
       if (/no enchanted items/i.test(a) && /cast when used/i.test(b)) return true;
       if (/cast when used/i.test(a) && /no enchanted items/i.test(b)) return true;
-      if (/no potions/i.test(a) && /fatigue and potions only/i.test(b)) return true;
-      if (/fatigue and potions only/i.test(a) && /no potions/i.test(b)) return true;
-      if (/atronach and no potions/i.test(a) && /fatigue and potions only/i.test(b)) return true;
-      if (/fatigue and potions only/i.test(a) && /atronach and no potions/i.test(b)) return true;
       if (/no tribunal or bloodmoon/i.test(a) && /werewolf|bloodmoon/i.test(b)) return true;
       if (/no tribunal or bloodmoon/i.test(b) && /werewolf|bloodmoon/i.test(a)) return true;
       const either = (x, y) => (x.test(a) && y.test(b)) || (x.test(b) && y.test(a));
@@ -2558,7 +2556,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       { kind: "COLLECTION", text: "Mine raw ebony or raw glass yourself and sell it" },
       { kind: "ACTION", text: "Taste (eat) five alchemy ingredients you have never used" },
       { kind: "ACTION", text: "Make one potion and never drink it — sell or drop it" },
-      { kind: "ROLEPLAY", text: "Join no factions until you have visited five settlements" },
       { kind: "ROLEPLAY", text: "Sleep in a tomb" },
       { kind: "ROLEPLAY", text: "Leave an offering in an ancestral tomb urn and take nothing" },
       { kind: "COLLECTION", text: "Find a unique named weapon that is not an artifact" },
@@ -5125,7 +5122,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       const keepC = cr ? cr.value : "";
       const keepR = rr ? rr.value : "";
       if (cr) { fillSelect(cr, names); if (names.indexOf(keepC) !== -1) cr.value = keepC; else if (names.length) cr.value = names[0]; }
-      if (rr) { fillSelect(rr, names); if (names.indexOf(keepR) !== -1) rr.value = keepR; else if (names.length) rr.value = names[0]; }
+      if (rr) { const rNames = names.filter((name) => name !== "Hill Giant"); fillSelect(rr, rNames); if (rNames.indexOf(keepR) !== -1) rr.value = keepR; else if (rNames.length) rr.value = rNames[0]; }
       if (rc) {
         const keepCls = rc.value;
         const classes = ["Custom"].concat(CLASS_NAMES_NOW());
@@ -5814,7 +5811,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     function rollOne(key) {
       if (isLocked(key)) return;
       const r = challengeRun;
-      if (key === "race") { r.race = pickOne(Object.keys(raceTable())); setPick("r-race", r.race); }
+      if (key === "race") {
+        const pool = Object.keys(raceTable()).filter((name) => name !== "Hill Giant");
+        r.race = pickOne(pool);
+        setPick("r-race", r.race);
+      }
       else if (key === "gender") { r.gender = pickOne(["Male", "Female"]); setPick("r-gender", r.gender); }
       else if (key === "sign") { r.sign = pickOne(Object.keys(SIGNS)); setPick("r-sign", r.sign); }
       else if (key === "cls") rollClass();

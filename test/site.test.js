@@ -511,7 +511,7 @@ test("restrictions that repeat or undercut each other don't roll together", asyn
   const pairs = [
     ["Level 20 cap", "Level 10 cap"],
     ["No magic", "No spending Magicka"],
-    ["No Magicka — fatigue and potions only", "No spending Magicka"],
+    ["No Magicka", "No spending Magicka"],
     ["No spending Magicka", "No destruction"],
     ["No birthsign powers", "No activated birthsign powers"],
     ["No racial powers", "No activated racial powers"],
@@ -537,6 +537,69 @@ test("restrictions that repeat or undercut each other don't roll together", asyn
     const picks = [...window.pickCompatibleRestrictions(5, pool, [])];
     for (const a of picks) for (const b of picks) if (a !== b) assert.ok(!clash(a, b), `rolled ${a} with ${b}`);
   }
+});
+
+test("challenge run pool and logic refinements: Hill Giant, No Magicka, merchant training, settlements, and level 50 cap conflict", async () => {
+  const dom = await loadSite();
+  const { window } = dom;
+  const pool = [...window.eval("POOL")];
+  const hard = [...window.eval("HARD")];
+  const objectives = [...window.eval("OBJECTIVES")].map((o) => o.text);
+
+  // 1. Hill Giant is excluded from the randomizer pool
+  window.eval('arceOn = true; applyArceLists();');
+  const rRaceOptions = [...window.document.querySelectorAll("#r-race option")].map((o) => o.value);
+  assert.ok(!rRaceOptions.includes("Hill Giant"), "Hill Giant must not be in randomizer race select list");
+  for (let i = 0; i < 50; i++) {
+    window.rollOne("race");
+    assert.notEqual(window.challengeRun.race, "Hill Giant", "Randomizer must never roll Hill Giant");
+  }
+
+  // 2. Hard — No Magicka (fatigue and potions only portion removed)
+  assert.ok(pool.includes("No Magicka"), "No Magicka must be in POOL");
+  assert.ok(!pool.includes("No Magicka — fatigue and potions only"), "old No Magicka wording must be removed from POOL");
+  assert.ok(hard.includes("No Magicka"), "No Magicka must be in HARD");
+  assert.equal(window.band("No Magicka"), "Hard");
+
+  // 3. No merchants except to pay for training is classified as Hard
+  assert.ok(pool.includes("No merchants except to pay for training"));
+  assert.ok(hard.includes("No merchants except to pay for training"), "No merchants except to pay for training must be in HARD");
+  assert.equal(window.band("No merchants except to pay for training"), "Hard");
+
+  // 4. Join no factions until you have visited five settlements is in POOL, not in OBJECTIVES
+  assert.ok(pool.includes("Join no factions until you have visited five settlements"), "must be in POOL as a restriction");
+  assert.ok(!objectives.includes("Join no factions until you have visited five settlements"), "must not be in OBJECTIVES");
+
+  // 5. No guild guides, recall or intervention in POOL
+  assert.ok(pool.includes("No guild guides, recall or intervention"), "No guild guides, recall or intervention must be in POOL");
+  assert.ok(!pool.includes("No Intervention spells, Mark, Recall, or Guild Guides"), "old intervention wording must be removed");
+
+  // 6. Reach level 50 conflicts with level cap restrictions in logic
+  assert.ok(objectives.includes("Reach level 50") || [...window.eval("MAJORS")].includes("Reach level 50"));
+  const levelNeeds = [...window.tagsOf("Reach level 50")];
+  assert.deepEqual(levelNeeds, ["level"]);
+  assert.ok(!window.restrictionOkForNeeds("Level 20 cap", levelNeeds), "Level 20 cap must conflict with Reach level 50");
+  assert.ok(!window.restrictionOkForNeeds("Level 10 cap", levelNeeds), "Level 10 cap must conflict with Reach level 50");
+  assert.ok(!window.restrictionOkForNeeds("Never sleep to level up — stay level 1", levelNeeds), "stay level 1 must conflict with Reach level 50");
+
+  // Rolling restrictions under Reach level 50 never picks level cap restrictions
+  window.challengeRun.major = "Reach level 50";
+  window.challengeRun.minors = [];
+  for (let i = 0; i < 50; i++) {
+    window.rollRestrictions();
+    for (const r of window.challengeRun.rests) {
+      assert.ok(!/level 20 cap|level 10 cap|stay level 1/i.test(r), `rolled ${r} under Reach level 50`);
+    }
+  }
+
+  // Rolling major under locked Level 20 cap never picks Reach level 50
+  window.challengeRun.rests = ["Level 20 cap"];
+  window.eval('aspectLocks.rest = true;');
+  for (let i = 0; i < 50; i++) {
+    window.rollMajor();
+    assert.notEqual(window.challengeRun.major, "Reach level 50", "rolled Reach level 50 under locked Level 20 cap");
+  }
+  window.eval('aspectLocks.rest = false;');
 });
 
 test("starting spells come from the race, the birthsign and the magic skills", async () => {
