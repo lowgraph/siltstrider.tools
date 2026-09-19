@@ -3,7 +3,6 @@ import Configurator from "./configurator";
 import CharacterSheet from "./character-sheet";
 import PremadeBrowser from "./premade-browser";
 import GearAdvisor from "./gear-advisor";
-import VitalsBar from "./vitals-bar";
 import LocalCharactersPanel from "./local-characters-panel";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
@@ -119,20 +118,6 @@ export default function CharacterBuilderRoot() {
         />
       ) : (
         <>
-          {/* Quick Vitals HUD (shown on screens < 1024px when on configurator tab) */}
-          {sheet && (
-            <div className="character-vitals-hud block lg:hidden bg-[#100d08] p-3 border border-[#2a2318] space-y-2 mw-groove-panel">
-              <div className="text-xs font-mono text-[#d4b06a] mb-1 pb-1 border-b border-[#221c13]">
-                <span className="font-serif font-bold text-sm">Character Vitals</span>
-              </div>
-              <div className="flex flex-col space-y-2">
-                <VitalsBar label="Health" kind="health" value={sheet.health} max={sheet.health} />
-                <VitalsBar label="Magicka" kind="magicka" value={sheet.magicka} max={sheet.magicka} />
-                <VitalsBar label="Fatigue" kind="fatigue" value={sheet.fatigue} max={sheet.fatigue} />
-              </div>
-            </div>
-          )}
-
           {/* Desktop 2-Pane Dashboard: Side-by-Side on Desktop (>=1024px), Tabbed on screens < 1024px */}
           <div className="cb-dashboard">
             <div className={`cb-pane ${mobileTab !== "config" ? "cb-pane-mobile-hidden" : ""}`}>

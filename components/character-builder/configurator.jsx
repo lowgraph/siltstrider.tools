@@ -204,10 +204,10 @@ export default function Configurator({
       </div>
 
       {/* Row 3: Specialization & Favored Attributes (Clean grid, no enclosing box) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label htmlFor="builder-spec" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
-            <span>Specialization</span>
+            <span>Specialization (+5)</span>
             <InfoTip
               text={
                 specSkills[build.spec]
@@ -217,7 +217,7 @@ export default function Configurator({
             />
           </label>
           <select id="builder-spec"
-            className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
+            className="mw-select w-full h-10 px-2.5 py-2 text-sm focus:outline-none"
             disabled={build.className !== "Custom"}
             aria-label="Specialization"
             value={build.spec}
@@ -225,7 +225,7 @@ export default function Configurator({
           >
             {["Combat", "Magic", "Stealth"].map((sp) => (
               <option key={sp} value={sp}>
-                {sp} (+5 skills)
+                {sp}
               </option>
             ))}
           </select>
@@ -233,11 +233,11 @@ export default function Configurator({
 
         <div>
           <label htmlFor="builder-fav1" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
-            <span>Favored Attr 1</span>
+            <span>Favored Attr 1 (+10)</span>
             <InfoTip text={ATTR_TIP[build.fav1] || "Grants +10 starting attribute bonus."} />
           </label>
           <select id="builder-fav1"
-            className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
+            className="mw-select w-full h-10 px-2.5 py-2 text-sm focus:outline-none"
             disabled={build.className !== "Custom"}
             aria-label="Favored attribute 1"
             value={build.fav1}
@@ -245,7 +245,7 @@ export default function Configurator({
           >
             {ATTRS.map((a) => (
               <option key={a} value={a}>
-                {a} (+10)
+                {a}
               </option>
             ))}
           </select>
@@ -253,11 +253,11 @@ export default function Configurator({
 
         <div>
           <label htmlFor="builder-fav2" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
-            <span>Favored Attr 2</span>
+            <span>Favored Attr 2 (+10)</span>
             <InfoTip text={ATTR_TIP[build.fav2] || "Grants +10 starting attribute bonus."} />
           </label>
           <select id="builder-fav2"
-            className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
+            className="mw-select w-full h-10 px-2.5 py-2 text-sm focus:outline-none"
             disabled={build.className !== "Custom"}
             aria-label="Favored attribute 2"
             value={build.fav2}
@@ -265,7 +265,7 @@ export default function Configurator({
           >
             {ATTRS.map((a) => (
               <option key={a} value={a}>
-                {a} (+10)
+                {a}
               </option>
             ))}
           </select>
