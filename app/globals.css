@@ -49,6 +49,27 @@ body.view-builder .hero {
   align-items: center;
 }
 
+@media (max-width: 767px) {
+  body.view-challenge #panel-challenge {
+    padding: 16px 12px !important;
+    margin: 8px auto 16px !important;
+  }
+}
+
+/* Hide legacy DOM children inside #panel-challenge while preserving modern React container */
+body.view-challenge #panel-challenge > *:not(.challenge-runs-root) {
+  display: none !important;
+}
+
+/* Guarantee no other legacy panel displays in view-challenge */
+body.view-challenge .panel:not(#panel-challenge) {
+  display: none !important;
+}
+
+body.view-challenge .hero {
+  align-items: center;
+}
+
 /* Character Builder Two-Pane Layout (immune to legacy CSS collisions) */
 .cb-dashboard {
   display: grid;

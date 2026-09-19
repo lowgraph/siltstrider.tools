@@ -8,6 +8,7 @@ import {ShellProvider,useShell} from './shell-context';
 import {getGameDataLoader} from './use-game-data';
 import {createCharacterCatalogService,profileFromLocation} from '../lib/character-catalogs.mjs';
 import CharacterBuilderRoot from './character-builder/character-builder-root';
+import ChallengeRunsRoot from './challenge-runs/challenge-runs-root';
 import {CharacterProvider} from './character-context';
 import {EnchantingHud,SpellmakingHud,AlchemyHud,TravelHud} from './calculator-hud';
 
@@ -21,10 +22,18 @@ function ActiveViewOverlay() {
   return null;
 }
 
+function ChallengeViewOverlay() {
+  const shell = useShell();
+  if (shell.view === 'challenge') {
+    return <ChallengeRunsRoot />;
+  }
+  return null;
+}
+
 export default function LegacyWorkbench({html,revision}){
  const isClient = typeof window !== 'undefined';
  const [dataReady,setDataReady]=useState(()=>isClient&&Boolean(window.POOL||window.MAJORS));
- const [slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null);
+ const [slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null),[challengeSlot,setChallengeSlot]=useState(null);
  const [catalogReady,setCatalogReady]=useState(()=>isClient&&Boolean(window.siltCharacters?.active));
  const [booted,setBooted]=useState(()=>isClient&&Boolean(window.siltShell));
  const [enchantSlot,setEnchantSlot]=useState(null),[spellSlot,setSpellSlot]=useState(null),[alchemySlot,setAlchemySlot]=useState(null),[travelSlot,setTravelSlot]=useState(null);
@@ -32,6 +41,7 @@ export default function LegacyWorkbench({html,revision}){
  useEffect(()=>{
   setSlot(document.getElementById('react-header-slot'));
   setMainSlot(document.getElementById('panel-build') || document.getElementById('main-tools'));
+  setChallengeSlot(document.getElementById('panel-challenge'));
   if (isClient) {
     if (window.POOL || window.MAJORS) setDataReady(true);
     if (window.siltShell) setBooted(true);
@@ -82,6 +92,7 @@ export default function LegacyWorkbench({html,revision}){
     </div>
     {slot&&createPortal(<SiteHeader/>,slot)}
     {mainSlot&&createPortal(<ActiveViewOverlay/>,mainSlot)}
+    {challengeSlot&&createPortal(<ChallengeViewOverlay/>,challengeSlot)}
     {enchantSlot&&createPortal(<EnchantingHud/>,enchantSlot)}
     {spellSlot&&createPortal(<SpellmakingHud/>,spellSlot)}
     {alchemySlot&&createPortal(<><AlchemyDataBridge/><AlchemyHud/></>,alchemySlot)}

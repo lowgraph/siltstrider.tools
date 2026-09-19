@@ -2327,7 +2327,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (/no tribunal or bloodmoon/i.test(a) && /werewolf|bloodmoon/i.test(b)) return true;
       if (/no tribunal or bloodmoon/i.test(b) && /werewolf|bloodmoon/i.test(a)) return true;
       const either = (x, y) => (x.test(a) && y.test(b)) || (x.test(b) && y.test(a));
-      if (either(/marksman only/i, /no ranged/i) || either(/fists only/i, /no ranged/i) || either(/marksman only/i, /no melee/i)) return true;
+      if (either(/marksman only/i, /no ranged/i) || either(/fists only/i, /no ranged/i) || either(/marksman only/i, /no melee/i) || either(/fists only/i, /no melee/i)) return true;
       // No magic, No Magicka and No spending Magicka already rule out any one school or kind of spell.
       if (either(/^no magic$|no magicka|no spending magicka/i, /^no (restoration|conjuration|illusion|mysticism|alteration|destruction)$|no restore health spells|no bound weapons|no summons in combat/i)) return true;
       return false;
