@@ -345,8 +345,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     body.view-builder #panel-home,
     body.view-enchanting #panel-home,
     body.view-spellmaking #panel-home,
-    body.view-alchemy #panel-home { display: none !important; }
-    body.view-travel #panel-home { display: none !important; }
+    body.view-alchemy #panel-home,
+    body.view-travel #panel-home,
+    body.view-about #panel-home,
+    body.view-changelog #panel-home { display: none !important; }
     body.view-challenge #panel-challenge { display: block; }
     body.view-builder #panel-build { display: block; }
     body.view-enchanting #panel-enchant { display: block; }
@@ -1541,6 +1543,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       <section class="changelog-day">
         <h3><time datetime="2026-09-19">September 19, 2026</time></h3>
         <ul>
+          <li>Four specialized calculator workstations: overhauled Enchanting, Spellmaking, Alchemy, and Travel from static legacy forms into responsive, two-pane CRPG interactive workstations that dynamically ingest character stats, skills, and fatigue from the active character sheet via useActiveCharacter, with bidirectional DOM synchronization.</li>
+          <li>Enchanting Workstation: live visual capacity gauge bar (0 / 120 points) with base item presets, soul gem selector from Petty to Grand with 400-soul Constant Effect indicator, When Used, On Strike, and Constant Effect toggles, multi-effect stack builder, self-enchant success chance %, and ranked barter pricing for 21 Vanilla and 15 Tamriel Rebuilt enchanters with live search.</li>
+          <li>Spellmaking Workstation: custom spell naming, magic school filter tabs (Alteration, Conjuration, Destruction, Illusion, Mysticism, Restoration), multi-effect stack editor with min/max magnitude, duration, area, and range inputs, exact OpenMW magicka cost formula, cast reliability rating badge, governing school indicator, and ranked barter pricing for 38 named spellmakers.</li>
+          <li>Alchemy Workstation: apparatus rack with Mortar &amp; Pestle, Alembic, Calcinator, and Retort across five quality tiers, four crucible slots with live ingredient search, effect pills, and a filter to show only ingredients sharing effects with Slot 1. Live potion preview calculates brew success chance %, gold value, magnitude, and duration.</li>
+          <li>Alchemy Crucible clear controls: crucible slots initialize clean and empty, with a new Clear All Ingredients button in the crucible subheader to reset all slots, search queries, and custom names in one click, plus individual per-slot Clear buttons that clear both the selected ingredient and search text.</li>
+          <li>Travel Optimizer Workstation: shortest-hop BFS transit network router across Silt Striders, Boats, Guild Guides, and River Striders. Features searchable origin and destination listboxes, fast-select travel hubs, quick origin/destination swap, turn-by-turn navigation cards, and complete waypoint breadcrumb chain.</li>
+          <li>Authentic dark CRPG scrollbars: added global dark color-scheme on root and all form elements, standard scrollbar-color (#4e3c23 thumb on #14100a track), and custom WebKit scrollbars across all scrollable containers and listbox elements (select[size]), permanently eliminating white browser scrollbars.</li>
+          <li>Pure CRPG aesthetic: completely emoji-free interface across all tools, with no white boxes or light borders, and all difficulty buttons, gauge bars, and service badges harmonized with authentic Morrowind gold, brass, and dark wood tones.</li>
           <li>Character Builder workspace alignment: Custom Class Builder spans directly above Character Configuration, and Premade Builds Catalog spans directly above Character Sheet, framing the desktop layout into two balanced, column-aligned work areas.</li>
           <li>Enclosed the Character Builder inside the game's authentic 6-pixel ornate parchment window frame with deep inset shading, giving it the same master window treatment as Challenge Runs.</li>
           <li>Desktop panel spacing: reduced the gap between the Configurator and Character Sheet to 20 pixels, bringing the planner into a tighter, cohesive side-by-side workstation without losing breathing room.</li>
@@ -2899,13 +2909,15 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       });
     } catch (e) {}
     function showView(name) {
-      document.body.classList.remove("view-challenge", "view-builder", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel");
+      document.body.classList.remove("view-challenge", "view-builder", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
       if (name === "challenge") document.body.classList.add("view-challenge");
       if (name === "builder") document.body.classList.add("view-builder");
       if (name === "enchanting") document.body.classList.add("view-enchanting");
       if (name === "spellmaking") document.body.classList.add("view-spellmaking");
       if (name === "alchemy") document.body.classList.add("view-alchemy");
       if (name === "travel") document.body.classList.add("view-travel");
+      if (name === "about") document.body.classList.add("view-about");
+      if (name === "changelog") document.body.classList.add("view-changelog");
       var navC = document.getElementById("btn-challenge");
       var navB = document.getElementById("btn-build");
       if (navC) navC.setAttribute("aria-current", name === "challenge" ? "page" : "false");
