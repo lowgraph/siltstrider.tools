@@ -1,5 +1,6 @@
 "use client";
 import Script from 'next/script';
+import AlchemyDataBridge from './alchemy-data-bridge';
 import {memo,useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
 import SiteHeader from './site-header';
@@ -83,7 +84,7 @@ export default function LegacyWorkbench({html,revision}){
     {mainSlot&&createPortal(<ActiveViewOverlay/>,mainSlot)}
     {enchantSlot&&createPortal(<EnchantingHud/>,enchantSlot)}
     {spellSlot&&createPortal(<SpellmakingHud/>,spellSlot)}
-    {alchemySlot&&createPortal(<AlchemyHud/>,alchemySlot)}
+    {alchemySlot&&createPortal(<><AlchemyDataBridge/><AlchemyHud/></>,alchemySlot)}
     {travelSlot&&createPortal(<TravelHud/>,travelSlot)}
     <Script id="legacy-data" src={'/legacy/legacy-data.js?v='+revision} strategy="afterInteractive" onReady={()=>setDataReady(true)}/>
     {(dataReady||(isClient&&Boolean(window.POOL)))&&(catalogReady||(isClient&&Boolean(window.siltCharacters?.active)))&&<Script id="legacy-runtime" src={'/legacy/legacy-runtime.js?v='+revision} strategy="afterInteractive" onReady={()=>setBooted(true)} onError={()=>setStatus({status:'error',message:'Application code failed to load. Reload this page.'})}/>}

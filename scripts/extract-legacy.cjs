@@ -48,6 +48,7 @@ function extract(html) {
     runtime=runtime.replace(lookup,'document.getElementById("'+id+'")?.addEventListener');
   }
   runtime=require('./connect-character-runtime.cjs')(runtime);
+  runtime=require('./connect-alchemy-runtime.cjs')(runtime);
   runtime+='\n'+fs.readFileSync(path.join(ROOT,'migration/shell-bridge.js'),'utf8');
   runtime+='\n'+fs.readFileSync(path.join(ROOT,'migration/character-bridge.js'),'utf8');
   const css=styles.map(s=>s[1]).join('\n').replaceAll('#btn-world-tr','#react-world-tr').replaceAll('#btn-arce','#react-arce').replaceAll('#btn-challenge','#react-nav-challenge').replaceAll('#btn-build','#react-nav-build');
