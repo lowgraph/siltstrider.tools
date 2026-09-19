@@ -4,6 +4,7 @@ import CharacterSheet from "./character-sheet";
 import PremadeBrowser from "./premade-browser";
 import GearAdvisor from "./gear-advisor";
 import VitalsBar from "./vitals-bar";
+import LocalCharactersPanel from "./local-characters-panel";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 
@@ -61,12 +62,12 @@ export default function CharacterBuilderRoot() {
   return (
     <div className="character-builder-root w-full mx-auto space-y-6">
       {/* Top Mode Bar */}
-      <div className="mode-bar flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3 flex-wrap">
+      <div className="mode-bar flex flex-wrap items-center justify-between gap-4 mt-2 sm:mt-4 mb-8">
+        <div className="flex items-center gap-3.5 flex-wrap">
           <button
             type="button"
-            className={`mw-btn px-5 py-2.5 font-serif text-sm font-bold tracking-wide transition-colors ${
-              activeTab === "builder" ? "active" : ""
+            className={`mw-btn px-6 py-3 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
+              activeTab === "builder" ? "active ring-1 ring-[#d4b06a]" : ""
             }`}
             onClick={() => setActiveTab("builder")}
           >
@@ -74,8 +75,8 @@ export default function CharacterBuilderRoot() {
           </button>
           <button
             type="button"
-            className={`mw-btn px-5 py-2.5 font-serif text-sm font-bold tracking-wide transition-colors ${
-              activeTab === "premade" ? "active" : ""
+            className={`mw-btn px-6 py-3 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
+              activeTab === "premade" ? "active ring-1 ring-[#d4b06a]" : ""
             }`}
             onClick={() => setActiveTab("premade")}
           >
@@ -149,6 +150,7 @@ export default function CharacterBuilderRoot() {
                 onSwapSkill={handleSwapSkill}
                 onSelectClassPreset={handleSelectClassPreset}
               />
+              <LocalCharactersPanel />
             </div>
 
             <div className={`cb-pane ${mobileTab !== "sheet" ? "cb-pane-mobile-hidden" : ""}`}>

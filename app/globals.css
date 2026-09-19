@@ -8,9 +8,9 @@
 body.view-builder #panel-build {
   display: block !important;
   width: 100% !important;
-  max-width: 1280px !important;
-  margin: 16px auto 32px !important;
-  padding: 24px 28px !important;
+  max-width: 1320px !important;
+  margin: 16px auto 36px !important;
+  padding: 32px 36px !important;
   background: var(--surface, #181510) !important;
   background-clip: padding-box !important;
   border: 6px solid transparent !important;
@@ -22,7 +22,7 @@ body.view-builder #panel-build {
 
 @media (max-width: 767px) {
   body.view-builder #panel-build {
-    padding: 12px 10px !important;
+    padding: 16px 12px !important;
     margin: 8px auto 16px !important;
   }
 }
@@ -131,6 +131,55 @@ body.view-builder .hero {
 .mw-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+/* Elevated Prominence for Top Mode Bar Buttons */
+.mode-bar .mw-btn {
+  font-size: 1.05rem !important;
+  padding: 12px 24px !important;
+  letter-spacing: 0.04em !important;
+}
+
+.mode-bar .mw-btn.active,
+.mode-bar .mw-btn[aria-pressed="true"] {
+  background: linear-gradient(180deg, #4d361c 0%, #26190c 100%) !important;
+  color: #fff4d6 !important;
+  border-color: #d4b06a !important;
+  box-shadow: 0 0 8px rgba(212, 176, 106, 0.4), inset 0 0 6px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Deep Breathing Room for Configurator and Character Sheet */
+.configurator,
+.character-sheet {
+  padding: 32px 36px !important;
+}
+@media (min-width: 640px) {
+  .configurator,
+  .character-sheet {
+    padding: 36px 48px !important;
+  }
+}
+@media (max-width: 639px) {
+  .configurator,
+  .character-sheet {
+    padding: 24px 18px !important;
+  }
+}
+
+/* Standalone Box Separation for Local Characters and Gear Advisor */
+.local-characters-box {
+  margin-top: 1.75rem !important;
+}
+
+.gear-advisor {
+  margin-top: 2rem !important;
+}
+
+#local-characters-box #local-characters {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Authentic Morrowind Etched Groove Panels & Warning Callouts */
@@ -402,6 +451,73 @@ body.view-builder .hero {
     white-space: normal !important;
     width: auto !important;
   }
+}
+
+/* Early game & Endgame kit collapsible CRPG plaques */
+.gear-results-container details,
+#gear-box details {
+  margin: 18px 0 !important;
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: rgba(18, 14, 9, 0.75) !important;
+  box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  padding: 0 !important;
+}
+
+.gear-results-container details summary,
+#gear-box details summary {
+  padding: 14px 20px !important;
+  background: linear-gradient(180deg, rgba(68, 48, 26, 0.88) 0%, rgba(22, 16, 11, 0.95) 100%) !important;
+  border-bottom: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  color: #f3e6c8 !important;
+  font-family: "Pelagiad", Georgia, serif !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+  user-select: none !important;
+}
+
+.gear-results-container details summary:hover,
+#gear-box details summary:hover {
+  background: linear-gradient(180deg, rgba(92, 64, 34, 0.95) 0%, rgba(32, 24, 16, 1) 100%) !important;
+  color: #fff !important;
+}
+
+.gear-results-container details summary::-webkit-details-marker,
+#gear-box details summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.gear-results-container details summary::after,
+#gear-box details summary::after {
+  content: " ▾" !important;
+  color: #d4b06a !important;
+  font-size: 1.1rem !important;
+  font-weight: bold !important;
+}
+
+.gear-results-container details[open] summary::after,
+#gear-box details[open] summary::after {
+  content: " ▴" !important;
+}
+
+.gear-results-container details > p.muted,
+#gear-box details > p.muted {
+  padding: 14px 20px 8px !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  color: #b8a585 !important;
+}
+
+.gear-results-container details > table,
+#gear-box details > table {
+  margin: 8px 0 12px !important;
 }
 
 

@@ -84,22 +84,6 @@ export default function Configurator({
   const activeRace = catalogs?.races?.[build.race] || (typeof window !== "undefined" && window.RACES?.[build.race]);
   const activeSign = catalogs?.signs?.[build.sign] || (typeof window !== "undefined" && window.SIGNS?.[build.sign]);
 
-  // Mount legacy #local-characters into Configurator if available in DOM
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const el = document.getElementById("local-characters");
-    const slot = document.getElementById("local-characters-slot");
-    if (el && slot && !slot.contains(el)) {
-      slot.appendChild(el);
-    }
-    return () => {
-      const custom = document.getElementById("custom");
-      if (el && custom && slot && slot.contains(el)) {
-        custom.insertBefore(el, custom.firstChild);
-      }
-    };
-  }, []);
-
   const handleClassChange = (className) => {
     if (className === "Custom") {
       onUpdateField("className", "Custom");
@@ -117,7 +101,7 @@ export default function Configurator({
 
   return (
     <div
-      className="configurator px-8 sm:px-10 py-6 sm:py-7 space-y-6 text-sm"
+      className="configurator px-10 sm:px-14 py-8 space-y-7 text-sm"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
@@ -429,9 +413,6 @@ export default function Configurator({
           })}
         </div>
       </div>
-
-      {/* Saved Characters Local Storage Manager */}
-      <div id="local-characters-slot" className="mt-4 pt-4 border-t border-[#261e13]" />
     </div>
   );
 }

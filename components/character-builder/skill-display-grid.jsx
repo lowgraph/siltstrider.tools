@@ -33,10 +33,10 @@ function SkillGroup({ title, skills, skillData = {} }) {
   );
 }
 
-export default function SkillDisplayGrid({ maj = [], min = [], skills = {}, raceBonuses = {} }) {
-  const allSkillNames = Object.keys(skills);
+export default function SkillDisplayGrid({ maj = [], min = [], skills = {} }) {
+  const allSkillNames = Object.keys(skills).sort();
   const otherSkills = allSkillNames.filter(
-    (sk) => !maj.includes(sk) && !min.includes(sk) && (skills[sk]?.v > 5 || raceBonuses[sk])
+    (sk) => !maj.includes(sk) && !min.includes(sk)
   );
 
   return (
@@ -44,7 +44,7 @@ export default function SkillDisplayGrid({ maj = [], min = [], skills = {}, race
       <SkillGroup title="Major Skills" skills={maj} skillData={skills} />
       <SkillGroup title="Minor Skills" skills={min} skillData={skills} />
       {otherSkills.length > 0 && (
-        <SkillGroup title="Notable Miscellaneous Skills" skills={otherSkills} skillData={skills} />
+        <SkillGroup title="Miscellaneous Skills" skills={otherSkills} skillData={skills} />
       )}
     </div>
   );

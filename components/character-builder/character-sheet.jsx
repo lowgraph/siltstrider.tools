@@ -32,7 +32,7 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
 
   return (
     <div
-      className="character-sheet px-8 sm:px-10 py-6 sm:py-7 space-y-6 text-sm"
+      className="character-sheet px-10 sm:px-14 py-8 space-y-7 text-sm"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
