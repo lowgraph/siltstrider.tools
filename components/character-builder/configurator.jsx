@@ -8,22 +8,28 @@ function InfoTip({ text }) {
   if (!text) return null;
 
   return (
-    <span className="relative inline-block ml-1.5 align-middle">
+    <span className="relative inline-block ml-1 align-middle">
       <button
         type="button"
-        className="w-4 h-4 text-[10px] font-serif font-bold bg-[#2a2114] text-[#d4b06a] border border-[#4a3a22] hover:bg-[#3a2d1d] hover:text-[#f3e6c8] inline-flex items-center justify-center cursor-pointer transition-colors"
+        className="w-6 h-6 sm:w-5 sm:h-5 text-xs font-serif font-bold bg-[#2a2114] text-[#d4b06a] border border-[#4a3a22] hover:bg-[#3a2d1d] hover:text-[#f3e6c8] inline-flex items-center justify-center cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4b06a]"
         onClick={(e) => {
           e.preventDefault();
           setOpen((o) => !o);
         }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape" && open) {
+            setOpen(false);
+          }
+        }}
         title="Toggle mechanics explanation"
         aria-label="Information"
+        aria-expanded={open}
       >
         i
       </button>
       {open && (
         <span
-          className="absolute z-50 left-0 top-6 w-64 p-2.5 text-xs text-[#f3e6c8] bg-[#14100a] shadow-2xl font-serif leading-relaxed block mw-groove-panel"
+          className="absolute z-50 left-0 top-7 w-64 p-2.5 text-xs text-[#f3e6c8] bg-[#14100a] shadow-2xl font-serif leading-relaxed block mw-groove-panel"
           style={{
             boxShadow: "0 8px 24px rgba(0,0,0,0.8)"
           }}
@@ -111,7 +117,7 @@ export default function Configurator({
 
   return (
     <div
-      className="configurator p-5 space-y-5 text-sm"
+      className="configurator p-6 sm:p-7 space-y-6 text-sm"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
@@ -119,7 +125,7 @@ export default function Configurator({
         boxShadow: "inset 0 0 12px 3px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.5)"
       }}
     >
-      <div className="border-b border-[#2a2318] pb-2.5">
+      <div className="border-b border-[#2a2318] pb-3">
         <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide">
           Character Configuration
         </h3>
@@ -129,9 +135,9 @@ export default function Configurator({
       </div>
 
       {/* Row 1: Race & Gender */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label htmlFor="builder-race" className="block text-sm font-serif font-bold text-[#d4b06a] mb-1.5">
+          <label htmlFor="builder-race" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
             <span>Race</span>
             <InfoTip text={activeRace?.tip || "Each race provides distinct attribute ratings, skill bonuses, and unique innate spells or powers."} />
           </label>
@@ -150,7 +156,7 @@ export default function Configurator({
         </div>
 
         <div>
-          <label className="block text-sm font-serif font-bold text-[#d4b06a] mb-1.5">
+          <label className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
             Sex / Gender
           </label>
           <div className="flex gap-2 h-10">
@@ -171,9 +177,9 @@ export default function Configurator({
       </div>
 
       {/* Row 2: Class & Birthsign */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label htmlFor="builder-className" className="block text-sm font-serif font-bold text-[#d4b06a] mb-1.5">
+          <label htmlFor="builder-className" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
             Class
           </label>
           <select id="builder-className"
@@ -194,7 +200,7 @@ export default function Configurator({
         </div>
 
         <div>
-          <label htmlFor="builder-sign" className="block text-sm font-serif font-bold text-[#d4b06a] mb-1.5">
+          <label htmlFor="builder-sign" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
             <span>Birthsign</span>
             {activeSign?.tip && <InfoTip text={activeSign.tip} />}
           </label>
@@ -213,79 +219,77 @@ export default function Configurator({
         </div>
       </div>
 
-      {/* Specialization & Favored Attributes */}
-      <div className="p-4 bg-[#120f0a] border border-[#2a2318] space-y-3 mw-groove-panel">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label htmlFor="builder-spec" className="block text-sm font-serif font-bold text-[#d4b06a] mb-1.5">
-              <span>Specialization</span>
-              <InfoTip
-                text={
-                  specSkills[build.spec]
-                    ? `${build.spec} specialization adds +5 to all 9 governed skills: ${specSkills[build.spec].join(", ")}.`
-                    : "Adds +5 to skills in this specialization."
-                }
-              />
-            </label>
-            <select id="builder-spec"
-              className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
-              disabled={build.className !== "Custom"}
-              aria-label="Specialization"
-              value={build.spec}
-              onChange={(e) => onUpdateField("spec", e.target.value)}
-            >
-              {["Combat", "Magic", "Stealth"].map((sp) => (
-                <option key={sp} value={sp}>
-                  {sp} (+5 skills)
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Row 3: Specialization & Favored Attributes (Clean grid, no enclosing box) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div>
+          <label htmlFor="builder-spec" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
+            <span>Specialization</span>
+            <InfoTip
+              text={
+                specSkills[build.spec]
+                  ? `${build.spec} specialization adds +5 to all 9 governed skills: ${specSkills[build.spec].join(", ")}.`
+                  : "Adds +5 to skills in this specialization."
+              }
+            />
+          </label>
+          <select id="builder-spec"
+            className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
+            disabled={build.className !== "Custom"}
+            aria-label="Specialization"
+            value={build.spec}
+            onChange={(e) => onUpdateField("spec", e.target.value)}
+          >
+            {["Combat", "Magic", "Stealth"].map((sp) => (
+              <option key={sp} value={sp}>
+                {sp} (+5 skills)
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <div>
-            <label htmlFor="builder-fav1" className="block text-sm font-serif font-bold text-[#d4b06a] mb-1.5">
-              <span>Favored Attr 1</span>
-              <InfoTip text={ATTR_TIP[build.fav1] || "Grants +10 starting attribute bonus."} />
-            </label>
-            <select id="builder-fav1"
-              className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
-              disabled={build.className !== "Custom"}
-              aria-label="Favored attribute 1"
-              value={build.fav1}
-              onChange={(e) => onUpdateField("fav1", e.target.value)}
-            >
-              {ATTRS.map((a) => (
-                <option key={a} value={a}>
-                  {a} (+10)
-                </option>
-              ))}
-            </select>
-          </div>
+        <div>
+          <label htmlFor="builder-fav1" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
+            <span>Favored Attr 1</span>
+            <InfoTip text={ATTR_TIP[build.fav1] || "Grants +10 starting attribute bonus."} />
+          </label>
+          <select id="builder-fav1"
+            className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
+            disabled={build.className !== "Custom"}
+            aria-label="Favored attribute 1"
+            value={build.fav1}
+            onChange={(e) => onUpdateField("fav1", e.target.value)}
+          >
+            {ATTRS.map((a) => (
+              <option key={a} value={a}>
+                {a} (+10)
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <div>
-            <label htmlFor="builder-fav2" className="block text-sm font-serif font-bold text-[#d4b06a] mb-1.5">
-              <span>Favored Attr 2</span>
-              <InfoTip text={ATTR_TIP[build.fav2] || "Grants +10 starting attribute bonus."} />
-            </label>
-            <select id="builder-fav2"
-              className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
-              disabled={build.className !== "Custom"}
-              aria-label="Favored attribute 2"
-              value={build.fav2}
-              onChange={(e) => onUpdateField("fav2", e.target.value)}
-            >
-              {ATTRS.map((a) => (
-                <option key={a} value={a}>
-                  {a} (+10)
-                </option>
-              ))}
-            </select>
-          </div>
+        <div>
+          <label htmlFor="builder-fav2" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
+            <span>Favored Attr 2</span>
+            <InfoTip text={ATTR_TIP[build.fav2] || "Grants +10 starting attribute bonus."} />
+          </label>
+          <select id="builder-fav2"
+            className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
+            disabled={build.className !== "Custom"}
+            aria-label="Favored attribute 2"
+            value={build.fav2}
+            onChange={(e) => onUpdateField("fav2", e.target.value)}
+          >
+            {ATTRS.map((a) => (
+              <option key={a} value={a}>
+                {a} (+10)
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
       {/* Governing Attribute Distribution Counter */}
-      <div className="pt-2 border-t border-[#261e13]">
+      <div className="pt-2">
         <SkillAttributeSummary maj={build.maj} min={build.min} />
       </div>
 
@@ -312,7 +316,7 @@ export default function Configurator({
           <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
             Major Skills (+25)
           </h4>
-          <span className="text-[11px] font-mono text-[#8a7a5e]">5 Slots</span>
+          <span className="text-[11px] font-mono text-[#9e8b6b]">5 Slots</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {build.maj.map((skillName, idx) => {
@@ -323,7 +327,7 @@ export default function Configurator({
             return (
               <div
                 key={`maj-${idx}`}
-                className={`flex items-center gap-2 p-1.5 border border-[#2a2216] transition-colors ${
+                className={`flex items-center gap-2 p-1.5 transition-colors ${
                   idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
                 }`}
               >
@@ -372,7 +376,7 @@ export default function Configurator({
           <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
             Minor Skills (+10)
           </h4>
-          <span className="text-[11px] font-mono text-[#8a7a5e]">5 Slots</span>
+          <span className="text-[11px] font-mono text-[#9e8b6b]">5 Slots</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {build.min.map((skillName, idx) => {
@@ -383,7 +387,7 @@ export default function Configurator({
             return (
               <div
                 key={`min-${idx}`}
-                className={`flex items-center gap-2 p-1.5 border border-[#2a2216] transition-colors ${
+                className={`flex items-center gap-2 p-1.5 transition-colors ${
                   idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
                 }`}
               >
@@ -427,7 +431,7 @@ export default function Configurator({
       </div>
 
       {/* Saved Characters Local Storage Manager */}
-      <div id="local-characters-slot" className="mt-2" />
+      <div id="local-characters-slot" className="mt-4 pt-4 border-t border-[#261e13]" />
     </div>
   );
 }

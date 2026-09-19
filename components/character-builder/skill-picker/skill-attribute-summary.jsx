@@ -36,13 +36,13 @@ export default function SkillAttributeSummary({ maj = [], min = [] }) {
               ? "border-[#d4b06a] bg-[#271d11] text-[#f3e6c8] font-bold"
               : count > 0
               ? "border-[#4a3a25] bg-[#16120b] text-[#d4b06a]"
-              : "border-[#201910] bg-[#0c0906] text-[#6d5e46]";
+              : "border-[#201910] bg-[#0c0906] text-[#8f7b5c]";
 
           return (
             <div
               key={attr}
               title={`${attr}: ${count} class skill${count === 1 ? "" : "s"}`}
-              className={`flex items-center justify-between px-1.5 py-1 border text-center font-mono text-[11px] ${highlightClass}`}
+              className={`flex items-center justify-between px-1.5 py-1.5 border text-center font-mono text-[11px] ${highlightClass}`}
             >
               <span>{abbr}</span>
               <span className="font-bold">({count})</span>

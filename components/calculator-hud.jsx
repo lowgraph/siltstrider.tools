@@ -51,11 +51,11 @@ export function EnchantingHud() {
 
   return (
     <div
-      className="p-3 mb-4 space-y-2.5 text-sm"
+      className="p-3 mb-4 space-y-2.5 text-sm mw-groove-panel"
       style={{
-        border: "4px solid transparent",
-        borderImage: "var(--mw-bevel) 4 repeat",
-        background: "#16130e"
+        border: "2px solid transparent",
+        borderImage: "var(--mw-groove) 2 repeat",
+        background: "#120f0a"
       }}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
@@ -79,21 +79,21 @@ export function EnchantingHud() {
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#b8a280]">
         <div>
-          <span className="text-[#8a7a5e]">Enchant Base: </span>
+          <span className="text-[#9e8b6b]">Enchant Base: </span>
           <strong className="text-[#f2e6cb]">{baseSkill}</strong>
           {currentStats.skill !== baseSkill && (
             <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentStats.skill})</span>
           )}
         </div>
         <div>
-          <span className="text-[#8a7a5e]">INT Base: </span>
+          <span className="text-[#9e8b6b]">INT Base: </span>
           <strong className="text-[#f2e6cb]">{baseInt}</strong>
           {currentStats.int !== baseInt && (
             <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentStats.int})</span>
           )}
         </div>
         <div>
-          <span className="text-[#8a7a5e]">LUC Base: </span>
+          <span className="text-[#9e8b6b]">LUC Base: </span>
           <strong className="text-[#f2e6cb]">{baseLuck}</strong>
           {currentStats.luck !== baseLuck && (
             <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentStats.luck})</span>
@@ -192,11 +192,11 @@ export function SpellmakingHud() {
 
   return (
     <div
-      className="p-3 mb-4 space-y-2.5 text-sm"
+      className="p-3 mb-4 space-y-2.5 text-sm mw-groove-panel"
       style={{
-        border: "4px solid transparent",
-        borderImage: "var(--mw-bevel) 4 repeat",
-        background: "#16130e"
+        border: "2px solid transparent",
+        borderImage: "var(--mw-groove) 2 repeat",
+        background: "#120f0a"
       }}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
@@ -221,14 +221,14 @@ export function SpellmakingHud() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#b8a280]">
           <div>
-            <span className="text-[#8a7a5e]">WIL Base: </span>
+            <span className="text-[#9e8b6b]">WIL Base: </span>
             <strong className="text-[#f2e6cb]">{baseWil}</strong>
             {currentData.wil !== baseWil && (
               <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.wil})</span>
             )}
           </div>
           <div>
-            <span className="text-[#8a7a5e]">LUC Base: </span>
+            <span className="text-[#9e8b6b]">LUC Base: </span>
             <strong className="text-[#f2e6cb]">{baseLuck}</strong>
             {currentData.luck !== baseLuck && (
               <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.luck})</span>
@@ -291,11 +291,11 @@ export function AlchemyHud() {
 
   return (
     <div
-      className="p-3 mb-4 space-y-2.5 text-sm"
+      className="p-3 mb-4 space-y-2.5 text-sm mw-groove-panel"
       style={{
-        border: "4px solid transparent",
-        borderImage: "var(--mw-bevel) 4 repeat",
-        background: "#16130e"
+        border: "2px solid transparent",
+        borderImage: "var(--mw-groove) 2 repeat",
+        background: "#120f0a"
       }}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
@@ -320,21 +320,21 @@ export function AlchemyHud() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#b8a280]">
           <div>
-            <span className="text-[#8a7a5e]">Alchemy Base: </span>
+            <span className="text-[#9e8b6b]">Alchemy Base: </span>
             <strong className="text-[#f2e6cb]">{baseSkill}</strong>
             {currentData.skill !== baseSkill && (
               <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.skill})</span>
             )}
           </div>
           <div>
-            <span className="text-[#8a7a5e]">INT Base: </span>
+            <span className="text-[#9e8b6b]">INT Base: </span>
             <strong className="text-[#f2e6cb]">{baseInt}</strong>
             {currentData.int !== baseInt && (
               <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.int})</span>
             )}
           </div>
           <div>
-            <span className="text-[#8a7a5e]">LUC Base: </span>
+            <span className="text-[#9e8b6b]">LUC Base: </span>
             <strong className="text-[#f2e6cb]">{baseLuck}</strong>
             {currentData.luck !== baseLuck && (
               <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.luck})</span>
@@ -343,7 +343,7 @@ export function AlchemyHud() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-serif font-bold text-[#8a7a5e]">Brew Success:</span>
+          <span className="text-xs font-serif font-bold text-[#9e8b6b]">Brew Success:</span>
           <span
             className={`px-2.5 py-0.5 border font-mono font-bold text-xs ${
               currentData.chance >= 75
@@ -378,11 +378,11 @@ export function TravelHud() {
 
   return (
     <div
-      className="p-3 mb-4 space-y-2.5 text-sm"
+      className="p-3 mb-4 space-y-2.5 text-sm mw-groove-panel"
       style={{
-        border: "4px solid transparent",
-        borderImage: "var(--mw-bevel) 4 repeat",
-        background: "#16130e"
+        border: "2px solid transparent",
+        borderImage: "var(--mw-groove) 2 repeat",
+        background: "#120f0a"
       }}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
@@ -397,7 +397,7 @@ export function TravelHud() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="text-[#8a7a5e] font-serif font-bold">Quick Start Origin:</span>
+        <span className="text-[#9e8b6b] font-serif font-bold">Quick Start Origin:</span>
         <button
           type="button"
           onClick={() => setOrigin("Seyda Neen")}

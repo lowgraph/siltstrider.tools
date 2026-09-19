@@ -32,7 +32,7 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
 
   return (
     <div
-      className="character-sheet p-5 space-y-5 text-sm"
+      className="character-sheet p-6 sm:p-7 space-y-6 text-sm"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
@@ -41,7 +41,7 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
       }}
     >
       {/* Header Summary */}
-      <div className="border-b border-[#2a2318] pb-2.5">
+      <div className="border-b border-[#2a2318] pb-3">
         <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide flex items-center justify-between">
           <span>{build.name || build.className || "Custom Build"}</span>
           <span className="text-sm font-mono font-medium text-[#d4b06a]">
@@ -75,8 +75,8 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
       )}
 
       {/* Vitals Section */}
-      <div className="vitals-section space-y-1.5 bg-[#100d08] p-4 border border-[#2a2318] mw-groove-panel">
-        <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold border-b border-[#221c13] pb-1.5 mb-2.5">
+      <div className="vitals-section space-y-2 bg-[#100d08] p-5 border border-[#2a2318] mw-groove-panel">
+        <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold border-b border-[#221c13] pb-2 mb-3">
           Vitals
         </h4>
         <VitalsBar label="Health" kind="health" value={sheet.health} max={sheet.health} />
@@ -149,7 +149,7 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
       </div>
 
       {/* Show The Math Disclosure */}
-      <details className="text-xs text-[#8c7853] bg-[#100d08] p-2.5 border border-[#221c13] cursor-pointer mw-groove-panel">
+      <details className="text-xs text-[#9e8b6b] bg-[#100d08] p-2.5 border border-[#221c13] cursor-pointer mw-groove-panel">
         <summary className="font-serif font-semibold text-[#d4b06a] hover:underline">
           Show the math &amp; mechanics breakdown
         </summary>
@@ -157,7 +157,7 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
           <li>
             Health: <code>floor((STR {sheet.strForHp} + END {sheet.endForHp}) / 2) = {sheet.health}</code>
             {sheet.sign?.attrs?.Endurance && (
-              <span className="text-[#8c7853]"> (Birthsign Fortify Endurance does not raise level-1 Health)</span>
+              <span className="text-[#9e8b6b]"> (Birthsign Fortify Endurance does not raise level-1 Health)</span>
             )}
           </li>
           <li>

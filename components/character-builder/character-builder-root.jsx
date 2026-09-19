@@ -59,20 +59,13 @@ export default function CharacterBuilderRoot() {
   const handleSelectClassPreset = selectClassPreset;
 
   return (
-    <div className="character-builder-root w-full max-w-[1280px] mx-auto px-2 sm:px-4 py-4 space-y-4">
+    <div className="character-builder-root w-full max-w-[1280px] mx-auto px-3 sm:px-6 py-6 space-y-6">
       {/* Top Mode Bar */}
-      <div
-        className="mode-bar p-3.5 flex flex-wrap items-center justify-between gap-3"
-        style={{
-          border: "4px solid transparent",
-          borderImage: "var(--mw-bevel) 4 repeat",
-          background: "#181510"
-        }}
-      >
-        <div className="flex items-center gap-2 flex-wrap">
+      <div className="mode-bar flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3 flex-wrap">
           <button
             type="button"
-            className={`mw-btn px-4 py-2 font-serif text-sm font-bold tracking-wide transition-colors ${
+            className={`mw-btn px-5 py-2.5 font-serif text-sm font-bold tracking-wide transition-colors ${
               activeTab === "builder" ? "active" : ""
             }`}
             onClick={() => setActiveTab("builder")}
@@ -81,7 +74,7 @@ export default function CharacterBuilderRoot() {
           </button>
           <button
             type="button"
-            className={`mw-btn px-4 py-2 font-serif text-sm font-bold tracking-wide transition-colors ${
+            className={`mw-btn px-5 py-2.5 font-serif text-sm font-bold tracking-wide transition-colors ${
               activeTab === "premade" ? "active" : ""
             }`}
             onClick={() => setActiveTab("premade")}
@@ -90,7 +83,7 @@ export default function CharacterBuilderRoot() {
           </button>
           <button
             type="button"
-            className="mw-btn px-3 py-2 font-serif text-xs font-bold tracking-wide flex items-center gap-1.5"
+            className="mw-btn px-4 py-2.5 font-serif text-xs font-bold tracking-wide flex items-center gap-1.5"
             onClick={handleCopyLink}
             title="Copy shareable build permalink"
           >
@@ -134,15 +127,8 @@ export default function CharacterBuilderRoot() {
           {/* Quick Vitals HUD (shown on screens < 1024px when on configurator tab) */}
           {sheet && (
             <div className="character-vitals-hud block lg:hidden bg-[#100d08] p-3 border border-[#2a2318] space-y-2 mw-groove-panel">
-              <div className="flex items-center justify-between text-xs font-mono text-[#d4b06a] mb-1 pb-1 border-b border-[#221c13]">
+              <div className="text-xs font-mono text-[#d4b06a] mb-1 pb-1 border-b border-[#221c13]">
                 <span className="font-serif font-bold text-sm">Character Vitals</span>
-                <button
-                  type="button"
-                  className="mw-btn px-2.5 py-1 text-xs font-serif font-bold tracking-wide"
-                  onClick={() => setMobileTab(mobileTab === "config" ? "sheet" : "config")}
-                >
-                  {mobileTab === "config" ? "View Full Sheet →" : "← View Config"}
-                </button>
               </div>
               <div className="flex flex-col space-y-2">
                 <VitalsBar label="Health" kind="health" value={sheet.health} max={sheet.health} />

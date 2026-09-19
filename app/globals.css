@@ -36,7 +36,7 @@ body.view-builder .hero {
 .cb-dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: start;
   width: 100%;
 }
@@ -78,6 +78,15 @@ body.view-builder .hero {
 .mw-select:focus {
   outline: none !important;
   border-color: #d4b06a !important;
+}
+
+.mw-select:focus-visible,
+.mw-btn:focus-visible,
+#local-characters select:focus-visible,
+#local-characters input:focus-visible,
+#local-characters .btn:focus-visible {
+  outline: 2px solid #d4b06a !important;
+  outline-offset: 2px !important;
 }
 
 .mw-select option,
@@ -314,5 +323,11 @@ body.view-builder .hero {
 }
 @media (max-width: 1023px) {
   html:has(body.view-builder), body.view-builder { overflow-x: clip; }
-  .character-vitals-hud { position: sticky; top: 0; z-index: 30; }
+  .character-vitals-hud {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.92) !important;
+    border-bottom: 2px solid #2e2417 !important;
+  }
 }
