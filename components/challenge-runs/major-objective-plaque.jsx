@@ -29,19 +29,19 @@ export default function MajorObjectivePlaque({
               title="Roll another major objective"
               disabled={isLocked}
             >
-              🎲 Roll
+              Roll
             </button>
           )}
 
           <button
             type="button"
             className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+              isLocked ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
             }`}
             onClick={onToggleLock}
             title={isLocked ? "Unlock Major Objective" : "Lock Major Objective"}
           >
-            {isLocked ? "🔒 Locked" : "🔓 Lock"}
+            {isLocked ? "Locked" : "Lock"}
           </button>
         </div>
       </div>

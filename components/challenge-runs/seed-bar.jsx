@@ -75,7 +75,7 @@ export default function SeedBar({
             onClick={onCopyLink}
             title="Copy shareable challenge link"
           >
-            {copiedLink ? "✓ Copied" : "🔗 Share"}
+            {copiedLink ? "Copied" : "Share"}
           </button>
         </div>
       </div>

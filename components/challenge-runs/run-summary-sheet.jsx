@@ -89,7 +89,6 @@ export default function RunSummarySheet({
           id="react-btn-to-optimizer"
           title="Transfer this rolled character into the Build Optimizer"
         >
-          <span className="text-base">⚔️</span>
           <span>Send to Build Optimizer</span>
         </button>
 
@@ -100,7 +99,7 @@ export default function RunSummarySheet({
             onClick={onCopySummary}
             title="Copy run summary in markdown format"
           >
-            <span>{copiedSummary ? "✓ Copied!" : "📋 Copy Summary"}</span>
+            <span>{copiedSummary ? "Copied" : "Copy Summary"}</span>
           </button>
 
           <button
@@ -109,7 +108,7 @@ export default function RunSummarySheet({
             onClick={onCopyPermalink}
             title="Copy shareable URL link for this run"
           >
-            <span>{copiedPermalink ? "✓ Copied!" : "🔗 Copy Permalink"}</span>
+            <span>{copiedPermalink ? "Copied" : "Copy Permalink"}</span>
           </button>
         </div>
       </div>

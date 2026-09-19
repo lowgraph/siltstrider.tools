@@ -1,13 +1,6 @@
 "use client";
 import { band } from "../../lib/challenge-math.mjs";
 
-const BADGE_STYLES = {
-  Easy: "bg-[#18301c] border-[#2d6136] text-[#7de091]",
-  Medium: "bg-[#332b13] border-[#7d6520] text-[#eed072]",
-  Hard: "bg-[#381614] border-[#7d2922] text-[#f28e85]",
-  Grind: "bg-[#251d2f] border-[#573a78] text-[#c9a7f5]"
-};
-
 export default function RestrictionsTablet({
   restrictions = [],
   restNote = "",
@@ -37,19 +30,19 @@ export default function RestrictionsTablet({
               title="Re-roll active restrictions"
               disabled={isLocked}
             >
-              🎲 Roll
+              Roll
             </button>
           )}
 
           <button
             type="button"
             className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+              isLocked ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
             }`}
             onClick={onToggleLock}
             title={isLocked ? "Unlock Restrictions" : "Lock Restrictions"}
           >
-            {isLocked ? "🔒 Locked" : "🔓 Lock"}
+            {isLocked ? "Locked" : "Lock"}
           </button>
         </div>
       </div>
@@ -59,14 +52,13 @@ export default function RestrictionsTablet({
         <ul className="space-y-2.5">
           {restrictions.map((r, i) => {
             const b = band(r);
-            const style = BADGE_STYLES[b] || BADGE_STYLES.Medium;
             return (
               <li
                 key={i}
                 className="flex items-start gap-2.5 p-2 bg-[#19140c] border border-[#2a2114] hover:border-[#4a3920] transition-colors"
               >
                 <span
-                  className={`text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 border shrink-0 mt-0.5 font-mono ${style}`}
+                  className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 border shrink-0 mt-0.5 font-mono bg-[#251e13] border-[#3d301e] text-[#d4b06a]"
                 >
                   {b}
                 </span>

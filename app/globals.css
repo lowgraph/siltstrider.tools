@@ -134,6 +134,13 @@ body.view-challenge .hero {
   font-family: var(--font-sans) !important;
 }
 
+.mw-select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: #0e0b07 !important;
+  color: #7a6b52 !important;
+}
+
 /* Authentic Morrowind Bevel Buttons */
 .mw-btn {
   border-radius: 0 !important;

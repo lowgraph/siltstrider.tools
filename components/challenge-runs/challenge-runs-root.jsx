@@ -529,7 +529,7 @@ export default function ChallengeRunsRoot() {
             className="w-full mw-btn py-3 px-4 text-sm font-serif font-bold text-[#fce8bb] bg-[#1a140d]/95 backdrop-blur border-2 border-[#d4b06a] shadow-2xl flex items-center justify-center gap-2"
             onClick={() => handleGenerateRun()}
           >
-            <span>🎲 Re-roll Run</span>
+            <span>Re-roll Run</span>
           </button>
         </div>
       )}

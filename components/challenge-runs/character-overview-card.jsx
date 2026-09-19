@@ -40,36 +40,36 @@ export default function CharacterOverviewCard({
           <button
             type="button"
             className={`px-2 py-1 text-xs border rounded-none font-serif ${
-              locks.race ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+              locks.race ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
             }`}
             onClick={() => onToggleLock("race")}
             title={locks.race ? "Unlock Race" : "Lock Race"}
           >
-            {locks.race ? "🔒 Race" : "🔓 Race"}
+            {locks.race ? "Race: Locked" : "Race: Lock"}
           </button>
 
           {/* Class Lock */}
           <button
             type="button"
             className={`px-2 py-1 text-xs border rounded-none font-serif ${
-              locks.cls ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+              locks.cls ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
             }`}
             onClick={() => onToggleLock("cls")}
             title={locks.cls ? "Unlock Class" : "Lock Class"}
           >
-            {locks.cls ? "🔒 Class" : "🔓 Class"}
+            {locks.cls ? "Class: Locked" : "Class: Lock"}
           </button>
 
           {/* Sign Lock */}
           <button
             type="button"
             className={`px-2 py-1 text-xs border rounded-none font-serif ${
-              locks.sign ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+              locks.sign ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
             }`}
             onClick={() => onToggleLock("sign")}
             title={locks.sign ? "Unlock Sign" : "Lock Sign"}
           >
-            {locks.sign ? "🔒 Sign" : "🔓 Sign"}
+            {locks.sign ? "Sign: Locked" : "Sign: Lock"}
           </button>
         </div>
       </div>

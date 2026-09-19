@@ -35,7 +35,6 @@ export default function RunConfigurator({
           onClick={onGenerateRun}
           id="react-btn-generate-run"
         >
-          <span className="text-xl">🎲</span>
           <span>Generate Run</span>
         </button>
         <p className="text-[11px] text-[#9b8b6a] font-serif text-center mt-1.5">
@@ -116,17 +115,19 @@ export default function RunConfigurator({
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {[
-            { id: "Easy", label: "Easy", count: easyCount, color: "text-[#7de091]" },
-            { id: "Medium", label: "Medium", count: medCount, color: "text-[#eed072]" },
-            { id: "Hard", label: "Hard", count: hardCount, color: "text-[#f28e85]" },
-            { id: "Grind", label: "Grind", count: grindCount, color: "text-[#c9a7f5]" }
+            { id: "Easy", label: "Easy", count: easyCount },
+            { id: "Medium", label: "Medium", count: medCount },
+            { id: "Hard", label: "Hard", count: hardCount },
+            { id: "Grind", label: "Grind", count: grindCount }
           ].map((b) => {
             const isChecked = !!allowedBands[b.id];
             return (
               <label
                 key={b.id}
                 className={`flex items-center justify-between p-2 border cursor-pointer select-none transition-colors ${
-                  isChecked ? "bg-[#1f190f] border-[#4a3b26]" : "bg-[#100d08] border-[#221a0f] opacity-60"
+                  isChecked
+                    ? "bg-[#221b10] border-[#d4b06a]/50 text-[#f3e6c8]"
+                    : "bg-[#100d08] border-[#221a0f] text-[#7a6b52] opacity-75"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
@@ -136,7 +137,7 @@ export default function RunConfigurator({
                     onChange={() => onToggleBand(b.id)}
                     className="accent-[#d4b06a] cursor-pointer"
                   />
-                  <span className={`text-xs font-serif font-bold ${b.color}`}>
+                  <span className="text-xs font-serif font-bold text-[#f3e6c8]">
                     {b.label}
                   </span>
                 </div>
@@ -166,11 +167,11 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.race ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+                locks.race ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
               }`}
               onClick={() => onToggleLock("race")}
             >
-              {locks.race ? "🔒 Race" : "🔓 Race"}
+              {locks.race ? "Locked" : "Lock"}
             </button>
             <select
               className="flex-1 mw-select p-1.5 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
@@ -192,11 +193,11 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.cls ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+                locks.cls ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
               }`}
               onClick={() => onToggleLock("cls")}
             >
-              {locks.cls ? "🔒 Class" : "🔓 Class"}
+              {locks.cls ? "Locked" : "Lock"}
             </button>
             <select
               className="flex-1 mw-select p-1.5 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
@@ -219,11 +220,11 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.sign ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+                locks.sign ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
               }`}
               onClick={() => onToggleLock("sign")}
             >
-              {locks.sign ? "🔒 Sign" : "🔓 Sign"}
+              {locks.sign ? "Locked" : "Lock"}
             </button>
             <select
               className="flex-1 mw-select p-1.5 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
@@ -245,21 +246,21 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`py-1.5 px-2 text-xs border font-serif text-center ${
-                locks.major ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+                locks.major ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
               }`}
               onClick={() => onToggleLock("major")}
             >
-              {locks.major ? "🔒 Major Objective" : "🔓 Major Objective"}
+              {locks.major ? "Major: Locked" : "Major: Lock"}
             </button>
 
             <button
               type="button"
               className={`py-1.5 px-2 text-xs border font-serif text-center ${
-                locks.rest ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "border-[#3a2e1d] text-[#8e7e65]"
+                locks.rest ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
               }`}
               onClick={() => onToggleLock("rest")}
             >
-              {locks.rest ? "🔒 Restrictions" : "🔓 Restrictions"}
+              {locks.rest ? "Restrictions: Locked" : "Restrictions: Lock"}
             </button>
           </div>
         </div>
@@ -272,7 +273,7 @@ export default function RunConfigurator({
           className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-[#c2b291] flex items-center justify-center gap-1.5"
           onClick={onOpenPoolBrowser}
         >
-          <span>📜 Browse Full Pools &amp; Rules</span>
+          <span>Browse Full Pools &amp; Rules</span>
         </button>
       </div>
     </div>

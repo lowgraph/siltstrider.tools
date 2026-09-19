@@ -52,7 +52,7 @@ export default function PoolBrowserModal({
             className="mw-btn px-3 py-1 text-sm font-bold"
             onClick={onClose}
           >
-            ✕ Close
+            Close
           </button>
         </div>
 
