@@ -147,30 +147,6 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
           <p className="text-[#8c7853] italic">No innate spells or active powers.</p>
         )}
       </div>
-
-      {/* Show The Math Disclosure */}
-      <details className="text-xs text-[#9e8b6b] bg-[#100d08] p-2.5 border border-[#221c13] cursor-pointer mw-groove-panel">
-        <summary className="font-serif font-semibold text-[#d4b06a] hover:underline">
-          Show the math &amp; mechanics breakdown
-        </summary>
-        <ul className="list-disc pl-5 mt-2 space-y-1 text-[#c4b998] font-mono text-[11px]">
-          <li>
-            Health: <code>floor((STR {sheet.strForHp} + END {sheet.endForHp}) / 2) = {sheet.health}</code>
-            {sheet.sign?.attrs?.Endurance && (
-              <span className="text-[#9e8b6b]"> (Birthsign Fortify Endurance does not raise level-1 Health)</span>
-            )}
-          </li>
-          <li>
-            Magicka: <code>INT {sheet.attrs?.Intelligence?.v} × (1 + race {sheet.race?.mag || 0} + sign {sheet.sign?.mag || 0}) = {sheet.magicka}</code>
-          </li>
-          <li>
-            Fatigue: <code>STR({sheet.attrs?.Strength?.v}) + WIL({sheet.attrs?.Willpower?.v}) + AGI({sheet.attrs?.Agility?.v}) + END({sheet.attrs?.Endurance?.v}) = {sheet.fatigue}</code>
-          </li>
-          <li>
-            Starting spells chance formula: <code>2 × School Skill − Cost + Willpower/5 + Luck/10 ≥ 50</code>
-          </li>
-        </ul>
-      </details>
     </div>
   );
 }

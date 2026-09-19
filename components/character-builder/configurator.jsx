@@ -8,7 +8,7 @@ function InfoTip({ text }) {
   if (!text) return null;
 
   return (
-    <span className="relative inline-block ml-1 align-middle">
+    <span className="relative inline-block ml-1 align-middle shrink-0">
       <button
         type="button"
         className="w-6 h-6 sm:w-5 sm:h-5 text-xs font-serif font-bold bg-[#2a2114] text-[#d4b06a] border border-[#4a3a22] hover:bg-[#3a2d1d] hover:text-[#f3e6c8] inline-flex items-center justify-center cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4b06a]"
@@ -184,7 +184,7 @@ export default function Configurator({
         </div>
 
         <div>
-          <label htmlFor="builder-sign" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label htmlFor="builder-sign" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
             <span>Birthsign</span>
             {activeSign?.tip && <InfoTip text={activeSign.tip} />}
           </label>
@@ -206,8 +206,8 @@ export default function Configurator({
       {/* Row 3: Specialization & Favored Attributes (Clean grid, no enclosing box) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label htmlFor="builder-spec" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
-            <span>Specialization (+5)</span>
+          <label htmlFor="builder-spec" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
+            <span>Specialization</span>
             <InfoTip
               text={
                 specSkills[build.spec]
@@ -232,8 +232,8 @@ export default function Configurator({
         </div>
 
         <div>
-          <label htmlFor="builder-fav1" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
-            <span>Favored Attr 1 (+10)</span>
+          <label htmlFor="builder-fav1" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
+            <span>Favored Attr 1</span>
             <InfoTip text={ATTR_TIP[build.fav1] || "Grants +10 starting attribute bonus."} />
           </label>
           <select id="builder-fav1"
@@ -252,8 +252,8 @@ export default function Configurator({
         </div>
 
         <div>
-          <label htmlFor="builder-fav2" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
-            <span>Favored Attr 2 (+10)</span>
+          <label htmlFor="builder-fav2" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
+            <span>Favored Attr 2</span>
             <InfoTip text={ATTR_TIP[build.fav2] || "Grants +10 starting attribute bonus."} />
           </label>
           <select id="builder-fav2"
