@@ -134,14 +134,18 @@ body.view-builder .hero {
 }
 
 /* Elevated Prominence for Top Mode Bar Buttons */
-.mode-bar .mw-btn {
+.mode-bar .mw-btn,
+.mode-bar-grid .mw-btn {
   font-size: 1.05rem !important;
   padding: 12px 24px !important;
   letter-spacing: 0.04em !important;
+  width: 100% !important;
 }
 
 .mode-bar .mw-btn.active,
-.mode-bar .mw-btn[aria-pressed="true"] {
+.mode-bar .mw-btn[aria-pressed="true"],
+.mode-bar-grid .mw-btn.active,
+.mode-bar-grid .mw-btn[aria-pressed="true"] {
   background: linear-gradient(180deg, #4d361c 0%, #26190c 100%) !important;
   color: #fff4d6 !important;
   border-color: #d4b06a !important;
@@ -166,20 +170,14 @@ body.view-builder .hero {
   }
 }
 
-/* Standalone Box Separation for Local Characters and Gear Advisor */
+/* Standalone Separation for Local Characters and Gear Advisor */
+.local-characters-container,
 .local-characters-box {
   margin-top: 1.75rem !important;
 }
 
 .gear-advisor {
   margin-top: 2rem !important;
-}
-
-#local-characters-box #local-characters {
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-  box-shadow: none !important;
 }
 
 /* Authentic Morrowind Etched Groove Panels & Warning Callouts */
@@ -197,23 +195,68 @@ body.view-builder .hero {
   border-radius: 0 !important;
 }
 
-/* Authentic Styling for Local Characters Manager */
+/* Authentic Plaque Styling for Local Characters (Matching Gear Kit Tabs) */
 #local-characters {
-  border: 4px solid transparent !important;
-  border-image: var(--mw-bevel) 4 repeat !important;
-  background: #14100a !important;
-  padding: 12px 14px !important;
-  color: #f3e6c8 !important;
+  margin: 0 !important;
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: rgba(18, 14, 9, 0.75) !important;
+  box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
 }
 
 #local-characters summary {
+  padding: 14px 20px !important;
+  background: linear-gradient(180deg, rgba(68, 48, 26, 0.88) 0%, rgba(22, 16, 11, 0.95) 100%) !important;
+  border-bottom: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  color: #f3e6c8 !important;
   font-family: "Pelagiad", Georgia, serif !important;
-  font-size: 1rem !important;
-  font-weight: bold !important;
-  color: #d4b06a !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   cursor: pointer !important;
-  outline: none !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
   user-select: none !important;
+  outline: none !important;
+}
+
+#local-characters summary:hover {
+  background: linear-gradient(180deg, rgba(92, 64, 34, 0.95) 0%, rgba(32, 24, 16, 1) 100%) !important;
+  color: #fff !important;
+}
+
+#local-characters summary::-webkit-details-marker {
+  display: none !important;
+}
+
+#local-characters summary::after {
+  content: " ▾" !important;
+  color: #d4b06a !important;
+  font-size: 1.1rem !important;
+  font-weight: bold !important;
+}
+
+#local-characters[open] summary::after {
+  content: " ▴" !important;
+}
+
+#local-characters[open] > *:not(summary) {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+#local-characters[open] > p.muted:first-of-type {
+  padding-top: 14px !important;
+  margin-top: 0 !important;
+}
+
+#local-characters[open] > .row:last-of-type {
+  padding-bottom: 16px !important;
 }
 
 #local-characters .field {

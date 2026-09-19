@@ -315,9 +315,6 @@ export default function Configurator({
                   idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
                 }`}
               >
-                <span className="text-xs font-mono font-bold text-[#d4b06a] w-4 text-right">
-                  {idx + 1}.
-                </span>
                 <select
                   id={`builder-maj-${idx}`}
                   className="mw-select flex-1 h-9 px-2.5 py-1 text-sm focus:outline-none"
@@ -375,9 +372,6 @@ export default function Configurator({
                   idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
                 }`}
               >
-                <span className="text-xs font-mono font-bold text-[#d4b06a] w-4 text-right">
-                  {idx + 1}.
-                </span>
                 <select
                   id={`builder-min-${idx}`}
                   className="mw-select flex-1 h-9 px-2.5 py-1 text-sm focus:outline-none"

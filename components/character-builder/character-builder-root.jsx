@@ -61,61 +61,55 @@ export default function CharacterBuilderRoot() {
 
   return (
     <div className="character-builder-root w-full mx-auto space-y-6">
-      {/* Top Mode Bar */}
-      <div className="mode-bar flex flex-wrap items-center justify-between gap-4 mt-2 sm:mt-4 mb-8">
-        <div className="flex items-center gap-3.5 flex-wrap">
+      {/* Top Mode Selectors: Aligned with the 2-Pane UI columns */}
+      <div className="mode-bar-grid grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+        <div>
           <button
             type="button"
-            className={`mw-btn px-6 py-3 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
+            className={`w-full mw-btn py-3 px-5 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "builder" ? "active ring-1 ring-[#d4b06a]" : ""
             }`}
             onClick={() => setActiveTab("builder")}
           >
             Custom Class Builder
           </button>
+        </div>
+        <div>
           <button
             type="button"
-            className={`mw-btn px-6 py-3 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
+            className={`w-full mw-btn py-3 px-5 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "premade" ? "active ring-1 ring-[#d4b06a]" : ""
             }`}
             onClick={() => setActiveTab("premade")}
           >
             Premade Builds Catalog
           </button>
+        </div>
+      </div>
+
+      {/* Mobile View Toggle (Visible on screens < 1024px) */}
+      {activeTab === "builder" && (
+        <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-[#120f0a] border border-[#2a2318] mb-6">
           <button
             type="button"
-            className="mw-btn px-4 py-2.5 font-serif text-xs font-bold tracking-wide flex items-center gap-1.5"
-            onClick={handleCopyLink}
-            title="Copy shareable build permalink"
+            className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${
+              mobileTab === "config" ? "active" : ""
+            }`}
+            onClick={() => setMobileTab("config")}
           >
-            <span>{copied ? "✓ Link Copied!" : "🔗 Copy Build Link"}</span>
+            Configurator
+          </button>
+          <button
+            type="button"
+            className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${
+              mobileTab === "sheet" ? "active" : ""
+            }`}
+            onClick={() => setMobileTab("sheet")}
+          >
+            Character Sheet
           </button>
         </div>
-
-        {/* View Toggle (Visible on screens < 1024px) */}
-        {activeTab === "builder" && (
-          <div className="flex lg:hidden items-center gap-2 w-full sm:w-auto p-1 bg-[#120f0a] border border-[#2a2318] mt-1 sm:mt-0">
-            <button
-              type="button"
-              className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${
-                mobileTab === "config" ? "active" : ""
-              }`}
-              onClick={() => setMobileTab("config")}
-            >
-              Configurator
-            </button>
-            <button
-              type="button"
-              className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${
-                mobileTab === "sheet" ? "active" : ""
-              }`}
-              onClick={() => setMobileTab("sheet")}
-            >
-              Character Sheet
-            </button>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Main Content Area */}
       {activeTab === "premade" ? (
@@ -151,6 +145,17 @@ export default function CharacterBuilderRoot() {
                 onSelectClassPreset={handleSelectClassPreset}
               />
               <LocalCharactersPanel />
+              {/* Copy Build Link Button below Local Characters */}
+              <div className="mt-4">
+                <button
+                  type="button"
+                  className="w-full mw-btn py-3 px-4 font-serif text-sm font-bold tracking-wide flex items-center justify-center gap-2 shadow-sm"
+                  onClick={handleCopyLink}
+                  title="Copy shareable build permalink"
+                >
+                  <span>{copied ? "✓ Link Copied!" : "🔗 Copy Build Link"}</span>
+                </button>
+              </div>
             </div>
 
             <div className={`cb-pane ${mobileTab !== "sheet" ? "cb-pane-mobile-hidden" : ""}`}>
