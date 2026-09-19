@@ -1244,6 +1244,34 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       <h2>Changelog</h2>
       <p class="muted">What changed on Silt Strider, newest first.</p>
       <section class="changelog-day">
+        <h3><time datetime="2026-09-19">September 19, 2026</time></h3>
+        <ul>
+          <li>Character Builder workspace alignment: Custom Class Builder spans directly above Character Configuration, and Premade Builds Catalog spans directly above Character Sheet, framing the desktop layout into two balanced, column-aligned work areas.</li>
+          <li>Enclosed the Character Builder inside the game's authentic 6-pixel ornate parchment window frame with deep inset shading, giving it the same master window treatment as Challenge Runs.</li>
+          <li>Desktop panel spacing: reduced the gap between the Configurator and Character Sheet to 20 pixels, bringing the planner into a tighter, cohesive side-by-side workstation without losing breathing room.</li>
+          <li>Clean skill slots: removed redundant slot index numbers from Major and Minor skill slots, giving dropdown selectors full horizontal space while preserving accessible screen-reader labels.</li>
+          <li>Local Characters saved build manager moved into its own standalone collapsible plaque below the Configurator, styled with a dark bronze header banner, gold chevrons, and etched borders, with Copy Build Link positioned directly below it.</li>
+          <li>Mobile ergonomics: removed the sticky mobile vitals bar so small screens have full, unobstructed height for picking skills and attributes without persistent banners taking up space. Vitals remain cleanly accessible on the Character Sheet tab.</li>
+          <li>Mobile-first Gear Advisor: checkboxes wrap neatly in their own line, and Optimize Gear expands to a full-width action button on mobile screens before settling into an inline control on desktop.</li>
+          <li>Specialization and Favored Attribute dropdowns: removed inline (+5 skills) and (+10) from the option choices so names like Intelligence and Personality never clip behind the dropdown arrow. The info button now sits locked horizontally beside each field title.</li>
+          <li>Character sheet cleanup: removed the math formula breakdown details accordion, keeping the sheet strictly focused on in-game Morrowind stats, attributes, and starting spells.</li>
+        </ul>
+      </section>
+      <section class="changelog-day">
+        <h3><time datetime="2026-09-18">September 18, 2026</time></h3>
+        <ul>
+          <li>Next.js and React architecture: Silt Strider runs on Next.js 16 with React 19, static export, and on-demand game data loading for Vanilla, Tamriel Rebuilt, and ARCE profiles.</li>
+          <li>Rebuilt the Character Planner in React: interactive Configurator, live Character Sheet, Premade Builds catalogue browser, and decoupled Gear Advisor, preserving URL permalinks and local saves.</li>
+          <li>Art direction overhaul and 3-tier frame hierarchy: eliminated line tangencies across the site. The 6-pixel ornate scrollwork frame is reserved for primary panels, 2-pixel etched grooves for plaques and banners, and 4-pixel bevels exclusively for buttons and dropdowns.</li>
+          <li>High-contrast gold focus outlines appear on keyboard navigation across all buttons, dropdowns, and save inputs, and muted text contrast meets WCAG AA standards.</li>
+          <li>Cross-tool calculator integration: Enchanting, Spellmaking, Alchemy, and Travel calculators feature live character HUD banners reflecting Intelligence, Willpower, Luck, skills, and fatigue in real-time barter, cast chance, and brewing numbers.</li>
+          <li>Tactile Armor Rating badges: equipment recommendations display Armor Rating as distinct burnished bronze stat badges with monospace numerals and gold borders.</li>
+          <li>Kit plaques: Early Game and Endgame equipment recommendations are styled as rich collapsible CRPG plaques with Pelagiad serif headings and hover highlights.</li>
+          <li>All seventeen Miscellaneous Skills are listed alphabetically on the character sheet under Miscellaneous Skills, matching the game.</li>
+          <li>Data pipeline and acquisition engine: normalized game-data extraction across Vanilla, Tamriel Rebuilt 26.08, and ARCE 4.1, evaluating merchant stock ownership, pro-rata pricing for worn gear, repairable broken items, and leveled danger budgets based on Samarys Ancestral Tomb.</li>
+        </ul>
+      </section>
+      <section class="changelog-day">
         <h3><time datetime="2026-09-17">September 17, 2026</time></h3>
         <ul>
           <li>Enchanting calculator: pick effects, a soul, and a named enchanter. Charge, gold, and barter follow OpenMW. Constant Effect needs a soul of 400 or more. Tamriel Rebuilt adds extra effects and mainland enchanters when that world is on. Search an enchanter by name if the list is long.</li>
