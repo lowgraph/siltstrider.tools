@@ -2500,6 +2500,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else pageSub.textContent = "Premade sheets and a custom class builder. Optimize gear when you are ready.";
       }
       if (drawer) drawer.classList.remove("open");
+      if (["enchanting", "spellmaking", "alchemy"].includes(name) && typeof syncCharacterStatsToCalculators === "function") {
+        syncCharacterStatsToCalculators(false);
+      }
       writeShareHash();
     }
     var pendingRun = null;
@@ -2638,7 +2641,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           const run = encodeRunPayload();
           if (run) parts.push("run=" + run);
         }
-        if (parts[0] === "builder" && typeof collectBuild === "function") {
+        if (["builder", "enchanting", "spellmaking", "alchemy", "travel"].includes(parts[0]) && typeof collectBuild === "function") {
           try { parts.push("build=" + toBase64Url(JSON.stringify(collectBuild()))); } catch (eB) {}
         }
         // Explicit values make shared links independent of the recipient's preferences.
@@ -2676,14 +2679,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         setArce(extra);
         applyPendingBuild();
         if (pendingRun) { applyRunPayload(pendingRun); pendingRun = null; }
-        if (/builder|optimizer/.test(h) || buildM) showView("builder");
-        else if (/challenge/.test(h) || runM) showView("challenge");
-        else if (/\benchanting\b/.test(h)) showView("enchanting");
+        if (/\benchanting\b/.test(h)) showView("enchanting");
         else if (/\bspellmaking\b/.test(h)) showView("spellmaking");
         else if (/\balchemy\b/.test(h)) showView("alchemy");
         else if (/\btravel\b/.test(h)) showView("travel");
         else if (/\babout\b/.test(h)) showView("about");
         else if (/\bchangelog\b/.test(h)) showView("changelog");
+        else if (/builder|optimizer/.test(h) || buildM) showView("builder");
+        else if (/challenge/.test(h) || runM) showView("challenge");
         else showView("home");
       } catch (e) {
         console.error("Could not restore the shared planner", e);
@@ -5014,14 +5017,60 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       syncSkillPrev(panel === "r" ? RAND_SKILL_IDS : SKILL_IDS);
       lockFavored(panel);
     }
+    function syncCharacterStatsToCalculators(force = false) {
+      if (typeof getCurrentCharacter !== "function" || typeof computeSheet !== "function") return;
+      try {
+        const ch = getCurrentCharacter("c");
+        const sh = computeSheet(ch);
+        if (!sh) return;
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (!el || val === undefined) return;
+          if (force || !el.dataset.userEdited) {
+            el.value = String(val);
+            el.dispatchEvent(new Event("input", { bubbles: true }));
+            el.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        };
+        const trackEdit = (id) => {
+          const el = document.getElementById(id);
+          if (el && !el.dataset.boundTrack) {
+            el.dataset.boundTrack = "1";
+            el.addEventListener("input", () => { el.dataset.userEdited = "1"; });
+          }
+        };
+        ["enc-skill","enc-int","enc-luck","enc-merc","enc-pers","spl-alt","spl-con","spl-des","spl-ill","spl-mys","spl-res","spl-wil","spl-luck","spl-merc","spl-pers","alc-skill","alc-int","alc-luck"].forEach(trackEdit);
+        setVal("enc-skill", sh.skills?.["Enchant"]?.v);
+        setVal("enc-int", sh.attributes?.["Intelligence"]?.v);
+        setVal("enc-luck", sh.attributes?.["Luck"]?.v);
+        setVal("enc-merc", sh.skills?.["Mercantile"]?.v);
+        setVal("enc-pers", sh.attributes?.["Personality"]?.v);
+        setVal("spl-alt", sh.skills?.["Alteration"]?.v);
+        setVal("spl-con", sh.skills?.["Conjuration"]?.v);
+        setVal("spl-des", sh.skills?.["Destruction"]?.v);
+        setVal("spl-ill", sh.skills?.["Illusion"]?.v);
+        setVal("spl-mys", sh.skills?.["Mysticism"]?.v);
+        setVal("spl-res", sh.skills?.["Restoration"]?.v);
+        setVal("spl-wil", sh.attributes?.["Willpower"]?.v);
+        setVal("spl-luck", sh.attributes?.["Luck"]?.v);
+        setVal("spl-merc", sh.skills?.["Mercantile"]?.v);
+        setVal("spl-pers", sh.attributes?.["Personality"]?.v);
+        setVal("alc-skill", sh.skills?.["Alchemy"]?.v);
+        setVal("alc-int", sh.attributes?.["Intelligence"]?.v);
+        setVal("alc-luck", sh.attributes?.["Luck"]?.v);
+      } catch (e) {}
+    }
     function loadCharacter(character, panel = "c") {
       if (panel !== "c" && panel !== "r") throw new Error("Unknown character panel");
       const b = normalizeCharacter(character);
       restoreState(() => {
         restoreCharacterWorld(b);
         writeCharacterControls(b, panel);
-        if (panel === "c") { lockSkillSelects(b.className !== "Custom"); refreshCustom(); }
-        else {
+        if (panel === "c") {
+          lockSkillSelects(b.className !== "Custom");
+          refreshCustom();
+          syncCharacterStatsToCalculators(false);
+        } else {
           Object.assign(challengeRun, { race: b.race, gender: b.gender, cls: b.className, sign: b.sign });
           renderRun();
         }
