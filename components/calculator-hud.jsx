@@ -73,7 +73,7 @@ export function EnchantingHud() {
           className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a] hover:text-[#f2e6cb] transition-colors"
           title="Reset input fields to active character's level 1 base stats"
         >
-          ↺ Ingest Base Character Stats
+          Ingest Base Character Stats
         </button>
       </div>
 
@@ -111,7 +111,7 @@ export function EnchantingHud() {
                 : "bg-[#2b1414] border-[#5e2727] text-[#d46a6a]"
             }`}
           >
-            Soul: {currentStats.soul}/400 {ceSoulOk ? "✓" : "✗ (Too Small)"}
+            Soul: {currentStats.soul}/400 {ceSoulOk ? "✓" : "[Too Small]"}
           </span>
           <span
             className={`px-2 py-0.5 border font-mono font-bold ${
@@ -120,7 +120,7 @@ export function EnchantingHud() {
                 : "bg-[#2b1f14] border-[#5e4327] text-[#d4a86a]"
             }`}
           >
-            Enchant: {currentStats.skill}/100 {ceSkillTarget ? "✓ Mastered" : "(Self-Enchanting CE Unreliable)"}
+            Enchant: {currentStats.skill}/100 {ceSkillTarget ? "[Mastered]" : "(Self-Enchanting CE Unreliable)"}
           </span>
         </div>
       )}
@@ -214,7 +214,7 @@ export function SpellmakingHud() {
           className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a] hover:text-[#f2e6cb] transition-colors"
           title="Reset input fields to active character's level 1 base stats"
         >
-          ↺ Ingest Base Character Stats
+          Ingest Base Character Stats
         </button>
       </div>
 
@@ -313,7 +313,7 @@ export function AlchemyHud() {
           className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a] hover:text-[#f2e6cb] transition-colors"
           title="Reset input fields to active character's level 1 base stats"
         >
-          ↺ Ingest Base Character Stats
+          Ingest Base Character Stats
         </button>
       </div>
 
@@ -403,21 +403,21 @@ export function TravelHud() {
           onClick={() => setOrigin("Seyda Neen")}
           className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
         >
-          📍 Seyda Neen (Arrival)
+          Seyda Neen (Arrival)
         </button>
         <button
           type="button"
           onClick={() => setOrigin("Balmora")}
           className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
         >
-          📍 Balmora (Hub)
+          Balmora (Hub)
         </button>
         <button
           type="button"
           onClick={() => setOrigin("Vivec")}
           className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
         >
-          📍 Vivec
+          Vivec
         </button>
         {isTr && (
           <button
@@ -425,7 +425,7 @@ export function TravelHud() {
             onClick={() => setOrigin("Old Ebonheart")}
             className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
           >
-            📍 Old Ebonheart (TR)
+            Old Ebonheart (TR)
           </button>
         )}
       </div>

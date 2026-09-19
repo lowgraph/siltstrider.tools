@@ -11,6 +11,10 @@ import CharacterBuilderRoot from './character-builder/character-builder-root';
 import ChallengeRunsRoot from './challenge-runs/challenge-runs-root';
 import {CharacterProvider} from './character-context';
 import {EnchantingHud,SpellmakingHud,AlchemyHud,TravelHud} from './calculator-hud';
+import EnchantingWorkstation from './calculators/enchanting/enchanting-workstation';
+import SpellmakingWorkstation from './calculators/spellmaking/spellmaking-workstation';
+import AlchemyWorkstation from './calculators/alchemy/alchemy-workstation';
+import TravelWorkstation from './calculators/travel/travel-workstation';
 
 const LegacyBody=memo(function LegacyBody({html}){return <div id="legacy-workbench" dangerouslySetInnerHTML={{__html:html}}/>;});
 
@@ -93,10 +97,10 @@ export default function LegacyWorkbench({html,revision}){
     {slot&&createPortal(<SiteHeader/>,slot)}
     {mainSlot&&createPortal(<ActiveViewOverlay/>,mainSlot)}
     {challengeSlot&&createPortal(<ChallengeViewOverlay/>,challengeSlot)}
-    {enchantSlot&&createPortal(<EnchantingHud/>,enchantSlot)}
-    {spellSlot&&createPortal(<SpellmakingHud/>,spellSlot)}
-    {alchemySlot&&createPortal(<><AlchemyDataBridge/><AlchemyHud/></>,alchemySlot)}
-    {travelSlot&&createPortal(<TravelHud/>,travelSlot)}
+    {enchantSlot&&createPortal(<EnchantingWorkstation/>,enchantSlot)}
+    {spellSlot&&createPortal(<SpellmakingWorkstation/>,spellSlot)}
+    {alchemySlot&&createPortal(<><AlchemyDataBridge/><AlchemyWorkstation/></>,alchemySlot)}
+    {travelSlot&&createPortal(<TravelWorkstation/>,travelSlot)}
     <Script id="legacy-data" src={'/legacy/legacy-data.js?v='+revision} strategy="afterInteractive" onReady={()=>setDataReady(true)}/>
     {(dataReady||(isClient&&Boolean(window.POOL)))&&(catalogReady||(isClient&&Boolean(window.siltCharacters?.active)))&&<Script id="legacy-runtime" src={'/legacy/legacy-runtime.js?v='+revision} strategy="afterInteractive" onReady={()=>setBooted(true)} onError={()=>setStatus({status:'error',message:'Application code failed to load. Reload this page.'})}/>}
   </CharacterProvider>

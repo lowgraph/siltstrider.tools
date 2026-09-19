@@ -70,6 +70,64 @@ body.view-challenge .hero {
   align-items: center;
 }
 
+/* Calculator Panels: Authentic Morrowind Master Window Frames */
+body.view-enchanting #panel-enchant,
+body.view-spellmaking #panel-spell,
+body.view-alchemy #panel-alchemy,
+body.view-travel #panel-travel {
+  display: block !important;
+  width: 100% !important;
+  max-width: 1320px !important;
+  margin: 16px auto 36px !important;
+  padding: 24px 28px !important;
+  background: var(--surface, #181510) !important;
+  background-clip: padding-box !important;
+  border: 6px solid transparent !important;
+  border-image: var(--mw-border) 6 repeat !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 0 16px 2px rgba(0, 0, 0, 0.85) !important;
+  align-self: center !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 767px) {
+  body.view-enchanting #panel-enchant,
+  body.view-spellmaking #panel-spell,
+  body.view-alchemy #panel-alchemy,
+  body.view-travel #panel-travel {
+    padding: 14px 10px !important;
+    margin: 8px auto 16px !important;
+  }
+}
+
+/* Hide unstyled legacy DOM children while preserving modern React workstation inside each panel */
+body.view-enchanting #panel-enchant > *:not(#react-enchant-hud) {
+  display: none !important;
+}
+body.view-spellmaking #panel-spell > *:not(#react-spell-hud) {
+  display: none !important;
+}
+body.view-alchemy #panel-alchemy > *:not(#react-alchemy-hud) {
+  display: none !important;
+}
+body.view-travel #panel-travel > *:not(#react-travel-hud) {
+  display: none !important;
+}
+
+/* Guarantee no other legacy panel displays in calculator views */
+body.view-enchanting .panel:not(#panel-enchant),
+body.view-spellmaking .panel:not(#panel-spell),
+body.view-alchemy .panel:not(#panel-alchemy),
+body.view-travel .panel:not(#panel-travel) {
+  display: none !important;
+}
+
+body.view-enchanting .hero,
+body.view-spellmaking .hero,
+body.view-alchemy .hero,
+body.view-travel .hero {
+  align-items: center;
+}
+
 /* Character Builder Two-Pane Layout (immune to legacy CSS collisions) */
 .cb-dashboard {
   display: grid;
