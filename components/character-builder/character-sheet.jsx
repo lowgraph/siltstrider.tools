@@ -58,22 +58,20 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
       {/* Warnings */}
       {sheet.duplicates.length > 0 && (
         <div className="mw-warning-scroll p-3 text-xs space-y-0.5">
-          <div className="font-serif font-bold text-[#fca5a5] flex items-center gap-1.5">
-            <span>⚠️</span>
+          <div className="font-serif font-bold text-[#d4b06a] flex items-center gap-1.5">
             <span>Duplicate Skill Conflict</span>
           </div>
-          <p className="text-[#e29393]">
+          <p className="text-[#c4b998]">
             Skill picked more than once: <strong>{sheet.duplicates.join(", ")}</strong>. Choose 10 distinct skills.
           </p>
         </div>
       )}
       {sheet.favoredClash && (
         <div className="mw-warning-scroll p-3 text-xs space-y-0.5">
-          <div className="font-serif font-bold text-[#fca5a5] flex items-center gap-1.5">
-            <span>⚠️</span>
+          <div className="font-serif font-bold text-[#d4b06a] flex items-center gap-1.5">
             <span>Favored Attribute Conflict</span>
           </div>
-          <p className="text-[#e29393]">
+          <p className="text-[#c4b998]">
             Both favored attributes are <strong>{build.fav1}</strong>. Choose two different attributes.
           </p>
         </div>
@@ -165,7 +163,7 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
           }}
           title="Open Level Progression Optimizer with this build"
         >
-          <span>📈 Level Progression Optimizer →</span>
+          <span>Level Progression Optimizer →</span>
         </button>
       </div>
     </div>

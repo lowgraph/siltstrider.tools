@@ -84,7 +84,7 @@ export default function ProgressionSheet({
           <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
             Leveled Vitals (Level {level})
           </h4>
-          <span className="text-[10px] font-mono text-[#4ade80]">
+          <span className="text-[10px] font-mono text-[#d4b06a]">
             +{Math.max(0, health - (initialSheet?.health || health))} Total HP Gained
           </span>
         </div>
@@ -119,17 +119,17 @@ export default function ProgressionSheet({
                 <div className="text-right">
                   <span
                     className={`font-mono text-sm font-bold ${
-                      isMaxed ? "text-[#fde047]" : diff > 0 ? "text-[#4ade80]" : "text-[#f3e6c8]"
+                      isMaxed ? "text-[#d4b06a]" : "text-[#f3e6c8]"
                     }`}
                   >
                     {curVal}
                   </span>
                   {isMaxed ? (
-                    <span className="block text-[8px] font-mono font-bold text-[#fde047] uppercase leading-none">
+                    <span className="block text-[8px] font-mono font-bold text-[#d4b06a] uppercase leading-none">
                       MAX
                     </span>
                   ) : diff > 0 ? (
-                    <span className="block text-[9px] font-mono text-[#4ade80] leading-none">
+                    <span className="block text-[9px] font-mono text-[#d4b06a] leading-none">
                       +{diff}
                     </span>
                   ) : null}

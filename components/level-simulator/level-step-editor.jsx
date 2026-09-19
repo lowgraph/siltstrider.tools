@@ -87,7 +87,7 @@ export default function LevelStepEditor({
             className="mw-btn py-2.5 px-3 text-xs font-serif font-bold text-left flex flex-col justify-center transition-all col-span-1 sm:col-span-2 ring-1 ring-[#d4b06a] active"
             onClick={() => onApplyStrategy("auto")}
           >
-            <span className="text-[#f3e6c8] text-sm">⚡ Auto-Calculate Optimal Build</span>
+            <span className="text-[#f3e6c8] text-sm">Auto-Calculate Optimal Build</span>
             <span className="text-[10px] text-[#9e8b6b] font-sans font-normal mt-0.5">
               Rushes Endurance to 100 first for max HP, then auto-solves secondary attributes with 5x multipliers.
             </span>
@@ -99,7 +99,7 @@ export default function LevelStepEditor({
             }`}
             onClick={() => onApplyStrategy("rush_endurance")}
           >
-            <span className="text-[#f3e6c8]">🛡️ Rush Endurance (+5)</span>
+            <span className="text-[#f3e6c8]">Rush Endurance (+5)</span>
             <span className="block text-[10px] text-[#9e8b6b] font-sans font-normal mt-0.5">
               Guarantees +5 Endurance every level until 100.
             </span>
@@ -111,7 +111,7 @@ export default function LevelStepEditor({
             }`}
             onClick={() => onApplyStrategy("triple_5")}
           >
-            <span className="text-[#f3e6c8]">⚔️ Triple +5 (+5/+5/+5)</span>
+            <span className="text-[#f3e6c8]">Triple +5 (+5/+5/+5)</span>
             <span className="block text-[10px] text-[#9e8b6b] font-sans font-normal mt-0.5">
               Pure min-maxing with 3x +5 attribute multipliers.
             </span>
@@ -123,17 +123,17 @@ export default function LevelStepEditor({
             }`}
             onClick={() => onApplyStrategy("efficient_luck")}
           >
-            <span className="text-[#f3e6c8]">🍀 Efficient (+5/+5/+1 Luck)</span>
+            <span className="text-[#f3e6c8]">Efficient (+5/+5/+1 Luck)</span>
             <span className="block text-[10px] text-[#9e8b6b] font-sans font-normal mt-0.5">
               Two +5 bonuses plus steady +1 Luck every level.
             </span>
           </button>
           <button
             type="button"
-            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-[#ef4444] text-left transition-all hover:bg-[#251010]"
+            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-[#b8a078] hover:text-[#d4b06a] text-left transition-all hover:bg-[#1a140d]"
             onClick={onResetPlan}
           >
-            <span>🔄 Reset to Level 1</span>
+            <span>Reset to Level 1</span>
             <span className="block text-[10px] text-[#9e8b6b] font-sans font-normal mt-0.5">
               Clears progression back to starting sheet.
             </span>
@@ -266,9 +266,9 @@ export default function LevelStepEditor({
 
               {/* Validation errors */}
               {!validation.valid && (
-                <div className="text-[11px] text-[#ef4444] space-y-0.5 bg-[#251010] p-2 border border-[#4a1c1c]">
+                <div className="text-[11px] text-[#d4b06a] space-y-0.5 bg-[#18130b] p-2 border border-[#3e301f]">
                   {validation.errors.map((err, idx) => (
-                    <div key={idx}>⚠️ {err}</div>
+                    <div key={idx}>{err}</div>
                   ))}
                 </div>
               )}

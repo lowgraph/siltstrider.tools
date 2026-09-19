@@ -32,13 +32,13 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
           <span className="font-serif text-sm font-bold text-[#f3e6c8]">
             Level {level} → <span className="text-[#d4b06a]">Level {nextLevel}</span>
           </span>
-          <span className="text-xs px-2 py-0.5 bg-[#1b2a12] border border-[#2d471e] text-[#4ade80] font-mono font-bold">
+          <span className="text-xs px-2 py-0.5 bg-[#18140e] border border-[#3e301f] text-[#d4b06a] font-mono font-bold">
             +{healthGain} HP Gain
           </span>
         </div>
         {totalTrainingCost > 0 && !isStatsOnly && (
-          <div className="text-xs font-mono font-bold text-[#fde047] flex items-center gap-1">
-            <span>🪙 ~{totalTrainingCost.toLocaleString()} Septims training cost</span>
+          <div className="text-xs font-mono font-bold text-[#d4b06a] flex items-center gap-1">
+            <span>~{totalTrainingCost.toLocaleString()} Septims training cost</span>
           </div>
         )}
       </div>
@@ -63,9 +63,9 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono text-sm font-bold text-[#4ade80]">+{b.bonus}</span>
+                  <span className="font-mono text-sm font-bold text-[#d4b06a]">+{b.bonus}</span>
                   {isMaxed && (
-                    <span className="block text-[8px] font-mono font-bold text-[#fde047] uppercase leading-none">
+                    <span className="block text-[8px] font-mono font-bold text-[#d4b06a] uppercase leading-none">
                       MAX
                     </span>
                   )}
@@ -92,7 +92,7 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
                 className="text-xs px-2 py-1 bg-[#1a140d] border border-[#3e301f] text-[#f3e6c8] font-serif flex items-center gap-1.5"
               >
                 <span>{skill}:</span>
-                <strong className="font-mono text-[#4ade80]">+{pts}</strong>
+                <strong className="font-mono text-[#d4b06a]">+{pts}</strong>
               </span>
             ))}
             {mmEntries.length === 0 && (
@@ -106,8 +106,8 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
       {!isStatsOnly && (
         <div className="misc-training-block space-y-1.5 p-3 bg-[#130f09] border border-[#3d2f19]">
           <div className="flex items-center justify-between gap-2 border-b border-[#2a2012] pb-1.5">
-            <h5 className="text-xs uppercase tracking-wider text-[#fde047] font-serif font-bold flex items-center gap-1.5">
-              <span>🎯 Miscellaneous Skills to Train (for 5x Multipliers)</span>
+            <h5 className="text-xs uppercase tracking-wider text-[#d4b06a] font-serif font-bold flex items-center gap-1.5">
+              <span>Miscellaneous Skills to Train (for 5x Multipliers)</span>
             </h5>
           </div>
 
@@ -119,15 +119,15 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
                   className="flex flex-wrap items-center justify-between gap-2 p-1.5 bg-[#18130b] border border-[#332515] text-xs"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[#fde047] font-mono font-bold">•</span>
+                    <span className="text-[#d4b06a] font-mono font-bold">•</span>
                     <span className="font-serif font-bold text-[#f3e6c8]">{m.skill}</span>
                     <span className="text-[10px] font-mono text-[#9e8b6b]">({m.startValue} → {m.endValue})</span>
-                    <span className="text-[10px] px-1.5 py-0.2 bg-[#2a1c0d] border border-[#4a3219] text-[#fdba74] font-serif">
+                    <span className="text-[10px] px-1.5 py-0.2 bg-[#1a140d] border border-[#3e301f] text-[#b8a078] font-serif">
                       Gov: {m.attribute} (5x bonus)
                     </span>
                   </div>
                   <div className="flex items-center gap-3 font-mono text-xs">
-                    <span className="font-bold text-[#4ade80]">Train +{m.points} pts</span>
+                    <span className="font-bold text-[#f3e6c8]">Train +{m.points} pts</span>
                     {m.cost > 0 && <span className="text-[#d4b06a]">~{m.cost}g</span>}
                   </div>
                 </div>
@@ -135,7 +135,7 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
             </div>
           ) : (
             <p className="text-xs text-[#9e8b6b] italic m-0 pt-1">
-              ✓ No Miscellaneous training required for this level (all multipliers satisfied by Major/Minor increases or Luck +1).
+              No Miscellaneous training required for this level (all multipliers satisfied by Major/Minor increases or Luck +1).
             </p>
           )}
         </div>

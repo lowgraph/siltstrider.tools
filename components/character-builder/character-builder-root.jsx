@@ -138,7 +138,7 @@ export default function CharacterBuilderRoot() {
                   onClick={handleCopyLink}
                   title="Copy shareable build permalink"
                 >
-                  <span>{copied ? "✓ Link Copied!" : "🔗 Copy Build Link"}</span>
+                  <span>{copied ? "Link Copied!" : "Copy Build Link"}</span>
                 </button>
               </div>
             </div>

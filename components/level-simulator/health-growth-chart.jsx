@@ -68,7 +68,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             (Level {startLevel} → {endLevel})
           </span>
         </h4>
-        <div className="text-xs font-mono font-bold text-[#4ade80] flex items-center gap-1">
+        <div className="text-xs font-mono font-bold text-[#d4b06a] flex items-center gap-1">
           <span>+{finalDiff} HP Advantage</span>
         </div>
       </div>
@@ -84,8 +84,8 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
         >
           <defs>
             <linearGradient id="hpAdvantageGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#4ade80" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#4ade80" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="#d4b06a" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#d4b06a" stopOpacity="0.02" />
             </linearGradient>
           </defs>
 
@@ -171,21 +171,21 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           {/* Area between paths */}
           <path d={areaPath} fill="url(#hpAdvantageGrad)" />
 
-          {/* Delayed Path (Red / Muted) */}
+          {/* Delayed Path (Muted Brass) */}
           <path
             d={delayedPath}
             fill="none"
-            stroke="#ef4444"
+            stroke="#8c7853"
             strokeWidth="2"
             strokeDasharray="4,3"
             opacity="0.85"
           />
 
-          {/* Optimal Path (Green / Gold) */}
+          {/* Optimal Path (Gold) */}
           <path
             d={optimalPath}
             fill="none"
-            stroke="#4ade80"
+            stroke="#d4b06a"
             strokeWidth="2.5"
           />
 
@@ -194,7 +194,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             cx={getX(endLevel)}
             cy={getY(finalOptimal)}
             r="4"
-            fill="#4ade80"
+            fill="#d4b06a"
             stroke="#0c0a06"
             strokeWidth="1.5"
           />
@@ -202,7 +202,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             cx={getX(endLevel)}
             cy={getY(finalDelayed)}
             r="4"
-            fill="#ef4444"
+            fill="#8c7853"
             stroke="#0c0a06"
             strokeWidth="1.5"
           />
@@ -213,20 +213,20 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs pt-1">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-1 bg-[#4ade80] inline-block rounded-none"></span>
+            <span className="w-3 h-1 bg-[#d4b06a] inline-block rounded-none"></span>
             <span className="text-[#f3e6c8] font-serif font-semibold">
-              Rushed Endurance: <strong className="font-mono text-[#4ade80]">{finalOptimal} HP</strong>
+              Rushed Endurance: <strong className="font-mono text-[#d4b06a]">{finalOptimal} HP</strong>
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-1 bg-[#ef4444] inline-block border-t border-dashed border-[#ef4444]"></span>
+            <span className="w-3 h-1 bg-[#8c7853] inline-block border-t border-dashed border-[#8c7853]"></span>
             <span className="text-[#9e8b6b] font-serif font-semibold">
-              Delayed Endurance: <strong className="font-mono text-[#ef4444]">{finalDelayed} HP</strong>
+              Delayed Endurance: <strong className="font-mono text-[#9e8b6b]">{finalDelayed} HP</strong>
             </span>
           </div>
         </div>
         <div className="text-[11px] text-[#9e8b6b] font-sans">
-          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-[#f87171]">-{finalDiff} HP</strong>
+          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-[#f3e6c8]">-{finalDiff} HP</strong>
         </div>
       </div>
     </div>

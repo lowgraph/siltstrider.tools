@@ -72,9 +72,9 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
 
           const badgeBg =
             s.tier === "Major"
-              ? "bg-[#382b13] text-[#fde047]"
+              ? "bg-[#382b13] text-[#d4b06a]"
               : s.tier === "Minor"
-              ? "bg-[#2d1e0d] text-[#fdba74]"
+              ? "bg-[#2d1e0d] text-[#b8a078]"
               : "bg-[#1f1911] text-[#9e8b6b]";
 
           return (
@@ -96,7 +96,7 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
                     {s.tier}
                   </span>
                   {s.gained > 0 && (
-                    <span className="text-[10px] font-mono text-[#4ade80]">
+                    <span className="text-[10px] font-mono text-[#d4b06a]">
                       +{s.gained} trained
                     </span>
                   )}
@@ -107,13 +107,13 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
               <div className="text-right shrink-0">
                 <span
                   className={`font-mono text-sm font-bold ${
-                    isMaxed ? "text-[#fde047]" : s.gained > 0 ? "text-[#4ade80]" : "text-[#f3e6c8]"
+                    isMaxed ? "text-[#d4b06a]" : "text-[#f3e6c8]"
                   }`}
                 >
                   {s.curVal}
                 </span>
                 {isMaxed && (
-                  <span className="block text-[8px] font-mono font-bold text-[#fde047] uppercase leading-none">
+                  <span className="block text-[8px] font-mono font-bold text-[#d4b06a] uppercase leading-none">
                     MAX
                   </span>
                 )}

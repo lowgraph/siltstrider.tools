@@ -210,7 +210,7 @@ export default function LevelSimulatorRoot() {
             className="mw-btn py-2 px-3 text-xs font-serif font-bold text-[#d4b06a]"
             onClick={handleExportJSON}
           >
-            📥 Export Leveled JSON
+            Export Leveled JSON
           </button>
         </div>
       </div>
