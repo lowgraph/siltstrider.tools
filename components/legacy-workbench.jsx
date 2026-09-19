@@ -15,6 +15,7 @@ import EnchantingWorkstation from './calculators/enchanting/enchanting-workstati
 import SpellmakingWorkstation from './calculators/spellmaking/spellmaking-workstation';
 import AlchemyWorkstation from './calculators/alchemy/alchemy-workstation';
 import TravelWorkstation from './calculators/travel/travel-workstation';
+import LevelSimulatorRoot from './level-simulator/level-simulator-root';
 
 const LegacyBody=memo(function LegacyBody({html}){return <div id="legacy-workbench" dangerouslySetInnerHTML={{__html:html}}/>;});
 
@@ -34,10 +35,18 @@ function ChallengeViewOverlay() {
   return null;
 }
 
+function LevelerViewOverlay() {
+  const shell = useShell();
+  if (shell.view === 'leveler') {
+    return <LevelSimulatorRoot />;
+  }
+  return null;
+}
+
 export default function LegacyWorkbench({html,revision}){
  const isClient = typeof window !== 'undefined';
  const [dataReady,setDataReady]=useState(()=>isClient&&Boolean(window.POOL||window.MAJORS));
- const [slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null),[challengeSlot,setChallengeSlot]=useState(null);
+ const [slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null),[challengeSlot,setChallengeSlot]=useState(null),[levelerSlot,setLevelerSlot]=useState(null);
  const [catalogReady,setCatalogReady]=useState(()=>isClient&&Boolean(window.siltCharacters?.active));
  const [booted,setBooted]=useState(()=>isClient&&Boolean(window.siltShell));
  const [enchantSlot,setEnchantSlot]=useState(null),[spellSlot,setSpellSlot]=useState(null),[alchemySlot,setAlchemySlot]=useState(null),[travelSlot,setTravelSlot]=useState(null);
@@ -46,6 +55,7 @@ export default function LegacyWorkbench({html,revision}){
   setSlot(document.getElementById('react-header-slot'));
   setMainSlot(document.getElementById('panel-build') || document.getElementById('main-tools'));
   setChallengeSlot(document.getElementById('panel-challenge'));
+  setLevelerSlot(document.getElementById('panel-leveler'));
   if (isClient) {
     if (window.POOL || window.MAJORS) setDataReady(true);
     if (window.siltShell) setBooted(true);
@@ -97,6 +107,7 @@ export default function LegacyWorkbench({html,revision}){
     {slot&&createPortal(<SiteHeader/>,slot)}
     {mainSlot&&createPortal(<ActiveViewOverlay/>,mainSlot)}
     {challengeSlot&&createPortal(<ChallengeViewOverlay/>,challengeSlot)}
+    {levelerSlot&&createPortal(<LevelerViewOverlay/>,levelerSlot)}
     {enchantSlot&&createPortal(<EnchantingWorkstation/>,enchantSlot)}
     {spellSlot&&createPortal(<SpellmakingWorkstation/>,spellSlot)}
     {alchemySlot&&createPortal(<><AlchemyDataBridge/><AlchemyWorkstation/></>,alchemySlot)}

@@ -1445,11 +1445,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
             <span class="drawer-label">Character Planners</span>
             <button type="button" class="btn" id="btn-challenge">Challenge Runs</button>
             <button type="button" class="btn" id="btn-build">Build Optimizer</button>
+            <button type="button" class="btn drawer-only" id="btn-leveler-drawer">Level Simulator</button>
             <div class="nav-dropdown-wrap desktop-only" id="calc-dropdown-wrap">
               <button type="button" class="btn nav-dropdown-btn" id="btn-dropdown-calc" aria-haspopup="true" aria-expanded="false" aria-controls="dropdown-calc-menu" aria-label="Calculators menu">
                 Calculators <span class="dropdown-caret" aria-hidden="true">▾</span>
               </button>
               <div class="nav-dropdown-menu" id="dropdown-calc-menu" role="menu" aria-label="Calculators" hidden>
+                <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-leveler">Level Simulator</button>
                 <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-enchant">Enchanting</button>
                 <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-spell">Spellmaking</button>
                 <button type="button" role="menuitem" class="dropdown-item" id="btn-desk-alchemy">Alchemy</button>
@@ -1470,6 +1472,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
             <div class="drawer-group">
               <span class="drawer-label">Calculators</span>
               <div class="drawer-grid grid-2">
+                <button type="button" class="btn" id="btn-nav-leveler">Level Simulator</button>
                 <button type="button" class="btn" id="btn-nav-enchant">Enchanting</button>
                 <button type="button" class="btn" id="btn-nav-spell">Spellmaking</button>
                 <button type="button" class="btn" id="btn-nav-alchemy">Alchemy</button>
@@ -1510,6 +1513,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       <div class="actions">
         <button type="button" class="btn home-card" id="btn-go-challenge"><strong>Challenge Runs</strong><span>Roll restrictions, a character, and side goals for this playthrough.</span></button>
         <button type="button" class="btn home-card" id="btn-go-build"><strong>Build Optimizer</strong><span>Open premade sheets or tune a custom class, then pick early and late gear.</span></button>
+        <button type="button" class="btn home-card" id="btn-go-leveler"><strong>Level Simulator</strong><span>Simulate progression to cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.</span></button>
         <button type="button" class="btn home-card" id="btn-go-enchant"><strong>Enchanting</strong><span>Effects, souls, and named enchanters with OpenMW charge and gold.</span></button>
         <button type="button" class="btn home-card" id="btn-go-spell"><strong>Spellmaking</strong><span>Magicka, cast chance, and the gold a spellmaker would charge.</span></button>
         <button type="button" class="btn home-card" id="btn-go-alchemy"><strong>Alchemy</strong><span>Named apparatus and four ingredients; brew numbers from OpenMW.</span></button>
@@ -1851,6 +1855,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           <p class="muted">The address bar keeps this sheet. Copy the link to share or come back later.</p>
         </div>
       </div>
+    </div>
+    <div class="panel" id="panel-leveler">
+      <h2>Character Level Simulator</h2>
+      <p class="muted">Simulate progression to theoretical level cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.</p>
     </div>
     <div class="panel" id="panel-travel">
       <h2>Travel optimizer</h2>
@@ -2793,6 +2801,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const psp = document.getElementById("panel-spell");
     const pal = document.getElementById("panel-alchemy");
     const ptr = document.getElementById("panel-travel");
+    const plv = document.getElementById("panel-leveler");
     const menuBtn = document.getElementById("btn-menu");
     const drawer = document.getElementById("menu-drawer");
     const pageSub = document.getElementById("page-sub");
@@ -2917,9 +2926,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       });
     } catch (e) {}
     function showView(name) {
-      document.body.classList.remove("view-challenge", "view-builder", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
+      document.body.classList.remove("view-challenge", "view-builder", "view-leveler", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
       if (name === "challenge") document.body.classList.add("view-challenge");
       if (name === "builder") document.body.classList.add("view-builder");
+      if (name === "leveler") document.body.classList.add("view-leveler");
       if (name === "enchanting") document.body.classList.add("view-enchanting");
       if (name === "spellmaking") document.body.classList.add("view-spellmaking");
       if (name === "alchemy") document.body.classList.add("view-alchemy");
@@ -2930,13 +2940,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       var navB = document.getElementById("btn-build");
       if (navC) navC.setAttribute("aria-current", name === "challenge" ? "page" : "false");
       if (navB) navB.setAttribute("aria-current", name === "builder" ? "page" : "false");
-      var calcViews = ["enchanting", "spellmaking", "alchemy", "travel"];
+      var calcViews = ["leveler", "enchanting", "spellmaking", "alchemy", "travel"];
       var moreViews = ["about", "changelog"];
       var bdc = document.getElementById("btn-dropdown-calc");
       var bdm = document.getElementById("btn-dropdown-more");
       if (bdc) bdc.classList.toggle("on", calcViews.includes(name));
       if (bdm) bdm.classList.toggle("on", moreViews.includes(name));
       var deskNavIds = [
+        ["btn-desk-leveler", "leveler"],
         ["btn-desk-enchant", "enchanting"],
         ["btn-desk-spell", "spellmaking"],
         ["btn-desk-alchemy", "alchemy"],
@@ -2975,6 +2986,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           }
         }
       }
+      if (plv) plv.classList.toggle("show", name === "leveler");
       if (pa) pa.classList.toggle("show", name === "about");
       if (pcl) pcl.classList.toggle("show", name === "changelog");
       if (pe) pe.classList.toggle("show", name === "enchanting");
@@ -2986,6 +2998,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else if (name === "challenge") pageSub.textContent = "Roll a character, a major goal, side tasks, and restrictions.";
         else if (name === "about") pageSub.textContent = "About this unofficial fan project.";
         else if (name === "changelog") pageSub.textContent = "What changed on the site, newest first.";
+        else if (name === "leveler") pageSub.textContent = "Progression simulator, 5x multiplier training, and health projection.";
         else if (name === "enchanting") pageSub.textContent = "Effects, souls, and named enchanters.";
         else if (name === "spellmaking") pageSub.textContent = "Magicka, cast chance, and spellmaker gold.";
         else if (name === "alchemy") pageSub.textContent = "Apparatus, ingredients, and brew numbers.";
@@ -3130,6 +3143,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         const parts = [];
         if (pb && pb.classList.contains("show")) parts.push("builder");
         else if (pc && pc.classList.contains("show")) parts.push("challenge");
+        else if (plv && plv.classList.contains("show")) parts.push("leveler");
         else if (pa && pa.classList.contains("show")) parts.push("about");
         else if (pcl && pcl.classList.contains("show")) parts.push("changelog");
         else if (pe && pe.classList.contains("show")) parts.push("enchanting");
@@ -3143,7 +3157,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
           const run = encodeRunPayload();
           if (run) parts.push("run=" + run);
         }
-        if (["builder", "enchanting", "spellmaking", "alchemy", "travel"].includes(parts[0]) && typeof collectBuild === "function") {
+        if (["builder", "leveler", "enchanting", "spellmaking", "alchemy", "travel"].includes(parts[0]) && typeof collectBuild === "function") {
           try { parts.push("build=" + toBase64Url(JSON.stringify(collectBuild()))); } catch (eB) {}
         }
         // Explicit values make shared links independent of the recipient's preferences.
@@ -3185,6 +3199,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else if (/\bspellmaking\b/.test(h)) showView("spellmaking");
         else if (/\balchemy\b/.test(h)) showView("alchemy");
         else if (/\btravel\b/.test(h)) showView("travel");
+        else if (/\bleveler\b|\blevel\b/.test(h)) showView("leveler");
         else if (/\babout\b/.test(h)) showView("about");
         else if (/\bchangelog\b/.test(h)) showView("changelog");
         else if (/builder|optimizer/.test(h) || buildM) showView("builder");
@@ -3209,10 +3224,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     bindOnce(b, () => showView("builder"));
     bindOnce(document.getElementById("btn-go-challenge"), () => showView("challenge"));
     bindOnce(document.getElementById("btn-go-build"), () => showView("builder"));
+    bindOnce(document.getElementById("btn-go-leveler"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-go-enchant"), () => showView("enchanting"));
     bindOnce(document.getElementById("btn-go-spell"), () => showView("spellmaking"));
     bindOnce(document.getElementById("btn-go-alchemy"), () => showView("alchemy"));
     bindOnce(document.getElementById("btn-go-travel"), () => showView("travel"));
+    bindOnce(document.getElementById("btn-nav-leveler"), () => showView("leveler"));
+    bindOnce(document.getElementById("btn-leveler-drawer"), () => showView("leveler"));
+    bindOnce(document.getElementById("btn-desk-leveler"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-nav-enchant"), () => showView("enchanting"));
     bindOnce(document.getElementById("btn-nav-spell"), () => showView("spellmaking"));
     bindOnce(document.getElementById("btn-nav-alchemy"), () => showView("alchemy"));

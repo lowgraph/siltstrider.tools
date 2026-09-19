@@ -152,6 +152,22 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
           <p className="text-[#8c7853] italic">No innate spells or active powers.</p>
         )}
       </div>
+
+      {/* Quick Launch: Level Progression Optimizer */}
+      <div className="pt-2 border-t border-[#2a2318]">
+        <button
+          type="button"
+          className="w-full mw-btn py-3 px-4 font-serif text-sm font-bold tracking-wide flex items-center justify-center gap-2 shadow-sm text-[#f3e6c8] hover:text-[#d4b06a]"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.siltShell?.navigate) {
+              window.siltShell.navigate("leveler");
+            }
+          }}
+          title="Open Level Progression Optimizer with this build"
+        >
+          <span>📈 Level Progression Optimizer →</span>
+        </button>
+      </div>
     </div>
   );
 }

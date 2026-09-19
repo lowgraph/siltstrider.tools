@@ -1,7 +1,7 @@
 // Runs after the verified classic runtime. One snapshot feeds all React tools.
 (function () {
   const listeners = new Set();
-  const views = {home:'home',challenge:'challenge',build:'builder',about:'about',changelog:'changelog',enchant:'enchanting',spell:'spellmaking',alchemy:'alchemy',travel:'travel'};
+  const views = {home:'home',challenge:'challenge',build:'builder',leveler:'leveler',about:'about',changelog:'changelog',enchant:'enchanting',spell:'spellmaking',alchemy:'alchemy',travel:'travel'};
   let snapshot, depth=0;
   function publish() {
     const panel=document.querySelector('.panel.show');

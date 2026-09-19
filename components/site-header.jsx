@@ -11,10 +11,11 @@ const descriptions = {
   enchanting: 'Effects, souls, and named enchanters.',
   spellmaking: 'Magicka, cast chance, and spellmaker gold.',
   alchemy: 'Apparatus, ingredients, and brew numbers.',
-  travel: 'Fewest hops between towns.'
+  travel: 'Fewest hops between towns.',
+  leveler: 'Progression simulator, 5x multiplier training, and health projection.'
 };
 
-const CALC_VIEWS = ['enchanting', 'spellmaking', 'alchemy', 'travel'];
+const CALC_VIEWS = ['leveler', 'enchanting', 'spellmaking', 'alchemy', 'travel'];
 const MORE_VIEWS = ['about', 'changelog'];
 
 export default function SiteHeader({ shell: propShell } = {}) {
@@ -194,6 +195,16 @@ export default function SiteHeader({ shell: propShell } = {}) {
           >
             Build Optimizer
           </button>
+          <button
+            type="button"
+            id="react-nav-leveler"
+            className={'btn drawer-only' + (shell.view === 'leveler' ? ' on' : '')}
+            disabled={!shell.ready}
+            aria-current={shell.view === 'leveler' ? 'page' : undefined}
+            onClick={e => navigate(e, 'leveler')}
+          >
+            Level Simulator
+          </button>
 
           {/* Desktop Dropdowns */}
           <div className="nav-dropdown-wrap desktop-only" ref={calcDropdownRef}>
@@ -221,6 +232,15 @@ export default function SiteHeader({ shell: propShell } = {}) {
                 aria-label="Calculators"
                 onKeyDown={e => handleMenuKeyDown(e, calcMenuRef, calcBtnRef, () => setCalcOpen(false))}
               >
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={'dropdown-item' + (shell.view === 'leveler' ? ' on' : '')}
+                  aria-current={shell.view === 'leveler' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'leveler')}
+                >
+                  Level Simulator
+                </button>
                 <button
                   type="button"
                   role="menuitem"
@@ -314,6 +334,15 @@ export default function SiteHeader({ shell: propShell } = {}) {
           <div className="drawer-group">
             <span className="drawer-label">Calculators</span>
             <div className="drawer-grid grid-2">
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'leveler' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'leveler' ? 'page' : undefined}
+                onClick={e => navigate(e, 'leveler')}
+              >
+                Level Simulator
+              </button>
               <button
                 type="button"
                 className={'btn' + (shell.view === 'enchanting' ? ' on' : '')}
