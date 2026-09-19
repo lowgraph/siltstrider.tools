@@ -749,3 +749,371 @@ test("level-math edge cases: all attributes maxed at 100, custom priority, and s
   assert.ok(valRes2.errors.some((e) => e.includes("already capped at 100")));
 });
 
+test("adversarial test 1: extreme level caps and boundary headroom", async () => {
+  const { calculateTheoreticalLevelCap, simulateProgression, ALL_SKILLS } = await import(
+    "../lib/level-math.mjs"
+  );
+
+  // 1. All 10 MM skills at 5: 10 * 95 = 950 headroom -> cap = 1 + 95 = 96
+  assert.equal(calculateTheoreticalLevelCap(Array(10).fill(5)), 96);
+
+  // 2. Level 50 with 200 headroom -> 50 + 20 = 70
+  assert.equal(calculateTheoreticalLevelCap(Array(10).fill(80), null, 50), 70);
+
+  // 3. Skills over 100 (e.g. 120, 105) clamped to 0 headroom rather than negative
+  assert.equal(
+    calculateTheoreticalLevelCap([120, 105, 100, 100, 100, 100, 100, 100, 100, 100], null, 10),
+    10
+  );
+
+  // 4. Null, undefined, empty array, NaN level handling
+  assert.equal(calculateTheoreticalLevelCap(null), 1);
+  assert.equal(calculateTheoreticalLevelCap([]), 1);
+  assert.equal(calculateTheoreticalLevelCap([40], null, NaN), 7);
+  assert.equal(calculateTheoreticalLevelCap([40], null, -10), 7);
+
+  // 5. Character starting at Level 100 with all skills 100
+  const all100Skills = {};
+  ALL_SKILLS.forEach((s) => (all100Skills[s] = 100));
+  const char100 = {
+    level: 100,
+    attributes: {
+      Strength: 100,
+      Endurance: 100,
+      Agility: 100,
+      Speed: 100,
+      Intelligence: 100,
+      Willpower: 100,
+      Personality: 100,
+      Luck: 100
+    },
+    skills: all100Skills,
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  };
+  const prog100 = simulateProgression(char100);
+  assert.equal(prog100.levelCap, 100);
+  assert.equal(prog100.steps.length, 0);
+  assert.equal(prog100.finalState.level, 100);
+});
+
+test("adversarial test 2: odd skill increases, multiplier thresholds, and Luck constraint", async () => {
+  const { normalizeCharacterState, validateLevelStep } = await import("../lib/level-math.mjs");
+
+  const state = normalizeCharacterState({
+    level: 1,
+    attributes: { Strength: 40, Endurance: 40, Luck: 40 },
+    skills: { "Long Blade": 40, "Heavy Armor": 40 },
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  });
+
+  // 1. Odd increases: 3 points Long Blade (Strength), 7 points Heavy Armor (Endurance)
+  // Strength: 3 increases -> multiplier threshold gives 2x (+2 max)
+  // Endurance: 7 increases -> multiplier threshold gives 3x (+3 max)
+  const validOddStep = {
+    attributeBonuses: [
+      { attribute: "Strength", bonus: 2 },
+      { attribute: "Endurance", bonus: 3 }
+    ],
+    majorMinorIncreases: { "Long Blade": 3, "Heavy Armor": 7 },
+    miscIncreases: {}
+  };
+  const valValid = validateLevelStep(state, validOddStep);
+  assert.equal(valValid.valid, true);
+
+  // 2. Attempting +3 for Strength with only 3 increases fails (needs 5)
+  const invalidOddStep = {
+    attributeBonuses: [
+      { attribute: "Strength", bonus: 3 },
+      { attribute: "Endurance", bonus: 3 }
+    ],
+    majorMinorIncreases: { "Long Blade": 3, "Heavy Armor": 7 },
+    miscIncreases: {}
+  };
+  const valInvalid = validateLevelStep(state, invalidOddStep);
+  assert.equal(valInvalid.valid, false);
+  assert.ok(
+    valInvalid.errors.some((e) =>
+      e.includes("requires at least 5 skill increases, but only received 3")
+    )
+  );
+
+  // 3. Luck strictly +1: bonuses of 2, 5, 0, or -1 must be rejected
+  for (const badLuck of [2, 5, 0, -1]) {
+    const stepBadLuck = {
+      attributeBonuses: [{ attribute: "Luck", bonus: badLuck }],
+      majorMinorIncreases: { "Long Blade": 10 },
+      miscIncreases: {}
+    };
+    const res = validateLevelStep(state, stepBadLuck);
+    assert.equal(res.valid, false);
+    assert.ok(res.errors.some((e) => e.includes("Luck bonus must strictly be +1")));
+  }
+});
+
+test("adversarial test 3: partial allocations, attribute capping boundaries, and all attributes maxed", async () => {
+  const { normalizeCharacterState, validateLevelStep, optimizeLevelStep } = await import(
+    "../lib/level-math.mjs"
+  );
+
+  // 1. Only 1 attribute uncapped (Luck 80, all others 100) -> maxAllowedPicks is 1
+  const stateOnlyLuck = normalizeCharacterState({
+    level: 1,
+    attributes: {
+      Strength: 100,
+      Intelligence: 100,
+      Willpower: 100,
+      Agility: 100,
+      Speed: 100,
+      Endurance: 100,
+      Personality: 100,
+      Luck: 80
+    },
+    skills: { "Long Blade": 40, "Heavy Armor": 40 },
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  });
+
+  const step1Pick = {
+    attributeBonuses: [{ attribute: "Luck", bonus: 1 }],
+    majorMinorIncreases: { "Long Blade": 10 },
+    miscIncreases: {}
+  };
+  assert.equal(validateLevelStep(stateOnlyLuck, step1Pick).valid, true);
+
+  // Attempting 2 picks when only 1 uncapped attribute exists must be rejected
+  const step2Picks = {
+    attributeBonuses: [
+      { attribute: "Luck", bonus: 1 },
+      { attribute: "Strength", bonus: 1 }
+    ],
+    majorMinorIncreases: { "Long Blade": 10 },
+    miscIncreases: {}
+  };
+  const val2Picks = validateLevelStep(stateOnlyLuck, step2Picks);
+  assert.equal(val2Picks.valid, false);
+  assert.ok(
+    val2Picks.errors.some((e) => e.includes("Cannot select more than 1 attributes"))
+  );
+
+  // 2. All 8 attributes capped at 100: allows 0 picks, accumulates 10 HP per level
+  const stateAllCapped = normalizeCharacterState({
+    level: 1,
+    attributes: {
+      Strength: 100,
+      Intelligence: 100,
+      Willpower: 100,
+      Agility: 100,
+      Speed: 100,
+      Endurance: 100,
+      Personality: 100,
+      Luck: 100
+    },
+    skills: { "Long Blade": 40, "Heavy Armor": 40 },
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  });
+  const optAllCapped = optimizeLevelStep(stateAllCapped);
+  assert.equal(optAllCapped.attributeBonuses.length, 0);
+  assert.equal(optAllCapped.healthGain, 10);
+  assert.equal(validateLevelStep(stateAllCapped, optAllCapped).valid, true);
+
+  // 3. Rejecting attribute over-cap attempt (current 98 + bonus 5 = 103 > 100)
+  const stateNearCap = normalizeCharacterState({
+    level: 1,
+    attributes: { Strength: 98, Endurance: 40 },
+    skills: { "Long Blade": 40 },
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  });
+  const stepOverCap = {
+    attributeBonuses: [{ attribute: "Strength", bonus: 5 }],
+    majorMinorIncreases: { "Long Blade": 10 },
+    miscIncreases: {}
+  };
+  const valOverCap = validateLevelStep(stateNearCap, stepOverCap);
+  assert.equal(valOverCap.valid, false);
+  assert.ok(
+    valOverCap.errors.some((e) => e.includes("cannot exceed 100 (current: 98, bonus: +5)"))
+  );
+});
+
+test("adversarial test 4: smart Misc allocation, trainer cost minimization, and split training", async () => {
+  const { normalizeCharacterState, optimizeLevelStep } = await import("../lib/level-math.mjs");
+
+  // 1. Attribute with low Misc headroom (Endurance has only Spear at 95) gets MM points first
+  const char = {
+    level: 1,
+    attributes: { Endurance: 40, Strength: 40, Agility: 40 },
+    skills: {
+      "Medium Armor": 40,
+      "Heavy Armor": 40,
+      Spear: 95,
+      "Long Blade": 40,
+      "Blunt Weapon": 5,
+      Axe: 5,
+      Armorer: 5,
+      Acrobatics: 5
+    },
+    maj: ["Medium Armor", "Heavy Armor", "Block", "Armorer", "Long Blade"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  };
+  const step = optimizeLevelStep(normalizeCharacterState(char), {
+    priority: ["Endurance", "Strength", "Agility"]
+  });
+
+  assert.equal(step.majorMinorIncreases["Medium Armor"], 10);
+  const endBonus = step.attributeBonuses.find((b) => b.attribute === "Endurance");
+  assert.equal(endBonus.bonus, 5);
+
+  // 2. Strength trains cheap Misc skills (starting at 5) for 95 gold
+  const strTraining = step.miscTraining.find((t) => t.attribute === "Strength");
+  assert.ok(strTraining);
+  assert.equal(strTraining.cost, 95);
+
+  // 3. Split training when cheapest skill has limited headroom
+  const charSplit = {
+    level: 1,
+    attributes: { Strength: 40, Endurance: 40, Agility: 40 },
+    skills: {
+      "Long Blade": 100,
+      Acrobatics: 100,
+      Axe: 100,
+      Armorer: 93,     // 7 headroom
+      "Blunt Weapon": 97 // 3 headroom
+    },
+    maj: ["Heavy Armor", "Medium Armor", "Block", "Short Blade", "Security"],
+    min: ["Destruction", "Restoration", "Light Armor", "Sneak", "Speechcraft"]
+  };
+  const stepSplit = optimizeLevelStep(normalizeCharacterState(charSplit), {
+    priority: ["Strength"]
+  });
+  const strSplits = stepSplit.miscTraining.filter((t) => t.attribute === "Strength");
+  assert.equal(strSplits.length, 2);
+  const totalStrPts = strSplits.reduce((sum, t) => sum + t.points, 0);
+  assert.equal(totalStrPts, 10);
+  assert.equal(strSplits[0].skill, "Armorer");
+  assert.equal(strSplits[0].points, 7);
+  assert.equal(strSplits[1].skill, "Blunt Weapon");
+  assert.equal(strSplits[1].points, 3);
+});
+
+test("adversarial test 5: dual-mode stats_only mechanics and zero-misc attribute solver behavior", async () => {
+  const {
+    normalizeCharacterState,
+    validateLevelStep,
+    optimizeLevelStep,
+    PROGRESSION_MODES
+  } = await import("../lib/level-math.mjs");
+
+  // 1. In stats_only mode: allows arbitrary attribute bonus picks without skill increases
+  const char = {
+    level: 1,
+    attributes: { Strength: 40, Endurance: 40, Agility: 40, Luck: 40 },
+    skills: { "Long Blade": 40 },
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  };
+  const state = normalizeCharacterState(char);
+
+  const stepData = {
+    attributeBonuses: [
+      { attribute: "Strength", bonus: 5 },
+      { attribute: "Endurance", bonus: 5 },
+      { attribute: "Luck", bonus: 1 }
+    ],
+    majorMinorIncreases: {},
+    miscIncreases: {}
+  };
+
+  // Valid in stats_only mode without any skill points
+  const valStatsOnly = validateLevelStep(state, stepData, { mode: PROGRESSION_MODES.STATS_ONLY });
+  assert.equal(valStatsOnly.valid, true);
+
+  // In full mode, same step fails because 0 skill increases were provided
+  const valFull = validateLevelStep(state, stepData, { mode: PROGRESSION_MODES.STATS_AND_SKILLS });
+  assert.equal(valFull.valid, false);
+  assert.ok(valFull.errors.some((e) => e.includes("requires exactly 10 Major or Minor skill increases")));
+
+  // 2. Solver behavior when two chosen attributes have 0 Misc headroom
+  // Character where Endurance (3 skills) and Personality (3 skills) are all in Maj/Min
+  const zeroMiscChar = {
+    level: 1,
+    attributes: { Endurance: 40, Personality: 40, Strength: 40 },
+    skills: {
+      "Medium Armor": 30,
+      "Heavy Armor": 30,
+      Spear: 30,
+      Illusion: 30,
+      Mercantile: 30,
+      Speechcraft: 30,
+      "Long Blade": 30,
+      Block: 30,
+      Armorer: 30,
+      Destruction: 30
+    },
+    maj: ["Medium Armor", "Heavy Armor", "Spear", "Illusion", "Mercantile"],
+    min: ["Speechcraft", "Long Blade", "Block", "Armorer", "Destruction"]
+  };
+  const stepZeroMisc = optimizeLevelStep(normalizeCharacterState(zeroMiscChar), {
+    priority: ["Endurance", "Personality", "Strength"]
+  });
+
+  // One gets +5 from MM, the other gracefully gets +1 from 0 increases, Strength gets +5 from Misc training
+  const endB = stepZeroMisc.attributeBonuses.find((b) => b.attribute === "Endurance");
+  const perB = stepZeroMisc.attributeBonuses.find((b) => b.attribute === "Personality");
+  const strB = stepZeroMisc.attributeBonuses.find((b) => b.attribute === "Strength");
+  assert.equal(endB.bonus, 5);
+  assert.equal(perB.bonus, 1);
+  assert.equal(strB.bonus, 5);
+  assert.equal(validateLevelStep(normalizeCharacterState(zeroMiscChar), stepZeroMisc).valid, true);
+});
+
+test("adversarial test 6: malformed step inputs, duplicate picks, and invalid skill mappings", async () => {
+  const { normalizeCharacterState, validateLevelStep } = await import("../lib/level-math.mjs");
+
+  const state = normalizeCharacterState({
+    level: 1,
+    attributes: { Strength: 50, Endurance: 50, Luck: 50 },
+    skills: { "Long Blade": 40 },
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  });
+
+  // 1. Missing state or stepData returns invalid with error
+  assert.equal(validateLevelStep(null, {}).valid, false);
+  assert.equal(validateLevelStep(state, null).valid, false);
+
+  // 2. Duplicate attribute picks in stepData
+  const dupStep = {
+    attributeBonuses: [
+      { attribute: "Strength", bonus: 1 },
+      { attribute: "Strength", bonus: 1 }
+    ],
+    majorMinorIncreases: { "Long Blade": 10 }
+  };
+  const valDup = validateLevelStep(state, dupStep);
+  assert.equal(valDup.valid, false);
+  assert.ok(valDup.errors.some((e) => e.includes("selected multiple times")));
+
+  // 3. Invalid attribute name
+  const invalidAttrStep = {
+    attributeBonuses: [{ attribute: "Charisma", bonus: 1 }],
+    majorMinorIncreases: { "Long Blade": 10 }
+  };
+  const valAttr = validateLevelStep(state, invalidAttrStep);
+  assert.equal(valAttr.valid, false);
+  assert.ok(valAttr.errors.some((e) => e.includes("Invalid attribute name")));
+
+  // 4. Non-major/minor skill passed in majorMinorIncreases
+  const nonMMStep = {
+    attributeBonuses: [{ attribute: "Strength", bonus: 1 }],
+    majorMinorIncreases: { Acrobatics: 10 } // Acrobatics is Misc for this char
+  };
+  const valNonMM = validateLevelStep(state, nonMMStep);
+  assert.equal(valNonMM.valid, false);
+  assert.ok(valNonMM.errors.some((e) => e.includes("is not a Major or Minor skill")));
+});
+
+
