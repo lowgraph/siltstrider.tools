@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useEffect, useState } from "react";
-import { ATTRS, ATTR_TIP } from "../../lib/character-math.mjs";
+import { ATTRS, ATTR_TIP, SKILL_GOV, ATTR_ABBR } from "../../lib/character-math.mjs";
+import SkillAttributeSummary from "./skill-picker/skill-attribute-summary";
 
 function InfoTip({ text }) {
   const [open, setOpen] = useState(false);
@@ -37,6 +38,7 @@ function InfoTip({ text }) {
 export default function Configurator({
   build,
   catalogs,
+  sheet,
   onUpdateField,
   onSwapSkill,
   onSelectClassPreset
@@ -165,9 +167,6 @@ export default function Configurator({
               </button>
             ))}
           </div>
-          <p className="text-xs text-[#b8a078] mt-1.5 italic">
-            Different base attributes by gender for this race.
-          </p>
         </div>
       </div>
 
@@ -211,9 +210,6 @@ export default function Configurator({
               </option>
             ))}
           </select>
-          {activeSign?.tip && (
-            <p className="text-xs text-[#b8a078] mt-1.5 italic">{activeSign.tip}</p>
-          )}
         </div>
       </div>
 
@@ -288,75 +284,145 @@ export default function Configurator({
         </div>
       </div>
 
+      {/* Governing Attribute Distribution Counter */}
+      <div className="pt-2 border-t border-[#261e13]">
+        <SkillAttributeSummary maj={build.maj} min={build.min} />
+      </div>
+
+      {/* Preset Class Customization Quick-Action Banner */}
+      {build.className !== "Custom" && (
+        <div className="flex items-center justify-between p-2.5 bg-[#17120a] border border-[#382b18] text-xs">
+          <span className="text-[#c2b293]">
+            Preset Class: <strong className="text-[#f3e6c8]">{build.className}</strong> (Locked)
+          </span>
+          <button
+            type="button"
+            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a]"
+            onClick={() => onUpdateField("className", "Custom")}
+            title="Convert to Custom Class to customize major and minor skills"
+          >
+            ✎ Customize Skills
+          </button>
+        </div>
+      )}
+
       {/* Major Skills (5) */}
-      <div className="space-y-2.5">
-        <h4 className="text-sm uppercase tracking-widest text-[#d4b06a] font-serif font-bold border-b border-[#2a2318] pb-1.5">
-          Major Skills (+25)
-        </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {build.maj.map((skillName, idx) => (
-            <div
-              key={`maj-${idx}`}
-              className={`flex items-center gap-2 p-1.5 border border-[#2a2216] transition-colors ${
-                idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
-              }`}
-            >
-              <span className="text-xs font-mono font-bold text-[#d4b06a] w-5 text-right">{idx + 1}.</span>
-              <select
-                className="mw-select flex-1 h-9 px-2.5 py-1 text-sm focus:outline-none"
-                disabled={build.className !== "Custom"}
-                value={skillName}
-                aria-label={"Major skill " + (idx + 1)}
-                onChange={(e) => onSwapSkill(true, idx, e.target.value)}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between border-b border-[#2a2318] pb-1">
+          <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+            Major Skills (+25)
+          </h4>
+          <span className="text-[11px] font-mono text-[#8a7a5e]">5 Slots</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {build.maj.map((skillName, idx) => {
+            const rating = sheet?.skills?.[skillName]?.v;
+            const gov = SKILL_GOV[skillName];
+            const abbr = gov ? ATTR_ABBR[gov] : "";
+
+            return (
+              <div
+                key={`maj-${idx}`}
+                className={`flex items-center gap-2 p-1.5 border border-[#2a2216] transition-colors ${
+                  idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
+                }`}
               >
-                {["Combat", "Magic", "Stealth"].map((spec) => (
-                  <optgroup key={spec} label={spec}>
-                    {(specSkills[spec] || []).map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
-          ))}
+                <span className="text-xs font-mono font-bold text-[#d4b06a] w-4 text-right">
+                  {idx + 1}.
+                </span>
+                <select
+                  id={`builder-maj-${idx}`}
+                  className="mw-select flex-1 h-9 px-2.5 py-1 text-sm focus:outline-none"
+                  disabled={build.className !== "Custom"}
+                  value={skillName}
+                  aria-label={"Major skill " + (idx + 1)}
+                  onChange={(e) => onSwapSkill(true, idx, e.target.value)}
+                >
+                  {["Combat", "Magic", "Stealth"].map((spec) => (
+                    <optgroup key={spec} label={spec}>
+                      {(specSkills[spec] || []).map((s) => {
+                        const sGov = SKILL_GOV[s];
+                        const sAbbr = sGov ? ATTR_ABBR[sGov] : "";
+                        return (
+                          <option key={s} value={s}>
+                            {s} {sAbbr ? `[${sAbbr}]` : ""}
+                          </option>
+                        );
+                      })}
+                    </optgroup>
+                  ))}
+                </select>
+                {rating !== undefined && (
+                  <span
+                    className="font-mono font-bold text-xs px-1.5 py-0.5 bg-[#22180d] border border-[#3d2b16] text-[#d4b06a] min-w-[28px] text-center shrink-0"
+                    title={`Rating: ${rating}${abbr ? ` (${gov})` : ""}`}
+                  >
+                    {rating}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Minor Skills (5) */}
-      <div className="space-y-2.5">
-        <h4 className="text-sm uppercase tracking-widest text-[#d4b06a] font-serif font-bold border-b border-[#2a2318] pb-1.5">
-          Minor Skills (+10)
-        </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {build.min.map((skillName, idx) => (
-            <div
-              key={`min-${idx}`}
-              className={`flex items-center gap-2 p-1.5 border border-[#2a2216] transition-colors ${
-                idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
-              }`}
-            >
-              <span className="text-xs font-mono font-bold text-[#d4b06a] w-5 text-right">{idx + 1}.</span>
-              <select
-                className="mw-select flex-1 h-9 px-2.5 py-1 text-sm focus:outline-none"
-                disabled={build.className !== "Custom"}
-                value={skillName}
-                aria-label={"Minor skill " + (idx + 1)}
-                onChange={(e) => onSwapSkill(false, idx, e.target.value)}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between border-b border-[#2a2318] pb-1">
+          <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+            Minor Skills (+10)
+          </h4>
+          <span className="text-[11px] font-mono text-[#8a7a5e]">5 Slots</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {build.min.map((skillName, idx) => {
+            const rating = sheet?.skills?.[skillName]?.v;
+            const gov = SKILL_GOV[skillName];
+            const abbr = gov ? ATTR_ABBR[gov] : "";
+
+            return (
+              <div
+                key={`min-${idx}`}
+                className={`flex items-center gap-2 p-1.5 border border-[#2a2216] transition-colors ${
+                  idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
+                }`}
               >
-                {["Combat", "Magic", "Stealth"].map((spec) => (
-                  <optgroup key={spec} label={spec}>
-                    {(specSkills[spec] || []).map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
-          ))}
+                <span className="text-xs font-mono font-bold text-[#d4b06a] w-4 text-right">
+                  {idx + 1}.
+                </span>
+                <select
+                  id={`builder-min-${idx}`}
+                  className="mw-select flex-1 h-9 px-2.5 py-1 text-sm focus:outline-none"
+                  disabled={build.className !== "Custom"}
+                  value={skillName}
+                  aria-label={"Minor skill " + (idx + 1)}
+                  onChange={(e) => onSwapSkill(false, idx, e.target.value)}
+                >
+                  {["Combat", "Magic", "Stealth"].map((spec) => (
+                    <optgroup key={spec} label={spec}>
+                      {(specSkills[spec] || []).map((s) => {
+                        const sGov = SKILL_GOV[s];
+                        const sAbbr = sGov ? ATTR_ABBR[sGov] : "";
+                        return (
+                          <option key={s} value={s}>
+                            {s} {sAbbr ? `[${sAbbr}]` : ""}
+                          </option>
+                        );
+                      })}
+                    </optgroup>
+                  ))}
+                </select>
+                {rating !== undefined && (
+                  <span
+                    className="font-mono font-bold text-xs px-1.5 py-0.5 bg-[#1a140d] border border-[#352514] text-[#c2a662] min-w-[28px] text-center shrink-0"
+                    title={`Rating: ${rating}${abbr ? ` (${gov})` : ""}`}
+                  >
+                    {rating}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

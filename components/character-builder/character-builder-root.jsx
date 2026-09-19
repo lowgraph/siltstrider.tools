@@ -408,7 +408,7 @@ export default function CharacterBuilderRoot() {
                 <span className="font-serif font-bold text-sm">Character Vitals</span>
                 <button
                   type="button"
-                  className="underline text-xs text-[#d4b06a] hover:text-[#f3e6c8]"
+                  className="mw-btn px-2.5 py-1 text-xs font-serif font-bold tracking-wide"
                   onClick={() => setMobileTab(mobileTab === "config" ? "sheet" : "config")}
                 >
                   {mobileTab === "config" ? "View Full Sheet →" : "← View Config"}
@@ -428,6 +428,7 @@ export default function CharacterBuilderRoot() {
               <Configurator
                 build={build}
                 catalogs={catalogs}
+                sheet={sheet}
                 onUpdateField={handleUpdateField}
                 onSwapSkill={handleSwapSkill}
                 onSelectClassPreset={handleSelectClassPreset}
