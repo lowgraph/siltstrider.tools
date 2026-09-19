@@ -572,19 +572,54 @@ body.view-builder .hero {
 }
 
 
-/* Override the legacy rule hiding the React menu button on small screens. */
-@media (max-width: 767px) {
+/* Responsive Top Bar & CRPG Hamburger Navigation Drawer */
+#react-header-slot .drawer-label {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  #react-header-slot .hamburger {
+    display: none !important;
+  }
+  #react-header-slot #react-menu-drawer {
+    display: flex !important;
+    position: static !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 899px) {
+  #react-header-slot .topbar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+  }
+  #react-header-slot .brand {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
   #react-header-slot .hamburger {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
+    flex: 0 0 auto !important;
     min-width: 44px;
     min-height: 44px;
+    width: 44px;
+    height: 44px;
     border-radius: 0 !important;
     border: 4px solid transparent !important;
     border-image: var(--mw-bevel) 4 repeat !important;
     background: linear-gradient(180deg, rgba(62, 42, 22, 0.75) 0%, rgba(18, 14, 9, 0.6) 100%) !important;
     color: #d4b06a !important;
+    font-family: var(--font-serif) !important;
     font-size: 1.35rem !important;
     line-height: 1 !important;
     cursor: pointer !important;
@@ -592,21 +627,101 @@ body.view-builder .hero {
     transition: background 0.15s ease, color 0.15s ease !important;
   }
   #react-header-slot .hamburger:hover,
-  #react-header-slot .hamburger:active,
+  #react-header-slot .hamburger:active {
+    background: linear-gradient(180deg, rgba(82, 56, 30, 0.85) 0%, rgba(28, 20, 12, 0.7) 100%) !important;
+    color: #f3e6c8 !important;
+  }
   #react-header-slot .hamburger[aria-expanded="true"] {
     background: #3a2d1d !important;
     color: #f3e6c8 !important;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8) !important;
   }
-  #react-header-slot #react-menu-drawer { display: none !important; }
+  #react-header-slot .hamburger:focus-visible {
+    outline: 2px solid #d4b06a !important;
+    outline-offset: 2px !important;
+  }
+  #react-header-slot #react-menu-drawer {
+    display: none !important;
+  }
   #react-header-slot #react-menu-drawer.open {
     display: flex !important;
-    width: 100%;
-    flex-basis: 100%;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    flex-basis: 100% !important;
     background: #14100a !important;
+    background-clip: padding-box !important;
     border: 4px solid transparent !important;
     border-image: var(--mw-bevel) 4 repeat !important;
-    padding: 10px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85) !important;
+    padding: 14px 16px !important;
+    margin-top: 8px !important;
+    gap: 12px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), inset 0 0 12px 2px rgba(0, 0, 0, 0.7) !important;
+    z-index: 50 !important;
+  }
+  #react-header-slot #react-menu-drawer.open .nav-primary {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+  #react-header-slot #react-menu-drawer.open .nav-primary .btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    padding: 10px 14px !important;
+    font-size: 0.95rem !important;
+    font-family: var(--font-serif) !important;
+    letter-spacing: 0.02em !important;
+  }
+  #react-header-slot #react-menu-drawer.open .world-bar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    padding-top: 10px !important;
+    border-top: 1px solid rgba(212, 176, 106, 0.25) !important;
+    gap: 6px !important;
+  }
+  #react-header-slot #react-menu-drawer.open .drawer-label {
+    display: block !important;
+    font-family: var(--font-serif) !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #d4b06a !important;
+    margin-bottom: 4px !important;
+  }
+  #react-header-slot #react-menu-drawer.open .world-controls {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 6px !important;
+  }
+  #react-header-slot #react-menu-drawer.open .seg {
+    display: flex !important;
+    width: 100% !important;
+  }
+  #react-header-slot #react-menu-drawer.open .seg-btn {
+    flex: 1 1 50% !important;
+    min-height: 38px !important;
+    font-size: 0.85rem !important;
+    font-family: var(--font-serif) !important;
+    text-align: center !important;
+  }
+  #react-header-slot #react-menu-drawer.open .arce-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    font-size: 0.85rem !important;
+    font-family: var(--font-serif) !important;
+    text-align: center !important;
   }
 }
 @media (max-width: 1023px) {

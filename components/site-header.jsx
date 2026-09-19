@@ -16,13 +16,14 @@ export default function SiteHeader(){
   <div className="brand"><h1><a href="#home" className="brand-home" onClick={e=>navigate(e,'home')}>Silt Strider</a></h1>
    <p className="kicker">siltstrider.tools — Morrowind build planner &amp; challenge run generator<span className="page-sub">{descriptions[shell.view]}</span></p>
   </div>
-  <button ref={menu} type="button" className="hamburger" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} aria-controls="react-menu-drawer" onClick={()=>setOpen(!open)}>☰</button>
+  <button ref={menu} type="button" className="hamburger" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} aria-controls="react-menu-drawer" onClick={()=>setOpen(!open)}>{open ? '✕' : '☰'}</button>
   <div className={'header-tools menu-drawer'+(open?' open':'')} id="react-menu-drawer">
    <div className="nav-primary">
     <button type="button" id="react-nav-challenge" className={'btn'+(shell.view==='challenge'?' on':'')} disabled={!shell.ready} aria-current={shell.view==='challenge'?'page':undefined} onClick={e=>navigate(e,'challenge')}>Challenge Runs</button>
     <button type="button" id="react-nav-build" className={'btn'+(shell.view==='builder'?' on':'')} disabled={!shell.ready} aria-current={shell.view==='builder'?'page':undefined} onClick={e=>navigate(e,'builder')}>Build Optimizer</button>
    </div>
    <div className="nav-secondary world-bar"><div className="world-controls">
+    <span className="drawer-label">Game World Profile</span>
     <div className="seg" role="group" aria-label="World">
      <button type="button" className={'seg-btn'+(shell.world==='vanilla'?' on':'')} disabled={!shell.ready} aria-pressed={shell.world==='vanilla'} onClick={()=>shell.setProfile('vanilla')}>Vanilla</button>
      <button type="button" className={'seg-btn'+(shell.world==='tr'?' on':'')} id="react-world-tr" title="Tamriel Rebuilt" disabled={!shell.ready} aria-pressed={shell.world==='tr'} onClick={()=>shell.setProfile(shell.arce?'tr_arce':'tr')}>Tamriel Rebuilt</button>

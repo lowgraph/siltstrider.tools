@@ -973,7 +973,6 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       margin-left: auto;
     }
     .nav-primary { display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
-    body:not(.view-challenge):not(.view-builder) .nav-primary { display: none; }
     .nav-secondary { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 14px; width: 100%; }
     .nav-link {
       appearance: none; background: none; border: 0; padding: 0; margin: 0;
@@ -1012,7 +1011,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     .world-controls {
       display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-end; justify-content: flex-start; gap: 2px;
     }
-    .hamburger { display: none !important; }
+    .hamburger { display: none; }
+    @media (max-width: 899px) {
+      .hamburger { display: inline-flex; }
+    }
     .menu-drawer {
       display: flex;
       position: static;
