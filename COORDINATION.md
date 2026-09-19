@@ -1,20 +1,18 @@
 # Coordination
 
-Two agents work on Silt Strider in parallel. This file is identical in both
+Three agents work on Silt Strider in parallel. This file is identical in both
 repositories. If you change it, change both copies in the same session.
 
 ## Who owns what
 
-| | Site agent | Data agent |
-| --- | --- | --- |
-| Repository | `A:\Claude\morrowind-tools` | `C:\Users\tiago\OneDrive\Documents\ChatGPT\OpenMW Decompiler` |
-| Owns | Next.js, React, calculators, UI, Clerk, `cloudflare/`, D1 routes and migrations | extraction, catalogs, policy, gear rows, the rules library, the app bundle |
-| Reads | `public/game-data/` | the plugin files and `A:\Cache\OpenMWFoundation` |
-| Never | opens a SQLite database or runs an extractor | writes JSX, CSS, or a route handler |
+| | Antigravity (UI Lead) | Codex (Site Agent) | Claude (Data Agent) |
+| --- | --- | --- | --- |
+| Repository / Focus | Architecture, Design & Specs (`UI_TRANSFORMATION.md`) | `A:\Claude\morrowind-tools` | `C:\Users\tiago\OneDrive\Documents\ChatGPT\OpenMW Decompiler` |
+| Owns | UI/UX specifications, design tokens, component hierarchy, CRPG aesthetic standards | Next.js 16 App Router, React 19, Tailwind CSS, UI implementation, Clerk, `cloudflare/`, D1 routes & migrations | Extraction, catalogs, policy, gear rows, rules library, engine dumps, app bundle publication |
+| Reads | User feedback, in-game references (`Char Creation.png`), legacy runtime | `UI_TRANSFORMATION.md`, `public/game-data/`, legacy workbench | Plugin files, OpenMW engine dumps, `A:\Cache\OpenMWFoundation` |
+| Never | Writes production backend database code | Opens raw SQLite databases or runs extractors | Writes frontend JSX, CSS, or Cloudflare route handlers |
 
-**One agent per repository.** Both agents can reach both folders; that is the only
-thing that can actually break this arrangement. If you need a change on the other
-side, say so and stop — do not reach across.
+**Respect workspace boundaries.** While agents can inspect files across folders for context, each agent only commits changes within its designated scope. Antigravity authors cross-cutting UI blueprints; Codex implements them in `morrowind-tools`; Claude implements data features in `OpenMW Decompiler`.
 
 ## The contract is the bundle
 
@@ -65,30 +63,41 @@ Keep that property in anything new.
 
 ## Current split of work
 
-**Site agent**
+**Antigravity (UI Transformation Lead)**
 
-1. Rewire the legacy calculators to the loader. `DATA_LOADER.md` is explicit that
+1. Maintain and evolve `UI_TRANSFORMATION.md` roadmap.
+2. Review site UI implementation against CRPG design system and responsive mobile standards.
+3. Specify Phase 2 (modernized skill picker) and Phase 3 (cross-tool calculator state integration).
+
+**Codex (Site agent)**
+
+1. Execute the UI transformation specified in `UI_TRANSFORMATION.md` (Phase 1: two-pane Character Builder, decoupled Gear Advisor, and mobile sticky Vitals HUD; Phase 2: modernized skill pickers; Phase 3: cross-tool state integration).
+2. Fix the mobile navigation drawer conflict (`legacy.css` suppressing `.hamburger`).
+3. Rewire the legacy calculators to the loader. `DATA_LOADER.md` is explicit that
    the loader is ready and the calculators still use their verified legacy tables;
    until this lands, the bundle powers nothing.
-2. Repoint `scripts/stage-game-data.mjs` away from its `A:/Cache/OpenMWBundlePreview`
+4. Repoint `scripts/stage-game-data.mjs` away from its `A:/Cache/OpenMWBundlePreview`
    default to `A:/Cache/OpenMWFoundation/app-bundle`. The preview folder is scratch
    and will be deleted.
-3. Commit or delete the untracked `lib/character-catalogs.mjs`.
-4. Build the three-toggle UI: steal early gear, endgame gear early, near starting
+5. Commit or delete the untracked `lib/character-catalogs.mjs`.
+6. Build the three-toggle UI: steal early gear, endgame gear early, near starting
    areas. See POLICY.md in the data repository for what each one means.
-5. D1 schema and routes for journal progress, equipped loadouts, known spells and
+7. D1 schema and routes for journal progress, equipped loadouts, known spells and
    saved challenges. The existing 16 KB `character_json` cap will not hold them.
    The data agent supplies the field requirements; the migrations are yours.
 
-**Data agent**
+**Claude (Data agent)**
 
-1. Ship gear rows through the bundle as a `GearRows` catalog. 424 rows per profile
-   currently sit unused because they are a separate artifact. Additive, so it costs
-   the site nothing to ship and one line to use.
-2. The rules library. `CATALOGS.md` states that engine-fixed targeting,
-   no-magnitude and no-duration effect rules, harmful-effect flags and display units
-   are **not** synthesized. Alchemy, enchanting and spellmaking cannot be correct
-   without them. This is the largest gap in the project.
+1. ~~Ship gear rows through the bundle as a `GearRows` catalog.~~ **Done.**
+   `build_app_bundle.py` publishes them automatically, keyed per row, with the policy
+   that produced them travelling as payload fields. Rows must be rebuilt first: the
+   packager refuses a file from another snapshot or one whose rows predate the key.
+   Nothing changes on the site until `FEATURE_CATALOGS` gains a `gear` group.
+2. ~~The rules library.~~ **Partly done.** `build_rules_library.py` derives targeting,
+   no-magnitude and no-duration from content usage and ships them as the `EffectRules`
+   catalog, with the spell cost formula's engine literals authored alongside. 134 of 141
+   effects are decided, 7 report `null`. Display units and harmful-effect flags are still
+   absent and are not inferable from content; see RULES.md.
 3. The travel graph as a shipped catalog, from `services.sqlite`.
 4. Merchant barter pricing, for "gold price per merchant".
 5. The 326 journal topics with no resolvable title.

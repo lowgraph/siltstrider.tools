@@ -10,7 +10,7 @@ data groups, not declarations that the calculators' engine rules are complete.
 ## Local setup
 
 Run `npm run data:stage` to validate and copy the completed bundle from
-`A:/Cache/OpenMWBundlePreview` into ignored `public/game-data`. For another source:
+`A:/Cache/OpenMWFoundation/app-bundle` into ignored `public/game-data`. For another source:
 
 ```powershell
 npm run data:stage -- A:\Cache\OpenMWFoundation\app-bundle
@@ -18,7 +18,8 @@ npm run data:stage -- A:\Cache\OpenMWFoundation\app-bundle
 
 This reads completed JSON files only. It runs no extraction and opens no databases.
 All payloads and reconstructed deltas are verified before the current pointer is
-switched. Only files named by the manifest are copied. Existing releases remain.
+switched. A timestamp-only rebuild preserves the existing immutable manifest;
+all other manifest differences are rejected. Only files named by the manifest are copied. Existing releases remain.
 Run staging before building a release when you intend to include the local bundle.
 For R2/CDN hosting, set `NEXT_PUBLIC_GAME_DATA_URL` to that public bundle root at
 build time instead. Cross-origin hosting must permit GET requests from the site.
@@ -59,7 +60,10 @@ cleanup runs against a release another open tab may be using. Metadata currently
 requires connectivity on a new page session; this is not a full offline mode.
 
 The loader does not fetch locations, world SQLite, book prose, journal or travel
-SQL databases. Gear rows use a separate contract and need their own adapter.
+SQL databases. Gear rows need their own adapter. The pipeline can publish a
+`GearRows` catalog, but the currently staged release does not contain it. Staging
+validates the release manifest; it does not generate missing catalogs or
+automatically switch the optimizer to a new data source.
 
 ## Checks
 

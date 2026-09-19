@@ -3,3 +3,285 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 /* No preflight during the compatibility checkpoint. */
 .game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
+
+/* Modern React Character Builder takes over #panel-build */
+body.view-builder #panel-build {
+  display: block !important;
+  width: 100% !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  align-self: center !important;
+}
+
+/* Hide legacy DOM children inside #panel-build while preserving modern React container */
+body.view-builder #panel-build > *:not(.character-builder-root) {
+  display: none !important;
+}
+
+/* Guarantee no other legacy panel displays in view-builder */
+body.view-builder .panel:not(#panel-build) {
+  display: none !important;
+}
+
+/* Ensure the hero container centers full content */
+body.view-builder .hero {
+  align-items: center;
+}
+
+/* Character Builder Two-Pane Layout (immune to legacy CSS collisions) */
+.cb-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  width: 100%;
+}
+
+.cb-pane {
+  min-width: 0;
+  width: 100%;
+}
+
+@media (max-width: 1023px) {
+  .cb-dashboard {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .cb-pane-mobile-hidden {
+    display: none !important;
+  }
+}
+
+/* Authentic Morrowind Bevel Dropdowns & Inputs */
+.mw-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: 0 !important;
+  border: 4px solid transparent !important;
+  border-image: var(--mw-bevel) 4 repeat !important;
+  background-color: #120f0a !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23d4b06a'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-clip: padding-box !important;
+  color: #f3e6c8 !important;
+  font-family: inherit;
+  cursor: pointer;
+  padding-right: 32px !important;
+}
+
+.mw-select:focus {
+  outline: none !important;
+  border-color: #d4b06a !important;
+}
+
+.mw-select option,
+.mw-select optgroup {
+  background-color: #120f0a;
+  color: #f3e6c8;
+}
+
+/* Authentic Morrowind Bevel Buttons */
+.mw-btn {
+  border-radius: 0 !important;
+  border: 4px solid transparent !important;
+  border-image: var(--mw-bevel) 4 repeat !important;
+  background: linear-gradient(180deg, rgba(62, 42, 22, 0.52) 0%, rgba(8, 6, 4, 0.22) 100%) !important;
+  color: #d4b06a !important;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mw-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(82, 56, 30, 0.65) 0%, rgba(18, 14, 9, 0.35) 100%) !important;
+  color: #f3e6c8 !important;
+}
+
+.mw-btn.active,
+.mw-btn[aria-pressed="true"] {
+  background: #3a2d1d !important;
+  color: #f3e6c8 !important;
+}
+
+.mw-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Authentic Morrowind Etched Groove Panels & Warning Callouts */
+.mw-groove-panel {
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  border-radius: 0 !important;
+}
+
+.mw-warning-scroll {
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #24110b !important;
+  color: #fca5a5 !important;
+  border-radius: 0 !important;
+}
+
+/* Authentic Styling for Local Characters Manager */
+#local-characters {
+  border: 4px solid transparent !important;
+  border-image: var(--mw-bevel) 4 repeat !important;
+  background: #14100a !important;
+  padding: 12px 14px !important;
+  color: #f3e6c8 !important;
+}
+
+#local-characters summary {
+  font-family: "Pelagiad", Georgia, serif !important;
+  font-size: 1rem !important;
+  font-weight: bold !important;
+  color: #d4b06a !important;
+  cursor: pointer !important;
+  outline: none !important;
+  user-select: none !important;
+}
+
+#local-characters .field {
+  margin-top: 10px;
+}
+
+#local-characters label {
+  display: block;
+  font-family: "Pelagiad", Georgia, serif;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #d4b06a;
+  margin-bottom: 4px;
+}
+
+#local-characters select,
+#local-characters input[type="text"] {
+  width: 100%;
+  height: 38px;
+  border-radius: 0 !important;
+  border: 4px solid transparent !important;
+  border-image: var(--mw-bevel) 4 repeat !important;
+  background: #100d08 !important;
+  color: #f3e6c8 !important;
+  padding: 6px 12px !important;
+  font-size: 0.875rem;
+}
+
+#local-characters select {
+  appearance: none;
+  background: #100d08 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23d4b06a'/%3E%3C/svg%3E") no-repeat right 12px center !important;
+  padding-right: 32px !important;
+}
+
+#local-characters .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#local-characters .row .btn {
+  flex: 1 1 30%;
+  min-width: 110px;
+  height: 36px;
+  border-radius: 0 !important;
+  border: 4px solid transparent !important;
+  border-image: var(--mw-bevel) 4 repeat !important;
+  background: linear-gradient(180deg, rgba(62, 42, 22, 0.52) 0%, rgba(8, 6, 4, 0.22) 100%) !important;
+  color: #d4b06a !important;
+  font-family: "Pelagiad", Georgia, serif;
+  font-size: 0.8125rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#local-characters .row .btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(82, 56, 30, 0.65) 0%, rgba(18, 14, 9, 0.35) 100%) !important;
+  color: #f3e6c8 !important;
+}
+
+#local-characters .row .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#local-characters p.muted {
+  font-size: 0.75rem;
+  color: #b8a078;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+#local-characters #saved-character-status {
+  font-size: 0.8125rem;
+  color: #d4b06a;
+  margin-top: 8px;
+  font-family: monospace;
+}
+
+#local-characters #saved-character-warning {
+  font-size: 0.8125rem;
+  color: #fca5a5;
+  margin-top: 4px;
+}
+
+/* Gear Recommendations Table: prevent slot/category wrapping and alternate row backgrounds */
+.gear-results-container table,
+#gear-box table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gear-results-container td:first-child,
+#gear-box td:first-child {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  width: 1%;
+  font-weight: 600;
+  color: #d4b06a;
+  padding-right: 1.25rem !important;
+}
+
+.gear-results-container tbody tr:nth-child(even),
+#gear-box tbody tr:nth-child(even) {
+  background: rgba(201, 162, 39, 0.08) !important;
+}
+
+.gear-results-container tbody tr:nth-child(odd),
+#gear-box tbody tr:nth-child(odd) {
+  background: rgba(18, 14, 9, 0.85) !important;
+}
+
+.gear-results-container tbody tr:hover,
+#gear-box tbody tr:hover {
+  background: rgba(201, 162, 39, 0.16) !important;
+}
+
+@media (max-width: 640px) {
+  .gear-results-container td:first-child,
+  #gear-box td:first-child {
+    white-space: normal !important;
+    width: auto !important;
+  }
+}
+
+
+/* Override the legacy rule hiding the React menu button on small screens. */
+@media (max-width: 767px) {
+  #react-header-slot .hamburger { display: inline-flex !important; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+  #react-header-slot #react-menu-drawer { display: none !important; }
+  #react-header-slot #react-menu-drawer.open { display: flex !important; width: 100%; flex-basis: 100%; }
+}
+@media (max-width: 1023px) {
+  html:has(body.view-builder), body.view-builder { overflow-x: clip; }
+  .character-vitals-hud { position: sticky; top: 0; z-index: 30; }
+}

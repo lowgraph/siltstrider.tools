@@ -3,15 +3,27 @@ import Script from 'next/script';
 import {memo,useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
 import SiteHeader from './site-header';
-import {ShellProvider} from './shell-context';
+import {ShellProvider,useShell} from './shell-context';
 import {getGameDataLoader} from './use-game-data';
 import {createCharacterCatalogService,profileFromLocation} from '../lib/character-catalogs.mjs';
+import CharacterBuilderRoot from './character-builder/character-builder-root';
+
 const LegacyBody=memo(function LegacyBody({html}){return <div id="legacy-workbench" dangerouslySetInnerHTML={{__html:html}}/>;});
+
+function ActiveViewOverlay() {
+  const shell = useShell();
+  if (shell.view === 'builder') {
+    return <CharacterBuilderRoot />;
+  }
+  return null;
+}
+
 export default function LegacyWorkbench({html,revision}){
- const [dataReady,setDataReady]=useState(false),[slot,setSlot]=useState(null),[catalogReady,setCatalogReady]=useState(false),[booted,setBooted]=useState(false);
+ const [dataReady,setDataReady]=useState(false),[slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null),[catalogReady,setCatalogReady]=useState(false),[booted,setBooted]=useState(false);
  const [status,setStatus]=useState({status:'loading'}),[attempt,setAttempt]=useState(0);
  useEffect(()=>{
   setSlot(document.getElementById('react-header-slot'));
+  setMainSlot(document.getElementById('panel-build') || document.getElementById('main-tools'));
   let current=true;
   const service=window.siltCharacters ||= createCharacterCatalogService(getGameDataLoader());
   service.profileFromLocation=()=>{let storage;try{storage=window.localStorage;}catch{}return profileFromLocation(window.location.hash,storage);};
@@ -29,6 +41,7 @@ export default function LegacyWorkbench({html,revision}){
    <LegacyBody html={html}/>
   </div>
   {slot&&createPortal(<SiteHeader/>,slot)}
+  {mainSlot&&createPortal(<ActiveViewOverlay/>,mainSlot)}
   <Script id="legacy-data" src={'/legacy/legacy-data.js?v='+revision} strategy="afterInteractive" onReady={()=>setDataReady(true)}/>
   {dataReady&&catalogReady&&<Script id="legacy-runtime" src={'/legacy/legacy-runtime.js?v='+revision} strategy="afterInteractive" onReady={()=>setBooted(true)} onError={()=>setStatus({status:'error',message:'Application code failed to load. Reload this page.'})}/>}
  </ShellProvider>;

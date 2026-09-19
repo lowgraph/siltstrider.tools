@@ -1,7 +1,17 @@
+# Three-agent architecture
+
+The Silt Strider project is developed collaboratively by three agents:
+- **Codex (Site Agent):** Implements the Next.js 16 App Router web application in this repository.
+- **Claude (Data Agent):** Builds the game data pipelines, extraction databases, and app bundles in `lowgraph/openmw-decompiler`.
+- **Antigravity (UI Transformation Lead):** Guides UI/UX architecture and CRPG fidelity per [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md).
+
+See [COORDINATION.md](COORDINATION.md) and [AGENTS.md](AGENTS.md) for governance and collaboration rules.
+
 # Two repositories
 
 The game data this app serves is built in a separate repository, and the bundle
-under `public/game-data/` is the only interface between them. Read
+under `public/game-data/` is the only interface between them. The frontend transformation
+roadmap is documented in [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md). Read
 [COORDINATION.md](COORDINATION.md) before changing anything that touches it:
 `lib/bundle-loader.mjs`, `scripts/stage-game-data.mjs`, or the contract those two
 hold up. `test/bundle-contract.test.js` pins which bundle changes must keep
