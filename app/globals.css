@@ -139,8 +139,9 @@ select[size] option:checked {
 /* No preflight during the compatibility checkpoint. */
 .game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
 
-/* Modern React Character Builder takes over #panel-build inside an authentic master window frame */
-body.view-builder #panel-build {
+/* Modern React Character Builder & Level Simulator take over master window frames */
+body.view-builder #panel-build,
+body.view-leveler #panel-leveler {
   display: block !important;
   width: 100% !important;
   max-width: 1320px !important;
@@ -156,24 +157,28 @@ body.view-builder #panel-build {
 }
 
 @media (max-width: 767px) {
-  body.view-builder #panel-build {
+  body.view-builder #panel-build,
+  body.view-leveler #panel-leveler {
     padding: 16px 12px !important;
     margin: 8px auto 16px !important;
   }
 }
 
-/* Hide legacy DOM children inside #panel-build while preserving modern React container */
-body.view-builder #panel-build > *:not(.character-builder-root) {
+/* Hide legacy DOM children inside panels while preserving modern React container */
+body.view-builder #panel-build > *:not(.character-builder-root),
+body.view-leveler #panel-leveler > *:not(.level-simulator-root) {
   display: none !important;
 }
 
-/* Guarantee no other legacy panel displays in view-builder */
-body.view-builder .panel:not(#panel-build) {
+/* Guarantee no other legacy panel displays in active views */
+body.view-builder .panel:not(#panel-build),
+body.view-leveler .panel:not(#panel-leveler) {
   display: none !important;
 }
 
 /* Ensure the hero container centers full content */
-body.view-builder .hero {
+body.view-builder .hero,
+body.view-leveler .hero {
   align-items: center;
 }
 
