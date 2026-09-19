@@ -44,8 +44,13 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
       <div className="border-b border-[#2a2318] pb-3">
         <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide flex items-center justify-between">
           <span>{build.name || build.className || "Custom Build"}</span>
-          <span className="text-sm font-mono font-medium text-[#d4b06a]">
-            {build.gender} {build.race} · {build.sign}
+          <span className="text-sm font-mono font-medium text-[#d4b06a] flex items-center gap-2">
+            <span>{build.gender} {build.race} · {build.sign}</span>
+            {sheet.bitterCup && (
+              <span className="text-xs px-1.5 py-0.5 bg-[#251a0e] border border-[#4a341b] text-[#d4b06a] font-serif font-bold">
+                Bitter Cup
+              </span>
+            )}
           </span>
         </h3>
       </div>

@@ -18,7 +18,8 @@ export const DEFAULT_BUILD = {
   fav1: "Strength",
   fav2: "Endurance",
   maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Athletics"],
-  min: ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"]
+  min: ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"],
+  bitterCup: false
 };
 
 function readBuildFromDom(shell) {
@@ -33,6 +34,7 @@ function readBuildFromDom(shell) {
 
   const maj = [0, 1, 2, 3, 4].map((i) => getVal("maj" + i, DEFAULT_BUILD.maj[i]));
   const min = [0, 1, 2, 3, 4].map((i) => getVal("min" + i, DEFAULT_BUILD.min[i]));
+  const bitterCupEl = document.getElementById("c-bittercup");
 
   return {
     version: 1,
@@ -47,7 +49,8 @@ function readBuildFromDom(shell) {
     fav1: getVal("c-fav1", DEFAULT_BUILD.fav1),
     fav2: getVal("c-fav2", DEFAULT_BUILD.fav2),
     maj,
-    min
+    min,
+    bitterCup: bitterCupEl ? bitterCupEl.checked : false
   };
 }
 
@@ -210,6 +213,7 @@ export function CharacterProvider({ children }) {
           prev.spec !== domBuild.spec ||
           prev.fav1 !== domBuild.fav1 ||
           prev.fav2 !== domBuild.fav2 ||
+          Boolean(prev.bitterCup) !== Boolean(domBuild.bitterCup) ||
           JSON.stringify(prev.maj) !== JSON.stringify(domBuild.maj) ||
           JSON.stringify(prev.min) !== JSON.stringify(domBuild.min);
         return isDiff ? domBuild : prev;
@@ -219,7 +223,7 @@ export function CharacterProvider({ children }) {
     const target = document.getElementById("panel-build") || document.body;
     const observer = new MutationObserver(syncFromDom);
     if (target) {
-      observer.observe(target, { attributes: true, subtree: true, attributeFilter: ["value", "selected"] });
+      observer.observe(target, { attributes: true, subtree: true, attributeFilter: ["value", "selected", "checked"] });
     }
 
     const onStorageOrHash = () => syncFromDom();
@@ -324,6 +328,11 @@ export function CharacterProvider({ children }) {
     setVal("c-class", build.className);
     build.maj?.forEach((s, i) => setVal("maj" + i, s));
     build.min?.forEach((s, i) => setVal("min" + i, s));
+
+    const bcEl = document.getElementById("c-bittercup");
+    if (bcEl && bcEl.checked !== Boolean(build.bitterCup)) {
+      bcEl.checked = Boolean(build.bitterCup);
+    }
 
     if (typeof window !== "undefined" && typeof window.syncSkillPrev === "function") {
       try {

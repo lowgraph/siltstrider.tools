@@ -1116,4 +1116,71 @@ test("adversarial test 6: malformed step inputs, duplicate picks, and invalid sk
   assert.ok(valNonMM.errors.some((e) => e.includes("is not a Major or Minor skill")));
 });
 
+test("bitter cup integration with simulateProgression and level-math", async () => {
+  const { simulateProgression, normalizeCharacterState, applyBitterCup } = await import(
+    "../lib/level-math.mjs"
+  );
+
+  const character = {
+    level: 1,
+    attributes: {
+      Strength: 50,
+      Intelligence: 40,
+      Willpower: 30,
+      Agility: 40,
+      Speed: 50,
+      Endurance: 75,
+      Personality: 55,
+      Luck: 40
+    },
+    skills: {
+      "Long Blade": 45,
+      "Heavy Armor": 40,
+      "Block": 35,
+      "Armorer": 35,
+      "Medium Armor": 35,
+      "Destruction": 30,
+      "Restoration": 20,
+      "Short Blade": 30,
+      "Sneak": 20,
+      "Security": 20
+    },
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"],
+    min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"],
+    health: 50
+  };
+
+  // 1. Without Bitter Cup: Endurance is 75, Willpower is 30
+  const normBase = normalizeCharacterState(character);
+  assert.equal(normBase.attributes.Endurance, 75);
+  assert.equal(normBase.attributes.Willpower, 30);
+  assert.equal(normBase.bitterCup, null);
+
+  // 2. With Bitter Cup: Endurance is 75 + 20 = 95, Willpower is 30 - 20 = 10
+  const normBC = normalizeCharacterState(character, null, { bitterCup: true });
+  assert.ok(normBC.bitterCup);
+  assert.equal(normBC.bitterCup.highest, "Endurance");
+  assert.equal(normBC.bitterCup.lowest, "Willpower");
+  assert.equal(normBC.attributes.Endurance, 95);
+  assert.equal(normBC.attributes.Willpower, 10);
+
+  // 3. simulateProgression with bitterCup: true
+  const progBC = simulateProgression(character, { bitterCup: true, targetLevel: 3, strategy: "auto" });
+  assert.ok(progBC.bitterCup);
+  assert.equal(progBC.initialSheet.attributes.Endurance, 95);
+  // Level 1 -> 2: Endurance starts at 95, needs only +5 to reach 100!
+  const step1 = progBC.steps[0];
+  const endBonus = step1.attributeBonuses.find((b) => b.attribute === "Endurance");
+  assert.ok(endBonus);
+  assert.equal(endBonus.bonus, 5);
+  assert.equal(step1.stateAfter.attributes.Endurance, 100);
+  // Level 2 -> 3: Endurance is already 100, so solver moves on to other attributes!
+  const step2 = progBC.steps[1];
+  const endBonus2 = step2.attributeBonuses.find((b) => b.attribute === "Endurance");
+  assert.equal(endBonus2, undefined); // Endurance already capped!
+  // Health gain at level 2 is floor(100 / 10) = 10 HP
+  assert.equal(step1.healthGain, 10);
+});
+
+
 
