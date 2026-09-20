@@ -1482,6 +1482,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
               </div>
             </div>
             <div class="drawer-group">
+              <span class="drawer-label">Character Vault</span>
+              <div class="drawer-grid grid-1">
+                <button type="button" class="btn" id="btn-nav-vault">Cloud Character Vault</button>
+              </div>
+            </div>
+            <div class="drawer-group">
               <span class="drawer-label">Reference &amp; Site</span>
               <div class="drawer-grid grid-3">
                 <button type="button" class="btn" id="btn-nav-home">Home</button>
@@ -1517,6 +1523,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <button type="button" class="btn home-card" id="btn-go-challenge"><strong>Challenge Runs</strong><span>Roll restrictions, a character, and side goals for this playthrough.</span></button>
         <button type="button" class="btn home-card" id="btn-go-build"><strong>Build Optimizer</strong><span>Open premade sheets or tune a custom class, then pick early and late gear.</span></button>
         <button type="button" class="btn home-card" id="btn-go-leveler"><strong>Level Simulator</strong><span>Simulate progression to cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.</span></button>
+        <button type="button" class="btn home-card" id="btn-go-vault"><strong>Cloud Character Vault</strong><span>Cloud character storage, OpenMW save ingestion (.omwsave), and cross-device sync.</span></button>
         <button type="button" class="btn home-card" id="btn-go-enchant"><strong>Enchanting</strong><span>Effects, souls, and named enchanters with OpenMW charge and gold.</span></button>
         <button type="button" class="btn home-card" id="btn-go-spell"><strong>Spellmaking</strong><span>Magicka, cast chance, and the gold a spellmaker would charge.</span></button>
         <button type="button" class="btn home-card" id="btn-go-alchemy"><strong>Alchemy</strong><span>Named apparatus and four ingredients; brew numbers from OpenMW.</span></button>
@@ -1882,6 +1889,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     <div class="panel" id="panel-leveler">
       <h2>Character Level Simulator</h2>
       <p class="muted">Simulate progression to theoretical level cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.</p>
+    </div>
+    <div class="panel" id="panel-vault">
+      <h2>Cloud Character Vault</h2>
+      <p class="muted">Cloud character storage, OpenMW save ingestion (.omwsave), revision history, and cross-device sync.</p>
     </div>
     <div class="panel" id="panel-travel">
       <h2>Travel optimizer</h2>
@@ -2825,6 +2836,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const pal = document.getElementById("panel-alchemy");
     const ptr = document.getElementById("panel-travel");
     const plv = document.getElementById("panel-leveler");
+    const pv = document.getElementById("panel-vault");
     const menuBtn = document.getElementById("btn-menu");
     const drawer = document.getElementById("menu-drawer");
     const pageSub = document.getElementById("page-sub");
@@ -2949,10 +2961,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       });
     } catch (e) {}
     function showView(name) {
-      document.body.classList.remove("view-challenge", "view-builder", "view-leveler", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
+      document.body.classList.remove("view-challenge", "view-builder", "view-leveler", "view-vault", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
       if (name === "challenge") document.body.classList.add("view-challenge");
       if (name === "builder") document.body.classList.add("view-builder");
       if (name === "leveler") document.body.classList.add("view-leveler");
+      if (name === "vault") document.body.classList.add("view-vault");
       if (name === "enchanting") document.body.classList.add("view-enchanting");
       if (name === "spellmaking") document.body.classList.add("view-spellmaking");
       if (name === "alchemy") document.body.classList.add("view-alchemy");
@@ -3010,6 +3023,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         }
       }
       if (plv) plv.classList.toggle("show", name === "leveler");
+      if (pv) pv.classList.toggle("show", name === "vault");
       if (pa) pa.classList.toggle("show", name === "about");
       if (pcl) pcl.classList.toggle("show", name === "changelog");
       if (pe) pe.classList.toggle("show", name === "enchanting");
@@ -3022,6 +3036,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else if (name === "about") pageSub.textContent = "About this unofficial fan project.";
         else if (name === "changelog") pageSub.textContent = "What changed on the site, newest first.";
         else if (name === "leveler") pageSub.textContent = "Progression simulator, 5x multiplier training, and health projection.";
+        else if (name === "vault") pageSub.textContent = "Cloud character storage, OpenMW save ingestion, and build synchronization.";
         else if (name === "enchanting") pageSub.textContent = "Effects, souls, and named enchanters.";
         else if (name === "spellmaking") pageSub.textContent = "Magicka, cast chance, and spellmaker gold.";
         else if (name === "alchemy") pageSub.textContent = "Apparatus, ingredients, and brew numbers.";
@@ -3248,11 +3263,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     bindOnce(document.getElementById("btn-go-challenge"), () => showView("challenge"));
     bindOnce(document.getElementById("btn-go-build"), () => showView("builder"));
     bindOnce(document.getElementById("btn-go-leveler"), () => showView("leveler"));
+    bindOnce(document.getElementById("btn-go-vault"), () => showView("vault"));
     bindOnce(document.getElementById("btn-go-enchant"), () => showView("enchanting"));
     bindOnce(document.getElementById("btn-go-spell"), () => showView("spellmaking"));
     bindOnce(document.getElementById("btn-go-alchemy"), () => showView("alchemy"));
     bindOnce(document.getElementById("btn-go-travel"), () => showView("travel"));
     bindOnce(document.getElementById("btn-nav-leveler"), () => showView("leveler"));
+    bindOnce(document.getElementById("btn-nav-vault"), () => showView("vault"));
     bindOnce(document.getElementById("btn-leveler-drawer"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-desk-leveler"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-nav-enchant"), () => showView("enchanting"));

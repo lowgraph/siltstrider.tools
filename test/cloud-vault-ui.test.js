@@ -529,4 +529,49 @@ test("Hybrid Sync Engine in lib/character-vault.mjs manages local storage and co
   assert.equal(loadLocalCharacters(mockStorage)[0].name, "Cloud Fresh");
 });
 
+test("CloudVaultWorkstation renders master workstation container and handles view routing", async () => {
+  const CloudVaultWorkstation = component("components/character-vault/cloud-vault-workstation.jsx");
+  const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/#vault" });
+  dom.window.Clerk = {
+    user: { id: "user-test-1", fullName: "Jiub" },
+    session: { getToken: async () => "mock-jwt" },
+  };
+  global.window = dom.window;
+  global.document = dom.window.document;
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+
+  await act(async () => {
+    root.render(React.createElement(CloudVaultWorkstation));
+  });
+
+  // Verify Master Window Header and titles
+  const h2 = container.querySelector("h2");
+  assert.ok(h2, "Master window must contain h2 title");
+  assert.equal(h2.textContent.trim(), "Cloud Character Vault");
+
+  // Verify quick launch buttons
+  const navBtns = [...container.querySelectorAll("button")].map((b) => b.textContent.trim());
+  assert.ok(navBtns.some((t) => t.includes("Character Builder")), "Must provide quick navigation to builder");
+  assert.ok(navBtns.some((t) => t.includes("Level Simulator")), "Must provide quick navigation to leveler");
+
+  // Verify filter tabs
+  assert.ok(navBtns.some((t) => t.includes("All Cloud Saves")), "Must have All Cloud Saves tab");
+  assert.ok(navBtns.some((t) => t.includes("OpenMW Saves")), "Must have OpenMW Saves tab");
+  assert.ok(navBtns.some((t) => t.includes("Character Builds")), "Must have Character Builds tab");
+  assert.ok(navBtns.some((t) => t.includes("Challenges")), "Must have Challenges tab");
+  assert.ok(navBtns.some((t) => t.includes("Local Browser Saves")), "Must have Local Browser Saves tab");
+
+  // Verify dropzone and file input
+  const fileInput = container.querySelector('input[type="file"]');
+  assert.ok(fileInput, "Must render file input for dropzone ingestion");
+  assert.equal(fileInput.getAttribute("accept"), ".omwsave,.json");
+
+  await act(async () => {
+    root.unmount();
+  });
+});
+
 

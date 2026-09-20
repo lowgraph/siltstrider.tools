@@ -12,7 +12,8 @@ const descriptions = {
   spellmaking: 'Magicka, cast chance, and spellmaker gold.',
   alchemy: 'Apparatus, ingredients, and brew numbers.',
   travel: 'Fewest hops between towns.',
-  leveler: 'Progression simulator, 5x multiplier training, and health projection.'
+  leveler: 'Progression simulator, 5x multiplier training, and health projection.',
+  vault: 'Cloud character storage, OpenMW save ingestion, and build synchronization.'
 };
 
 const CALC_VIEWS = ['leveler', 'enchanting', 'spellmaking', 'alchemy', 'travel'];
@@ -198,13 +199,10 @@ export default function SiteHeader({ shell: propShell } = {}) {
           <button
             type="button"
             id="react-nav-vault"
-            className="btn desktop-only"
+            className={'btn desktop-only' + (shell.view === 'vault' ? ' on' : '')}
             disabled={!shell.ready}
-            onClick={() => {
-              if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('silt-open-vault'));
-              }
-            }}
+            aria-current={shell.view === 'vault' ? 'page' : undefined}
+            onClick={e => navigate(e, 'vault')}
             title="Open Cloud Character Vault"
           >
             Cloud Vault
@@ -434,14 +432,10 @@ export default function SiteHeader({ shell: propShell } = {}) {
             <button
               type="button"
               id="react-drawer-vault"
-              className="btn w-full"
+              className={'btn w-full' + (shell.view === 'vault' ? ' on' : '')}
               disabled={!shell.ready}
-              onClick={() => {
-                setOpen(false);
-                if (typeof window !== 'undefined') {
-                  window.dispatchEvent(new CustomEvent('silt-open-vault'));
-                }
-              }}
+              aria-current={shell.view === 'vault' ? 'page' : undefined}
+              onClick={e => navigate(e, 'vault')}
             >
               Cloud Character Vault
             </button>
