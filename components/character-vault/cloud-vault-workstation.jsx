@@ -69,7 +69,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
   };
 
   return (
-    <div className="mw-master-window p-4 sm:p-6 mb-8 text-[#f3e6c8]">
+    <div className="cloud-vault-root text-[#f3e6c8]">
       {/* Header & Quick Launch Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#2a2215] mb-6">
         <div>
