@@ -1559,14 +1559,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       <section class="changelog-day">
         <h3><time datetime="2026-09-20">September 20, 2026</time></h3>
         <ul>
-          <li>Cloud Character Vault: introduced an authentic CRPG cloud save manager and modal portal framed inside canonical 6-pixel ornate parchment borders (--mw-border), accessible directly from the persistent site header, mobile navigation drawer, and Build Optimizer.</li>
-          <li>OpenMW binary save ingestion: client-side ESM parser (lib/omwsave-parser.mjs) directly parses native .omwsave binary save files (format v37+ and legacy versions) in-browser with zero Node.js dependencies, automatically extracting character attributes, skills, dynamic vitals, gold, cell location, inventory items, and completed journal quest milestones.</li>
-          <li>SLT1 binary codec: ultra-compact byte-packed serialization format (lib/cloud-save-codec.mjs) achieving ~96% compression (compressing ~35 KB character dossiers down to ~1.4 KB BLOBs) for high-performance serverless storage in Cloudflare D1.</li>
-          <li>Tiered cloud quota enforcement: Free tier users receive 5 cloud save slots with full inventory and quest logging; Supporter/Paid users receive 25 cloud save slots, enforced at the edge via SQLite database triggers.</li>
-          <li>Offline-first hybrid synchronization: zero-latency local caching in localStorage paired with Clerk JWT cloud synchronization, optimistic concurrency locking, and automated conflict resolution.</li>
-          <li>1-Click local migration: dedicated vault action to migrate offline browser saves to the cloud in one click, alongside bi-directional JSON export/import and shareable URL permalinks.</li>
-          <li>Cross-tool navigation hooks: seamless quick-launch buttons integrated into the Character Sheet header, Local Characters panel, and desktop navigation bar.</li>
-          <li>Pure CRPG aesthetic: 100% adherence to authentic Morrowind styling with Pelagiad typography, gold highlights (#d4b06a), warm parchment (#f3e6c8), zero modern emojis, and zero neon hues.</li>
+          <li>Cloud Character Vault: authentic CRPG save workstation (#panel-vault) and quick modal portal in 6px ornate borders (--mw-border) with home card and header navigation.</li>
+          <li>OpenMW save ingestion: client ESM parser (lib/omwsave-parser.mjs) extracts attributes, skills, vitals, gold, location, inventory, and quests from native .omwsave files.</li>
+          <li>SLT1 binary codec: ~96% byte compression (~35 KB dossiers into ~1.4 KB BLOBs) for Cloudflare D1 edge database storage.</li>
+          <li>Tiered quota model: 5 slots for free accounts, 25 slots for supporters, enforced via edge SQLite triggers.</li>
+          <li>Offline-first sync: zero-latency local caching with Clerk JWT cloud sync, optimistic concurrency, and 1-click migration.</li>
         </ul>
       </section>
       <section class="changelog-day">

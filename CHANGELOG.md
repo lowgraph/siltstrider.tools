@@ -6,6 +6,8 @@ All notable changes to the **Silt Strider** Morrowind character planner, calcula
 
 ### Highlights
 - **Cloud Character Vault Workstation (`#panel-vault` & Modal Portal):** Introduced an authentic CRPG dossier management portal enclosed in canonical 6-pixel ornate parchment borders (`--mw-border`), accessible from the persistent site header, mobile navigation drawer, and Build Optimizer.
+- **Workstation Frame & Panel Isolation:** Configured `#panel-vault` with master window framing (`--mw-border` 6px), deep inset shading, and strict CSS panel hiding (`body.view-vault #panel-home { display: none !important; }`), ensuring an isolated, distraction-free dossier management view matching Character Builder and Level Simulator.
+- **Home Launcher Grid Harmonization:** Expanded the Home page launcher grid to 8 cards with the addition of the Cloud Character Vault card (`#btn-go-vault`), balancing the 2x4 layout and wiring seamless `#vault` hash navigation.
 - **Client-Side OpenMW Binary Save Parser (`lib/omwsave-parser.mjs`):** Direct in-browser parsing of `.omwsave` binary files (format v37+ and legacy formats). Automatically extracts character name, race, class, birthsign, level, attributes, skills, dynamic vitals, gold, cell/location, inventory, and completed journal quest milestones with zero Node.js/native dependencies.
 - **SLT1 Binary Codec & Ultra-Compact Serialization (`lib/cloud-save-codec.mjs`):** Proprietary byte-packed binary codec compressing large ~35 KB character dossiers down to ~1.4 KB BLOBs (~96% compression ratio) for efficient Cloudflare D1 edge database storage.
 - **Tiered Cloud Quota Model:**
