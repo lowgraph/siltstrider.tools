@@ -19,7 +19,7 @@ export default function CharacterBuilderRoot() {
     selectClassPreset,
     selectPremade
   } = useActiveCharacter();
-  const [activeTab, setActiveTab] = useState("builder"); // "builder" | "paperdoll" | "premade"
+  const [activeTab, setActiveTab] = useState("builder"); // "builder" | "equipment" | "premade"
   const [mobileTab, setMobileTab] = useState("config"); // "config" | "sheet" (screens < 1024px)
   const [copied, setCopied] = useState(false);
 
@@ -59,13 +59,17 @@ export default function CharacterBuilderRoot() {
   const handleSwapSkill = swapSkill;
   const handleSelectClassPreset = selectClassPreset;
 
-  // Listen for silt-open-paperdoll events from quick launch buttons
+  // Listen for silt-open-equipment events from quick launch buttons
   useEffect(() => {
-    const handleOpenPaperdoll = () => {
-      setActiveTab("paperdoll");
+    const handleOpenEquipment = () => {
+      setActiveTab("equipment");
     };
-    window.addEventListener("silt-open-paperdoll", handleOpenPaperdoll);
-    return () => window.removeEventListener("silt-open-paperdoll", handleOpenPaperdoll);
+    window.addEventListener("silt-open-equipment", handleOpenEquipment);
+    window.addEventListener("silt-open-paperdoll", handleOpenEquipment);
+    return () => {
+      window.removeEventListener("silt-open-equipment", handleOpenEquipment);
+      window.removeEventListener("silt-open-paperdoll", handleOpenEquipment);
+    };
   }, []);
 
   return (
@@ -87,13 +91,13 @@ export default function CharacterBuilderRoot() {
         <div>
           <button
             type="button"
-            id="btn-tab-paperdoll"
+            id="btn-tab-equipment"
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
-              activeTab === "paperdoll" ? "active ring-1 ring-[#d4b06a]" : ""
+              activeTab === "equipment" ? "active ring-1 ring-[#d4b06a]" : ""
             }`}
-            onClick={() => setActiveTab("paperdoll")}
+            onClick={() => setActiveTab("equipment")}
           >
-            Equipped Loadouts &amp; Studio
+            Equipped Loadouts
           </button>
         </div>
         <div>
@@ -140,7 +144,7 @@ export default function CharacterBuilderRoot() {
           onSelectBuild={handleSelectPremade}
           activeProfile={shell.profile}
         />
-      ) : activeTab === "paperdoll" ? (
+      ) : activeTab === "equipment" ? (
         <EquipmentStudioRoot
           character={build}
           skills={sheet?.skills || {}}
@@ -180,7 +184,7 @@ export default function CharacterBuilderRoot() {
                 build={build}
                 sheet={sheet}
                 catalogs={catalogs}
-                onOpenPaperdoll={() => setActiveTab("paperdoll")}
+                onOpenEquipment={() => setActiveTab("equipment")}
               />
             </div>
           </div>

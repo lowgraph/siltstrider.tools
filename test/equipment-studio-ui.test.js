@@ -24,7 +24,7 @@ function component(file, exportName = "default") {
 }
 
 const EquipmentStudioRoot = component("components/equipment-studio/equipment-studio-root.jsx");
-const PaperdollGrid = component("components/equipment-studio/paperdoll-grid.jsx");
+const EquipmentLedger = component("components/equipment-studio/equipment-ledger.jsx");
 const EquipmentSlotCard = component("components/equipment-studio/equipment-slot-card.jsx", "EquipmentSlotCard");
 const EquipmentStatsSummary = component("components/equipment-studio/equipment-stats-summary.jsx", "EquipmentStatsSummary");
 const LoadoutTabsBar = component("components/equipment-studio/loadout-tabs-bar.jsx", "LoadoutTabsBar");
@@ -79,7 +79,7 @@ test("Equipment Studio UI: Renders root component with all 19 canonical slots an
   });
 
   const text = container.textContent;
-  assert.match(text, /Equipped Loadouts & Paperdoll Studio/);
+  assert.match(text, /Equipped Loadouts & Equipment Inspector/);
   assert.match(text, /Primary Combat/);
   assert.match(text, /Secondary \/ Alternate/);
   assert.match(text, /Stealth & Infiltration/);
@@ -271,7 +271,7 @@ test("Equipment Studio UI (Adversarial): Corrupted, null, and empty loadout item
   });
 
   // Renders gracefully with unarmored fallback AR and carry weight clamp
-  assert.match(container.textContent, /Equipped Loadouts & Paperdoll Studio/);
+  assert.match(container.textContent, /Equipped Loadouts & Equipment Inspector/);
   assert.match(container.textContent, /Total Armor Rating/);
 
   act(() => root.unmount());

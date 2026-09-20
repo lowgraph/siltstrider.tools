@@ -3,7 +3,7 @@ import { memo } from "react";
 import { SLOT_DISPLAY_NAMES, getEffectiveArmorCategory } from "../../lib/equipment-math.mjs";
 
 /**
- * Procedural SVG icons for paperdoll equipment slots.
+ * Procedural SVG icons for equipment slots.
  * Renders crisp, authentic CRPG line icons without emojis or raster bloat.
  */
 function SlotGlyph({ slot }) {

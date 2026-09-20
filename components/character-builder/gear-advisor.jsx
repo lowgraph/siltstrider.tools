@@ -76,7 +76,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
     }
   };
 
-  const handleEquipToPaperdoll = (isEndgame = false) => {
+  const handleEquipToLoadout = (isEndgame = false) => {
     const isHeavy = build?.maj?.includes("Heavy Armor") || build?.min?.includes("Heavy Armor");
     const isMedium = build?.maj?.includes("Medium Armor") || build?.min?.includes("Medium Armor");
     let kitId = "kit-starter-light";
@@ -91,6 +91,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
     const kit = QUICK_LOADOUT_KITS.find((k) => k.id === kitId) || QUICK_LOADOUT_KITS[0];
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("silt-equip-kit", { detail: { kitItems: kit.items } }));
+      window.dispatchEvent(new CustomEvent("silt-open-equipment"));
       window.dispatchEvent(new CustomEvent("silt-open-paperdoll"));
     }
   };
@@ -163,10 +164,10 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
           <button
             type="button"
             className="w-full sm:w-auto mw-btn py-2.5 px-5 font-serif font-bold text-sm tracking-wide shadow-md whitespace-nowrap text-center text-[#d4b06a]"
-            onClick={() => handleEquipToPaperdoll(endgameEarly)}
-            title="Equip recommended gear kit directly into your active paperdoll loadout"
+            onClick={() => handleEquipToLoadout(endgameEarly)}
+            title="Equip recommended gear kit directly into your active loadout"
           >
-            Equip Kit to Paperdoll →
+            Equip Kit to Loadout →
           </button>
         </div>
       </div>

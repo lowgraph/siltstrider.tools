@@ -4,7 +4,7 @@ import AttributeGrid from "./attribute-grid";
 import SkillDisplayGrid from "./skill-display-grid";
 import { startingSpells } from "../../lib/character-math.mjs";
 
-export default function CharacterSheet({ build, sheet, catalogs, onOpenPaperdoll = null }) {
+export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment = null, onOpenPaperdoll = null }) {
   if (!sheet) {
     return (
       <div
@@ -151,7 +151,7 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenPaperdoll
         )}
       </div>
 
-      {/* Quick Launch: Cloud Character Vault & Equipped Paperdoll & Level Optimizer */}
+      {/* Quick Launch: Cloud Character Vault & Equipped Loadout & Level Optimizer */}
       <div className="pt-2 border-t border-[#2a2318] space-y-2">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <button
@@ -169,18 +169,20 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenPaperdoll
           </button>
           <button
             type="button"
-            id="btn-sheet-paperdoll"
+            id="btn-sheet-equipment"
             className="w-full mw-btn py-3 px-3 font-serif text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-1.5 shadow-sm text-[#f3e6c8] hover:text-[#d4b06a]"
             onClick={() => {
-              if (typeof onOpenPaperdoll === "function") {
+              if (typeof onOpenEquipment === "function") {
+                onOpenEquipment();
+              } else if (typeof onOpenPaperdoll === "function") {
                 onOpenPaperdoll();
               } else if (typeof window !== "undefined") {
-                window.dispatchEvent(new CustomEvent("silt-open-paperdoll"));
+                window.dispatchEvent(new CustomEvent("silt-open-equipment"));
               }
             }}
-            title="Inspect equipped loadout in the Paperdoll Studio"
+            title="Inspect equipped loadout in the Equipment Inspector"
           >
-            <span>Equipped Paperdoll →</span>
+            <span>Equipped Loadout →</span>
           </button>
           <button
             type="button"

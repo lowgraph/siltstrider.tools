@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback, useMemo, useEffect } from "react";
-import PaperdollGrid from "./paperdoll-grid";
+import EquipmentLedger from "./equipment-ledger";
 import EquipmentStatsSummary from "./equipment-stats-summary";
 import LoadoutTabsBar from "./loadout-tabs-bar";
 import ItemPickerDrawer from "./item-picker-drawer";
@@ -10,7 +10,7 @@ import {
 } from "../../lib/equipment-math.mjs";
 
 /**
- * Root Paperdoll Studio & Equipped Loadout Inspector
+ * Root Equipment Studio & Equipped Loadout Inspector
  */
 export default function EquipmentStudioRoot({
   character = {},
@@ -155,7 +155,7 @@ export default function EquipmentStudioRoot({
       <div className="border-b border-[#2a2318] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
           <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide flex items-center gap-2">
-            <span>Equipped Loadouts &amp; Paperdoll Studio</span>
+            <span>Equipped Loadouts &amp; Equipment Inspector</span>
           </h3>
           <p className="text-sm text-[#b8a078] mt-1">
             Canonical 19-slot equipment inspector with weighted armor ratings, encumbrance capacity, and multi-loadout presets.
@@ -180,10 +180,10 @@ export default function EquipmentStudioRoot({
         onEquipKit={handleEquipKit}
       />
 
-      {/* 2-Pane Studio: Left = 19-Slot Paperdoll Grid, Right = Combat & Armor Stats Summary */}
+      {/* 2-Pane Studio: Left = 19-Slot Equipment Ledger, Right = Combat & Armor Stats Summary */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
         <div className="xl:col-span-8">
-          <PaperdollGrid
+          <EquipmentLedger
             character={character}
             loadout={activeItems}
             skills={skills}
