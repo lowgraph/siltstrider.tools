@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
+import { QUICK_LOADOUT_KITS } from '../equipment-studio/loadout-tabs-bar';
 
 // Keep the verified endgame tables and notes; the bundle supplies early rows.
 function endgameHtml(html){
@@ -75,6 +76,25 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
     }
   };
 
+  const handleEquipToPaperdoll = (isEndgame = false) => {
+    const isHeavy = build?.maj?.includes("Heavy Armor") || build?.min?.includes("Heavy Armor");
+    const isMedium = build?.maj?.includes("Medium Armor") || build?.min?.includes("Medium Armor");
+    let kitId = "kit-starter-light";
+    if (isEndgame) {
+      kitId = "kit-endgame-daedric";
+    } else if (isHeavy) {
+      kitId = "kit-starter-heavy";
+    } else if (isMedium) {
+      kitId = "kit-starter-medium";
+    }
+
+    const kit = QUICK_LOADOUT_KITS.find((k) => k.id === kitId) || QUICK_LOADOUT_KITS[0];
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("silt-equip-kit", { detail: { kitItems: kit.items } }));
+      window.dispatchEvent(new CustomEvent("silt-open-paperdoll"));
+    }
+  };
+
   useEffect(() => {
     const box = document.getElementById("gear-box");
     if (!box) return;
@@ -138,6 +158,15 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
             disabled={optimizing}
           >
             {optimizing ? "Analyzing loadout..." : "Optimize Gear"}
+          </button>
+
+          <button
+            type="button"
+            className="w-full sm:w-auto mw-btn py-2.5 px-5 font-serif font-bold text-sm tracking-wide shadow-md whitespace-nowrap text-center text-[#d4b06a]"
+            onClick={() => handleEquipToPaperdoll(endgameEarly)}
+            title="Equip recommended gear kit directly into your active paperdoll loadout"
+          >
+            Equip Kit to Paperdoll →
           </button>
         </div>
       </div>

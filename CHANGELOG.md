@@ -2,6 +2,28 @@
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
+## [Phase 9] Equipped Loadouts & Equipment Inspector (Paperdoll Studio) — 2026-09-20
+
+### Highlights
+- **Canonical 19-Slot Paperdoll Equipment Studio (`components/equipment-studio/`):** Introduced an authentic CRPG paperdoll equipment inspector arranged symmetrically around a central character identity plaque. Designed strictly with Morrowind UI invariants: procedural CRPG SVG glyphs, 4px `--mw-bevel` buttons, `--mw-groove` dividers, warm parchment `#f3e6c8`, gold headings `#d4b06a`, deep inset frames, zero emojis, and zero modern neon hues.
+- **Tactile Equipment Slot Cards (`equipment-slot-card.jsx`):** Renders all 19 canonical equipment slots (Helmet, Pauldrons, Cuirass, Gauntlets, Greaves, Boots, Shield, Weapons, Ammunition, Robe, Shirt, Pants, Skirt, Rings, Amulet, Belt) with procedural SVG silhouette glyphs, item names, armor rating & weight chips, unequip `✕` actions, and responsive layout.
+- **Mathematical Calculations Engine (`lib/equipment-math.mjs`):**
+  - **Weighted Total Armor Rating (AR):** Implements Morrowind's canonical slot weighting ratios (Cuirass 30%, Shield 10%, Helmet 10%, Greaves 10%, Boots 10%, Pauldrons 10% each, Gauntlets 5% each) and Unarmored skill formula ($\lfloor \text{UnarmoredSkill}^2 \times 0.0065 \rfloor$) with dynamic skill-scaling armor formulas.
+  - **Encumbrance & Carry Capacity:** Accurately models $\text{Strength} \times 5$ carrying capacity with active weight tallying, percentage cap indicator, and tactile visual progress meter.
+  - **Main-Hand Weapon Combat Profile:** Computes weapon damage ranges across all three attack types (Chop, Slash, Thrust min-max), weapon speed, reach, and automatic fallback to Hand-to-Hand when unarmed.
+  - **Two-Handed vs. Shield Mutual Exclusion:** Equipping a two-handed weapon (claymore, battle axe, warhammer, halberd, staff, bow, crossbow) automatically un-equips the off-hand shield or light source with clear feedback.
+  - **Beast Race Equipment Restrictions:** Authentic lore fidelity barring Argonian and Khajiit characters from equipping footwear and closed helmets, with explanatory badge overlays and item picker warnings.
+  - **Constant Effect Enchantment Aggregation:** Automatically scans equipped items and aggregates passive constant effect enchantments (attributes, skill fortifications, resistances) into a structured combat ledger.
+- **Multi-Loadout Presets System (`loadout-tabs-bar.jsx`):** Up to 4 named equipment loadouts per character (`Primary Combat`, `Secondary / Alternate`, `Stealth & Infiltration`, `Arcane & Utility`) with 1-click tab switching, duplication, renaming, clearing, and curated starter/endgame kit templates (`Seyda Neen Scout`, `Ghostgate Glass Champion`, `Daedric Warlord`).
+- **Interactive Item Picker & Custom Forging Drawer (`item-picker-drawer.jsx`):** Slide-in modal drawer with embedded game item catalog across all slots, category filter chips (`ALL`, `LIGHT`, `MEDIUM`, `HEAVY`), instant search, beast restriction indicators, and a custom item forge form for homebrew/artifact gear.
+- **Cross-Tool Architecture & Integrations:**
+  - **3-Way Studio Mode Bar (`character-builder-root.jsx`):** Expanded Character Builder top navigation to seamlessly toggle between `Custom Class Builder`, `Equipped Loadouts & Studio`, and `Premade Builds Catalog`.
+  - **Character Sheet Quick Launch (`character-sheet.jsx`):** Added `[ Equipped Paperdoll → ]` direct navigation button in the Character Sheet quick launch grid.
+  - **Gear Advisor Direct Equip Bridge (`gear-advisor.jsx`):** Added `[ Equip Kit to Paperdoll → ]` action button to equip the algorithmic gear recommendation directly into the active paperdoll loadout via decoupled event dispatching.
+- **Automated QA & Adversarial Test Coverage:** Added 17 unit and adversarial UI tests across `test/equipment-math.test.js` and `test/equipment-studio-ui.test.js`. 100% test pass rate across all 242 site test suites and 259 pipeline test suites.
+
+---
+
 ## [Phase 8] Home Hub & Tool Directory Overhaul — 2026-09-20
 
 ### Highlights

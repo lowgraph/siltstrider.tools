@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Configurator from "./configurator";
 import CharacterSheet from "./character-sheet";
 import PremadeBrowser from "./premade-browser";
 import GearAdvisor from "./gear-advisor";
 import LocalCharactersPanel from "./local-characters-panel";
+import EquipmentStudioRoot from "../equipment-studio/equipment-studio-root";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 
@@ -18,7 +19,7 @@ export default function CharacterBuilderRoot() {
     selectClassPreset,
     selectPremade
   } = useActiveCharacter();
-  const [activeTab, setActiveTab] = useState("builder"); // "builder" | "premade"
+  const [activeTab, setActiveTab] = useState("builder"); // "builder" | "paperdoll" | "premade"
   const [mobileTab, setMobileTab] = useState("config"); // "config" | "sheet" (screens < 1024px)
   const [copied, setCopied] = useState(false);
 
@@ -58,14 +59,24 @@ export default function CharacterBuilderRoot() {
   const handleSwapSkill = swapSkill;
   const handleSelectClassPreset = selectClassPreset;
 
+  // Listen for silt-open-paperdoll events from quick launch buttons
+  useEffect(() => {
+    const handleOpenPaperdoll = () => {
+      setActiveTab("paperdoll");
+    };
+    window.addEventListener("silt-open-paperdoll", handleOpenPaperdoll);
+    return () => window.removeEventListener("silt-open-paperdoll", handleOpenPaperdoll);
+  }, []);
+
   return (
     <div className="character-builder-root w-full mx-auto space-y-6">
-      {/* Top Mode Selectors: Aligned with the 2-Pane UI columns */}
-      <div className="mode-bar-grid grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+      {/* Top Mode Selectors: 3-Way CRPG Studio Bar */}
+      <div className="mode-bar-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <button
             type="button"
-            className={`w-full mw-btn py-3 px-5 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
+            id="btn-tab-builder"
+            className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "builder" ? "active ring-1 ring-[#d4b06a]" : ""
             }`}
             onClick={() => setActiveTab("builder")}
@@ -76,7 +87,20 @@ export default function CharacterBuilderRoot() {
         <div>
           <button
             type="button"
-            className={`w-full mw-btn py-3 px-5 font-serif text-base font-bold tracking-wide transition-all shadow-md ${
+            id="btn-tab-paperdoll"
+            className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
+              activeTab === "paperdoll" ? "active ring-1 ring-[#d4b06a]" : ""
+            }`}
+            onClick={() => setActiveTab("paperdoll")}
+          >
+            Equipped Loadouts &amp; Studio
+          </button>
+        </div>
+        <div>
+          <button
+            type="button"
+            id="btn-tab-premade"
+            className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "premade" ? "active ring-1 ring-[#d4b06a]" : ""
             }`}
             onClick={() => setActiveTab("premade")}
@@ -86,7 +110,7 @@ export default function CharacterBuilderRoot() {
         </div>
       </div>
 
-      {/* Mobile View Toggle (Visible on screens < 1024px) */}
+      {/* Mobile View Toggle (Visible on screens < 1024px when builder is active) */}
       {activeTab === "builder" && (
         <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-[#120f0a] border border-[#2a2318] mb-6">
           <button
@@ -116,6 +140,14 @@ export default function CharacterBuilderRoot() {
           onSelectBuild={handleSelectPremade}
           activeProfile={shell.profile}
         />
+      ) : activeTab === "paperdoll" ? (
+        <EquipmentStudioRoot
+          character={build}
+          skills={sheet?.skills || {}}
+          attributes={sheet?.attrs || {}}
+          initialLoadouts={build.loadouts}
+          onLoadoutsChange={(newLoadouts) => updateField("loadouts", newLoadouts)}
+        />
       ) : (
         <>
           {/* Desktop 2-Pane Dashboard: Side-by-Side on Desktop (>=1024px), Tabbed on screens < 1024px */}
@@ -144,12 +176,21 @@ export default function CharacterBuilderRoot() {
             </div>
 
             <div className={`cb-pane ${mobileTab !== "sheet" ? "cb-pane-mobile-hidden" : ""}`}>
-              <CharacterSheet build={build} sheet={sheet} catalogs={catalogs} />
+              <CharacterSheet
+                build={build}
+                sheet={sheet}
+                catalogs={catalogs}
+                onOpenPaperdoll={() => setActiveTab("paperdoll")}
+              />
             </div>
           </div>
 
           {/* Decoupled Gear Advisor */}
-      <GearAdvisor attrs={Object.fromEntries(Object.entries(sheet?.attrs||{}).map(([key,value])=>[key,value.v]))} beast={Boolean(catalogs?.races?.[build.race]?.beast)} build={{...build, world:shell.world, arce:shell.arce}} />
+          <GearAdvisor
+            attrs={Object.fromEntries(Object.entries(sheet?.attrs || {}).map(([key, value]) => [key, value.v]))}
+            beast={Boolean(catalogs?.races?.[build.race]?.beast)}
+            build={{ ...build, world: shell.world, arce: shell.arce }}
+          />
         </>
       )}
     </div>

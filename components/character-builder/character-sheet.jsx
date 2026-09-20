@@ -4,7 +4,7 @@ import AttributeGrid from "./attribute-grid";
 import SkillDisplayGrid from "./skill-display-grid";
 import { startingSpells } from "../../lib/character-math.mjs";
 
-export default function CharacterSheet({ build, sheet, catalogs }) {
+export default function CharacterSheet({ build, sheet, catalogs, onOpenPaperdoll = null }) {
   if (!sheet) {
     return (
       <div
@@ -151,9 +151,9 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
         )}
       </div>
 
-      {/* Quick Launch: Cloud Character Vault & Level Progression Optimizer */}
+      {/* Quick Launch: Cloud Character Vault & Equipped Paperdoll & Level Optimizer */}
       <div className="pt-2 border-t border-[#2a2318] space-y-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <button
             type="button"
             id="btn-sheet-cloud-vault"
@@ -169,6 +169,22 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
           </button>
           <button
             type="button"
+            id="btn-sheet-paperdoll"
+            className="w-full mw-btn py-3 px-3 font-serif text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-1.5 shadow-sm text-[#f3e6c8] hover:text-[#d4b06a]"
+            onClick={() => {
+              if (typeof onOpenPaperdoll === "function") {
+                onOpenPaperdoll();
+              } else if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("silt-open-paperdoll"));
+              }
+            }}
+            title="Inspect equipped loadout in the Paperdoll Studio"
+          >
+            <span>Equipped Paperdoll →</span>
+          </button>
+          <button
+            type="button"
+            id="btn-sheet-leveler"
             className="w-full mw-btn py-3 px-3 font-serif text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-1.5 shadow-sm text-[#f3e6c8] hover:text-[#d4b06a]"
             onClick={() => {
               if (typeof window !== "undefined" && window.siltShell?.navigate) {
@@ -177,7 +193,7 @@ export default function CharacterSheet({ build, sheet, catalogs }) {
             }}
             title="Open Level Progression Optimizer with this build"
           >
-            <span>Level Progression Optimizer →</span>
+            <span>Level Optimizer →</span>
           </button>
         </div>
       </div>
