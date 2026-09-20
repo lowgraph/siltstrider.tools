@@ -1504,6 +1504,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       </div>
       <div class="account-bar" aria-label="Account">
         <span id="account-status" class="muted" role="status" aria-live="polite"></span>
+        <button type="button" class="btn" id="account-cloud-vault" title="Open Cloud Character Vault">Cloud Vault</button>
         <button type="button" class="btn" id="account-sign-in">Sign in</button>
         <button type="button" class="btn" id="account-sign-up">Sign up</button>
         <div id="account-user" aria-label="Your account" hidden></div>
@@ -8783,6 +8784,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
       signIn.addEventListener("click", () => open("in"));
       signUp.addEventListener("click", () => open("up"));
+      const vaultBtn = document.getElementById("account-cloud-vault");
+      if (vaultBtn) {
+        vaultBtn.addEventListener("click", () => {
+          window.dispatchEvent(new CustomEvent("silt-open-vault"));
+        });
+      }
       window.siltStriderAuth = Object.freeze({
         ready: initialize,
         async getToken() { const clerk = await initialize(); return clerk.session ? clerk.session.getToken() : null; }

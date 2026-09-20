@@ -372,6 +372,7 @@ export function CharacterProvider({ children }) {
     () => ({
       build,
       setBuild,
+      loadBuild: setBuild,
       sheet,
       catalogs,
       updateField,
@@ -391,6 +392,8 @@ export function useActiveCharacter() {
   if (!ctx) {
     return {
       build: DEFAULT_BUILD,
+      setBuild: () => {},
+      loadBuild: () => {},
       sheet: null,
       catalogs: null,
       updateField: () => {},

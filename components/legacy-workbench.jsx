@@ -16,8 +16,15 @@ import SpellmakingWorkstation from './calculators/spellmaking/spellmaking-workst
 import AlchemyWorkstation from './calculators/alchemy/alchemy-workstation';
 import TravelWorkstation from './calculators/travel/travel-workstation';
 import LevelSimulatorRoot from './level-simulator/level-simulator-root';
+import CloudVaultModal from './character-vault/cloud-vault-modal';
+import { useActiveCharacter } from './character-context';
 
 const LegacyBody=memo(function LegacyBody({html}){return <div id="legacy-workbench" dangerouslySetInnerHTML={{__html:html}}/>;});
+
+function VaultPortal() {
+  const { build, setBuild } = useActiveCharacter();
+  return <CloudVaultModal activeBuild={build} onApplyBuild={setBuild} />;
+}
 
 function ActiveViewOverlay() {
   const shell = useShell();
@@ -112,6 +119,7 @@ export default function LegacyWorkbench({html,revision}){
     {spellSlot&&createPortal(<SpellmakingWorkstation/>,spellSlot)}
     {alchemySlot&&createPortal(<><AlchemyDataBridge/><AlchemyWorkstation/></>,alchemySlot)}
     {travelSlot&&createPortal(<TravelWorkstation/>,travelSlot)}
+    <VaultPortal />
     <Script id="legacy-data" src={'/legacy/legacy-data.js?v='+revision} strategy="afterInteractive" onReady={()=>setDataReady(true)}/>
     {(dataReady||(isClient&&Boolean(window.POOL)))&&(catalogReady||(isClient&&Boolean(window.siltCharacters?.active)))&&<Script id="legacy-runtime" src={'/legacy/legacy-runtime.js?v='+revision} strategy="afterInteractive" onReady={()=>setBooted(true)} onError={()=>setStatus({status:'error',message:'Application code failed to load. Reload this page.'})}/>}
   </CharacterProvider>

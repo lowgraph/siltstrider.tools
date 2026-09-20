@@ -197,6 +197,20 @@ export default function SiteHeader({ shell: propShell } = {}) {
           </button>
           <button
             type="button"
+            id="react-nav-vault"
+            className="btn desktop-only"
+            disabled={!shell.ready}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('silt-open-vault'));
+              }
+            }}
+            title="Open Cloud Character Vault"
+          >
+            Cloud Vault
+          </button>
+          <button
+            type="button"
             id="react-nav-leveler"
             className={'btn drawer-only' + (shell.view === 'leveler' ? ' on' : '')}
             disabled={!shell.ready}
@@ -413,6 +427,24 @@ export default function SiteHeader({ shell: propShell } = {}) {
                 Changelog
               </button>
             </div>
+          </div>
+
+          <div className="drawer-group">
+            <span className="drawer-label">Character Vault</span>
+            <button
+              type="button"
+              id="react-drawer-vault"
+              className="btn w-full"
+              disabled={!shell.ready}
+              onClick={() => {
+                setOpen(false);
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('silt-open-vault'));
+                }
+              }}
+            >
+              Cloud Character Vault
+            </button>
           </div>
         </div>
 

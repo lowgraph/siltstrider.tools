@@ -3,8 +3,18 @@
   "name": "plain-disk-78e6",
   "account_id": "4653c1ab885ae65ebea83b3804643010",
   "compatibility_date": "2026-09-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "cloudflare/worker.mjs",
   "workers_dev": true,
   "preview_urls": false,
   "routes": [{ "pattern": "siltstrider.tools", "custom_domain": true }],
-  "assets": { "directory": "./.next-export", "html_handling": "auto-trailing-slash", "not_found_handling": "404-page" }
+  "assets": { "directory": "./.next-export", "html_handling": "auto-trailing-slash", "not_found_handling": "404-page" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "siltstrider-db",
+      "database_id": "141a1409-3956-4267-a078-02483bbb2bf6",
+      "migrations_dir": "cloudflare/migrations"
+    }
+  ]
 }

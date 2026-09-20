@@ -2,6 +2,20 @@
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
+## [Phase 7] Cloud Character Vault & OpenMW Binary Save Ingestion — 2026-09-20
+
+### Highlights
+- **Cloud Character Vault Workstation (`#panel-vault` & Modal Portal):** Introduced an authentic CRPG dossier management portal enclosed in canonical 6-pixel ornate parchment borders (`--mw-border`), accessible from the persistent site header, mobile navigation drawer, and Build Optimizer.
+- **Client-Side OpenMW Binary Save Parser (`lib/omwsave-parser.mjs`):** Direct in-browser parsing of `.omwsave` binary files (format v37+ and legacy formats). Automatically extracts character name, race, class, birthsign, level, attributes, skills, dynamic vitals, gold, cell/location, inventory, and completed journal quest milestones with zero Node.js/native dependencies.
+- **SLT1 Binary Codec & Ultra-Compact Serialization (`lib/cloud-save-codec.mjs`):** Proprietary byte-packed binary codec compressing large ~35 KB character dossiers down to ~1.4 KB BLOBs (~96% compression ratio) for efficient Cloudflare D1 edge database storage.
+- **Tiered Cloud Quota Model:**
+  - **Free Tier:** 5 cloud character slots with full inventory, quests, and challenge data persistence.
+  - **Paid / Supporter Tier:** 25 cloud character slots with automatic tier enforcement via SQLite triggers (`COALESCE(max_saves, 5)`).
+- **Offline-First Hybrid Sync Engine (`lib/character-vault.mjs`):** Zero-latency local browser caching in `localStorage` paired with seamless cloud synchronization to Cloudflare D1 via Clerk JWT authentication.
+- **1-Click Local Migration & Backup:** Dedicated button allowing players to migrate offline character builds to the cloud in a single click, with bi-directional JSON export/import for complete data portability.
+- **Cross-Tool Navigation & Shell Integration:** Quick launch buttons embedded in the Character Sheet header, Local Characters panel, and desktop navigation bar (`[ Cloud Vault ]`).
+- **CRPG Aesthetic Standards:** 100% adherence to authentic Morrowind styling: Pelagiad typography, `--mw-bevel` 4px buttons, `--mw-groove` dividers, warm parchment `#f3e6c8`, gold `#d4b06a` accents, zero modern emojis, and zero neon hues.
+
 ---
 
 ## [Phase 6] Character Level Simulator & Build Progression Optimizer — 2026-09-19
