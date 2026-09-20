@@ -139,10 +139,12 @@ select[size] option:checked {
 /* No preflight during the compatibility checkpoint. */
 .game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
 
-/* Modern React Character Builder, Level Simulator & Cloud Vault take over master window frames */
+/* Modern React Character Builder, Level Simulator, Cloud Vault & Home Hub take over master window frames */
 body.view-builder #panel-build,
 body.view-leveler #panel-leveler,
-body.view-vault #panel-vault {
+body.view-vault #panel-vault,
+body.view-home #panel-home,
+body:not([class*="view-"]) #panel-home {
   display: block !important;
   width: 100% !important;
   max-width: 1320px !important;
@@ -160,7 +162,9 @@ body.view-vault #panel-vault {
 @media (max-width: 767px) {
   body.view-builder #panel-build,
   body.view-leveler #panel-leveler,
-  body.view-vault #panel-vault {
+  body.view-vault #panel-vault,
+  body.view-home #panel-home,
+  body:not([class*="view-"]) #panel-home {
     padding: 16px 12px !important;
     margin: 8px auto 16px !important;
   }
@@ -169,21 +173,24 @@ body.view-vault #panel-vault {
 /* Hide legacy DOM children inside panels while preserving modern React container */
 body.view-builder #panel-build > *:not(.character-builder-root),
 body.view-leveler #panel-leveler > *:not(.level-simulator-root),
-body.view-vault #panel-vault > *:not(.cloud-vault-root) {
+body.view-vault #panel-vault > *:not(.cloud-vault-root),
+#panel-home:has(.home-hub-root) > *:not(.home-hub-root) {
   display: none !important;
 }
 
 /* Guarantee no other legacy panel displays in active views */
 body.view-builder .panel:not(#panel-build),
 body.view-leveler .panel:not(#panel-leveler),
-body.view-vault .panel:not(#panel-vault) {
+body.view-vault .panel:not(#panel-vault),
+body.view-home .panel:not(#panel-home) {
   display: none !important;
 }
 
 /* Ensure the hero container centers full content */
 body.view-builder .hero,
 body.view-leveler .hero,
-body.view-vault .hero {
+body.view-vault .hero,
+body.view-home .hero {
   align-items: center;
 }
 

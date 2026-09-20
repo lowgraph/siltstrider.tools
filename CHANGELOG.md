@@ -2,6 +2,20 @@
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
+## [Phase 8] Home Hub & Tool Directory Overhaul — 2026-09-20
+
+### Highlights
+- **Home Hub CRPG Transformation (`components/home-hub/`):** Transformed the legacy `#panel-home` landing page into an authentic Morrowind CRPG directory hub enclosed in canonical 6-pixel ornate parchment borders (`--mw-border`), Pelagiad typography, warm parchment `#f3e6c8`, gold `#d4b06a`, and deep inset shading.
+- **Active Character Session Plaque (`active-session-banner.jsx`):** Integrated a real-time session banner connected to `useActiveCharacter()` from `CharacterContext`. Displays active character identity (Name, Race, Class, Birthsign, Specialization) along with authentic color-coded vitals chips (Health `#b83b3b`, Magicka `#3b6bb8`, Fatigue `#3bb852`) and 1-click continuation controls (`[ Resume Build Optimizer → ]`, `[ Level Simulator → ]`, `[ Cloud Vault ]`). Includes graceful empty-state fallback when no character is active.
+- **8-Tool Directory Grid (`tool-directory-grid.jsx` & `tool-launcher-card.jsx`):** Unified all 8 site planning and calculation modules (`builder`, `leveler`, `vault`, `challenge`, `enchanting`, `spellmaking`, `alchemy`, `travel`) into a responsive CRPG grid. Each card features canonical subtitles, feature tags, status badges (`POPULAR`, `NEW`), and tactile `--mw-bevel` action buttons.
+- **Game World Profiles Guide (`world-profiles-guide.jsx`):** Added an interactive parchment guide explaining Vanilla Vvardenfell, Tamriel Rebuilt Mainland, and TR + ARCE Rebalance profiles with 1-click profile switching via `window.siltShell.setProfile`.
+- **Project Colophon Bulletin (`colophon-bulletin.jsx`):** Established official project metadata, Bethesda/Tamriel Rebuilt data provenance, Pelagiad typeface licensing attribution, and direct links to About, Changelog, and community support.
+- **Master Window Isolation & Seamless Hydration:** Enforced `#panel-home:has(.home-hub-root) > *:not(.home-hub-root) { display: none !important; }` in `app/globals.css` to eliminate legacy markup flash during hydration while maintaining preflight fallback compatibility.
+- **Adversarial QA & Test Suite:** Added 9 new unit and adversarial test suites (`test/home-hub-ui.test.js`) verifying all 8 launcher cards, rapid profile switching, empty session states, and cross-platform CustomEvent dispatching. All 225 site test suites and 233 pipeline test suites pass with 100% success.
+- **Aesthetic Invariants:** 100% adherence to authentic CRPG aesthetic standards: zero emojis, zero modern neon hues, Pelagiad font, `--mw-groove` dividers, and `--mw-bevel` buttons.
+
+---
+
 ## [Phase 7] Cloud Character Vault & OpenMW Binary Save Ingestion — 2026-09-20
 
 ### Highlights

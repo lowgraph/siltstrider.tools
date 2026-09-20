@@ -2960,7 +2960,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       });
     } catch (e) {}
     function showView(name) {
-      document.body.classList.remove("view-challenge", "view-builder", "view-leveler", "view-vault", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
+      document.body.classList.remove("view-home", "view-challenge", "view-builder", "view-leveler", "view-vault", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
+      if (name === "home") document.body.classList.add("view-home");
       if (name === "challenge") document.body.classList.add("view-challenge");
       if (name === "builder") document.body.classList.add("view-builder");
       if (name === "leveler") document.body.classList.add("view-leveler");
