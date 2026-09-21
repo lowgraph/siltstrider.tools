@@ -2,6 +2,127 @@
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
+## [Phase 12] Modern App Shell & Architecture Decoupling — 2026-09-21
+
+### Highlights
+- **Native React App Shell (`components/app-shell.jsx`):**
+  - Completely replaced the legacy HTML extraction harness (`LegacyWorkbench.jsx`, `dangerouslySetInnerHTML`, and 11 `createPortal` mounts) with a declarative, native React 19 / Next.js 16 application layout.
+  - Renders all 12 tools (`home`, `builder`, `challenge`, `leveler`, `factions`, `enchanting`, `spellmaking`, `alchemy`, `travel`, `vault`, `about`, `changelog`) cleanly inside `<main className="site-main">`.
+  - Automatic `view-${view}` body class synchronization and persistent `<SiteHeader />`, `<SiteFooter />`, and `<CloudVaultModal />`.
+- **Pure ESM Permalink Codec & Hash Sync Engine (`lib/permalink-codec.mjs`):**
+  - Universal safe UTF-8 Base64URL encoder and decoder for character build states, challenge runs, and game profile flags (`vanilla`, `tr`, `tr_arce`).
+  - Strict input sanitation with prototype pollution defense and safe fallbacks for corrupted hashes or legacy aliases (`#optimizer`, `#TR`, `#ARCE`).
+  - Bidirectional hash event synchronization via modernized `components/shell-context.jsx` preserving seamless browser back/forward history navigation.
+- **Challenge Engine Decoupling (`lib/challenge-engine.mjs`):**
+  - Extracted card aspect rolling, seed reproducibility, lock preservation, and mutual restriction conflict resolution into a pure ESM engine.
+- **Native React Static Views (`components/views/` & `components/site-footer.jsx`):**
+  - Replaced legacy static markup for `#panel-about` and `#panel-changelog` with responsive, accessible React components (`AboutView` and `ChangelogView`).
+  - Implemented authentic CRPG footer with legal disclaimers, open-source attribution, and keyboard-accessible modal navigation hooks.
+- **Asset Ingestion & CRPG Design Tokens (`app/globals.css`):**
+  - Ingested local Pelagiad font (`public/fonts/Pelagiad.ttf`) and Morrowind 9-slice border textures (`public/textures/mw-border.png`, `mw-bevel.png`, `mw-groove.png`).
+  - Established formal `:root` tokens for `--ink`, `--paper`, `--gold`, and procedural 9-slice border styles without external or inline asset dependencies.
+- **Legacy Extraction Hook Deprecation (`package.json`, `app/page.jsx`):**
+  - Retired `scripts/extract-legacy.cjs` from `predev` and `prebuild` npm hooks.
+  - Decoupled `app/page.jsx` from `manifest.json` and query parameters, rendering `<AppShell />` directly.
+  - Next.js production build compile time reduced to **592ms** (down from >6s).
+- **Test Integrity & Adversarial QA:**
+  - Authored unit and adversarial test suites for permalinks (`test/permalink-codec.test.js`), challenge engine (`test/challenge-engine.test.js`), and app shell routing (`test/app-shell.test.js`).
+  - 100% test pass rate across 297 site tests (`npm test`) and 482 pipeline tests (`unittest discover`).
+
+## [Best-In-Slot Gear Advisor & Bundle Integration] — 2026-09-20
+
+### Highlights
+- **Best-In-Slot Bundle Feature Integration (`lib/bundle-loader.mjs`):**
+  - Added `bestInSlot: Object.freeze(['BestInSlot', 'Armor', 'Clothing', 'Weapons'])` to `FEATURE_CATALOGS`.
+  - Added contract verification in `test/bundle-contract.test.js` ensuring all 4 catalogs load cleanly across `vanilla`, `tr`, and `tr_arce` profiles.
+- **Client-Side Best-In-Slot Scoring & Resolution Engine (`lib/best-in-slot.mjs`):**
+  - Implemented `picksForBuild`, `deriveBuildTraits`, `scoreItem`, `findClosestBuildRecord`, and `resolveBestInSlotPicks` adhering strictly to `best-in-slot-types.ts` and `build_best_in_slot_catalog.py` specifications.
+  - Matches 122 pre-computed `BuildPicks` records for canonical premade builds and dynamically scores custom characters using the catalog's embedded scoring model.
+  - Evaluates drawback rules and severities (disqualifying vs significant with mitigations), fortify skills and attributes, armor rating scaling, weapon damage contributions, and beast race equipment filters (beast races excluded from closed helmets and footwear).
+  - Categorizes resolved recommendations into 3 clean groups: Optimized Armor & Shield, Optimized Weapons, and Constant-Effect Clothing & Jewelry (featuring distinct Ring 1 and Ring 2 picks).
+- **CRPG Best-In-Slot UI View (`components/character-builder/best-in-slot-view.jsx`):**
+  - Designed authentic Morrowind-themed late-game equipment dossier under `<details open className="best-in-slot-recommendations"><summary>Optimized endgame kit</summary>`.
+  - Renders slot labels, item names with gold highlights, key combat stats (AR, damage, effect summary), score badges, scoring rationale chips, and drawback warnings with mitigations.
+  - Displays rich acquisition details (placed in world with easiest level, quest reward tags, and formidable level warnings).
+  - Supports expandable runner-up / alternative picks per slot.
+- **Gear Advisor Wiring (`components/character-builder/gear-advisor.jsx`):**
+  - Wired `useGameData('bestInSlot')` into `GearAdvisor` and `GearAdvisorView`.
+  - Renders live `BestInSlotView` recommendations when bundle is ready upon clicking "Optimize Gear", with clean backward-compatible fallback to legacy `gearHtml`.
+  - Fully responds to character changes, beast race restrictions, and the "Endgame gear early" toggle (`allowFormidableSources`).
+- **Comprehensive Automated QA & Adversarial Edge Cases:**
+  - Added `test/best-in-slot.test.js` with 12 unit, integration, and adversarial tests covering:
+    - Pre-computed picks and formidable toggle behavior (e.g. King Helseth's Royal Signet Ring inclusion/exclusion).
+    - Drain Magicka disqualification on casters vs non-casters.
+    - Beast race footwear/helmet exclusion.
+    - React UI rendering of `BestInSlotView` and `GearAdvisorView` with runner-up toggling.
+    - 3 adversarial edge-case suites (Rule 3): null/undefined/malformed inputs, exact boundary level 30 vs 31 with quest overrides, and empty custom characters.
+  - 100% test pass rate: 275/275 tests in `A:\Claude\morrowind-tools`, 445/445 tests in `OpenMW Decompiler`.
+
+## [Phase 11] Faction Journal & Promotion Deficit Engine — 2026-09-20
+
+### Highlights
+- **Faction Journal Workstation (`components/journal-factions/`):** Introduced a full-featured CRPG Faction Journal workstation for tracking faction affiliations, rank promotions, attribute/skill deficits, inter-faction diplomacy, and linked guild quests. Designed strictly with authentic Morrowind UI aesthetics: Pelagiad font, `--mw-bevel` button styling, `--mw-groove` dividers, warm parchment `#f3e6c8`, gold headings `#d4b06a`, and deep inset frames.
+  - **Master Split-Pane Workspace (`journal-factions-root.jsx`):** Features responsive split-pane layout, profile-aware live game bundle status (`• Live: 27 Factions (VANILLA)`), active character build summary from `CharacterContext`, and interactive join/leave faction membership toggle with vault save synchronization.
+  - **Searchable Faction Roster (`faction-roster.jsx`):** Provides real-time text search across faction names, favoured attributes, and skills, with 8 category filter tabs (`All Factions`, `Guilds`, `Great Houses`, `Imperial`, `Religion & Cults`, `Native & Ashlanders`, `Vampire Clans`, `My Memberships`), active faction selection, owned world placement counts, and status badges (`Eligible to Join`, `Unqualified`, `Non-joinable`, `Member · Rank Name`, `⚠ Expelled`).
+  - **Interactive Faction Dossier View (`faction-detail-view.jsx`):**
+    - **10-Rank Stepper Track:** Displays ranks 0 through 9 with current rank badge, reputation thresholds, and click-to-inspect requirements for any rank.
+    - **Promotion Requirements & Deficit Solver:** Evaluates character attributes and skills against canonical FADT thresholds. Displays individual progress meters with color-coded qualification indicators (`✓` or `(Need +X)`), and aggregates promotion gaps into actionable instructions.
+    - **Simulated Reputation Control:** Interactive input allowing players to simulate different faction reputation values to test future promotion eligibility.
+    - **Mutual Exclusivity Warning:** Automatically detects and alerts on rival faction conflicts (e.g. Great House Hlaalu vs Redoran/Telvanni, rival vampire clans).
+    - **Diplomatic Standing & Inter-Faction Relations:** Maps allied reactions (+1 to +3) and hostile/rival reactions (-1 to -3) with disposition adjustments.
+    - **Associated Faction Quests Ledger:** Displays all quests associated with the faction prefix with quest key, finish index, and progress status.
+- **Canonical Morrowind Faction Promotion Engine (`lib/faction-math.mjs`):**
+  - Implemented pure calculation functions: `normalizeStatKey`, `getStatValue`, `joinableFactions`, `meetsRank`, `getHighestEligibleRank`, `solvePromotionGaps`, `MUTUAL_EXCLUSIONS`, `getMutualExclusionConflict`, `getFactionReactions`, and `getFactionQuests`.
+  - Strictly models canonical Morrowind FADT promotion rules: requires both favoured attributes $\ge$ rank thresholds; requires 1 skill $\ge$ primary skill threshold, and 2 other favoured skills $\ge$ favoured skill threshold; faction reputation $\ge$ rank reputation.
+- **Bundle Loader & Game Data Integration:**
+  - Added `factions: Object.freeze(['Factions', 'Quests', 'Skills', 'Attributes'])` to `FEATURE_CATALOGS` in `lib/bundle-loader.mjs`.
+  - Wired into `useGameData('factions')` for seamless content-addressed loading with graceful fallback.
+- **Navigation & Legacy Shell Integration:**
+  - Registered `factions: 'factions'` in `migration/shell-bridge.js`.
+  - Added `#panel-factions` panel to `index.html` and wired through `showView('factions')`, `calcViews`, and `deskNavIds`.
+  - Added Faction Journal to site header desktop dropdown (`#react-desk-factions`) and mobile drawer, preserving single-row desktop header invariant.
+  - Added Faction Journal launcher card to Home Hub directory (`tool-directory-grid.jsx`), expanding canonical tools to 9.
+  - Mounted `JournalFactionsRoot` via React portal in `components/legacy-workbench.jsx`.
+- **Legacy HTML Byte Budget Compliance:**
+  - Extracted legacy body: 48,906 bytes (strict budget < 50,000 bytes with 1,094 bytes headroom).
+- **Automated QA & Adversarial Test Coverage:**
+  - Added `test/faction-math.test.js` (7 test suites) and `test/journal-factions-ui.test.js` (7 UI integration & adversarial test suites).
+  - Updated `test/home-hub-ui.test.js` and `test/bundle-contract.test.js`.
+  - 100% test pass rate: 262/262 tests in `A:\Claude\morrowind-tools`, 445/445 tests in `OpenMW Decompiler`.
+  - Headless Chrome CDP visual layout verification at 1440x950 and 390x844 viewports.
+
+---
+
+
+
+### Highlights
+- **Specialized Workstations Live Data Rewiring:** Completely wired all 4 specialized workstations (`Enchanting`, `Spellmaking`, `Alchemy`, `Travel`) to the content-addressed game data bundle loader (`lib/bundle-loader.mjs` and `useGameData`), moving off static legacy extracts to dynamic, profile-aware bundle data with clean fallbacks.
+- **Bundle Loader Feature Catalog Expansion (`lib/bundle-loader.mjs`):**
+  - Expanded `FEATURE_CATALOGS` to include:
+    - `travel: Object.freeze(['Travel', 'Places'])`
+    - `enchanting: Object.freeze(['MagicEffects', 'GameSettings', 'Enchantments', 'EffectRules', 'Merchants'])`
+    - `spellmaking: Object.freeze(['MagicEffects', 'GameSettings', 'EffectRules', 'Merchants'])`
+  - Validated immutable profile inheritance and delta resolution across `vanilla`, `tr`, and `tr_arce`.
+- **Dynamic Travel Graph Adapter (`lib/travel-graph.mjs`):**
+  - Implemented `adaptTravelGraph(records, nodes)` to dynamically compile live transit networks from bundle `Travel` records and node metadata.
+  - Normalizes settlement names (strips Guild of Mages, Wolverine Hall, and Vivec canton suffixes) and maps transit modes (`silt_strider`, `guild_guide`, `gondola`, `riverstrider`).
+  - Extended `buildNetworkGraph`, `getAvailableTransitStops`, and `findFewestHopsRoute` to accept dynamic custom graphs with seamless fallback to static network tables.
+- **Three-Toggle Gear Acquisition Policy & Gear Advisor Integration:**
+  - Added `#gear-near-start` ("Near starting areas") toggle to `index.html` `.gear-toggles` group and wired through `earlyGearOptions()`.
+  - Updated `components/character-builder/gear-advisor.jsx` with bi-directional DOM synchronization (`handleToggleNearStart`), `resolveRanking()`, and direct connection to `useGameData('gear')`.
+- **Live Workstations Features:**
+  - **Alchemy Workstation (`alchemy-workstation.jsx`):** Consumes `useGameData('alchemy')`, dynamically loads live ingredients and apparatus tiers from bundle catalogs via `adaptAlchemy`, and displays live status badge `• Live: 126 Ing. (PROFILE)`.
+  - **Enchanting Workstation (`enchanting-workstation.jsx`):** Consumes `useGameData('enchanting')`, filters effects using `allowEnchanting === true` from live `EffectRules`, extracts enchanters using `servicesRaw & 65536` (`0x10000` service bit) from live `Merchants`, and displays live status badge `• Live: 129 Effects · 24 Vendors (PROFILE)`.
+  - **Spellmaking Workstation (`spellmaking-workstation.jsx`):** Consumes `useGameData('spellmaking')`, filters spells using `allowSpellmaking === true` from live `EffectRules`, extracts spellmakers using `servicesRaw & 32768` (`0x8000` service bit) from live `Merchants`, and displays live status badge `• Live: 129 Spells · 43 Vendors (PROFILE)`.
+  - **Travel Workstation (`travel-workstation.jsx`):** Consumes `useGameData('travel')`, dynamically builds network graphs via `adaptTravelGraph`, and displays live status badge `• Live: 21 Stops (PROFILE)`.
+- **Automated QA & Adversarial Test Coverage:**
+  - Added contract tests in `test/bundle-contract.test.js` verifying `loadFeature` decoding for `travel`, `enchanting`, and `spellmaking`.
+  - Created `test/live-workstations.test.js` targeting edge conditions: malformed records, missing nodes, self-loops, disconnected transit networks, all 8 boolean toggle permutations for gear policy, and merchant bitmask service isolation.
+  - 100% test pass rate across all 247 site test suites and 396 pipeline test suites.
+  - Turbopack production build compiled and statically optimized in 1.2s with zero errors.
+
+---
+
 ## [Phase 9] Equipped Loadouts & Equipment Inspector — 2026-09-20
 
 ### Highlights
