@@ -71,7 +71,7 @@ function AppShellMain() {
       <SiteHeader />
 
       {/* Main View Router - Declarative Mounting Without Portals */}
-      <main className="site-main flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 py-3 sm:py-4">
+      <main className="site-main flex-1 w-full max-w-(--page-width) mx-auto px-2 sm:px-4 py-3 sm:py-4">
         <section
           id="panel-home"
           className={`panel ${activeView === 'home' ? 'show' : ''}`}

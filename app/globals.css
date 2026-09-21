@@ -33,6 +33,10 @@
   --surface: var(--color-surface-7);
   --radius: 0;
 
+  /* Width of the centered page column shared by the header, main area and panels.
+     Wide enough for the full-size title beside the nav. */
+  --page-width: 1360px;
+
   --mw-border: url("/textures/mw-border.png");
   --mw-bevel: url("/textures/mw-bevel.png");
   --mw-groove: url("/textures/mw-groove.png");
@@ -172,7 +176,7 @@ body.view-home #panel-home,
 body:not([class*="view-"]) #panel-home {
   display: block !important;
   width: 100% !important;
-  max-width: 1320px !important;
+  max-width: var(--page-width) !important;
   margin: 16px auto 36px !important;
   padding: 32px 36px !important;
   background: var(--surface, var(--color-surface-7)) !important;
@@ -255,7 +259,7 @@ body.view-alchemy #panel-alchemy,
 body.view-travel #panel-travel {
   display: block !important;
   width: 100% !important;
-  max-width: 1320px !important;
+  max-width: var(--page-width) !important;
   margin: 16px auto 36px !important;
   padding: 24px 28px !important;
   background: var(--surface, var(--color-surface-7)) !important;
@@ -1306,3 +1310,24 @@ body.view-travel .hero {
   html:has(body.view-builder), body.view-builder { overflow-x: clip; }
 }
 
+/* ==========================================================================
+   Centered page column
+   ========================================================================== */
+/* legacy-compat.css resets margin and padding on every element outside Tailwind's
+   cascade layers, and unlayered rules beat layered ones, so Tailwind's mx-auto never
+   applied. Restore it so every container that asks to be centered is. */
+.mx-auto { margin-inline: auto; }
+
+/* The header shares the page column, so the title lines up with the panels. */
+.topbar { width: 100%; max-width: var(--page-width); margin-inline: auto; }
+
+/* The home intro is a <header>, which the legacy header rule pins left at full width;
+   restore the centered block its classes ask for (text-center max-w-3xl mx-auto). */
+.home-hub-root > header { max-width: 48rem; margin-inline: auto; text-align: center; }
+
+@media (min-width: 900px) {
+  /* The title block takes the room the nav leaves, and the title scales down only when
+     that room is too small for it (narrow windows), so it never runs under the nav. */
+  .topbar .brand { flex: 1 1 0; container-type: inline-size; }
+  .topbar .brand h1 { font-size: clamp(2.4rem, min(6vw, 21cqi), 4.4rem); }
+}
