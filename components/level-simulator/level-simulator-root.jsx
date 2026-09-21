@@ -176,7 +176,7 @@ export default function LevelSimulatorRoot() {
       {/* Toast Notification */}
       {toastMessage && (
         <div
-          className="fixed bottom-6 right-6 z-50 p-3 bg-[#18140e] border border-[#d4b06a] text-[#f3e6c8] font-serif text-xs font-bold shadow-xl animate-fade-in"
+          className="fixed bottom-6 right-6 z-50 p-3 bg-surface-7 border border-accent text-fg-2 font-serif text-xs font-bold shadow-xl animate-fade-in"
           role="status"
         >
           {toastMessage}
@@ -184,12 +184,12 @@ export default function LevelSimulatorRoot() {
       )}
 
       {/* Top Controls & Navigation Bar */}
-      <div className="top-toolbar bg-[#181510] p-4 border border-[#2a2318] mw-groove-panel flex flex-wrap items-center justify-between gap-4">
+      <div className="top-toolbar bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#f3e6c8] tracking-wide m-0">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
             Character Level Simulator &amp; Progression Optimizer
           </h2>
-          <p className="text-xs text-[#9e8b6b] mt-0.5 m-0 font-sans">
+          <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
             Simulate leveling to theoretical cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.
           </p>
         </div>
@@ -207,7 +207,7 @@ export default function LevelSimulatorRoot() {
           </button>
           <button
             type="button"
-            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-[#d4b06a]"
+            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-accent"
             onClick={handleExportJSON}
           >
             Export Leveled JSON
@@ -219,7 +219,7 @@ export default function LevelSimulatorRoot() {
       <LevelModeToggle mode={mode} onModeChange={setMode} />
 
       {/* Mobile Tab Bar (< 1024px) */}
-      <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-[#120f0a] border border-[#2a2318] mb-4">
+      <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-surface-2 border border-line-11 mb-4">
         <button
           type="button"
           className={`flex-1 py-2 px-3 text-xs font-serif font-bold transition-all mw-btn ${

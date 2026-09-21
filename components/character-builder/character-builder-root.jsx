@@ -81,7 +81,7 @@ export default function CharacterBuilderRoot() {
             type="button"
             id="btn-tab-builder"
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
-              activeTab === "builder" ? "active ring-1 ring-[#d4b06a]" : ""
+              activeTab === "builder" ? "active ring-1 ring-accent" : ""
             }`}
             onClick={() => setActiveTab("builder")}
           >
@@ -93,7 +93,7 @@ export default function CharacterBuilderRoot() {
             type="button"
             id="btn-tab-equipment"
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
-              activeTab === "equipment" ? "active ring-1 ring-[#d4b06a]" : ""
+              activeTab === "equipment" ? "active ring-1 ring-accent" : ""
             }`}
             onClick={() => setActiveTab("equipment")}
           >
@@ -105,7 +105,7 @@ export default function CharacterBuilderRoot() {
             type="button"
             id="btn-tab-premade"
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
-              activeTab === "premade" ? "active ring-1 ring-[#d4b06a]" : ""
+              activeTab === "premade" ? "active ring-1 ring-accent" : ""
             }`}
             onClick={() => setActiveTab("premade")}
           >
@@ -116,7 +116,7 @@ export default function CharacterBuilderRoot() {
 
       {/* Mobile View Toggle (Visible on screens < 1024px when builder is active) */}
       {activeTab === "builder" && (
-        <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-[#120f0a] border border-[#2a2318] mb-6">
+        <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-surface-2 border border-line-11 mb-6">
           <button
             type="button"
             className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${

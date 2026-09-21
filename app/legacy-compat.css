@@ -50,14 +50,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     :root {
       --ink: #1a120c;
-      --paper: #f3e6c8;
-      --muted: #b8a078;
+      --paper: var(--color-fg-2);
+      --muted: var(--color-fg-8);
       --parchment: #e4d2a8;
       --parchment-dark: #d4be8c;
-      --gold: #d4b06a;
+      --gold: var(--color-accent);
       --offblack: #0c0a08;
       --journal: #12100c;
-      --surface: #181510;
+      --surface: var(--color-surface-7);
       --radius: 0;
       /* Morrowind's borders, drawn pixel for pixel in the colours and rough grain of the game's character sheet. Each
          texture is 128px square, its slice equals the border width it's drawn at, and it repeats along the edge rather
@@ -69,14 +69,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       --mw-bevel: url("/textures/mw-groove.png");
       --mw-groove: url("/textures/mw-bevel.png");
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-color: #4e3c23 #14100a; scrollbar-width: thin; }
-    html, body { min-height: 100%; max-width: 100%; overflow-x: hidden; color-scheme: dark; scrollbar-color: #4e3c23 #14100a; scrollbar-width: thin; }
+    * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track); scrollbar-width: thin; }
+    html, body { min-height: 100%; max-width: 100%; overflow-x: hidden; color-scheme: dark; scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track); scrollbar-width: thin; }
     select, input, textarea { color-scheme: dark; }
     ::-webkit-scrollbar { width: 10px; height: 10px; }
-    ::-webkit-scrollbar-track { background: #14100a; border: 1px solid #231b11; }
+    ::-webkit-scrollbar-track { background: var(--color-surface-3); border: 1px solid #231b11; }
     ::-webkit-scrollbar-thumb { background: #4e3c23; border: 1px solid #332717; }
-    ::-webkit-scrollbar-thumb:hover { background: #785d37; border-color: #d4b06a; }
-    ::-webkit-scrollbar-corner { background: #14100a; }
+    ::-webkit-scrollbar-thumb:hover { background: #785d37; border-color: var(--color-accent); }
+    ::-webkit-scrollbar-corner { background: var(--color-surface-3); }
     img, svg, video, canvas, table, pre { max-width: 100%; }
     button, select, textarea, input, .btn { max-width: 100%; }
     body {
@@ -226,7 +226,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     a.home-card:hover { background: linear-gradient(180deg, rgba(90, 58, 28, 0.62) 0%, rgba(12, 8, 4, 0.32) 100%); transform: translateY(-1px); }
     a.home-card:active { transform: translateY(0); }
     .home-card:focus-visible { outline-offset: 4px; }
-    .home-card strong { display: block; font-size: 1.15rem; color: #f3e6c8; }
+    .home-card strong { display: block; font-size: 1.15rem; color: var(--color-fg-2); }
     .home-card span { color: #f0e6d0; font-size: 0.95rem; line-height: 1.4; }
     .btn {
       appearance: none;
@@ -240,7 +240,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       min-width: 0;
       max-width: 100%;
       min-height: 48px;
-      color: #f3e6c8;
+      color: var(--color-fg-2);
       background: linear-gradient(180deg, rgba(62, 42, 22, 0.52) 0%, rgba(8, 6, 4, 0.22) 100%);
       box-shadow: none;
       transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
@@ -365,11 +365,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     .alc-dd { position: relative; }
     .alc-dd-btn {
       width: 100%; text-align: left; font: inherit; color: var(--parchment);
-      background: var(--ink, #1a140c); border: 1px solid var(--gold); padding: 8px 10px; cursor: pointer;
+      background: var(--ink, var(--color-surface-6)); border: 1px solid var(--gold); padding: 8px 10px; cursor: pointer;
     }
     .alc-dd-menu {
       display: none; position: absolute; z-index: 20; left: 0; right: 0;
-      max-height: 280px; overflow: auto; background: #1a140c; border: 1px solid var(--gold);
+      max-height: 280px; overflow: auto; background: var(--color-surface-6); border: 1px solid var(--gold);
     }
     .alc-dd.open .alc-dd-menu { display: block; }
     .alc-dd-item {
@@ -419,13 +419,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       border-image: var(--mw-bevel) 4 repeat;
       background: #000 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23d4b06a'/%3E%3C/svg%3E") no-repeat right 12px center;
       background-clip: padding-box;
-      color: #d4b06a;
+      color: var(--color-accent);
       cursor: pointer;
     }
     select option, select optgroup {
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-      background-color: #120f0a;
-      color: #f3e6c8;
+      background-color: var(--color-surface-2);
+      color: var(--color-fg-2);
     }
     select:disabled { cursor: not-allowed; }
     .chk-grid {
@@ -460,14 +460,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       border: 4px solid transparent;
       border-image: var(--mw-bevel) 4 repeat;
       background: transparent;
-      color: #d4b06a;
+      color: var(--color-accent);
       cursor: pointer;
       line-height: 1;
       box-sizing: border-box;
     }
-    .icon-btn:hover { background: rgba(212,176,106,0.12); }
+    .icon-btn:hover { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
     .icon-btn[aria-pressed="true"] {
-      background: rgba(212,176,106,0.22);
+      background: color-mix(in srgb, var(--color-accent) 22%, transparent);
       color: #f3e6c4;
     }
     .icon-btn svg { width: 0.85em; height: 0.85em; display: block; }
@@ -526,7 +526,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       padding: 10px 12px;
       border: 6px solid transparent;
       border-image: var(--mw-border) 6 repeat;
-      background: rgba(12,10,8,0.55);
+      background: color-mix(in srgb, var(--color-surface-1) 55%, transparent);
       background-clip: padding-box;
       box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.9);
       min-width: 0;
@@ -546,7 +546,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       display: block;
       font-size: 1.35rem;
       letter-spacing: 0.04em;
-      color: #d4b06a;
+      color: var(--color-accent);
       line-height: 1.55em;
       min-height: 1.55em;
       padding-right: 4.4em;
@@ -620,13 +620,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       box-sizing: border-box;
       border-radius: 0;
       border: 4px solid #8a6a28;
-      background: #14110d;
-      color: #d4b06a;
+      background: var(--color-surface-3);
+      color: var(--color-accent);
     }
     #challenge-advanced select option,
     #challenge-advanced select optgroup {
-      background: #14110d;
-      color: #d4b06a;
+      background: var(--color-surface-3);
+      color: var(--color-accent);
     }
     .sum-row .sum-acts { display: flex; gap: 6px; flex: 0 0 auto; }
     input[type="checkbox"] {
@@ -636,16 +636,16 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       height: 18px;
       margin: 0;
       flex: 0 0 18px;
-      border: 2px solid #d4b06a;
+      border: 2px solid var(--color-accent);
       border-radius: 0;
-      background: #0c0a08;
+      background: var(--color-surface-1);
       cursor: pointer;
       display: grid;
       place-content: center;
     }
     input[type="checkbox"]::after {
       content: "X";
-      color: #d4b06a;
+      color: var(--color-accent);
       font-size: 12px;
       font-weight: 700;
       line-height: 1;
@@ -674,8 +674,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       box-sizing: border-box;
       border-radius: 0;
       border: 4px solid #8a6a28;
-      background: #14110d;
-      color: #d4b06a;
+      background: var(--color-surface-3);
+      color: var(--color-accent);
     }
     #challenge-advanced .pool {
       margin: 8px 0 28px;
@@ -723,7 +723,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     .premade-filters .row { margin: 0; }
     .premade-filters .btn { min-width: 0; flex: 1; }
-    .cat-row { border: 6px solid transparent; border-image: var(--mw-border) 6 repeat; overflow: hidden; background: #16130f; background-clip: padding-box; }
+    .cat-row { border: 6px solid transparent; border-image: var(--mw-border) 6 repeat; overflow: hidden; background: var(--color-surface-3); background-clip: padding-box; }
     .cat-btn {
       width: 100%;
       text-align: left;
@@ -753,7 +753,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     }
     .build-link:hover { background: #1c1812; color: #fff; }
     .build-item { display: flex; flex-direction: column; }
-    .build-sheet { display: none; margin: 0 0 8px 12px; padding: 12px 14px; border: 6px solid transparent; border-image: var(--mw-border) 6 repeat; background: #14110d; background-clip: padding-box; }
+    .build-sheet { display: none; margin: 0 0 8px 12px; padding: 12px 14px; border: 6px solid transparent; border-image: var(--mw-border) 6 repeat; background: var(--color-surface-3); background-clip: padding-box; }
     .build-item.open .build-sheet { display: block; }
     .build-sheet p { margin: 4px 0; font-size: 0.95rem; }
     .sheet-skills { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.35rem; row-gap: 0.35rem; }
@@ -767,16 +767,16 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       height: 24px;
       border: 2px solid transparent;
       border-image: var(--mw-groove) 2 repeat;
-      color: #f3e6c8;
+      color: var(--color-fg-2);
       font-size: 0.9rem;
       line-height: 20px;
       text-align: center;
       font-variant-numeric: tabular-nums;
       text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
     }
-    .vital-health { background: linear-gradient(180deg, #a03017 0%, #9e2f17 20%, #671f0f 50%, #45130a 75%, #2f0e07 100%); }
-    .vital-magicka { background: linear-gradient(180deg, #2a387f 0%, #29367d 20%, #1b2352 50%, #121636 75%, #0c1025 100%); }
-    .vital-fatigue { background: linear-gradient(180deg, #007a2f 0%, #00772f 20%, #004d1f 50%, #003014 75%, #00240e 100%); }
+    .vital-health { background: var(--gradient-health); }
+    .vital-magicka { background: var(--gradient-magicka); }
+    .vital-fatigue { background: var(--gradient-fatigue); }
     .sheet-skills strong { margin-right: 0; }
     .sheet-skill { display: inline-block; min-width: 0; }
     .custom-grid { display: grid; gap: 12px; margin-top: 12px; }
@@ -808,12 +808,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       border-image: var(--mw-bevel) 4 repeat;
       background: #000;
       background-clip: padding-box;
-      color: #d4b06a;
+      color: var(--color-accent);
     }
     .calc-you {
       margin: 12px 0 16px;
       padding: 14px 14px 10px;
-      background: rgba(20, 17, 13, 0.42);
+      background: color-mix(in srgb, var(--color-surface-3) 42%, transparent);
       box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.38);
       border: 1px solid rgba(138, 115, 68, 0.4);
     }
@@ -859,7 +859,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     #gear-box { max-width: 100%; }
     #gear-box table { width: 100%; border-collapse: collapse; font-size: 0.9rem; line-height: 1.55; }
     #gear-box tbody tr:nth-child(even) { background: rgba(201, 162, 39, 0.12); }
-    #gear-box tbody tr:nth-child(odd) { background: rgba(20, 17, 13, 0.55); }
+    #gear-box tbody tr:nth-child(odd) { background: color-mix(in srgb, var(--color-surface-3) 55%, transparent); }
     #gear-box th, #gear-box td { text-align: left; padding: 8px 8px; border-bottom: 1px solid #3a3224; vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
     #gear-box th { color: var(--gold); font-weight: 600; }
     #gear-box td:first-child { overflow-wrap: normal; word-break: normal; }
@@ -908,7 +908,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     .gear-phase.late {
       margin-top: 36px;
       border-top-width: 3px;
-      background: #241c14;
+      background: var(--color-surface-12);
     }
 
 
@@ -945,7 +945,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     #gear-box .where {
       margin: 8px 0 4px 0;
       padding: 8px 10px;
-      background: #1a1713;
+      background: var(--color-surface-7);
       border-left: 3px solid var(--gold);
       color: #e8dcc4;
       font-size: 0.95rem;
@@ -1023,10 +1023,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     .desktop-only { display: inline-flex; }
     .nav-dropdown-wrap { position: relative; display: inline-flex; }
     .nav-dropdown-btn { display: inline-flex; align-items: center; gap: 5px; }
-    .dropdown-caret { font-size: 0.8rem; color: #d4b06a; line-height: 1; pointer-events: none; }
+    .dropdown-caret { font-size: 0.8rem; color: var(--color-accent); line-height: 1; pointer-events: none; }
     .nav-dropdown-menu {
       position: absolute; top: calc(100% + 4px); right: 0; min-width: 175px;
-      background: #14100a; background-clip: padding-box;
+      background: var(--color-surface-3); background-clip: padding-box;
       border: 4px solid transparent; border-image: var(--mw-bevel) 4 repeat;
       padding: 6px; display: flex; flex-direction: column; gap: 3px; z-index: 100;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), inset 0 0 10px rgba(0, 0, 0, 0.8);
@@ -1038,8 +1038,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       cursor: pointer; border-radius: 0; width: 100%; text-decoration: none;
       transition: background 0.12s ease, color 0.12s ease;
     }
-    .dropdown-item:hover, .dropdown-item:focus-visible { background: rgba(212, 176, 106, 0.2); color: #f0d48a; outline: none; }
-    .dropdown-item.on, .dropdown-item[aria-current="page"] { background: #3a2a18; color: #f0d48a; font-weight: 700; border-left: 3px solid #d4b06a; padding-left: 9px; }
+    .dropdown-item:hover, .dropdown-item:focus-visible { background: color-mix(in srgb, var(--color-accent) 20%, transparent); color: #f0d48a; outline: none; }
+    .dropdown-item.on, .dropdown-item[aria-current="page"] { background: #3a2a18; color: #f0d48a; font-weight: 700; border-left: 3px solid var(--color-accent); padding-left: 9px; }
     @media (max-width: 899px) {
       .hamburger {
         display: inline-flex;
@@ -1054,7 +1054,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         border: 4px solid transparent;
         border-image: var(--mw-bevel) 4 repeat;
         background: linear-gradient(180deg, rgba(62, 42, 22, 0.75) 0%, rgba(18, 14, 9, 0.6) 100%);
-        color: #d4b06a;
+        color: var(--color-accent);
         font-family: inherit;
         font-size: 1.35rem;
         line-height: 1;
@@ -1064,15 +1064,15 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
       .hamburger:hover, .hamburger:active {
         background: linear-gradient(180deg, rgba(82, 56, 30, 0.85) 0%, rgba(28, 20, 12, 0.7) 100%);
-        color: #f3e6c8;
+        color: var(--color-fg-2);
       }
       .hamburger[aria-expanded="true"] {
-        background: #3a2d1d;
-        color: #f3e6c8;
+        background: var(--color-surface-21);
+        color: var(--color-fg-2);
         box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
       }
       .hamburger:focus-visible {
-        outline: 2px solid #d4b06a;
+        outline: 2px solid var(--color-accent);
         outline-offset: 2px;
       }
     }
@@ -1151,7 +1151,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
       .menu-drawer.open {
         display: flex;
-        background: #14100a;
+        background: var(--color-surface-3);
         background-clip: padding-box;
         border: 4px solid transparent;
         border-image: var(--mw-bevel) 4 repeat;
@@ -1181,7 +1181,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         display: flex;
         flex-direction: column;
         width: 100%;
-        border-top: 1px solid rgba(212, 176, 106, 0.25);
+        border-top: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
         padding-top: 10px;
         gap: 6px;
       }
@@ -1208,7 +1208,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         letter-spacing: 0.02em;
         text-align: center;
       }
-      .world-bar { order: 1; width: 100%; align-items: stretch; border-top: 1px solid rgba(212, 176, 106, 0.25); padding-top: 10px; gap: 6px; }
+      .world-bar { order: 1; width: 100%; align-items: stretch; border-top: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent); padding-top: 10px; gap: 6px; }
       .world-bar .world-label { display: none; }
       .drawer-label {
         display: block;
@@ -1216,7 +1216,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #d4b06a;
+        color: var(--color-accent);
         margin-bottom: 4px;
       }
       .world-controls {
@@ -1284,7 +1284,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       .account-bar {
         margin: 8px 0 0;
         padding-top: 8px;
-        border-top: 1px solid rgba(212, 176, 106, 0.2);
+        border-top: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
       }
       .account-bar::before {
         content: "Account & Cloud Saves:";
@@ -1337,7 +1337,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       border: 4px solid transparent;
       border-image: var(--mw-bevel) 4 repeat;
       background: linear-gradient(180deg, rgba(62, 42, 22, 0.65) 0%, rgba(18, 14, 9, 0.45) 100%);
-      color: #f3e6c8;
+      color: var(--color-fg-2);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       transition: background 0.12s ease, color 0.12s ease, transform 0.1s ease;
     }
@@ -1347,10 +1347,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       transform: translateY(-1px);
     }
     .account-bar .btn:active { transform: translateY(0); }
-    .account-bar .btn:focus-visible { outline: 2px solid #d4b06a; outline-offset: 2px; }
+    .account-bar .btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
     .account-bar [hidden] { display: none !important; }
     #account-status { margin: 0 4px 0 0; font-size: 0.82rem; color: #c4a056; font-style: italic; }
-    #account-user { display: inline-flex; align-items: center; border: 2px solid #8a7344; padding: 2px; background: #14100a; }
+    #account-user { display: inline-flex; align-items: center; border: 2px solid #8a7344; padding: 2px; background: var(--color-surface-3); }
     @media (max-width: 899px) {
       header:not(.drawer-open):not(:has(.menu-drawer.open)) .account-bar {
         display: none !important;
@@ -1361,7 +1361,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         flex-direction: column !important;
         align-items: stretch !important;
         width: 100% !important;
-        background: #14100a !important;
+        background: var(--color-surface-3) !important;
         border: 4px solid transparent !important;
         border-image: var(--mw-bevel) 4 repeat !important;
         padding: 12px 16px !important;
@@ -1379,7 +1379,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #d4b06a;
+        color: var(--color-accent);
         margin-bottom: 2px;
       }
       header.drawer-open .account-bar .btn:not([hidden]),
@@ -1394,13 +1394,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         border: 4px solid transparent !important;
         border-image: var(--mw-bevel) 4 repeat !important;
         background: linear-gradient(180deg, rgba(62, 42, 22, 0.65) 0%, rgba(18, 14, 9, 0.45) 100%) !important;
-        color: #f3e6c8 !important;
+        color: var(--color-fg-2) !important;
       }
       header.drawer-open .account-bar #account-status,
       header:has(.menu-drawer.open) .account-bar #account-status {
         text-align: center !important;
         font-size: 0.85rem !important;
-        color: #d4b06a !important;
+        color: var(--color-accent) !important;
         margin: 4px 0 !important;
       }
       header.drawer-open .account-bar #account-user:not([hidden]),
@@ -1419,8 +1419,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       .site-footer { margin-top: 20px; padding: 20px 4px 12px; font-size: 1rem; }
     }
     .about-legal { margin-bottom: 20px; }
-    .about-credits { margin-top: 24px; padding-top: 16px; border-top: 1px solid #d4b06a; }
-    .changelog-day + .changelog-day { margin-top: 20px; padding-top: 12px; border-top: 1px solid #d4b06a; }
+    .about-credits { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-accent); }
+    .changelog-day + .changelog-day { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--color-accent); }
     .changelog-day ul { margin: 8px 0 0; padding-left: 1.2em; }
     .changelog-day li + li { margin-top: 6px; }
   

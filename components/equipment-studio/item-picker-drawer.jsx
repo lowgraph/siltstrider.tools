@@ -235,17 +235,17 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
         style={{
           border: "6px solid transparent",
           borderImage: "var(--mw-border) 6 repeat",
-          background: "var(--surface, #14100a)",
+          background: "var(--color-surface-3)",
           boxShadow: "0 12px 36px rgba(0, 0, 0, 0.95), inset 0 0 12px 2px rgba(0, 0, 0, 0.9)",
         }}
       >
         {/* Drawer Header */}
-        <div className="flex items-center justify-between border-b border-[#2a2318] pb-3">
+        <div className="flex items-center justify-between border-b border-line-11 pb-3">
           <div>
-            <h3 className="font-serif text-lg font-bold text-[#f3e6c8] flex items-center gap-2">
+            <h3 className="font-serif text-lg font-bold text-fg-2 flex items-center gap-2">
               <span>Equip: {slotName}</span>
             </h3>
-            <p className="text-xs text-[#8c7853] mt-0.5">
+            <p className="text-xs text-fg-14 mt-0.5">
               Select an authentic game item or forge a custom equipment record.
             </p>
           </div>
@@ -253,7 +253,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center mw-btn font-bold text-sm text-[#8c7853] hover:text-[#f3e6c8]"
+            className="w-7 h-7 flex items-center justify-center mw-btn font-bold text-sm text-fg-14 hover:text-fg-2"
             title="Close Drawer"
           >
             ✕
@@ -261,12 +261,12 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
         </div>
 
         {/* Tab Switcher: Catalog vs Custom Builder */}
-        <div className="flex items-center gap-2 border-b border-[#241c12] pb-2">
+        <div className="flex items-center gap-2 border-b border-line-12 pb-2">
           <button
             type="button"
             onClick={() => setActiveTab("catalog")}
             className={`mw-btn px-4 py-1.5 font-serif text-xs font-bold ${
-              activeTab === "catalog" ? "active ring-1 ring-[#d4b06a]" : ""
+              activeTab === "catalog" ? "active ring-1 ring-accent" : ""
             }`}
           >
             Browse Catalog ({filteredItems.length})
@@ -275,7 +275,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
             type="button"
             onClick={() => setActiveTab("custom")}
             className={`mw-btn px-4 py-1.5 font-serif text-xs font-bold ${
-              activeTab === "custom" ? "active ring-1 ring-[#d4b06a]" : ""
+              activeTab === "custom" ? "active ring-1 ring-accent" : ""
             }`}
           >
             + Forge Custom Item
@@ -288,7 +288,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                 onUnequipSlot(slot);
                 onClose();
               }}
-              className="mw-btn px-3 py-1.5 font-serif text-xs font-bold text-[#a35e5e] hover:text-[#ff8888]"
+              className="mw-btn px-3 py-1.5 font-serif text-xs font-bold text-danger-8 hover:text-danger-3"
             >
               Unequip Slot
             </button>
@@ -305,7 +305,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${slotName} items...`}
-                className="mw-input flex-1 min-w-[180px] px-3 py-1.5 text-xs bg-[#0d0a06] border border-[#2e2316] text-[#f3e6c8] focus:border-[#d4b06a]"
+                className="mw-input flex-1 min-w-[180px] px-3 py-1.5 text-xs bg-surface-1 border border-line-11 text-fg-2 focus:border-accent"
               />
 
               {["Cuirass", "Helmet", "Greaves", "LeftPauldron", "RightPauldron", "LeftGauntlet", "RightGauntlet", "CarriedLeft"].includes(slot) && (
@@ -328,7 +328,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
 
             {/* Beast Race Warning Note */}
             {isBeast && (slot === "Boots" || slot === "Helmet") && (
-              <div className="p-2.5 bg-[#251010] border border-[#552020] text-xs text-[#e89b9b]">
+              <div className="p-2.5 bg-danger-surface-2 border border-danger-line-3 text-xs text-danger-2">
                 <strong className="font-serif">Beast Anatomy Note: </strong>
                 {slot === "Boots"
                   ? "Argonians and Khajiit cannot equip any boots or footwear."
@@ -346,31 +346,31 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                   return (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-2.5 bg-[#120e09] border border-[#241c12] hover:border-[#4d3a24] hover:bg-[#1a140d] transition-colors"
+                      className="flex items-center justify-between p-2.5 bg-surface-2 border border-line-12 hover:border-line-7 hover:bg-surface-6 transition-colors"
                     >
                       <div className="min-w-0 flex-1 pr-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-serif font-bold text-xs text-[#f3e6c8]">
+                          <span className="font-serif font-bold text-xs text-fg-2">
                             {item.name}
                           </span>
                           {armorCat && (
-                            <span className="text-[9px] uppercase px-1 py-0.2 bg-[#1f180f] border border-[#3d2e1b] text-[#c4b998]">
+                            <span className="text-[9px] uppercase px-1 py-0.2 bg-surface-9 border border-line-9 text-fg-5">
                               {armorCat}
                             </span>
                           )}
                           {is2H && (
-                            <span className="text-[9px] uppercase px-1 py-0.2 bg-[#2a1711] border border-[#542a1f] text-[#d48b6a]">
+                            <span className="text-[9px] uppercase px-1 py-0.2 bg-danger-surface-2 border border-danger-line-3 text-warning-3">
                               Two-Handed
                             </span>
                           )}
                           {item.enchantmentId && (
-                            <span className="text-[10px] text-[#d4b06a]" title="Enchanted">
+                            <span className="text-[10px] text-accent" title="Enchanted">
                               ✦
                             </span>
                           )}
                         </div>
 
-                        <div className="text-[11px] font-mono text-[#8c7853] mt-0.5 flex items-center gap-3">
+                        <div className="text-[11px] font-mono text-fg-14 mt-0.5 flex items-center gap-3">
                           {item.armorRating !== undefined && <span>AR: {item.armorRating}</span>}
                           {item.chop && <span>Chop: {item.chop.min}-{item.chop.max}</span>}
                           {item.weight !== undefined && <span>Weight: {item.weight}</span>}
@@ -384,7 +384,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                           onEquipItem(slot, item);
                           onClose();
                         }}
-                        className="mw-btn px-4 py-1.5 font-serif font-bold text-xs text-[#d4b06a] hover:text-[#ffffff] whitespace-nowrap"
+                        className="mw-btn px-4 py-1.5 font-serif font-bold text-xs text-accent hover:text-fg-1 whitespace-nowrap"
                       >
                         Equip
                       </button>
@@ -392,7 +392,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                   );
                 })
               ) : (
-                <div className="py-8 text-center text-xs font-serif italic text-[#6e5d3f]">
+                <div className="py-8 text-center text-xs font-serif italic text-fg-16">
                   No items found matching your filters.
                 </div>
               )}
@@ -404,7 +404,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
         {activeTab === "custom" && (
           <form onSubmit={handleCreateCustom} className="space-y-4 pt-1">
             <div className="space-y-1">
-              <label className="text-xs uppercase font-serif font-bold text-[#8c7853]">
+              <label className="text-xs uppercase font-serif font-bold text-fg-14">
                 Item Name
               </label>
               <input
@@ -413,13 +413,13 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                 onChange={(e) => setCustomName(e.target.value)}
                 placeholder="e.g. Custom Daedric Plate of Fortitude"
                 required
-                className="mw-input w-full px-3 py-2 text-xs bg-[#0d0a06] border border-[#2e2316] text-[#f3e6c8]"
+                className="mw-input w-full px-3 py-2 text-xs bg-surface-1 border border-line-11 text-fg-2"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs uppercase font-serif font-bold text-[#8c7853]">
+                <label className="text-xs uppercase font-serif font-bold text-fg-14">
                   {slot === "CarriedRight" ? "Max Strike Damage" : "Base Armor Rating"}
                 </label>
                 <input
@@ -428,12 +428,12 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                   onChange={(e) => setCustomAR(e.target.value)}
                   min="0"
                   max="1000"
-                  className="mw-input w-full px-3 py-1.5 text-xs bg-[#0d0a06] border border-[#2e2316] text-[#f3e6c8]"
+                  className="mw-input w-full px-3 py-1.5 text-xs bg-surface-1 border border-line-11 text-fg-2"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs uppercase font-serif font-bold text-[#8c7853]">
+                <label className="text-xs uppercase font-serif font-bold text-fg-14">
                   Weight (lbs)
                 </label>
                 <input
@@ -442,14 +442,14 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                   onChange={(e) => setCustomWeight(e.target.value)}
                   min="0"
                   step="0.1"
-                  className="mw-input w-full px-3 py-1.5 text-xs bg-[#0d0a06] border border-[#2e2316] text-[#f3e6c8]"
+                  className="mw-input w-full px-3 py-1.5 text-xs bg-surface-1 border border-line-11 text-fg-2"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full mw-btn py-2.5 font-serif font-bold text-xs tracking-wide text-[#d4b06a]"
+              className="w-full mw-btn py-2.5 font-serif font-bold text-xs tracking-wide text-accent"
             >
               Forge &amp; Equip to {slotName}
             </button>

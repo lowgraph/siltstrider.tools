@@ -147,23 +147,23 @@ export default function EquipmentStudioRoot({
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
-        background: "var(--surface, #181510)",
+        background: "var(--color-surface-7)",
         boxShadow: "inset 0 0 12px 3px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.5)",
       }}
     >
       {/* Header & Subtitle */}
-      <div className="border-b border-[#2a2318] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="border-b border-line-11 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide flex items-center gap-2">
+          <h3 className="font-serif text-xl font-bold text-fg-2 tracking-wide flex items-center gap-2">
             <span>Equipped Loadouts &amp; Equipment Inspector</span>
           </h3>
-          <p className="text-sm text-[#b8a078] mt-1">
+          <p className="text-sm text-fg-8 mt-1">
             Canonical 19-slot equipment inspector with weighted armor ratings, encumbrance capacity, and multi-loadout presets.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-[#8c7853]">
+          <span className="text-xs font-mono text-fg-14">
             {character.race ? `${character.race} · ` : ""}{character.className || "Custom Build"}
           </span>
         </div>

@@ -66,7 +66,7 @@ function AppShellMain() {
   }, [activeView]);
 
   return (
-    <div className="site-layout min-h-screen flex flex-col bg-[#14100a] text-[#f3e6c8]">
+    <div className="site-layout min-h-screen flex flex-col bg-surface-3 text-fg-2">
       {/* Persistent CRPG Top Bar & Navigation Header */}
       <SiteHeader />
 

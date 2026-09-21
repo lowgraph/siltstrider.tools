@@ -21,11 +21,11 @@ export default function SeedBar({
   };
 
   return (
-    <div className="seed-bar-panel w-full p-3 sm:p-4 mb-5 border border-[#3a2e1d] bg-[#14100a] text-[#f3e6c8]">
+    <div className="seed-bar-panel w-full p-3 sm:p-4 mb-5 border border-line-9 bg-surface-3 text-fg-2">
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
         {/* Difficulty Preset Buttons */}
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-          <span className="text-xs uppercase tracking-wider text-[#d4b06a] font-serif font-bold mr-1">
+          <span className="text-xs uppercase tracking-wider text-accent font-serif font-bold mr-1">
             Preset:
           </span>
           {Object.values(DIFFICULTY_PRESETS).map((p) => {
@@ -35,7 +35,7 @@ export default function SeedBar({
                 key={p.id}
                 type="button"
                 className={`mw-btn px-2.5 sm:px-3 py-1.5 text-xs font-serif font-bold tracking-wide transition-all whitespace-nowrap ${
-                  isActive ? "active ring-1 ring-[#d4b06a] text-[#d4b06a]" : "text-[#c2b291]"
+                  isActive ? "active ring-1 ring-accent text-accent" : "text-fg-7"
                 }`}
                 onClick={() => onSelectPreset(p.id)}
                 title={p.description}
@@ -47,15 +47,15 @@ export default function SeedBar({
         </div>
 
         {/* Deterministic Seed Input & Share Link */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-[#2a2215]">
+        <div className="flex flex-wrap items-center gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-line-11">
           <form onSubmit={handleSubmitSeed} className="flex items-center gap-1.5 flex-1 sm:flex-initial min-w-0">
-            <label htmlFor="challenge-seed-input" className="text-xs uppercase tracking-wider text-[#9b8b6a] font-serif whitespace-nowrap">
+            <label htmlFor="challenge-seed-input" className="text-xs uppercase tracking-wider text-fg-11 font-serif whitespace-nowrap">
               Seed:
             </label>
             <input
               id="challenge-seed-input"
               type="text"
-              className="bg-[#0c0906] border border-[#4a3b26] px-2 py-1 text-xs font-mono text-[#d4b06a] w-32 sm:w-36 uppercase tracking-wider min-w-0"
+              className="bg-surface-1 border border-line-7 px-2 py-1 text-xs font-mono text-accent w-32 sm:w-36 uppercase tracking-wider min-w-0"
               value={inputSeed}
               onChange={(e) => setInputSeed(e.target.value)}
               placeholder="SEED-XXXX-WORLD"
@@ -71,7 +71,7 @@ export default function SeedBar({
 
           <button
             type="button"
-            className="mw-btn px-3 py-1 text-xs font-serif font-bold text-[#d4b06a] flex items-center gap-1 whitespace-nowrap shrink-0"
+            className="mw-btn px-3 py-1 text-xs font-serif font-bold text-accent flex items-center gap-1 whitespace-nowrap shrink-0"
             onClick={onCopyLink}
             title="Copy shareable challenge link"
           >

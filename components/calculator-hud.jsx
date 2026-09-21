@@ -55,60 +55,60 @@ export function EnchantingHud() {
       style={{
         border: "2px solid transparent",
         borderImage: "var(--mw-groove) 2 repeat",
-        background: "#120f0a"
+        background: "var(--color-surface-2)"
       }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-11 pb-2">
         <div className="flex items-center gap-2">
-          <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider text-xs">
+          <span className="font-serif font-bold text-accent uppercase tracking-wider text-xs">
             Active Character:
           </span>
-          <span className="font-bold text-[#f2e6cb]">
+          <span className="font-bold text-fg-2">
             {build.race} {build.className}
           </span>
         </div>
         <button
           type="button"
           onClick={() => syncToCalculators()}
-          className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a] hover:text-[#f2e6cb] transition-colors"
+          className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-accent hover:text-fg-2 transition-colors"
           title="Reset input fields to active character's level 1 base stats"
         >
           Ingest Base Character Stats
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#b8a280]">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-fg-8">
         <div>
-          <span className="text-[#9e8b6b]">Enchant Base: </span>
-          <strong className="text-[#f2e6cb]">{baseSkill}</strong>
+          <span className="text-fg-11">Enchant Base: </span>
+          <strong className="text-fg-2">{baseSkill}</strong>
           {currentStats.skill !== baseSkill && (
-            <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentStats.skill})</span>
+            <span className="text-accent ml-1 font-mono">(Testing: {currentStats.skill})</span>
           )}
         </div>
         <div>
-          <span className="text-[#9e8b6b]">INT Base: </span>
-          <strong className="text-[#f2e6cb]">{baseInt}</strong>
+          <span className="text-fg-11">INT Base: </span>
+          <strong className="text-fg-2">{baseInt}</strong>
           {currentStats.int !== baseInt && (
-            <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentStats.int})</span>
+            <span className="text-accent ml-1 font-mono">(Testing: {currentStats.int})</span>
           )}
         </div>
         <div>
-          <span className="text-[#9e8b6b]">LUC Base: </span>
-          <strong className="text-[#f2e6cb]">{baseLuck}</strong>
+          <span className="text-fg-11">LUC Base: </span>
+          <strong className="text-fg-2">{baseLuck}</strong>
           {currentStats.luck !== baseLuck && (
-            <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentStats.luck})</span>
+            <span className="text-accent ml-1 font-mono">(Testing: {currentStats.luck})</span>
           )}
         </div>
       </div>
 
       {isCe && (
-        <div className="pt-1.5 border-t border-[#2e2417] flex flex-wrap items-center gap-2 text-xs">
-          <span className="font-serif font-bold text-[#d4b06a]">Constant Effect Cap:</span>
+        <div className="pt-1.5 border-t border-line-11 flex flex-wrap items-center gap-2 text-xs">
+          <span className="font-serif font-bold text-accent">Constant Effect Cap:</span>
           <span
             className={`px-2 py-0.5 border font-mono font-bold ${
               ceSoulOk
-                ? "bg-[#182613] border-[#315723] text-[#78d46a]"
-                : "bg-[#2b1414] border-[#5e2727] text-[#d46a6a]"
+                ? "bg-success-surface-2 border-success-line-4 text-success-3"
+                : "bg-danger-surface-2 border-danger-line-3 text-danger-7"
             }`}
           >
             Soul: {currentStats.soul}/400 {ceSoulOk ? "✓" : "[Too Small]"}
@@ -116,8 +116,8 @@ export function EnchantingHud() {
           <span
             className={`px-2 py-0.5 border font-mono font-bold ${
               ceSkillTarget
-                ? "bg-[#182613] border-[#315723] text-[#78d46a]"
-                : "bg-[#2b1f14] border-[#5e4327] text-[#d4a86a]"
+                ? "bg-success-surface-2 border-success-line-4 text-success-3"
+                : "bg-surface-16 border-line-5 text-accent-2"
             }`}
           >
             Enchant: {currentStats.skill}/100 {ceSkillTarget ? "[Mastered]" : "(Self-Enchanting CE Unreliable)"}
@@ -185,10 +185,10 @@ export function SpellmakingHud() {
     currentData.castChance === null
       ? null
       : currentData.castChance >= 75
-      ? { label: "Highly Reliable", color: "border-[#315723] bg-[#182613] text-[#78d46a]" }
+      ? { label: "Highly Reliable", color: "border-success-line-4 bg-success-surface-2 text-success-3" }
       : currentData.castChance >= 30
-      ? { label: "Risky", color: "border-[#5e4327] bg-[#2b1f14] text-[#d4a86a]" }
-      : { label: "Uncastable", color: "border-[#5e2727] bg-[#2b1414] text-[#d46a6a]" };
+      ? { label: "Risky", color: "border-line-5 bg-surface-16 text-accent-2" }
+      : { label: "Uncastable", color: "border-danger-line-3 bg-danger-surface-2 text-danger-7" };
 
   return (
     <div
@@ -196,22 +196,22 @@ export function SpellmakingHud() {
       style={{
         border: "2px solid transparent",
         borderImage: "var(--mw-groove) 2 repeat",
-        background: "#120f0a"
+        background: "var(--color-surface-2)"
       }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-11 pb-2">
         <div className="flex items-center gap-2">
-          <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider text-xs">
+          <span className="font-serif font-bold text-accent uppercase tracking-wider text-xs">
             Active Character:
           </span>
-          <span className="font-bold text-[#f2e6cb]">
+          <span className="font-bold text-fg-2">
             {build.race} {build.className}
           </span>
         </div>
         <button
           type="button"
           onClick={() => syncToCalculators()}
-          className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a] hover:text-[#f2e6cb] transition-colors"
+          className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-accent hover:text-fg-2 transition-colors"
           title="Reset input fields to active character's level 1 base stats"
         >
           Ingest Base Character Stats
@@ -219,26 +219,26 @@ export function SpellmakingHud() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#b8a280]">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-fg-8">
           <div>
-            <span className="text-[#9e8b6b]">WIL Base: </span>
-            <strong className="text-[#f2e6cb]">{baseWil}</strong>
+            <span className="text-fg-11">WIL Base: </span>
+            <strong className="text-fg-2">{baseWil}</strong>
             {currentData.wil !== baseWil && (
-              <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.wil})</span>
+              <span className="text-accent ml-1 font-mono">(Testing: {currentData.wil})</span>
             )}
           </div>
           <div>
-            <span className="text-[#9e8b6b]">LUC Base: </span>
-            <strong className="text-[#f2e6cb]">{baseLuck}</strong>
+            <span className="text-fg-11">LUC Base: </span>
+            <strong className="text-fg-2">{baseLuck}</strong>
             {currentData.luck !== baseLuck && (
-              <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.luck})</span>
+              <span className="text-accent ml-1 font-mono">(Testing: {currentData.luck})</span>
             )}
           </div>
         </div>
 
         {reliability && (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-serif font-bold text-[#8a7a5e]">Spell Reliability:</span>
+            <span className="text-xs font-serif font-bold text-fg-13">Spell Reliability:</span>
             <span className={`px-2.5 py-0.5 border font-mono font-bold text-xs ${reliability.color}`}>
               {reliability.label} ({currentData.castChance}%)
             </span>
@@ -295,22 +295,22 @@ export function AlchemyHud() {
       style={{
         border: "2px solid transparent",
         borderImage: "var(--mw-groove) 2 repeat",
-        background: "#120f0a"
+        background: "var(--color-surface-2)"
       }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-11 pb-2">
         <div className="flex items-center gap-2">
-          <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider text-xs">
+          <span className="font-serif font-bold text-accent uppercase tracking-wider text-xs">
             Active Character:
           </span>
-          <span className="font-bold text-[#f2e6cb]">
+          <span className="font-bold text-fg-2">
             {build.race} {build.className}
           </span>
         </div>
         <button
           type="button"
           onClick={() => syncToCalculators()}
-          className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a] hover:text-[#f2e6cb] transition-colors"
+          className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-accent hover:text-fg-2 transition-colors"
           title="Reset input fields to active character's level 1 base stats"
         >
           Ingest Base Character Stats
@@ -318,39 +318,39 @@ export function AlchemyHud() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#b8a280]">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-fg-8">
           <div>
-            <span className="text-[#9e8b6b]">Alchemy Base: </span>
-            <strong className="text-[#f2e6cb]">{baseSkill}</strong>
+            <span className="text-fg-11">Alchemy Base: </span>
+            <strong className="text-fg-2">{baseSkill}</strong>
             {currentData.skill !== baseSkill && (
-              <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.skill})</span>
+              <span className="text-accent ml-1 font-mono">(Testing: {currentData.skill})</span>
             )}
           </div>
           <div>
-            <span className="text-[#9e8b6b]">INT Base: </span>
-            <strong className="text-[#f2e6cb]">{baseInt}</strong>
+            <span className="text-fg-11">INT Base: </span>
+            <strong className="text-fg-2">{baseInt}</strong>
             {currentData.int !== baseInt && (
-              <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.int})</span>
+              <span className="text-accent ml-1 font-mono">(Testing: {currentData.int})</span>
             )}
           </div>
           <div>
-            <span className="text-[#9e8b6b]">LUC Base: </span>
-            <strong className="text-[#f2e6cb]">{baseLuck}</strong>
+            <span className="text-fg-11">LUC Base: </span>
+            <strong className="text-fg-2">{baseLuck}</strong>
             {currentData.luck !== baseLuck && (
-              <span className="text-[#d4b06a] ml-1 font-mono">(Testing: {currentData.luck})</span>
+              <span className="text-accent ml-1 font-mono">(Testing: {currentData.luck})</span>
             )}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-serif font-bold text-[#9e8b6b]">Brew Success:</span>
+          <span className="text-xs font-serif font-bold text-fg-11">Brew Success:</span>
           <span
             className={`px-2.5 py-0.5 border font-mono font-bold text-xs ${
               currentData.chance >= 75
-                ? "border-[#315723] bg-[#182613] text-[#78d46a]"
+                ? "border-success-line-4 bg-success-surface-2 text-success-3"
                 : currentData.chance >= 40
-                ? "border-[#5e4327] bg-[#2b1f14] text-[#d4a86a]"
-                : "border-[#5e2727] bg-[#2b1414] text-[#d46a6a]"
+                ? "border-line-5 bg-surface-16 text-accent-2"
+                : "border-danger-line-3 bg-danger-surface-2 text-danger-7"
             }`}
           >
             {currentData.chance}%
@@ -382,40 +382,40 @@ export function TravelHud() {
       style={{
         border: "2px solid transparent",
         borderImage: "var(--mw-groove) 2 repeat",
-        background: "#120f0a"
+        background: "var(--color-surface-2)"
       }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2e2417] pb-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-11 pb-2">
         <div className="flex items-center gap-2">
-          <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider text-xs">
+          <span className="font-serif font-bold text-accent uppercase tracking-wider text-xs">
             Character Origin:
           </span>
-          <span className="font-bold text-[#f2e6cb]">
+          <span className="font-bold text-fg-2">
             {build.race} ({isTr ? "Tamriel Rebuilt" : "Vvardenfell"})
           </span>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="text-[#9e8b6b] font-serif font-bold">Quick Start Origin:</span>
+        <span className="text-fg-11 font-serif font-bold">Quick Start Origin:</span>
         <button
           type="button"
           onClick={() => setOrigin("Seyda Neen")}
-          className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
+          className="mw-btn px-2 py-0.5 text-xs text-accent hover:text-fg-2"
         >
           Seyda Neen (Arrival)
         </button>
         <button
           type="button"
           onClick={() => setOrigin("Balmora")}
-          className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
+          className="mw-btn px-2 py-0.5 text-xs text-accent hover:text-fg-2"
         >
           Balmora (Hub)
         </button>
         <button
           type="button"
           onClick={() => setOrigin("Vivec")}
-          className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
+          className="mw-btn px-2 py-0.5 text-xs text-accent hover:text-fg-2"
         >
           Vivec
         </button>
@@ -423,7 +423,7 @@ export function TravelHud() {
           <button
             type="button"
             onClick={() => setOrigin("Old Ebonheart")}
-            className="mw-btn px-2 py-0.5 text-xs text-[#d4b06a] hover:text-[#f2e6cb]"
+            className="mw-btn px-2 py-0.5 text-xs text-accent hover:text-fg-2"
           >
             Old Ebonheart (TR)
           </button>

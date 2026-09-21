@@ -1,0 +1,158 @@
+/*
+ * Silt Strider theme tokens.
+ *
+ * Every color the React components use comes from here. Components reference these
+ * through Tailwind utilities (text-fg-3, bg-surface-5, border-line-9, text-accent, ...)
+ * or var(--color-*) in inline styles. A theme restyles the site by overriding these
+ * custom properties under a selector such as [data-theme="ashfall"].
+ *
+ * Values below are the classic Morrowind theme. The ramps were built from the colors
+ * the site already used: shades that were visually indistinguishable share one token.
+ * `static` keeps every token emitted, because legacy-compat.css reads some of them
+ * outside Tailwind's view.
+ */
+@theme static {
+
+  /* Text. fg-1 is the brightest; higher numbers are quieter. */
+  --color-fg-1: #ffffff;
+  --color-fg-2: #f3e6c8;
+  --color-fg-3: #ffd9b3;
+  --color-fg-4: #e0cfab;
+  --color-fg-5: #c4b998;
+  --color-fg-6: #c9b88e;
+  --color-fg-7: #c2b291;
+  --color-fg-8: #b8a078;
+  --color-fg-9: #a8997c;
+  --color-fg-10: #a89066;
+  --color-fg-11: #9e8b6b;
+  --color-fg-12: #a67a65;
+  --color-fg-13: #8e7e65;
+  --color-fg-14: #8c7853;
+  --color-fg-15: #7a6b52;
+  --color-fg-16: #6e5d3f;
+  --color-fg-17: #5a4c33;
+  --color-fg-18: #4a3b25;
+
+  /* Surfaces. surface-1 is the deepest well; higher numbers sit higher (lighter). */
+  --color-surface-1: #0c0906;
+  --color-surface-2: #100d08;
+  --color-surface-3: #14100a;
+  --color-surface-4: #16120b;
+  --color-surface-5: #19140c;
+  --color-surface-6: #1a140d;
+  --color-surface-7: #181510;
+  --color-surface-8: #201811;
+  --color-surface-9: #1f1911;
+  --color-surface-10: #1f1a10;
+  --color-surface-11: #251a0e;
+  --color-surface-12: #241c13;
+  --color-surface-13: #261d12;
+  --color-surface-14: #251e13;
+  --color-surface-15: #2d1e0d;
+  --color-surface-16: #2b1f14;
+  --color-surface-17: #2a2215;
+  --color-surface-18: #2d2214;
+  --color-surface-19: #2f2214;
+  --color-surface-20: #382b13;
+  --color-surface-21: #3a2d1d;
+  --color-surface-22: #3d301b;
+  --color-surface-23: #453218;
+  --color-surface-24: #8c7853;
+
+  /* Borders and dividers. line-1 is the most prominent. */
+  --color-line-1: #8c7853;
+  --color-line-2: #6e5833;
+  --color-line-3: #5c4a38;
+  --color-line-4: #5c4827;
+  --color-line-5: #5e4327;
+  --color-line-6: #4a3e20;
+  --color-line-7: #4a3b26;
+  --color-line-8: #4a341b;
+  --color-line-9: #3a2e1d;
+  --color-line-10: #352514;
+  --color-line-11: #2a2215;
+  --color-line-12: #221c13;
+
+  /* Accent (gold in the classic theme). Shared by text, fills and borders. */
+  --color-accent: #d4b06a;
+  --color-accent-1: #ffd700;
+  --color-accent-2: #d4a86a;
+  --color-accent-3: #c49750;
+  --color-accent-4: #a6824a;
+  --color-accent-5: #8e7436;
+
+  /* Danger / negative (text) */
+  --color-danger-1: #ffd6d6;
+  --color-danger-2: #fca5a5;
+  --color-danger-3: #f28e85;
+  --color-danger-4: #e29381;
+  --color-danger-5: #e58a8a;
+  --color-danger-6: #ff6b6b;
+  --color-danger-7: #d67373;
+  --color-danger-8: #a35e5e;
+  --color-danger-9: #a03017;
+
+  /* Danger / negative (surfaces) */
+  --color-danger-surface-1: #170e0e;
+  --color-danger-surface-2: #2b1414;
+  --color-danger-surface-3: #3d1a1a;
+  --color-danger-surface-4: #a03017;
+  --color-danger-surface-5: #a64a3d;
+
+  /* Danger / negative (borders) */
+  --color-danger-line-1: #8f3636;
+  --color-danger-line-2: #702a2a;
+  --color-danger-line-3: #5e2727;
+
+  /* Success / positive (text) */
+  --color-success-1: #b4e698;
+  --color-success-2: #88d99c;
+  --color-success-3: #78d46a;
+  --color-success-4: #9bc37e;
+  --color-success-5: #86bfaf;
+  --color-success-6: #8e9c85;
+
+  /* Success / positive (surfaces) */
+  --color-success-surface-1: #10190c;
+  --color-success-surface-2: #182613;
+  --color-success-surface-3: #28401e;
+  --color-success-surface-4: #345427;
+  --color-success-surface-5: #007a2f;
+  --color-success-surface-6: #5fa33e;
+  --color-success-surface-7: #52d634;
+
+  /* Success / positive (borders) */
+  --color-success-line-1: #5fa33e;
+  --color-success-line-2: #4b7a35;
+  --color-success-line-3: #385e54;
+  --color-success-line-4: #3e5f2e;
+  --color-success-line-5: #3a4e28;
+  --color-success-line-6: #004d1f;
+
+  /* Warning */
+  --color-warning-1: #e6b98d;
+  --color-warning-2: #e89b4f;
+  --color-warning-3: #d4886a;
+  --color-warning-surface: #c97d2e;
+  --color-warning-line: #8c592a;
+
+  /* Info */
+  --color-info: #96a7eb;
+  --color-info-surface-1: #141b26;
+  --color-info-surface-2: #2a387f;
+  --color-info-line-1: #4a5878;
+  --color-info-line-2: #1b2352;
+  --color-teal-surface: #10211d;
+
+  /* Game vitals */
+  --color-health: #a03017;
+  --color-magicka: #2a387f;
+  --color-fatigue: #007a2f;
+}
+
+:root {
+  /* Vitals bar fills (5-stop classic bevel gradients) */
+  --gradient-health: linear-gradient(180deg, #a03017 0%, #9e2f17 20%, #671f0f 50%, #45130a 75%, #2f0e07 100%);
+  --gradient-magicka: linear-gradient(180deg, #2a387f 0%, #29367d 20%, #1b2352 50%, #121636 75%, #0c1025 100%);
+  --gradient-fatigue: linear-gradient(180deg, #007a2f 0%, #00772f 20%, #004d1f 50%, #003014 75%, #00240e 100%);
+}

@@ -106,7 +106,7 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
   return (
     <div className="loadout-tabs-bar space-y-3">
       {/* Top Bar: Tabs & Presets */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2a2318] pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line-11 pb-3">
         {/* Preset Tabs */}
         <div className="flex flex-wrap items-center gap-2">
           {loadouts.map((loadout, index) => {
@@ -125,7 +125,7 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
                       if (e.key === "Escape") setEditingId(null);
                     }}
                     autoFocus
-                    className="mw-input px-2 py-1 text-xs font-serif font-bold text-[#f3e6c8] bg-[#120e09] border border-[#d4b06a]"
+                    className="mw-input px-2 py-1 text-xs font-serif font-bold text-fg-2 bg-surface-2 border border-accent"
                   />
                   <button
                     type="button"
@@ -152,16 +152,16 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
                 onClick={() => onSelectLoadout(loadout.id)}
                 className={`group flex items-center gap-2 px-3.5 py-2 text-xs font-serif font-bold tracking-wide transition-all mw-btn ${
                   isActive
-                    ? "active ring-1 ring-[#d4b06a] text-[#ffffff]"
-                    : "text-[#c4b998] hover:text-[#f3e6c8]"
+                    ? "active ring-1 ring-accent text-fg-1"
+                    : "text-fg-5 hover:text-fg-2"
                 }`}
               >
                 <span>{loadout.name}</span>
                 <span
                   className={`text-[10px] font-mono px-1 py-0.2 border ${
                     isActive
-                      ? "bg-[#2b1f11] border-[#5c4728] text-[#d4b06a]"
-                      : "bg-[#17120a] border-[#292014] text-[#8c7853]"
+                      ? "bg-surface-19 border-line-4 text-accent"
+                      : "bg-surface-5 border-line-11 text-fg-14"
                   }`}
                 >
                   {itemCount}
@@ -180,7 +180,7 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
               const active = loadouts.find((l) => l.id === activeLoadoutId);
               if (active) startRename(active);
             }}
-            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-[#c4b998] hover:text-[#f3e6c8]"
+            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
             title="Rename current loadout"
           >
             Rename
@@ -190,7 +190,7 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
           <button
             type="button"
             onClick={() => onCopyLoadout(activeLoadoutId)}
-            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-[#c4b998] hover:text-[#f3e6c8]"
+            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
             title="Duplicate active loadout to next available slot"
           >
             Copy
@@ -204,7 +204,7 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
                 onClearLoadout(activeLoadoutId);
               }
             }}
-            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-[#a35e5e] hover:text-[#ff8888]"
+            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-danger-8 hover:text-danger-3"
             title="Clear all equipped items from this loadout"
           >
             Clear
@@ -215,19 +215,19 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
             <button
               type="button"
               onClick={() => setShowKitMenu(!showKitMenu)}
-              className="mw-btn px-3 py-1.5 text-xs font-serif font-bold text-[#d4b06a] hover:text-[#ffffff] flex items-center gap-1.5"
+              className="mw-btn px-3 py-1.5 text-xs font-serif font-bold text-accent hover:text-fg-1 flex items-center gap-1.5"
             >
               <span>Equip Kit Preset ▾</span>
             </button>
 
             {showKitMenu && (
               <div
-                className="absolute right-0 top-full mt-1.5 w-72 p-2 bg-[#14100b] border border-[#4a3924] shadow-2xl z-30 space-y-1"
+                className="absolute right-0 top-full mt-1.5 w-72 p-2 bg-surface-3 border border-line-7 shadow-2xl z-30 space-y-1"
                 style={{
                   boxShadow: "0 8px 24px rgba(0, 0, 0, 0.9), inset 0 0 8px 1px rgba(0, 0, 0, 0.8)",
                 }}
               >
-                <div className="text-[10px] uppercase font-serif font-bold text-[#8c7853] px-2 py-1 border-b border-[#241c12]">
+                <div className="text-[10px] uppercase font-serif font-bold text-fg-14 px-2 py-1 border-b border-line-12">
                   Select Pre-Configured Kit
                 </div>
                 {QUICK_LOADOUT_KITS.map((kit) => (
@@ -238,12 +238,12 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
                       onEquipKit(activeLoadoutId, kit.items);
                       setShowKitMenu(false);
                     }}
-                    className="w-full p-2 text-left hover:bg-[#221a10] border border-transparent hover:border-[#423420] transition-colors group"
+                    className="w-full p-2 text-left hover:bg-surface-12 border border-transparent hover:border-line-7 transition-colors group"
                   >
-                    <div className="font-serif font-bold text-xs text-[#f3e6c8] group-hover:text-[#d4b06a]">
+                    <div className="font-serif font-bold text-xs text-fg-2 group-hover:text-accent">
                       {kit.name}
                     </div>
-                    <div className="text-[10px] text-[#8c7853] leading-snug mt-0.5">
+                    <div className="text-[10px] text-fg-14 leading-snug mt-0.5">
                       {kit.description}
                     </div>
                   </button>

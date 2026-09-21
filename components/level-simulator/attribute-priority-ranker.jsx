@@ -21,14 +21,14 @@ export default function AttributePriorityRanker({
   const detectedName = detectedArchetype?.name || "Melee Tank / Warrior";
 
   return (
-    <div className="attribute-priority-ranker space-y-3 bg-[#100d08] p-4 border border-[#2a2318] mw-groove-panel">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#221c13] pb-2">
-        <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+    <div className="attribute-priority-ranker space-y-3 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-12 pb-2">
+        <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
           Attribute Leveling Priority
         </h4>
         <div className="flex items-center gap-1.5 text-xs">
-          <span className="text-[#9e8b6b]">Detected Archetype:</span>
-          <span className="font-serif font-bold text-[#f3e6c8] bg-[#1a140d] px-2 py-0.5 border border-[#3a3020]">
+          <span className="text-fg-11">Detected Archetype:</span>
+          <span className="font-serif font-bold text-fg-2 bg-surface-6 px-2 py-0.5 border border-line-9">
             {detectedName}
           </span>
         </div>
@@ -36,7 +36,7 @@ export default function AttributePriorityRanker({
 
       {/* Preset Archetype Selectors */}
       <div className="archetype-selector-row">
-        <label htmlFor="archetype-select" className="text-xs text-[#9e8b6b] font-serif block mb-1">
+        <label htmlFor="archetype-select" className="text-xs text-fg-11 font-serif block mb-1">
           Preset Priority Template:
         </label>
         <select
@@ -60,13 +60,13 @@ export default function AttributePriorityRanker({
         {priority.map((attr, idx) => (
           <div
             key={attr}
-            className="flex items-center justify-between p-1.5 bg-[#16120b] border border-[#2f2518] shadow-sm text-xs"
+            className="flex items-center justify-between p-1.5 bg-surface-4 border border-line-11 shadow-sm text-xs"
           >
             <div className="flex items-center gap-1.5 overflow-hidden">
-              <span className="font-mono text-[10px] text-[#d4b06a] font-bold w-4 shrink-0">
+              <span className="font-mono text-[10px] text-accent font-bold w-4 shrink-0">
                 #{idx + 1}
               </span>
-              <span className="font-serif font-semibold text-[#f3e6c8] truncate" title={attr}>
+              <span className="font-serif font-semibold text-fg-2 truncate" title={attr}>
                 {attr}
               </span>
             </div>
@@ -97,9 +97,9 @@ export default function AttributePriorityRanker({
       </div>
 
       {/* Mechanics Explanation */}
-      <div className="text-[11px] text-[#9e8b6b] leading-tight pt-1">
+      <div className="text-[11px] text-fg-11 leading-tight pt-1">
         <p className="m-0">
-          <strong className="text-[#c4b998]">Mechanics Note:</strong> Endurance is prioritized first across all archetypes because Morrowind&apos;s level-up Health gain is non-retroactive. Stealth builds prioritize Strength over Speed as sneak attack multipliers scale directly with Strength.
+          <strong className="text-fg-5">Mechanics Note:</strong> Endurance is prioritized first across all archetypes because Morrowind&apos;s level-up Health gain is non-retroactive. Stealth builds prioritize Strength over Speed as sneak attack multipliers scale directly with Strength.
         </p>
       </div>
     </div>

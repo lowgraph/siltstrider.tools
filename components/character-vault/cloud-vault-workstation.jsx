@@ -69,14 +69,14 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
   };
 
   return (
-    <div className="cloud-vault-root text-[#f3e6c8]">
+    <div className="cloud-vault-root text-fg-2">
       {/* Header & Quick Launch Navigation */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#2a2215] mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line-11 mb-6">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#d4b06a] tracking-wide">
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-accent tracking-wide">
             Cloud Character Vault
           </h2>
-          <p className="text-xs text-[#8c7853] font-serif mt-1">
+          <p className="text-xs text-fg-14 font-serif mt-1">
             Cloud character storage, OpenMW save ingestion (.omwsave), revision history, and cross-device sync.
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
           </button>
           <button
             type="button"
-            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-[#d4b06a]"
+            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-accent"
             onClick={() => {
               window.siltShell?.navigate("leveler");
             }}
@@ -105,39 +105,39 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
 
       {/* Status / Error Alerts */}
       {vault.statusMessage && (
-        <div className="bg-[#1f1a10] border border-[#5a482e] px-4 py-2 text-xs font-serif text-[#d4b06a] mb-4 flex items-center justify-between">
+        <div className="bg-surface-10 border border-line-4 px-4 py-2 text-xs font-serif text-accent mb-4 flex items-center justify-between">
           <span>{vault.statusMessage}</span>
         </div>
       )}
       {vault.errorMessage && (
-        <div className="bg-[#261010] border border-[#702a2a] px-4 py-2 text-xs font-serif text-[#e58a8a] mb-4 flex items-center justify-between">
+        <div className="bg-danger-surface-2 border border-danger-line-2 px-4 py-2 text-xs font-serif text-danger-5 mb-4 flex items-center justify-between">
           <span>{vault.errorMessage}</span>
         </div>
       )}
 
       {/* Sign-In CTA (if signed out) */}
       {!vault.signedIn ? (
-        <div className="bg-[#120f0a] border border-[#4a3b26] p-5 space-y-3 mw-groove-panel text-center sm:text-left mb-6">
+        <div className="bg-surface-2 border border-line-7 p-5 space-y-3 mw-groove-panel text-center sm:text-left mb-6">
           <div className="sm:flex items-center justify-between gap-4">
             <div className="space-y-1">
-              <h4 className="font-serif text-base font-bold text-[#d4b06a]">
+              <h4 className="font-serif text-base font-bold text-accent">
                 Connect Your Account for Cloud Sync
               </h4>
-              <p className="text-xs text-[#c4b998] font-serif">
+              <p className="text-xs text-fg-5 font-serif">
                 Sign in with Google, Discord, or Email to unlock 5 free cloud save slots, upload OpenMW .omwsave files, and sync character builds across devices.
               </p>
             </div>
             <div className="mt-3 sm:mt-0 flex gap-2 justify-center">
               <button
                 type="button"
-                className="mw-btn px-4 py-2 font-serif text-xs font-bold text-[#f3e6c8] hover:text-[#d4b06a]"
+                className="mw-btn px-4 py-2 font-serif text-xs font-bold text-fg-2 hover:text-accent"
                 onClick={vault.openSignIn}
               >
                 Sign In
               </button>
               <button
                 type="button"
-                className="mw-btn px-4 py-2 font-serif text-xs font-bold text-[#d4b06a]"
+                className="mw-btn px-4 py-2 font-serif text-xs font-bold text-accent"
                 onClick={vault.openSignUp}
               >
                 Register Free
@@ -148,25 +148,25 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
       ) : (
         <>
           {/* Account Quota Badge & Warning */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#110e08] p-3 border border-[#2a2215] mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-surface-2 p-3 border border-line-11 mb-6">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-serif text-[#c4b998]">
+              <span className="text-xs font-serif text-fg-5">
                 Account Quota:
               </span>
               <span className={`px-2.5 py-1 text-xs font-serif font-bold uppercase tracking-wider border ${
                 isAtQuota
-                  ? "bg-[#2b1616] border-[#8f3636] text-[#e58a8a]"
-                  : "bg-[#1a140d] border-[#4a3b26] text-[#d4b06a]"
+                  ? "bg-danger-surface-2 border-danger-line-1 text-danger-5"
+                  : "bg-surface-6 border-line-7 text-accent"
               }`}>
                 {vault.entitlements.currentSaves} / {vault.entitlements.maxSaves} Saves Used
               </span>
-              <span className="text-xs font-mono text-[#8c7853]">
+              <span className="text-xs font-mono text-fg-14">
                 ({vault.entitlements.tier === "paid" || vault.entitlements.tier === "supporter" ? "Supporter Tier: 25" : "Free Tier: 5"})
               </span>
             </div>
 
             {isAtQuota && (
-              <span className="text-xs font-serif text-[#d4886a]">
+              <span className="text-xs font-serif text-warning-3">
                 Capacity reached. Delete or overwrite a save to store new builds.
               </span>
             )}
@@ -175,14 +175,14 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
           {/* Action Toolbar: Save Active Build & Import */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {/* Save Current Build */}
-            <div className="bg-[#120f0a] border border-[#2a2215] p-4 space-y-3">
-              <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold border-b border-[#221c13] pb-1">
+            <div className="bg-surface-2 border border-line-11 p-4 space-y-3">
+              <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
                 Save Active Build to Cloud
               </h4>
               <form onSubmit={handleSaveActive} className="space-y-2">
                 <input
                   type="text"
-                  className="w-full bg-[#0a0805] border border-[#3a2e1d] p-2 text-xs text-[#f3e6c8] placeholder-[#7a6b52] font-serif focus:outline-none focus:border-[#d4b06a]"
+                  className="w-full bg-surface-1 border border-line-9 p-2 text-xs text-fg-2 placeholder-fg-15 font-serif focus:outline-none focus:border-accent"
                   placeholder={`Name (e.g. ${build?.name || build?.className || "Dunmer Assassin"})`}
                   value={saveName}
                   onChange={(e) => setSaveName(e.target.value)}
@@ -192,7 +192,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
                 />
                 <button
                   type="submit"
-                  className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-[#f3e6c8] hover:text-[#d4b06a]"
+                  className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-fg-2 hover:text-accent"
                   onClick={handleSaveActive}
                   disabled={vault.actionBusy || isAtQuota}
                 >
@@ -203,10 +203,10 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
 
             {/* Import .omwsave / JSON */}
             <div
-              className={`bg-[#120f0a] border p-4 space-y-3 flex flex-col justify-between transition-colors ${
+              className={`bg-surface-2 border p-4 space-y-3 flex flex-col justify-between transition-colors ${
                 dragOver
-                  ? "border-[#d4b06a] bg-[#1c160e]"
-                  : "border-[#2a2215]"
+                  ? "border-accent bg-surface-6"
+                  : "border-line-11"
               }`}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -216,10 +216,10 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
               onDrop={handleDrop}
             >
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold border-b border-[#221c13] pb-1">
+                <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
                   Import Save (.omwsave or .json)
                 </h4>
-                <p className="text-[11px] text-[#8c7853] font-serif mt-1">
+                <p className="text-[11px] text-fg-14 font-serif mt-1">
                   Drag and drop your OpenMW save file or character JSON here.
                 </p>
               </div>
@@ -235,7 +235,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
                 />
                 <button
                   type="button"
-                  className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-[#f3e6c8] hover:text-[#d4b06a]"
+                  className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-fg-2 hover:text-accent"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={vault.actionBusy || isAtQuota}
                 >
@@ -248,11 +248,11 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
       )}
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1 border-b border-[#2a2215] pb-2 overflow-x-auto mb-6">
+      <div className="flex items-center gap-1 border-b border-line-11 pb-2 overflow-x-auto mb-6">
         <button
           type="button"
           className={`px-3 py-1.5 text-xs font-serif font-bold transition-all mw-btn whitespace-nowrap ${
-            activeTab === "all" ? "active text-[#d4b06a]" : "text-[#8c7853]"
+            activeTab === "all" ? "active text-accent" : "text-fg-14"
           }`}
           onClick={() => setActiveTab("all")}
         >
@@ -261,7 +261,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <button
           type="button"
           className={`px-3 py-1.5 text-xs font-serif font-bold transition-all mw-btn whitespace-nowrap ${
-            activeTab === "openmw" ? "active text-[#d4b06a]" : "text-[#8c7853]"
+            activeTab === "openmw" ? "active text-accent" : "text-fg-14"
           }`}
           onClick={() => setActiveTab("openmw")}
         >
@@ -270,7 +270,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <button
           type="button"
           className={`px-3 py-1.5 text-xs font-serif font-bold transition-all mw-btn whitespace-nowrap ${
-            activeTab === "builds" ? "active text-[#d4b06a]" : "text-[#8c7853]"
+            activeTab === "builds" ? "active text-accent" : "text-fg-14"
           }`}
           onClick={() => setActiveTab("builds")}
         >
@@ -279,7 +279,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <button
           type="button"
           className={`px-3 py-1.5 text-xs font-serif font-bold transition-all mw-btn whitespace-nowrap ${
-            activeTab === "challenges" ? "active text-[#d4b06a]" : "text-[#8c7853]"
+            activeTab === "challenges" ? "active text-accent" : "text-fg-14"
           }`}
           onClick={() => setActiveTab("challenges")}
         >
@@ -288,7 +288,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <button
           type="button"
           className={`px-3 py-1.5 text-xs font-serif font-bold transition-all mw-btn whitespace-nowrap ${
-            activeTab === "local" ? "active text-[#d4b06a]" : "text-[#8c7853]"
+            activeTab === "local" ? "active text-accent" : "text-fg-14"
           }`}
           onClick={() => setActiveTab("local")}
         >
@@ -300,7 +300,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
       {activeTab === "local" ? (
         // Local Browser Characters List
         localSaves.length === 0 ? (
-          <div className="p-8 text-center border border-[#2a2215] bg-[#110e08] text-[#8c7853] font-serif text-xs">
+          <div className="p-8 text-center border border-line-11 bg-surface-2 text-fg-14 font-serif text-xs">
             No local characters found in browser storage.
           </div>
         ) : (
@@ -310,26 +310,26 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
               return (
                 <div
                   key={rec.id || idx}
-                  className="bg-[#14100a] border border-[#3a2e1d] p-4 flex flex-col justify-between space-y-3"
+                  className="bg-surface-3 border border-line-9 p-4 flex flex-col justify-between space-y-3"
                 >
                   <div>
                     <div className="flex items-center justify-between">
-                      <h5 className="font-serif font-bold text-sm text-[#f3e6c8]">
+                      <h5 className="font-serif font-bold text-sm text-fg-2">
                         {rec.name || char.name || "Local Character"}
                       </h5>
-                      <span className="text-[10px] font-mono text-[#8c7853]">
+                      <span className="text-[10px] font-mono text-fg-14">
                         Level {char.level || 1}
                       </span>
                     </div>
-                    <p className="text-xs text-[#8c7853] font-serif mt-0.5">
+                    <p className="text-xs text-fg-14 font-serif mt-0.5">
                       {char.race || "Dark Elf"} · {char.className || "Custom"} · {char.sign || "The Lady"}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#221c13]">
+                  <div className="flex items-center gap-2 pt-2 border-t border-line-12">
                     <button
                       type="button"
-                      className="flex-1 mw-btn py-1 px-2 text-xs font-serif font-bold text-[#d4b06a]"
+                      className="flex-1 mw-btn py-1 px-2 text-xs font-serif font-bold text-accent"
                       onClick={() => {
                         if (typeof setBuild === "function") {
                           setBuild(char);
@@ -343,7 +343,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
                     {vault.signedIn && (
                       <button
                         type="button"
-                        className="mw-btn py-1 px-2 text-xs font-serif font-bold text-[#c4b998]"
+                        className="mw-btn py-1 px-2 text-xs font-serif font-bold text-fg-5"
                         onClick={() => vault.importLocalSave(rec)}
                         disabled={vault.actionBusy || isAtQuota}
                         title="Upload to Cloud Vault"
@@ -360,14 +360,14 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
       ) : (
         // Cloud Saves Grid
         filteredCloudSaves.length === 0 ? (
-          <div className="p-8 text-center border border-[#2a2215] bg-[#110e08] text-[#8c7853] font-serif text-xs space-y-2">
+          <div className="p-8 text-center border border-line-11 bg-surface-2 text-fg-14 font-serif text-xs space-y-2">
             <p>
               {vault.signedIn
                 ? "No cloud saves found in this category."
                 : "Sign in to see and manage your cloud saves."}
             </p>
             {vault.signedIn && !isAtQuota && (
-              <p className="text-[#c4b998]">
+              <p className="text-fg-5">
                 Save your active build above or import an OpenMW .omwsave file.
               </p>
             )}

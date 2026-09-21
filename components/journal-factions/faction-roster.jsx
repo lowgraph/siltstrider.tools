@@ -79,9 +79,9 @@ export default function FactionRoster({
   }, [factions, searchQuery, activeCategory, joinedMap]);
 
   return (
-    <aside className="faction-roster-pane flex flex-col h-full bg-[#1b1610] border-2 border-[#5c4827] shadow-inner text-[#f3e6c8]">
+    <aside className="faction-roster-pane flex flex-col h-full bg-surface-6 border-2 border-line-4 shadow-inner text-fg-2">
       {/* Search Bar */}
-      <div className="p-3 border-b border-[#3d301b] bg-[#14100a]">
+      <div className="p-3 border-b border-line-9 bg-surface-3">
         <label htmlFor="faction-search-input" className="sr-only">Search factions</label>
         <div className="relative">
           <input
@@ -90,13 +90,13 @@ export default function FactionRoster({
             value={searchQuery}
             onChange={e => onSearchChange(e.target.value)}
             placeholder="Search faction, skill, or attribute..."
-            className="w-full bg-[#241c13] border border-[#5c4827] px-3 py-1.5 text-xs text-[#f3e6c8] placeholder-[#8c7853] focus:border-[#d4b06a] focus:outline-none"
+            className="w-full bg-surface-12 border border-line-4 px-3 py-1.5 text-xs text-fg-2 placeholder-fg-14 focus:border-accent focus:outline-none"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => onSearchChange("")}
-              className="absolute right-2 top-1.5 text-[#8c7853] hover:text-[#d4b06a] text-xs"
+              className="absolute right-2 top-1.5 text-fg-14 hover:text-accent text-xs"
               aria-label="Clear search"
             >
               ✕
@@ -106,7 +106,7 @@ export default function FactionRoster({
       </div>
 
       {/* Category Pills */}
-      <div className="px-2 py-2 flex flex-wrap gap-1 border-b border-[#3d301b] bg-[#17120c] overflow-x-auto">
+      <div className="px-2 py-2 flex flex-wrap gap-1 border-b border-line-9 bg-surface-3 overflow-x-auto">
         {CATEGORIES.map(cat => {
           const isActive = activeCategory === cat.id;
           const count = cat.id === "joined" ? joinedKeys.length : null;
@@ -117,8 +117,8 @@ export default function FactionRoster({
               onClick={() => onCategoryChange(cat.id)}
               className={`px-2 py-1 text-[11px] font-serif uppercase tracking-wider transition-colors ${
                 isActive
-                  ? "bg-[#3d301b] text-[#d4b06a] font-bold border border-[#d4b06a]"
-                  : "bg-transparent text-[#a6926d] hover:text-[#f3e6c8] border border-transparent"
+                  ? "bg-surface-22 text-accent font-bold border border-accent"
+                  : "bg-transparent text-fg-10 hover:text-fg-2 border border-transparent"
               }`}
             >
               {cat.label} {count !== null ? `(${count})` : ""}
@@ -130,7 +130,7 @@ export default function FactionRoster({
       {/* Roster Items List */}
       <div className="flex-1 overflow-y-auto p-2 space-y-1.5" role="listbox" aria-label="Factions List">
         {filteredFactions.length === 0 ? (
-          <div className="p-6 text-center text-xs text-[#8c7853] italic">
+          <div className="p-6 text-center text-xs text-fg-14 italic">
             No factions found matching criteria.
           </div>
         ) : (
@@ -158,18 +158,18 @@ export default function FactionRoster({
                 onClick={() => onSelectFaction(faction.key)}
                 className={`faction-roster-item w-full text-left p-2.5 transition-all flex flex-col gap-1 border ${
                   isSelected
-                    ? "bg-[#2c2216] border-[#d4b06a] shadow-md"
-                    : "bg-[#201811] hover:bg-[#271e15] border-[#3d301b]"
+                    ? "bg-surface-18 border-accent shadow-md"
+                    : "bg-surface-8 hover:bg-surface-12 border-line-9"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className={`font-serif text-sm font-semibold tracking-wide ${
-                    isSelected ? "text-[#d4b06a]" : "text-[#f3e6c8]"
+                    isSelected ? "text-accent" : "text-fg-2"
                   }`}>
                     {faction.name || faction.key}
                   </span>
                   {faction.ownedPlacements > 0 && (
-                    <span className="text-[10px] text-[#8c7853] font-mono shrink-0" title="Owned World Placements">
+                    <span className="text-[10px] text-fg-14 font-mono shrink-0" title="Owned World Placements">
                       {faction.ownedPlacements.toLocaleString()} spots
                     </span>
                   )}
@@ -178,33 +178,33 @@ export default function FactionRoster({
                 {/* Badges Row */}
                 <div className="flex items-center flex-wrap gap-1.5 mt-0.5">
                   {membership ? (
-                    <span className="px-1.5 py-0.5 text-[10px] uppercase font-bold bg-[#3d301b] text-[#d4b06a] border border-[#d4b06a]/50">
+                    <span className="px-1.5 py-0.5 text-[10px] uppercase font-bold bg-surface-22 text-accent border border-accent/50">
                       {membership.expelled ? "⚠ Expelled" : `Member · ${rankLabel}`}
                     </span>
                   ) : hasRanks ? (
                     isEligibleToJoin ? (
-                      <span className="px-1.5 py-0.5 text-[10px] font-serif text-[#9bc37e] bg-[#1a2916] border border-[#3e5f2e]">
+                      <span className="px-1.5 py-0.5 text-[10px] font-serif text-success-4 bg-success-surface-2 border border-success-line-4">
                         Eligible to Join
                       </span>
                     ) : (
-                      <span className="px-1.5 py-0.5 text-[10px] font-serif text-[#8c7853] bg-[#17120c] border border-[#2b2014]">
+                      <span className="px-1.5 py-0.5 text-[10px] font-serif text-fg-14 bg-surface-3 border border-line-11">
                         Unqualified
                       </span>
                     )
                   ) : (
-                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-[#78664a] bg-[#14100a] border border-[#261c12]">
+                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-fg-15 bg-surface-3 border border-line-12">
                       Non-joinable
                     </span>
                   )}
 
                   {conflict && !membership && (
-                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-[#d67373] bg-[#331414] border border-[#662020]" title={conflict.description}>
+                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-danger-7 bg-danger-surface-3 border border-danger-line-2" title={conflict.description}>
                       Rival Joined
                     </span>
                   )}
 
                   {faction.hidden && (
-                    <span className="px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-[#8c7853] bg-[#120e0a]">
+                    <span className="px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-fg-14 bg-surface-2">
                       Secret
                     </span>
                   )}
@@ -212,7 +212,7 @@ export default function FactionRoster({
 
                 {/* Favoured Attributes Snippet */}
                 {faction.favouredAttributes?.length > 0 && (
-                  <div className="text-[10px] text-[#8c7853] font-serif truncate mt-0.5">
+                  <div className="text-[10px] text-fg-14 font-serif truncate mt-0.5">
                     {faction.favouredAttributes.map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(" · ")}
                   </div>
                 )}

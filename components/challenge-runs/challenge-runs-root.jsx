@@ -469,7 +469,7 @@ export default function ChallengeRunsRoot() {
       />
 
       {/* Mobile View Toggle (Visible only on screens < 1024px) */}
-      <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-[#120f0a] border border-[#2a2318]">
+      <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-surface-2 border border-line-11">
         <button
           type="button"
           className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${
@@ -536,7 +536,7 @@ export default function ChallengeRunsRoot() {
         <div className="block lg:hidden sticky bottom-3 z-30 px-2 mt-4">
           <button
             type="button"
-            className="w-full mw-btn py-3 px-4 text-sm font-serif font-bold text-[#fce8bb] bg-[#1a140d]/95 backdrop-blur border-2 border-[#d4b06a] shadow-2xl flex items-center justify-center gap-2"
+            className="w-full mw-btn py-3 px-4 text-sm font-serif font-bold text-fg-2 bg-surface-6/95 backdrop-blur border-2 border-accent shadow-2xl flex items-center justify-center gap-2"
             onClick={() => handleGenerateRun()}
           >
             <span>Re-roll Run</span>

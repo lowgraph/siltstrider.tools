@@ -9,14 +9,14 @@ export default function RestrictionsTablet({
   onRollRestrictions
 }) {
   return (
-    <div className="restrictions-tablet border border-[#3a2e1d] bg-[#14100a] p-4 text-[#f3e6c8]">
+    <div className="restrictions-tablet border border-line-9 bg-surface-3 p-4 text-fg-2">
       {/* Header bar */}
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#2a2215]">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-line-11">
         <div className="flex items-center gap-2">
-          <span className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+          <span className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
             Active Restrictions
           </span>
-          <span className="text-xs px-2 py-0.5 bg-[#251e13] border border-[#3d301e] text-[#c2b291] font-mono">
+          <span className="text-xs px-2 py-0.5 bg-surface-14 border border-line-9 text-fg-7 font-mono">
             {restrictions.length}
           </span>
         </div>
@@ -37,7 +37,7 @@ export default function RestrictionsTablet({
           <button
             type="button"
             className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+              isLocked ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
             }`}
             onClick={onToggleLock}
             title={isLocked ? "Unlock Restrictions" : "Lock Restrictions"}
@@ -55,14 +55,14 @@ export default function RestrictionsTablet({
             return (
               <li
                 key={i}
-                className="flex items-start gap-2.5 p-2 bg-[#19140c] border border-[#2a2114] hover:border-[#4a3920] transition-colors"
+                className="flex items-start gap-2.5 p-2 bg-surface-5 border border-line-11 hover:border-line-7 transition-colors"
               >
                 <span
-                  className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 border shrink-0 mt-0.5 font-mono bg-[#251e13] border-[#3d301e] text-[#d4b06a]"
+                  className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 border shrink-0 mt-0.5 font-mono bg-surface-14 border-line-9 text-accent"
                 >
                   {b}
                 </span>
-                <span className="text-sm font-serif text-[#ebd9b2] leading-relaxed">
+                <span className="text-sm font-serif text-fg-4 leading-relaxed">
                   {r}
                 </span>
               </li>
@@ -70,14 +70,14 @@ export default function RestrictionsTablet({
           })}
         </ul>
       ) : (
-        <p className="text-sm italic text-[#7a6b52] py-2">
+        <p className="text-sm italic text-fg-15 py-2">
           No restrictions rolled. Use Generate Run to pick active challenge modifiers.
         </p>
       )}
 
       {/* Note or warnings */}
       {restNote && (
-        <div className="mt-3 p-2 bg-[#261d12] border border-[#523e20] text-xs text-[#d9c49c]">
+        <div className="mt-3 p-2 bg-surface-13 border border-line-4 text-xs text-fg-4">
           {restNote}
         </div>
       )}

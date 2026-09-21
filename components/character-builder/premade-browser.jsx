@@ -52,16 +52,16 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
-        background: "var(--surface, #181510)",
+        background: "var(--color-surface-7)",
         boxShadow: "inset 0 0 12px 3px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.5)"
       }}
     >
-      <div className="border-b border-[#2a2318] pb-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="border-b border-line-11 pb-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide">
+          <h3 className="font-serif text-xl font-bold text-fg-2 tracking-wide">
             Premade Character Builds ({filteredBuilds.length})
           </h3>
-          <p className="text-sm text-[#b8a078] mt-0.5">
+          <p className="text-sm text-fg-8 mt-0.5">
             Curated character builds designed for authentic playstyles, roleplay, and racial themes.
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
         <input
           type="text"
           placeholder="Filter by name, race, sign, or skill..."
-          className="flex-1 h-10 bg-[#120f0a] text-[#f3e6c8] border-4 border-transparent px-3.5 py-2 text-sm focus:outline-none transition-colors"
+          className="flex-1 h-10 bg-surface-2 text-fg-2 border-4 border-transparent px-3.5 py-2 text-sm focus:outline-none transition-colors"
           style={{
             borderImage: "var(--mw-bevel) 4 repeat"
           }}
@@ -134,60 +134,60 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
           const isExpanded = filter.trim().length > 0 || openCategories.has(cat);
 
           return (
-            <div key={cat} className="category-block bg-[#100d08] border border-[#251e14] rounded overflow-hidden">
+            <div key={cat} className="category-block bg-surface-2 border border-line-12 rounded overflow-hidden">
               <button
                 type="button"
                 onClick={() => toggleCategory(cat)}
-                className="w-full flex items-center justify-between p-3 bg-[#15100a] hover:bg-[#1f180f] border-b border-[#251e14] transition-colors text-left group"
+                className="w-full flex items-center justify-between p-3 bg-surface-3 hover:bg-surface-9 border-b border-line-12 transition-colors text-left group"
                 aria-expanded={isExpanded}
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-mono text-[#d4b06a] transition-transform duration-200">
+                  <span className="text-xs font-mono text-accent transition-transform duration-200">
                     {isExpanded ? "▼" : "▶"}
                   </span>
-                  <span className="font-serif text-sm uppercase tracking-wider text-[#d4b06a] font-bold group-hover:text-[#f3e6c8] transition-colors">
+                  <span className="font-serif text-sm uppercase tracking-wider text-accent font-bold group-hover:text-fg-2 transition-colors">
                     {cat}
                   </span>
-                  <span className="text-xs font-mono text-[#8c7853]">
+                  <span className="text-xs font-mono text-fg-14">
                     ({inCat.length} {inCat.length === 1 ? "build" : "builds"})
                   </span>
                 </div>
-                <span className="text-xs text-[#8c7853] font-serif group-hover:text-[#d4b06a] transition-colors">
+                <span className="text-xs text-fg-14 font-serif group-hover:text-accent transition-colors">
                   {isExpanded ? "Collapse ▲" : "Expand ▼"}
                 </span>
               </button>
 
               {isExpanded && (
-                <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-3 bg-[#0d0a06]">
+                <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-3 bg-surface-1">
                   {inCat.map((b) => (
                     <div
                       key={b.name}
-                      className="p-4 bg-[#14100a] border border-[#2a2318] hover:border-[#d4b06a] rounded transition-all cursor-pointer group flex flex-col justify-between"
+                      className="p-4 bg-surface-3 border border-line-11 hover:border-accent rounded transition-all cursor-pointer group flex flex-col justify-between"
                       onClick={() => onSelectBuild(b)}
                     >
                       <div>
                         <div className="flex items-start justify-between gap-2">
-                          <strong className="font-serif text-base font-bold text-[#f3e6c8] group-hover:text-[#d4b06a] transition-colors leading-tight">
+                          <strong className="font-serif text-base font-bold text-fg-2 group-hover:text-accent transition-colors leading-tight">
                             {b.name}
                           </strong>
-                          <span className="text-xs font-mono font-medium text-[#d4b06a] shrink-0">
+                          <span className="text-xs font-mono font-medium text-accent shrink-0">
                             {b.gender} {b.race}
                           </span>
                         </div>
-                        <div className="text-xs text-[#b8a078] mt-1.5">
-                          Sign: <span className="text-[#f3e6c8] font-medium">{b.sign}</span> · Favored:{" "}
-                          <span className="text-[#f3e6c8] font-medium">{b.fav}</span>
+                        <div className="text-xs text-fg-8 mt-1.5">
+                          Sign: <span className="text-fg-2 font-medium">{b.sign}</span> · Favored:{" "}
+                          <span className="text-fg-2 font-medium">{b.fav}</span>
                         </div>
-                        <div className="text-xs text-[#cfc3aa] mt-1 line-clamp-1">
-                          <strong className="text-[#d4b06a]">Maj:</strong> {b.maj}
+                        <div className="text-xs text-fg-4 mt-1 line-clamp-1">
+                          <strong className="text-accent">Maj:</strong> {b.maj}
                         </div>
-                        <div className="text-xs text-[#8c7853] mt-0.5 line-clamp-1">
-                          <strong className="text-[#a69677]">Min:</strong> {b.min}
+                        <div className="text-xs text-fg-14 mt-0.5 line-clamp-1">
+                          <strong className="text-fg-9">Min:</strong> {b.min}
                         </div>
                       </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-[#1f1a12] flex items-center justify-between">
-                        <span className="text-xs text-[#8c7853] italic">{b.spec} Specialization</span>
+                      <div className="mt-3 pt-2.5 border-t border-line-12 flex items-center justify-between">
+                        <span className="text-xs text-fg-14 italic">{b.spec} Specialization</span>
                         <button
                           type="button"
                           className="mw-btn px-3 py-1 text-xs font-serif font-bold"
@@ -207,7 +207,7 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
           );
         })}
         {filteredBuilds.length === 0 && (
-          <p className="text-center text-sm text-[#8c7853] italic py-8">
+          <p className="text-center text-sm text-fg-14 italic py-8">
             No premade builds found matching &quot;{filter}&quot;.
           </p>
         )}

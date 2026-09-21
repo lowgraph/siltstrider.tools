@@ -26,25 +26,25 @@ export default function RunConfigurator({
   const grindCount = POOL.filter((r) => band(r) === "Grind").length;
 
   return (
-    <div className="run-configurator border border-[#3a2e1d] bg-[#14100a] p-5 text-[#f3e6c8] space-y-5">
+    <div className="run-configurator border border-line-9 bg-surface-3 p-5 text-fg-2 space-y-5">
       {/* Primary Action */}
       <div>
         <button
           type="button"
-          className="w-full mw-btn py-3.5 px-6 font-serif text-base font-bold tracking-wider uppercase text-[#f8ecce] shadow-lg flex items-center justify-center gap-2 border-2 border-[#d4b06a]"
+          className="w-full mw-btn py-3.5 px-6 font-serif text-base font-bold tracking-wider uppercase text-fg-2 shadow-lg flex items-center justify-center gap-2 border-2 border-accent"
           onClick={onGenerateRun}
           id="react-btn-generate-run"
         >
           <span>Generate Run</span>
         </button>
-        <p className="text-[11px] text-[#9b8b6a] font-serif text-center mt-1.5">
+        <p className="text-[11px] text-fg-11 font-serif text-center mt-1.5">
           Rolls character identity, victory condition, and gameplay modifiers based on chosen settings.
         </p>
       </div>
 
       {/* Difficulty Presets Strip */}
-      <div className="border-t border-[#2a2215] pt-4">
-        <label className="text-xs uppercase tracking-widest font-serif font-bold text-[#d4b06a] block mb-2">
+      <div className="border-t border-line-11 pt-4">
+        <label className="text-xs uppercase tracking-widest font-serif font-bold text-accent block mb-2">
           Difficulty Preset
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -55,7 +55,7 @@ export default function RunConfigurator({
                 key={p.id}
                 type="button"
                 className={`mw-btn py-2 px-2 text-xs font-serif font-bold transition-all text-center ${
-                  isActive ? "active ring-1 ring-[#d4b06a] text-[#d4b06a]" : "text-[#bdae8e]"
+                  isActive ? "active ring-1 ring-accent text-accent" : "text-fg-7"
                 }`}
                 onClick={() => onSelectPreset(p.id)}
                 title={p.description}
@@ -68,14 +68,14 @@ export default function RunConfigurator({
       </div>
 
       {/* Modifier Counts */}
-      <div className="border-t border-[#2a2215] pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="border-t border-line-11 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="cfg-rest-count" className="text-xs uppercase tracking-wider font-serif font-bold text-[#c2b291] block mb-1.5">
+          <label htmlFor="cfg-rest-count" className="text-xs uppercase tracking-wider font-serif font-bold text-fg-7 block mb-1.5">
             Active Restrictions
           </label>
           <select
             id="cfg-rest-count"
-            className="w-full mw-select p-2 text-sm font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+            className="w-full mw-select p-2 text-sm font-serif bg-surface-1 border border-line-9 text-fg-2"
             value={restrictionCount}
             onChange={(e) => onRestrictionCountChange(e.target.value)}
           >
@@ -89,12 +89,12 @@ export default function RunConfigurator({
         </div>
 
         <div>
-          <label htmlFor="cfg-obj-count" className="text-xs uppercase tracking-wider font-serif font-bold text-[#c2b291] block mb-1.5">
+          <label htmlFor="cfg-obj-count" className="text-xs uppercase tracking-wider font-serif font-bold text-fg-7 block mb-1.5">
             Minor Objectives
           </label>
           <select
             id="cfg-obj-count"
-            className="w-full mw-select p-2 text-sm font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+            className="w-full mw-select p-2 text-sm font-serif bg-surface-1 border border-line-9 text-fg-2"
             value={objectiveCount}
             onChange={(e) => onObjectiveCountChange(e.target.value)}
           >
@@ -109,8 +109,8 @@ export default function RunConfigurator({
       </div>
 
       {/* Difficulty Filter Chips */}
-      <div className="border-t border-[#2a2215] pt-4">
-        <label className="text-xs uppercase tracking-widest font-serif font-bold text-[#d4b06a] block mb-2">
+      <div className="border-t border-line-11 pt-4">
+        <label className="text-xs uppercase tracking-widest font-serif font-bold text-accent block mb-2">
           Difficulty Filter Pool
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -126,8 +126,8 @@ export default function RunConfigurator({
                 key={b.id}
                 className={`flex items-center justify-between p-2 border cursor-pointer select-none transition-colors ${
                   isChecked
-                    ? "bg-[#221b10] border-[#d4b06a]/50 text-[#f3e6c8]"
-                    : "bg-[#100d08] border-[#221a0f] text-[#7a6b52] opacity-75"
+                    ? "bg-surface-14 border-accent/50 text-fg-2"
+                    : "bg-surface-2 border-line-12 text-fg-15 opacity-75"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
@@ -135,13 +135,13 @@ export default function RunConfigurator({
                     type="checkbox"
                     checked={isChecked}
                     onChange={() => onToggleBand(b.id)}
-                    className="accent-[#d4b06a] cursor-pointer"
+                    className="accent-accent cursor-pointer"
                   />
-                  <span className="text-xs font-serif font-bold text-[#f3e6c8]">
+                  <span className="text-xs font-serif font-bold text-fg-2">
                     {b.label}
                   </span>
                 </div>
-                <span className="text-[10px] text-[#8e7e65] font-mono">
+                <span className="text-[10px] text-fg-13 font-mono">
                   ({b.count})
                 </span>
               </label>
@@ -151,12 +151,12 @@ export default function RunConfigurator({
       </div>
 
       {/* Slot-Pinning Locks */}
-      <div className="border-t border-[#2a2215] pt-4 space-y-3">
+      <div className="border-t border-line-11 pt-4 space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs uppercase tracking-widest font-serif font-bold text-[#d4b06a]">
+          <label className="text-xs uppercase tracking-widest font-serif font-bold text-accent">
             Pinned Slots (Locks)
           </label>
-          <span className="text-[11px] text-[#8e7e65] font-serif">
+          <span className="text-[11px] text-fg-13 font-serif">
             Locked slots stay unchanged on roll
           </span>
         </div>
@@ -167,14 +167,14 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.race ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+                locks.race ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
               }`}
               onClick={() => onToggleLock("race")}
             >
               {locks.race ? "Locked" : "Lock"}
             </button>
             <select
-              className="flex-1 mw-select p-1.5 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+              className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
               value={character?.race || ""}
               onChange={(e) => onUpdateCharacterSlot("race", e.target.value)}
               disabled={!locks.race && !character?.race}
@@ -193,14 +193,14 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.cls ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+                locks.cls ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
               }`}
               onClick={() => onToggleLock("cls")}
             >
               {locks.cls ? "Locked" : "Lock"}
             </button>
             <select
-              className="flex-1 mw-select p-1.5 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+              className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
               value={character?.cls || ""}
               onChange={(e) => onUpdateCharacterSlot("cls", e.target.value)}
               disabled={!locks.cls && !character?.cls}
@@ -220,14 +220,14 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.sign ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+                locks.sign ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
               }`}
               onClick={() => onToggleLock("sign")}
             >
               {locks.sign ? "Locked" : "Lock"}
             </button>
             <select
-              className="flex-1 mw-select p-1.5 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+              className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
               value={character?.sign || ""}
               onChange={(e) => onUpdateCharacterSlot("sign", e.target.value)}
               disabled={!locks.sign && !character?.sign}
@@ -246,7 +246,7 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`py-1.5 px-2 text-xs border font-serif text-center ${
-                locks.major ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+                locks.major ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
               }`}
               onClick={() => onToggleLock("major")}
             >
@@ -256,7 +256,7 @@ export default function RunConfigurator({
             <button
               type="button"
               className={`py-1.5 px-2 text-xs border font-serif text-center ${
-                locks.rest ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+                locks.rest ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
               }`}
               onClick={() => onToggleLock("rest")}
             >
@@ -267,10 +267,10 @@ export default function RunConfigurator({
       </div>
 
       {/* Pool Explorer Button */}
-      <div className="border-t border-[#2a2215] pt-4">
+      <div className="border-t border-line-11 pt-4">
         <button
           type="button"
-          className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-[#c2b291] flex items-center justify-center gap-1.5"
+          className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-fg-7 flex items-center justify-center gap-1.5"
           onClick={onOpenPoolBrowser}
         >
           <span>Browse Full Pools &amp; Rules</span>

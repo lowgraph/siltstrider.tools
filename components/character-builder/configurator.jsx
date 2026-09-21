@@ -11,7 +11,7 @@ function InfoTip({ text }) {
     <span className="relative inline-block ml-1 align-middle shrink-0">
       <button
         type="button"
-        className="w-6 h-6 sm:w-5 sm:h-5 text-xs font-serif font-bold bg-[#2a2114] text-[#d4b06a] border border-[#4a3a22] hover:bg-[#3a2d1d] hover:text-[#f3e6c8] inline-flex items-center justify-center cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4b06a]"
+        className="w-6 h-6 sm:w-5 sm:h-5 text-xs font-serif font-bold bg-surface-17 text-accent border border-line-7 hover:bg-surface-21 hover:text-fg-2 inline-flex items-center justify-center cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
         onClick={(e) => {
           e.preventDefault();
           setOpen((o) => !o);
@@ -29,7 +29,7 @@ function InfoTip({ text }) {
       </button>
       {open && (
         <span
-          className="absolute z-50 left-0 top-7 w-64 p-2.5 text-xs text-[#f3e6c8] bg-[#14100a] shadow-2xl font-serif leading-relaxed block mw-groove-panel"
+          className="absolute z-50 left-0 top-7 w-64 p-2.5 text-xs text-fg-2 bg-surface-3 shadow-2xl font-serif leading-relaxed block mw-groove-panel"
           style={{
             boxShadow: "0 8px 24px rgba(0,0,0,0.8)"
           }}
@@ -105,15 +105,15 @@ export default function Configurator({
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
-        background: "var(--surface, #181510)",
+        background: "var(--color-surface-7)",
         boxShadow: "inset 0 0 12px 3px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.5)"
       }}
     >
-      <div className="border-b border-[#2a2318] pb-3">
-        <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide">
+      <div className="border-b border-line-11 pb-3">
+        <h3 className="font-serif text-xl font-bold text-fg-2 tracking-wide">
           Character Configuration
         </h3>
-        <p className="text-sm text-[#b8a078] mt-0.5">
+        <p className="text-sm text-fg-8 mt-0.5">
           Tune race, birthsign, class, and skill specialties.
         </p>
       </div>
@@ -121,7 +121,7 @@ export default function Configurator({
       {/* Row 1: Race & Gender */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label htmlFor="builder-race" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label htmlFor="builder-race" className="block text-sm font-serif font-bold text-accent mb-2">
             <span>Race</span>
             <InfoTip text={activeRace?.tip || "Each race provides distinct attribute ratings, skill bonuses, and unique innate spells or powers."} />
           </label>
@@ -140,7 +140,7 @@ export default function Configurator({
         </div>
 
         <div>
-          <label className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label className="block text-sm font-serif font-bold text-accent mb-2">
             Sex / Gender
           </label>
           <div className="flex gap-2 h-10">
@@ -163,7 +163,7 @@ export default function Configurator({
       {/* Row 2: Class & Birthsign */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label htmlFor="builder-className" className="block text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label htmlFor="builder-className" className="block text-sm font-serif font-bold text-accent mb-2">
             Class
           </label>
           <select id="builder-className"
@@ -184,7 +184,7 @@ export default function Configurator({
         </div>
 
         <div>
-          <label htmlFor="builder-sign" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label htmlFor="builder-sign" className="flex items-center justify-between text-sm font-serif font-bold text-accent mb-2">
             <span>Birthsign</span>
             {activeSign?.tip && <InfoTip text={activeSign.tip} />}
           </label>
@@ -206,7 +206,7 @@ export default function Configurator({
       {/* Row 3: Specialization & Favored Attributes (Clean grid, no enclosing box) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label htmlFor="builder-spec" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label htmlFor="builder-spec" className="flex items-center justify-between text-sm font-serif font-bold text-accent mb-2">
             <span>Specialization</span>
             <InfoTip
               text={
@@ -232,7 +232,7 @@ export default function Configurator({
         </div>
 
         <div>
-          <label htmlFor="builder-fav1" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label htmlFor="builder-fav1" className="flex items-center justify-between text-sm font-serif font-bold text-accent mb-2">
             <span>Favored Attr 1</span>
             <InfoTip text={ATTR_TIP[build.fav1] || "Grants +10 starting attribute bonus."} />
           </label>
@@ -252,7 +252,7 @@ export default function Configurator({
         </div>
 
         <div>
-          <label htmlFor="builder-fav2" className="flex items-center justify-between text-sm font-serif font-bold text-[#d4b06a] mb-2">
+          <label htmlFor="builder-fav2" className="flex items-center justify-between text-sm font-serif font-bold text-accent mb-2">
             <span>Favored Attr 2</span>
             <InfoTip text={ATTR_TIP[build.fav2] || "Grants +10 starting attribute bonus."} />
           </label>
@@ -278,12 +278,12 @@ export default function Configurator({
       </div>
 
       {/* Bitter Cup Artifact Option */}
-      <div className="p-3 bg-[#17120a] border border-[#382b18] flex flex-wrap items-center justify-between gap-3 text-xs">
-        <label htmlFor="c-bittercup" className="flex items-center gap-2.5 cursor-pointer font-serif text-sm font-bold text-[#d4b06a]">
+      <div className="p-3 bg-surface-5 border border-line-9 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <label htmlFor="c-bittercup" className="flex items-center gap-2.5 cursor-pointer font-serif text-sm font-bold text-accent">
           <input
             type="checkbox"
             id="c-bittercup"
-            className="w-4 h-4 accent-[#d4b06a] cursor-pointer"
+            className="w-4 h-4 accent-accent cursor-pointer"
             checked={Boolean(build.bitterCup)}
             onChange={(e) => onUpdateField("bitterCup", e.target.checked)}
           />
@@ -291,7 +291,7 @@ export default function Configurator({
         </label>
         <div className="flex items-center gap-2">
           {sheet?.bitterCup && (
-            <span className="text-[11px] font-mono text-[#c2a662]">
+            <span className="text-[11px] font-mono text-accent">
               +{sheet.bitterCup.bonus} {sheet.bitterCup.highest} / -{sheet.bitterCup.penalty} {sheet.bitterCup.lowest}
             </span>
           )}
@@ -301,13 +301,13 @@ export default function Configurator({
 
       {/* Preset Class Customization Quick-Action Banner */}
       {build.className !== "Custom" && (
-        <div className="flex items-center justify-between p-2.5 bg-[#17120a] border border-[#382b18] text-xs">
-          <span className="text-[#c2b293]">
-            Preset Class: <strong className="text-[#f3e6c8]">{build.className}</strong> (Locked)
+        <div className="flex items-center justify-between p-2.5 bg-surface-5 border border-line-9 text-xs">
+          <span className="text-fg-7">
+            Preset Class: <strong className="text-fg-2">{build.className}</strong> (Locked)
           </span>
           <button
             type="button"
-            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a]"
+            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-accent"
             onClick={() => onUpdateField("className", "Custom")}
             title="Convert to Custom Class to customize major and minor skills"
           >
@@ -318,11 +318,11 @@ export default function Configurator({
 
       {/* Major Skills (5) */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between border-b border-[#2a2318] pb-1">
-          <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+        <div className="flex items-center justify-between border-b border-line-11 pb-1">
+          <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
             Major Skills (+25)
           </h4>
-          <span className="text-[11px] font-mono text-[#9e8b6b]">5 Slots</span>
+          <span className="text-[11px] font-mono text-fg-11">5 Slots</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {build.maj.map((skillName, idx) => {
@@ -334,7 +334,7 @@ export default function Configurator({
               <div
                 key={`maj-${idx}`}
                 className={`flex items-center gap-2 p-1.5 transition-colors ${
-                  idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
+                  idx % 2 === 0 ? "bg-surface-3" : "bg-surface-9"
                 }`}
               >
                 <select
@@ -361,7 +361,7 @@ export default function Configurator({
                 </select>
                 {rating !== undefined && (
                   <span
-                    className="font-mono font-bold text-xs px-1.5 py-0.5 bg-[#22180d] border border-[#3d2b16] text-[#d4b06a] min-w-[28px] text-center shrink-0"
+                    className="font-mono font-bold text-xs px-1.5 py-0.5 bg-surface-11 border border-line-10 text-accent min-w-[28px] text-center shrink-0"
                     title={`Rating: ${rating}${abbr ? ` (${gov})` : ""}`}
                   >
                     {rating}
@@ -375,11 +375,11 @@ export default function Configurator({
 
       {/* Minor Skills (5) */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between border-b border-[#2a2318] pb-1">
-          <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+        <div className="flex items-center justify-between border-b border-line-11 pb-1">
+          <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
             Minor Skills (+10)
           </h4>
-          <span className="text-[11px] font-mono text-[#9e8b6b]">5 Slots</span>
+          <span className="text-[11px] font-mono text-fg-11">5 Slots</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {build.min.map((skillName, idx) => {
@@ -391,7 +391,7 @@ export default function Configurator({
               <div
                 key={`min-${idx}`}
                 className={`flex items-center gap-2 p-1.5 transition-colors ${
-                  idx % 2 === 0 ? "bg-[#14100a]" : "bg-[#1d170f]"
+                  idx % 2 === 0 ? "bg-surface-3" : "bg-surface-9"
                 }`}
               >
                 <select
@@ -418,7 +418,7 @@ export default function Configurator({
                 </select>
                 {rating !== undefined && (
                   <span
-                    className="font-mono font-bold text-xs px-1.5 py-0.5 bg-[#1a140d] border border-[#352514] text-[#c2a662] min-w-[28px] text-center shrink-0"
+                    className="font-mono font-bold text-xs px-1.5 py-0.5 bg-surface-6 border border-line-10 text-accent min-w-[28px] text-center shrink-0"
                     title={`Rating: ${rating}${abbr ? ` (${gov})` : ""}`}
                   >
                     {rating}

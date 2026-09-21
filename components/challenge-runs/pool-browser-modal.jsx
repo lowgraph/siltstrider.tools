@@ -36,14 +36,14 @@ export default function PoolBrowserModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#14100a] border-2 border-[#d4b06a] w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl text-[#f3e6c8]">
+      <div className="bg-surface-3 border-2 border-accent w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl text-fg-2">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#3a2e1d] bg-[#1a140d]">
+        <div className="flex items-center justify-between p-4 border-b border-line-9 bg-surface-6">
           <div>
-            <h3 className="text-lg font-serif font-bold text-[#d4b06a]">
+            <h3 className="text-lg font-serif font-bold text-accent">
               Challenge Runs Pool Browser
             </h3>
-            <p className="text-xs text-[#9b8b6a] font-serif">
+            <p className="text-xs text-fg-11 font-serif">
               Search and explore all objectives, restrictions, and rules for {world === "tr" ? "Tamriel Rebuilt" : "Vvardenfell"}.
             </p>
           </div>
@@ -57,10 +57,10 @@ export default function PoolBrowserModal({
         </div>
 
         {/* Controls: Search & Tabs */}
-        <div className="p-4 border-b border-[#2a2215] space-y-3 bg-[#110e08]">
+        <div className="p-4 border-b border-line-11 space-y-3 bg-surface-2">
           <input
             type="text"
-            className="w-full bg-[#0a0805] border border-[#4a3b26] p-2 text-sm text-[#f3e6c8] placeholder-[#7a6b52] font-serif"
+            className="w-full bg-surface-1 border border-line-7 p-2 text-sm text-fg-2 placeholder-fg-15 font-serif"
             placeholder="Search objectives, places, tags, or restrictions…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -78,7 +78,7 @@ export default function PoolBrowserModal({
                 key={tab.id}
                 type="button"
                 className={`mw-btn px-3 py-1 text-xs font-serif ${
-                  activeTab === tab.id ? "active ring-1 ring-[#d4b06a]" : ""
+                  activeTab === tab.id ? "active ring-1 ring-accent" : ""
                 }`}
                 onClick={() => setActiveTab(tab.id)}
               >
@@ -93,15 +93,15 @@ export default function PoolBrowserModal({
           {/* Major Objectives */}
           {(activeTab === "all" || activeTab === "major") && (
             <div>
-              <h4 className="text-xs uppercase tracking-widest font-serif font-bold text-[#d4b06a] mb-2 border-b border-[#3a2e1d] pb-1">
+              <h4 className="text-xs uppercase tracking-widest font-serif font-bold text-accent mb-2 border-b border-line-9 pb-1">
                 Major Objectives ({filteredMajors.length})
               </h4>
               <ul className="space-y-1.5 text-sm">
                 {filteredMajors.map((m, idx) => (
-                  <li key={idx} className="p-2 bg-[#19140c] border border-[#261e12] flex items-center justify-between">
+                  <li key={idx} className="p-2 bg-surface-5 border border-line-11 flex items-center justify-between">
                     <span className="font-serif">{m}</span>
                     {regionsIn(m).map((r) => (
-                      <span key={r} className="region-tag text-[10px] px-1.5 py-0.5 bg-[#251e13] border border-[#3d301e] text-[#b8a786]">
+                      <span key={r} className="region-tag text-[10px] px-1.5 py-0.5 bg-surface-14 border border-line-9 text-fg-7">
                         {r}
                       </span>
                     ))}
@@ -114,14 +114,14 @@ export default function PoolBrowserModal({
           {/* Minor Objectives */}
           {(activeTab === "all" || activeTab === "minor") && (
             <div>
-              <h4 className="text-xs uppercase tracking-widest font-serif font-bold text-[#d4b06a] mb-2 border-b border-[#3a2e1d] pb-1">
+              <h4 className="text-xs uppercase tracking-widest font-serif font-bold text-accent mb-2 border-b border-line-9 pb-1">
                 Minor Objectives ({filteredMinors.length})
               </h4>
               <ul className="space-y-1.5 text-sm">
                 {filteredMinors.map((o, idx) => (
-                  <li key={idx} className="p-2 bg-[#19140c] border border-[#261e12] flex items-center justify-between">
+                  <li key={idx} className="p-2 bg-surface-5 border border-line-11 flex items-center justify-between">
                     <span className="font-serif">{o.text}</span>
-                    <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-[#251e13] text-[#a9997b]">
+                    <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-surface-14 text-fg-9">
                       {o.kind}
                     </span>
                   </li>
@@ -133,16 +133,16 @@ export default function PoolBrowserModal({
           {/* Restrictions */}
           {(activeTab === "all" || activeTab === "restrictions") && (
             <div>
-              <h4 className="text-xs uppercase tracking-widest font-serif font-bold text-[#d4b06a] mb-2 border-b border-[#3a2e1d] pb-1">
+              <h4 className="text-xs uppercase tracking-widest font-serif font-bold text-accent mb-2 border-b border-line-9 pb-1">
                 Restrictions ({filteredRestrictions.length})
               </h4>
               <ul className="space-y-1.5 text-sm">
                 {filteredRestrictions.map((r, idx) => {
                   const b = band(r);
                   return (
-                    <li key={idx} className="p-2 bg-[#19140c] border border-[#261e12] flex items-center justify-between">
+                    <li key={idx} className="p-2 bg-surface-5 border border-line-11 flex items-center justify-between">
                       <span className="font-serif">{r}</span>
-                      <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-[#251e13] text-[#d4b06a] border border-[#3d301e]">
+                      <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-surface-14 text-accent border border-line-9">
                         {b}
                       </span>
                     </li>

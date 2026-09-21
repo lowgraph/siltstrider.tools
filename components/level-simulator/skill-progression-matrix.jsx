@@ -36,20 +36,20 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
   }, [skillEntries, selectedSpec]);
 
   return (
-    <div className="skill-progression-matrix space-y-3 bg-[#100d08] p-4 border border-[#2a2318] mw-groove-panel">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#221c13] pb-2">
-        <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+    <div className="skill-progression-matrix space-y-3 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-12 pb-2">
+        <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
           27-Skill Progression Matrix
         </h4>
 
         {/* Category Tabs */}
-        <div className="inline-flex rounded-none p-0.5 bg-[#18140e] border border-[#3a3020] text-xs">
+        <div className="inline-flex rounded-none p-0.5 bg-surface-7 border border-line-9 text-xs">
           {["all", "Combat", "Magic", "Stealth"].map((spec) => (
             <button
               key={spec}
               type="button"
               className={`mw-btn py-1 px-2.5 text-[11px] font-serif font-bold transition-all ${
-                selectedSpec === spec ? "active ring-1 ring-[#d4b06a]" : "text-[#9e8b6b]"
+                selectedSpec === spec ? "active ring-1 ring-accent" : "text-fg-11"
               }`}
               onClick={() => setSelectedSpec(spec)}
             >
@@ -65,17 +65,17 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
           const isMaxed = s.curVal >= 100;
           const tierClass =
             s.tier === "Major"
-              ? "border-[#8e7436] bg-[#1a150c]"
+              ? "border-accent-5 bg-surface-5"
               : s.tier === "Minor"
-              ? "border-[#5c4220] bg-[#16120b]"
-              : "border-[#2a2318] bg-[#120f0a]";
+              ? "border-line-5 bg-surface-4"
+              : "border-line-11 bg-surface-2";
 
           const badgeBg =
             s.tier === "Major"
-              ? "bg-[#382b13] text-[#d4b06a]"
+              ? "bg-surface-20 text-accent"
               : s.tier === "Minor"
-              ? "bg-[#2d1e0d] text-[#b8a078]"
-              : "bg-[#1f1911] text-[#9e8b6b]";
+              ? "bg-surface-15 text-fg-8"
+              : "bg-surface-9 text-fg-11";
 
           return (
             <div
@@ -84,10 +84,10 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 overflow-hidden">
-                  <span className="font-serif font-semibold text-[#f3e6c8] truncate" title={s.skill}>
+                  <span className="font-serif font-semibold text-fg-2 truncate" title={s.skill}>
                     {s.skill}
                   </span>
-                  <span className="font-mono text-[9px] px-1 py-0.2 bg-[#241c12] text-[#d4b06a] border border-[#3e301f] shrink-0">
+                  <span className="font-mono text-[9px] px-1 py-0.2 bg-surface-12 text-accent border border-line-9 shrink-0">
                     {s.govAbbr}
                   </span>
                 </div>
@@ -96,7 +96,7 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
                     {s.tier}
                   </span>
                   {s.gained > 0 && (
-                    <span className="text-[10px] font-mono text-[#d4b06a]">
+                    <span className="text-[10px] font-mono text-accent">
                       +{s.gained} trained
                     </span>
                   )}
@@ -107,18 +107,18 @@ export default function SkillProgressionMatrix({ initialSkills, currentSkills, m
               <div className="text-right shrink-0">
                 <span
                   className={`font-mono text-sm font-bold ${
-                    isMaxed ? "text-[#d4b06a]" : "text-[#f3e6c8]"
+                    isMaxed ? "text-accent" : "text-fg-2"
                   }`}
                 >
                   {s.curVal}
                 </span>
                 {isMaxed && (
-                  <span className="block text-[8px] font-mono font-bold text-[#d4b06a] uppercase leading-none">
+                  <span className="block text-[8px] font-mono font-bold text-accent uppercase leading-none">
                     MAX
                   </span>
                 )}
                 {!isMaxed && s.startVal !== s.curVal && (
-                  <span className="block text-[9px] font-mono text-[#9e8b6b] leading-none">
+                  <span className="block text-[9px] font-mono text-fg-11 leading-none">
                     base {s.startVal}
                   </span>
                 )}

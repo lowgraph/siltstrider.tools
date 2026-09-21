@@ -262,20 +262,20 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   };
 
   return (
-    <div className="journal-factions-root max-w-7xl mx-auto flex flex-col h-[calc(100vh-140px)] min-h-[600px] bg-[#14100a] text-[#f3e6c8] border-4 border-[#5c4827] shadow-2xl">
+    <div className="journal-factions-root max-w-7xl mx-auto flex flex-col h-[calc(100vh-140px)] min-h-[600px] bg-surface-3 text-fg-2 border-4 border-line-4 shadow-2xl">
       {/* Top Bar / Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-[#1b1610] border-b-2 border-[#5c4827]">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-surface-6 border-b-2 border-line-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl md:text-2xl font-serif font-bold text-[#d4b06a] tracking-wide">
+          <h1 className="text-xl md:text-2xl font-serif font-bold text-accent tracking-wide">
             Faction Journal
           </h1>
           {/* Live Bundle Status Badge */}
           {isLive ? (
-            <span className="px-2 py-0.5 text-[11px] font-mono uppercase bg-[#182614] border border-[#3e5f2e] text-[#9bc37e]" title="Loaded from verified game data bundle">
+            <span className="px-2 py-0.5 text-[11px] font-mono uppercase bg-success-surface-2 border border-success-line-4 text-success-4" title="Loaded from verified game data bundle">
               • Live: {factionsList.length} Factions ({shell?.profile?.toUpperCase() || "VANILLA"})
             </span>
           ) : (
-            <span className="px-2 py-0.5 text-[11px] font-mono text-[#8c7853] bg-[#241c13] border border-[#3d301b]">
+            <span className="px-2 py-0.5 text-[11px] font-mono text-fg-14 bg-surface-12 border border-line-9">
               Loading bundle data…
             </span>
           )}
@@ -285,8 +285,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
         <div className="flex items-center gap-3 text-xs font-serif">
           {sheet && (
             <div className="hidden sm:block text-right">
-              <span className="text-[#8c7853] block text-[10px] uppercase">Active Character:</span>
-              <strong className="text-[#c9b88e]">{build.name || "Adventurer"}</strong> ({build.race} {build.className})
+              <span className="text-fg-14 block text-[10px] uppercase">Active Character:</span>
+              <strong className="text-fg-6">{build.name || "Adventurer"}</strong> ({build.race} {build.className})
             </div>
           )}
 
@@ -296,8 +296,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
               onClick={() => handleToggleJoin(selectedFaction.key)}
               className={`px-3 py-1.5 text-xs font-serif uppercase tracking-wider font-bold transition-all border ${
                 currentMembership
-                  ? "bg-[#3d1a1a] text-[#f0a8a8] border-[#8c2a2a] hover:bg-[#522222]"
-                  : "bg-[#28401e] text-[#b4e698] border-[#5fa33e] hover:bg-[#345427]"
+                  ? "bg-danger-surface-3 text-danger-2 border-danger-line-1 hover:bg-danger-surface-3"
+                  : "bg-success-surface-3 text-success-1 border-success-line-1 hover:bg-success-surface-4"
               }`}
             >
               {currentMembership ? "Leave Faction" : "+ Join Faction"}
@@ -309,7 +309,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
       {/* Main Split-Pane Workspace */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Left Pane: Roster (320px on desktop) */}
-        <div className="w-full md:w-80 md:min-w-[300px] h-64 md:h-full border-b-2 md:border-b-0 md:border-r-2 border-[#5c4827] flex flex-col">
+        <div className="w-full md:w-80 md:min-w-[300px] h-64 md:h-full border-b-2 md:border-b-0 md:border-r-2 border-line-4 flex flex-col">
           <FactionRoster
             factions={factionsList}
             selectedFactionKey={selectedFactionKey}

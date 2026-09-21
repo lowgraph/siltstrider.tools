@@ -92,10 +92,10 @@ export default function ToolDirectoryGrid({ onNavigate }) {
   return (
     <section className="mb-8" aria-label="Tools Directory">
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-4">
-        <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#d4b06a] tracking-wide">
+        <h2 className="text-xl sm:text-2xl font-serif font-bold text-accent tracking-wide">
           CRPG Tools Directory
         </h2>
-        <p className="text-xs text-[#a09070] font-serif">
+        <p className="text-xs text-fg-11 font-serif">
           Select any planning module to begin your journey across Vvardenfell and the Mainland.
         </p>
       </div>

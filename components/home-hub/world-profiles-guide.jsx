@@ -36,24 +36,24 @@ export default function WorldProfilesGuide() {
 
   return (
     <section
-      className="home-hub-profiles-guide mw-master-window p-4 sm:p-6 mb-8 text-[#f3e6c8]"
+      className="home-hub-profiles-guide mw-master-window p-4 sm:p-6 mb-8 text-fg-2"
       style={{
-        background: "var(--surface, #181510)",
+        background: "var(--color-surface-7)",
         boxShadow: "0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 16px rgba(0, 0, 0, 0.8)",
       }}
       aria-label="Game World Profiles Guide"
     >
-      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-4 pb-3 border-b border-[#2a2215]">
+      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-4 pb-3 border-b border-line-11">
         <div>
-          <h2 className="text-lg sm:text-xl font-serif font-bold text-[#d4b06a] tracking-wide">
+          <h2 className="text-lg sm:text-xl font-serif font-bold text-accent tracking-wide">
             Game World Profiles
           </h2>
-          <p className="text-xs text-[#a09070] font-serif mt-0.5">
+          <p className="text-xs text-fg-11 font-serif mt-0.5">
             Switch your active world at any time. All calculators, gear advisors, and travel paths adapt in real time.
           </p>
         </div>
-        <span className="text-xs font-serif text-[#c9b88e] shrink-0">
-          Active: <strong className="text-[#ffd700] uppercase font-mono">{currentProfile.replace("_", " + ")}</strong>
+        <span className="text-xs font-serif text-fg-6 shrink-0">
+          Active: <strong className="text-accent-1 uppercase font-mono">{currentProfile.replace("_", " + ")}</strong>
         </span>
       </div>
 
@@ -65,23 +65,23 @@ export default function WorldProfilesGuide() {
               key={p.id}
               className={`p-3.5 sm:p-4 rounded border transition-all flex flex-col justify-between ${
                 isActive
-                  ? "bg-[#281f13] border-[#d4b06a] shadow-[0_0_12px_rgba(212,176,106,0.2)]"
-                  : "bg-[#14100b] border-[#382b19] hover:border-[#6e5833]"
+                  ? "bg-surface-13 border-accent shadow-[0_0_12px_color-mix(in_srgb,var(--color-accent)_20%,transparent)]"
+                  : "bg-surface-3 border-line-9 hover:border-line-2"
               }`}
             >
               <div>
                 <div className="flex items-center justify-between gap-1 mb-1">
-                  <h3 className="font-serif font-bold text-sm sm:text-base text-[#d4b06a]">
+                  <h3 className="font-serif font-bold text-sm sm:text-base text-accent">
                     {p.title}
                   </h3>
                   {isActive && (
-                    <span className="text-[10px] uppercase font-serif font-bold px-1.5 py-0.5 bg-[#453218] border border-[#d4b06a] text-[#ffd700] rounded-sm">
+                    <span className="text-[10px] uppercase font-serif font-bold px-1.5 py-0.5 bg-surface-23 border border-accent text-accent-1 rounded-sm">
                       Active
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-[#8c7853] font-serif mb-2">{p.era}</p>
-                <p className="text-xs text-[#dcd0b4] leading-relaxed font-serif mb-3">
+                <p className="text-[11px] text-fg-14 font-serif mb-2">{p.era}</p>
+                <p className="text-xs text-fg-4 leading-relaxed font-serif mb-3">
                   {p.desc}
                 </p>
               </div>
@@ -92,8 +92,8 @@ export default function WorldProfilesGuide() {
                 disabled={isActive}
                 className={`mw-btn w-full py-1.5 px-3 text-xs font-serif font-bold tracking-wide transition-all ${
                   isActive
-                    ? "opacity-60 cursor-default text-[#ffd700]"
-                    : "text-[#d4b06a] hover:text-[#fff]"
+                    ? "opacity-60 cursor-default text-accent-1"
+                    : "text-accent hover:text-fg-1"
                 }`}
               >
                 {isActive ? "✓ Selected Profile" : `Switch to ${p.title} →`}

@@ -17,7 +17,7 @@ export default function ProgressionSheet({
 
   if (!state) {
     return (
-      <div className="progression-sheet p-8 text-center bg-[#181510] border-6 border-transparent mw-border-panel text-xs text-[#9e8b6b]">
+      <div className="progression-sheet p-8 text-center bg-surface-7 border-6 border-transparent mw-border-panel text-xs text-fg-11">
         Loading progression sheet…
       </div>
     );
@@ -49,29 +49,29 @@ export default function ProgressionSheet({
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
-        background: "var(--surface, #181510)",
+        background: "var(--color-surface-7)",
         boxShadow: "inset 0 0 12px 3px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.5)"
       }}
     >
       {/* Header Bar */}
-      <div className="border-b border-[#2a2318] pb-3 flex flex-wrap items-center justify-between gap-2">
+      <div className="border-b border-line-11 pb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="font-serif text-lg sm:text-xl font-bold text-[#f3e6c8] tracking-wide flex items-center gap-2">
+          <h3 className="font-serif text-lg sm:text-xl font-bold text-fg-2 tracking-wide flex items-center gap-2">
             <span>{character?.name || className}</span>
-            <span className="text-xs px-2 py-0.5 bg-[#251a0e] border border-[#4a341b] text-[#d4b06a] font-serif font-bold">
+            <span className="text-xs px-2 py-0.5 bg-surface-11 border border-line-8 text-accent font-serif font-bold">
               Level {level}
             </span>
           </h3>
-          <p className="text-xs text-[#9e8b6b] font-mono mt-0.5">
+          <p className="text-xs text-fg-11 font-mono mt-0.5">
             {gender} {race} · {sign}
           </p>
         </div>
         <div className="text-right">
-          <div className="text-xs font-serif text-[#9e8b6b]">
-            Theoretical Cap: <strong className="font-mono text-[#f3e6c8]">Lvl {levelCap}</strong>
+          <div className="text-xs font-serif text-fg-11">
+            Theoretical Cap: <strong className="font-mono text-fg-2">Lvl {levelCap}</strong>
           </div>
           {bitterCup && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-[#2a1b0c] border border-[#4d3215] text-[#d4b06a] font-serif font-bold inline-block mt-1">
+            <span className="text-[10px] px-1.5 py-0.5 bg-surface-15 border border-line-8 text-accent font-serif font-bold inline-block mt-1">
               Bitter Cup (+{bitterCup.highest} / -{bitterCup.lowest})
             </span>
           )}
@@ -79,12 +79,12 @@ export default function ProgressionSheet({
       </div>
 
       {/* Leveled Vitals */}
-      <div className="vitals-section space-y-2 bg-[#100d08] p-4 border border-[#2a2318] mw-groove-panel">
-        <div className="flex items-center justify-between border-b border-[#221c13] pb-1.5 mb-2">
-          <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+      <div className="vitals-section space-y-2 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
+        <div className="flex items-center justify-between border-b border-line-12 pb-1.5 mb-2">
+          <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
             Leveled Vitals (Level {level})
           </h4>
-          <span className="text-[10px] font-mono text-[#d4b06a]">
+          <span className="text-[10px] font-mono text-accent">
             +{Math.max(0, health - (initialSheet?.health || health))} Total HP Gained
           </span>
         </div>
@@ -94,8 +94,8 @@ export default function ProgressionSheet({
       </div>
 
       {/* Primary Attributes Grid */}
-      <div className="attributes-section space-y-2 bg-[#100d08] p-4 border border-[#2a2318] mw-groove-panel">
-        <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold border-b border-[#221c13] pb-1.5 mb-2">
+      <div className="attributes-section space-y-2 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
+        <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1.5 mb-2">
           Primary Attributes
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -108,28 +108,28 @@ export default function ProgressionSheet({
             return (
               <div
                 key={attr}
-                className="p-2 bg-[#16120b] border border-[#2f2518] flex items-center justify-between text-xs shadow-sm"
+                className="p-2 bg-surface-4 border border-line-11 flex items-center justify-between text-xs shadow-sm"
               >
                 <div>
-                  <span className="font-serif font-semibold text-[#f3e6c8] block">{attr}</span>
-                  <span className="text-[10px] font-mono text-[#9e8b6b]">
+                  <span className="font-serif font-semibold text-fg-2 block">{attr}</span>
+                  <span className="text-[10px] font-mono text-fg-11">
                     base {baseVal}
                   </span>
                 </div>
                 <div className="text-right">
                   <span
                     className={`font-mono text-sm font-bold ${
-                      isMaxed ? "text-[#d4b06a]" : "text-[#f3e6c8]"
+                      isMaxed ? "text-accent" : "text-fg-2"
                     }`}
                   >
                     {curVal}
                   </span>
                   {isMaxed ? (
-                    <span className="block text-[8px] font-mono font-bold text-[#d4b06a] uppercase leading-none">
+                    <span className="block text-[8px] font-mono font-bold text-accent uppercase leading-none">
                       MAX
                     </span>
                   ) : diff > 0 ? (
-                    <span className="block text-[9px] font-mono text-[#d4b06a] leading-none">
+                    <span className="block text-[9px] font-mono text-accent leading-none">
                       +{diff}
                     </span>
                   ) : null}

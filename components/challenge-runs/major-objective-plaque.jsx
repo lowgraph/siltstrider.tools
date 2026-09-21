@@ -10,12 +10,12 @@ export default function MajorObjectivePlaque({
   const regions = major ? regionsIn(major) : [];
 
   return (
-    <div className="major-objective-plaque border-2 border-[#d4b06a]/40 bg-[#16120b] p-4 text-[#f3e6c8] relative shadow-md">
+    <div className="major-objective-plaque border-2 border-accent/40 bg-surface-4 p-4 text-fg-2 relative shadow-md">
       {/* Top Banner Header */}
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#3a2e1d]">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-line-9">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 bg-[#d4b06a] inline-block transform rotate-45" />
-          <h4 className="text-sm font-serif uppercase tracking-widest text-[#d4b06a] font-bold">
+          <span className="w-2.5 h-2.5 bg-accent inline-block transform rotate-45" />
+          <h4 className="text-sm font-serif uppercase tracking-widest text-accent font-bold">
             Major Objective
           </h4>
         </div>
@@ -36,7 +36,7 @@ export default function MajorObjectivePlaque({
           <button
             type="button"
             className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+              isLocked ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
             }`}
             onClick={onToggleLock}
             title={isLocked ? "Unlock Major Objective" : "Lock Major Objective"}
@@ -50,14 +50,14 @@ export default function MajorObjectivePlaque({
       <div className="py-2">
         {major ? (
           <div>
-            <p className="text-base font-serif font-bold text-[#fce8bb] leading-relaxed">
+            <p className="text-base font-serif font-bold text-fg-2 leading-relaxed">
               {major}
             </p>
             {regions.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1.5 items-center">
-                <span className="text-[11px] text-[#9b8b6a] font-serif uppercase">Region:</span>
+                <span className="text-[11px] text-fg-11 font-serif uppercase">Region:</span>
                 {regions.map((r) => (
-                  <span key={r} className="region-tag text-xs px-2 py-0.5 bg-[#251e13] border border-[#4a3b26] text-[#e0cfab]">
+                  <span key={r} className="region-tag text-xs px-2 py-0.5 bg-surface-14 border border-line-7 text-fg-4">
                     {r}
                   </span>
                 ))}
@@ -65,7 +65,7 @@ export default function MajorObjectivePlaque({
             )}
           </div>
         ) : (
-          <p className="text-sm italic text-[#7a6b52] py-2">
+          <p className="text-sm italic text-fg-15 py-2">
             No major objective rolled yet. Click Generate Run to roll your victory condition.
           </p>
         )}

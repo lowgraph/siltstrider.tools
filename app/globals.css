@@ -1,6 +1,7 @@
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+@import "./theme.css";
 
 @theme {
   --font-serif: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
@@ -22,14 +23,14 @@
 :root {
   color-scheme: dark;
   --ink: #1a120c;
-  --paper: #f3e6c8;
-  --muted: #b8a078;
+  --paper: var(--color-fg-2);
+  --muted: var(--color-fg-8);
   --parchment: #e4d2a8;
   --parchment-dark: #d4be8c;
-  --gold: #d4b06a;
+  --gold: var(--color-accent);
   --offblack: #0c0a08;
   --journal: #12100c;
-  --surface: #181510;
+  --surface: var(--color-surface-7);
   --radius: 0;
 
   --mw-border: url("/textures/mw-border.png");
@@ -38,7 +39,7 @@
 
   --mw-scroll-thumb: #4e3c23;
   --mw-scroll-thumb-hover: #785d37;
-  --mw-scroll-track: #14100a;
+  --mw-scroll-track: var(--color-surface-3);
 }
 
 html,
@@ -69,7 +70,7 @@ textarea {
 }
 
 ::-webkit-scrollbar-track {
-  background: #14100a;
+  background: var(--color-surface-3);
   border: 1px solid #231b11;
 }
 
@@ -81,11 +82,11 @@ textarea {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #785d37;
-  border-color: #d4b06a;
+  border-color: var(--color-accent);
 }
 
 ::-webkit-scrollbar-corner {
-  background: #14100a;
+  background: var(--color-surface-3);
 }
 
 .mw-scrollbar {
@@ -99,7 +100,7 @@ textarea {
 }
 
 .mw-scrollbar::-webkit-scrollbar-track {
-  background: var(--mw-scroll-track, #14100a);
+  background: var(--mw-scroll-track, var(--color-surface-3));
   border: 1px solid #231b11;
 }
 
@@ -115,10 +116,10 @@ textarea {
 /* Specific styling for <select size> listboxes */
 select[size] {
   color-scheme: dark;
-  scrollbar-color: #4e3c23 #14100a;
+  scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track);
   scrollbar-width: thin;
-  background-color: #0c0906 !important;
-  color: #f3e6c8 !important;
+  background-color: var(--color-surface-1) !important;
+  color: var(--color-fg-2) !important;
 }
 
 select[size]::-webkit-scrollbar {
@@ -126,8 +127,8 @@ select[size]::-webkit-scrollbar {
 }
 
 select[size]::-webkit-scrollbar-track {
-  background: #14100a;
-  border-left: 1px solid #2a2114;
+  background: var(--color-surface-3);
+  border-left: 1px solid var(--color-line-11);
 }
 
 select[size]::-webkit-scrollbar-thumb {
@@ -141,15 +142,15 @@ select[size]::-webkit-scrollbar-thumb:hover {
 
 select[size] option {
   padding: 4px 8px;
-  background-color: #0c0906;
-  color: #f3e6c8;
+  background-color: var(--color-surface-1);
+  color: var(--color-fg-2);
 }
 
 select[size] option:hover,
 select[size] option:focus,
 select[size] option:checked {
-  background-color: #2a2114 !important;
-  color: #d4b06a !important;
+  background-color: var(--color-surface-17) !important;
+  color: var(--color-accent) !important;
 }
 
 /* Listbox override for selects with size > 1 */
@@ -160,7 +161,7 @@ select[size] option:checked {
 }
 
 /* No preflight during the compatibility checkpoint. */
-.game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: #17140e; color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
+.game-data-status { position: fixed; z-index: 10000; top: 1rem; left: 50%; transform: translateX(-50%); padding: 1rem; background: var(--color-surface-7); color: #e5d5ad; border: 1px solid #baa267; max-width: 90vw; }
 
 /* Modern React Character Builder, Level Simulator, Cloud Vault & Home Hub take over master window frames */
 body.view-builder #panel-build,
@@ -174,7 +175,7 @@ body:not([class*="view-"]) #panel-home {
   max-width: 1320px !important;
   margin: 16px auto 36px !important;
   padding: 32px 36px !important;
-  background: var(--surface, #181510) !important;
+  background: var(--surface, var(--color-surface-7)) !important;
   background-clip: padding-box !important;
   border: 6px solid transparent !important;
   border-image: var(--mw-border) 6 repeat !important;
@@ -257,7 +258,7 @@ body.view-travel #panel-travel {
   max-width: 1320px !important;
   margin: 16px auto 36px !important;
   padding: 24px 28px !important;
-  background: var(--surface, #181510) !important;
+  background: var(--surface, var(--color-surface-7)) !important;
   background-clip: padding-box !important;
   border: 6px solid transparent !important;
   border-image: var(--mw-border) 6 repeat !important;
@@ -337,12 +338,12 @@ body.view-travel .hero {
   border-radius: 0 !important;
   border: 4px solid transparent !important;
   border-image: var(--mw-bevel) 4 repeat !important;
-  background-color: #120f0a !important;
+  background-color: var(--color-surface-2) !important;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23d4b06a'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
   background-position: right 12px center !important;
   background-clip: padding-box !important;
-  color: #f3e6c8 !important;
+  color: var(--color-fg-2) !important;
   font-family: var(--font-serif) !important;
   cursor: pointer;
   padding-right: 32px !important;
@@ -350,7 +351,7 @@ body.view-travel .hero {
 
 .mw-select:focus {
   outline: none !important;
-  border-color: #d4b06a !important;
+  border-color: var(--color-accent) !important;
 }
 
 .mw-select:focus-visible,
@@ -358,22 +359,22 @@ body.view-travel .hero {
 #local-characters select:focus-visible,
 #local-characters input:focus-visible,
 #local-characters .btn:focus-visible {
-  outline: 2px solid #d4b06a !important;
+  outline: 2px solid var(--color-accent) !important;
   outline-offset: 2px !important;
 }
 
 .mw-select option,
 .mw-select optgroup {
-  background-color: #120f0a;
-  color: #f3e6c8;
+  background-color: var(--color-surface-2);
+  color: var(--color-fg-2);
   font-family: var(--font-sans) !important;
 }
 
 .mw-select:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-  background-color: #0e0b07 !important;
-  color: #7a6b52 !important;
+  background-color: var(--color-surface-1) !important;
+  color: var(--color-fg-15) !important;
 }
 
 /* Authentic Morrowind Bevel Buttons */
@@ -382,7 +383,7 @@ body.view-travel .hero {
   border: 4px solid transparent !important;
   border-image: var(--mw-bevel) 4 repeat !important;
   background: linear-gradient(180deg, rgba(62, 42, 22, 0.52) 0%, rgba(8, 6, 4, 0.22) 100%) !important;
-  color: #d4b06a !important;
+  color: var(--color-accent) !important;
   font-family: var(--font-serif) !important;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
@@ -390,13 +391,13 @@ body.view-travel .hero {
 
 .mw-btn:hover:not(:disabled) {
   background: linear-gradient(180deg, rgba(82, 56, 30, 0.65) 0%, rgba(18, 14, 9, 0.35) 100%) !important;
-  color: #f3e6c8 !important;
+  color: var(--color-fg-2) !important;
 }
 
 .mw-btn.active,
 .mw-btn[aria-pressed="true"] {
-  background: #3a2d1d !important;
-  color: #f3e6c8 !important;
+  background: var(--color-surface-21) !important;
+  color: var(--color-fg-2) !important;
 }
 
 .mw-btn:disabled {
@@ -419,7 +420,7 @@ body.view-travel .hero {
 .mode-bar-grid .mw-btn[aria-pressed="true"] {
   background: linear-gradient(180deg, #4d361c 0%, #26190c 100%) !important;
   color: #fff4d6 !important;
-  border-color: #d4b06a !important;
+  border-color: var(--color-accent) !important;
   box-shadow: 0 0 8px rgba(212, 176, 106, 0.4), inset 0 0 6px rgba(0, 0, 0, 0.6) !important;
 }
 
@@ -462,7 +463,7 @@ body.view-travel .hero {
   border: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
   background: #24110b !important;
-  color: #fca5a5 !important;
+  color: var(--color-danger-2) !important;
   border-radius: 0 !important;
 }
 
@@ -471,7 +472,7 @@ body.view-travel .hero {
   margin: 0 !important;
   border: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
-  background: rgba(18, 14, 9, 0.75) !important;
+  background: color-mix(in srgb, var(--color-surface-2) 75%, transparent) !important;
   box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
   padding: 0 !important;
   border-radius: 0 !important;
@@ -482,7 +483,7 @@ body.view-travel .hero {
   background: linear-gradient(180deg, rgba(68, 48, 26, 0.88) 0%, rgba(22, 16, 11, 0.95) 100%) !important;
   border-bottom: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
-  color: #f3e6c8 !important;
+  color: var(--color-fg-2) !important;
   font-family: var(--font-serif) !important;
   font-size: 1.3rem !important;
   font-weight: 700 !important;
@@ -507,7 +508,7 @@ body.view-travel .hero {
 
 #local-characters summary::after {
   content: " ▾" !important;
-  color: #d4b06a !important;
+  color: var(--color-accent) !important;
   font-size: 1.1rem !important;
   font-weight: bold !important;
 }
@@ -539,7 +540,7 @@ body.view-travel .hero {
   font-family: var(--font-serif);
   font-size: 0.875rem;
   font-weight: bold;
-  color: #d4b06a;
+  color: var(--color-accent);
   margin-bottom: 4px;
 }
 
@@ -550,15 +551,15 @@ body.view-travel .hero {
   border-radius: 0 !important;
   border: 4px solid transparent !important;
   border-image: var(--mw-bevel) 4 repeat !important;
-  background: #100d08 !important;
-  color: #f3e6c8 !important;
+  background: var(--color-surface-2) !important;
+  color: var(--color-fg-2) !important;
   padding: 6px 12px !important;
   font-size: 0.875rem;
 }
 
 #local-characters select {
   appearance: none;
-  background: #100d08 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23d4b06a'/%3E%3C/svg%3E") no-repeat right 12px center !important;
+  background: var(--color-surface-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23d4b06a'/%3E%3C/svg%3E") no-repeat right 12px center !important;
   padding-right: 32px !important;
 }
 
@@ -577,7 +578,7 @@ body.view-travel .hero {
   border: 4px solid transparent !important;
   border-image: var(--mw-bevel) 4 repeat !important;
   background: linear-gradient(180deg, rgba(62, 42, 22, 0.52) 0%, rgba(8, 6, 4, 0.22) 100%) !important;
-  color: #d4b06a !important;
+  color: var(--color-accent) !important;
   font-family: var(--font-serif);
   font-size: 0.8125rem;
   font-weight: bold;
@@ -587,7 +588,7 @@ body.view-travel .hero {
 
 #local-characters .row .btn:hover:not(:disabled) {
   background: linear-gradient(180deg, rgba(82, 56, 30, 0.65) 0%, rgba(18, 14, 9, 0.35) 100%) !important;
-  color: #f3e6c8 !important;
+  color: var(--color-fg-2) !important;
 }
 
 #local-characters .row .btn:disabled {
@@ -597,21 +598,21 @@ body.view-travel .hero {
 
 #local-characters p.muted {
   font-size: 0.75rem;
-  color: #b8a078;
+  color: var(--color-fg-8);
   margin-top: 6px;
   line-height: 1.4;
 }
 
 #local-characters #saved-character-status {
   font-size: 0.8125rem;
-  color: #d4b06a;
+  color: var(--color-accent);
   margin-top: 8px;
   font-family: var(--font-mono);
 }
 
 #local-characters #saved-character-warning {
   font-size: 0.8125rem;
-  color: #fca5a5;
+  color: var(--color-danger-2);
   margin-top: 4px;
 }
 
@@ -629,8 +630,8 @@ body.view-travel .hero {
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.06em !important;
-  color: #d4b06a !important;
-  background: #14100a !important;
+  color: var(--color-accent) !important;
+  background: var(--color-surface-3) !important;
   border-bottom: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
   padding: 8px 12px !important;
@@ -643,7 +644,7 @@ body.view-travel .hero {
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.08em !important;
-  color: #d4b06a !important;
+  color: var(--color-accent) !important;
   background: linear-gradient(90deg, rgba(62, 42, 22, 0.75) 0%, rgba(18, 14, 9, 0.45) 100%) !important;
   border-top: 2px solid transparent !important;
   border-bottom: 2px solid transparent !important;
@@ -654,7 +655,7 @@ body.view-travel .hero {
 .gear-results-container td,
 #gear-box td {
   padding: 8px 12px !important;
-  border-bottom: 1px solid #2a2216 !important;
+  border-bottom: 1px solid var(--color-line-11) !important;
   vertical-align: middle !important;
 }
 
@@ -667,7 +668,7 @@ body.view-travel .hero {
   overflow-wrap: normal !important;
   width: 1%;
   font-weight: 600;
-  color: #d4b06a;
+  color: var(--color-accent);
   padding-right: 1.25rem !important;
 }
 
@@ -678,7 +679,7 @@ body.view-travel .hero {
 
 .gear-results-container tbody tr:nth-child(odd),
 #gear-box tbody tr:nth-child(odd) {
-  background: rgba(18, 14, 9, 0.85) !important;
+  background: color-mix(in srgb, var(--color-surface-2) 85%, transparent) !important;
 }
 
 .gear-results-container tbody tr:hover,
@@ -695,7 +696,7 @@ body.view-travel .hero {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #f3e6c8;
+  color: var(--color-fg-2);
   background: linear-gradient(180deg, #2d2215 0%, #171109 100%);
   border: 1px solid #9e7f45;
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.7), 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -709,7 +710,7 @@ body.view-travel .hero {
   font-family: var(--font-serif);
   font-size: 1.05rem;
   font-weight: 700;
-  color: #f3e6c8;
+  color: var(--color-fg-2);
   letter-spacing: 0.01em;
 }
 
@@ -740,8 +741,8 @@ body.view-travel .hero {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #d4b06a;
-  background: #1e170d;
+  color: var(--color-accent);
+  background: var(--color-surface-9);
   border: 1px solid #7a6338;
 }
 
@@ -754,8 +755,8 @@ body.view-travel .hero {
   font-size: 0.7rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #d4b06a;
-  background: #18120b;
+  color: var(--color-accent);
+  background: var(--color-surface-6);
   border: 1px solid #6b5327;
 }
 
@@ -773,7 +774,7 @@ body.view-travel .hero {
   margin: 18px 0 !important;
   border: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
-  background: rgba(18, 14, 9, 0.75) !important;
+  background: color-mix(in srgb, var(--color-surface-2) 75%, transparent) !important;
   box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
   padding: 0 !important;
 }
@@ -784,7 +785,7 @@ body.view-travel .hero {
   background: linear-gradient(180deg, rgba(68, 48, 26, 0.88) 0%, rgba(22, 16, 11, 0.95) 100%) !important;
   border-bottom: 2px solid transparent !important;
   border-image: var(--mw-groove) 2 repeat !important;
-  color: #f3e6c8 !important;
+  color: var(--color-fg-2) !important;
   font-family: var(--font-serif) !important;
   font-size: 1.3rem !important;
   font-weight: 700 !important;
@@ -811,7 +812,7 @@ body.view-travel .hero {
 .gear-results-container details summary::after,
 #gear-box details summary::after {
   content: " ▾" !important;
-  color: #d4b06a !important;
+  color: var(--color-accent) !important;
   font-size: 1.1rem !important;
   font-weight: bold !important;
 }
@@ -854,7 +855,7 @@ body.view-travel .hero {
 
 .dropdown-caret {
   font-size: 0.8rem;
-  color: #d4b06a;
+  color: var(--color-accent);
   line-height: 1;
   pointer-events: none;
 }
@@ -864,7 +865,7 @@ body.view-travel .hero {
   top: calc(100% + 4px);
   right: 0;
   min-width: 175px;
-  background: #14100a;
+  background: var(--color-surface-3);
   background-clip: padding-box;
   border: 4px solid transparent;
   border-image: var(--mw-bevel) 4 repeat;
@@ -894,7 +895,7 @@ body.view-travel .hero {
 
 .dropdown-item:hover,
 .dropdown-item:focus-visible {
-  background: rgba(212, 176, 106, 0.2);
+  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
   color: #f0d48a;
   outline: none;
 }
@@ -904,7 +905,7 @@ body.view-travel .hero {
   background: #3a2a18;
   color: #f0d48a;
   font-weight: 700;
-  border-left: 3px solid #d4b06a;
+  border-left: 3px solid var(--color-accent);
   padding-left: 9px;
 }
 
@@ -927,7 +928,7 @@ body.view-travel .hero {
   border: 4px solid transparent !important;
   border-image: var(--mw-bevel) 4 repeat !important;
   background: linear-gradient(180deg, rgba(62, 42, 22, 0.65) 0%, rgba(18, 14, 9, 0.45) 100%) !important;
-  color: #f3e6c8 !important;
+  color: var(--color-fg-2) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
   transition: background 0.12s ease, color 0.12s ease, transform 0.1s ease !important;
 }
@@ -943,7 +944,7 @@ body.view-travel .hero {
 }
 
 .account-bar .btn:focus-visible {
-  outline: 2px solid #d4b06a !important;
+  outline: 2px solid var(--color-accent) !important;
   outline-offset: 2px !important;
 }
 
@@ -960,7 +961,7 @@ body.view-travel .hero {
   align-items: center !important;
   border: 2px solid #8a7344 !important;
   padding: 2px !important;
-  background: #14100a !important;
+  background: var(--color-surface-3) !important;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.5) !important;
 }
 
@@ -1018,7 +1019,7 @@ body.view-travel .hero {
   .account-bar {
     margin: 8px 0 0 !important;
     padding-top: 8px !important;
-    border-top: 1px solid rgba(212, 176, 106, 0.2) !important;
+    border-top: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent) !important;
   }
   .account-bar::before {
     content: "Account & Cloud Saves:";
@@ -1086,7 +1087,7 @@ body.view-travel .hero {
     border: 4px solid transparent !important;
     border-image: var(--mw-bevel) 4 repeat !important;
     background: linear-gradient(180deg, rgba(62, 42, 22, 0.75) 0%, rgba(18, 14, 9, 0.6) 100%) !important;
-    color: #d4b06a !important;
+    color: var(--color-accent) !important;
     font-family: var(--font-serif) !important;
     font-size: 1.35rem !important;
     line-height: 1 !important;
@@ -1097,15 +1098,15 @@ body.view-travel .hero {
   #react-header-slot .hamburger:hover,
   #react-header-slot .hamburger:active {
     background: linear-gradient(180deg, rgba(82, 56, 30, 0.85) 0%, rgba(28, 20, 12, 0.7) 100%) !important;
-    color: #f3e6c8 !important;
+    color: var(--color-fg-2) !important;
   }
   #react-header-slot .hamburger[aria-expanded="true"] {
-    background: #3a2d1d !important;
-    color: #f3e6c8 !important;
+    background: var(--color-surface-21) !important;
+    color: var(--color-fg-2) !important;
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8) !important;
   }
   #react-header-slot .hamburger:focus-visible {
-    outline: 2px solid #d4b06a !important;
+    outline: 2px solid var(--color-accent) !important;
     outline-offset: 2px !important;
   }
   #react-header-slot #react-menu-drawer {
@@ -1117,7 +1118,7 @@ body.view-travel .hero {
     align-items: stretch !important;
     width: 100% !important;
     flex-basis: 100% !important;
-    background: #14100a !important;
+    background: var(--color-surface-3) !important;
     background-clip: padding-box !important;
     border: 4px solid transparent !important;
     border-image: var(--mw-bevel) 4 repeat !important;
@@ -1156,7 +1157,7 @@ body.view-travel .hero {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
-    border-top: 1px solid rgba(212, 176, 106, 0.25) !important;
+    border-top: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent) !important;
     padding-top: 10px !important;
     gap: 6px !important;
   }
@@ -1190,7 +1191,7 @@ body.view-travel .hero {
     align-items: stretch !important;
     width: 100% !important;
     padding-top: 10px !important;
-    border-top: 1px solid rgba(212, 176, 106, 0.25) !important;
+    border-top: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent) !important;
     gap: 6px !important;
   }
   #react-header-slot #react-menu-drawer.open .drawer-label {
@@ -1200,7 +1201,7 @@ body.view-travel .hero {
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.08em !important;
-    color: #d4b06a !important;
+    color: var(--color-accent) !important;
     margin-bottom: 4px !important;
   }
   #react-header-slot #react-menu-drawer.open .world-controls {
@@ -1242,7 +1243,7 @@ body.view-travel .hero {
     flex-direction: column !important;
     align-items: stretch !important;
     width: 100% !important;
-    background: #14100a !important;
+    background: var(--color-surface-3) !important;
     background-clip: padding-box !important;
     border: 4px solid transparent !important;
     border-image: var(--mw-bevel) 4 repeat !important;
@@ -1261,7 +1262,7 @@ body.view-travel .hero {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #d4b06a;
+    color: var(--color-accent);
     margin-bottom: 2px;
   }
   header.drawer-open .account-bar .btn:not([hidden]),
@@ -1278,14 +1279,14 @@ body.view-travel .hero {
     border: 4px solid transparent !important;
     border-image: var(--mw-bevel) 4 repeat !important;
     background: linear-gradient(180deg, rgba(62, 42, 22, 0.65) 0%, rgba(18, 14, 9, 0.45) 100%) !important;
-    color: #f3e6c8 !important;
+    color: var(--color-fg-2) !important;
   }
   header.drawer-open .account-bar #account-status,
   header:has(.menu-drawer.open) .account-bar #account-status {
     text-align: center !important;
     font-family: var(--font-serif) !important;
     font-size: 0.85rem !important;
-    color: #d4b06a !important;
+    color: var(--color-accent) !important;
     margin: 4px 0 !important;
   }
   header.drawer-open .account-bar #account-user:not([hidden]),

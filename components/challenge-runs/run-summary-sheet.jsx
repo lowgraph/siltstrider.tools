@@ -16,24 +16,24 @@ export default function RunSummarySheet({
   copiedPermalink
 }) {
   return (
-    <div className="run-summary-sheet border border-[#4a3a22] bg-[#17120a] p-5 text-[#f3e6c8] space-y-5 shadow-2xl relative">
+    <div className="run-summary-sheet border border-line-7 bg-surface-5 p-5 text-fg-2 space-y-5 shadow-2xl relative">
       {/* Title & Sheet Kicker */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#3a2e1d] pb-3 gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line-9 pb-3 gap-2">
         <div>
-          <span className="text-[11px] uppercase tracking-widest text-[#9b8b6a] font-serif">
+          <span className="text-[11px] uppercase tracking-widest text-fg-11 font-serif">
             Character Dossier
           </span>
-          <h2 className="text-xl font-serif font-bold text-[#f3e6c8]">
+          <h2 className="text-xl font-serif font-bold text-fg-2">
             Run Summary Sheet
           </h2>
         </div>
 
         {run?.seed && (
           <div className="sm:text-right">
-            <span className="text-[10px] uppercase tracking-wider text-[#8e7e65] block font-serif">
+            <span className="text-[10px] uppercase tracking-wider text-fg-13 block font-serif">
               Seed Active
             </span>
-            <span className="text-xs font-mono font-bold text-[#d4b06a] break-all">
+            <span className="text-xs font-mono font-bold text-accent break-all">
               {run.seed}
             </span>
           </div>
@@ -81,10 +81,10 @@ export default function RunSummarySheet({
       />
 
       {/* 5. Bottom Action Bar */}
-      <div className="pt-3 border-t border-[#3a2e1d] space-y-3">
+      <div className="pt-3 border-t border-line-9 space-y-3">
         <button
           type="button"
-          className="w-full mw-btn py-3 px-4 font-serif text-sm font-bold tracking-wide uppercase text-[#f8ecce] shadow-md flex items-center justify-center gap-2 border border-[#d4b06a]"
+          className="w-full mw-btn py-3 px-4 font-serif text-sm font-bold tracking-wide uppercase text-fg-2 shadow-md flex items-center justify-center gap-2 border border-accent"
           onClick={onSendToOptimizer}
           id="react-btn-to-optimizer"
           title="Transfer this rolled character into the Build Optimizer"
@@ -95,7 +95,7 @@ export default function RunSummarySheet({
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
-            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-[#c2b291] flex items-center justify-center gap-1.5"
+            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-fg-7 flex items-center justify-center gap-1.5"
             onClick={onCopySummary}
             title="Copy run summary in markdown format"
           >
@@ -104,7 +104,7 @@ export default function RunSummarySheet({
 
           <button
             type="button"
-            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-[#c2b291] flex items-center justify-center gap-1.5"
+            className="mw-btn py-2 px-3 text-xs font-serif font-bold text-fg-7 flex items-center justify-center gap-1.5"
             onClick={onCopyPermalink}
             title="Copy shareable URL link for this run"
           >

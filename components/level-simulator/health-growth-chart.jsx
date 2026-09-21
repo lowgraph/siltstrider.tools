@@ -60,21 +60,21 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
     .join(" ")} Z`;
 
   return (
-    <div className="health-growth-chart-wrap space-y-3 bg-[#100d08] p-4 border border-[#2a2318] mw-groove-panel">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#221c13] pb-2">
-        <h4 className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold flex items-center gap-2">
+    <div className="health-growth-chart-wrap space-y-3 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-12 pb-2">
+        <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold flex items-center gap-2">
           <span>Health Growth Projection</span>
-          <span className="text-[10px] font-mono text-[#9e8b6b] normal-case">
+          <span className="text-[10px] font-mono text-fg-11 normal-case">
             (Level {startLevel} → {endLevel})
           </span>
         </h4>
-        <div className="text-xs font-mono font-bold text-[#d4b06a] flex items-center gap-1">
+        <div className="text-xs font-mono font-bold text-accent flex items-center gap-1">
           <span>+{finalDiff} HP Advantage</span>
         </div>
       </div>
 
       {/* SVG Chart */}
-      <div className="w-full overflow-hidden bg-[#0c0a06] border border-[#231b11] p-1">
+      <div className="w-full overflow-hidden bg-surface-1 border border-line-12 p-1">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto max-h-[220px]"
@@ -84,8 +84,8 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
         >
           <defs>
             <linearGradient id="hpAdvantageGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#d4b06a" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#d4b06a" stopOpacity="0.02" />
+              <stop offset="0%" style={{ stopColor: "var(--color-accent)" }} stopOpacity="0.25" />
+              <stop offset="100%" style={{ stopColor: "var(--color-accent)" }} stopOpacity="0.02" />
             </linearGradient>
           </defs>
 
@@ -95,7 +95,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y1={padTop}
             x2={width - padRight}
             y2={padTop}
-            stroke="#261e14"
+            style={{ stroke: "var(--color-line-12)" }}
             strokeDasharray="2,2"
           />
           <line
@@ -103,7 +103,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y1={padTop + chartH / 2}
             x2={width - padRight}
             y2={padTop + chartH / 2}
-            stroke="#261e14"
+            style={{ stroke: "var(--color-line-12)" }}
             strokeDasharray="2,2"
           />
           <line
@@ -111,7 +111,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y1={padTop + chartH}
             x2={width - padRight}
             y2={padTop + chartH}
-            stroke="#3a2e1e"
+            style={{ stroke: "var(--color-line-9)" }}
           />
 
           {/* Y Axis Labels */}
@@ -120,7 +120,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y={padTop + 4}
             textAnchor="end"
             fontSize="10"
-            fill="#9e8b6b"
+            style={{ fill: "var(--color-fg-11)" }}
             fontFamily="monospace"
           >
             {maxHp}
@@ -130,7 +130,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y={padTop + chartH / 2 + 4}
             textAnchor="end"
             fontSize="10"
-            fill="#9e8b6b"
+            style={{ fill: "var(--color-fg-11)" }}
             fontFamily="monospace"
           >
             {Math.round((maxHp + minHp) / 2)}
@@ -140,7 +140,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y={padTop + chartH + 4}
             textAnchor="end"
             fontSize="10"
-            fill="#9e8b6b"
+            style={{ fill: "var(--color-fg-11)" }}
             fontFamily="monospace"
           >
             {minHp}
@@ -152,7 +152,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y={height - 8}
             textAnchor="start"
             fontSize="10"
-            fill="#9e8b6b"
+            style={{ fill: "var(--color-fg-11)" }}
             fontFamily="monospace"
           >
             Lvl {startLevel}
@@ -162,7 +162,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             y={height - 8}
             textAnchor="end"
             fontSize="10"
-            fill="#9e8b6b"
+            style={{ fill: "var(--color-fg-11)" }}
             fontFamily="monospace"
           >
             Lvl {endLevel}
@@ -175,7 +175,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           <path
             d={delayedPath}
             fill="none"
-            stroke="#8c7853"
+            style={{ stroke: "var(--color-line-1)" }}
             strokeWidth="2"
             strokeDasharray="4,3"
             opacity="0.85"
@@ -185,7 +185,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           <path
             d={optimalPath}
             fill="none"
-            stroke="#d4b06a"
+            style={{ stroke: "var(--color-accent)" }}
             strokeWidth="2.5"
           />
 
@@ -194,16 +194,14 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             cx={getX(endLevel)}
             cy={getY(finalOptimal)}
             r="4"
-            fill="#d4b06a"
-            stroke="#0c0a06"
+            style={{ fill: "var(--color-accent)", stroke: "var(--color-surface-1)" }}
             strokeWidth="1.5"
           />
           <circle
             cx={getX(endLevel)}
             cy={getY(finalDelayed)}
             r="4"
-            fill="#8c7853"
-            stroke="#0c0a06"
+            style={{ fill: "var(--color-line-1)", stroke: "var(--color-surface-1)" }}
             strokeWidth="1.5"
           />
         </svg>
@@ -213,20 +211,20 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs pt-1">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-1 bg-[#d4b06a] inline-block rounded-none"></span>
-            <span className="text-[#f3e6c8] font-serif font-semibold">
-              Rushed Endurance: <strong className="font-mono text-[#d4b06a]">{finalOptimal} HP</strong>
+            <span className="w-3 h-1 bg-accent inline-block rounded-none"></span>
+            <span className="text-fg-2 font-serif font-semibold">
+              Rushed Endurance: <strong className="font-mono text-accent">{finalOptimal} HP</strong>
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-1 bg-[#8c7853] inline-block border-t border-dashed border-[#8c7853]"></span>
-            <span className="text-[#9e8b6b] font-serif font-semibold">
-              Delayed Endurance: <strong className="font-mono text-[#9e8b6b]">{finalDelayed} HP</strong>
+            <span className="w-3 h-1 bg-surface-24 inline-block border-t border-dashed border-line-1"></span>
+            <span className="text-fg-11 font-serif font-semibold">
+              Delayed Endurance: <strong className="font-mono text-fg-11">{finalDelayed} HP</strong>
             </span>
           </div>
         </div>
-        <div className="text-[11px] text-[#9e8b6b] font-sans">
-          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-[#f3e6c8]">-{finalDiff} HP</strong>
+        <div className="text-[11px] text-fg-11 font-sans">
+          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-fg-2">-{finalDiff} HP</strong>
         </div>
       </div>
     </div>

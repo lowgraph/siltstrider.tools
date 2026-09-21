@@ -23,14 +23,14 @@ export default function MinorObjectivesChecklist({
   };
 
   return (
-    <div className="minor-objectives-checklist border border-[#3a2e1d] bg-[#14100a] p-4 text-[#f3e6c8]">
+    <div className="minor-objectives-checklist border border-line-9 bg-surface-3 p-4 text-fg-2">
       {/* Header bar */}
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#2a2215]">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-line-11">
         <div className="flex items-center gap-2">
-          <span className="text-xs uppercase tracking-widest text-[#d4b06a] font-serif font-bold">
+          <span className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
             Minor Objectives
           </span>
-          <span className="text-xs px-2 py-0.5 bg-[#251e13] border border-[#3d301e] text-[#c2b291] font-mono">
+          <span className="text-xs px-2 py-0.5 bg-surface-14 border border-line-9 text-fg-7 font-mono">
             {objectives.length}
           </span>
         </div>
@@ -51,7 +51,7 @@ export default function MinorObjectivesChecklist({
           <button
             type="button"
             className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]" : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65]"
+              isLocked ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
             }`}
             onClick={onToggleLock}
             title={isLocked ? "Unlock Minor Objectives" : "Lock Minor Objectives"}
@@ -72,8 +72,8 @@ export default function MinorObjectivesChecklist({
             return (
               <li
                 key={i}
-                className={`p-2.5 bg-[#19140c] border transition-colors flex items-start gap-3 cursor-pointer select-none ${
-                  isDone ? "border-[#2f4228] bg-[#121c10]/40 opacity-75" : "border-[#2a2114] hover:border-[#4a3920]"
+                className={`p-2.5 bg-surface-5 border transition-colors flex items-start gap-3 cursor-pointer select-none ${
+                  isDone ? "border-success-line-5 bg-success-surface-1/40 opacity-75" : "border-line-11 hover:border-line-7"
                 }`}
                 onClick={() => toggleCheck(i)}
               >
@@ -81,13 +81,13 @@ export default function MinorObjectivesChecklist({
                   type="checkbox"
                   checked={isDone}
                   onChange={() => toggleCheck(i)}
-                  className="mt-1 accent-[#d4b06a] cursor-pointer"
+                  className="mt-1 accent-accent cursor-pointer"
                   onClick={(e) => e.stopPropagation()}
                 />
                 <div className="flex-1">
                   <span
                     className={`text-sm font-serif leading-relaxed block ${
-                      isDone ? "line-through text-[#8e9c85]" : "text-[#ebd9b2]"
+                      isDone ? "line-through text-success-6" : "text-fg-4"
                     }`}
                   >
                     {text}
@@ -97,7 +97,7 @@ export default function MinorObjectivesChecklist({
                       {regions.map((r) => (
                         <span
                           key={r}
-                          className="region-tag text-[11px] px-1.5 py-0.5 bg-[#251e13] border border-[#3d301e] text-[#b8a786]"
+                          className="region-tag text-[11px] px-1.5 py-0.5 bg-surface-14 border border-line-9 text-fg-7"
                         >
                           {r}
                         </span>
@@ -110,7 +110,7 @@ export default function MinorObjectivesChecklist({
           })}
         </ul>
       ) : (
-        <p className="text-sm italic text-[#7a6b52] py-2">
+        <p className="text-sm italic text-fg-15 py-2">
           No minor objectives selected. Pick 1–5 optional world milestones.
         </p>
       )}

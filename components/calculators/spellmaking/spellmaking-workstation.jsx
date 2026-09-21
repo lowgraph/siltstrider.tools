@@ -254,31 +254,31 @@ export default function SpellmakingWorkstation() {
   }, [alt, con, des, ill, mys, res, willpower, luck, mercantile, personality, disposition]);
 
   return (
-    <div className="spellmaking-workstation p-4 sm:p-5 border border-[#3a2e1d] bg-[#14100a] text-[#f3e6c8] space-y-6">
+    <div className="spellmaking-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">
       {/* Top Banner: Character Skills & Stats & Live Game-Data Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#19140c] border border-[#2a2215]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-5 border border-line-11">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-          <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider whitespace-nowrap">
+          <span className="font-serif font-bold text-accent uppercase tracking-wider whitespace-nowrap">
             Active Character:
           </span>
-          <span className="font-bold text-[#f3e6c8] whitespace-nowrap">
+          <span className="font-bold text-fg-2 whitespace-nowrap">
             {build.race || "Adventurer"} {build.className || "Custom"}
           </span>
-          <span className="text-[#8e7e65] hidden sm:inline">·</span>
-          <span className="text-[#a8997c] whitespace-nowrap">
-            WIL: <strong className="text-[#d4b06a]">{willpower}</strong> | LUK: <strong className="text-[#d4b06a]">{luck}</strong>
+          <span className="text-fg-13 hidden sm:inline">·</span>
+          <span className="text-fg-9 whitespace-nowrap">
+            WIL: <strong className="text-accent">{willpower}</strong> | LUK: <strong className="text-accent">{luck}</strong>
           </span>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
           {gameData.status === 'ready' ? (
-            <span className="text-xs px-2 py-0.5 rounded border border-[#3a4e28] bg-[#10190c] text-[#78d65c] font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#52d634] inline-block"/>
+            <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
               <span>Live: {availableEffects.length} Spells · {spellmakersList.length} Vendors ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
             </span>
           ) : gameData.status === 'loading' ? (
-            <span className="text-xs px-2 py-0.5 rounded border border-[#4a3e20] bg-[#1a150c] text-[#d4b06a] font-mono flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#d4b06a] inline-block animate-pulse"/>
+            <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block animate-pulse"/>
               <span>Loading bundle...</span>
             </span>
           ) : null}
@@ -298,18 +298,18 @@ export default function SpellmakingWorkstation() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left Pane: Grimoire Configuration */}
         <div className="space-y-4">
-          <h3 className="text-sm font-serif font-bold text-[#d4b06a] uppercase tracking-wider border-b border-[#3a2e1d] pb-1.5">
+          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
             Spellcraft Configuration
           </h3>
 
           <div>
-            <label htmlFor="spell-name-input" className="text-xs uppercase font-serif font-bold text-[#c2b291] block mb-1">
+            <label htmlFor="spell-name-input" className="text-xs uppercase font-serif font-bold text-fg-7 block mb-1">
               Spell Name
             </label>
             <input
               id="spell-name-input"
               type="text"
-              className="w-full bg-[#0c0906] border border-[#3a2e1d] p-2 text-xs font-serif text-[#f3e6c8]"
+              className="w-full bg-surface-1 border border-line-9 p-2 text-xs font-serif text-fg-2"
               value={spellName}
               onChange={(e) => setSpellName(e.target.value)}
               placeholder="Spell Name"
@@ -318,7 +318,7 @@ export default function SpellmakingWorkstation() {
 
           {/* Magic School Filter Pills */}
           <div>
-            <label className="text-xs uppercase font-serif font-bold text-[#c2b291] block mb-1.5">
+            <label className="text-xs uppercase font-serif font-bold text-fg-7 block mb-1.5">
               Filter by Magic School
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -328,8 +328,8 @@ export default function SpellmakingWorkstation() {
                   type="button"
                   className={`px-2.5 py-1 text-xs font-serif font-bold border transition-colors ${
                     activeSchoolTab === s
-                      ? "bg-[#2d2214] border-[#d4b06a] text-[#d4b06a]"
-                      : "bg-[#14100a] border-[#3a2e1d] text-[#8e7e65] hover:text-[#d4b06a]"
+                      ? "bg-surface-18 border-accent text-accent"
+                      : "bg-surface-3 border-line-9 text-fg-13 hover:text-accent"
                   }`}
                   onClick={() => setActiveSchoolTab(s)}
                 >
@@ -342,7 +342,7 @@ export default function SpellmakingWorkstation() {
           {/* Effects Stack */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs uppercase font-serif font-bold text-[#d4b06a]">
+              <label className="text-xs uppercase font-serif font-bold text-accent">
                 Spell Effects Stack ({effectsList.length})
               </label>
               <button
@@ -362,10 +362,10 @@ export default function SpellmakingWorkstation() {
                 const showArea = row.range !== "self";
 
                 return (
-                  <div key={idx} className="p-3 bg-[#19140c] border border-[#2a2114] space-y-2.5">
+                  <div key={idx} className="p-3 bg-surface-5 border border-line-11 space-y-2.5">
                     <div className="flex items-center justify-between gap-2">
                       <select
-                        className="flex-1 mw-select p-1.5 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+                        className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
                         value={row.effectIndex}
                         onChange={(e) => handleEffectChange(idx, "effectIndex", Number(e.target.value))}
                       >
@@ -382,7 +382,7 @@ export default function SpellmakingWorkstation() {
                       {effectsList.length > 1 && (
                         <button
                           type="button"
-                          className="mw-btn px-2 py-1 text-xs font-serif text-[#a03017] hover:text-[#e29381]"
+                          className="mw-btn px-2 py-1 text-xs font-serif text-danger-9 hover:text-danger-4"
                           onClick={() => handleRemoveEffect(idx)}
                           title="Remove effect from spell"
                         >
@@ -394,9 +394,9 @@ export default function SpellmakingWorkstation() {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                       {showRange && (
                         <div>
-                          <label className="text-[10px] text-[#8e7e65] block mb-0.5">Range</label>
+                          <label className="text-[10px] text-fg-13 block mb-0.5">Range</label>
                           <select
-                            className="w-full mw-select p-1 text-xs font-serif bg-[#0c0906] border border-[#3a2e1d] text-[#f3e6c8]"
+                            className="w-full mw-select p-1 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
                             value={row.range}
                             onChange={(e) => handleEffectChange(idx, "range", e.target.value)}
                           >
@@ -408,24 +408,24 @@ export default function SpellmakingWorkstation() {
                       )}
 
                       <div>
-                        <label className="text-[10px] text-[#8e7e65] block mb-0.5">Min Mag</label>
+                        <label className="text-[10px] text-fg-13 block mb-0.5">Min Mag</label>
                         <input
                           type="number"
                           min="1"
                           max="500"
-                          className="w-full bg-[#0c0906] border border-[#3a2e1d] p-1 text-xs font-mono text-[#f3e6c8]"
+                          className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                           value={row.min}
                           onChange={(e) => handleEffectChange(idx, "min", Math.max(1, Number(e.target.value) || 1))}
                         />
                       </div>
 
                       <div>
-                        <label className="text-[10px] text-[#8e7e65] block mb-0.5">Max Mag</label>
+                        <label className="text-[10px] text-fg-13 block mb-0.5">Max Mag</label>
                         <input
                           type="number"
                           min="1"
                           max="500"
-                          className="w-full bg-[#0c0906] border border-[#3a2e1d] p-1 text-xs font-mono text-[#f3e6c8]"
+                          className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                           value={row.max}
                           onChange={(e) => handleEffectChange(idx, "max", Math.max(1, Number(e.target.value) || 1))}
                         />
@@ -433,12 +433,12 @@ export default function SpellmakingWorkstation() {
 
                       {showDuration && (
                         <div>
-                          <label className="text-[10px] text-[#8e7e65] block mb-0.5">Duration</label>
+                          <label className="text-[10px] text-fg-13 block mb-0.5">Duration</label>
                           <input
                             type="number"
                             min="1"
                             max="500"
-                            className="w-full bg-[#0c0906] border border-[#3a2e1d] p-1 text-xs font-mono text-[#f3e6c8]"
+                            className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                             value={row.dur}
                             onChange={(e) => handleEffectChange(idx, "dur", Math.max(1, Number(e.target.value) || 1))}
                           />
@@ -447,12 +447,12 @@ export default function SpellmakingWorkstation() {
 
                       {showArea && (
                         <div>
-                          <label className="text-[10px] text-[#8e7e65] block mb-0.5">Area</label>
+                          <label className="text-[10px] text-fg-13 block mb-0.5">Area</label>
                           <input
                             type="number"
                             min="0"
                             max="500"
-                            className="w-full bg-[#0c0906] border border-[#3a2e1d] p-1 text-xs font-mono text-[#f3e6c8]"
+                            className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                             value={row.area}
                             onChange={(e) => handleEffectChange(idx, "area", Math.max(0, Number(e.target.value) || 0))}
                           />
@@ -468,39 +468,39 @@ export default function SpellmakingWorkstation() {
 
         {/* Right Pane: Dossier & Barter */}
         <div className="space-y-4">
-          <h3 className="text-sm font-serif font-bold text-[#d4b06a] uppercase tracking-wider border-b border-[#3a2e1d] pb-1.5">
+          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
             Spellmaking Output &amp; Barter
           </h3>
 
           {/* Output Summary Card */}
-          <div className="p-3.5 bg-[#17120b] border border-[#3a2e1d] space-y-3">
+          <div className="p-3.5 bg-surface-5 border border-line-9 space-y-3">
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-2.5 bg-[#120e08] border border-[#2a2114]">
-                <span className="text-[10px] uppercase text-[#8e7e65] block font-serif">Magicka Cost</span>
-                <span className="text-xl font-bold font-mono text-[#d4b06a]">{magickaCost} pts</span>
+              <div className="p-2.5 bg-surface-3 border border-line-11">
+                <span className="text-[10px] uppercase text-fg-13 block font-serif">Magicka Cost</span>
+                <span className="text-xl font-bold font-mono text-accent">{magickaCost} pts</span>
               </div>
 
-              <div className="p-2.5 bg-[#120e08] border border-[#2a2114]">
-                <span className="text-[10px] uppercase text-[#8e7e65] block font-serif">Cast Reliability</span>
-                <span className={`text-xl font-bold font-mono ${castChance >= 75 ? "text-[#d4b06a]" : castChance >= 40 ? "text-[#e0cfab]" : "text-[#f28e85]"}`}>
+              <div className="p-2.5 bg-surface-3 border border-line-11">
+                <span className="text-[10px] uppercase text-fg-13 block font-serif">Cast Reliability</span>
+                <span className={`text-xl font-bold font-mono ${castChance >= 75 ? "text-accent" : castChance >= 40 ? "text-fg-4" : "text-danger-3"}`}>
                   {castChance}%
                 </span>
               </div>
             </div>
 
-            <div className="p-2.5 bg-[#120e08] border border-[#2a2114] flex justify-between items-center text-xs">
-              <span className="text-[#8e7e65] font-serif">Governing School:</span>
-              <span className="font-serif font-bold text-[#f3e6c8]">
+            <div className="p-2.5 bg-surface-3 border border-line-11 flex justify-between items-center text-xs">
+              <span className="text-fg-13 font-serif">Governing School:</span>
+              <span className="font-serif font-bold text-fg-2">
                 {primarySchool} ({governingSkillValue} skill)
               </span>
             </div>
 
-            <div className="text-xs space-y-1 pt-1 border-t border-[#2a2215]">
-              <span className="text-[11px] text-[#8e7e65] uppercase font-serif block">Spell Formula</span>
+            <div className="text-xs space-y-1 pt-1 border-t border-line-11">
+              <span className="text-[11px] text-fg-13 uppercase font-serif block">Spell Formula</span>
               {calculatedEffects.map((item, idx) => (
-                <div key={idx} className="flex justify-between text-xs font-serif text-[#e0cfab]">
+                <div key={idx} className="flex justify-between text-xs font-serif text-fg-4">
                   <span>{item.effect?.n || "Effect"}</span>
-                  <span className="font-mono text-[11px] text-[#d4b06a]">
+                  <span className="font-mono text-[11px] text-accent">
                     {item.range.toUpperCase()}: {item.min}-{item.max} pts, {item.dur}s
                   </span>
                 </div>
@@ -509,36 +509,36 @@ export default function SpellmakingWorkstation() {
           </div>
 
           {/* Spellmakers Ranked Barter Table */}
-          <div className="p-3.5 bg-[#17120b] border border-[#3a2e1d] space-y-3">
+          <div className="p-3.5 bg-surface-5 border border-line-9 space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <label className="text-xs uppercase font-serif font-bold text-[#d4b06a]">
+              <label className="text-xs uppercase font-serif font-bold text-accent">
                 Ranked Spellmakers ({filteredSpellmakers.length})
               </label>
               <input
                 type="text"
-                className="bg-[#0c0906] border border-[#3a2e1d] px-2 py-0.5 text-xs text-[#f3e6c8] placeholder-[#7a6b52] font-serif w-36"
+                className="bg-surface-1 border border-line-9 px-2 py-0.5 text-xs text-fg-2 placeholder-fg-15 font-serif w-36"
                 placeholder="Search spellmakers..."
                 value={vendorSearch}
                 onChange={(e) => setVendorSearch(e.target.value)}
               />
             </div>
 
-            <div className="max-h-48 overflow-y-auto mw-scrollbar space-y-1.5 pr-1 border border-[#2a2114] p-1 bg-[#100d08]">
+            <div className="max-h-48 overflow-y-auto mw-scrollbar space-y-1.5 pr-1 border border-line-11 p-1 bg-surface-2">
               {filteredSpellmakers.slice(0, 15).map((sm) => (
                 <div
                   key={sm.id}
                   className={`p-2 border text-xs flex items-center justify-between cursor-pointer transition-colors ${
                     selectedVendorId === sm.id
-                      ? "bg-[#251e13] border-[#d4b06a] text-[#f3e6c8]"
-                      : "bg-[#14100a] border-[#221a0f] text-[#c2b291] hover:border-[#4a3920]"
+                      ? "bg-surface-14 border-accent text-fg-2"
+                      : "bg-surface-3 border-line-12 text-fg-7 hover:border-line-7"
                   }`}
                   onClick={() => setSelectedVendorId(sm.id)}
                 >
                   <div className="truncate mr-2">
                     <span className="font-serif font-bold block truncate">{sm.n}</span>
-                    <span className="text-[10px] text-[#8e7e65] font-mono">Merc: {sm.merc} · Pers: {sm.pers}</span>
+                    <span className="text-[10px] text-fg-13 font-mono">Merc: {sm.merc} · Pers: {sm.pers}</span>
                   </div>
-                  <span className="font-mono font-bold text-[#d4b06a] shrink-0">
+                  <span className="font-mono font-bold text-accent shrink-0">
                     {sm.barterPrice.toLocaleString()} g
                   </span>
                 </div>

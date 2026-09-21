@@ -144,16 +144,16 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
-        background: "var(--surface, #181510)",
+        background: "var(--color-surface-7)",
         boxShadow: "inset 0 0 12px 3px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.5)"
       }}
     >
-      <div className="border-b border-[#2a2318] pb-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="border-b border-line-11 pb-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h3 className="font-serif text-xl font-bold text-[#f3e6c8] tracking-wide flex items-center gap-2">
+          <h3 className="font-serif text-xl font-bold text-fg-2 tracking-wide flex items-center gap-2">
             <span>Gear Recommendations &amp; Progression Advisor</span>
           </h3>
-          <p className="text-sm text-[#b8a078] mt-1">
+          <p className="text-sm text-fg-8 mt-1">
             Optimized armor, weapons, and artifact acquisition tailored to your major weapon and armor skills.
           </p>
         </div>
@@ -161,29 +161,29 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
         {/* Action Controls & Policy Toggles */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm pt-2 lg:pt-0">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <label className="flex items-center gap-2 cursor-pointer text-[#f3e6c8]">
+            <label className="flex items-center gap-2 cursor-pointer text-fg-2">
               <input
                 type="checkbox"
-                className="accent-[#d4b06a] w-4 h-4"
+                className="accent-accent w-4 h-4"
                 checked={stealEarly}
                 onChange={(e) => handleToggleSteal(e.target.checked)}
               />
               <span>Steal early gear</span>
             </label>
 
-            <label className="flex items-center gap-2 cursor-pointer text-[#f3e6c8]">
+            <label className="flex items-center gap-2 cursor-pointer text-fg-2">
               <input
                 type="checkbox"
-                className="accent-[#d4b06a] w-4 h-4"
+                className="accent-accent w-4 h-4"
                 checked={endgameEarly}
                 onChange={(e) => handleToggleEndgame(e.target.checked)}
               />
               <span>Endgame gear early</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer text-[#f3e6c8]">
+            <label className="flex items-center gap-2 cursor-pointer text-fg-2">
               <input
                 type="checkbox"
-                className="accent-[#d4b06a] w-4 h-4"
+                className="accent-accent w-4 h-4"
                 checked={nearStart}
                 onChange={(e) => handleToggleNearStart(e.target.checked)}
               />
@@ -202,7 +202,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
 
           <button
             type="button"
-            className="w-full sm:w-auto mw-btn py-2.5 px-5 font-serif font-bold text-sm tracking-wide shadow-md whitespace-nowrap text-center text-[#d4b06a]"
+            className="w-full sm:w-auto mw-btn py-2.5 px-5 font-serif font-bold text-sm tracking-wide shadow-md whitespace-nowrap text-center text-accent"
             onClick={() => handleEquipToLoadout(endgameEarly)}
             title="Equip recommended gear kit directly into your active loadout"
           >
@@ -214,7 +214,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       {/* Rendered Gear Recommendations */}
       {rankError&&<p role="alert">{rankError}</p>}
       {gearHtml || (hasRun && bisResult?.status === "ready") ? (
-        <div className="gear-results-container text-sm overflow-x-auto text-[#f3e6c8]">
+        <div className="gear-results-container text-sm overflow-x-auto text-fg-2">
           <GearSourcesView ranking={ranking} build={build} beast={beast} result={result} toggles={{theft:stealEarly,endgame:endgameEarly,nearStart}}/>
           {bisResult?.status === "ready" ? (
             <BestInSlotView
@@ -228,7 +228,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
           )}
         </div>
       ) : (
-        <div className="p-8 text-center bg-[#100d08] border border-[#221c13] text-[#b8a078] text-sm italic mw-groove-panel">
+        <div className="p-8 text-center bg-surface-2 border border-line-12 text-fg-8 text-sm italic mw-groove-panel">
           Click <strong>&quot;Optimize Gear&quot;</strong> to generate early and late-game equipment recommendations for this build.
         </div>
       )}

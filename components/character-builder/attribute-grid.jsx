@@ -14,20 +14,20 @@ export default function AttributeGrid({ attrs = {}, signName = "" }) {
         return (
           <div
             key={attr}
-            className={`attribute-row flex items-center justify-between px-3 py-1.5 min-h-[36px] border border-[#2a2318] hover:border-[#4a3f2d] transition-colors rounded-[1px] ${
-              isAltRow ? "bg-[#1c160f]" : "bg-[#130f0a]"
+            className={`attribute-row flex items-center justify-between px-3 py-1.5 min-h-[36px] border border-line-11 hover:border-line-7 transition-colors rounded-[1px] ${
+              isAltRow ? "bg-surface-6" : "bg-surface-3"
             }`}
             title={`${attr}: ${ATTR_TIP[attr] || ""}`}
           >
             <div className="flex items-center gap-2 min-w-0 pr-2">
-              <span className="font-serif text-[#f3e6c8] text-sm sm:text-base font-medium truncate">{attr}</span>
+              <span className="font-serif text-fg-2 text-sm sm:text-base font-medium truncate">{attr}</span>
               {bonusText && (
-                <span className="text-xs text-[#b8a078] font-mono truncate" title={bonusText}>
+                <span className="text-xs text-fg-8 font-mono truncate" title={bonusText}>
                   {bonusText}
                 </span>
               )}
             </div>
-            <strong className="font-mono text-[#d4b06a] text-base sm:text-lg font-bold pl-2">
+            <strong className="font-mono text-accent text-base sm:text-lg font-bold pl-2">
               {data.v}
             </strong>
           </div>

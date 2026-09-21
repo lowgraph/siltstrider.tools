@@ -57,27 +57,27 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
 
   return (
     <>
-      <tr className="border-b border-[#221c13] hover:bg-[#1f1911] transition-colors">
-        <td className="py-2.5 px-3 font-semibold text-[#d4b06a] align-top whitespace-nowrap">
+      <tr className="border-b border-line-12 hover:bg-surface-9 transition-colors">
+        <td className="py-2.5 px-3 font-semibold text-accent align-top whitespace-nowrap">
           {slotLabel}
         </td>
 
         <td className="py-2.5 px-3 align-top space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-bold text-[#f3e6c8] text-base">{item.name || pick.item}</span>
+            <span className="font-bold text-fg-2 text-base">{item.name || pick.item}</span>
             {pick.score != null && (
-              <span className="px-1.5 py-0.5 rounded text-xs bg-[#2b2214] border border-[#4a3920] text-[#d4b06a] font-mono">
+              <span className="px-1.5 py-0.5 rounded text-xs bg-surface-17 border border-line-7 text-accent font-mono">
                 Score: {pick.score}
               </span>
             )}
             {stats.length > 0 && (
-              <span className="text-xs text-[#9d8968] font-mono">[{stats.join(" · ")}]</span>
+              <span className="text-xs text-fg-11 font-mono">[{stats.join(" · ")}]</span>
             )}
           </div>
 
           {/* Constant effects description */}
           {effectsSummary && (
-            <p className="text-xs text-[#cfbc96] leading-relaxed">{effectsSummary}</p>
+            <p className="text-xs text-fg-6 leading-relaxed">{effectsSummary}</p>
           )}
 
           {/* Ranking rationale chips */}
@@ -86,10 +86,10 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
               {pick.reasons.map(([lbl, val], idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[11px] rounded bg-[#18130b] border border-[#3b2d1a] text-[#cbb48b]"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[11px] rounded bg-surface-5 border border-line-9 text-fg-7"
                 >
-                  <span className="text-[#a89066]">{lbl}</span>
-                  <span className="text-[#d4b06a] font-mono">+{val}</span>
+                  <span className="text-fg-10">{lbl}</span>
+                  <span className="text-accent font-mono">+{val}</span>
                 </span>
               ))}
             </div>
@@ -101,7 +101,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
               {pick.warnings.map((w, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-[#2e120e] border border-[#6b251b] text-[#fca5a5]"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-danger-surface-2 border border-danger-line-2 text-danger-2"
                 >
                   <span>⚠</span>
                   <span>{w}</span>
@@ -115,7 +115,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
             <div className="pt-1">
               <button
                 type="button"
-                className="text-xs text-[#a08552] hover:text-[#d4b06a] underline cursor-pointer"
+                className="text-xs text-fg-10 hover:text-accent underline cursor-pointer"
                 onClick={() => setShowAlts(!showAlts)}
               >
                 {showAlts ? "Hide runner-up picks ▲" : `View ${alternatives.length} runner-up pick${alternatives.length > 1 ? "s" : ""} ▼`}
@@ -124,11 +124,11 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
           )}
         </td>
 
-        <td className="py-2.5 px-3 align-top text-xs text-[#b8a078]">
+        <td className="py-2.5 px-3 align-top text-xs text-fg-8">
           <span className="font-serif">{formatSource(item.source)}</span>
           {item.source?.easiestLevel > 30 && (
             <div className="mt-1">
-              <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#3d1a14] border border-[#63271d] text-[#fca5a5]">
+              <span className="px-1.5 py-0.5 rounded text-[10px] bg-danger-surface-3 border border-danger-line-2 text-danger-2">
                 Formidable Level {item.source.easiestLevel}
               </span>
             </div>
@@ -144,13 +144,13 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
           return (
             <tr
               key={aIdx}
-              className="bg-[#14100a] text-xs text-[#a89066] border-b border-[#1b150d]"
+              className="bg-surface-3 text-xs text-fg-10 border-b border-line-12"
             >
-              <td className="py-1.5 px-3 italic pl-6 text-[#8a7248]">Runner-up #{aIdx + 2}</td>
+              <td className="py-1.5 px-3 italic pl-6 text-fg-14">Runner-up #{aIdx + 2}</td>
               <td className="py-1.5 px-3 space-y-0.5">
-                <span className="font-semibold text-[#cfbc96]">{aItem.name || aPick.item}</span>
+                <span className="font-semibold text-fg-6">{aItem.name || aPick.item}</span>
                 {aPick.score != null && (
-                  <span className="ml-2 font-mono text-[#a08552]">Score: {aPick.score}</span>
+                  <span className="ml-2 font-mono text-fg-10">Score: {aPick.score}</span>
                 )}
               </td>
               <td className="py-1.5 px-3">{formatSource(aItem.source)}</td>
@@ -175,10 +175,10 @@ export function BestInSlotView({
   if (!resolved || !resolved.groups || resolved.groups.length === 0) {
     return (
       <details open className="best-in-slot-recommendations mt-6">
-        <summary className="font-serif text-lg font-bold text-[#f3e6c8] cursor-pointer">
+        <summary className="font-serif text-lg font-bold text-fg-2 cursor-pointer">
           Optimized endgame kit
         </summary>
-        <p className="mt-3 text-sm text-[#a89066] italic">
+        <p className="mt-3 text-sm text-fg-10 italic">
           No constant-effect gear recommendations available for this build configuration.
         </p>
       </details>
@@ -187,12 +187,12 @@ export function BestInSlotView({
 
   return (
     <details open className="best-in-slot-recommendations mt-6">
-      <summary className="font-serif text-lg font-bold text-[#f3e6c8] cursor-pointer">
+      <summary className="font-serif text-lg font-bold text-fg-2 cursor-pointer">
         Optimized endgame kit
       </summary>
 
       <div className="mt-3 space-y-4">
-        <p className="text-sm text-[#b8a078] leading-relaxed">
+        <p className="text-sm text-fg-8 leading-relaxed">
           Constant-effect endgame equipment ranked specifically for your build&apos;s attributes,
           skills, and class archetype ({resolved.matchedBuild || build?.name || "Custom"}).
           Drawbacks that ruin a character disqualify an item; acceptable drawbacks display warnings
@@ -200,28 +200,28 @@ export function BestInSlotView({
         </p>
 
         {beast && (
-          <p className="text-xs text-[#c49750] italic">
+          <p className="text-xs text-accent-3 italic">
             Equipping note: Headgear and boots covering the full head or feet are automatically excluded
             for beast races.
           </p>
         )}
 
         {allowFormidableSources && (
-          <p className="text-xs text-[#e0a96d] italic">
+          <p className="text-xs text-accent-2 italic">
             Endgame gear early is enabled: includes formidable high-level targets (such as King Helseth&apos;s Royal Signet Ring).
           </p>
         )}
 
         {resolved.groups.map((group) => (
           <div key={group.label} className="mt-4 space-y-2">
-            <h4 className="font-serif text-base font-bold text-[#d4b06a] border-b border-[#2e2417] pb-1">
+            <h4 className="font-serif text-base font-bold text-accent border-b border-line-11 pb-1">
               {group.label}
             </h4>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse border border-[#261f15] bg-[#120e08]">
+              <table className="w-full text-left border-collapse border border-line-12 bg-surface-3">
                 <thead>
-                  <tr className="bg-[#1a140c] border-b border-[#2e2417] text-xs font-serif text-[#d4b06a]">
+                  <tr className="bg-surface-6 border-b border-line-11 text-xs font-serif text-accent">
                     <th className="py-2 px-3 w-36">Slot</th>
                     <th className="py-2 px-3">Recommended Item</th>
                     <th className="py-2 px-3 w-64">Acquisition &amp; Location</th>

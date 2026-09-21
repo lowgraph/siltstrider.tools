@@ -53,19 +53,19 @@ export default function CloudVaultCard({
 
   return (
     <div
-      className="vault-card p-4 space-y-3 bg-[#120f0a] border border-[#3a2e1d] hover:border-[#5a482e] transition-colors relative"
+      className="vault-card p-4 space-y-3 bg-surface-2 border border-line-9 hover:border-line-4 transition-colors relative"
       style={{
         boxShadow: "inset 0 0 8px 1px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.4)",
       }}
     >
       {/* Top Header */}
-      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-[#2a2215] pb-2">
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-line-11 pb-2">
         <div className="flex-1 min-w-[200px]">
           {editing ? (
             <form onSubmit={handleSaveRename} className="flex items-center gap-2">
               <input
                 type="text"
-                className="bg-[#0a0805] border border-[#4a3b26] px-2 py-1 text-sm text-[#f3e6c8] font-serif w-full max-w-[260px] focus:outline-none focus:border-[#d4b06a]"
+                className="bg-surface-1 border border-line-7 px-2 py-1 text-sm text-fg-2 font-serif w-full max-w-[260px] focus:outline-none focus:border-accent"
                 value={nameVal}
                 onChange={(e) => setNameVal(e.target.value)}
                 onInput={(e) => setNameVal(e.target.value)}
@@ -74,7 +74,7 @@ export default function CloudVaultCard({
               />
               <button
                 type="submit"
-                className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#d4b06a]"
+                className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-accent"
                 onClick={handleSaveRename}
                 disabled={isBusy || !nameVal.trim()}
               >
@@ -82,7 +82,7 @@ export default function CloudVaultCard({
               </button>
               <button
                 type="button"
-                className="mw-btn px-2.5 py-1 text-xs font-serif text-[#a69677]"
+                className="mw-btn px-2.5 py-1 text-xs font-serif text-fg-9"
                 onClick={handleCancelRename}
                 disabled={isBusy}
               >
@@ -91,12 +91,12 @@ export default function CloudVaultCard({
             </form>
           ) : (
             <div className="flex items-center gap-2">
-              <h4 className="font-serif text-base font-bold text-[#f3e6c8] tracking-wide">
+              <h4 className="font-serif text-base font-bold text-fg-2 tracking-wide">
                 {save.name || "Unnamed Character"}
               </h4>
               <button
                 type="button"
-                className="text-xs text-[#8c7853] hover:text-[#d4b06a] underline font-serif ml-1"
+                className="text-xs text-fg-14 hover:text-accent underline font-serif ml-1"
                 onClick={() => setEditing(true)}
                 title="Rename this save"
                 disabled={isBusy}
@@ -105,17 +105,17 @@ export default function CloudVaultCard({
               </button>
             </div>
           )}
-          <p className="text-xs text-[#8c7853] font-mono mt-0.5">
+          <p className="text-xs text-fg-14 font-mono mt-0.5">
             Revision {save.revision ?? 1} · {formattedDate}
           </p>
         </div>
 
         {/* Badges */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-serif uppercase tracking-wider px-2 py-0.5 bg-[#1f170e] border border-[#45321c] text-[#d4b06a]">
+          <span className="text-[11px] font-serif uppercase tracking-wider px-2 py-0.5 bg-surface-8 border border-line-8 text-accent">
             {typeLabel}
           </span>
-          <span className="text-[11px] font-serif uppercase tracking-wider px-2 py-0.5 bg-[#141b12] border border-[#2b4226] text-[#86bf77]">
+          <span className="text-[11px] font-serif uppercase tracking-wider px-2 py-0.5 bg-success-surface-1 border border-success-line-5 text-success-4">
             Cloud Synced
           </span>
         </div>
@@ -123,31 +123,31 @@ export default function CloudVaultCard({
 
       {/* Stats Summary Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-serif">
-        <div className="bg-[#0a0805] p-2 border border-[#221c13]">
-          <span className="text-[#8c7853] block text-[10px] uppercase tracking-wider">Level &amp; Class</span>
-          <span className="text-[#f3e6c8] font-bold">
+        <div className="bg-surface-1 p-2 border border-line-12">
+          <span className="text-fg-14 block text-[10px] uppercase tracking-wider">Level &amp; Class</span>
+          <span className="text-fg-2 font-bold">
             Lvl {save.level || 1} {save.class_name || "Adventurer"}
           </span>
         </div>
 
-        <div className="bg-[#0a0805] p-2 border border-[#221c13]">
-          <span className="text-[#8c7853] block text-[10px] uppercase tracking-wider">Race &amp; Sign</span>
-          <span className="text-[#f3e6c8] font-bold">
+        <div className="bg-surface-1 p-2 border border-line-12">
+          <span className="text-fg-14 block text-[10px] uppercase tracking-wider">Race &amp; Sign</span>
+          <span className="text-fg-2 font-bold">
             {save.race || "Dark Elf"}
             {save.birthsign ? ` · ${save.birthsign}` : ""}
           </span>
         </div>
 
-        <div className="bg-[#0a0805] p-2 border border-[#221c13]">
-          <span className="text-[#8c7853] block text-[10px] uppercase tracking-wider">Location / Cell</span>
-          <span className="text-[#f3e6c8] font-bold truncate block" title={save.cell_name || "Vvardenfell"}>
+        <div className="bg-surface-1 p-2 border border-line-12">
+          <span className="text-fg-14 block text-[10px] uppercase tracking-wider">Location / Cell</span>
+          <span className="text-fg-2 font-bold truncate block" title={save.cell_name || "Vvardenfell"}>
             {save.cell_name || "Vvardenfell"}
           </span>
         </div>
 
-        <div className="bg-[#0a0805] p-2 border border-[#221c13]">
-          <span className="text-[#8c7853] block text-[10px] uppercase tracking-wider">Gold &amp; Progress</span>
-          <span className="text-[#d4b06a] font-bold">
+        <div className="bg-surface-1 p-2 border border-line-12">
+          <span className="text-fg-14 block text-[10px] uppercase tracking-wider">Gold &amp; Progress</span>
+          <span className="text-accent font-bold">
             {(save.gold || 0).toLocaleString("en-US")} gp
             {save.quest_count ? ` · ${save.quest_count} quests` : ""}
           </span>
@@ -155,11 +155,11 @@ export default function CloudVaultCard({
       </div>
 
       {/* Action Footer */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#221c13]">
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-line-12">
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="mw-btn px-3 py-1.5 text-xs font-serif font-bold text-[#f3e6c8] hover:text-[#d4b06a] shadow-sm"
+            className="mw-btn px-3 py-1.5 text-xs font-serif font-bold text-fg-2 hover:text-accent shadow-sm"
             onClick={() => onLoad(save.id)}
             disabled={isBusy}
             title="Load this build into Character Builder"
@@ -169,7 +169,7 @@ export default function CloudVaultCard({
           {onDuplicate && (
             <button
               type="button"
-              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-[#c4b998] hover:text-[#f3e6c8]"
+              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
               onClick={() => onDuplicate(save.id)}
               disabled={isBusy}
               title="Duplicate this build as an independent save"
@@ -180,7 +180,7 @@ export default function CloudVaultCard({
           {onShare && (
             <button
               type="button"
-              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-[#c4b998] hover:text-[#f3e6c8]"
+              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
               onClick={async () => {
                 const res = await onShare(save);
                 if (res?.success) {
@@ -196,7 +196,7 @@ export default function CloudVaultCard({
           )}
           <button
             type="button"
-            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-[#c4b998] hover:text-[#f3e6c8]"
+            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
             onClick={() => onExport(save.id, save.name)}
             disabled={isBusy}
             title="Download full save data as structured JSON"
@@ -208,10 +208,10 @@ export default function CloudVaultCard({
         <div>
           {confirmDelete ? (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-[#d4886a] font-serif font-semibold">Delete save?</span>
+              <span className="text-xs text-warning-3 font-serif font-semibold">Delete save?</span>
               <button
                 type="button"
-                className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-[#e06a6a] border-[#6b2828] hover:bg-[#381414]"
+                className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-danger-7 border-danger-line-2 hover:bg-danger-surface-3"
                 onClick={() => {
                   setConfirmDelete(false);
                   onDelete(save.id, save.revision);
@@ -222,7 +222,7 @@ export default function CloudVaultCard({
               </button>
               <button
                 type="button"
-                className="mw-btn px-2 py-1 text-xs font-serif text-[#a69677]"
+                className="mw-btn px-2 py-1 text-xs font-serif text-fg-9"
                 onClick={() => setConfirmDelete(false)}
                 disabled={isBusy}
               >
@@ -232,7 +232,7 @@ export default function CloudVaultCard({
           ) : (
             <button
               type="button"
-              className="text-xs text-[#a67a65] hover:text-[#d46a6a] underline font-serif"
+              className="text-xs text-fg-12 hover:text-danger-7 underline font-serif"
               onClick={() => setConfirmDelete(true)}
               disabled={isBusy}
             >
