@@ -10,6 +10,8 @@ import {
   RAW_GRAPH,
   VANILLA_STOPS
 } from "../../../lib/travel-graph.mjs";
+import { resolveStopPositions, regionLabels, mapEdges } from "../../../lib/travel-map.mjs";
+import TransitMap from "./transit-map";
 
 const POPULAR_HUBS = [
   { name: "Seyda Neen", desc: "Arrival Port", vanillaOnly: false },
@@ -35,6 +37,24 @@ export default function TravelWorkstation() {
     }
     return null;
   }, [gameData.status, gameData.data]);
+
+  // Stop positions, network edges and region labels for the transit map (live bundle only).
+  const mapData = useMemo(() => {
+    if (!liveNetworkGraph) return null;
+    const { positions, unplaced } = resolveStopPositions(
+      gameData.data?.metadata?.Travel?.nodes || {},
+      gameData.data?.metadata?.Places?.settlements || []
+    );
+    // Only stops that are part of the network, so the map and the stop count agree.
+    const onNetwork = Object.fromEntries(Object.entries(positions).filter(([stop]) => liveNetworkGraph[stop]));
+    if (!Object.keys(onNetwork).length) return null;
+    return {
+      positions: onNetwork,
+      unplaced: unplaced.filter((stop) => liveNetworkGraph[stop]),
+      edges: mapEdges(liveNetworkGraph),
+      regions: regionLabels(gameData.data?.catalogs?.Places || [])
+    };
+  }, [liveNetworkGraph, gameData.data]);
 
   const availableStops = useMemo(() => {
     return getAvailableTransitStops(world, liveNetworkGraph);
@@ -168,7 +188,7 @@ export default function TravelWorkstation() {
           {gameData.status === 'ready' ? (
             <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
-              <span>Live: {availableStops.length} Stops ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+              <span>Live: {availableStops.length} Stops ({gameData.data?.profile?.toUpperCase() || world.toUpperCase()})</span>
             </span>
           ) : gameData.status === 'loading' ? (
             <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">
@@ -411,6 +431,22 @@ export default function TravelWorkstation() {
                 ))}
               </div>
             </div>
+          )}
+
+          {mapData && (
+            <TransitMap
+              positions={mapData.positions}
+              edges={mapData.edges}
+              regions={mapData.regions}
+              unplaced={mapData.unplaced}
+              route={route}
+              origin={origin}
+              destination={destination}
+              onSelectStop={(stop) => {
+                setDestSearch("");
+                handleDestinationChange(stop);
+              }}
+            />
           )}
         </div>
       </div>
