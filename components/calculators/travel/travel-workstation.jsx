@@ -3,6 +3,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
+import { useSearchIntent } from "../../use-search-intent";
+import { clearSearchIntent } from "../../../lib/search-intent.mjs";
 import {
   getAvailableTransitStops,
   findFewestHopsRoute,
@@ -114,6 +116,19 @@ export default function TravelWorkstation() {
       }
     }
   };
+
+  // "Plan a trip here" from site search: set the destination once the stop list has it.
+  const intent = useSearchIntent("travel");
+  useEffect(() => {
+    if (!intent || intent.kind !== "destination") return;
+    if (availableStops.includes(intent.value)) {
+      clearSearchIntent(intent);
+      setDestSearch("");
+      handleDestinationChange(intent.value);
+    } else if (gameData.status === "ready" || gameData.status === "error") {
+      clearSearchIntent(intent);
+    }
+  }, [intent, availableStops, gameData.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSwap = () => {
     const prevOrigin = origin;

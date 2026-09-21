@@ -1,6 +1,8 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import { useGameData } from "../use-game-data";
+import { useSearchIntent } from "../use-search-intent";
+import { clearSearchIntent } from "../../lib/search-intent.mjs";
 import { useActiveCharacter } from "../character-context";
 import { useShell } from "../shell-context";
 import FactionRoster from "./faction-roster";
@@ -237,6 +239,29 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
     const saveQuests = typeof window !== "undefined" ? window.siltVaultActiveSave?.progress?.quests || [] : [];
     return getFactionQuests(selectedFactionKey, questCatalog, saveQuests);
   }, [selectedFactionKey, questCatalog]);
+
+  // A faction picked in site search: select it, clear the roster filters, scroll it into view.
+  const intent = useSearchIntent("factions");
+  const [revealKey, setRevealKey] = useState(null);
+  useEffect(() => {
+    if (!intent || intent.kind !== "faction") return;
+    if (!isLive) {
+      if (gameData.status === "error") clearSearchIntent(intent);
+      return;
+    }
+    clearSearchIntent(intent);
+    const hit = factionsList.find(f => f.key.toLowerCase() === String(intent.value).toLowerCase());
+    if (!hit) return;
+    setSearchQuery("");
+    setActiveCategory("all");
+    setSelectedFactionKey(hit.key);
+    setRevealKey(hit.key);
+  }, [intent, isLive, factionsList, gameData.status]);
+  useEffect(() => {
+    if (!revealKey) return;
+    document.querySelector('.journal-factions-root .faction-roster-item[aria-selected="true"]')?.scrollIntoView?.({ block: "nearest" });
+    setRevealKey(null);
+  }, [revealKey]);
 
   const handleUpdateMembership = (updatedMembership) => {
     setJoinedFactions(prev => {

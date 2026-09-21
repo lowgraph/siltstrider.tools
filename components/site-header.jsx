@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
 import { useShell } from './shell-context';
+import SearchPalette from './search/search-palette';
 
 const descriptions = {
   home: 'Pick a planner for this playthrough.',
@@ -49,6 +50,8 @@ export default function SiteHeader({ shell: propShell } = {}) {
   const [open, setOpen] = useState(false);
   const [calcOpen, setCalcOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchKey, setSearchKey] = useState('Ctrl K');
   const root = useRef(null);
   const menu = useRef(null);
   const calcDropdownRef = useRef(null);
@@ -111,6 +114,37 @@ export default function SiteHeader({ shell: propShell } = {}) {
       document.removeEventListener('click', outside);
     };
   }, [open, calcOpen, moreOpen]);
+
+  // Site search: Ctrl+K / Cmd+K toggles it, "/" opens it when not typing in a field.
+  const openSearch = () => {
+    setOpen(false);
+    setCalcOpen(false);
+    setMoreOpen(false);
+    setSearchOpen(true);
+  };
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '')) setSearchKey('⌘K');
+  }, []);
+  useEffect(() => {
+    if (!shell.ready) return undefined;
+    const onKey = e => {
+      if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey) {
+        e.preventDefault();
+        setOpen(false);
+        setCalcOpen(false);
+        setMoreOpen(false);
+        setSearchOpen(v => !v);
+        return;
+      }
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName || ''))) return;
+      e.preventDefault();
+      openSearch();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [shell.ready]);
 
   const handleDropdownBtnKeyDown = (e, type) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -209,6 +243,21 @@ export default function SiteHeader({ shell: propShell } = {}) {
       >
         {open ? '✕' : '☰'}
       </button>
+      <button
+        type="button"
+        className="search-trigger"
+        disabled={!shell.ready}
+        aria-haspopup="dialog"
+        aria-keyshortcuts="Control+K Meta+K /"
+        onClick={openSearch}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" />
+        </svg>
+        <span className="search-trigger-label">Search items, spells, places…</span>
+        <kbd>{searchKey}</kbd>
+      </button>
+      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} profile={shell.profile} navigate={view => shell.navigate(view)} />
       <div className={'header-tools menu-drawer' + (open ? ' open' : '')} id="react-menu-drawer">
         <div className="nav-primary">
           <span className="drawer-label drawer-only">Character Planners</span>

@@ -3,6 +3,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
+import { useSearchIntent } from "../../use-search-intent";
+import { clearSearchIntent } from "../../../lib/search-intent.mjs";
 import { adaptAlchemy } from "../../../lib/alchemy-catalogs.mjs";
 import {
   APPARATUS_TIERS,
@@ -104,6 +106,24 @@ export default function AlchemyWorkstation() {
     return FALLBACK_INGREDIENTS;
   }, [bundleAlchemy]);
 
+  // "Add to Alchemy" from site search: put the ingredient in the first empty slot
+  // (the last slot when all four are full) once the bundle's ingredients are in.
+  const intent = useSearchIntent("alchemy");
+  useEffect(() => {
+    if (!intent || intent.kind !== "ingredient") return;
+    if (!bundleAlchemy) {
+      if (gameData.status === "ready" || gameData.status === "error") clearSearchIntent(intent);
+      return;
+    }
+    clearSearchIntent(intent);
+    const hit = allIngredients.find(x => x.id === intent.value);
+    const slots = [[slot1, setSlot1, setSearch1], [slot2, setSlot2, setSearch2], [slot3, setSlot3, setSearch3], [slot4, setSlot4, setSearch4]];
+    if (!hit || slots.some(([current]) => current?.id === hit.id)) return;
+    const [, setSlot, setSearch] = slots.find(([current]) => !current) || slots[3];
+    setSlot(hit);
+    setSearch("");
+  }, [intent, bundleAlchemy, allIngredients, gameData.status]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleIngestCharacterStats = useCallback(() => {
     setSkill(baseSkill);
     setIntelligence(baseInt);
@@ -173,8 +193,9 @@ export default function AlchemyWorkstation() {
 
       // If matchFirst is on and slot > 0, check if ing shares any effect with slot1
       if (matchFirst && slotIndex > 0 && slot1) {
-        const slot1Effects = new Set((slot1.effects || []).map((e) => e.n));
-        const hasCommon = (ing.effects || []).some((e) => slot1Effects.has(e.n));
+        // Bundle ingredients keep 4 effect slots; empty ones are null.
+        const slot1Effects = new Set((slot1.effects || []).filter(Boolean).map((e) => e.n));
+        const hasCommon = (ing.effects || []).some((e) => e && slot1Effects.has(e.n));
         if (!hasCommon) return false;
       }
 
@@ -395,8 +416,10 @@ export default function AlchemyWorkstation() {
                   </div>
 
                   <div className="flex gap-2">
+                    {/* Inline sizes: the legacy #panel-alchemy rule makes every input and select 100% wide. */}
                     <select
                       className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
+                      style={{ flex: "1 1 0", minWidth: 0 }}
                       value={current?.id || ""}
                       onChange={(e) => {
                         const hit = allIngredients.find((x) => x.id === e.target.value);
@@ -414,6 +437,7 @@ export default function AlchemyWorkstation() {
                     <input
                       type="text"
                       className="w-32 bg-surface-1 border border-line-9 px-2 py-1 text-xs text-fg-2 placeholder-fg-15 font-serif"
+                      style={{ width: "8rem", flex: "none" }}
                       placeholder="Search..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
@@ -422,7 +446,7 @@ export default function AlchemyWorkstation() {
 
                   {current && (
                     <div className="pt-1 flex flex-wrap gap-1">
-                      {(current.effects || []).map((eff, eIdx) => {
+                      {(current.effects || []).filter(Boolean).map((eff, eIdx) => {
                         const label = formatEffectLabel(eff);
                         return (
                           <span
