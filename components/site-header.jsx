@@ -142,8 +142,14 @@ export default function SiteHeader({ shell: propShell } = {}) {
       e.preventDefault();
       openSearch();
     };
+    // Other parts of the page (the home page's "New" pill) open search with this event.
+    const onRequest = () => openSearch();
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    window.addEventListener('silt-open-search', onRequest);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      window.removeEventListener('silt-open-search', onRequest);
+    };
   }, [shell.ready]);
 
   const handleDropdownBtnKeyDown = (e, type) => {
