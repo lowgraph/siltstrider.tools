@@ -8,11 +8,34 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+@font-face {
+  font-family: "Pelagiad";
+  src: url("/fonts/Pelagiad.ttf") format("truetype"), url("/legacy/assets/b282ea043af32e15.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ==========================================================================
    Global Dark Scheme & Authentic CRPG Scrollbars
    ========================================================================== */
 :root {
   color-scheme: dark;
+  --ink: #1a120c;
+  --paper: #f3e6c8;
+  --muted: #b8a078;
+  --parchment: #e4d2a8;
+  --parchment-dark: #d4be8c;
+  --gold: #d4b06a;
+  --offblack: #0c0a08;
+  --journal: #12100c;
+  --surface: #181510;
+  --radius: 0;
+
+  --mw-border: url("/textures/mw-border.png");
+  --mw-bevel: url("/textures/mw-bevel.png");
+  --mw-groove: url("/textures/mw-groove.png");
+
   --mw-scroll-thumb: #4e3c23;
   --mw-scroll-thumb-hover: #785d37;
   --mw-scroll-track: #14100a;
@@ -143,6 +166,7 @@ select[size] option:checked {
 body.view-builder #panel-build,
 body.view-leveler #panel-leveler,
 body.view-vault #panel-vault,
+body.view-factions #panel-factions,
 body.view-home #panel-home,
 body:not([class*="view-"]) #panel-home {
   display: block !important;
@@ -163,6 +187,7 @@ body:not([class*="view-"]) #panel-home {
   body.view-builder #panel-build,
   body.view-leveler #panel-leveler,
   body.view-vault #panel-vault,
+  body.view-factions #panel-factions,
   body.view-home #panel-home,
   body:not([class*="view-"]) #panel-home {
     padding: 16px 12px !important;
@@ -174,6 +199,9 @@ body:not([class*="view-"]) #panel-home {
 body.view-builder #panel-build > *:not(.character-builder-root),
 body.view-leveler #panel-leveler > *:not(.level-simulator-root),
 body.view-vault #panel-vault > *:not(.cloud-vault-root),
+body.view-factions #panel-factions > *:not(.journal-factions-root),
+body.view-about #panel-about > *:not(.about-view-root),
+body.view-changelog #panel-changelog > *:not(.changelog-view-root),
 #panel-home:has(.home-hub-root) > *:not(.home-hub-root) {
   display: none !important;
 }
@@ -182,6 +210,9 @@ body.view-vault #panel-vault > *:not(.cloud-vault-root),
 body.view-builder .panel:not(#panel-build),
 body.view-leveler .panel:not(#panel-leveler),
 body.view-vault .panel:not(#panel-vault),
+body.view-factions .panel:not(#panel-factions),
+body.view-about .panel:not(#panel-about),
+body.view-changelog .panel:not(#panel-changelog),
 body.view-home .panel:not(#panel-home) {
   display: none !important;
 }
@@ -190,6 +221,7 @@ body.view-home .panel:not(#panel-home) {
 body.view-builder .hero,
 body.view-leveler .hero,
 body.view-vault .hero,
+body.view-factions .hero,
 body.view-home .hero {
   align-items: center;
 }

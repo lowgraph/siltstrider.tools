@@ -349,12 +349,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     body.view-spellmaking #panel-home,
     body.view-alchemy #panel-home,
     body.view-travel #panel-home,
+    body.view-factions #panel-home,
     body.view-about #panel-home,
     body.view-changelog #panel-home { display: none !important; }
     body.view-challenge #panel-challenge { display: block; }
     body.view-builder #panel-build { display: block; }
     body.view-leveler #panel-leveler { display: block; }
     body.view-vault #panel-vault { display: block; }
+    body.view-factions #panel-factions { display: block; }
     body.view-enchanting #panel-enchant { display: block; }
     body.view-spellmaking #panel-spell { display: block; }
     body.view-alchemy #panel-alchemy { display: block; }
@@ -1559,11 +1561,11 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       <section class="changelog-day">
         <h3><time datetime="2026-09-20">September 20, 2026</time></h3>
         <ul>
-          <li>Cloud Character Vault: authentic CRPG save workstation (#panel-vault) and quick modal portal in 6px ornate borders (--mw-border) with home card and header navigation.</li>
-          <li>OpenMW save ingestion: client ESM parser (lib/omwsave-parser.mjs) extracts attributes, skills, vitals, gold, location, inventory, and quests from native .omwsave files.</li>
-          <li>SLT1 binary codec: ~96% byte compression (~35 KB dossiers into ~1.4 KB BLOBs) for Cloudflare D1 edge database storage.</li>
-          <li>Tiered quota model: 5 slots for free accounts, 25 slots for supporters, enforced via edge SQLite triggers.</li>
-          <li>Offline-first sync: zero-latency local caching with Clerk JWT cloud sync, optimistic concurrency, and 1-click migration.</li>
+          <li>Live bundle data: wired Enchanting, Spellmaking, Alchemy, and Travel to content-addressed catalogs with live badges.</li>
+          <li>Gear Advisor: added &quot;Near starting areas&quot; policy toggle alongside Steal and Endgame with dynamic filtering.</li>
+          <li>Equipped Loadouts: 19-slot categorized CRPG equipment ledger with weighted AR, carry capacity, and multi-loadouts.</li>
+          <li>Cloud Character Vault: authentic save workstation (#panel-vault) and modal portal with OpenMW .omwsave import.</li>
+          <li>SLT1 binary codec: ~96% compression for fast Cloudflare D1 cloud saves and offline-first local storage.</li>
         </ul>
       </section>
       <section class="changelog-day">
@@ -1874,6 +1876,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         <div class="gear-toggles" role="group" aria-label="Early-game gear">
           <label><input type="checkbox" id="gear-steal" checked /> Steal early gear</label>
           <label><input type="checkbox" id="gear-endgame" /> Endgame gear early</label>
+          <label><input type="checkbox" id="gear-near-start" /> Near starting areas</label>
           <label><input type="checkbox" id="c-bittercup" /> Drink Bitter Cup</label>
         </div>
         <button type="button" class="btn" id="btn-gear">Optimize gear</button>
@@ -1892,6 +1895,10 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     <div class="panel" id="panel-vault">
       <h2>Cloud Character Vault</h2>
       <p class="muted">Cloud character storage, OpenMW save ingestion (.omwsave), revision history, and cross-device sync.</p>
+    </div>
+    <div class="panel" id="panel-factions">
+      <h2>Faction Journal</h2>
+      <p class="muted">Track memberships, rank requirements, promotion eligibility, and inter-faction standing.</p>
     </div>
     <div class="panel" id="panel-travel">
       <h2>Travel optimizer</h2>
@@ -2836,6 +2843,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     const ptr = document.getElementById("panel-travel");
     const plv = document.getElementById("panel-leveler");
     const pv = document.getElementById("panel-vault");
+    const pf = document.getElementById("panel-factions");
     const menuBtn = document.getElementById("btn-menu");
     const drawer = document.getElementById("menu-drawer");
     const pageSub = document.getElementById("page-sub");
@@ -2960,12 +2968,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       });
     } catch (e) {}
     function showView(name) {
-      document.body.classList.remove("view-home", "view-challenge", "view-builder", "view-leveler", "view-vault", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
+      document.body.classList.remove("view-home", "view-challenge", "view-builder", "view-leveler", "view-vault", "view-factions", "view-enchanting", "view-spellmaking", "view-alchemy", "view-travel", "view-about", "view-changelog");
       if (name === "home") document.body.classList.add("view-home");
       if (name === "challenge") document.body.classList.add("view-challenge");
       if (name === "builder") document.body.classList.add("view-builder");
       if (name === "leveler") document.body.classList.add("view-leveler");
       if (name === "vault") document.body.classList.add("view-vault");
+      if (name === "factions") document.body.classList.add("view-factions");
       if (name === "enchanting") document.body.classList.add("view-enchanting");
       if (name === "spellmaking") document.body.classList.add("view-spellmaking");
       if (name === "alchemy") document.body.classList.add("view-alchemy");
@@ -2976,7 +2985,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       var navB = document.getElementById("btn-build");
       if (navC) navC.setAttribute("aria-current", name === "challenge" ? "page" : "false");
       if (navB) navB.setAttribute("aria-current", name === "builder" ? "page" : "false");
-      var calcViews = ["leveler", "enchanting", "spellmaking", "alchemy", "travel"];
+      var calcViews = ["leveler", "factions", "enchanting", "spellmaking", "alchemy", "travel"];
       var moreViews = ["about", "changelog"];
       var bdc = document.getElementById("btn-dropdown-calc");
       var bdm = document.getElementById("btn-dropdown-more");
@@ -2984,6 +2993,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       if (bdm) bdm.classList.toggle("on", moreViews.includes(name));
       var deskNavIds = [
         ["btn-desk-leveler", "leveler"],
+        ["btn-desk-factions", "factions"],
         ["btn-desk-enchant", "enchanting"],
         ["btn-desk-spell", "spellmaking"],
         ["btn-desk-alchemy", "alchemy"],
@@ -3024,6 +3034,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
       if (plv) plv.classList.toggle("show", name === "leveler");
       if (pv) pv.classList.toggle("show", name === "vault");
+      if (pf) pf.classList.toggle("show", name === "factions");
       if (pa) pa.classList.toggle("show", name === "about");
       if (pcl) pcl.classList.toggle("show", name === "changelog");
       if (pe) pe.classList.toggle("show", name === "enchanting");
@@ -3037,6 +3048,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else if (name === "changelog") pageSub.textContent = "What changed on the site, newest first.";
         else if (name === "leveler") pageSub.textContent = "Progression simulator, 5x multiplier training, and health projection.";
         else if (name === "vault") pageSub.textContent = "Cloud character storage, OpenMW save ingestion, and build synchronization.";
+        else if (name === "factions") pageSub.textContent = "Track memberships, rank requirements, promotion eligibility, and inter-faction standing.";
         else if (name === "enchanting") pageSub.textContent = "Effects, souls, and named enchanters.";
         else if (name === "spellmaking") pageSub.textContent = "Magicka, cast chance, and spellmaker gold.";
         else if (name === "alchemy") pageSub.textContent = "Apparatus, ingredients, and brew numbers.";
@@ -3238,6 +3250,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
         else if (/\balchemy\b/.test(h)) showView("alchemy");
         else if (/\btravel\b/.test(h)) showView("travel");
         else if (/\bleveler\b|\blevel\b/.test(h)) showView("leveler");
+        else if (/\bfactions\b|\bfaction\b/.test(h)) showView("factions");
         else if (/\babout\b/.test(h)) showView("about");
         else if (/\bchangelog\b/.test(h)) showView("changelog");
         else if (/builder|optimizer/.test(h) || buildM) showView("builder");
@@ -3264,12 +3277,16 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     bindOnce(document.getElementById("btn-go-build"), () => showView("builder"));
     bindOnce(document.getElementById("btn-go-leveler"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-go-vault"), () => showView("vault"));
+    bindOnce(document.getElementById("btn-go-factions"), () => showView("factions"));
     bindOnce(document.getElementById("btn-go-enchant"), () => showView("enchanting"));
     bindOnce(document.getElementById("btn-go-spell"), () => showView("spellmaking"));
     bindOnce(document.getElementById("btn-go-alchemy"), () => showView("alchemy"));
     bindOnce(document.getElementById("btn-go-travel"), () => showView("travel"));
     bindOnce(document.getElementById("btn-nav-leveler"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-nav-vault"), () => showView("vault"));
+    bindOnce(document.getElementById("btn-nav-factions"), () => showView("factions"));
+    bindOnce(document.getElementById("btn-factions-drawer"), () => showView("factions"));
+    bindOnce(document.getElementById("btn-desk-factions"), () => showView("factions"));
     bindOnce(document.getElementById("btn-leveler-drawer"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-desk-leveler"), () => showView("leveler"));
     bindOnce(document.getElementById("btn-nav-enchant"), () => showView("enchanting"));
@@ -4741,9 +4758,14 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
     function earlyGearOptions() {
       const steal = document.getElementById("gear-steal");
       const endgame = document.getElementById("gear-endgame");
+      const nearStart = document.getElementById("gear-near-start");
       const canSteal = !steal || steal.checked;
       if (endgame) endgame.disabled = !canSteal;
-      return { steal: canSteal, endgame: canSteal && !!endgame && endgame.checked };
+      return {
+        steal: canSteal,
+        endgame: canSteal && !!endgame && endgame.checked,
+        nearStart: !!nearStart && nearStart.checked
+      };
     }
     const stolenPick = (p) => /\bsteal\b/i.test(pickWhere(p));
     // Places in or around the starting towns, for hand-picked rows that have no closeness data.
@@ -4877,12 +4899,15 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       }
     }
     document.getElementById("btn-gear").addEventListener("click", optimizeGear);
-    ["gear-steal", "gear-endgame"].forEach((id) => {
-      document.getElementById(id).addEventListener("change", () => {
-        earlyGearOptions();
-        const box = document.getElementById("gear-box");
-        if (box && !box.classList.contains("hidden") && box.querySelector("table")) optimizeGear();
-      });
+    ["gear-steal", "gear-endgame", "gear-near-start"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("change", () => {
+          earlyGearOptions();
+          const box = document.getElementById("gear-box");
+          if (box && !box.classList.contains("hidden") && box.querySelector("table")) optimizeGear();
+        });
+      }
     });
     earlyGearOptions();
 

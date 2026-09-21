@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
+import {BestInSlotView} from './best-in-slot-view';
 import { QUICK_LOADOUT_KITS } from '../equipment-studio/loadout-tabs-bar';
 
 // Keep the verified endgame tables and notes; the bundle supplies early rows.
@@ -17,17 +18,19 @@ function endgameHtml(html){
 export default function GearAdvisor(props){
   const [enabled,setEnabled]=useState(false);
   const result=useGameData('gear',{enabled});
-  return <GearAdvisorView {...props} result={result} onLoad={()=>setEnabled(true)}/>;
+  const bisResult=useGameData('bestInSlot',{enabled});
+  return <GearAdvisorView {...props} result={result} bisResult={bisResult} onLoad={()=>setEnabled(true)}/>;
 }
 
-export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }) {
+export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResult, onLoad }) {
   const [ranking,setRanking]=useState(null);
   const [rankError,setRankError]=useState(null);
-  const [nearStart,setNearStart]=useState(false);
+  const [nearStart, setNearStart] = useState(() => document.getElementById("gear-near-start")?.checked ?? false);
   const [stealEarly, setStealEarly] = useState(() => document.getElementById("gear-steal")?.checked ?? true);
   const [endgameEarly, setEndgameEarly] = useState(() => document.getElementById("gear-endgame")?.checked ?? false);
   const [gearHtml, setGearHtml] = useState("");
   const [optimizing, setOptimizing] = useState(false);
+  const [hasRun, setHasRun] = useState(false);
 
   // Sync with DOM checkboxes if legacy runtime is present
   const handleToggleSteal = (val) => {
@@ -48,12 +51,42 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
     }
   };
 
+  const handleToggleNearStart = (val) => {
+    setNearStart(val);
+    const el = document.getElementById("gear-near-start");
+    if (el) {
+      el.checked = val;
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  };
+
+  const resolveRanking = () => {
+    if (typeof window !== "undefined" && typeof window.makeBuildProfile === 'function') {
+      return window.makeBuildProfile(build?.maj || [], build?.min || [], build?.spec || '', build?.race || '', attrs, build?.sign || '');
+    }
+    const maj = build?.maj || [];
+    const min = build?.min || [];
+    const skills = [...maj, ...min];
+    const armPool = ["Heavy Armor", "Medium Armor", "Light Armor", "Unarmored"].filter(s => skills.includes(s));
+    const wepPool = ["Long Blade", "Short Blade", "Blunt Weapon", "Axe", "Spear", "Marksman", "Hand-to-hand"].filter(s => skills.includes(s));
+    return {
+      maj, min, spec: build?.spec || '', raceName: build?.race || '', attrs, sign: build?.sign || '',
+      primaryWep: wepPool[0] || "Long Blade",
+      primaryArmor: armPool[0] || "Light Armor",
+      wepRanked: (wepPool.length ? wepPool : ["Long Blade"]).map(n => ({ n, s: maj.includes(n) ? 50 : 30 })),
+      armRanked: (armPool.length ? armPool : ["Light Armor"]).map(n => ({ n, s: maj.includes(n) ? 50 : 30 })),
+      twoHand: false,
+      shield: skills.includes("Block") ? "recommended" : "optional"
+    };
+  };
+
   const buildKey = JSON.stringify(build);
   // A result is valid only for the character used to compute it.
   useEffect(() => {
     setGearHtml("");
     setRanking(null);
     setRankError(null);
+    setHasRun(false);
     const box = document.getElementById("gear-box");
     if (box) box.innerHTML = "";
   }, [buildKey]);
@@ -61,13 +94,14 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
   const handleOptimize = () => {
     onLoad();
     setOptimizing(true);
+    setHasRun(true);
     try {
-      if(typeof window.makeBuildProfile!=='function')throw new Error('Build ranking is not ready. Try again.');
-      setRanking(window.makeBuildProfile(build.maj,build.min,build.spec,build.race,attrs,build.sign));
+      const prof = resolveRanking();
+      setRanking(prof);
       setRankError(null);
       const btn = document.getElementById("btn-gear");
       if (btn) btn.click();
-      else if (typeof window.optimizeGear === "function") window.optimizeGear();
+      else if (typeof window !== "undefined" && typeof window.optimizeGear === "function") window.optimizeGear();
       setGearHtml(endgameHtml(document.getElementById("gear-box")?.innerHTML || ""));
     } catch(error) {
       setRankError(error.message);
@@ -147,7 +181,12 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
               <span>Endgame gear early</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer text-[#f3e6c8]">
-              <input type="checkbox" className="accent-[#d4b06a] w-4 h-4" checked={nearStart} onChange={e=>setNearStart(e.target.checked)}/>
+              <input
+                type="checkbox"
+                className="accent-[#d4b06a] w-4 h-4"
+                checked={nearStart}
+                onChange={(e) => handleToggleNearStart(e.target.checked)}
+              />
               <span>Near starting areas</span>
             </label>
           </div>
@@ -174,10 +213,19 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, onLoad }
 
       {/* Rendered Gear Recommendations */}
       {rankError&&<p role="alert">{rankError}</p>}
-      {gearHtml ? (
+      {gearHtml || (hasRun && bisResult?.status === "ready") ? (
         <div className="gear-results-container text-sm overflow-x-auto text-[#f3e6c8]">
           <GearSourcesView ranking={ranking} build={build} beast={beast} result={result} toggles={{theft:stealEarly,endgame:endgameEarly,nearStart}}/>
-          <div dangerouslySetInnerHTML={{ __html: gearHtml }}/>
+          {bisResult?.status === "ready" ? (
+            <BestInSlotView
+              featureData={bisResult.data}
+              build={build}
+              beast={beast}
+              allowFormidableSources={endgameEarly}
+            />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: gearHtml }}/>
+          )}
         </div>
       ) : (
         <div className="p-8 text-center bg-[#100d08] border border-[#221c13] text-[#b8a078] text-sm italic mw-groove-panel">

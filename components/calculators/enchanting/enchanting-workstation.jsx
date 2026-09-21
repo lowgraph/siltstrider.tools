@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
+import { useGameData } from "../../use-game-data";
 import {
   SOUL_GEMS,
   ENCHANT_BASE_ITEMS,
@@ -52,8 +53,24 @@ export default function EnchantingWorkstation() {
   const [selectedVendorId, setSelectedVendorId] = useState("galbedir");
   const [vendorSearch, setVendorSearch] = useState("");
 
+  const gameData = useGameData('enchanting', { enabled: true });
+
   // Available effects from game data / runtime
   const availableEffects = useMemo(() => {
+    if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.EffectRules)) {
+      const live = gameData.data.catalogs.EffectRules
+        .filter((r) => r.allowEnchanting)
+        .map((r) => ({
+          n: r.name,
+          b: r.baseCost,
+          mag: r.noMagnitude ? 0 : 1,
+          dur: r.noDuration ? 0 : 1,
+          school: r.school ? (r.school.charAt(0).toUpperCase() + r.school.slice(1)) : "Alteration",
+          ce: 1
+        }))
+        .sort((a, b) => a.n.localeCompare(b.n));
+      if (live.length > 0) return live;
+    }
     if (typeof window !== "undefined" && Array.isArray(window.__MW_EFFECTS) && window.__MW_EFFECTS.length > 0) {
       return window.__MW_EFFECTS;
     }
@@ -78,7 +95,7 @@ export default function EnchantingWorkstation() {
       { n: "Absorb Health", b: 8, mag: 1, dur: 1, school: "Mysticism", ce: 0 },
       { n: "Paralyze", b: 40, mag: 0, dur: 1, school: "Illusion", ce: 0 }
     ];
-  }, []);
+  }, [gameData.status, gameData.data]);
 
   // Update base stats if character changes and user hasn't edited
   const handleIngestCharacterStats = useCallback(() => {
@@ -160,7 +177,23 @@ export default function EnchantingWorkstation() {
   }, [totalPoints, enchantType]);
 
   const enchantersList = useMemo(() => {
-    const list = getActiveEnchanters(world);
+    let list = null;
+    if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Merchants)) {
+      const liveMerchants = gameData.data.catalogs.Merchants
+        .filter((m) => (m.servicesRaw & 65536) !== 0)
+        .map((m) => ({
+          id: m.key,
+          n: `${m.name} (${m.cells?.[0] ? m.cells[0].replace(/^(interior|exterior):/,'') : m.class || 'Enchanter'})`,
+          merc: m.mercantile,
+          pers: m.personality,
+          luck: m.luck,
+          gold: m.gold
+        }));
+      if (liveMerchants.length > 0) list = liveMerchants;
+    }
+    if (!list) {
+      list = getActiveEnchanters(world);
+    }
     const pc = { merc: mercantile, pers: personality, luck, disp: disposition };
     return list
       .map((npc) => ({
@@ -168,7 +201,7 @@ export default function EnchantingWorkstation() {
         barterPrice: calcBarterBuyPrice(baseGoldCost, npc, pc)
       }))
       .sort((a, b) => a.barterPrice - b.barterPrice);
-  }, [world, mercantile, personality, luck, disposition, baseGoldCost]);
+  }, [gameData.status, gameData.data, world, mercantile, personality, luck, disposition, baseGoldCost]);
 
   const filteredEnchanters = useMemo(() => {
     if (!vendorSearch.trim()) return enchantersList;
@@ -205,7 +238,7 @@ export default function EnchantingWorkstation() {
 
   return (
     <div className="enchanting-workstation p-4 sm:p-5 border border-[#3a2e1d] bg-[#14100a] text-[#f3e6c8] space-y-6">
-      {/* Top Banner: Active Character Stats Strip */}
+      {/* Top Banner: Active Character Stats Strip & Live Game-Data Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#19140c] border border-[#2a2215]">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
           <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider whitespace-nowrap">
@@ -220,14 +253,28 @@ export default function EnchantingWorkstation() {
           </span>
         </div>
 
-        <button
-          type="button"
-          className="mw-btn w-full sm:w-auto px-2.5 py-1 text-xs font-serif font-bold"
-          onClick={handleIngestCharacterStats}
-          title="Reset calculator inputs to match active character sheet"
-        >
-          Ingest Character Stats
-        </button>
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          {gameData.status === 'ready' ? (
+            <span className="text-xs px-2 py-0.5 rounded border border-[#3a4e28] bg-[#10190c] text-[#78d65c] font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#52d634] inline-block"/>
+              <span>Live: {availableEffects.length} Effects · {enchantersList.length} Vendors ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+            </span>
+          ) : gameData.status === 'loading' ? (
+            <span className="text-xs px-2 py-0.5 rounded border border-[#4a3e20] bg-[#1a150c] text-[#d4b06a] font-mono flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#d4b06a] inline-block animate-pulse"/>
+              <span>Loading bundle...</span>
+            </span>
+          ) : null}
+
+          <button
+            type="button"
+            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
+            onClick={handleIngestCharacterStats}
+            title="Reset calculator inputs to match active character sheet"
+          >
+            Ingest Character Stats
+          </button>
+        </div>
       </div>
 
       {/* Main 2-Pane Workstation Layout */}

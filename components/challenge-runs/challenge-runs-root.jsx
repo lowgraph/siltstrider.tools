@@ -20,6 +20,7 @@ import {
   tagsOf,
   restrictionOkForNeeds
 } from "../../lib/challenge-math.mjs";
+import { rollCardAspect } from "../../lib/challenge-engine.mjs";
 import { computeSheet } from "../../lib/character-math.mjs";
 
 export default function ChallengeRunsRoot() {
@@ -379,6 +380,7 @@ export default function ChallengeRunsRoot() {
   // Roll individual aspect
   const handleRollAspect = useCallback(
     (key) => {
+      if (locks[key]) return;
       if (typeof window !== "undefined" && typeof window.rollAspect === "function") {
         try {
           window.rollAspect(key);
@@ -386,9 +388,17 @@ export default function ChallengeRunsRoot() {
           return;
         } catch (e) {}
       }
-      handleGenerateRun();
+      setRun((prevRun) => {
+        return rollCardAspect(key, prevRun, {
+          catalogs,
+          world: shell.world,
+          allowedBands,
+          restrictionCount: Number(restrictionCount) || 3,
+          objectiveCount: Number(objectiveCount) || 2
+        });
+      });
     },
-    [handleGenerateRun, syncFromLegacy]
+    [locks, catalogs, shell.world, allowedBands, restrictionCount, objectiveCount, syncFromLegacy]
   );
 
   // Send to Build Optimizer Bridge

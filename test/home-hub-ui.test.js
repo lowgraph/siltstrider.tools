@@ -215,7 +215,7 @@ test("Adversarial: ActiveSessionBanner handles completely missing window.siltShe
   root.unmount();
 });
 
-test("ToolDirectoryGrid renders all 8 canonical tools in correct order", async () => {
+test("ToolDirectoryGrid renders all 9 canonical tools in correct order", async () => {
   const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
   global.window = dom.window;
   global.document = dom.window.document;
@@ -224,11 +224,12 @@ test("ToolDirectoryGrid renders all 8 canonical tools in correct order", async (
   const ToolDirectoryGrid = component("components/home-hub/tool-directory-grid.jsx");
   const TOOLS = component("components/home-hub/tool-directory-grid.jsx", "TOOLS");
 
-  assert.equal(TOOLS.length, 8);
+  assert.equal(TOOLS.length, 9);
   const expectedIds = [
     "builder",
     "leveler",
     "vault",
+    "factions",
     "challenge",
     "enchanting",
     "spellmaking",
@@ -248,6 +249,7 @@ test("ToolDirectoryGrid renders all 8 canonical tools in correct order", async (
   assert.ok(container.textContent.includes("Build Optimizer"));
   assert.ok(container.textContent.includes("Level Simulator"));
   assert.ok(container.textContent.includes("Cloud Character Vault"));
+  assert.ok(container.textContent.includes("Faction Journal"));
   assert.ok(container.textContent.includes("Challenge Runs"));
   assert.ok(container.textContent.includes("Enchanting Calculator"));
   assert.ok(container.textContent.includes("Spellmaking Calculator"));
@@ -255,7 +257,7 @@ test("ToolDirectoryGrid renders all 8 canonical tools in correct order", async (
   assert.ok(container.textContent.includes("Travel Optimizer"));
 
   const articles = container.querySelectorAll("article");
-  assert.equal(articles.length, 8);
+  assert.equal(articles.length, 9);
 
   root.unmount();
 });

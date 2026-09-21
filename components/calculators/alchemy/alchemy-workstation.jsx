@@ -2,6 +2,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
+import { useGameData } from "../../use-game-data";
+import { adaptAlchemy } from "../../../lib/alchemy-catalogs.mjs";
 import {
   APPARATUS_TIERS,
   formatEffectLabel,
@@ -77,12 +79,30 @@ export default function AlchemyWorkstation() {
     setCustomPotionName("");
   };
 
+  const gameData = useGameData('alchemy', { enabled: true });
+
+  const bundleAlchemy = useMemo(() => {
+    if (gameData.status === 'ready' && gameData.data) {
+      try {
+        const legacyEffects = typeof window !== "undefined" && Array.isArray(window.__MW_EFFECTS) ? window.__MW_EFFECTS : [];
+        return adaptAlchemy(gameData.data, legacyEffects);
+      } catch (err) {
+        console.warn("Bundle alchemy adaptation fallback:", err);
+        return null;
+      }
+    }
+    return null;
+  }, [gameData.status, gameData.data]);
+
   const allIngredients = useMemo(() => {
+    if (bundleAlchemy?.ingredients?.length > 0) {
+      return bundleAlchemy.ingredients;
+    }
     if (typeof window !== "undefined" && Array.isArray(window.INGREDIENTS) && window.INGREDIENTS.length > 0) {
       return window.INGREDIENTS;
     }
     return FALLBACK_INGREDIENTS;
-  }, []);
+  }, [bundleAlchemy]);
 
   const handleIngestCharacterStats = useCallback(() => {
     setSkill(baseSkill);
@@ -91,11 +111,32 @@ export default function AlchemyWorkstation() {
     if (syncToCalculators) syncToCalculators();
   }, [baseSkill, baseInt, baseLuck, syncToCalculators]);
 
+  // Apparatus choices: bundle if available, else APPARATUS_TIERS
+  const apparatusTiers = useMemo(() => {
+    if (bundleAlchemy?.apparatus) {
+      return {
+        mortar: bundleAlchemy.apparatus.mortar?.length > 0
+          ? bundleAlchemy.apparatus.mortar.map(a => ({ id: a.id, name: a.n, quality: a.q }))
+          : APPARATUS_TIERS.mortar,
+        alembic: bundleAlchemy.apparatus.alembic?.length > 0
+          ? [{ id: "none", name: "None", quality: 0 }].concat(bundleAlchemy.apparatus.alembic.map(a => ({ id: a.id, name: a.n, quality: a.q })))
+          : APPARATUS_TIERS.alembic,
+        calcinator: bundleAlchemy.apparatus.calcinator?.length > 0
+          ? [{ id: "none", name: "None", quality: 0 }].concat(bundleAlchemy.apparatus.calcinator.map(a => ({ id: a.id, name: a.n, quality: a.q })))
+          : APPARATUS_TIERS.calcinator,
+        retort: bundleAlchemy.apparatus.retort?.length > 0
+          ? [{ id: "none", name: "None", quality: 0 }].concat(bundleAlchemy.apparatus.retort.map(a => ({ id: a.id, name: a.n, quality: a.q })))
+          : APPARATUS_TIERS.retort
+      };
+    }
+    return APPARATUS_TIERS;
+  }, [bundleAlchemy]);
+
   // Selected apparatus qualities
-  const mortar = useMemo(() => APPARATUS_TIERS.mortar.find((a) => a.id === mortarId) || APPARATUS_TIERS.mortar[1], [mortarId]);
-  const alembic = useMemo(() => APPARATUS_TIERS.alembic.find((a) => a.id === alembicId) || APPARATUS_TIERS.alembic[0], [alembicId]);
-  const calcinator = useMemo(() => APPARATUS_TIERS.calcinator.find((a) => a.id === calcinatorId) || APPARATUS_TIERS.calcinator[0], [calcinatorId]);
-  const retort = useMemo(() => APPARATUS_TIERS.retort.find((a) => a.id === retortId) || APPARATUS_TIERS.retort[0], [retortId]);
+  const mortar = useMemo(() => apparatusTiers.mortar.find((a) => a.id === mortarId) || apparatusTiers.mortar[1] || apparatusTiers.mortar[0], [apparatusTiers, mortarId]);
+  const alembic = useMemo(() => apparatusTiers.alembic.find((a) => a.id === alembicId) || apparatusTiers.alembic[0], [apparatusTiers, alembicId]);
+  const calcinator = useMemo(() => apparatusTiers.calcinator.find((a) => a.id === calcinatorId) || apparatusTiers.calcinator[0], [apparatusTiers, calcinatorId]);
+  const retort = useMemo(() => apparatusTiers.retort.find((a) => a.id === retortId) || apparatusTiers.retort[0], [apparatusTiers, retortId]);
 
   // Active slots
   const selectedIngredients = useMemo(() => {
@@ -174,7 +215,7 @@ export default function AlchemyWorkstation() {
 
   return (
     <div className="alchemy-workstation p-4 sm:p-5 border border-[#3a2e1d] bg-[#14100a] text-[#f3e6c8] space-y-6">
-      {/* Top Banner: Character Stats Strip */}
+      {/* Top Banner: Character Stats Strip & Live Game-Data Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#19140c] border border-[#2a2215]">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
           <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider whitespace-nowrap">
@@ -189,14 +230,28 @@ export default function AlchemyWorkstation() {
           </span>
         </div>
 
-        <button
-          type="button"
-          className="mw-btn w-full sm:w-auto px-2.5 py-1 text-xs font-serif font-bold"
-          onClick={handleIngestCharacterStats}
-          title="Reset alchemy skills to active character's base values"
-        >
-          Ingest Character Stats
-        </button>
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          {gameData.status === 'ready' ? (
+            <span className="text-xs px-2 py-0.5 rounded border border-[#3a4e28] bg-[#10190c] text-[#78d65c] font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#52d634] inline-block"/>
+              <span>Live: {allIngredients.length} Ing. ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+            </span>
+          ) : gameData.status === 'loading' ? (
+            <span className="text-xs px-2 py-0.5 rounded border border-[#4a3e20] bg-[#1a150c] text-[#d4b06a] font-mono flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#d4b06a] inline-block animate-pulse"/>
+              <span>Loading bundle...</span>
+            </span>
+          ) : null}
+
+          <button
+            type="button"
+            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
+            onClick={handleIngestCharacterStats}
+            title="Reset alchemy skills to active character's base values"
+          >
+            Ingest Character Stats
+          </button>
+        </div>
       </div>
 
       {/* Main 2-Pane Workstation Layout */}
@@ -219,7 +274,7 @@ export default function AlchemyWorkstation() {
                 value={mortarId}
                 onChange={(e) => setMortarId(e.target.value)}
               >
-                {APPARATUS_TIERS.mortar.map((a) => (
+                {apparatusTiers.mortar.map((a) => (
                   <option key={a.id} value={a.id}>
                     {a.name.replace(" Mortar and Pestle", "")} ({a.quality}x)
                   </option>
@@ -237,7 +292,7 @@ export default function AlchemyWorkstation() {
                 value={alembicId}
                 onChange={(e) => setAlembicId(e.target.value)}
               >
-                {APPARATUS_TIERS.alembic.map((a) => (
+                {apparatusTiers.alembic.map((a) => (
                   <option key={a.id} value={a.id}>
                     {a.name.replace(" Alembic", "")} {a.quality > 0 ? `(${a.quality}x)` : ""}
                   </option>
@@ -255,7 +310,7 @@ export default function AlchemyWorkstation() {
                 value={calcinatorId}
                 onChange={(e) => setCalcinatorId(e.target.value)}
               >
-                {APPARATUS_TIERS.calcinator.map((a) => (
+                {apparatusTiers.calcinator.map((a) => (
                   <option key={a.id} value={a.id}>
                     {a.name.replace(" Calcinator", "")} {a.quality > 0 ? `(${a.quality}x)` : ""}
                   </option>
@@ -273,7 +328,7 @@ export default function AlchemyWorkstation() {
                 value={retortId}
                 onChange={(e) => setRetortId(e.target.value)}
               >
-                {APPARATUS_TIERS.retort.map((a) => (
+                {apparatusTiers.retort.map((a) => (
                   <option key={a.id} value={a.id}>
                     {a.name.replace(" Retort", "")} {a.quality > 0 ? `(${a.quality}x)` : ""}
                   </option>

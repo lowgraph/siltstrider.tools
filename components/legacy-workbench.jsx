@@ -19,9 +19,36 @@ import LevelSimulatorRoot from './level-simulator/level-simulator-root';
 import CloudVaultModal from './character-vault/cloud-vault-modal';
 import CloudVaultWorkstation from './character-vault/cloud-vault-workstation';
 import HomeHubRoot from './home-hub/home-hub-root';
+import JournalFactionsRoot from './journal-factions/journal-factions-root';
+import AboutView from './views/about-view';
+import ChangelogView from './views/changelog-view';
 import { useActiveCharacter } from './character-context';
 
 const LegacyBody=memo(function LegacyBody({html}){return <div id="legacy-workbench" dangerouslySetInnerHTML={{__html:html}}/>;});
+
+function AboutViewOverlay() {
+  const shell = useShell();
+  if (shell.view === 'about') {
+    return <AboutView />;
+  }
+  return null;
+}
+
+function ChangelogViewOverlay() {
+  const shell = useShell();
+  if (shell.view === 'changelog') {
+    return <ChangelogView />;
+  }
+  return null;
+}
+
+function FactionsViewOverlay() {
+  const shell = useShell();
+  if (shell.view === 'factions') {
+    return <JournalFactionsRoot />;
+  }
+  return null;
+}
 
 function HomeViewOverlay() {
   const shell = useShell();
@@ -71,7 +98,7 @@ function LevelerViewOverlay() {
 export default function LegacyWorkbench({html,revision}){
  const isClient = typeof window !== 'undefined';
  const [dataReady,setDataReady]=useState(()=>isClient&&Boolean(window.POOL||window.MAJORS));
- const [slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null),[challengeSlot,setChallengeSlot]=useState(null),[levelerSlot,setLevelerSlot]=useState(null),[vaultSlot,setVaultSlot]=useState(null),[homeSlot,setHomeSlot]=useState(null);
+ const [slot,setSlot]=useState(null),[mainSlot,setMainSlot]=useState(null),[challengeSlot,setChallengeSlot]=useState(null),[levelerSlot,setLevelerSlot]=useState(null),[vaultSlot,setVaultSlot]=useState(null),[homeSlot,setHomeSlot]=useState(null),[factionsSlot,setFactionsSlot]=useState(null),[aboutSlot,setAboutSlot]=useState(null),[changelogSlot,setChangelogSlot]=useState(null);
  const [catalogReady,setCatalogReady]=useState(()=>isClient&&Boolean(window.siltCharacters?.active));
  const [booted,setBooted]=useState(()=>isClient&&Boolean(window.siltShell));
  const [enchantSlot,setEnchantSlot]=useState(null),[spellSlot,setSpellSlot]=useState(null),[alchemySlot,setAlchemySlot]=useState(null),[travelSlot,setTravelSlot]=useState(null);
@@ -83,6 +110,9 @@ export default function LegacyWorkbench({html,revision}){
   setLevelerSlot(document.getElementById('panel-leveler'));
   setVaultSlot(document.getElementById('panel-vault'));
   setHomeSlot(document.getElementById('panel-home'));
+  setFactionsSlot(document.getElementById('panel-factions'));
+  setAboutSlot(document.getElementById('panel-about'));
+  setChangelogSlot(document.getElementById('panel-changelog'));
   if (isClient) {
     if (window.POOL || window.MAJORS) setDataReady(true);
     if (window.siltShell) setBooted(true);
@@ -140,7 +170,10 @@ export default function LegacyWorkbench({html,revision}){
     {alchemySlot&&createPortal(<><AlchemyDataBridge/><AlchemyWorkstation/></>,alchemySlot)}
     {travelSlot&&createPortal(<TravelWorkstation/>,travelSlot)}
     {vaultSlot&&createPortal(<VaultViewOverlay/>,vaultSlot)}
+    {factionsSlot&&createPortal(<FactionsViewOverlay/>,factionsSlot)}
     {homeSlot&&createPortal(<HomeViewOverlay/>,homeSlot)}
+    {aboutSlot&&createPortal(<AboutViewOverlay/>,aboutSlot)}
+    {changelogSlot&&createPortal(<ChangelogViewOverlay/>,changelogSlot)}
     <VaultPortal />
     <Script id="legacy-data" src={'/legacy/legacy-data.js?v='+revision} strategy="afterInteractive" onReady={()=>setDataReady(true)}/>
     {(dataReady||(isClient&&Boolean(window.POOL)))&&(catalogReady||(isClient&&Boolean(window.siltCharacters?.active)))&&<Script id="legacy-runtime" src={'/legacy/legacy-runtime.js?v='+revision} strategy="afterInteractive" onReady={()=>setBooted(true)} onError={()=>setStatus({status:'error',message:'Application code failed to load. Reload this page.'})}/>}

@@ -8,8 +8,6 @@
     "dev": "next dev --hostname 127.0.0.1 --port 8765",
     "test": "node --test test/*.test.js",
     "dev:legacy": "node --env-file-if-exists=.env.local scripts/dev-server.cjs",
-    "predev": "node scripts/extract-legacy.cjs",
-    "prebuild": "node scripts/extract-legacy.cjs",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1 --port 8765",
     "extract:legacy": "node scripts/extract-legacy.cjs",

@@ -163,3 +163,84 @@ test('gear feature preserves verified policy metadata and ARCE inheritance witho
  assert.ok(!hits.some(u=>u.endsWith('/Races.json')));
  assert.equal((await loader.loadFeature('vanilla','gear')).metadata.GearRows.profile.id,'vanilla');
 });
+
+test('travel, enchanting, and spellmaking features load matching catalogs according to contract', async () => {
+  const b = bundle()
+    .catalog('Travel', { rows: [{ key: 'travel_1', from: 'interior:balmora, guild of mages', to: 'interior:caldera, guild of mages', mode: 'guild_guide' }] })
+    .catalog('Places')
+    .catalog('MagicEffects', { rows: [{ key: 'fire_damage', name: 'Fire Damage' }] })
+    .catalog('GameSettings')
+    .catalog('Enchantments')
+    .catalog('EffectRules', { rows: [{ key: 'fire_damage', allowEnchanting: true, allowSpellmaking: true }] })
+    .catalog('Merchants', { rows: [{ id: 'galbedir', servicesRaw: 65536 | 32768, cell: 'Balmora, Guild of Mages' }] })
+    .publish();
+
+  const { createBundleLoader } = await modulePromise;
+  const loader = createBundleLoader({
+    baseUrl: ROOT,
+    crypto: webcrypto,
+    cacheStorage: null,
+    fetcher: async url => new Response(b.routes.get(url))
+  });
+
+  const travelData = await loader.loadFeature('vanilla', 'travel');
+  assert.equal(travelData.catalogs.Travel.length, 1);
+  assert.equal(travelData.catalogs.Places.length, 2);
+
+  const enchData = await loader.loadFeature('vanilla', 'enchanting');
+  assert.equal(enchData.catalogs.EffectRules.length, 1);
+  assert.equal(enchData.catalogs.Merchants.length, 1);
+
+  const spellData = await loader.loadFeature('vanilla', 'spellmaking');
+  assert.equal(spellData.catalogs.EffectRules.length, 1);
+  assert.equal(spellData.catalogs.Merchants.length, 1);
+});
+
+test('factions feature loads Factions, Quests, Skills, and Attributes catalogs', async () => {
+  const b = bundle()
+    .catalog('Factions', { rows: [{ key: 'mages guild', name: 'Mages Guild', ranks: [] }] })
+    .catalog('Quests', { rows: [{ key: 'mg_flowers', name: 'Flowers', trackable: true }] })
+    .catalog('Skills', { rows: [{ key: 'alchemy', name: 'Alchemy' }] })
+    .catalog('Attributes', { rows: [{ key: 'intelligence', name: 'Intelligence' }] })
+    .publish();
+
+  const { createBundleLoader } = await modulePromise;
+  const loader = createBundleLoader({
+    baseUrl: ROOT,
+    crypto: webcrypto,
+    cacheStorage: null,
+    fetcher: async url => new Response(b.routes.get(url))
+  });
+
+  const factionsData = await loader.loadFeature('vanilla', 'factions');
+  assert.equal(factionsData.catalogs.Factions.length, 1);
+  assert.equal(factionsData.catalogs.Quests.length, 1);
+  assert.equal(factionsData.catalogs.Skills.length, 1);
+  assert.equal(factionsData.catalogs.Attributes.length, 1);
+});
+
+test('bestInSlot feature loads BestInSlot, Armor, Clothing, and Weapons catalogs', async () => {
+  const b = bundle()
+    .catalog('BestInSlot', { rows: [{ key: 'build/0', build: 'Spellsword' }] })
+    .catalog('Armor', { rows: [{ key: 'ebon_plate', name: 'Ebony Mail' }] })
+    .catalog('Clothing', { rows: [{ key: 'robe_drake', name: "Robe of the Drake's Pride" }] })
+    .catalog('Weapons', { rows: [{ key: 'keening', name: 'Keening' }] })
+    .publish();
+
+  const { createBundleLoader } = await modulePromise;
+  const loader = createBundleLoader({
+    baseUrl: ROOT,
+    crypto: webcrypto,
+    cacheStorage: null,
+    fetcher: async url => new Response(b.routes.get(url))
+  });
+
+  const bisData = await loader.loadFeature('vanilla', 'bestInSlot');
+  assert.equal(bisData.catalogs.BestInSlot.length, 1);
+  assert.equal(bisData.catalogs.Armor.length, 1);
+  assert.equal(bisData.catalogs.Clothing.length, 1);
+  assert.equal(bisData.catalogs.Weapons.length, 1);
+});
+
+
+

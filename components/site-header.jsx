@@ -13,10 +13,11 @@ const descriptions = {
   alchemy: 'Apparatus, ingredients, and brew numbers.',
   travel: 'Fewest hops between towns.',
   leveler: 'Progression simulator, 5x multiplier training, and health projection.',
+  factions: 'Track memberships, rank requirements, promotion eligibility, and inter-faction standing.',
   vault: 'Cloud character storage, OpenMW save ingestion, and build synchronization.'
 };
 
-const CALC_VIEWS = ['leveler', 'enchanting', 'spellmaking', 'alchemy', 'travel'];
+const CALC_VIEWS = ['leveler', 'factions', 'enchanting', 'spellmaking', 'alchemy', 'travel'];
 const MORE_VIEWS = ['about', 'changelog'];
 
 export default function SiteHeader({ shell: propShell } = {}) {
@@ -217,6 +218,16 @@ export default function SiteHeader({ shell: propShell } = {}) {
           >
             Level Simulator
           </button>
+          <button
+            type="button"
+            id="react-nav-factions"
+            className={'btn drawer-only' + (shell.view === 'factions' ? ' on' : '')}
+            disabled={!shell.ready}
+            aria-current={shell.view === 'factions' ? 'page' : undefined}
+            onClick={e => navigate(e, 'factions')}
+          >
+            Faction Journal
+          </button>
 
           {/* Desktop Dropdowns */}
           <div className="nav-dropdown-wrap desktop-only" ref={calcDropdownRef}>
@@ -252,6 +263,16 @@ export default function SiteHeader({ shell: propShell } = {}) {
                   onClick={e => navigate(e, 'leveler')}
                 >
                   Level Simulator
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  id="react-desk-factions"
+                  className={'dropdown-item' + (shell.view === 'factions' ? ' on' : '')}
+                  aria-current={shell.view === 'factions' ? 'page' : undefined}
+                  onClick={e => navigate(e, 'factions')}
+                >
+                  Faction Journal
                 </button>
                 <button
                   type="button"
@@ -354,6 +375,15 @@ export default function SiteHeader({ shell: propShell } = {}) {
                 onClick={e => navigate(e, 'leveler')}
               >
                 Level Simulator
+              </button>
+              <button
+                type="button"
+                className={'btn' + (shell.view === 'factions' ? ' on' : '')}
+                disabled={!shell.ready}
+                aria-current={shell.view === 'factions' ? 'page' : undefined}
+                onClick={e => navigate(e, 'factions')}
+              >
+                Faction Journal
               </button>
               <button
                 type="button"

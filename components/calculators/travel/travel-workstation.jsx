@@ -2,9 +2,11 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
+import { useGameData } from "../../use-game-data";
 import {
   getAvailableTransitStops,
   findFewestHopsRoute,
+  adaptTravelGraph,
   RAW_GRAPH,
   VANILLA_STOPS
 } from "../../../lib/travel-graph.mjs";
@@ -22,10 +24,21 @@ export default function TravelWorkstation() {
   const { build } = useActiveCharacter();
   const { world } = useShell();
   const isTr = world === "tr";
+  const gameData = useGameData('travel', { enabled: true });
+
+  const liveNetworkGraph = useMemo(() => {
+    if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Travel)) {
+      const records = gameData.data.catalogs.Travel;
+      const nodes = gameData.data.metadata?.Travel?.nodes || {};
+      const adapted = adaptTravelGraph(records, nodes);
+      if (Object.keys(adapted).length > 0) return adapted;
+    }
+    return null;
+  }, [gameData.status, gameData.data]);
 
   const availableStops = useMemo(() => {
-    return getAvailableTransitStops(world);
-  }, [world]);
+    return getAvailableTransitStops(world, liveNetworkGraph);
+  }, [world, liveNetworkGraph]);
 
   const [origin, setOrigin] = useState("Seyda Neen");
   const [destination, setDestination] = useState("Vivec");
@@ -106,8 +119,8 @@ export default function TravelWorkstation() {
 
   // Compute route
   const route = useMemo(() => {
-    return findFewestHopsRoute(origin, destination, world);
-  }, [origin, destination, world]);
+    return findFewestHopsRoute(origin, destination, world, liveNetworkGraph);
+  }, [origin, destination, world, liveNetworkGraph]);
 
   // Service color helper (gold / wood / dark themes, NO rainbows)
   const getServiceBadge = (kind) => {
@@ -129,7 +142,7 @@ export default function TravelWorkstation() {
 
   return (
     <div className="travel-workstation p-4 sm:p-5 border border-[#3a2e1d] bg-[#14100a] text-[#f3e6c8] space-y-6">
-      {/* Top Banner: Active Character & World Profile Strip */}
+      {/* Top Banner: Active Character & World Profile Strip & Live Game-Data Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#19140c] border border-[#2a2215]">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
           <span className="font-serif font-bold text-[#d4b06a] uppercase tracking-wider whitespace-nowrap">
@@ -151,10 +164,22 @@ export default function TravelWorkstation() {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          {gameData.status === 'ready' ? (
+            <span className="text-xs px-2 py-0.5 rounded border border-[#3a4e28] bg-[#10190c] text-[#78d65c] font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#52d634] inline-block"/>
+              <span>Live: {availableStops.length} Stops ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+            </span>
+          ) : gameData.status === 'loading' ? (
+            <span className="text-xs px-2 py-0.5 rounded border border-[#4a3e20] bg-[#1a150c] text-[#d4b06a] font-mono flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#d4b06a] inline-block animate-pulse"/>
+              <span>Loading bundle...</span>
+            </span>
+          ) : null}
+
           <button
             type="button"
-            className="mw-btn w-full sm:w-auto px-2.5 py-1 text-xs font-serif font-bold"
+            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
             onClick={handleSwap}
             title="Swap Origin and Destination"
           >

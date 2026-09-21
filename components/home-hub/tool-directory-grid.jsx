@@ -32,6 +32,16 @@ export const TOOLS = [
     badge: "NEW",
   },
   {
+    id: "factions",
+    title: "Faction Journal",
+    subtitle: "Affiliations, Ranks & Quests",
+    description:
+      "Track guild and Great House affiliations, solve rank promotion requirements, audit inter-faction disposition reactions, and track related quests.",
+    tags: ["Promotion Solver", "Great Houses", "Inter-Faction Standing", "Quest Links"],
+    actionLabel: "Open Faction Journal →",
+    badge: "NEW",
+  },
+  {
     id: "challenge",
     title: "Challenge Runs",
     subtitle: "Randomized Playthrough Generator",
