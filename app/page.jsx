@@ -5,7 +5,6 @@ export default function Page() {
   if (key && !/^pk_(test|live)_[A-Za-z0-9_-]+$/.test(key)) throw new Error('Invalid Clerk publishable key');
   return <>
     <meta name="clerk-publishable-key" content={key} />
-    <link rel="stylesheet" href="/legacy/legacy.css" />
     <AppShell />
   </>;
 }

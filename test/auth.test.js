@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { JSDOM, VirtualConsole } = require('jsdom');
-const { createServer, renderPage } = require('../scripts/dev-server.cjs');
+const { createServer, renderPage } = require('../archive/legacy/scripts/dev-server.cjs');
 const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
 const publicKey = 'pk_test_' + Buffer.from('example.clerk.accounts.dev$').toString('base64');
 const tick = () => new Promise(resolve => setImmediate(resolve));

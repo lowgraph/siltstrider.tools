@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "Pelagiad";
-  src: url("/fonts/Pelagiad.ttf") format("truetype"), url("/legacy/assets/b282ea043af32e15.ttf") format("truetype");
+  src: url("/fonts/Pelagiad.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

@@ -15,7 +15,7 @@ function createServer(key = '') {
     if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405); res.end(); return; }
     if (!['/', '/index.html'].includes(url.pathname)) { res.writeHead(404); res.end('Not found'); return; }
     try {
-      const html = renderPage(fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8'), key);
+      const html = renderPage(fs.readFileSync(path.join(__dirname, '../../../index.html'), 'utf8'), key);
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
       res.end(req.method === 'HEAD' ? undefined : html);
     } catch {

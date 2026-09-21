@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {JSDOM}=require('jsdom');
-const {extract}=require('../scripts/extract-legacy.cjs');
+const {extract}=require('../archive/legacy/scripts/extract-legacy.cjs');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const plain=x=>JSON.parse(JSON.stringify(x));
 function loadExtracted() {

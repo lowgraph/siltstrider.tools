@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const acorn = require('acorn');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../../..');
 const digest = value => crypto.createHash('sha256').update(value).digest('hex').slice(0,16);
 function literal(node) {
   if (!node) return true;
@@ -49,8 +49,8 @@ function extract(html) {
   }
   runtime=require('./connect-character-runtime.cjs')(runtime);
   runtime=require('./connect-alchemy-runtime.cjs')(runtime);
-  runtime+='\n'+fs.readFileSync(path.join(ROOT,'migration/shell-bridge.js'),'utf8');
-  runtime+='\n'+fs.readFileSync(path.join(ROOT,'migration/character-bridge.js'),'utf8');
+  runtime+='\n'+fs.readFileSync(path.join(ROOT,'archive/legacy/migration/shell-bridge.js'),'utf8');
+  runtime+='\n'+fs.readFileSync(path.join(ROOT,'archive/legacy/migration/character-bridge.js'),'utf8');
   const css=styles.map(s=>s[1]).join('\n').replaceAll('#btn-world-tr','#react-world-tr').replaceAll('#btn-arce','#react-arce').replaceAll('#btn-challenge','#react-nav-challenge').replaceAll('#btn-build','#react-nav-build');
   return {body,runtime,data,css,assets,
     manifest:{sourceSha256:crypto.createHash('sha256').update(html).digest('hex'),revision:crypto.createHash('sha256').update(body+runtime+data+css).digest('hex'),tables:declarations.flatMap(n=>n.declarations.map(d=>d.id.name)),assetCount:assets.size}};

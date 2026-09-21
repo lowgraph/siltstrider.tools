@@ -2,7 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {JSDOM}=require('jsdom');
-const connect=require('../scripts/connect-alchemy-runtime.cjs');
+const connect=require('../archive/legacy/scripts/connect-alchemy-runtime.cjs');
 const adapter=import('../lib/alchemy-catalogs.mjs');
 function fixture(){
  return {profile:'vanilla',snapshotId:'s',catalogs:{

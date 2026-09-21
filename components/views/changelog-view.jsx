@@ -20,6 +20,12 @@ export default function ChangelogView() {
           </h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-[#c9b897]">
             <li>
+              <strong className="text-[#f3e6c8]">Legacy Cleanup &amp; Architecture Archival (Phase 13):</strong> Archived obsolete transition harnesses (<code className="text-[#d4b06a]">components/legacy-workbench.jsx</code>, extraction scripts, and bridges) into <code className="text-[#d4b06a]">archive/legacy/</code>.
+            </li>
+            <li>
+              <strong className="text-[#f3e6c8]">Native Styling Bundling:</strong> Ingested base legacy styling into <code className="text-[#d4b06a]">app/legacy-compat.css</code> and removed runtime <code className="text-[#d4b06a]">/legacy/legacy.css</code> stylesheet links from the page root.
+            </li>
+            <li>
               <strong className="text-[#f3e6c8]">Underlying Architecture &amp; Shell Decoupling (Phase 12):</strong> Completed full architectural transition away from the legacy extraction harness towards a native, declarative React 19 / Next.js 16 layout.
             </li>
             <li>

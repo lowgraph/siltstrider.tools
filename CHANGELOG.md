@@ -2,6 +2,25 @@
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
+## [Phase 13] Legacy Cleanup & Architecture Archival — 2026-09-21
+
+### Highlights
+- **Legacy Harness Archival (`archive/legacy/`):**
+  - Moved obsolete DOM workbench `components/legacy-workbench.jsx` to `archive/legacy/components/`.
+  - Moved legacy extraction scripts (`scripts/extract-legacy.cjs`, `scripts/connect-character-runtime.cjs`, `scripts/connect-alchemy-runtime.cjs`) and preview dev server (`scripts/dev-server.cjs`) to `archive/legacy/scripts/`.
+  - Moved legacy migration event bridges (`migration/shell-bridge.js`, `migration/character-bridge.js`) to `archive/legacy/migration/`.
+  - Created `archive/legacy/README.md` documenting the historical context of the DOM-slicing migration harness.
+- **Native Style Bundling & Entry Point Decoupling (`app/legacy-compat.css`, `app/layout.jsx`):**
+  - Ingested baseline legacy styles into `app/legacy-compat.css` with local fonts (`/fonts/Pelagiad.ttf`) and textures (`/textures/mw-*.png`).
+  - Imported `legacy-compat.css` directly into `app/layout.jsx`, eliminating external runtime stylesheet links (`<link rel="stylesheet" href="/legacy/legacy.css" />`) from `app/page.jsx`.
+  - Completely cleaned and removed `public/legacy/` from disk while maintaining `.gitignore` protection.
+- **Build & Cloudflare Pipeline Decoupling:**
+  - Decoupled `scripts/build-cloudflare.cjs` to remove `extract-legacy.cjs` execution.
+  - Removed `"extract:legacy"` script from `package.json` and repointed `"dev:legacy"` to the archived dev server.
+- **Regression Test Re-anchoring:**
+  - Re-anchored `test/migration.test.js`, `test/character-catalogs.test.js`, `test/alchemy-catalogs.test.js`, and `test/auth.test.js` to archived script locations.
+  - 100% test pass rate across 297 site tests (`npm test`) and 482 pipeline tests (`unittest discover`).
+
 ## [Phase 12] Modern App Shell & Architecture Decoupling — 2026-09-21
 
 ### Highlights
