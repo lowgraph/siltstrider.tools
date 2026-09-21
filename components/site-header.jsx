@@ -20,6 +20,27 @@ const descriptions = {
 const CALC_VIEWS = ['leveler', 'factions', 'enchanting', 'spellmaking', 'alchemy', 'travel'];
 const MORE_VIEWS = ['about', 'changelog'];
 
+// Phone tab bar: the four planners one tap away, everything else behind Menu.
+const TAB_ICON = {
+  home: <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" />,
+  builder: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" /></>,
+  challenge: <><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" /></>,
+  leveler: <><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></>,
+  menu: <path d="M4 7h16M4 12h16M4 17h16" />,
+  close: <path d="M6 6l12 12M18 6 6 18" />
+};
+const PHONE_TABS = [
+  { view: 'home', label: 'Home' },
+  { view: 'builder', label: 'Build' },
+  { view: 'challenge', label: 'Challenge' },
+  { view: 'leveler', label: 'Level' }
+];
+const TabIcon = ({ name }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {TAB_ICON[name]}
+  </svg>
+);
+
 export default function SiteHeader({ shell: propShell } = {}) {
   let contextShell = null;
   try { contextShell = useShell(); } catch {}
@@ -153,6 +174,20 @@ export default function SiteHeader({ shell: propShell } = {}) {
     setCalcOpen(false);
     setMoreOpen(false);
   };
+
+  // The phone menu opens under the header, so bring it into view when opened from the tab bar.
+  const toggleMenuFromTabs = () => {
+    if (!open && typeof window !== 'undefined') {
+      try {
+        const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      } catch {}
+    }
+    setCalcOpen(false);
+    setMoreOpen(false);
+    setOpen(!open);
+  };
+  const onTabView = PHONE_TABS.some(t => t.view === shell.view);
 
   const isCalcActive = CALC_VIEWS.includes(shell.view);
   const isMoreActive = MORE_VIEWS.includes(shell.view);
@@ -513,6 +548,33 @@ export default function SiteHeader({ shell: propShell } = {}) {
           </div>
         </div>
       </div>
+
+      {/* Phone tab bar: shown below 900px, styled in globals.css */}
+      <nav className="phone-tabs" aria-label="Main">
+        {PHONE_TABS.map(tab => (
+          <button
+            key={tab.view}
+            type="button"
+            disabled={!shell.ready}
+            aria-current={shell.view === tab.view ? 'page' : undefined}
+            onClick={e => navigate(e, tab.view)}
+          >
+            <TabIcon name={tab.view} />
+            <span>{tab.label}</span>
+          </button>
+        ))}
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls="react-menu-drawer"
+          aria-label={open ? 'Close menu' : 'Open menu: calculators, vault and more'}
+          data-section={!open && !onTabView ? 'true' : undefined}
+          onClick={toggleMenuFromTabs}
+        >
+          <TabIcon name={open ? 'close' : 'menu'} />
+          <span>{open ? 'Close' : 'Menu'}</span>
+        </button>
+      </nav>
     </div>
   );
 }

@@ -176,7 +176,8 @@ export default function LevelSimulatorRoot() {
       {/* Toast Notification */}
       {toastMessage && (
         <div
-          className="fixed bottom-6 right-6 z-50 p-3 bg-surface-7 border border-accent text-fg-2 font-serif text-xs font-bold shadow-xl animate-fade-in"
+          style={{ bottom: "calc(var(--phone-tabs-h, 0px) + 24px)" }}
+          className="fixed right-6 z-50 p-3 bg-surface-7 border border-accent text-fg-2 font-serif text-xs font-bold shadow-xl animate-fade-in"
           role="status"
         >
           {toastMessage}

@@ -533,7 +533,7 @@ export default function ChallengeRunsRoot() {
 
       {/* Sticky Quick Roll Action on Mobile when viewing sheet */}
       {mobileTab === "sheet" && (
-        <div className="block lg:hidden sticky bottom-3 z-30 px-2 mt-4">
+        <div className="block lg:hidden sticky z-30 px-2 mt-4" style={{ bottom: "calc(var(--phone-tabs-h, 0px) + 12px)" }}>
           <button
             type="button"
             className="w-full mw-btn py-3 px-4 text-sm font-serif font-bold text-fg-2 bg-surface-6/95 backdrop-blur border-2 border-accent shadow-2xl flex items-center justify-center gap-2"
