@@ -86,18 +86,14 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
           <button
             type="button"
             className="mw-btn py-2 px-3 text-xs font-serif font-bold"
-            onClick={() => {
-              window.siltShell?.navigate("builder");
-            }}
+            onClick={() => shell?.navigate?.("builder")}
           >
             ← Character Builder
           </button>
           <button
             type="button"
             className="mw-btn py-2 px-3 text-xs font-serif font-bold text-accent"
-            onClick={() => {
-              window.siltShell?.navigate("leveler");
-            }}
+            onClick={() => shell?.navigate?.("leveler")}
           >
             Level Simulator →
           </button>

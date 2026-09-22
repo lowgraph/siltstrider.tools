@@ -381,6 +381,83 @@ test("Challenge Runs: Generate keeps to the ticked difficulty bands (no Hard or 
   }
 });
 
+test("The character sheet's Level Optimizer button opens the Level Simulator", async () => {
+  const dom = setupDom("#builder");
+  const root = createRoot(dom.window.document.getElementById("root"));
+  // One bundle, so the sheet and the provider share a single shell context.
+  const bundled = require("esbuild").buildSync({
+    stdin: {
+      contents: 'export { ShellProvider } from "./components/shell-context.jsx"; export { default as CharacterSheet } from "./components/character-builder/character-sheet.jsx";',
+      resolveDir: path.resolve("."), loader: "jsx"
+    },
+    bundle: true, write: false, platform: "node", format: "cjs", jsx: "automatic",
+    external: ["react", "react/jsx-runtime"]
+  });
+  const m = new Module(path.resolve("sheet-bundle.js"), module);
+  m.paths = module.paths;
+  m._compile(bundled.outputFiles[0].text, path.resolve("sheet-bundle.js"));
+  const { ShellProvider, CharacterSheet } = m.exports;
+  const { computeSheet } = await import("../lib/character-math.mjs");
+  const attrs = { Strength: 40, Intelligence: 40, Willpower: 30, Agility: 40, Speed: 50, Endurance: 40, Personality: 30, Luck: 40 };
+  const catalogs = {
+    skills: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor", "Destruction", "Restoration", "Short Blade", "Sneak", "Security"],
+    specSkills: { Combat: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"], Magic: ["Destruction", "Restoration"], Stealth: ["Short Blade", "Sneak", "Security"] },
+    races: { "Dark Elf": { M: attrs, F: attrs, skills: {}, mag: 0 } },
+    signs: { "The Lady": { mag: 0, attrs: {} } },
+    raceSpells: {}, signSpells: {}
+  };
+  const build = {
+    race: "Dark Elf", gender: "Male", sign: "The Lady", className: "Custom", spec: "Combat", fav1: "Strength", fav2: "Endurance",
+    maj: ["Long Blade", "Heavy Armor", "Block", "Armorer", "Medium Armor"], min: ["Destruction", "Restoration", "Short Blade", "Sneak", "Security"]
+  };
+  try {
+    await act(async () => root.render(React.createElement(ShellProvider, null,
+      React.createElement(CharacterSheet, { build, sheet: computeSheet(build, catalogs), catalogs }))));
+    await act(async () => dom.window.document.getElementById("btn-sheet-leveler").click());
+    assert.match(dom.window.location.hash, /^#leveler/);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
+test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcuts", async () => {
+  const dom = setupDom("#leveler");
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+  const settle = () => act(async () => { for (let i = 0; i < 20; i++) await new Promise((r) => setTimeout(r, 0)); });
+  const button = (text) => [...dom.window.document.querySelectorAll("main button")].find((b) => b.textContent.trim() === text);
+  const press = async (text) => {
+    const el = button(text);
+    assert.ok(el, `"${text}" exists`);
+    await act(async () => el.click());
+    await settle();
+  };
+  const go = async (hash) => {
+    await act(async () => {
+      dom.window.location.hash = hash;
+      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+    });
+    await settle();
+  };
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+    await press("← Back to Character Builder");
+    assert.match(dom.window.location.hash, /^#builder/);
+
+    await go("#vault");
+    await press("Level Simulator →");
+    assert.match(dom.window.location.hash, /^#leveler/);
+    await go("#vault");
+    await press("← Character Builder");
+    assert.match(dom.window.location.hash, /^#builder/);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
   const dom = setupDom("#challenge");
   const container = dom.window.document.getElementById("root");

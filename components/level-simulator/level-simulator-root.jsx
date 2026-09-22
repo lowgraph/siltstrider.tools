@@ -238,9 +238,7 @@ export default function LevelSimulatorRoot() {
           <button
             type="button"
             className="mw-btn py-2 px-3 text-xs font-serif font-bold"
-            onClick={() => {
-              window.siltShell?.navigate("builder");
-            }}
+            onClick={() => shell.navigate?.("builder")}
           >
             ← Back to Character Builder
           </button>

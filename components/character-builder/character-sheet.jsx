@@ -3,8 +3,10 @@ import VitalsBar from "./vitals-bar";
 import AttributeGrid from "./attribute-grid";
 import SkillDisplayGrid from "./skill-display-grid";
 import { startingSpells } from "../../lib/character-math.mjs";
+import { useShell } from "../shell-context";
 
 export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment = null, onOpenPaperdoll = null }) {
+  const shell = useShell();
   if (!sheet) {
     return (
       <div
@@ -188,11 +190,7 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
             type="button"
             id="btn-sheet-leveler"
             className="w-full mw-btn py-3 px-3 font-serif text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-1.5 shadow-sm text-fg-2 hover:text-accent"
-            onClick={() => {
-              if (typeof window !== "undefined" && window.siltShell?.navigate) {
-                window.siltShell.navigate("leveler");
-              }
-            }}
+            onClick={() => shell.navigate?.("leveler")}
             title="Open Level Progression Optimizer with this build"
           >
             <span>Level Optimizer →</span>
