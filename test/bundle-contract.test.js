@@ -149,7 +149,7 @@ test('REJECTS an ARCE delta that claims a base other than its profile base',asyn
 
 
 test('gear feature preserves verified policy metadata and ARCE inheritance without duplicate downloads',async()=>{
- const b=bundle().catalog('GearRows',{payloadField:'coverage'}).catalog('Armor').catalog('Clothing').publish(),hits=[];
+ const b=bundle().catalog('GearRows',{payloadField:'coverage'}).catalog('Armor').catalog('Clothing').catalog('GameSettings').publish(),hits=[];
  const {createBundleLoader}=await modulePromise;
  const loader=createBundleLoader({baseUrl:ROOT,crypto:webcrypto,cacheStorage:null,fetcher:async url=>{
    hits.push(url);return new Response(b.routes.get(url));

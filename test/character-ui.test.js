@@ -74,6 +74,22 @@ test('early game uses optimizer table columns and warnings; clears during profil
  }finally{await act(async()=>root.unmount());dom.window.close();}
 });
 
+test('clothing sources show enchant capacity as the game does, not the record\'s points',async()=>{
+ const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
+ global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+ const View=component('components/character-builder/gear-sources.jsx','GearSourcesView');
+ const root=createRoot(document.getElementById('root'));
+ const shirt={key:'exquisite_shirt_01',name:'Exquisite Shirt',cellKey:'interior:Vivec',strength:600,acquisition:'purchase',price:120,nearStart:true};
+ const row={key:'clothing/shirt',category:'clothing',slot:'shirt',toggles:{theft:false,endgame:false,nearStart:false},primary:shirt};
+ const result={status:'ready',data:{profile:'vanilla',catalogs:{GearRows:[row],GameSettings:[{key:'fenchantmentmult',value:0.10000000149011612}]},metadata:{}}};
+ try{
+  const props={build:{maj:[]},ranking:{armRanked:[{n:'Heavy Armor'}],primaryArmor:'Heavy Armor',wepRanked:[]},result,toggles:{theft:false,endgame:false,nearStart:false}};
+  await act(async()=>root.render(React.createElement(View,props)));
+  assert.match(document.body.textContent,/Base enchant capacity: 60\./);
+  assert.doesNotMatch(document.body.textContent,/capacity: 600/);
+ }finally{await act(async()=>root.unmount());dom.window.close();}
+});
+
 test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns with all views',async()=>{
  const dom=new JSDOM('<div id="root"></div><div class="account-bar"></div>',{url:'http://localhost/'});
  global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;

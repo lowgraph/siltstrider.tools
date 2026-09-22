@@ -67,3 +67,13 @@ test('unarmored and unarmed ranking emits no armor, shield or weapon',async()=>{
  const groups=buildGearGroups({GearRows:[gear('boots'),gear('robe',{category:'clothing'})]}, {maj:['Unarmored']},toggles,{armRanked:[{n:'Unarmored'}],primaryArmor:'Unarmored',wepRanked:[{n:'Hand-to-hand'}],primaryWep:'Hand-to-hand',twoHand:true,shield:'none'});
  assert.deepEqual(groups.flatMap(g=>g.rows).map(r=>r.category),['clothing']);
 });
+
+test('enchant capacity is shown on the game\'s scale: points times fEnchantmentMult',async()=>{
+ const {enchantMultiplier,enchantCapacity}=await mod;
+ const vanilla=[{key:'fenchantmentmult',value:0.10000000149011612},{key:'fother',value:3}];
+ assert.equal(enchantCapacity(600,enchantMultiplier(vanilla)),60,'Exquisite Shirt: 600 points, 60 in game');
+ assert.equal(enchantCapacity(1200,enchantMultiplier(vanilla)),120);
+ assert.equal(enchantCapacity(56,enchantMultiplier(vanilla)),5.6,'Silver Staff keeps its decimal');
+ assert.equal(enchantCapacity(600,enchantMultiplier([{id:'fEnchantmentMult',value:0.2}])),120,'a mod that changes the setting is followed');
+ assert.equal(enchantMultiplier(undefined),0.1,'the vanilla value until settings load');
+});
