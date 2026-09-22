@@ -503,6 +503,52 @@ test("Challenge Runs: the seed box shows the run's seed, and loading it under ot
   }
 });
 
+test("Challenge Runs: Share copies a link that opens the same run, in its world", async () => {
+  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
+  let dom = setupDom("#challenge&TR&world=tr&arce=0");
+  let root = createRoot(dom.window.document.getElementById("root"));
+  // The sheet's cards; the Copy Permalink button reads "Copied" for a moment after sharing.
+  const sheet = () => dom.window.document.querySelector(".run-summary-sheet").textContent.replace(/Copied$/, "Copy Permalink");
+  let copied = null;
+  try {
+    // Node has its own navigator global; the page reads whichever one is in scope.
+    const clipboard = (value) => {
+      for (const nav of [dom.window.navigator, globalThis.navigator]) Object.defineProperty(nav, "clipboard", { configurable: true, value });
+    };
+    clipboard({ writeText: async (text) => { copied = text; } });
+    await act(async () => root.render(React.createElement(AppShell)));
+    await act(async () => dom.window.document.getElementById("react-btn-generate-run").click());
+    // A single-card reroll: the seed alone no longer makes this run, the link must carry it.
+    await act(async () => dom.window.document.querySelector('[title="Roll another major objective"]').click());
+    assert.match(dom.window.document.getElementById("challenge-seed-note").textContent, /seed alone rolls a different run/);
+    await act(async () => [...dom.window.document.querySelectorAll("main button")].find((b) => b.textContent.trim() === "Share").click());
+    await settle();
+    assert.match(copied, /^http:\/\/localhost:8765\/#challenge&TR&run=[A-Za-z0-9_-]+&world=tr&arce=0$/);
+    const shared = sheet();
+    await act(async () => root.unmount());
+    dom.window.close();
+
+    // Someone else opens the link: no stored run, a different device.
+    dom = setupDom(copied.slice(copied.indexOf("#")));
+    root = createRoot(dom.window.document.getElementById("root"));
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+    assert.equal(sheet(), shared, "the link opens the same run");
+    assert.doesNotMatch(dom.window.location.hash, /run=/, "and then leaves the address bar");
+    assert.match(dom.window.location.hash, /^#challenge&TR/, "in the link's world");
+
+    // Without a clipboard, the link is shown to copy by hand.
+    clipboard(undefined);
+    await act(async () => [...dom.window.document.querySelectorAll("main button")].find((b) => b.textContent.trim() === "Share").click());
+    await settle();
+    const fallback = [...dom.window.document.querySelectorAll("input[readonly]")].find((i) => i.value.includes("run="));
+    assert.ok(fallback, "the link is on screen");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
   const dom = setupDom("#challenge");
   const container = dom.window.document.getElementById("root");

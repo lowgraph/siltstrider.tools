@@ -188,3 +188,31 @@ test('a seed rolls the same run whatever came before and whatever the settings a
   assert.equal(legacy.rests.length, 2);
   assert.ok(legacy.rests.every((r) => band(r) === 'Easy'), 'an older seed rolls with the current settings');
 });
+
+test('a run from a link keeps only what a run has', async () => {
+  const { sanitizeRun, generateSeededRun, formatRunSeed } = await import('../lib/challenge-engine.mjs');
+  const { run } = generateSeededRun(formatRunSeed({ code: 'LINK5', allowedBands: { Easy: true, Medium: true }, restrictionCount: 3, objectiveCount: 2 }));
+  const round = sanitizeRun(JSON.parse(JSON.stringify(run)));
+  assert.deepEqual({ ...round, restNote: run.restNote }, run, 'a real run passes through unchanged');
+
+  const hostile = sanitizeRun({
+    race: 'Nord', gender: 'Robot', cls: { evil: true }, spec: 'Chaos', fav1: 'Luck', fav2: 'Charm',
+    maj: ['Long Blade', 'Hacking', 7], rests: ['x'.repeat(1000), 'No magic', 'a', 'b', 'c', 'd'],
+    minors: ['Walk far', { kind: 'ACTION', text: 'Jump' }, { text: 5 }], vitals: { health: 'lots' }, __proto__: { polluted: true }
+  });
+  assert.equal(hostile.race, 'Nord');
+  assert.equal(hostile.gender, '');
+  assert.equal(hostile.cls, '');
+  assert.equal(hostile.spec, 'Combat');
+  assert.equal(hostile.fav1, 'Luck');
+  assert.equal(hostile.fav2, 'Endurance');
+  assert.deepEqual(hostile.maj, ['Long Blade']);
+  assert.equal(hostile.rests.length, 5);
+  assert.equal(hostile.rests[0].length, 300);
+  assert.deepEqual(hostile.minors.map((o) => o.text), ['Walk far', 'Jump']);
+  assert.equal(hostile.vitals, null);
+  assert.equal(hostile.polluted, undefined);
+  assert.equal(sanitizeRun(null), null);
+  assert.equal(sanitizeRun([1, 2]), null);
+  assert.equal(sanitizeRun({ foo: 'bar' }), null, 'nothing that makes a run');
+});

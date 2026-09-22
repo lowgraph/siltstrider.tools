@@ -9,6 +9,7 @@ import { useActiveCharacter } from "../character-context";
 import { useChallengeRun } from "../challenge-run-context";
 import { DIFFICULTY_PRESETS, formatRunMarkdown } from "../../lib/challenge-math.mjs";
 import { formatRunSeed, generateSeededRun, newSeedCode, parseRunSeed, rollCardAspect } from "../../lib/challenge-engine.mjs";
+import { encodeShareHash } from "../../lib/permalink-codec.mjs";
 
 export default function ChallengeRunsRoot() {
   const shell = useShell();
@@ -292,27 +293,23 @@ export default function ChallengeRunsRoot() {
     }
   }, [run]);
 
-  // Copy Permalink
-  const handleCopyPermalink = useCallback(() => {
+  // Copy Permalink: a link that carries this exact run, locked cards and rerolls included,
+  // in this world. Where the clipboard is blocked, the link is shown to copy by hand.
+  const [shareLink, setShareLink] = useState(null);
+  const handleCopyPermalink = useCallback(async () => {
     if (typeof window === "undefined") return;
-    if (typeof window.writeShareHash === "function") {
-      try {
-        window.writeShareHash();
-      } catch (e) {}
-    }
-    const url = window.location.href;
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(url).then(() => {
-        setCopiedPermalink(true);
-        setTimeout(() => setCopiedPermalink(false), 2000);
-      });
-    } else {
-      const btn = document.getElementById("btn-copy-permalink");
-      if (btn) btn.click();
+    const { restNote, ...linked } = run;
+    const hash = encodeShareHash({ view: "challenge", world: shell.world, arce: shell.arce, profile: shell.profile, run: linked });
+    const url = window.location.origin + window.location.pathname + window.location.search + hash;
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareLink(null);
       setCopiedPermalink(true);
       setTimeout(() => setCopiedPermalink(false), 2000);
+    } catch {
+      setShareLink(url);
     }
-  }, []);
+  }, [run, shell.world, shell.arce, shell.profile]);
 
   return (
     <div className="challenge-runs-root w-full mx-auto space-y-5">
@@ -326,6 +323,7 @@ export default function ChallengeRunsRoot() {
         onSelectPreset={handleSelectPreset}
         onCopyLink={handleCopyPermalink}
         copiedLink={copiedPermalink}
+        shareLink={shareLink}
       />
 
       {/* Mobile View Toggle (Visible only on screens < 1024px) */}

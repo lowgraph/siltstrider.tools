@@ -10,7 +10,8 @@ export default function SeedBar({
   activePreset,
   onSelectPreset,
   onCopyLink,
-  copiedLink
+  copiedLink,
+  shareLink = null
 }) {
   const [inputSeed, setInputSeed] = useState(seed || "");
   // Show the seed of whatever run is on screen, rolled or loaded.
@@ -90,6 +91,18 @@ export default function SeedBar({
             ? "Some cards were locked or rerolled, so this seed alone rolls a different run. Share the link to pass on this exact run."
             : "The seed carries the world, difficulty bands and counts: load it anywhere to roll the same run."}
       </p>
+      {shareLink && (
+        <label className="block text-[11px] font-serif mt-2 text-fg-7">
+          Copy this link to share the run:
+          <input
+            type="text"
+            readOnly
+            className="mt-1 w-full bg-surface-1 border border-line-7 px-2 py-1 text-xs font-mono text-fg-4"
+            value={shareLink}
+            onFocus={(e) => e.target.select()}
+          />
+        </label>
+      )}
     </div>
   );
 }

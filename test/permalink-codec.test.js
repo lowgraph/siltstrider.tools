@@ -236,3 +236,25 @@ test('Adversarial QA 3: Extreme boundary conditions and stress inputs', async ()
   assert.equal(encodeShareHash(null), '#home');
   assert.equal(encodeShareHash({ view: 'unknown_view' }), '#home');
 });
+
+test('links encode and decode in browsers, whose Buffer polyfill has no base64url', async () => {
+  const { toBase64Url, fromBase64Url, encodeShareHash, decodeShareHash } = await modulePromise;
+  const run = { race: 'Dark Elf', rests: ['No fast travel of any kind — walk everywhere'], minors: [{ kind: 'ACTION', text: "Ald'ruhn · Ghostgate" }] };
+  const nodeEncoded = toBase64Url(JSON.stringify(run));
+  const realBuffer = globalThis.Buffer;
+  // What Next.js ships to the browser: a Buffer that rejects the 'base64url' encoding.
+  globalThis.Buffer = {
+    from: (value, encoding) => {
+      if (encoding === 'base64url') throw new TypeError('Unknown encoding: base64url');
+      return { toString: (enc) => { if (enc === 'base64url') throw new TypeError('Unknown encoding: base64url'); return realBuffer.from(value).toString(enc); } };
+    }
+  };
+  try {
+    assert.equal(toBase64Url(JSON.stringify(run)), nodeEncoded, 'the same link text either way');
+    const hash = encodeShareHash({ view: 'challenge', world: 'tr', run });
+    assert.deepEqual(decodeShareHash(hash).run, run);
+    assert.equal(fromBase64Url(nodeEncoded), JSON.stringify(run));
+  } finally {
+    globalThis.Buffer = realBuffer;
+  }
+});

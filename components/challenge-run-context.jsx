@@ -1,13 +1,14 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { DIFFICULTY_PRESETS } from "../lib/challenge-math.mjs";
-import { createEmptyRun } from "../lib/challenge-engine.mjs";
+import { createEmptyRun, sanitizeRun } from "../lib/challenge-engine.mjs";
+import { decodeShareHash, encodeShareHash } from "../lib/permalink-codec.mjs";
 
 /**
  * The challenge run lives above the views, like the character build, so leaving the
  * Challenge Runs page (to open the rolled character in the Build Optimizer, say) and
  * coming back finds the same run. The run and its locks are also kept in this browser,
- * so a reload does not lose them.
+ * so a reload does not lose them, and a shared link (#challenge&run=...) opens its run.
  */
 
 export const RUN_STORAGE_KEY = "silt-challenge-run";
@@ -52,6 +53,22 @@ function writeStoredRun(run, locks, store = storage()) {
   } catch {}
 }
 
+/** The run a shared link carries, or null. */
+export function runFromLink(hash) {
+  return sanitizeRun(decodeShareHash(hash || "").run);
+}
+
+// Once a linked run is open, take it out of the address bar: later rolls are not it, and
+// a reload should find the latest run, not the link's.
+function dropRunFromAddress() {
+  try {
+    const { view, world, arce, profile } = decodeShareHash(window.location.hash);
+    const hash = encodeShareHash({ view, world, arce, profile });
+    window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search + hash);
+    window.dispatchEvent(new Event("silt-shell-change"));
+  } catch {}
+}
+
 function useChallengeRunState({ persist }) {
   const [run, setRun] = useState(createEmptyRun);
   const [locks, setLocks] = useState(() => ({ ...EMPTY_LOCKS }));
@@ -60,13 +77,26 @@ function useChallengeRunState({ persist }) {
 
   // Read after mount: the server render has no storage, and hydration must match it.
   useEffect(() => {
-    if (!persist) return;
-    const saved = readStoredRun();
-    if (saved) {
-      setRun((current) => (current.race || current.major ? current : saved.run));
-      setLocks(saved.locks);
+    if (!persist) return undefined;
+    const openLink = () => {
+      const linked = runFromLink(window.location.hash);
+      if (!linked) return false;
+      setRun(linked);
+      setLocks({ ...EMPTY_LOCKS });
+      dropRunFromAddress();
+      return true;
+    };
+    if (!openLink()) {
+      const saved = readStoredRun();
+      if (saved) {
+        setRun((current) => (current.race || current.major ? current : saved.run));
+        setLocks(saved.locks);
+      }
     }
     restored.current = true;
+    // A link pasted into an open tab changes only the hash.
+    window.addEventListener("hashchange", openLink);
+    return () => window.removeEventListener("hashchange", openLink);
   }, [persist]);
 
   useEffect(() => {
