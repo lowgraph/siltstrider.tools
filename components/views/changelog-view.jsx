@@ -41,6 +41,12 @@ export default function ChangelogView() {
               <strong className="text-fg-2">Open an OpenMW Save:</strong> Open a <code className="text-accent">.omwsave</code> from the Cloud Vault without signing in; it is read in your browser and never uploaded. The builder takes over the character (custom classes included) and switches to the save&apos;s game profile, and anything the save&apos;s mods add that Silt Strider does not know is listed rather than guessed.
             </li>
             <li>
+              <strong className="text-fg-2">Challenge Runs Fixes:</strong> The run stays when you leave the page, Generate respects your difficulty ticks, seeds carry your settings and world so they roll the same run anywhere, Share links open the exact run, a character sent to the Build Optimizer can be sent back, and your preferred settings are remembered.
+            </li>
+            <li>
+              <strong className="text-fg-2">Enchant Capacity and Buttons:</strong> The Gear Advisor shows enchant capacity as the game does (an Exquisite Shirt holds 60, not 600). The Level Optimizer and other go-to buttons work again, and TR + ARCE sits in the top bar beside Vanilla and Tamriel Rebuilt.
+            </li>
+            <li>
               <strong className="text-fg-2">Front Page Leads with Your Save:</strong> Drop an OpenMW save anywhere on the home page to load it, or pick your world (Vanilla, Tamriel Rebuilt, TR + ARCE) and start a new build. Alchemy and Travel get large cards, with your brew chance on the Alchemy card.
             </li>
             <li>
