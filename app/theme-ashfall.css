@@ -1,0 +1,634 @@
+/*
+ * Ashfall: the modern theme (the default). Loaded after every other stylesheet.
+ *
+ * 1. Tokens: every --color-* token from theme.css, re-valued on the Ashfall
+ *    palette (Basalt surfaces, Bone text, one Ember accent), plus fonts.
+ * 2. Frames: the Morrowind 9-slice textures (--mw-border, --mw-bevel,
+ *    --mw-groove) become hairlines with rounded corners.
+ * 3. Components: legacy classes (.mw-btn, .btn, .seg, selects, panels...) and
+ *    the newer React pieces restyled to the Ashfall component sheet.
+ *
+ * Everything is scoped to :root[data-theme="ashfall"]; the classic theme is
+ * the base CSS with no overrides. Selectors that must beat legacy ID rules or
+ * !important declarations say so.
+ */
+
+/* ---- 1. Tokens ------------------------------------------------------------ */
+:root[data-theme="ashfall"] {
+  color-scheme: dark;
+
+  --color-fg-1: #fbf8f3;
+  --color-fg-2: #f4f0ea;
+  --color-fg-3: #ede6dc;
+  --color-fg-4: #e3ddd3;
+  --color-fg-5: #cfc9bf;
+  --color-fg-6: #c8c1b6;
+  --color-fg-7: #bfb9af;
+  --color-fg-8: #b5afa6;
+  --color-fg-9: #a8a298;
+  --color-fg-10: #a09a90;
+  --color-fg-11: #968f86;
+  --color-fg-12: #8e887f;
+  --color-fg-13: #8a847b;
+  --color-fg-14: #827c73;
+  --color-fg-15: #756f67;
+  --color-fg-16: #6b655d;
+  --color-fg-17: #5a554f;
+  --color-fg-18: #48443f;
+
+  --color-surface-1: #0e0d0c;
+  --color-surface-2: #111010;
+  --color-surface-3: #131210;
+  --color-surface-4: #151412;
+  --color-surface-5: #171614;
+  --color-surface-6: #181715;
+  --color-surface-7: #191816;
+  --color-surface-8: #1a1816;
+  --color-surface-9: #1b1917;
+  --color-surface-10: #1c1a18;
+  --color-surface-11: #1e1b18;
+  --color-surface-12: #1f1d1a;
+  --color-surface-13: #211e1b;
+  --color-surface-14: #221f1c;
+  --color-surface-15: #23201d;
+  --color-surface-16: #25221f;
+  --color-surface-17: #272421;
+  /* 18-23 are the "selected / highlighted" warm fills: Ember at 10-20%. */
+  --color-surface-18: #2b1c15;
+  --color-surface-19: #2e1e16;
+  --color-surface-20: #342116;
+  --color-surface-21: #3b2418;
+  --color-surface-22: #3d2a1c;
+  --color-surface-23: #422719;
+  --color-surface-24: #8e887f;
+
+  --color-line-1: #5a544d;
+  --color-line-2: #4d4843;
+  --color-line-3: #45403b;
+  --color-line-4: #3f3b36;
+  --color-line-5: #3a3632;
+  --color-line-6: #36322e;
+  --color-line-7: #33302c;
+  --color-line-8: #302d29;
+  --color-line-9: #2b2825;
+  --color-line-10: #282522;
+  --color-line-11: #232120;
+  --color-line-12: #1f1d1a;
+
+  --color-accent: #ff7a3d;
+  --color-accent-1: #ff9a6b;
+  --color-accent-2: #ff8a52;
+  --color-accent-3: #e86a30;
+  --color-accent-4: #c75a28;
+  --color-accent-5: #9e4a24;
+
+  --color-danger-1: #ffd9d6;
+  --color-danger-2: #fca5a0;
+  --color-danger-3: #f7867f;
+  --color-danger-4: #ee8a80;
+  --color-danger-5: #f07a76;
+  --color-danger-6: #ff6b66;
+  --color-danger-7: #e06a68;
+  --color-danger-8: #b0605c;
+  --color-danger-9: #f25c5c;
+  --color-danger-surface-1: #1c1212;
+  --color-danger-surface-2: #2a1616;
+  --color-danger-surface-3: #3a1c1c;
+  --color-danger-surface-4: #c84a4a;
+  --color-danger-surface-5: #d0605a;
+  --color-danger-line-1: #8a3a3a;
+  --color-danger-line-2: #6e2e2e;
+  --color-danger-line-3: #5a2828;
+
+  --color-success-1: #a8efcb;
+  --color-success-2: #7fe0b0;
+  --color-success-3: #5ad69a;
+  --color-success-4: #8dd4ae;
+  --color-success-5: #86c9b5;
+  --color-success-6: #8fa597;
+  --color-success-surface-1: #0f1a15;
+  --color-success-surface-2: #13241c;
+  --color-success-surface-3: #1b3529;
+  --color-success-surface-4: #214533;
+  --color-success-surface-5: #2fa872;
+  --color-success-surface-6: #3fcb8b;
+  --color-success-surface-7: #4be39b;
+  --color-success-line-1: #3faf7b;
+  --color-success-line-2: #2f7d59;
+  --color-success-line-3: #2b5e4a;
+  --color-success-line-4: #2a5641;
+  --color-success-line-5: #264a38;
+  --color-success-line-6: #1d4d36;
+
+  --color-warning-1: #f5cd85;
+  --color-warning-2: #f2b84b;
+  --color-warning-3: #e8a04a;
+  --color-warning-surface: #c98a2e;
+  --color-warning-line: #7a5a24;
+
+  --color-info: #9daeff;
+  --color-info-surface-1: #141a2a;
+  --color-info-surface-2: #3a4db0;
+  --color-info-line-1: #3e4c80;
+  --color-info-line-2: #26306a;
+  --color-teal-surface: #0f2226;
+
+  --color-health: #f25c5c;
+  --color-magicka: #7b93ff;
+  --color-fatigue: #3fcb8b;
+
+  /* Flat, slightly lit bars instead of the classic bevel. */
+  --gradient-health: linear-gradient(180deg, #f67a7a 0%, #f25c5c 55%, #d94a4a 100%);
+  --gradient-magicka: linear-gradient(180deg, #97a9ff 0%, #7b93ff 55%, #6178e6 100%);
+  --gradient-fatigue: linear-gradient(180deg, #62d9a3 0%, #3fcb8b 55%, #2fae74 100%);
+
+  /* Fonts: Geist for the interface, Geist Mono for numbers, Instrument Serif for titles. */
+  --font-serif: var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: var(--font-instrument), "Iowan Old Style", Georgia, serif;
+
+  /* Legacy aliases that legacy-compat.css reads. */
+  --offblack: #0c0b0a;
+  --journal: #0c0b0a;
+  --radius: 12px;
+  --mw-border: none;
+  --mw-bevel: none;
+  --mw-groove: none;
+  --mw-scroll-thumb: #3a3632;
+  --mw-scroll-thumb-hover: #4d4843;
+  --mw-scroll-track: transparent;
+
+  /* Ashfall-only helpers. */
+  --af-radius-chip: 8px;
+  --af-radius-control: 12px;
+  --af-radius-card: 20px;
+  --af-ring: 0 0 0 1px var(--color-accent), 0 0 0 4px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  --af-float: 0 24px 48px -12px rgba(0, 0, 0, 0.8);
+  --af-hairline: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ---- Base --------------------------------------------------------------- */
+:root[data-theme="ashfall"] body {
+  background: #0c0b0a;
+  color: var(--color-fg-2);
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* Elements and classes in separate rules: one :is() would take the class
+   specificity and outrank the heading rule below. */
+:root[data-theme="ashfall"] :is(h3, h4, table, input, select, option, optgroup, button, textarea) { font-family: var(--font-sans); }
+:root[data-theme="ashfall"] :is(.kicker, .btn, .sheet-grid) { font-family: var(--font-sans); }
+/* Page and section titles take the editorial serif. */
+:root[data-theme="ashfall"] :is(h1, h2) {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-shadow: none;
+}
+:root[data-theme="ashfall"] :is(h3, h4) { font-weight: 600; letter-spacing: 0; }
+:root[data-theme="ashfall"] :is(code, kbd, samp, pre, .font-mono) { font-family: var(--font-mono); }
+:root[data-theme="ashfall"] ::selection { background: color-mix(in srgb, var(--color-accent) 35%, transparent); color: var(--color-fg-1); }
+:root[data-theme="ashfall"] a { color: var(--color-accent); }
+:root[data-theme="ashfall"] a:hover { color: var(--color-accent-1); }
+:root[data-theme="ashfall"] :focus-visible { outline: none; box-shadow: var(--af-ring); }
+
+/* Scrollbars: a thin thumb, no track. */
+:root[data-theme="ashfall"],
+:root[data-theme="ashfall"] * { scrollbar-color: #3a3632 transparent; }
+:root[data-theme="ashfall"] ::-webkit-scrollbar { width: 8px; height: 8px; }
+:root[data-theme="ashfall"] ::-webkit-scrollbar-track,
+:root[data-theme="ashfall"] ::-webkit-scrollbar-corner { background: transparent; border: 0; }
+:root[data-theme="ashfall"] ::-webkit-scrollbar-thumb { background: #3a3632; border: 2px solid transparent; border-radius: 999px; background-clip: padding-box; }
+:root[data-theme="ashfall"] ::-webkit-scrollbar-thumb:hover { background: #4d4843; border-color: transparent; background-clip: padding-box; }
+
+/* Boxes drawn with Tailwind border utilities: round them, and thin the heavy
+   2px/4px frames to hairlines. Explicit rounded-* classes and table cells keep
+   their own shape. */
+:root[data-theme="ashfall"] :is([class~="border"], [class~="border-2"], [class~="border-4"]):not([class*="rounded"], td, th, tr, input, select, textarea) {
+  border-radius: 12px;
+}
+:root[data-theme="ashfall"] :is([class~="border-2"], [class~="border-4"]):not(td, th) { border-width: 1px; }
+
+/* ---- 2. Frames -------------------------------------------------------------
+   Inline styles in components use "Npx solid transparent" plus a texture
+   border-image; with the textures gone, give them a hairline instead. */
+:root[data-theme="ashfall"] [style*="var(--mw-border)"] {
+  border: 1px solid var(--color-line-9) !important;
+  border-radius: var(--af-radius-card) !important;
+}
+:root[data-theme="ashfall"] [style*="var(--mw-bevel)"] {
+  border: 1px solid var(--color-line-5) !important;
+  border-radius: var(--af-radius-control) !important;
+}
+:root[data-theme="ashfall"] [style*="var(--mw-groove)"] {
+  border: 1px solid var(--color-line-9) !important;
+  border-radius: 999px !important;
+}
+
+/* ---- 3. Components ------------------------------------------------------- */
+
+/* Pages sit on the Basalt ground; cards carry the structure, not a 9-slice
+   frame around everything. (The legacy panel rules are ID + !important.) */
+:root[data-theme="ashfall"] body :is(#panel-home, #panel-build, #panel-challenge, #panel-leveler, #panel-vault, #panel-factions, #panel-enchant, #panel-spell, #panel-alchemy, #panel-travel, #panel-about, #panel-changelog) {
+  background: transparent !important;
+  border: 0 !important;
+  border-image: none !important;
+  box-shadow: none !important;
+  padding: 28px 0 40px !important;
+}
+:root[data-theme="ashfall"] .panel p { color: var(--color-fg-5); }
+:root[data-theme="ashfall"] .panel h2 { color: var(--color-fg-2); }
+:root[data-theme="ashfall"] .hero::after { display: none; }
+
+/* Header */
+:root[data-theme="ashfall"] .topbar { padding-top: 18px; }
+/* Room for the nav row and the actions row under it whatever the description's length. */
+@media (min-width: 900px) { :root[data-theme="ashfall"] .topbar { min-height: 150px; } }
+/* Between phone and wide desktop the nav row needs the full width: the brand
+   takes its own row, with the theme switch and search to its right. */
+@media (min-width: 900px) and (max-width: 1299px) {
+  :root[data-theme="ashfall"] .topbar { flex-wrap: wrap; row-gap: 14px; min-height: 0; }
+  :root[data-theme="ashfall"] .topbar .brand { flex: 1 1 100%; max-width: calc(100% - 480px); padding-right: 0; }
+  :root[data-theme="ashfall"] .topbar .header-tools { flex: 1 1 100%; flex-wrap: wrap; row-gap: 8px; justify-content: flex-start; margin-left: 0; }
+  :root[data-theme="ashfall"] .topbar .nav-primary { justify-content: flex-start; flex-wrap: wrap; }
+  :root[data-theme="ashfall"] .topbar .world-bar { width: auto; margin-left: auto; }
+  :root[data-theme="ashfall"] .header-actions { top: 18px; bottom: auto; }
+}
+@media (min-width: 900px) and (max-width: 999px) {
+  :root[data-theme="ashfall"] .topbar .nav-primary .btn { padding: 0 8px; font-size: 13.5px; }
+  :root[data-theme="ashfall"] .topbar .nav-primary { gap: 2px; }
+}
+:root[data-theme="ashfall"] body :is(#react-nav-challenge, #react-nav-build) { background: transparent; color: var(--color-fg-8); box-shadow: none; }
+:root[data-theme="ashfall"] body:is(.view-challenge) #react-nav-challenge,
+:root[data-theme="ashfall"] body:is(.view-builder) #react-nav-build { background: var(--color-surface-15); border-color: var(--color-line-7); color: var(--color-fg-1); }
+:root[data-theme="ashfall"] .topbar .brand h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw, 2.6rem);
+  line-height: 1;
+  color: var(--color-fg-2);
+}
+:root[data-theme="ashfall"] .brand-home { display: inline-flex; align-items: center; gap: 12px; color: var(--color-fg-2); }
+:root[data-theme="ashfall"] .brand-home:hover { color: var(--color-fg-1); }
+/* The strider mark: a shell on four long legs. */
+:root[data-theme="ashfall"] .brand-home::before {
+  content: "";
+  width: 0.9em;
+  height: 0.9em;
+  flex: none;
+  background: var(--color-accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='10' rx='8.5' ry='5'/%3E%3Cpath d='M9.5 12.5 5.5 20 3.5 29M13.5 14.6 11.5 22 10.5 29M18.5 14.6 20.5 22 21.5 29M22.5 12.5 26.5 20 28.5 29' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='10' rx='8.5' ry='5'/%3E%3Cpath d='M9.5 12.5 5.5 20 3.5 29M13.5 14.6 11.5 22 10.5 29M18.5 14.6 20.5 22 21.5 29M22.5 12.5 26.5 20 28.5 29' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+@media (max-width: 899px) { :root[data-theme="ashfall"] .topbar { padding-inline: 8px; } }
+:root[data-theme="ashfall"] .kicker { font-size: 13px; color: var(--color-fg-12); line-height: 1.45; }
+:root[data-theme="ashfall"] .kicker .page-sub { color: var(--color-fg-8); }
+
+/* Nav buttons, the menu buttons and anything else using the legacy .btn */
+:root[data-theme="ashfall"] .btn {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--color-line-5);
+  border-image: none;
+  border-radius: var(--af-radius-control);
+  background: transparent;
+  color: var(--color-fg-2);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: none;
+  transform: none;
+}
+:root[data-theme="ashfall"] .btn:hover:not(:disabled) { background: var(--color-surface-15); border-color: var(--color-line-3); transform: none; }
+:root[data-theme="ashfall"] .btn:focus-visible { outline: none; box-shadow: var(--af-ring); }
+:root[data-theme="ashfall"] :is(.btn[aria-pressed="true"], .btn.on) {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  box-shadow: none;
+}
+:root[data-theme="ashfall"] .btn:disabled { opacity: 0.45; }
+/* In the desktop nav row the buttons read as quiet links. */
+@media (min-width: 900px) {
+  :root[data-theme="ashfall"] .topbar .nav-primary .btn { min-height: 36px; padding: 0 12px; border-color: transparent; color: var(--color-fg-8); }
+  :root[data-theme="ashfall"] .topbar .nav-primary .btn:hover:not(:disabled) { color: var(--color-fg-2); background: var(--color-surface-15); border-color: transparent; }
+  :root[data-theme="ashfall"] .topbar .nav-primary :is(.btn.on, .btn[aria-current="page"], .btn[aria-expanded="true"]) {
+    color: var(--color-fg-1);
+    background: var(--color-surface-15);
+    border-color: var(--color-line-7);
+  }
+}
+:root[data-theme="ashfall"] body.view-challenge #react-nav-challenge,
+:root[data-theme="ashfall"] body.view-builder #react-nav-build { color: var(--color-fg-1); }
+:root[data-theme="ashfall"] .dropdown-caret { color: var(--color-fg-12); }
+
+/* Dropdown menus */
+:root[data-theme="ashfall"] .nav-dropdown-menu {
+  padding: 6px;
+  border: 1px solid var(--color-line-5);
+  border-image: none;
+  border-radius: 16px;
+  background: #1a1816;
+  box-shadow: var(--af-float);
+}
+:root[data-theme="ashfall"] .dropdown-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--color-fg-2);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+:root[data-theme="ashfall"] :is(.dropdown-item:hover, .dropdown-item:focus-visible) { background: var(--color-surface-15); color: var(--color-fg-1); }
+:root[data-theme="ashfall"] :is(.dropdown-item.on, .dropdown-item[aria-current="page"]) {
+  padding-left: 12px;
+  border-left: 0;
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* World switch: pill segments */
+:root[data-theme="ashfall"] .seg {
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--color-line-5);
+  border-image: none;
+  border-radius: 999px;
+  background: #1a1816;
+}
+:root[data-theme="ashfall"] .seg .seg-btn {
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: var(--color-fg-8);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+}
+:root[data-theme="ashfall"] .seg .seg-btn + .seg-btn { border-left: 0; }
+:root[data-theme="ashfall"] .seg .seg-btn:hover:not(:disabled) { color: var(--color-fg-2); }
+:root[data-theme="ashfall"] :is(.seg .seg-btn.on, .seg .seg-btn[aria-pressed="true"]) { background: var(--color-surface-16); color: var(--color-fg-1); }
+:root[data-theme="ashfall"] .arce-toggle {
+  padding: 5px 12px;
+  border: 1px solid var(--color-line-5);
+  border-image: none;
+  border-radius: 999px;
+  background: #1a1816;
+  color: var(--color-fg-8);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+:root[data-theme="ashfall"] .arce-toggle.on { color: var(--color-accent); border-color: color-mix(in srgb, var(--color-accent) 45%, transparent); background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+
+/* Phone menu */
+:root[data-theme="ashfall"] .hamburger {
+  border: 1px solid var(--color-line-5);
+  border-image: none;
+  border-radius: var(--af-radius-control);
+  background: #1a1816;
+  color: var(--color-fg-2);
+  box-shadow: none;
+}
+:root[data-theme="ashfall"] .hamburger:hover,
+:root[data-theme="ashfall"] .hamburger:active,
+:root[data-theme="ashfall"] .hamburger[aria-expanded="true"] { background: var(--color-surface-15); color: var(--color-fg-1); box-shadow: none; }
+:root[data-theme="ashfall"] .menu-drawer.open {
+  border: 1px solid var(--color-line-7);
+  border-image: none;
+  border-radius: var(--af-radius-card);
+  background: var(--color-surface-3);
+  box-shadow: var(--af-float);
+}
+:root[data-theme="ashfall"] .drawer-label { font-family: var(--font-sans); font-size: 12px; letter-spacing: 0.08em; color: var(--color-fg-12); }
+:root[data-theme="ashfall"] header:is(.drawer-open, :has(.menu-drawer.open)) .account-bar {
+  border: 1px solid var(--color-line-7) !important;
+  border-image: none !important;
+  border-radius: var(--af-radius-card) !important;
+  box-shadow: var(--af-float) !important;
+}
+:root[data-theme="ashfall"] .account-bar .btn { border-image: none; }
+
+/* Phone tab bar */
+@media (max-width: 899px) {
+  :root[data-theme="ashfall"] .phone-tabs {
+    border-top: 1px solid var(--color-line-11);
+    border-image: none;
+    background: rgba(12, 11, 10, 0.92);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+  :root[data-theme="ashfall"] .phone-tabs button { font-family: var(--font-sans); font-size: 11px; font-weight: 500; color: var(--color-fg-12); }
+  :root[data-theme="ashfall"] .phone-tabs button[aria-current="page"] { box-shadow: none; color: var(--color-accent); font-weight: 600; }
+}
+
+/* Header search field */
+:root[data-theme="ashfall"] .search-trigger {
+  border: 1px solid var(--color-line-9);
+  border-image: none;
+  border-radius: var(--af-radius-control);
+  background: #1a1816;
+  box-shadow: var(--af-hairline);
+  color: var(--color-fg-12);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+:root[data-theme="ashfall"] .search-trigger:hover:not(:disabled) { border-color: var(--color-line-5); color: var(--color-fg-8); }
+:root[data-theme="ashfall"] :is(.search-trigger kbd, .search-footer kbd, .search-close-key) {
+  white-space: nowrap;
+  border-radius: 6px;
+  border-color: var(--color-line-5);
+  background: var(--color-surface-15);
+  color: var(--color-fg-11);
+}
+
+/* Buttons (.mw-btn is !important throughout the base CSS) */
+:root[data-theme="ashfall"] .mw-btn {
+  border: 1px solid var(--color-line-5) !important;
+  border-image: none !important;
+  border-radius: var(--af-radius-control) !important;
+  background: transparent !important;
+  color: var(--color-fg-2) !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 500;
+  letter-spacing: 0 !important;
+}
+:root[data-theme="ashfall"] .mw-btn:hover:not(:disabled) { background: var(--color-surface-15) !important; border-color: var(--color-line-3) !important; color: var(--color-fg-1) !important; }
+:root[data-theme="ashfall"] :is(.mw-btn.active, .mw-btn[aria-pressed="true"], .mode-bar .mw-btn.active, .mode-bar .mw-btn[aria-pressed="true"], .mode-bar-grid .mw-btn.active, .mode-bar-grid .mw-btn[aria-pressed="true"]) {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent) !important;
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent) !important;
+  color: var(--color-fg-1) !important;
+  box-shadow: none !important;
+}
+:root[data-theme="ashfall"] .mw-btn:disabled { background: #1a1816 !important; border-color: var(--color-surface-15) !important; color: var(--color-fg-16) !important; opacity: 1; }
+:root[data-theme="ashfall"] .mw-btn:focus-visible { outline: none !important; box-shadow: var(--af-ring) !important; }
+/* The one primary action on a screen: Ember. */
+:root[data-theme="ashfall"] :is(.home-cta--primary, #btn-gear) {
+  border-color: transparent !important;
+  background: var(--color-accent) !important;
+  color: #140a04 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 10px 28px -10px color-mix(in srgb, var(--color-accent) 60%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+:root[data-theme="ashfall"] :is(.home-cta--primary, #btn-gear):hover:not(:disabled) { background: var(--color-accent-1) !important; color: #140a04 !important; }
+:root[data-theme="ashfall"] #btn-gear { border-radius: var(--af-radius-control); }
+:root[data-theme="ashfall"] .icon-btn { border: 1px solid var(--color-line-5); border-image: none; border-radius: 10px; }
+
+/* Fields */
+:root[data-theme="ashfall"] :is(select, .mw-select, .mw-input, #local-characters select, #local-characters input[type="text"]) {
+  min-height: 40px;
+  border: 1px solid var(--color-line-9) !important;
+  border-image: none !important;
+  border-radius: 10px !important;
+  background-color: #1a1816 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='m1 1.5 5 5 5-5' stroke='%238e887f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  color: var(--color-fg-2) !important;
+  font-family: var(--font-sans) !important;
+}
+:root[data-theme="ashfall"] :is(.mw-input, #local-characters input[type="text"]) { background-image: none !important; }
+:root[data-theme="ashfall"] :is(#panel-enchant, #panel-spell, #panel-travel, #panel-alchemy) :is(input[type="number"], input[type="text"], select, .enc-eff-search, .alc-dd-btn),
+:root[data-theme="ashfall"] #saved-character-name {
+  border: 1px solid var(--color-line-9) !important;
+  border-image: none !important;
+  border-radius: 10px !important;
+  background-color: #1a1816 !important;
+  color: var(--color-fg-2) !important;
+  font-family: var(--font-sans) !important;
+}
+:root[data-theme="ashfall"] :is(select, .mw-select, input, textarea):focus-visible,
+:root[data-theme="ashfall"] :is(select, .mw-select, input, textarea):focus {
+  outline: none !important;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 20%, transparent) !important;
+}
+:root[data-theme="ashfall"] input[type="checkbox"] { accent-color: var(--color-accent); }
+:root[data-theme="ashfall"] select[size] { background-image: none !important; }
+:root[data-theme="ashfall"] :is(select[size] option:hover, select[size] option:focus, select[size] option:checked) {
+  background-color: color-mix(in srgb, var(--color-accent) 18%, #1a1816) !important;
+  color: var(--color-fg-1) !important;
+}
+
+/* Inset panels, callouts, tables and tags */
+:root[data-theme="ashfall"] .mw-groove-panel {
+  border: 1px solid var(--color-line-10) !important;
+  border-image: none !important;
+  border-radius: 14px !important;
+}
+:root[data-theme="ashfall"] .mw-warning-scroll {
+  border: 1px solid color-mix(in srgb, var(--color-warning-2) 40%, transparent) !important;
+  border-image: none !important;
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--color-warning-2) 8%, transparent) !important;
+}
+:root[data-theme="ashfall"] :is(.gear-results-container thead th, #gear-box thead th) {
+  border: 0;
+  border-bottom: 1px solid var(--color-line-7);
+  border-image: none;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-12);
+}
+:root[data-theme="ashfall"] :is(.gear-results-container th[colspan], #gear-box th[colspan]) { border-image: none; }
+:root[data-theme="ashfall"] :is(.gear-results-container details, #gear-box details, .cat-row, .build-sheet, .save-row, #local-characters, #run-summary .sum-row) {
+  border-image: none !important;
+  border-color: var(--color-line-9) !important;
+  border-radius: 14px;
+}
+:root[data-theme="ashfall"] :is(.region-tag, .gear-tag, .gear-ar-tag) { border-radius: var(--af-radius-chip); font-family: var(--font-sans); }
+:root[data-theme="ashfall"] .vital-bar { border-image: none; border-radius: 999px; overflow: hidden; }
+:root[data-theme="ashfall"] .site-footer { color: var(--color-fg-12); font-family: var(--font-sans); font-size: 13px; }
+
+/* Home page */
+:root[data-theme="ashfall"] .home-hub-root .home-title span { font-style: italic; }
+:root[data-theme="ashfall"] .home-hub-root .home-title { text-shadow: none; letter-spacing: -0.02em; line-height: 0.98; }
+:root[data-theme="ashfall"] .home-hub-root .home-news { border-radius: 999px; background: #131210; border-color: var(--color-line-9); padding-left: 4px; }
+:root[data-theme="ashfall"] .home-hub-root .home-news-tag { border-radius: 999px; background: color-mix(in srgb, var(--color-accent) 16%, transparent); color: var(--color-accent); font-weight: 600; }
+:root[data-theme="ashfall"] .home-hub-root .home-news kbd { border-radius: 6px; }
+@media (hover: none) { .home-hub-root .home-news kbd { display: none; } }
+:root[data-theme="ashfall"] .home-hub-root .home-character {
+  border: 1px solid var(--color-line-9);
+  border-image: none;
+  border-radius: var(--af-radius-card);
+  background: #131210;
+  box-shadow: var(--af-float), var(--af-hairline);
+}
+:root[data-theme="ashfall"] .home-hub-root .home-monogram {
+  border-radius: 13px;
+  border-color: color-mix(in srgb, var(--color-accent) 42%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  font-family: var(--font-display);
+}
+:root[data-theme="ashfall"] .home-hub-root .home-chip { border-radius: var(--af-radius-chip); border-color: color-mix(in srgb, var(--color-accent) 35%, transparent); background: color-mix(in srgb, var(--color-accent) 12%, transparent); color: var(--color-accent); font-family: var(--font-sans); font-weight: 500; }
+:root[data-theme="ashfall"] .home-hub-root .home-kicker { font-family: var(--font-sans); font-weight: 600; letter-spacing: 0.08em; color: var(--color-fg-12); }
+:root[data-theme="ashfall"] .home-hub-root .home-vital-bar { height: 8px; border: 0; border-image: none; border-radius: 999px; background: #23201d; overflow: hidden; }
+:root[data-theme="ashfall"] .home-hub-root .home-vital-fill { border-radius: 999px; }
+:root[data-theme="ashfall"] .home-hub-root .home-vital-fill--health { box-shadow: 0 0 10px rgba(242, 92, 92, 0.45); }
+:root[data-theme="ashfall"] .home-hub-root .home-vital-fill--magicka { box-shadow: 0 0 10px rgba(123, 147, 255, 0.45); }
+:root[data-theme="ashfall"] .home-hub-root .home-vital-fill--fatigue { box-shadow: 0 0 10px rgba(63, 203, 139, 0.45); }
+:root[data-theme="ashfall"] .home-hub-root .home-attribute { border-radius: 10px; background: #1a1816; border-color: var(--color-line-11); }
+:root[data-theme="ashfall"] .home-hub-root .home-attribute:has(.home-star) { border-color: color-mix(in srgb, var(--color-accent) 45%, transparent); }
+:root[data-theme="ashfall"] .home-hub-root .home-levelup { border-top-color: var(--color-line-11); }
+:root[data-theme="ashfall"] .home-hub-root .home-facts {
+  border-top: 1px solid var(--color-line-9);
+  border-bottom: 1px solid var(--color-line-9);
+  border-image: none;
+}
+:root[data-theme="ashfall"] .home-hub-root .home-fact + .home-fact { border-left-color: var(--color-line-11); }
+:root[data-theme="ashfall"] .home-hub-root .home-fact-value { font-family: var(--font-mono); font-weight: 500; font-size: 34px; color: var(--color-fg-2); }
+:root[data-theme="ashfall"] .home-hub-root .home-tool {
+  border: 1px solid var(--color-line-9);
+  border-radius: var(--af-radius-card);
+  background: #131210;
+  box-shadow: var(--af-hairline);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+:root[data-theme="ashfall"] .home-hub-root .home-tool:hover { border-color: var(--color-line-3); transform: translateY(-2px); }
+:root[data-theme="ashfall"] .home-hub-root .home-tool-icon { border-radius: 11px; border: 0; background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
+:root[data-theme="ashfall"] .home-hub-root .home-tool-title { font-family: var(--font-sans); font-size: 18px; font-weight: 600; color: var(--color-fg-1); }
+:root[data-theme="ashfall"] .home-hub-root .home-tool-desc { color: var(--color-fg-8); }
+:root[data-theme="ashfall"] .home-hub-root .home-tool-open { color: var(--color-accent); font-weight: 500; }
+:root[data-theme="ashfall"] .home-hub-root .home-preview { border-radius: 14px; border-color: var(--color-line-11); background: #0e0d0c; }
+:root[data-theme="ashfall"] .home-hub-root .home-big { font-family: var(--font-mono); font-size: 24px; font-weight: 500; }
+:root[data-theme="ashfall"] .home-hub-root :is(.home-tags li, .home-route li) { border-radius: var(--af-radius-chip); border-color: var(--color-line-7); }
+:root[data-theme="ashfall"] .home-hub-root .home-drop { border-radius: 12px; border-color: var(--color-line-5); }
+:root[data-theme="ashfall"] .home-hub-root .home-world { border-radius: var(--af-radius-card); background: #131210; border-color: var(--color-line-9); }
+:root[data-theme="ashfall"] .home-hub-root .home-world[data-active="true"] {
+  border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+:root[data-theme="ashfall"] .home-hub-root .home-world-title { font-family: var(--font-display); font-size: 28px; }
+:root[data-theme="ashfall"] .home-hub-root .home-colophon { border-top: 1px solid var(--color-line-9); border-image: none; }
+:root[data-theme="ashfall"] .home-hub-root .home-colophon-name { font-family: var(--font-display); font-size: 28px; }
+
+/* Search palette */
+:root[data-theme="ashfall"] .search-dialog {
+  border: 1px solid var(--color-line-5);
+  border-image: none;
+  border-radius: var(--af-radius-card);
+  background: #131210;
+  box-shadow: var(--af-float);
+  overflow: hidden;
+}
+:root[data-theme="ashfall"] .search-overlay { background: rgba(6, 5, 4, 0.72); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+:root[data-theme="ashfall"] .search-dialog .search-bar input { font-family: var(--font-sans); font-size: 18px; }
+:root[data-theme="ashfall"] :is(.search-bar, .search-chips, .search-footer) { border-color: var(--color-line-11); }
+:root[data-theme="ashfall"] .search-preview { background: #0e0d0c; border-left-color: var(--color-line-11); }
+:root[data-theme="ashfall"] .search-option { margin: 0 6px; border-left: 0; border-radius: 10px; padding-left: 10px; }
+:root[data-theme="ashfall"] :is(.search-option[aria-selected="true"], .search-more[aria-selected="true"]) { background: var(--color-surface-15); }
+:root[data-theme="ashfall"] .search-option-icon { border: 0; border-radius: 9px; background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
+:root[data-theme="ashfall"] :is(.search-group-label, .search-card-kicker, .search-card-label) { font-family: var(--font-sans); color: var(--color-fg-12); letter-spacing: 0.08em; }
+:root[data-theme="ashfall"] .search-dialog .search-card-title { font-family: var(--font-display); font-size: 30px; font-weight: 400; }
+:root[data-theme="ashfall"] .search-card-rows dd { font-family: var(--font-mono); font-size: 13.5px; }
+:root[data-theme="ashfall"] .search-console { border-radius: 10px; overflow: hidden; border-color: var(--color-line-7); }
+:root[data-theme="ashfall"] .search-console code { font-size: 11px; }
+:root[data-theme="ashfall"] .search-dialog .search-card-action { border-radius: var(--af-radius-control) !important; }
+@media (max-width: 899px) {
+  :root[data-theme="ashfall"] .search-dialog { border: 0; border-radius: 0; }
+}
+
+/* Theme switch tooltip: the switch itself stays classic on purpose (see globals.css). */
+:root[data-theme="ashfall"] .theme-toggle-tip { border-radius: 10px; border-color: var(--color-line-5); background: #1a1816; box-shadow: var(--af-float); }
+:root[data-theme="ashfall"] .theme-toggle-tip kbd { border-radius: 5px; }

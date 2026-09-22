@@ -69,7 +69,9 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
       --mw-bevel: url("/textures/mw-groove.png");
       --mw-groove: url("/textures/mw-bevel.png");
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track); scrollbar-width: thin; }
+    /* The margin/padding reset lives in globals.css's base layer, so Tailwind's
+       spacing utilities (a later layer) can override it. */
+    * { box-sizing: border-box; scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track); scrollbar-width: thin; }
     html, body { min-height: 100%; max-width: 100%; overflow-x: hidden; color-scheme: dark; scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track); scrollbar-width: thin; }
     select, input, textarea { color-scheme: dark; }
     ::-webkit-scrollbar { width: 10px; height: 10px; }

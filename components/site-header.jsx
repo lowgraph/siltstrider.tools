@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useShell } from './shell-context';
 import SearchPalette from './search/search-palette';
+import ThemeToggle from './theme-toggle';
 
 const descriptions = {
   home: 'Pick a planner for this playthrough.',
@@ -249,6 +250,8 @@ export default function SiteHeader({ shell: propShell } = {}) {
       >
         {open ? '✕' : '☰'}
       </button>
+      <div className="header-actions">
+      <ThemeToggle />
       <button
         type="button"
         className="search-trigger"
@@ -263,6 +266,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
         <span className="search-trigger-label">Search items, spells, places…</span>
         <kbd>{searchKey}</kbd>
       </button>
+      </div>
       <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} profile={shell.profile} navigate={view => shell.navigate(view)} />
       <div className={'header-tools menu-drawer' + (open ? ' open' : '')} id="react-menu-drawer">
         <div className="nav-primary">

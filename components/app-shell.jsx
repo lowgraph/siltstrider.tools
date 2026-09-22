@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import SiteHeader from './site-header';
 import SiteFooter from './site-footer';
 import { ShellProvider, useShell } from './shell-context';
+import { ThemeProvider } from './theme-provider';
 import { CharacterProvider, useActiveCharacter } from './character-context';
 import CloudVaultModal from './character-vault/cloud-vault-modal';
 
@@ -196,6 +197,7 @@ export default function AppShell({ revision = '' } = {}) {
   const [dataReady, setDataReady] = useState(() => isClient && Boolean(window.POOL || window.MAJORS));
 
   return (
+    <ThemeProvider>
     <ShellProvider>
       <CharacterProvider>
         <AppShellMain />
@@ -218,5 +220,6 @@ export default function AppShell({ revision = '' } = {}) {
         )}
       </CharacterProvider>
     </ShellProvider>
+    </ThemeProvider>
   );
 }

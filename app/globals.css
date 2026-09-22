@@ -1,4 +1,11 @@
 @layer theme, base, components, utilities;
+
+/* Reset browser spacing in the base layer. Unlayered, this reset used to beat
+   every Tailwind spacing utility (p-*, m-*, space-y-*, which sit in the
+   utilities layer), so the spacing written into the components never showed. */
+@layer base {
+  *, ::before, ::after { margin: 0; padding: 0; }
+}
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 @import "./theme.css";
@@ -36,6 +43,9 @@
   /* Width of the centered page column shared by the header, main area and panels.
      Wide enough for the full-size title beside the nav. */
   --page-width: 1360px;
+
+  /* Page and section titles. Pelagiad here; Ashfall swaps in Instrument Serif. */
+  --font-display: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
 
   --mw-border: url("/textures/mw-border.png");
   --mw-bevel: url("/textures/mw-bevel.png");
@@ -1430,9 +1440,103 @@ body.view-travel .hero {
 .search-trigger:hover:not(:disabled) { color: var(--color-fg-4); }
 .search-trigger:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .search-trigger:disabled { opacity: 0.5; cursor: default; }
+/* Header actions: the theme switch and the search field. Beside the phone
+   menu button; under the nav row on desktop. */
+.header-actions { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; margin-left: 8px; }
+.header-actions .search-trigger { margin-left: 0; }
 @media (min-width: 900px) {
   .topbar { min-height: 100px; }
-  .search-trigger { position: absolute; right: 0; bottom: 0; width: 330px; height: 40px; margin: 0; flex: none; }
+  .header-actions { position: absolute; right: 0; bottom: 0; margin: 0; flex: none; }
+  .header-actions .search-trigger { width: 300px; height: 40px; flex: none; }
+}
+
+/* Theme switch. Classic Morrowind styling in both themes: in Ashfall it is the
+   one piece of the old UI left on screen, the way back to it. */
+:root {
+  --classic-gold: #d4b06a;
+  --classic-gold-bright: #f0d48a;
+  --classic-brown: #1a140d;
+  --classic-brown-hi: #3a2a18;
+}
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: 40px;
+  padding: 0 14px 0 10px;
+  border: 4px solid transparent;
+  border-image: url("/textures/mw-bevel.png") 4 repeat;
+  background: linear-gradient(180deg, var(--classic-brown-hi) 0%, var(--classic-brown) 100%);
+  background-clip: padding-box;
+  color: var(--classic-gold);
+  font-family: "Pelagiad", "Iowan Old Style", Georgia, serif;
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+  transition: color 0.15s ease, filter 0.15s ease;
+}
+.theme-toggle:hover { color: var(--classic-gold-bright); filter: brightness(1.12); }
+.theme-toggle:focus-visible { outline: 2px solid var(--classic-gold); outline-offset: 2px; }
+.theme-toggle-face { display: inline-flex; align-items: center; gap: 8px; }
+.theme-toggle-glyph { width: 20px; height: 20px; flex: none; }
+.theme-toggle-face--to-ashfall .theme-toggle-glyph { color: #ff7a3d; filter: drop-shadow(0 0 4px rgba(255, 122, 61, 0.55)); }
+:root:not([data-theme="morrowind"]) .theme-toggle-face--to-ashfall,
+:root[data-theme="morrowind"] .theme-toggle-face--to-morrowind { display: none; }
+.theme-toggle-tip {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -4px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: max-content;
+  padding: 8px 12px;
+  border: 1px solid var(--color-line-5);
+  background: var(--color-surface-3);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+  color: var(--color-fg-2);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.theme-toggle-tip .theme-toggle-tip-title { display: block; font-weight: 600; }
+:root:not([data-theme="morrowind"]) .theme-toggle-tip .theme-toggle-face--to-ashfall,
+:root[data-theme="morrowind"] .theme-toggle-tip .theme-toggle-face--to-morrowind { display: none; }
+.theme-toggle-tip-key { color: var(--color-fg-11); font-size: 12px; }
+.theme-toggle-tip kbd {
+  margin-left: 4px;
+  padding: 1px 6px;
+  border: 1px solid var(--color-line-5);
+  border-bottom-width: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-fg-4);
+}
+.theme-toggle:hover .theme-toggle-tip,
+.theme-toggle:focus-visible .theme-toggle-tip { opacity: 1; transform: none; }
+@media (max-width: 899px) {
+  /* Icon only on phones; the accessible name still says what it does. */
+  .theme-toggle { width: 44px; height: 44px; padding: 0; justify-content: center; }
+  .theme-toggle-text { display: none; }
+  .theme-toggle-glyph { width: 22px; height: 22px; }
+  .theme-toggle-tip { right: auto; left: -4px; }
+}
+@media (hover: none) { .theme-toggle-tip { display: none; } }
+
+/* Theme switches cross-fade (View Transitions) unless motion is reduced. */
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.28s; animation-timing-function: ease; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
 }
 @media (max-width: 899px) {
   .search-trigger kbd { display: none; }
@@ -1629,7 +1733,7 @@ body.view-travel .hero {
 }
 .search-dialog .search-card-title {
   margin: 4px 0 14px;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 23px;
   font-weight: 700;
   line-height: 1.2;
@@ -1816,7 +1920,7 @@ body.view-travel .hero {
 #panel-home .home-hub-root .home-title,
 .home-hub-root .home-title {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: clamp(2.6rem, 5.2vw, 4.6rem);
   font-weight: 400;
   line-height: 1.02;
@@ -1863,7 +1967,7 @@ body.view-travel .hero {
 .home-hub-root .home-character-name {
   margin: 0;
   text-align: left;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 26px;
   font-weight: 400;
   line-height: 1.15;
@@ -1924,7 +2028,7 @@ body.view-travel .hero {
 }
 .home-hub-root .home-fact { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; }
 .home-hub-root .home-fact + .home-fact { border-left: 1px solid var(--color-line-10); }
-.home-hub-root .home-fact-value { font-family: var(--font-serif); font-size: 40px; line-height: 1; color: var(--color-accent); }
+.home-hub-root .home-fact-value { font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--color-accent); }
 .home-hub-root .home-fact-label { font-size: 14px; color: var(--color-fg-8); }
 
 /* Sections */
@@ -1934,7 +2038,7 @@ body.view-travel .hero {
 .home-hub-root .home-h2 {
   margin: 0;
   text-align: left;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: clamp(1.9rem, 3vw, 2.6rem);
   font-weight: 400;
   line-height: 1.1;
@@ -1976,7 +2080,7 @@ body.view-travel .hero {
   color: var(--color-accent);
 }
 .home-hub-root .home-tool-icon svg { width: 21px; height: 21px; }
-.home-hub-root .home-tool-title { font-family: var(--font-serif); font-size: 22px; line-height: 1.15; color: var(--color-accent); }
+.home-hub-root .home-tool-title { font-family: var(--font-display); font-size: 22px; line-height: 1.15; color: var(--color-accent); }
 .home-hub-root .home-tool-desc { font-size: 14.5px; line-height: 1.5; color: var(--color-fg-7); }
 .home-hub-root .home-tool-open { margin-top: auto; padding-top: 4px; font-size: 14px; color: var(--color-accent-1); }
 .home-hub-root .home-tool:hover .home-tool-open { color: var(--color-fg-1); }
@@ -1989,7 +2093,7 @@ body.view-travel .hero {
   background: var(--color-surface-1);
 }
 .home-hub-root .home-preview-head { font-size: 14px; line-height: 1.4; color: var(--color-fg-6); }
-.home-hub-root .home-big { font-family: var(--font-serif); font-size: 28px; line-height: 1; color: var(--color-accent); margin-right: 4px; }
+.home-hub-root .home-big { font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--color-accent); margin-right: 4px; }
 .home-hub-root .home-tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
 .home-hub-root .home-tags li { padding: 3px 9px; border: 1px solid var(--color-line-8); font-size: 13px; color: var(--color-fg-5); }
 .home-hub-root .home-premades { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
@@ -2044,7 +2148,7 @@ body.view-travel .hero {
   box-shadow: 0 0 18px color-mix(in srgb, var(--color-accent) 18%, transparent), inset 0 0 12px rgba(0, 0, 0, 0.6);
 }
 .home-hub-root .home-world-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 22px; }
-.home-hub-root .home-world-title { margin: 0; font-family: var(--font-serif); font-size: 24px; font-weight: 400; color: var(--color-fg-1); }
+.home-hub-root .home-world-title { margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 400; color: var(--color-fg-1); }
 .home-hub-root .home-world-desc { flex: 1 1 auto; font-size: 14.5px; line-height: 1.5; color: var(--color-fg-7); }
 .home-hub-root .home-world-button { min-height: 40px; font-size: 14px; font-weight: 700; }
 
@@ -2058,7 +2162,7 @@ body.view-travel .hero {
   border-image: var(--mw-groove) 2 repeat;
 }
 .home-hub-root .home-colophon-brand { display: flex; flex-direction: column; gap: 10px; }
-.home-hub-root .home-colophon-name { font-family: var(--font-serif); font-size: 26px; color: var(--color-fg-2); }
+.home-hub-root .home-colophon-name { font-family: var(--font-display); font-size: 26px; color: var(--color-fg-2); }
 .home-hub-root .home-support { display: flex; flex-wrap: wrap; gap: 8px 18px; }
 .home-hub-root .home-colophon a { color: var(--color-accent); text-decoration: none; font-size: 15px; }
 .home-hub-root .home-colophon a:hover { color: var(--color-fg-1); text-decoration: underline; text-underline-offset: 3px; }
