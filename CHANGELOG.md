@@ -25,7 +25,7 @@ All notable changes to the **Silt Strider** Morrowind character planner, calcula
 - **Challenge runs stay put:** leaving the page (to open the character in the Build Optimizer, say) no longer clears the run, and a reload keeps it.
 - **Difficulty ticks are respected:** Generate no longer rolls Hard or Grind restrictions with those bands unticked; "Reach level 50" now counts as Grind.
 - **Seeds reproduce runs:** a seed carries the world, difficulty bands and counts, and rolls the same run wherever it is loaded.
-- **Permalinks work:** Share copies a link that opens the exact run, in its world.
+- **Permalinks work:** Share copies a link that opens the exact run, in its world. Copy Build Link, and the vault's share, now copy a link that opens the character too.
 - **Send the build back:** a character sent to the Build Optimizer can go back to its challenge run, with any changes.
 - **Your settings are remembered:** your preferred bands and counts are kept on this device; a loaded seed's settings are only for its run.
 - **Enchant capacity on the game's scale:** the Gear Advisor showed record points (Exquisite Shirt 600); it now shows what the game shows (60). Silver Staff on the Enchanting page is 5.6, not 30.

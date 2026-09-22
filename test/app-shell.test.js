@@ -647,6 +647,46 @@ test("Challenge Runs: your settings are remembered; a loaded seed's are only for
   }
 });
 
+test("Copy Build Link copies a link that opens the same character, in its world", async () => {
+  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
+  let dom = setupDom("#builder&TR&world=tr&arce=0");
+  let root = createRoot(dom.window.document.getElementById("root"));
+  const button = (text) => [...dom.window.document.querySelectorAll("main button")].find((b) => b.textContent.trim() === text);
+  const gender = () => [...dom.window.document.querySelectorAll("main button")].filter((b) => ["Male", "Female"].includes(b.textContent.trim()) && b.className.includes("active")).map((b) => b.textContent.trim());
+  const clipboard = (value) => {
+    for (const nav of [dom.window.navigator, globalThis.navigator]) Object.defineProperty(nav, "clipboard", { configurable: true, value });
+  };
+  let copied = null;
+  try {
+    clipboard({ writeText: async (text) => { copied = text; } });
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+    await act(async () => button("Female").click());
+    await act(async () => button("Copy Build Link").click());
+    await settle();
+    assert.match(copied, /^http:\/\/localhost:8765\/#builder&TR&build=[A-Za-z0-9_-]+&world=tr&arce=0$/);
+    await act(async () => root.unmount());
+    dom.window.close();
+
+    // Someone else opens it: a fresh page, Male by default.
+    dom = setupDom(copied.slice(copied.indexOf("#")));
+    root = createRoot(dom.window.document.getElementById("root"));
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+    assert.deepEqual(gender(), ["Female"], "the link opens the same character");
+    assert.doesNotMatch(dom.window.location.hash, /build=/, "and then leaves the address bar");
+    assert.match(dom.window.location.hash, /^#builder&TR/, "in the link's world");
+
+    clipboard(undefined);
+    await act(async () => button("Copy Build Link").click());
+    await settle();
+    assert.ok([...dom.window.document.querySelectorAll("input[readonly]")].some((i) => i.value.includes("build=")), "without a clipboard the link is shown");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
   const dom = setupDom("#challenge");
   const container = dom.window.document.getElementById("root");

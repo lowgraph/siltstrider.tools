@@ -5,6 +5,8 @@ import { useShell } from "./shell-context";
 import { getGameDataLoader } from "./use-game-data";
 import { createCharacterCatalogService } from "../lib/character-catalogs.mjs";
 import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
+import { decodeShareHash, encodeShareHash } from "../lib/permalink-codec.mjs";
+import { sanitizeBuild } from "../lib/character-vault.mjs";
 import {
   buildFromSave,
   loadoutFromSave,
@@ -348,14 +350,8 @@ export function CharacterProvider({ children }) {
       } catch (e) {}
     }
 
-    // Safely refresh share hash after commit
     const timer = setTimeout(() => {
       isInternalSyncRef.current = false;
-      if (typeof window !== "undefined" && window.hashBooted && window.writeShareHash) {
-        try {
-          window.writeShareHash();
-        } catch (e) {}
-      }
     }, 100);
     return () => {
       clearTimeout(timer);
@@ -413,6 +409,27 @@ export function CharacterProvider({ children }) {
   }, [shell]);
 
   const clearSave = useCallback(() => setActiveSave(null), []);
+
+  // A shared build link (#builder&build=...) opens its character, on load or when pasted
+  // into an open tab, then leaves the address bar so later edits are not confused with it.
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+    const openLink = () => {
+      const decoded = decodeShareHash(window.location.hash);
+      const linked = sanitizeBuild(decoded.build);
+      if (!linked) return;
+      setActiveSave(null);
+      setBuild((prev) => ({ ...DEFAULT_BUILD, world: prev.world, arce: prev.arce, ...linked }));
+      try {
+        const { view, world, arce, profile } = decoded;
+        window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search + encodeShareHash({ view, world, arce, profile }));
+        window.dispatchEvent(new Event("silt-shell-change"));
+      } catch {}
+    };
+    openLink();
+    window.addEventListener("hashchange", openLink);
+    return () => window.removeEventListener("hashchange", openLink);
+  }, []);
 
   const value = useMemo(
     () => ({

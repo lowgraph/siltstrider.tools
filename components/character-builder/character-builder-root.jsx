@@ -8,6 +8,7 @@ import EquipmentStudioRoot from "../equipment-studio/equipment-studio-root";
 import SaveImportNotice from "../character-vault/save-import-notice";
 import ChallengeHandoff from "./challenge-handoff";
 import { useShell } from "../shell-context";
+import { generateBuildShareUrl } from "../../lib/character-vault.mjs";
 import { useActiveCharacter } from "../character-context";
 
 export default function CharacterBuilderRoot() {
@@ -25,6 +26,7 @@ export default function CharacterBuilderRoot() {
   const [activeTab, setActiveTab] = useState("builder"); // "builder" | "equipment" | "premade"
   const [mobileTab, setMobileTab] = useState("config"); // "config" | "sheet" (screens < 1024px)
   const [copied, setCopied] = useState(false);
+  const [shareLink, setShareLink] = useState(null);
 
   // Pure state updater: premade build selection
   const handleSelectPremade = useCallback(
@@ -36,27 +38,23 @@ export default function CharacterBuilderRoot() {
     [selectPremade]
   );
 
-  // Copy shareable build permalink
-  const handleCopyLink = useCallback(() => {
+  // Copy a link that opens this character, in this world. Where the clipboard is blocked,
+  // the link is shown to copy by hand.
+  const handleCopyLink = useCallback(async () => {
     if (typeof window === "undefined") return;
-    if (typeof window.writeShareHash === "function") {
-      try {
-        window.writeShareHash();
-      } catch (e) {}
-    }
-    const url = window.location.href;
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(url).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    } else {
-      const btn = document.getElementById("btn-copy-build-link");
-      if (btn) btn.click();
+    const url = generateBuildShareUrl(
+      { ...build, world: shell.world, arce: shell.arce },
+      window.location.origin + window.location.pathname
+    );
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareLink(null);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setShareLink(url);
     }
-  }, []);
+  }, [build, shell.world, shell.arce]);
 
   const handleUpdateField = updateField;
   const handleSwapSkill = swapSkill;
@@ -188,6 +186,18 @@ export default function CharacterBuilderRoot() {
                 >
                   <span>{copied ? "Link Copied!" : "Copy Build Link"}</span>
                 </button>
+                {shareLink && (
+                  <label className="block text-[11px] font-serif mt-2 text-fg-7">
+                    Copy this link to share the build:
+                    <input
+                      type="text"
+                      readOnly
+                      className="mt-1 w-full bg-surface-1 border border-line-7 px-2 py-1 text-xs font-mono text-fg-4"
+                      value={shareLink}
+                      onFocus={(e) => e.target.select()}
+                    />
+                  </label>
+                )}
               </div>
             </div>
 
