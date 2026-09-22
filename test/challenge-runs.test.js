@@ -151,4 +151,40 @@ test('challenge-runs: full randomized run populates valid vitals for optimizer p
   assert.ok(Number.isFinite(run.vitals.fatigue) && run.vitals.fatigue > 0);
 });
 
+test('seeds carry the world, bands and counts, and parse back', async () => {
+  const { formatRunSeed, parseRunSeed, newSeedCode } = await import('../lib/challenge-engine.mjs');
+  const bands = { Easy: true, Medium: true, Hard: false, Grind: true };
+  const seed = formatRunSeed({ code: 'K7Q2M', profile: 'tr_arce', allowedBands: bands, restrictionCount: 4, objectiveCount: 1 });
+  assert.equal(seed, 'K7Q2M-TRARCE-EMG-R4O1');
+  assert.deepEqual(parseRunSeed(seed.toLowerCase()), { code: 'K7Q2M', profile: 'tr_arce', settings: { allowedBands: bands, restrictionCount: 4, objectiveCount: 1 } });
+  assert.equal(parseRunSeed(formatRunSeed({ code: 'AAAAA', allowedBands: {}, restrictionCount: 9, objectiveCount: 0 })).settings.restrictionCount, 5, 'counts are clamped to 1-5');
+  assert.deepEqual(parseRunSeed('SEED-4918-TR'), { code: '4918', profile: 'tr', settings: null }, 'older seeds still load');
+  assert.equal(parseRunSeed('hello world'), null);
+  assert.match(newSeedCode(), /^[2-9A-HJ-NP-Z]{5}$/);
+});
 
+test('a seed rolls the same run whatever came before and whatever the settings are', async () => {
+  const { generateSeededRun, formatRunSeed } = await import('../lib/challenge-engine.mjs');
+  const { band } = await import('../lib/challenge-math.mjs');
+  const seed = formatRunSeed({ code: 'H3RD5', profile: 'vanilla', allowedBands: { Easy: false, Medium: false, Hard: true, Grind: false }, restrictionCount: 4, objectiveCount: 3 });
+  const first = generateSeededRun(seed).run;
+  const previous = { race: 'Nord', gender: 'Female', cls: 'Custom', maj: ['Block'], min: ['Axe'], rests: ['No magic'], minors: [{ text: 'x' }] };
+  const again = generateSeededRun(seed, { current: previous, fallback: { allowedBands: { Easy: true }, restrictionCount: 1, objectiveCount: 1 } }).run;
+  assert.deepEqual(again, first, 'nothing but the seed decides an unlocked run');
+  assert.equal(first.rests.length, 4);
+  assert.equal(first.minors.length, 3);
+  assert.ok(first.rests.every((r) => band(r) === 'Hard'), "the seed's bands, not the caller's");
+  assert.equal(first.seedExact, true);
+
+  const other = generateSeededRun(formatRunSeed({ code: 'OTHR5', allowedBands: { Easy: true, Medium: true }, restrictionCount: 2, objectiveCount: 2 })).run;
+  assert.notDeepEqual(other, first);
+
+  const locked = generateSeededRun(seed, { current: first, locks: { race: true, rest: true } }).run;
+  assert.equal(locked.race, first.race);
+  assert.deepEqual(locked.rests, first.rests);
+  assert.equal(locked.seedExact, false, 'locked cards make the seed inexact');
+
+  const legacy = generateSeededRun('SEED-4918-VANILLA', { fallback: { allowedBands: { Easy: true, Medium: false, Hard: false, Grind: false }, restrictionCount: 2, objectiveCount: 1 } }).run;
+  assert.equal(legacy.rests.length, 2);
+  assert.ok(legacy.rests.every((r) => band(r) === 'Easy'), 'an older seed rolls with the current settings');
+});

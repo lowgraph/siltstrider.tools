@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DIFFICULTY_PRESETS } from "../../lib/challenge-math.mjs";
 
 export default function SeedBar({
   seed,
-  onSeedChange,
+  seedExact = true,
+  seedError = null,
   onApplySeed,
   activePreset,
   onSelectPreset,
@@ -12,6 +13,8 @@ export default function SeedBar({
   copiedLink
 }) {
   const [inputSeed, setInputSeed] = useState(seed || "");
+  // Show the seed of whatever run is on screen, rolled or loaded.
+  useEffect(() => { setInputSeed(seed || ""); }, [seed]);
 
   const handleSubmitSeed = (e) => {
     e.preventDefault();
@@ -55,10 +58,11 @@ export default function SeedBar({
             <input
               id="challenge-seed-input"
               type="text"
-              className="bg-surface-1 border border-line-7 px-2 py-1 text-xs font-mono text-accent w-32 sm:w-36 uppercase tracking-wider min-w-0"
+              className="bg-surface-1 border border-line-7 px-2 py-1 text-xs font-mono text-accent w-48 sm:w-52 uppercase tracking-wider min-w-0"
               value={inputSeed}
               onChange={(e) => setInputSeed(e.target.value)}
-              placeholder="SEED-XXXX-WORLD"
+              placeholder="K7Q2M-TR-EM-R3O2"
+              aria-describedby="challenge-seed-note"
             />
             <button
               type="submit"
@@ -79,6 +83,13 @@ export default function SeedBar({
           </button>
         </div>
       </div>
+      <p id="challenge-seed-note" className="text-[11px] font-serif mt-2 mb-0 text-fg-11" role={seedError ? "alert" : undefined}>
+        {seedError
+          ? seedError
+          : seed && !seedExact
+            ? "Some cards were locked or rerolled, so this seed alone rolls a different run. Share the link to pass on this exact run."
+            : "The seed carries the world, difficulty bands and counts: load it anywhere to roll the same run."}
+      </p>
     </div>
   );
 }

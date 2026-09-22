@@ -4,6 +4,11 @@ const path = require("node:path");
 const Module = require("node:module");
 const { JSDOM } = require("jsdom");
 const React = require("react");
+// react-dom checks for input-event support when it loads, so it needs a DOM first;
+// without one, typing into a field never reaches onChange.
+const bootstrap = new JSDOM("", { url: "http://localhost/" });
+global.window = bootstrap.window;
+global.document = bootstrap.window.document;
 const { createRoot } = require("react-dom/client");
 const { act } = React;
 
@@ -452,6 +457,46 @@ test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcu
     await go("#vault");
     await press("← Character Builder");
     assert.match(dom.window.location.hash, /^#builder/);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
+test("Challenge Runs: the seed box shows the run's seed, and loading it under other settings rolls the same run", async () => {
+  const dom = setupDom("#challenge");
+  const root = createRoot(dom.window.document.getElementById("root"));
+  const doc = dom.window.document;
+  const sheet = () => doc.querySelector(".run-summary-sheet").textContent;
+  const button = (text) => [...doc.querySelectorAll("main button")].find((b) => b.textContent.trim() === text);
+  const load = async (value) => {
+    const input = doc.getElementById("challenge-seed-input");
+    await act(async () => {
+      input.value = value;
+      input._valueTracker?.setValue("");
+      input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    });
+    await act(async () => [...input.form.querySelectorAll("button")].find((el) => el.textContent.trim() === "Load").click());
+  };
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    const seed = doc.getElementById("challenge-seed-input").value;
+    assert.match(seed, /^[2-9A-Z]{5}-VANILLA-EM-R3O2$/, "Standard settings are in the seed");
+    const rolled = sheet();
+
+    await act(async () => button("Hardcore").click());
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    assert.notEqual(sheet(), rolled);
+
+    await load(seed.toLowerCase());
+    assert.equal(sheet(), rolled, "the seed brings the run back under Hardcore settings");
+    assert.equal(doc.getElementById("challenge-seed-input").value, seed);
+    assert.ok(button("Standard").className.includes("active"), "and the settings it was rolled with");
+
+    await load("not a seed");
+    assert.match(doc.getElementById("challenge-seed-note").textContent, /not a Silt Strider seed/);
+    assert.equal(sheet(), rolled, "a bad seed changes nothing");
   } finally {
     await act(async () => root.unmount());
     dom.window.close();

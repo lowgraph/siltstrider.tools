@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import SeedBar from "./seed-bar";
 import RunConfigurator from "./run-configurator";
 import RunSummarySheet from "./run-summary-sheet";
@@ -7,18 +7,8 @@ import PoolBrowserModal from "./pool-browser-modal";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 import { useChallengeRun } from "../challenge-run-context";
-import {
-  DIFFICULTY_PRESETS,
-  createRng,
-  generateSeed,
-  pickCompatibleRestrictions,
-  pickMixedObjectives,
-  formatRunMarkdown,
-  tagsOf,
-  restrictionOkForNeeds
-} from "../../lib/challenge-math.mjs";
-import { getActiveMajors, getActivePool, rollCardAspect } from "../../lib/challenge-engine.mjs";
-import { computeSheet } from "../../lib/character-math.mjs";
+import { DIFFICULTY_PRESETS, formatRunMarkdown } from "../../lib/challenge-math.mjs";
+import { formatRunSeed, generateSeededRun, newSeedCode, parseRunSeed, rollCardAspect } from "../../lib/challenge-engine.mjs";
 
 export default function ChallengeRunsRoot() {
   const shell = useShell();
@@ -57,11 +47,6 @@ export default function ChallengeRunsRoot() {
     if (!catalogs?.signs) return [];
     return Object.keys(catalogs.signs);
   }, [catalogs]);
-
-  // Only what the ticked difficulty bands allow: the restriction pool, and majors, where
-  // Reach level 50 counts as Grind.
-  const activeMajorsList = useMemo(() => getActiveMajors(shell.world, allowedBands), [shell.world, allowedBands]);
-  const activePool = useMemo(() => getActivePool(shell.world, allowedBands), [shell.world, allowedBands]);
 
   // Handle Preset Changes
   const handleSelectPreset = useCallback((presetId) => {
@@ -113,221 +98,95 @@ export default function ChallengeRunsRoot() {
     });
   }, [setLocks]);
 
-  // Generate Run Logic (Pure + Deterministic / Interactive)
-  const handleGenerateRun = useCallback(
-    (customSeed) => {
-      const activeSeed =
-        typeof customSeed === "string"
-          ? customSeed
-          : generateSeed("SEED", shell.world || "VANILLA");
-      const rng = createRng(activeSeed);
-
-      // 1. Roll or Keep Character Identity
-      let nextRace = run.race;
-      if (!locks.race || !nextRace) {
-        const pool = races.length ? races : ["Dark Elf", "Nord", "Redguard", "Breton"];
-        nextRace = pool[Math.floor(rng() * pool.length)];
-      }
-
-      let nextGender = run.gender;
-      if (!nextGender) {
-        nextGender = rng() < 0.5 ? "Male" : "Female";
-      }
-
-      let nextClass = run.cls;
-      if (!locks.cls || !nextClass) {
-        const pool = classNames.length ? ["Custom", ...classNames] : ["Warrior", "Mage", "Thief", "Custom"];
-        nextClass = pool[Math.floor(rng() * pool.length)];
-      }
-
-      let nextSign = run.sign;
-      if (!locks.sign || !nextSign) {
-        const pool = signs.length ? signs : ["The Lady", "The Warrior", "The Mage", "The Thief"];
-        nextSign = pool[Math.floor(rng() * pool.length)];
-      }
-
-      // 2. Roll or Keep Major Objective
-      let nextMajor = run.major;
-      if (!locks.major || !nextMajor) {
-        const eligibleMajors = activeMajorsList.filter((m) => {
-          if (!locks.rest) return true;
-          return run.rests.every((r) => restrictionOkForNeeds(r, tagsOf(m)));
-        });
-        const pool = eligibleMajors.length ? eligibleMajors : activeMajorsList;
-        nextMajor = pool[Math.floor(rng() * pool.length)];
-      }
-
-      // 3. Roll or Keep Minor Objectives
-      let nextMinors = run.minors;
-      if (!locks.obj || !nextMinors || !nextMinors.length) {
-        const numObj =
-          objectiveCount === "random"
-            ? 1 + Math.floor(rng() * 5)
-            : Math.min(5, Math.max(1, Number(objectiveCount) || 1));
-        nextMinors = pickMixedObjectives(numObj, locks.rest ? run.rests : [], rng);
-      }
-
-      // 4. Roll or Keep Active Restrictions
-      let nextRests = run.rests;
-      let nextRestNote = "";
-      if (!locks.rest || !nextRests || !nextRests.length) {
-        const numRest =
-          restrictionCount === "random"
-            ? 1 + Math.floor(rng() * 5)
-            : Math.min(5, Math.max(1, Number(restrictionCount) || 1));
-        const needs = tagsOf(nextMajor).concat(
-          ...nextMinors.map((o) => tagsOf(typeof o === "string" ? o : o.text))
-        );
-        nextRests = pickCompatibleRestrictions(numRest, activePool, needs, rng);
-        if (!nextRests.length) {
-          nextRestNote = "Turn on more difficulty bands to roll active restrictions.";
-        }
-      }
-
-      // Determine specialization, favored attributes, and skills for identity
-      let nextSpec = run.spec || "Combat";
-      let nextFav1 = run.fav1 || "Strength";
-      let nextFav2 = run.fav2 || "Endurance";
-      let nextMaj = Array.isArray(run.maj) ? [...run.maj] : [];
-      let nextMin = Array.isArray(run.min) ? [...run.min] : [];
-
-      if (nextClass === "Custom") {
-        if (!nextMaj.length || !nextMin.length || nextClass !== run.cls) {
-          const SPECS = ["Combat", "Magic", "Stealth"];
-          const ATTRS_LIST = ["Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance", "Personality", "Luck"];
-          const ALL_SKILLS_LIST = [
-            "Block", "Armorer", "Medium Armor", "Heavy Armor", "Blunt Weapon", "Long Blade", "Axe", "Spear", "Athletics",
-            "Enchant", "Destruction", "Alteration", "Illusion", "Conjuration", "Mysticism", "Restoration", "Alchemy", "Unarmored",
-            "Security", "Sneak", "Acrobatics", "Light Armor", "Short Blade", "Marksman", "Mercantile", "Speechcraft", "Hand-to-hand"
-          ];
-          nextSpec = SPECS[Math.floor(rng() * SPECS.length)];
-          const shuffledAttrs = [...ATTRS_LIST].sort(() => rng() - 0.5);
-          nextFav1 = shuffledAttrs[0];
-          nextFav2 = shuffledAttrs[1];
-          const shuffledSkills = [...ALL_SKILLS_LIST].sort(() => rng() - 0.5);
-          nextMaj = shuffledSkills.slice(0, 5);
-          nextMin = shuffledSkills.slice(5, 10);
-        }
-      } else if (catalogs?.classes?.[nextClass]) {
-        const c = catalogs.classes[nextClass];
-        nextSpec = c.spec;
-        nextFav1 = c.fav[0];
-        nextFav2 = c.fav[1];
-        nextMaj = [...c.maj];
-        nextMin = [...c.min];
-      }
-
-      // Compute vitals preview
-      let vitals = { health: 50, magicka: 40, fatigue: 180 };
-      if (catalogs && nextRace && nextClass && nextSign) {
-        try {
-          const computed = computeSheet(
-            {
-              race: nextRace,
-              gender: nextGender,
-              sign: nextSign,
-              className: nextClass,
-              spec: nextSpec,
-              fav1: nextFav1,
-              fav2: nextFav2,
-              maj: nextMaj.length ? nextMaj : ["Long Blade", "Heavy Armor", "Block", "Armorer", "Athletics"],
-              min: nextMin.length ? nextMin : ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"]
-            },
-            catalogs
-          );
-          if (computed) {
-            vitals = {
-              health: computed.health,
-              magicka: computed.magicka,
-              fatigue: computed.fatigue
-            };
-          }
-        } catch (e) {}
-      }
-
-      const updatedRun = {
-        ...run,
-        race: nextRace,
-        gender: nextGender,
-        cls: nextClass,
-        sign: nextSign,
-        spec: nextSpec,
-        fav1: nextFav1,
-        fav2: nextFav2,
-        maj: nextMaj,
-        min: nextMin,
-        major: nextMajor,
-        minors: nextMinors,
-        rests: nextRests,
-        restNote: nextRestNote,
-        vitals,
-        seed: activeSeed
-      };
-
-      setRun(updatedRun);
-
-      // Sync into legacy DOM elements and window.challengeRun
-      if (typeof window !== "undefined") {
-        if (window.challengeRun) {
-          window.challengeRun.race = nextRace;
-          window.challengeRun.gender = nextGender;
-          window.challengeRun.cls = nextClass;
-          window.challengeRun.sign = nextSign;
-          window.challengeRun.major = nextMajor;
-          window.challengeRun.minors = nextMinors;
-          window.challengeRun.rests = nextRests;
-          window.challengeRun.restNote = nextRestNote;
-        }
-
-        // Set hidden form controls for build optimizer bridge
-        const rRace = document.getElementById("r-race");
-        if (rRace) rRace.value = nextRace;
-        const rGender = document.getElementById("r-gender");
-        if (rGender) rGender.value = nextGender;
-        const rClass = document.getElementById("r-class");
-        if (rClass) rClass.value = nextClass;
-        const rSign = document.getElementById("r-sign");
-        if (rSign) rSign.value = nextSign;
-
-        if (typeof window.renderRun === "function") {
-          try {
-            window.renderRun();
-          } catch (e) {}
-        }
-      }
-
-      // Switch to sheet view on mobile when generated
+  // Roll a whole run from a seed. Unlocked cards come from the seed alone, so the seed
+  // reproduces the run; locked cards are carried over and make the run seed-inexact.
+  const rollFromSeed = useCallback(
+    (seed, { fresh = false } = {}) => {
+      const { run: next } = generateSeededRun(seed, {
+        catalogs,
+        world: shell.world,
+        current: fresh ? null : run,
+        locks: fresh ? {} : locks,
+        fallback: { allowedBands, restrictionCount, objectiveCount }
+      });
+      setRun(next);
       setMobileTab("sheet");
+      return next;
     },
-    [
-      run,
-      locks,
-      races,
-      classNames,
-      signs,
-      activeMajorsList,
-      activePool,
-      restrictionCount,
-      objectiveCount,
-      allowedBands,
-      catalogs,
-      shell.world
-    ]
+    [catalogs, shell.world, run, locks, allowedBands, restrictionCount, objectiveCount, setRun]
   );
 
-  // Roll individual aspect
+  // Generate: a new seed that carries this world and these settings.
+  const handleGenerateRun = useCallback(() => {
+    const count = (value) => (value === "random" ? 1 + Math.floor(Math.random() * 5) : value);
+    const seed = formatRunSeed({
+      code: newSeedCode(),
+      profile: shell.profile || "vanilla",
+      allowedBands,
+      restrictionCount: count(restrictionCount),
+      objectiveCount: count(objectiveCount)
+    });
+    rollFromSeed(seed);
+  }, [shell.profile, allowedBands, restrictionCount, objectiveCount, rollFromSeed]);
+
+  // Load a seed: take on its settings and world, and roll it whole, locks aside.
+  const [seedError, setSeedError] = useState(null);
+  const [pendingSeed, setPendingSeed] = useState(null);
+  const handleLoadSeed = useCallback(
+    (text) => {
+      const parsed = parseRunSeed(text);
+      if (!parsed) {
+        setSeedError("That is not a Silt Strider seed. Seeds look like K7Q2M-TR-EM-R3O2.");
+        return;
+      }
+      setSeedError(null);
+      const seed = String(text).trim().toUpperCase();
+      if (parsed.settings) {
+        const s = parsed.settings;
+        const match = Object.values(DIFFICULTY_PRESETS).find(
+          (p) => p.id !== "custom" && p.restrictionsCount === s.restrictionCount && p.objectivesCount === s.objectiveCount &&
+            Object.keys(p.bands).every((b) => Boolean(p.bands[b]) === Boolean(s.allowedBands[b]))
+        );
+        updateSettings({
+          preset: match ? match.id : "custom",
+          allowedBands: { ...s.allowedBands },
+          restrictionCount: String(s.restrictionCount),
+          objectiveCount: String(s.objectiveCount)
+        });
+      }
+      setLocks((prev) => Object.fromEntries(Object.keys(prev).map((k) => [k, false])));
+      if (parsed.profile !== (shell.profile || "vanilla") && typeof shell.setProfile === "function") {
+        setPendingSeed({ seed, profile: parsed.profile });
+        shell.setProfile(parsed.profile);
+        return;
+      }
+      rollFromSeed(seed, { fresh: true });
+    },
+    [shell, updateSettings, setLocks, rollFromSeed]
+  );
+
+  // A seed for another world rolls once that world's races, classes and signs are in.
+  useEffect(() => {
+    if (!pendingSeed || shell.profile !== pendingSeed.profile) return;
+    if (catalogs?.profile && catalogs.profile !== pendingSeed.profile) return;
+    setPendingSeed(null);
+    rollFromSeed(pendingSeed.seed, { fresh: true });
+  }, [pendingSeed, shell.profile, catalogs, rollFromSeed]);
+
+  // Roll individual aspect: the run no longer matches its seed.
   const handleRollAspect = useCallback(
     (key) => {
       if (locks[key]) return;
-      setRun((prevRun) => {
-        return rollCardAspect(key, prevRun, {
+      setRun((prevRun) => ({
+        ...rollCardAspect(key, prevRun, {
           catalogs,
           world: shell.world,
           allowedBands,
           restrictionCount: Number(restrictionCount) || 3,
           objectiveCount: Number(objectiveCount) || 2
-        });
-      });
+        }),
+        seedExact: false
+      }));
     },
     [locks, catalogs, shell.world, allowedBands, restrictionCount, objectiveCount, setRun]
   );
@@ -460,7 +319,9 @@ export default function ChallengeRunsRoot() {
       {/* Top Bar: Seed Engine, Presets & Quick Share */}
       <SeedBar
         seed={run.seed}
-        onApplySeed={(s) => handleGenerateRun(s)}
+        seedExact={run.seedExact !== false}
+        seedError={seedError}
+        onApplySeed={handleLoadSeed}
         activePreset={preset}
         onSelectPreset={handleSelectPreset}
         onCopyLink={handleCopyPermalink}
@@ -508,7 +369,7 @@ export default function ChallengeRunsRoot() {
             character={run}
             onUpdateCharacterSlot={(slot, val) => {
               setRun((prev) => {
-                const next = { ...prev, [slot]: val };
+                const next = { ...prev, [slot]: val, seedExact: false };
                 if (slot === "cls" && catalogs?.classes?.[val]) {
                   const c = catalogs.classes[val];
                   next.spec = c.spec;
