@@ -6,6 +6,7 @@ import SiteFooter from './site-footer';
 import { ShellProvider, useShell } from './shell-context';
 import { ThemeProvider } from './theme-provider';
 import { CharacterProvider, useActiveCharacter } from './character-context';
+import { ChallengeRunProvider } from './challenge-run-context';
 import CloudVaultModal from './character-vault/cloud-vault-modal';
 
 // All 12 Native Modern React Views
@@ -200,7 +201,9 @@ export default function AppShell({ revision = '' } = {}) {
     <ThemeProvider>
     <ShellProvider>
       <CharacterProvider>
-        <AppShellMain />
+        <ChallengeRunProvider>
+          <AppShellMain />
+        </ChallengeRunProvider>
         {revision && (
           <>
             <Script

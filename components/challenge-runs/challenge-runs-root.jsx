@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import SeedBar from "./seed-bar";
 import RunConfigurator from "./run-configurator";
 import RunSummarySheet from "./run-summary-sheet";
 import PoolBrowserModal from "./pool-browser-modal";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
+import { useChallengeRun } from "../challenge-run-context";
 import {
   POOL,
   MAJORS,
@@ -27,45 +28,17 @@ export default function ChallengeRunsRoot() {
   const shell = useShell();
   const { catalogs, setBuild, clearSave } = useActiveCharacter();
 
-  // Run State
-  const [run, setRun] = useState({
-    race: "",
-    gender: "",
-    cls: "",
-    sign: "",
-    spec: "Combat",
-    fav1: "Strength",
-    fav2: "Endurance",
-    maj: [],
-    min: [],
-    major: "",
-    minors: [],
-    rests: [],
-    restNote: "",
-    vitals: null,
-    seed: ""
-  });
-
-  // Slot Locks
-  const [locks, setLocks] = useState({
-    race: false,
-    cls: false,
-    sign: false,
-    major: false,
-    rest: false,
-    obj: false
-  });
-
-  // Configuration settings
-  const [preset, setPreset] = useState("standard");
-  const [restrictionCount, setRestrictionCount] = useState("3");
-  const [objectiveCount, setObjectiveCount] = useState("2");
-  const [allowedBands, setAllowedBands] = useState({
-    Easy: true,
-    Medium: true,
-    Hard: false,
-    Grind: false
-  });
+  // The run, its locks and the roll settings live in ChallengeRunProvider, above the
+  // views, so they survive a trip to the Build Optimizer and back.
+  const { run, setRun, locks, setLocks, settings, updateSettings } = useChallengeRun();
+  const { preset, restrictionCount, objectiveCount, allowedBands } = settings;
+  const setPreset = useCallback((id) => updateSettings({ preset: id }), [updateSettings]);
+  const setRestrictionCount = useCallback((value) => updateSettings({ restrictionCount: value }), [updateSettings]);
+  const setObjectiveCount = useCallback((value) => updateSettings({ objectiveCount: value }), [updateSettings]);
+  const setAllowedBands = useCallback(
+    (next) => updateSettings((prev) => ({ allowedBands: typeof next === "function" ? next(prev.allowedBands) : next })),
+    [updateSettings]
+  );
 
   // UI state
   const [mobileTab, setMobileTab] = useState("config"); // "config" | "sheet"
@@ -93,73 +66,6 @@ export default function ChallengeRunsRoot() {
     return shell.world === "tr" ? MAJORS.concat(TR_MAJORS) : MAJORS;
   }, [shell.world]);
 
-  // Sync state from legacy DOM / window.challengeRun on mount or change
-  const syncFromLegacy = useCallback(() => {
-    if (typeof window === "undefined" || !window.challengeRun) return;
-    const cr = window.challengeRun;
-    const b = window.readPanelBuild ? window.readPanelBuild("r") : null;
-
-    let vitals = null;
-    if (cr.race && cr.cls && cr.sign && catalogs) {
-      try {
-        const spec = (b && b.spec) || "Combat";
-        const fav1 = (b && b.fav1) || "Strength";
-        const fav2 = (b && b.fav2) || "Endurance";
-        const maj = (b && b.maj) || [];
-        const min = (b && b.min) || [];
-        const computed = computeSheet(
-          {
-            race: cr.race,
-            gender: cr.gender || "Male",
-            sign: cr.sign,
-            className: cr.cls,
-            spec,
-            fav1,
-            fav2,
-            maj,
-            min
-          },
-          catalogs
-        );
-        if (computed) {
-          vitals = {
-            health: computed.health,
-            magicka: computed.magicka,
-            fatigue: computed.fatigue
-          };
-        }
-      } catch (e) {
-        // Fallback vitals estimation
-        vitals = { health: 50, magicka: 40, fatigue: 180 };
-      }
-    }
-
-    setRun((prev) => ({
-      ...prev,
-      race: cr.race || "",
-      gender: cr.gender || "",
-      cls: cr.cls || "",
-      sign: cr.sign || "",
-      spec: b?.spec || "Combat",
-      fav1: b?.fav1 || "Strength",
-      fav2: b?.fav2 || "Endurance",
-      maj: b?.maj || [],
-      min: b?.min || [],
-      major: cr.major || "",
-      minors: cr.minors || [],
-      rests: cr.rests ? [...cr.rests] : [],
-      restNote: cr.restNote || "",
-      vitals,
-      seed: prev.seed || generateSeed("SEED", shell.world || "VANILLA")
-    }));
-  }, [catalogs, shell.world]);
-
-  useEffect(() => {
-    syncFromLegacy();
-    const interval = setInterval(syncFromLegacy, 500);
-    return () => clearInterval(interval);
-  }, [syncFromLegacy]);
-
   // Handle Preset Changes
   const handleSelectPreset = useCallback((presetId) => {
     const p = DIFFICULTY_PRESETS[presetId];
@@ -186,7 +92,7 @@ export default function ChallengeRunsRoot() {
         if (objCountEl) objCountEl.value = String(p.objectivesCount);
       }
     }
-  }, []);
+  }, [setPreset, setRestrictionCount, setObjectiveCount, setAllowedBands]);
 
   const handleToggleBand = useCallback((bandId) => {
     setPreset("custom");
@@ -196,7 +102,7 @@ export default function ChallengeRunsRoot() {
       if (el) el.checked = next[bandId];
       return next;
     });
-  }, []);
+  }, [setPreset, setAllowedBands]);
 
   const handleToggleLock = useCallback((slotKey) => {
     setLocks((prev) => {
@@ -208,7 +114,7 @@ export default function ChallengeRunsRoot() {
       }
       return next;
     });
-  }, []);
+  }, [setLocks]);
 
   // Generate Run Logic (Pure + Deterministic / Interactive)
   const handleGenerateRun = useCallback(
@@ -419,13 +325,6 @@ export default function ChallengeRunsRoot() {
   const handleRollAspect = useCallback(
     (key) => {
       if (locks[key]) return;
-      if (typeof window !== "undefined" && typeof window.rollAspect === "function") {
-        try {
-          window.rollAspect(key);
-          syncFromLegacy();
-          return;
-        } catch (e) {}
-      }
       setRun((prevRun) => {
         return rollCardAspect(key, prevRun, {
           catalogs,
@@ -436,7 +335,7 @@ export default function ChallengeRunsRoot() {
         });
       });
     },
-    [locks, catalogs, shell.world, allowedBands, restrictionCount, objectiveCount, syncFromLegacy]
+    [locks, catalogs, shell.world, allowedBands, restrictionCount, objectiveCount, setRun]
   );
 
   // Send to Build Optimizer Bridge

@@ -320,6 +320,47 @@ test("Challenge Runs: Send to Build Optimizer transfers rolled character into Ch
   }
 });
 
+test("Challenge Runs: the run survives a trip to the Build Optimizer and back, and a reload", async () => {
+  const dom = setupDom("#challenge");
+  const container = dom.window.document.getElementById("root");
+  let root = createRoot(container);
+  const summary = () => {
+    const panel = dom.window.document.getElementById("panel-challenge");
+    return [...panel.querySelectorAll(".character-overview-card h3, .run-summary-sheet li")].map((el) => el.textContent).join("|");
+  };
+  const go = async (hash) => {
+    await act(async () => {
+      dom.window.location.hash = hash;
+      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+      await new Promise((r) => setTimeout(r, 0));
+    });
+  };
+
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await act(async () => dom.window.document.getElementById("react-btn-generate-run").click());
+    const rolled = summary();
+    assert.doesNotMatch(rolled, /Not rolled yet/i);
+
+    await act(async () => dom.window.document.getElementById("react-btn-to-optimizer").click());
+    assert.match(dom.window.location.hash, /^#builder/);
+    await go("#challenge");
+    assert.equal(summary(), rolled, "the same run is waiting on return");
+
+    const stored = JSON.parse(dom.window.localStorage.getItem("silt-challenge-run"));
+    assert.equal(stored.run.seed.length > 0, true, "the run is kept in this browser");
+
+    await act(async () => root.unmount());
+    root = createRoot(container);
+    await act(async () => root.render(React.createElement(AppShell)));
+    await act(async () => { await new Promise((r) => setTimeout(r, 0)); });
+    assert.equal(summary(), rolled, "a reload restores it");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
   const dom = setupDom("#challenge");
   const container = dom.window.document.getElementById("root");
