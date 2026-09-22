@@ -88,3 +88,23 @@ test("planner tabs wait for the shell, the menu tab never does", async () => {
     assert.deepEqual(navigated, []);
   } finally { await cleanup(); }
 });
+
+test("the top bar offers all three worlds, TR + ARCE included, from any of them", async () => {
+  const picked = [];
+  const { cleanup } = await renderHeader({ profile: "vanilla", world: "vanilla", arce: false, setProfile: (p) => picked.push(p) });
+  try {
+    const worlds = () => [...document.querySelectorAll('.world-bar .seg [aria-pressed]')];
+    assert.deepEqual(worlds().map((b) => b.textContent), ["Vanilla", "Tamriel Rebuilt", "TR + ARCE"], "no need to pick Tamriel Rebuilt first");
+    assert.deepEqual(worlds().map((b) => b.getAttribute("aria-pressed")), ["true", "false", "false"]);
+    assert.equal(document.getElementById("react-arce"), null, "the old ARCE add-on toggle is gone");
+    await act(async () => worlds()[2].click());
+    await act(async () => worlds()[0].click());
+    assert.deepEqual(picked, ["tr_arce"], "the current world is not picked again");
+  } finally { await cleanup(); }
+
+  const again = await renderHeader({ profile: "tr_arce", world: "tr", arce: true });
+  try {
+    const pressed = [...document.querySelectorAll('.world-bar .seg [aria-pressed="true"]')].map((b) => b.textContent);
+    assert.deepEqual(pressed, ["TR + ARCE"], "TR + ARCE is shown as its own world, not as Tamriel Rebuilt");
+  } finally { await again.cleanup(); }
+});

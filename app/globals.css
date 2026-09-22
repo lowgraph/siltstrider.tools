@@ -1449,6 +1449,12 @@ body.view-travel .hero {
   .header-actions { position: absolute; right: 0; bottom: 0; margin: 0; flex: none; }
   .header-actions .search-trigger { width: 300px; height: 40px; flex: none; }
 }
+/* World switch: three worlds side by side. In the phone drawer, Tamriel Rebuilt
+   shortens to "TR" (legacy-compat.css), so the third segment keeps its short name. */
+@media (max-width: 899px) {
+  .seg .seg-btn { flex: 1 1 33%; }
+}
+
 /* Cloud Vault: the account button at the end of the actions row. */
 .vault-trigger {
   display: grid;

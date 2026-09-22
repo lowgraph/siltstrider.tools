@@ -38,6 +38,11 @@ const MORE_MENU = [
   { view: 'changelog', label: 'Changelog' }
 ];
 const CALC_VIEWS = CALC_MENU.map(item => item.view);
+const WORLD_CHOICES = [
+  { profile: 'vanilla', label: 'Vanilla', id: 'react-world-vanilla', title: 'Morrowind, Tribunal and Bloodmoon' },
+  { profile: 'tr', label: 'Tamriel Rebuilt', id: 'react-world-tr', title: 'Tamriel Rebuilt' },
+  { profile: 'tr_arce', label: 'TR + ARCE', id: 'react-world-arce', title: 'Tamriel Rebuilt with ARCE: extra races and classes' }
+];
 const MORE_VIEWS = MORE_MENU.map(item => item.view);
 
 // Phone tab bar: the most used tools one tap away, everything else behind Menu.
@@ -458,40 +463,27 @@ export default function SiteHeader({ shell: propShell } = {}) {
         <div className="nav-secondary world-bar">
           <div className="world-controls">
             <span className="drawer-label">Game World Profile</span>
+            {/* The three worlds side by side: TR + ARCE is a world of its own, not a
+                toggle that appears only after picking Tamriel Rebuilt. */}
             <div className="seg" role="group" aria-label="World">
-              <button
-                type="button"
-                className={'seg-btn' + (shell.world === 'vanilla' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-pressed={shell.world === 'vanilla'}
-                onClick={() => shell.setProfile('vanilla')}
-              >
-                Vanilla
-              </button>
-              <button
-                type="button"
-                className={'seg-btn' + (shell.world === 'tr' ? ' on' : '')}
-                id="react-world-tr"
-                title="Tamriel Rebuilt"
-                disabled={!shell.ready}
-                aria-pressed={shell.world === 'tr'}
-                onClick={() => shell.setProfile(shell.arce ? 'tr_arce' : 'tr')}
-              >
-                Tamriel Rebuilt
-              </button>
+              {WORLD_CHOICES.map(({ profile, label, id, title }) => {
+                const on = (shell.profile || 'vanilla') === profile;
+                return (
+                  <button
+                    key={profile}
+                    type="button"
+                    id={id}
+                    className={'seg-btn' + (on ? ' on' : '')}
+                    title={title}
+                    disabled={!shell.ready}
+                    aria-pressed={on}
+                    onClick={() => { if (!on) shell.setProfile(profile); }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
-            {shell.world === 'tr' && (
-              <button
-                type="button"
-                id="react-arce"
-                className={'arce-toggle' + (shell.arce ? ' on' : '')}
-                title="ARCE - Extra Races and Classes"
-                aria-pressed={shell.arce}
-                onClick={() => shell.setProfile(shell.arce ? 'tr' : 'tr_arce')}
-              >
-                ARCE - Extra Races and Classes
-              </button>
-            )}
           </div>
         </div>
       </div>
