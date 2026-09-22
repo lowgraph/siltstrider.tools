@@ -361,6 +361,26 @@ test("Challenge Runs: the run survives a trip to the Build Optimizer and back, a
   }
 });
 
+test("Challenge Runs: Generate keeps to the ticked difficulty bands (no Hard or Grind by default)", async () => {
+  const dom = setupDom("#challenge");
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    const panel = dom.window.document.getElementById("panel-challenge");
+    const seen = new Set();
+    for (let i = 0; i < 60; i++) {
+      await act(async () => dom.window.document.getElementById("react-btn-generate-run").click());
+      for (const li of panel.querySelectorAll(".restrictions-tablet li")) seen.add(li.querySelector("span").textContent);
+      assert.doesNotMatch(panel.querySelector(".major-objective-plaque").textContent, /Reach level 50/);
+    }
+    assert.deepEqual([...seen].sort(), ["Easy", "Medium"], "Standard ticks Easy and Medium only");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
   const dom = setupDom("#challenge");
   const container = dom.window.document.getElementById("root");

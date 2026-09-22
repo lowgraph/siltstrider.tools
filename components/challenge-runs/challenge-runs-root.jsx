@@ -8,10 +8,6 @@ import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 import { useChallengeRun } from "../challenge-run-context";
 import {
-  POOL,
-  MAJORS,
-  TR_MAJORS,
-  OBJECTIVES,
   DIFFICULTY_PRESETS,
   createRng,
   generateSeed,
@@ -21,7 +17,7 @@ import {
   tagsOf,
   restrictionOkForNeeds
 } from "../../lib/challenge-math.mjs";
-import { rollCardAspect } from "../../lib/challenge-engine.mjs";
+import { getActiveMajors, getActivePool, rollCardAspect } from "../../lib/challenge-engine.mjs";
 import { computeSheet } from "../../lib/character-math.mjs";
 
 export default function ChallengeRunsRoot() {
@@ -62,9 +58,10 @@ export default function ChallengeRunsRoot() {
     return Object.keys(catalogs.signs);
   }, [catalogs]);
 
-  const activeMajorsList = useMemo(() => {
-    return shell.world === "tr" ? MAJORS.concat(TR_MAJORS) : MAJORS;
-  }, [shell.world]);
+  // Only what the ticked difficulty bands allow: the restriction pool, and majors, where
+  // Reach level 50 counts as Grind.
+  const activeMajorsList = useMemo(() => getActiveMajors(shell.world, allowedBands), [shell.world, allowedBands]);
+  const activePool = useMemo(() => getActivePool(shell.world, allowedBands), [shell.world, allowedBands]);
 
   // Handle Preset Changes
   const handleSelectPreset = useCallback((presetId) => {
@@ -178,14 +175,10 @@ export default function ChallengeRunsRoot() {
           restrictionCount === "random"
             ? 1 + Math.floor(rng() * 5)
             : Math.min(5, Math.max(1, Number(restrictionCount) || 1));
-        const activePool = POOL.filter((r) => {
-          const b = r ? allowedBands[r.band || "Medium"] ?? true : true;
-          return allowedBands[b] ?? true;
-        });
         const needs = tagsOf(nextMajor).concat(
           ...nextMinors.map((o) => tagsOf(typeof o === "string" ? o : o.text))
         );
-        nextRests = pickCompatibleRestrictions(numRest, POOL, needs, rng);
+        nextRests = pickCompatibleRestrictions(numRest, activePool, needs, rng);
         if (!nextRests.length) {
           nextRestNote = "Turn on more difficulty bands to roll active restrictions.";
         }
@@ -313,6 +306,7 @@ export default function ChallengeRunsRoot() {
       classNames,
       signs,
       activeMajorsList,
+      activePool,
       restrictionCount,
       objectiveCount,
       allowedBands,

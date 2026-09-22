@@ -177,3 +177,21 @@ test('Adversarial QA 3: Tamriel Rebuilt profile correctly unlocks mainland major
   const trPool = getActivePool('tr');
   assert.ok(!trPool.includes('No Tribunal or Bloodmoon DLC'), 'TR pool must exclude No Tribunal or Bloodmoon DLC');
 });
+
+test('unticked difficulty bands leave their restrictions, and Reach level 50, out of the pools', async () => {
+  const { getActiveMajors, getActivePool, rollCardAspect } = await enginePromise;
+  const { band, GRIND_MAJORS } = await import('../lib/challenge-math.mjs');
+  const easyMedium = { Easy: true, Medium: true, Hard: false, Grind: false };
+  const pool = getActivePool('vanilla', easyMedium);
+  assert.ok(pool.length > 0);
+  assert.deepEqual([...new Set(pool.map(band))].sort(), ['Easy', 'Medium']);
+  assert.ok(!getActiveMajors('vanilla', easyMedium).some((m) => GRIND_MAJORS.includes(m)));
+  assert.ok(getActiveMajors('vanilla', { ...easyMedium, Grind: true }).includes('Reach level 50'));
+  assert.ok(getActiveMajors('vanilla').includes('Reach level 50'), 'without bands nothing is filtered');
+
+  for (let i = 0; i < 200; i++) {
+    const run = rollCardAspect('major', rollCardAspect('rest', { major: '' }, { allowedBands: easyMedium, restrictionCount: 5 }), { allowedBands: easyMedium });
+    assert.ok(run.rests.every((r) => ['Easy', 'Medium'].includes(band(r))), run.rests.join(', '));
+    assert.notEqual(run.major, 'Reach level 50');
+  }
+});
