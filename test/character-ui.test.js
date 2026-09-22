@@ -100,11 +100,13 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   assert.equal(drawer.classList.contains('open'),true);
   assert.equal(document.querySelector('.account-bar').classList.contains('drawer-open'),true);
 
-  // Mobile drawer contains all sections
-  assert.match(drawer.textContent,/Character Planners/);
-  assert.match(drawer.textContent,/Calculators/);
-  assert.match(drawer.textContent,/Reference & Site/);
+  // Mobile drawer contains all sections; the everyday tools lead, the occasional ones follow
+  assert.match(drawer.textContent,/^ToolsBuild OptimizerLevel SimulatorAlchemyTravelFaction Journal/);
+  assert.match(drawer.textContent,/More CalculatorsEnchantingSpellmaking/);
+  assert.match(drawer.textContent,/Extras & SiteHomeChallenge Runs/);
   assert.match(drawer.textContent,/Game World Profile/);
+  assert.equal(document.querySelector('#react-nav-challenge'),null,'Challenge Runs is not in the nav row');
+  assert.equal(document.querySelector('#react-nav-vault').getAttribute('aria-label'),'Cloud Vault: your saved characters');
 
   // Click a drawer calculator button (e.g. Enchanting)
   const enchantBtn=[...drawer.querySelectorAll('button')].find(b=>b.textContent==='Enchanting');
@@ -132,7 +134,7 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   await act(async()=>calcDropdownBtn.click());
   let dropdownMenu=document.querySelector('.nav-dropdown-menu');
   assert.ok(dropdownMenu);
-  assert.match(dropdownMenu.textContent,/Spellmaking/);
+  assert.equal(dropdownMenu.textContent,'EnchantingSpellmaking');
 
   // Clicking brand (within topbar, but outside dropdown) closes dropdown
   const brand=document.querySelector('.brand');

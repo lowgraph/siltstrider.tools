@@ -4,7 +4,7 @@ import { HOME_TOOLS } from "../../lib/home-data.mjs";
 const COLUMNS = [
   { title: "Planners", links: HOME_TOOLS.filter(t => t.group === "Planners") },
   { title: "Calculators", links: HOME_TOOLS.filter(t => t.group === "Calculators") },
-  { title: "Project", links: [{ view: "about", title: "About & credits" }, { view: "changelog", title: "Changelog" }] }
+  { title: "More", links: [...HOME_TOOLS.filter(t => t.group === "Extras"), { view: "about", title: "About & credits" }, { view: "changelog", title: "Changelog" }] }
 ];
 
 export default function HomeColophon({ onNavigate }) {

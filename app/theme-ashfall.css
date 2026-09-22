@@ -421,6 +421,23 @@
   :root[data-theme="ashfall"] .phone-tabs button[aria-current="page"] { box-shadow: none; color: var(--color-accent); font-weight: 600; }
 }
 
+/* Cloud Vault account button */
+:root[data-theme="ashfall"] .vault-trigger {
+  border: 1px solid var(--color-line-9);
+  border-image: none;
+  border-radius: 999px;
+  background: #1a1816;
+  color: var(--color-fg-8);
+  box-shadow: none;
+}
+:root[data-theme="ashfall"] .vault-trigger:hover:not(:disabled) { border-color: var(--color-line-3); color: var(--color-fg-1); }
+:root[data-theme="ashfall"] .vault-trigger.on {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-accent);
+}
+:root[data-theme="ashfall"] .vault-trigger:focus-visible { outline: none; box-shadow: var(--af-ring); }
+
 /* Header search field */
 :root[data-theme="ashfall"] .search-trigger {
   border: 1px solid var(--color-line-9);
@@ -548,6 +565,23 @@
 :root[data-theme="ashfall"] .home-hub-root .home-news-tag { border-radius: 999px; background: color-mix(in srgb, var(--color-accent) 16%, transparent); color: var(--color-accent); font-weight: 600; }
 :root[data-theme="ashfall"] .home-hub-root .home-news kbd { border-radius: 6px; }
 @media (hover: none) { .home-hub-root .home-news kbd { display: none; } }
+:root[data-theme="ashfall"] .home-hub-root .home-save {
+  border: 1.5px dashed var(--color-line-5);
+  border-radius: var(--af-radius-card);
+  background: #131210;
+}
+:root[data-theme="ashfall"] .home-hub-root .home-save[data-over="true"] {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, #131210);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+:root[data-theme="ashfall"] .home-hub-root .home-save--loaded { border-style: solid; border-color: var(--color-line-9); box-shadow: var(--af-float), var(--af-hairline); }
+:root[data-theme="ashfall"] .home-hub-root .home-save-icon { border: 0; border-radius: 12px; background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
+:root[data-theme="ashfall"] .home-hub-root .home-save-title { font-family: var(--font-sans); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+:root[data-theme="ashfall"] .home-hub-root .home-save-hint kbd { padding: 1px 6px; border: 1px solid var(--color-line-9); border-radius: 6px; }
+:root[data-theme="ashfall"] .home-hub-root .home-link { font-family: var(--font-sans); font-weight: 500; }
+:root[data-theme="ashfall"] .home-hub-root .home-meter { height: 8px; border: 0; border-image: none; border-radius: 999px; background: #23201d; overflow: hidden; }
+:root[data-theme="ashfall"] .home-hub-root .home-meter span { border-radius: 999px; box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 45%, transparent); }
 :root[data-theme="ashfall"] .home-hub-root .home-character {
   border: 1px solid var(--color-line-9);
   border-image: none;
@@ -593,13 +627,20 @@
 :root[data-theme="ashfall"] .home-hub-root .home-preview { border-radius: 14px; border-color: var(--color-line-11); background: #0e0d0c; }
 :root[data-theme="ashfall"] .home-hub-root .home-big { font-family: var(--font-mono); font-size: 24px; font-weight: 500; }
 :root[data-theme="ashfall"] .home-hub-root :is(.home-tags li, .home-route li) { border-radius: var(--af-radius-chip); border-color: var(--color-line-7); }
-:root[data-theme="ashfall"] .home-hub-root .home-drop { border-radius: 12px; border-color: var(--color-line-5); }
-:root[data-theme="ashfall"] .home-hub-root .home-world { border-radius: var(--af-radius-card); background: #131210; border-color: var(--color-line-9); }
+:root[data-theme="ashfall"] .home-hub-root .home-world {
+  border-radius: 999px;
+  background: #131210;
+  border-color: var(--color-line-9);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+}
 :root[data-theme="ashfall"] .home-hub-root .home-world[data-active="true"] {
   border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 12%, #131210);
+  color: var(--color-accent);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
-:root[data-theme="ashfall"] .home-hub-root .home-world-title { font-family: var(--font-display); font-size: 28px; }
 :root[data-theme="ashfall"] .home-hub-root .home-colophon { border-top: 1px solid var(--color-line-9); border-image: none; }
 :root[data-theme="ashfall"] .home-hub-root .home-colophon-name { font-family: var(--font-display); font-size: 28px; }
 

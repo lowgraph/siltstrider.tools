@@ -52,6 +52,19 @@ test('the parser reads gender from the player record, female and male alike', as
   assert.equal(parseOmwSave(saveFile({ flags: 8 })).identity.gender, 'Male');
 });
 
+test('a picked or dropped file is read by its kind: .omwsave parsed, .json checked, .ess refused', async () => {
+  const { File } = require('node:buffer');
+  const { readSaveFile } = await importer;
+  const parsed = await readSaveFile(new File([saveFile()], 'Tester.OMWSAVE'));
+  assert.equal(parsed.identity.class.name, 'Tom Catess');
+  const converted = await readSaveFile(new File([JSON.stringify(parsed)], 'tester.json'));
+  assert.equal(converted.identity.gender, 'Female');
+  // A Morrowind.exe save starts with the same TES3 header, so only its name tells them apart.
+  await assert.rejects(readSaveFile(new File([saveFile()], 'quick.ess')), /Morrowind\.exe save/);
+  await assert.rejects(readSaveFile(new File(['{"a":1}'], 'notes.json')), /not a converted OpenMW save/);
+  await assert.rejects(readSaveFile(new File(['x'], 'save.zip')), /ending in \.omwsave/);
+});
+
 test('a save without the flag word leaves gender unknown instead of guessing male', async () => {
   const { parseOmwSave } = await parser;
   assert.equal(parseOmwSave(saveFile({ flags: null })).identity.gender, null);

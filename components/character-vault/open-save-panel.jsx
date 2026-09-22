@@ -32,7 +32,7 @@ export default function OpenSavePanel({ vault }) {
         type="file"
         ref={inputRef}
         className="hidden"
-        accept=".omwsave,.json"
+        accept=".omwsave,.json,.ess"
         onChange={handleChange}
         disabled={vault.actionBusy}
         aria-label="Open an OpenMW save"

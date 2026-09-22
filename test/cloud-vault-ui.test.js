@@ -567,7 +567,7 @@ test("CloudVaultWorkstation renders master workstation container and handles vie
   // Verify dropzone and file input
   const fileInput = container.querySelector('input[type="file"]');
   assert.ok(fileInput, "Must render file input for dropzone ingestion");
-  assert.equal(fileInput.getAttribute("accept"), ".omwsave,.json");
+  assert.equal(fileInput.getAttribute("accept"), ".omwsave,.json,.ess", ".ess is accepted so it can be refused by name");
 
   await act(async () => {
     root.unmount();

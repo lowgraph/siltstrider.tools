@@ -19,23 +19,43 @@ const descriptions = {
   vault: 'Cloud character storage, OpenMW save ingestion, and build synchronization.'
 };
 
-const CALC_VIEWS = ['leveler', 'factions', 'enchanting', 'spellmaking', 'alchemy', 'travel'];
-const MORE_VIEWS = ['about', 'changelog'];
+// The everyday tools sit in the nav row; the rest wait in the two menus, and the
+// Cloud Vault is the account button beside search.
+const PRIMARY_VIEWS = [
+  { view: 'builder', label: 'Build Optimizer', id: 'react-nav-build' },
+  { view: 'leveler', label: 'Level Simulator', id: 'react-nav-leveler' },
+  { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
+  { view: 'travel', label: 'Travel', id: 'react-nav-travel' },
+  { view: 'factions', label: 'Faction Journal', id: 'react-nav-factions' }
+];
+const CALC_MENU = [
+  { view: 'enchanting', label: 'Enchanting' },
+  { view: 'spellmaking', label: 'Spellmaking' }
+];
+const MORE_MENU = [
+  { view: 'challenge', label: 'Challenge Runs' },
+  { view: 'about', label: 'About Silt Strider' },
+  { view: 'changelog', label: 'Changelog' }
+];
+const CALC_VIEWS = CALC_MENU.map(item => item.view);
+const MORE_VIEWS = MORE_MENU.map(item => item.view);
 
-// Phone tab bar: the four planners one tap away, everything else behind Menu.
+// Phone tab bar: the most used tools one tap away, everything else behind Menu.
 const TAB_ICON = {
   home: <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" />,
   builder: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" /></>,
   challenge: <><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" /></>,
   leveler: <><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></>,
+  alchemy: <path d="M10 3h4 M10.5 3v5L5.5 17a2.5 2.5 0 0 0 2.2 4h8.6a2.5 2.5 0 0 0 2.2-4l-5-9V3 M7.5 14h9" />,
+  vault: <><circle cx="12" cy="8.5" r="3.5" /><path d="M5.5 19.5c.9-3.2 3.4-5 6.5-5s5.6 1.8 6.5 5" /><circle cx="12" cy="12" r="10" /></>,
   menu: <path d="M4 7h16M4 12h16M4 17h16" />,
   close: <path d="M6 6l12 12M18 6 6 18" />
 };
 const PHONE_TABS = [
   { view: 'home', label: 'Home' },
   { view: 'builder', label: 'Build' },
-  { view: 'challenge', label: 'Challenge' },
-  { view: 'leveler', label: 'Level' }
+  { view: 'leveler', label: 'Level' },
+  { view: 'alchemy', label: 'Alchemy' }
 ];
 const TabIcon = ({ name }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -266,62 +286,36 @@ export default function SiteHeader({ shell: propShell } = {}) {
         <span className="search-trigger-label">Search items, spells, places…</span>
         <kbd>{searchKey}</kbd>
       </button>
+      <button
+        type="button"
+        id="react-nav-vault"
+        className={'vault-trigger' + (shell.view === 'vault' ? ' on' : '')}
+        disabled={!shell.ready}
+        aria-label="Cloud Vault: your saved characters"
+        title="Cloud Vault"
+        aria-current={shell.view === 'vault' ? 'page' : undefined}
+        onClick={e => navigate(e, 'vault')}
+      >
+        <TabIcon name="vault" />
+      </button>
       </div>
       <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} profile={shell.profile} navigate={view => shell.navigate(view)} />
       <div className={'header-tools menu-drawer' + (open ? ' open' : '')} id="react-menu-drawer">
         <div className="nav-primary">
-          <span className="drawer-label drawer-only">Character Planners</span>
-          <button
-            type="button"
-            id="react-nav-challenge"
-            className={'btn' + (shell.view === 'challenge' ? ' on' : '')}
-            disabled={!shell.ready}
-            aria-current={shell.view === 'challenge' ? 'page' : undefined}
-            onClick={e => navigate(e, 'challenge')}
-          >
-            Challenge Runs
-          </button>
-          <button
-            type="button"
-            id="react-nav-build"
-            className={'btn' + (shell.view === 'builder' ? ' on' : '')}
-            disabled={!shell.ready}
-            aria-current={shell.view === 'builder' ? 'page' : undefined}
-            onClick={e => navigate(e, 'builder')}
-          >
-            Build Optimizer
-          </button>
-          <button
-            type="button"
-            id="react-nav-vault"
-            className={'btn desktop-only' + (shell.view === 'vault' ? ' on' : '')}
-            disabled={!shell.ready}
-            aria-current={shell.view === 'vault' ? 'page' : undefined}
-            onClick={e => navigate(e, 'vault')}
-            title="Open Cloud Character Vault"
-          >
-            Cloud Vault
-          </button>
-          <button
-            type="button"
-            id="react-nav-leveler"
-            className={'btn drawer-only' + (shell.view === 'leveler' ? ' on' : '')}
-            disabled={!shell.ready}
-            aria-current={shell.view === 'leveler' ? 'page' : undefined}
-            onClick={e => navigate(e, 'leveler')}
-          >
-            Level Simulator
-          </button>
-          <button
-            type="button"
-            id="react-nav-factions"
-            className={'btn drawer-only' + (shell.view === 'factions' ? ' on' : '')}
-            disabled={!shell.ready}
-            aria-current={shell.view === 'factions' ? 'page' : undefined}
-            onClick={e => navigate(e, 'factions')}
-          >
-            Faction Journal
-          </button>
+          <span className="drawer-label drawer-only">Tools</span>
+          {PRIMARY_VIEWS.map(({ view, label, id }) => (
+            <button
+              key={view}
+              type="button"
+              id={id}
+              className={'btn' + (shell.view === view ? ' on' : '')}
+              disabled={!shell.ready}
+              aria-current={shell.view === view ? 'page' : undefined}
+              onClick={e => navigate(e, view)}
+            >
+              {label}
+            </button>
+          ))}
 
           {/* Desktop Dropdowns */}
           <div className="nav-dropdown-wrap desktop-only" ref={calcDropdownRef}>
@@ -349,61 +343,18 @@ export default function SiteHeader({ shell: propShell } = {}) {
                 aria-label="Calculators"
                 onKeyDown={e => handleMenuKeyDown(e, calcMenuRef, calcBtnRef, () => setCalcOpen(false))}
               >
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'leveler' ? ' on' : '')}
-                  aria-current={shell.view === 'leveler' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'leveler')}
-                >
-                  Level Simulator
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  id="react-desk-factions"
-                  className={'dropdown-item' + (shell.view === 'factions' ? ' on' : '')}
-                  aria-current={shell.view === 'factions' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'factions')}
-                >
-                  Faction Journal
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'enchanting' ? ' on' : '')}
-                  aria-current={shell.view === 'enchanting' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'enchanting')}
-                >
-                  Enchanting
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'spellmaking' ? ' on' : '')}
-                  aria-current={shell.view === 'spellmaking' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'spellmaking')}
-                >
-                  Spellmaking
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'alchemy' ? ' on' : '')}
-                  aria-current={shell.view === 'alchemy' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'alchemy')}
-                >
-                  Alchemy
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'travel' ? ' on' : '')}
-                  aria-current={shell.view === 'travel' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'travel')}
-                >
-                  Travel Optimizer
-                </button>
+                {CALC_MENU.map(({ view, label }) => (
+                  <button
+                    key={view}
+                    type="button"
+                    role="menuitem"
+                    className={'dropdown-item' + (shell.view === view ? ' on' : '')}
+                    aria-current={shell.view === view ? 'page' : undefined}
+                    onClick={e => navigate(e, view)}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -433,24 +384,18 @@ export default function SiteHeader({ shell: propShell } = {}) {
                 aria-label="More pages"
                 onKeyDown={e => handleMenuKeyDown(e, moreMenuRef, moreBtnRef, () => setMoreOpen(false))}
               >
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'about' ? ' on' : '')}
-                  aria-current={shell.view === 'about' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'about')}
-                >
-                  About Silt Strider
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={'dropdown-item' + (shell.view === 'changelog' ? ' on' : '')}
-                  aria-current={shell.view === 'changelog' ? 'page' : undefined}
-                  onClick={e => navigate(e, 'changelog')}
-                >
-                  Changelog
-                </button>
+                {MORE_MENU.map(({ view, label }) => (
+                  <button
+                    key={view}
+                    type="button"
+                    role="menuitem"
+                    className={'dropdown-item' + (shell.view === view ? ' on' : '')}
+                    aria-current={shell.view === view ? 'page' : undefined}
+                    onClick={e => navigate(e, view)}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -459,95 +404,38 @@ export default function SiteHeader({ shell: propShell } = {}) {
         {/* Mobile Drawer Sections (< 900px) */}
         <div className="drawer-sections-mobile drawer-only">
           <div className="drawer-group">
-            <span className="drawer-label">Calculators</span>
+            <span className="drawer-label">More Calculators</span>
             <div className="drawer-grid grid-2">
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'leveler' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'leveler' ? 'page' : undefined}
-                onClick={e => navigate(e, 'leveler')}
-              >
-                Level Simulator
-              </button>
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'factions' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'factions' ? 'page' : undefined}
-                onClick={e => navigate(e, 'factions')}
-              >
-                Faction Journal
-              </button>
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'enchanting' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'enchanting' ? 'page' : undefined}
-                onClick={e => navigate(e, 'enchanting')}
-              >
-                Enchanting
-              </button>
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'spellmaking' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'spellmaking' ? 'page' : undefined}
-                onClick={e => navigate(e, 'spellmaking')}
-              >
-                Spellmaking
-              </button>
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'alchemy' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'alchemy' ? 'page' : undefined}
-                onClick={e => navigate(e, 'alchemy')}
-              >
-                Alchemy
-              </button>
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'travel' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'travel' ? 'page' : undefined}
-                onClick={e => navigate(e, 'travel')}
-              >
-                Travel
-              </button>
+              {CALC_MENU.map(({ view, label }) => (
+                <button
+                  key={view}
+                  type="button"
+                  className={'btn' + (shell.view === view ? ' on' : '')}
+                  disabled={!shell.ready}
+                  aria-current={shell.view === view ? 'page' : undefined}
+                  onClick={e => navigate(e, view)}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
           <div className="drawer-group">
-            <span className="drawer-label">Reference &amp; Site</span>
-            <div className="drawer-grid grid-3">
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'home' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'home' ? 'page' : undefined}
-                onClick={e => navigate(e, 'home')}
-              >
-                Home
-              </button>
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'about' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'about' ? 'page' : undefined}
-                onClick={e => navigate(e, 'about')}
-              >
-                About
-              </button>
-              <button
-                type="button"
-                className={'btn' + (shell.view === 'changelog' ? ' on' : '')}
-                disabled={!shell.ready}
-                aria-current={shell.view === 'changelog' ? 'page' : undefined}
-                onClick={e => navigate(e, 'changelog')}
-              >
-                Changelog
-              </button>
+            <span className="drawer-label">Extras &amp; Site</span>
+            <div className="drawer-grid grid-2">
+              {[{ view: 'home', label: 'Home' }, ...MORE_MENU].map(({ view, label }) => (
+                <button
+                  key={view}
+                  type="button"
+                  className={'btn' + (shell.view === view ? ' on' : '')}
+                  disabled={!shell.ready}
+                  aria-current={shell.view === view ? 'page' : undefined}
+                  onClick={e => navigate(e, view)}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -626,7 +514,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
           type="button"
           aria-expanded={open}
           aria-controls="react-menu-drawer"
-          aria-label={open ? 'Close menu' : 'Open menu: calculators, vault and more'}
+          aria-label={open ? 'Close menu' : 'Open menu: travel, calculators, vault and more'}
           data-section={!open && !onTabView ? 'true' : undefined}
           onClick={toggleMenuFromTabs}
         >

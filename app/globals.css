@@ -1449,6 +1449,28 @@ body.view-travel .hero {
   .header-actions { position: absolute; right: 0; bottom: 0; margin: 0; flex: none; }
   .header-actions .search-trigger { width: 300px; height: 40px; flex: none; }
 }
+/* Cloud Vault: the account button at the end of the actions row. */
+.vault-trigger {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  padding: 0;
+  border: 4px solid transparent;
+  border-image: var(--mw-bevel) 4 repeat;
+  background: var(--color-surface-1);
+  background-clip: padding-box;
+  color: var(--color-accent);
+  cursor: pointer;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
+}
+.vault-trigger svg { width: 22px; height: 22px; }
+.vault-trigger:hover:not(:disabled),
+.vault-trigger.on { color: var(--color-fg-1); }
+.vault-trigger:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.vault-trigger:disabled { opacity: 0.5; cursor: default; }
+@media (min-width: 900px) { .vault-trigger { width: 40px; height: 40px; } }
 
 /* Theme switch. Classic Morrowind styling in both themes: in Ashfall it is the
    one piece of the old UI left on screen, the way back to it. */
@@ -1930,11 +1952,13 @@ body.view-travel .hero {
 }
 .home-hub-root .home-title span { color: var(--color-accent); }
 .home-hub-root .home-lead { max-width: 36rem; font-size: 18px; line-height: 1.6; color: var(--color-fg-6); }
-.home-hub-root .home-ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+.home-hub-root .home-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.home-hub-root .home-ctas-label { font-size: 15px; color: var(--color-fg-8); }
+.home-hub-root .home-ctas .home-link { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
+.home-hub-root .home-ctas .home-link svg { width: 16px; height: 16px; }
+.home-hub-root .home-link:disabled { opacity: 0.6; cursor: default; text-decoration: none; }
 .home-hub-root .home-cta { min-height: 48px; padding: 0 22px; font-size: 16px; font-weight: 700; }
 .home-hub-root .home-cta--primary { color: var(--color-fg-1); background: var(--color-surface-21); }
-.home-hub-root .home-sources { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--color-fg-11); }
-.home-hub-root .home-sources li:not(:last-child)::after { content: "·"; margin-left: 18px; color: var(--color-fg-14); }
 
 /* Character card */
 .home-hub-root .home-character {
@@ -2064,9 +2088,24 @@ body.view-travel .hero {
 }
 .home-hub-root .home-tool--builder { grid-column: span 7; }
 .home-hub-root .home-tool--leveler { grid-column: span 5; }
-.home-hub-root .home-tool--challenge,
-.home-hub-root .home-tool--travel,
-.home-hub-root .home-tool--vault { grid-column: span 4; }
+.home-hub-root .home-tool--alchemy,
+.home-hub-root .home-tool--travel { grid-column: span 6; }
+.home-hub-root .home-tool--enchanting,
+.home-hub-root .home-tool--spellmaking,
+.home-hub-root .home-tool--factions { grid-column: span 4; }
+.home-hub-root .home-tool--minor {
+  grid-column: span 6;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "icon title open" "icon desc open";
+  align-items: center;
+  gap: 2px 14px;
+  padding: 14px 18px;
+}
+.home-hub-root .home-tool--minor .home-tool-top { grid-area: icon; }
+.home-hub-root .home-tool--minor .home-tool-title { grid-area: title; font-size: 18px; }
+.home-hub-root .home-tool--minor .home-tool-desc { grid-area: desc; font-size: 14px; }
+.home-hub-root .home-tool--minor .home-tool-open { grid-area: open; margin: 0; padding: 0; font-size: 13px; white-space: nowrap; }
 .home-hub-root .home-tool:hover { border-color: var(--color-line-1); }
 .home-hub-root .home-tool:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .home-hub-root .home-tool-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -2104,53 +2143,95 @@ body.view-travel .hero {
 .home-hub-root .home-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .home-hub-root .home-key { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--color-accent); }
 .home-hub-root .home-key--dashed { border-top: 2px dashed var(--color-fg-12); }
-.home-hub-root .home-rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.home-hub-root .home-rules li { position: relative; padding-left: 16px; font-size: 14px; color: var(--color-fg-4); }
-.home-hub-root .home-rules li::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 0.55em;
-  width: 6px;
-  height: 6px;
-  background: var(--color-accent);
-  transform: rotate(45deg);
+.home-hub-root .home-meter {
+  display: block;
+  height: 10px;
+  border: 2px solid transparent;
+  border-image: var(--mw-groove) 2 repeat;
+  background: var(--color-surface-1);
 }
+.home-hub-root .home-meter span { display: block; height: 100%; background: var(--color-accent); }
 .home-hub-root .home-route { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .home-hub-root .home-route li { padding: 3px 8px; border: 1px solid var(--color-line-6); font-size: 13px; color: var(--color-fg-3); }
 .home-hub-root .home-route li + li::before { content: "→"; margin: 0 8px 0 -2px; color: var(--color-accent); }
 .home-hub-root .home-route li + li { border-left: 0; padding-left: 0; }
 .home-hub-root .home-route .home-route-gap { border-style: dashed; color: var(--color-fg-11); }
-.home-hub-root .home-drop {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 64px;
-  border: 1px dashed var(--color-line-3);
-  font-size: 14px;
-  color: var(--color-fg-8);
-}
-.home-hub-root .home-drop svg { width: 20px; height: 20px; color: var(--color-accent); }
-
-/* Worlds */
-.home-hub-root .home-worlds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+/* Worlds: the first choice, in the hero */
+.home-hub-root .home-worlds { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 40rem; }
+.home-hub-root .home-world-options { display: flex; flex-wrap: wrap; gap: 6px; }
 .home-hub-root .home-world {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 18px;
-  border: 1px solid var(--color-line-8);
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--color-line-7);
   background: var(--color-surface-3);
+  color: var(--color-fg-6);
+  font-family: var(--font-serif);
+  font-size: 15px;
+  cursor: pointer;
 }
+.home-hub-root .home-world:hover:not(:disabled) { border-color: var(--color-line-1); color: var(--color-fg-2); }
+.home-hub-root .home-world:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.home-hub-root .home-world:disabled { opacity: 0.6; cursor: default; }
 .home-hub-root .home-world[data-active="true"] {
   border-color: var(--color-accent);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--color-accent) 18%, transparent), inset 0 0 12px rgba(0, 0, 0, 0.6);
+  color: var(--color-fg-1);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--color-accent) 22%, transparent), inset 0 0 10px rgba(0, 0, 0, 0.6);
+  cursor: default;
 }
-.home-hub-root .home-world-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 22px; }
-.home-hub-root .home-world-title { margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 400; color: var(--color-fg-1); }
-.home-hub-root .home-world-desc { flex: 1 1 auto; font-size: 14.5px; line-height: 1.5; color: var(--color-fg-7); }
-.home-hub-root .home-world-button { min-height: 40px; font-size: 14px; font-weight: 700; }
+.home-hub-root .home-world-desc { font-size: 14px; line-height: 1.5; color: var(--color-fg-8); }
+.home-hub-root .home-world-content { color: var(--color-fg-4); }
+
+/* Save drop zone: the hero's primary action */
+.home-hub-root .home-save {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  max-width: 40rem;
+  padding: 20px;
+  border: 2px dashed var(--color-line-3);
+  background: color-mix(in srgb, var(--color-surface-3) 80%, transparent);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.home-hub-root .home-save[data-over="true"] {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface-3));
+}
+.home-hub-root .home-save[data-busy="true"] { opacity: 0.75; }
+.home-hub-root .home-save--loaded { flex-direction: column; gap: 12px; border-style: solid; border-color: var(--color-line-5); }
+.home-hub-root .home-save-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.home-hub-root .home-save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 4px; }
+.home-hub-root .home-save-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-line-5);
+  background: var(--color-surface-1);
+  color: var(--color-accent);
+}
+.home-hub-root .home-save-icon svg { width: 22px; height: 22px; }
+.home-hub-root .home-save-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+.home-hub-root .home-save-title { font-family: var(--font-display); font-size: 25px; line-height: 1.15; color: var(--color-fg-1); }
+.home-hub-root .home-save-note { font-size: 15px; line-height: 1.55; color: var(--color-fg-7); }
+.home-hub-root .home-save-hint { font-size: 13px; color: var(--color-fg-11); }
+.home-hub-root .home-save-hint kbd { font-family: var(--font-mono); font-size: 12px; color: var(--color-fg-6); }
+.home-hub-root .home-save-hint span { color: var(--color-fg-8); }
+.home-hub-root .home-save-error { font-size: 14px; color: var(--color-danger-2); }
+.home-hub-root .home-save-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.home-hub-root .home-save-actions .home-cta { min-height: 42px; padding: 0 16px; font-size: 14px; }
+.home-hub-root .home-save-more { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.home-hub-root .home-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.home-hub-root .home-link:hover { color: var(--color-fg-1); text-decoration: underline; text-underline-offset: 3px; }
+.home-hub-root .home-link:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
 /* Colophon */
 .home-hub-root .home-colophon {
@@ -2171,12 +2252,8 @@ body.view-travel .hero {
 
 @media (max-width: 1099px) {
   .home-hub-root .home-hero { gap: 28px; }
-  .home-hub-root .home-tool,
   .home-hub-root .home-tool--builder,
   .home-hub-root .home-tool--leveler { grid-column: span 6; }
-  .home-hub-root .home-tool--challenge,
-  .home-hub-root .home-tool--travel,
-  .home-hub-root .home-tool--vault { grid-column: span 4; }
   .home-hub-root .home-attribute { flex-direction: column; align-items: flex-start; gap: 0; padding: 5px 8px; }
   .home-hub-root .home-colophon { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .home-hub-root .home-colophon-brand { grid-column: 1 / -1; }
@@ -2190,7 +2267,6 @@ body.view-travel .hero {
   #panel-home .home-hub-root .home-title,
   .home-hub-root .home-title { font-size: 2.6rem; }
   .home-hub-root .home-lead { font-size: 16px; }
-  .home-hub-root .home-ctas { width: 100%; flex-direction: column; }
   .home-hub-root .home-cta { width: 100%; }
   .home-hub-root .home-character { padding: 16px; }
   .home-hub-root .home-facts { grid-template-columns: 1fr 1fr; }
@@ -2199,16 +2275,14 @@ body.view-travel .hero {
   .home-hub-root .home-fact:nth-child(n + 3) { border-top: 1px solid var(--color-line-10); }
   .home-hub-root .home-fact-value { font-size: 32px; }
   .home-hub-root .home-tools { grid-template-columns: minmax(0, 1fr); gap: 10px; }
-  .home-hub-root .home-tool,
-  .home-hub-root .home-tool--builder,
-  .home-hub-root .home-tool--leveler,
-  .home-hub-root .home-tool--challenge,
-  .home-hub-root .home-tool--travel,
-  .home-hub-root .home-tool--vault { grid-column: auto; padding: 14px; }
-  .home-hub-root .home-tool--alchemy .home-preview,
-  .home-hub-root .home-tool--builder .home-preview,
-  .home-hub-root .home-tool--vault .home-preview { display: none; }
+  .home-hub-root .home-tools > .home-tool { grid-column: auto; padding: 14px; }
+  .home-hub-root .home-tool--builder .home-preview { display: none; }
   .home-hub-root .home-tool-open { display: none; }
-  .home-hub-root .home-worlds { grid-template-columns: minmax(0, 1fr); }
+  .home-hub-root .home-tool--minor { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "icon title" "icon desc"; }
+  .home-hub-root .home-save { padding: 16px; gap: 12px; }
+  .home-hub-root .home-save-icon { display: none; }
+  .home-hub-root .home-save-title { font-size: 22px; }
+  .home-hub-root .home-save-row .home-cta { width: 100%; }
+  .home-hub-root .home-world { flex: 1 1 auto; padding: 0 10px; font-size: 14px; }
   .home-hub-root .home-colophon { grid-template-columns: 1fr 1fr; gap: 22px; }
 }

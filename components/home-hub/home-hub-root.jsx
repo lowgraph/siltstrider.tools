@@ -7,11 +7,10 @@ import { adaptTravelGraph } from "../../lib/travel-graph.mjs";
 import { ALL_SKILLS } from "../../lib/level-math.mjs";
 import { POOL } from "../../lib/challenge-math.mjs";
 import {
-  WORLD_PROFILES, characterSummary, exampleRoute, healthGap, nextLevelUp, sampleRestrictions, stopCount, worldLabel
+  WORLD_PROFILES, alchemyPreview, characterSummary, exampleRoute, healthGap, nextLevelUp, stopCount, worldLabel
 } from "../../lib/home-data.mjs";
 import HomeHero from "./home-hero";
 import HomeTools from "./home-tools";
-import HomeWorlds from "./home-worlds";
 import HomeColophon from "./home-colophon";
 
 // The live travel network for the current world; null (the built-in network) until it loads.
@@ -30,22 +29,39 @@ function useTravelGraph(loader, profile, ready) {
   return loaded.profile === profile && loaded.graph && Object.keys(loaded.graph).length ? loaded.graph : null;
 }
 
+// How many ingredients the current world has; null until they load.
+function useIngredientCount(loader, profile, ready) {
+  const [loaded, setLoaded] = useState({ profile: null, count: null });
+  useEffect(() => {
+    if (!ready) return undefined;
+    let current = true;
+    loader.loadCatalog(profile, "Ingredients")
+      .then(records => { if (current) setLoaded({ profile, count: Array.isArray(records) ? records.length : null }); })
+      .catch(() => {});
+    return () => { current = false; };
+  }, [loader, profile, ready]);
+  return loaded.profile === profile ? loaded.count : null;
+}
+
 /**
- * The home page: what the site is, the character you are working on, every
- * tool with a live preview, and the world you are playing in. `shell`,
- * `character` ({ build, sheet, catalogs }) and `loader` override the app's
- * own for tests.
+ * The home page: open a save or start a build, in the world you play, then
+ * every tool with a live preview. `shell`, `character` ({ build, sheet,
+ * catalogs, activeSave, loadSave, clearSave }) and `loader` override the
+ * app's own for tests.
  */
 export default function HomeHubRoot({ loader, shell: shellOverride, character: characterOverride }) {
   let contextShell = null;
   try { contextShell = useShell(); } catch {}
   const shell = shellOverride || contextShell;
   const activeCharacter = useActiveCharacter();
-  const { build, sheet, catalogs } = characterOverride || activeCharacter;
+  const { build, sheet: buildSheet, catalogs, activeSave, loadSave, clearSave } = characterOverride || activeCharacter;
+  // A loaded save shows the character as it is in the game, not the build at level 1.
+  const sheet = activeSave?.sheet || buildSheet;
   const profile = shell?.profile || "vanilla";
   const world = shell?.world || "vanilla";
   const source = loader || getGameDataLoader();
   const graph = useTravelGraph(source, profile, Boolean(shell?.ready));
+  const ingredients = useIngredientCount(source, profile, Boolean(shell?.ready));
 
   const navigate = view => {
     if (shell?.navigate) shell.navigate(view);
@@ -56,14 +72,17 @@ export default function HomeHubRoot({ loader, shell: shellOverride, character: c
   };
 
   const options = useMemo(() => ({ bitterCup: Boolean(sheet?.bitterCup || build?.bitterCup) }), [sheet, build]);
-  const character = useMemo(() => characterSummary(build, sheet), [build, sheet]);
+  // A custom class from a save is "Custom" to the builder; the card uses the name the player gave it.
+  const savedClass = activeSave?.className;
+  const character = useMemo(
+    () => characterSummary(savedClass ? { ...build, className: savedClass } : build, sheet),
+    [build, sheet, savedClass]
+  );
   const levelUp = useMemo(() => (sheet ? nextLevelUp(sheet, catalogs, options) : null), [sheet, catalogs, options]);
   const health = useMemo(() => (sheet ? healthGap(sheet, catalogs, options, 30) : null), [sheet, catalogs, options]);
   const route = useMemo(() => exampleRoute(world, graph), [world, graph]);
   const stops = useMemo(() => stopCount(world, graph), [world, graph]);
-  // Drawn after mount: a random pick during server rendering would not match the browser's.
-  const [restrictions, setRestrictions] = useState([]);
-  useEffect(() => { setRestrictions(sampleRestrictions(POOL, 3)); }, []);
+  const alchemy = useMemo(() => (sheet ? alchemyPreview(sheet, ingredients) : null), [sheet, ingredients]);
 
   const facts = [
     { value: ALL_SKILLS.length, label: "skills modeled for every character" },
@@ -77,10 +96,13 @@ export default function HomeHubRoot({ loader, shell: shellOverride, character: c
       <HomeHero
         character={character}
         levelUp={levelUp}
+        profile={profile}
         profileLabel={worldLabel(profile)}
         ready={Boolean(shell?.ready)}
+        save={{ activeSave, loadSave, clearSave }}
         onNavigate={navigate}
         onOpenSearch={openSearch}
+        onSelectWorld={id => shell?.setProfile?.(id)}
       />
 
       <section className="home-facts" aria-label="Silt Strider in numbers">
@@ -92,8 +114,7 @@ export default function HomeHubRoot({ loader, shell: shellOverride, character: c
         ))}
       </section>
 
-      <HomeTools character={character} health={health} route={route} restrictions={restrictions} onNavigate={navigate} />
-      <HomeWorlds profile={profile} ready={Boolean(shell?.ready)} onSelect={id => shell?.setProfile?.(id)} />
+      <HomeTools character={character} health={health} route={route} alchemy={alchemy} onNavigate={navigate} />
       <HomeColophon onNavigate={navigate} />
     </div>
   );

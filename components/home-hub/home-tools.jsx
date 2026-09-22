@@ -39,7 +39,7 @@ function HealthSpark({ health }) {
   );
 }
 
-function Preview({ view, character, health, route, restrictions }) {
+function Preview({ view, character, health, route, alchemy }) {
   switch (view) {
     case "builder":
       return (
@@ -67,11 +67,21 @@ function Preview({ view, character, health, route, restrictions }) {
           </div>
         </div>
       ) : null;
-    case "challenge":
-      return restrictions.length ? (
+    case "alchemy":
+      return alchemy ? (
         <div className="home-preview">
-          <div className="home-preview-head">Rules you might draw</div>
-          <ul className="home-rules">{restrictions.map(r => <li key={r}>{r}</li>)}</ul>
+          <div className="home-preview-head">
+            <span className="home-big">{alchemy.chance}%</span> chance for {character.name} to brew a potion
+          </div>
+          <span className="home-meter" aria-hidden="true"><span style={{ width: `${alchemy.chance}%` }} /></span>
+          <ul className="home-tags">
+            <li>Alchemy {alchemy.skill}</li>
+            <li>Intelligence {alchemy.intelligence}</li>
+            <li>Luck {alchemy.luck}</li>
+          </ul>
+          {alchemy.ingredients != null && (
+            <div className="home-legend"><span><span className="home-num">{alchemy.ingredients}</span> ingredients to brew with</span></div>
+          )}
         </div>
       ) : null;
     case "travel":
@@ -85,21 +95,15 @@ function Preview({ view, character, health, route, restrictions }) {
           </ol>
         </div>
       ) : null;
-    case "vault":
-      return (
-        <div className="home-preview">
-          <div className="home-drop">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V4" /><path d="m7 9 5-5 5 5" /><path d="M5 15v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" /></svg>
-            Import an .omwsave file
-          </div>
-        </div>
-      );
     default:
       return null;
   }
 }
 
-export default function HomeTools({ character, health, route, restrictions, onNavigate }) {
+// Occasional tools: a slim row under the everyday ones, without previews.
+const MINOR = new Set(["challenge", "vault"]);
+
+export default function HomeTools({ character, health, route, alchemy, onNavigate }) {
   return (
     <section className="home-section" aria-labelledby="home-tools-title">
       <div className="home-section-head">
@@ -115,7 +119,7 @@ export default function HomeTools({ character, health, route, restrictions, onNa
           <a
             key={tool.view}
             href={"#" + tool.view}
-            className={`home-tool home-tool--${tool.view}`}
+            className={`home-tool home-tool--${tool.view}${MINOR.has(tool.view) ? " home-tool--minor" : ""}`}
             onClick={e => { e.preventDefault(); onNavigate(tool.view); }}
           >
             <span className="home-tool-top">
@@ -124,7 +128,7 @@ export default function HomeTools({ character, health, route, restrictions, onNa
             </span>
             <span className="home-tool-title">{tool.title}</span>
             <span className="home-tool-desc">{tool.description}</span>
-            <Preview view={tool.view} character={character} health={health} route={route} restrictions={restrictions} />
+            {!MINOR.has(tool.view) && <Preview view={tool.view} character={character} health={health} route={route} alchemy={alchemy} />}
             <span className="home-tool-open">Open {tool.title} →</span>
           </a>
         ))}

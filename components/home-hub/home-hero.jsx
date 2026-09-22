@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import HomeSaveDrop from "./home-save-drop";
+import HomeWorlds from "./home-worlds";
 
 const Arrow = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -7,18 +9,18 @@ const Arrow = () => (
   </svg>
 );
 
-function CharacterCard({ character, levelUp, profileLabel, ready, onNavigate }) {
+function CharacterCard({ character, fromSave, levelUp, profileLabel, ready, onNavigate }) {
   return (
     <aside className="home-character" aria-labelledby="home-character-name">
       <div className="home-character-top">
-        <span className="home-kicker">Current character</span>
+        <span className="home-kicker">{fromSave ? "From your save" : "Current character"}</span>
         <span className="home-chip">{profileLabel}</span>
       </div>
       <div className="home-character-id">
         <span className="home-monogram" aria-hidden="true">{character.initial}</span>
         <div className="home-character-names">
           <h2 className="home-character-name" id="home-character-name">{character.name}</h2>
-          <div className="home-character-line">Level 1 · {character.line}</div>
+          <div className="home-character-line">Level {character.level} · {character.line}</div>
         </div>
       </div>
 
@@ -83,7 +85,9 @@ function CharacterCard({ character, levelUp, profileLabel, ready, onNavigate }) 
   );
 }
 
-export default function HomeHero({ character, levelUp, profileLabel, ready, onNavigate, onOpenSearch }) {
+export default function HomeHero({
+  character, levelUp, profile, profileLabel, ready, save, onNavigate, onOpenSearch, onSelectWorld
+}) {
   const [searchKey, setSearchKey] = useState("Ctrl K");
   useEffect(() => {
     if (typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || "")) setSearchKey("⌘K");
@@ -102,19 +106,29 @@ export default function HomeHero({ character, levelUp, profileLabel, ready, onNa
           A free toolbox for The Elder Scrolls III. Build a character, simulate every level-up, brew potions and plan
           your travel, with every number read straight from the game files.
         </div>
+        <HomeSaveDrop
+          activeSave={save?.activeSave}
+          onLoad={save?.loadSave}
+          onClear={save?.clearSave}
+          onNavigate={onNavigate}
+          ready={ready}
+        />
+        <HomeWorlds profile={profile} ready={ready} onSelect={onSelectWorld} />
         <div className="home-ctas">
-          <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!ready} onClick={() => onNavigate("builder")}>
-            Start a build <Arrow />
-          </button>
-          <button type="button" className="mw-btn home-cta" disabled={!ready} onClick={() => onNavigate("challenge")}>
-            Roll a challenge run
+          <span className="home-ctas-label">No save yet?</span>
+          <button type="button" className="home-link" disabled={!ready} onClick={() => onNavigate("builder")}>
+            Start a new build <Arrow />
           </button>
         </div>
-        <ul className="home-sources" aria-label="Supported games">
-          {["Morrowind", "Tribunal", "Bloodmoon", "Tamriel Rebuilt", "ARCE"].map(name => <li key={name}>{name}</li>)}
-        </ul>
       </div>
-      <CharacterCard character={character} levelUp={levelUp} profileLabel={profileLabel} ready={ready} onNavigate={onNavigate} />
+      <CharacterCard
+        character={character}
+        fromSave={Boolean(save?.activeSave?.sheet)}
+        levelUp={levelUp}
+        profileLabel={profileLabel}
+        ready={ready}
+        onNavigate={onNavigate}
+      />
     </section>
   );
 }

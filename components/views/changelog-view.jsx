@@ -41,6 +41,12 @@ export default function ChangelogView() {
               <strong className="text-fg-2">Open an OpenMW Save:</strong> Open a <code className="text-accent">.omwsave</code> from the Cloud Vault without signing in; it is read in your browser and never uploaded. The builder takes over the character (custom classes included) and switches to the save&apos;s game profile, and anything the save&apos;s mods add that Silt Strider does not know is listed rather than guessed.
             </li>
             <li>
+              <strong className="text-fg-2">Front Page Leads with Your Save:</strong> Drop an OpenMW save anywhere on the home page to load it, or pick your world (Vanilla, Tamriel Rebuilt, TR + ARCE) and start a new build. Alchemy and Travel get large cards, with your brew chance on the Alchemy card.
+            </li>
+            <li>
+              <strong className="text-fg-2">Navigation:</strong> Alchemy and Travel join the top menu, Challenge Runs moves under More, and the Cloud Vault is the account button beside search. On phones, the tab bar now has Alchemy.
+            </li>
+            <li>
               <strong className="text-fg-2">Your Save Across the Tools:</strong> The Equipment Studio gets a &quot;Worn by&quot; loadout with the character&apos;s gear and real stats, the Level Simulator can plan from the save&apos;s level, and the Journal shows its factions and quests. Cloud saves now keep gender, specialization and favoured attributes.
             </li>
           </ul>

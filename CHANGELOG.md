@@ -14,6 +14,13 @@ All notable changes to the **Silt Strider** Morrowind character planner, calcula
 - **Cloud saves** keep gender, specialization and favoured attributes; older saved payloads still load.
 - 356 site tests pass.
 
+### Front page and navigation
+- **Drop a save to start:** the home page leads with a drop zone for OpenMW saves (drop anywhere on the page, or choose a file). "Start a new build" is the second option, right under the world choice.
+- **World choice up top:** Vanilla, Tamriel Rebuilt or TR + ARCE is picked in the hero instead of at the bottom of the page; the header switch stays on every page.
+- **Tools weighted by use:** Alchemy and Travel get large cards (Alchemy shows your brew chance); Challenge Runs and Cloud Vault move to a slim row.
+- **Header:** Alchemy and Travel join the nav row; Challenge Runs moves under More; the Cloud Vault is an account button beside search. The phone tab bar swaps Challenge for Alchemy.
+- 367 site tests pass.
+
 ## [Phase 13] Legacy Cleanup & Architecture Archival — 2026-09-21
 
 ### Highlights

@@ -1,38 +1,33 @@
 "use client";
 import { WORLD_PROFILES } from "../../lib/home-data.mjs";
 
+/**
+ * Which Morrowind the site is set to, where a visitor makes their first choice. Every
+ * calculator, gear list and travel route follows it; a loaded save sets it by itself.
+ */
 export default function HomeWorlds({ profile, ready, onSelect }) {
+  const active = WORLD_PROFILES.find(world => world.id === profile) || WORLD_PROFILES[0];
   return (
-    <section className="home-section" aria-labelledby="home-worlds-title">
-      <div className="home-section-head">
-        <span className="home-kicker">World profiles</span>
-        <h2 className="home-h2" id="home-worlds-title">Choose your Morrowind.</h2>
-        <div className="home-sub">Switch at any time. Every calculator, gear list and travel route follows the world you pick.</div>
+    <div className="home-worlds" role="group" aria-labelledby="home-worlds-label">
+      <span className="home-kicker" id="home-worlds-label">Your Morrowind</span>
+      <div className="home-world-options">
+        {WORLD_PROFILES.map(world => (
+          <button
+            key={world.id}
+            type="button"
+            className="home-world"
+            data-active={world.id === active.id ? "true" : undefined}
+            aria-pressed={world.id === active.id}
+            disabled={!ready}
+            onClick={() => world.id !== active.id && onSelect(world.id)}
+          >
+            {world.title}
+          </button>
+        ))}
       </div>
-      <div className="home-worlds">
-        {WORLD_PROFILES.map(world => {
-          const active = world.id === profile;
-          return (
-            <div key={world.id} className="home-world" data-active={active ? "true" : undefined}>
-              <div className="home-world-top">
-                <span className="home-kicker">{world.content}</span>
-                {active && <span className="home-chip">Active</span>}
-              </div>
-              <h3 className="home-world-title">{world.title}</h3>
-              <div className="home-world-desc">{world.description}</div>
-              <button
-                type="button"
-                className="mw-btn home-world-button"
-                disabled={active || !ready}
-                aria-pressed={active}
-                onClick={() => onSelect(world.id)}
-              >
-                {active ? "In use" : `Switch to ${world.title}`}
-              </button>
-            </div>
-          );
-        })}
+      <div className="home-world-desc" title={active.description}>
+        <span className="home-world-content">{active.content}.</span> Every tool follows this; a save sets it for you.
       </div>
-    </section>
+    </div>
   );
 }

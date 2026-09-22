@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createCloudSaveClient, SAVE_TYPES, QuotaExceededError, RevisionConflictError } from "../../lib/cloud-save-service.mjs";
 import { parseOmwSave } from "../../lib/omwsave-parser.mjs";
+import { readSaveFile } from "../../lib/omwsave-import.mjs";
 import { duplicateCloudSave, generateBuildShareUrl } from "../../lib/character-vault.mjs";
 
 const LOCAL_SAVES_KEY = "siltstrider-saved-characters";
@@ -447,16 +448,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
       setErrorMessage(null);
       setStatusMessage(`Reading "${file.name}"…`);
       try {
-        let data;
-        if (file.name.toLowerCase().endsWith(".omwsave")) {
-          data = parseOmwSave(await file.arrayBuffer());
-        } else {
-          data = JSON.parse(await file.text());
-          if (!data?.identity || !data?.stuff) {
-            throw new Error("That JSON is not a converted OpenMW save.");
-          }
-        }
-        return await applyOpenMwSave(data);
+        return await applyOpenMwSave(await readSaveFile(file));
       } catch (err) {
         const msg = err.message || "Failed to open save";
         setErrorMessage(msg);
