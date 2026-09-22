@@ -99,3 +99,56 @@ test('challenge-math: formatRunMarkdown generates complete dossier', async () =>
   assert.ok(md.includes('[Hard]'));
   assert.ok(md.includes('SEED-9999-VANILLA'));
 });
+
+test('challenge-runs: optimizer bridge serializes custom build correctly without skill duplication', async () => {
+  const { rollCardAspect, createEmptyRun } = await import('../lib/challenge-engine.mjs');
+  let run = createEmptyRun('SEED-CUSTOM-1');
+  run.cls = 'Custom';
+  run = rollCardAspect('maj', run);
+  run = rollCardAspect('min', run);
+
+  assert.equal(run.maj.length, 5);
+  assert.equal(run.min.length, 5);
+
+  // Check no skills duplicated between major and minor
+  const skillSet = new Set([...run.maj, ...run.min]);
+  assert.equal(skillSet.size, 10);
+});
+
+test('challenge-runs: optimizer bridge safely handles missing or corrupt class/sign catalogs', async () => {
+  const { rollCardAspect } = await import('../lib/challenge-engine.mjs');
+  // Pass malformed catalogs
+  const runWithNull = rollCardAspect('cls', { cls: 'Warrior' }, { catalogs: { classes: null } });
+  assert.ok(runWithNull.cls);
+
+  const runWithEmpty = rollCardAspect('sign', {}, { catalogs: { signs: {} } });
+  assert.ok(runWithEmpty.sign);
+});
+
+test('challenge-runs: full randomized run populates valid vitals for optimizer preview', async () => {
+  const { randomizeFullRun } = await import('../lib/challenge-engine.mjs');
+  const mockCatalogs = {
+    races: {
+      "Dark Elf": { M: { Strength: 40, Endurance: 40, Intelligence: 40, Willpower: 30, Agility: 40, Speed: 50, Personality: 30, Luck: 40 }, F: { Strength: 30, Endurance: 40, Intelligence: 40, Willpower: 30, Agility: 40, Speed: 50, Personality: 40, Luck: 40 }, skills: {}, mag: 0 }
+    },
+    signs: {
+      "The Lady": { attrs: { Endurance: 25, Personality: 25 }, mag: 0 }
+    },
+    classes: {
+      Warrior: { spec: "Combat", fav: ["Strength", "Endurance"], maj: ["Long Blade", "Medium Armor", "Heavy Armor", "Athletics", "Block"], min: ["Armorer", "Spear", "Axe", "Blunt Weapon", "Marksman"] }
+    },
+    skills: [],
+    specSkills: { Combat: [], Magic: [], Stealth: [] }
+  };
+  const run = randomizeFullRun(null, {}, { seed: 'SEED-VITALS-TEST', catalogs: mockCatalogs });
+
+  assert.ok(run.race);
+  assert.ok(run.cls);
+  assert.ok(run.sign);
+  assert.ok(run.vitals);
+  assert.ok(Number.isFinite(run.vitals.health) && run.vitals.health > 0);
+  assert.ok(Number.isFinite(run.vitals.magicka) && run.vitals.magicka > 0);
+  assert.ok(Number.isFinite(run.vitals.fatigue) && run.vitals.fatigue > 0);
+});
+
+

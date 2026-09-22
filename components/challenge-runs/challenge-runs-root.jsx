@@ -25,7 +25,7 @@ import { computeSheet } from "../../lib/character-math.mjs";
 
 export default function ChallengeRunsRoot() {
   const shell = useShell();
-  const { catalogs } = useActiveCharacter();
+  const { catalogs, setBuild, clearSave } = useActiveCharacter();
 
   // Run State
   const [run, setRun] = useState({
@@ -285,6 +285,39 @@ export default function ChallengeRunsRoot() {
         }
       }
 
+      // Determine specialization, favored attributes, and skills for identity
+      let nextSpec = run.spec || "Combat";
+      let nextFav1 = run.fav1 || "Strength";
+      let nextFav2 = run.fav2 || "Endurance";
+      let nextMaj = Array.isArray(run.maj) ? [...run.maj] : [];
+      let nextMin = Array.isArray(run.min) ? [...run.min] : [];
+
+      if (nextClass === "Custom") {
+        if (!nextMaj.length || !nextMin.length || nextClass !== run.cls) {
+          const SPECS = ["Combat", "Magic", "Stealth"];
+          const ATTRS_LIST = ["Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance", "Personality", "Luck"];
+          const ALL_SKILLS_LIST = [
+            "Block", "Armorer", "Medium Armor", "Heavy Armor", "Blunt Weapon", "Long Blade", "Axe", "Spear", "Athletics",
+            "Enchant", "Destruction", "Alteration", "Illusion", "Conjuration", "Mysticism", "Restoration", "Alchemy", "Unarmored",
+            "Security", "Sneak", "Acrobatics", "Light Armor", "Short Blade", "Marksman", "Mercantile", "Speechcraft", "Hand-to-hand"
+          ];
+          nextSpec = SPECS[Math.floor(rng() * SPECS.length)];
+          const shuffledAttrs = [...ATTRS_LIST].sort(() => rng() - 0.5);
+          nextFav1 = shuffledAttrs[0];
+          nextFav2 = shuffledAttrs[1];
+          const shuffledSkills = [...ALL_SKILLS_LIST].sort(() => rng() - 0.5);
+          nextMaj = shuffledSkills.slice(0, 5);
+          nextMin = shuffledSkills.slice(5, 10);
+        }
+      } else if (catalogs?.classes?.[nextClass]) {
+        const c = catalogs.classes[nextClass];
+        nextSpec = c.spec;
+        nextFav1 = c.fav[0];
+        nextFav2 = c.fav[1];
+        nextMaj = [...c.maj];
+        nextMin = [...c.min];
+      }
+
       // Compute vitals preview
       let vitals = { health: 50, magicka: 40, fatigue: 180 };
       if (catalogs && nextRace && nextClass && nextSign) {
@@ -295,11 +328,11 @@ export default function ChallengeRunsRoot() {
               gender: nextGender,
               sign: nextSign,
               className: nextClass,
-              spec: run.spec || "Combat",
-              fav1: run.fav1 || "Strength",
-              fav2: run.fav2 || "Endurance",
-              maj: run.maj.length ? run.maj : ["Long Blade", "Heavy Armor", "Block", "Armorer", "Athletics"],
-              min: run.min.length ? run.min : ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"]
+              spec: nextSpec,
+              fav1: nextFav1,
+              fav2: nextFav2,
+              maj: nextMaj.length ? nextMaj : ["Long Blade", "Heavy Armor", "Block", "Armorer", "Athletics"],
+              min: nextMin.length ? nextMin : ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"]
             },
             catalogs
           );
@@ -319,6 +352,11 @@ export default function ChallengeRunsRoot() {
         gender: nextGender,
         cls: nextClass,
         sign: nextSign,
+        spec: nextSpec,
+        fav1: nextFav1,
+        fav2: nextFav2,
+        maj: nextMaj,
+        min: nextMin,
         major: nextMajor,
         minors: nextMinors,
         rests: nextRests,
@@ -405,18 +443,86 @@ export default function ChallengeRunsRoot() {
   const handleSendToOptimizer = useCallback(() => {
     if (typeof window === "undefined") return;
 
+    // Resolve class preset details if not Custom
+    const targetClass = run.cls || "Custom";
+    let targetSpec = run.spec || "Combat";
+    let targetFav1 = run.fav1 || "Strength";
+    let targetFav2 = run.fav2 || "Endurance";
+    let targetMaj = Array.isArray(run.maj) && run.maj.length === 5 ? [...run.maj] : [];
+    let targetMin = Array.isArray(run.min) && run.min.length === 5 ? [...run.min] : [];
+
+    if (targetClass !== "Custom" && catalogs?.classes?.[targetClass]) {
+      const c = catalogs.classes[targetClass];
+      targetSpec = c.spec || targetSpec;
+      targetFav1 = c.fav?.[0] || targetFav1;
+      targetFav2 = c.fav?.[1] || targetFav2;
+      if (!targetMaj.length) targetMaj = [...(c.maj || [])];
+      if (!targetMin.length) targetMin = [...(c.min || [])];
+    }
+
+    if (!targetMaj.length) {
+      targetMaj = ["Long Blade", "Heavy Armor", "Block", "Armorer", "Athletics"];
+    }
+    if (!targetMin.length) {
+      targetMin = ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"];
+    }
+
+    const targetBuild = {
+      version: 1,
+      world: shell?.world || "vanilla",
+      arce: !!shell?.arce,
+      name: "",
+      race: run.race || "Dark Elf",
+      gender: run.gender || "Male",
+      className: targetClass,
+      sign: run.sign || "The Lady",
+      spec: targetSpec,
+      fav1: targetFav1,
+      fav2: targetFav2,
+      maj: targetMaj,
+      min: targetMin,
+      bitterCup: false
+    };
+
+    if (typeof clearSave === "function") {
+      clearSave();
+    }
+
+    if (typeof setBuild === "function") {
+      setBuild(targetBuild);
+    }
+
+    // Set legacy DOM values if present (for test environments and fallback scripts)
+    const setDomVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = val;
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    };
+    setDomVal("c-race", targetBuild.race);
+    setDomVal("c-gender", targetBuild.gender);
+    setDomVal("c-sign", targetBuild.sign);
+    setDomVal("c-spec", targetBuild.spec);
+    setDomVal("c-fav1", targetBuild.fav1);
+    setDomVal("c-fav2", targetBuild.fav2);
+    setDomVal("c-class", targetBuild.className);
+    targetBuild.maj.forEach((s, i) => setDomVal("maj" + i, s));
+    targetBuild.min.forEach((s, i) => setDomVal("min" + i, s));
+
     // Use legacy bridge function if available
     const btn = document.getElementById("btn-to-optimizer");
     if (btn) {
-      btn.click();
-      return;
+      try {
+        btn.click();
+      } catch (e) {}
     }
 
     // Direct navigation fallback
     if (shell?.navigate) {
       shell.navigate("builder");
     }
-  }, [shell]);
+  }, [run, catalogs, shell, setBuild, clearSave]);
 
   // Copy Summary (Markdown)
   const handleCopySummary = useCallback(() => {
@@ -507,7 +613,20 @@ export default function ChallengeRunsRoot() {
             locks={locks}
             onToggleLock={handleToggleLock}
             character={run}
-            onUpdateCharacterSlot={(slot, val) => setRun((prev) => ({ ...prev, [slot]: val }))}
+            onUpdateCharacterSlot={(slot, val) => {
+              setRun((prev) => {
+                const next = { ...prev, [slot]: val };
+                if (slot === "cls" && catalogs?.classes?.[val]) {
+                  const c = catalogs.classes[val];
+                  next.spec = c.spec;
+                  next.fav1 = c.fav[0];
+                  next.fav2 = c.fav[1];
+                  next.maj = [...c.maj];
+                  next.min = [...c.min];
+                }
+                return next;
+              });
+            }}
             races={races}
             classes={classNames}
             signs={signs}

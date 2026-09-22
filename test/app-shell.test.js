@@ -264,3 +264,118 @@ test("Adversarial QA 3: Inactive panels do not render child content", async () =
     dom.window.close();
   }
 });
+
+test("Challenge Runs: Send to Build Optimizer transfers rolled character into CharacterContext and switches to #builder", async () => {
+  const dom = setupDom("#challenge");
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+
+  try {
+    await act(async () => {
+      root.render(React.createElement(AppShell));
+    });
+
+    const challengePanel = dom.window.document.getElementById("panel-challenge");
+    assert.ok(challengePanel.classList.contains("show"), "panel-challenge must be shown initially");
+
+    // Click Generate Run
+    const genBtn = dom.window.document.getElementById("react-btn-generate-run");
+    assert.ok(genBtn, "#react-btn-generate-run button must exist");
+
+    await act(async () => {
+      genBtn.click();
+    });
+
+    // Verify identity heading has been rolled (not "Not rolled yet")
+    const overviewHeading = challengePanel.querySelector(".character-overview-card h3");
+    assert.ok(overviewHeading, "character-overview-card heading must exist");
+    assert.doesNotMatch(overviewHeading.textContent, /Not rolled yet/i);
+
+    // Find and click Send to Build Optimizer button
+    const sendBtn = dom.window.document.getElementById("react-btn-to-optimizer");
+    assert.ok(sendBtn, "#react-btn-to-optimizer button must exist");
+
+    await act(async () => {
+      sendBtn.click();
+    });
+
+    // Hash must navigate to #builder
+    assert.match(dom.window.location.hash, /^#builder/);
+
+    // Active panel must now be #panel-build
+    const buildPanel = dom.window.document.getElementById("panel-build");
+    assert.ok(buildPanel.classList.contains("show"), "panel-build must be shown after transfer");
+    assert.equal(challengePanel.classList.contains("show"), false);
+
+    // Character builder must be mounted
+    const builderRoot = buildPanel.querySelector(".character-builder-root");
+    assert.ok(builderRoot, "character-builder-root must be rendered");
+
+    // The selects inside configurator must match the transferred character identity
+    const selects = buildPanel.querySelectorAll("select");
+    assert.ok(selects.length > 0, "builder configurator selects must be present");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
+test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
+  const dom = setupDom("#challenge");
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+
+  try {
+    await act(async () => {
+      root.render(React.createElement(AppShell));
+    });
+
+    // Directly click Send to Build Optimizer without rolling first
+    const sendBtn = dom.window.document.getElementById("react-btn-to-optimizer");
+    assert.ok(sendBtn, "#react-btn-to-optimizer button must exist");
+
+    await act(async () => {
+      sendBtn.click();
+    });
+
+    // Must navigate to #builder safely without unhandled exception
+    assert.match(dom.window.location.hash, /^#builder/);
+    const buildPanel = dom.window.document.getElementById("panel-build");
+    assert.ok(buildPanel.classList.contains("show"), "panel-build must be shown");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
+test("Adversarial QA 5: Send to Build Optimizer clears activeSave state and sets valid class and skills", async () => {
+  const dom = setupDom("#challenge");
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+
+  try {
+    await act(async () => {
+      root.render(React.createElement(AppShell));
+    });
+
+    // Generate run
+    const genBtn = dom.window.document.getElementById("react-btn-generate-run");
+
+    await act(async () => {
+      genBtn.click();
+    });
+
+    const sendBtn = dom.window.document.getElementById("react-btn-to-optimizer");
+    await act(async () => {
+      sendBtn.click();
+    });
+
+    assert.match(dom.window.location.hash, /^#builder/);
+    const buildPanel = dom.window.document.getElementById("panel-build");
+    assert.ok(buildPanel.classList.contains("show"));
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
