@@ -55,7 +55,7 @@ const VIEW_BODY_CLASSES = [
 
 function AppShellMain() {
   const shell = useShell();
-  const { build, setBuild } = useActiveCharacter();
+  const { build, setBuild, loadSave } = useActiveCharacter();
   const activeView = shell?.view && KNOWN_VIEWS.includes(shell.view) ? shell.view : 'home';
 
   // Synchronize body class with the active view for legacy CSS selectors and full compatibility
@@ -183,7 +183,7 @@ function AppShellMain() {
       <SiteFooter />
 
       {/* Global Cloud Character Vault Modal */}
-      <CloudVaultModal activeBuild={build} onApplyBuild={setBuild} />
+      <CloudVaultModal activeBuild={build} onApplyBuild={setBuild} onApplySave={loadSave} />
     </div>
   );
 }

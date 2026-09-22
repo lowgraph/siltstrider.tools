@@ -280,7 +280,8 @@ test('0:N Codec: Pure Zero Save (all sub-entity collections empty: 0 items, 0 qu
     identity: {
       name: 'Fresh Prisoner',
       race: 'Argonian',
-      class: { id: 'Slave', name: null, custom: false },
+      gender: 'Male',
+      class: { id: 'Slave', name: null, custom: false, specialization: null, favoredAttributes: [] },
       birthsign: 'The Tower',
       level: 1,
       cell: 'Seyda Neen, Prison Ship'
@@ -406,7 +407,8 @@ test('0:N Codec: Extreme N Stress Test (5,000+ sub-entities: 500 quests, 1,500 t
     identity: {
       name: 'God King of Vvardenfell',
       race: 'Chimer',
-      class: { id: 'LivingGod', name: 'Immortal Tribune', custom: true },
+      gender: 'Male',
+      class: { id: 'LivingGod', name: 'Immortal Tribune', custom: true, specialization: 'Magic', favoredAttributes: ['Intelligence', 'Personality'] },
       birthsign: 'The Lord',
       level: 78,
       cell: 'Vivec, Palace of Vivec'

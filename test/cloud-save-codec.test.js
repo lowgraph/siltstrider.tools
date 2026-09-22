@@ -19,7 +19,8 @@ test('Cloud Save Codec (SLT1): Full fidelity round-trip for OpenMW save extracts
     identity: {
       name: 'Nerevarine Incarnate',
       race: 'Dark Elf',
-      class: { id: 'Custom', name: 'Telvanni Battlemage', custom: true },
+      gender: 'Female',
+      class: { id: 'Custom', name: 'Telvanni Battlemage', custom: true, specialization: 'Magic', favoredAttributes: ['Intelligence', 'Willpower'] },
       birthsign: 'The Lady',
       level: 28,
       cell: "Balmora, Caius Cosades' House"
@@ -256,7 +257,8 @@ test('Cloud Save Codec: Adversarial edge cases (negative stages, custom quest st
     identity: {
       name: '',
       race: null,
-      class: { id: null, name: null, custom: false },
+      gender: null,
+      class: { id: null, name: null, custom: false, specialization: null, favoredAttributes: [] },
       birthsign: null,
       level: 1,
       cell: null
@@ -305,7 +307,8 @@ test('Cloud Save Codec: Adversarial edge cases (negative stages, custom quest st
     identity: {
       name: '  Adversarial Hero  ',
       race: 'Alfiq',
-      class: { id: 'custom_necromancer', name: 'Corpse Stitcher', custom: true },
+      gender: 'Male',
+      class: { id: 'custom_necromancer', name: 'Corpse Stitcher', custom: true, specialization: 'Magic', favoredAttributes: ['Intelligence', 'Endurance'] },
       birthsign: 'The Void',
       level: 50,
       cell: 'Mod Realm, Chamber of Souls'

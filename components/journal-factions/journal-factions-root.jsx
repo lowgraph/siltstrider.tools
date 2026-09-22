@@ -188,7 +188,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   } catch {
     shell = { profile: "vanilla", ready: false };
   }
-  const { sheet, build } = useActiveCharacter();
+  const { sheet, build, activeSave } = useActiveCharacter();
+  const saveProgress = activeSave?.save?.progress || null;
   const gameData = useGameData('factions', { enabled: Boolean(shell?.ready) });
 
   const isLive = Boolean(initialFactions) || (gameData.status === 'ready' && gameData.data?.catalogs?.Factions);
@@ -199,28 +200,20 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
-  // Ingested save / character vault factions
-  const [joinedFactions, setJoinedFactions] = useState(() => {
-    if (typeof window !== "undefined" && window.siltVaultActiveSave?.progress?.factions) {
-      return window.siltVaultActiveSave.progress.factions;
-    }
-    return [
-      { id: "fighters guild", rank: 1, reputation: 10, expelled: false }
-    ];
-  });
+  // Factions from a loaded save; without one, the tool's own example membership.
+  // Only factions the save shows the character in: a rank of -1 is a faction the save
+  // merely mentions, such as one the character was expelled from before joining.
+  const saveFactions = useMemo(() => (saveProgress?.factions || [])
+    .filter((f) => f.rank >= 0 || f.expelled)
+    .map((f) => ({ ...f, id: String(f.id).toLowerCase() })), [saveProgress]);
+  const [joinedFactions, setJoinedFactions] = useState(() => (
+    saveProgress ? saveFactions : [{ id: "fighters guild", rank: 1, reputation: 10, expelled: false }]
+  ));
 
-  // Keep joinedFactions synced if a cloud save or vault save is loaded
+  // Loading a different save replaces the membership list, edits and all.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const checkSave = () => {
-        if (window.siltVaultActiveSave?.progress?.factions) {
-          setJoinedFactions(window.siltVaultActiveSave.progress.factions);
-        }
-      };
-      window.addEventListener("silt-character-status", checkSave);
-      return () => window.removeEventListener("silt-character-status", checkSave);
-    }
-  }, []);
+    if (saveProgress) setJoinedFactions(saveFactions);
+  }, [saveProgress, saveFactions]);
 
   const joinedFactionKeys = useMemo(() => {
     return joinedFactions.map(j => j.id.toLowerCase());
@@ -236,9 +229,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
 
   // Quests for the selected faction
   const factionQuests = useMemo(() => {
-    const saveQuests = typeof window !== "undefined" ? window.siltVaultActiveSave?.progress?.quests || [] : [];
-    return getFactionQuests(selectedFactionKey, questCatalog, saveQuests);
-  }, [selectedFactionKey, questCatalog]);
+    return getFactionQuests(selectedFactionKey, questCatalog, saveProgress?.quests || []);
+  }, [selectedFactionKey, questCatalog, saveProgress]);
 
   // A faction picked in site search: select it, clear the roster filters, scroll it into view.
   const intent = useSearchIntent("factions");

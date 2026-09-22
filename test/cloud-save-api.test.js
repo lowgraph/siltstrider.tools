@@ -289,7 +289,8 @@ const sampleOmwSave = {
   identity: {
     name: 'Jiub the Victor',
     race: 'Dark Elf',
-    class: { id: 'Custom', name: 'Cliff Racer Hunter', custom: true },
+    gender: 'Male',
+    class: { id: 'Custom', name: 'Cliff Racer Hunter', custom: true, specialization: 'Stealth', favoredAttributes: ['Agility', 'Speed'] },
     birthsign: 'The Steed',
     level: 25,
     cell: 'Balmora, Guild of Fighters'

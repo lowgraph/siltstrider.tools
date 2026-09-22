@@ -13,6 +13,39 @@ export default function ChangelogView() {
       </div>
 
       <div className="space-y-6 text-sm text-fg-2">
+        {/* September 22, 2026 */}
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12">
+            <time dateTime="2026-09-22">September 22, 2026</time>
+          </h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>
+              <strong className="text-fg-2">Ashfall Default Theme:</strong> Made Ashfall the default color palette site-wide, with Morrowind Classic available as a toggle in the menu.
+            </li>
+            <li>
+              <strong className="text-fg-2">Home Page Rebuild:</strong> Rebuilt the landing page around the active character — quick-access cards for every tool, live stat preview, and one-tap navigation.
+            </li>
+            <li>
+              <strong className="text-fg-2">Site Search:</strong> Added a universal search palette (Ctrl+K / Cmd+K) indexing every view, action, and game term across the site.
+            </li>
+            <li>
+              <strong className="text-fg-2">Phone Tab Bar:</strong> Added a bottom navigation bar on mobile with quick access to the five most-used tools.
+            </li>
+            <li>
+              <strong className="text-fg-2">Transit Map:</strong> Added a visual transit network map to the Travel Optimizer showing all routes at a glance.
+            </li>
+            <li>
+              <strong className="text-fg-2">Send to Build Optimizer Fix:</strong> Rewired the Challenge Runs &quot;Send to Build Optimizer&quot; bridge to write through CharacterContext, fixing the broken handoff after the Phase 13 legacy cleanup.
+            </li>
+            <li>
+              <strong className="text-fg-2">OpenMW .omwsave Import:</strong> Import your OpenMW save files directly into the Cloud Vault — the parser extracts race, class, birthsign, skills, and attributes from the binary ESS/SAVE format.
+            </li>
+            <li>
+              <strong className="text-fg-2">Cloud Vault Improvements:</strong> Enhanced multi-save management, compact save codec, and smoother load/save flows across all workstations.
+            </li>
+          </ul>
+        </section>
+
         {/* September 21, 2026 */}
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12">
@@ -20,13 +53,22 @@ export default function ChangelogView() {
           </h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>
+              <strong className="text-fg-2">Theme Tokens Refactor:</strong> Routed every component color through semantic design tokens, enabling site-wide palette swaps with a single theme file.
+            </li>
+            <li>
+              <strong className="text-fg-2">Health Growth Chart:</strong> Made the Level Simulator&apos;s Health projection chart readable at a glance with clearer labels and contrast.
+            </li>
+            <li>
+              <strong className="text-fg-2">Page Centering Fix:</strong> Corrected the page column and header alignment for consistent centering across all viewports.
+            </li>
+            <li>
               <strong className="text-fg-2">Legacy Cleanup &amp; Architecture Archival (Phase 13):</strong> Archived obsolete transition harnesses (<code className="text-accent">components/legacy-workbench.jsx</code>, extraction scripts, and bridges) into <code className="text-accent">archive/legacy/</code>.
             </li>
             <li>
               <strong className="text-fg-2">Native Styling Bundling:</strong> Ingested base legacy styling into <code className="text-accent">app/legacy-compat.css</code> and removed runtime <code className="text-accent">/legacy/legacy.css</code> stylesheet links from the page root.
             </li>
             <li>
-              <strong className="text-fg-2">Underlying Architecture &amp; Shell Decoupling (Phase 12):</strong> Completed full architectural transition away from the legacy extraction harness towards a native, declarative React 19 / Next.js 16 layout.
+              <strong className="text-fg-2">Architecture &amp; Shell Decoupling (Phase 12):</strong> Completed full architectural transition away from the legacy extraction harness towards a native, declarative React 19 / Next.js 16 layout.
             </li>
             <li>
               <strong className="text-fg-2">Native React App Shell:</strong> Implemented <code className="text-accent">components/app-shell.jsx</code> mounting all 12 tools cleanly with zero DOM portal or legacy innerHTML dependencies.
@@ -39,12 +81,6 @@ export default function ChangelogView() {
             </li>
             <li>
               <strong className="text-fg-2">Asset Ingestion &amp; Design Tokens:</strong> Ingested Pelagiad font and Morrowind 9-slice border textures as native static assets with formal CSS variables.
-            </li>
-            <li>
-              <strong className="text-fg-2">Native React Views &amp; Footer:</strong> Converted remaining static panels (<code className="text-accent">#panel-about</code> and <code className="text-accent">#panel-changelog</code>) and site footer into responsive React components.
-            </li>
-            <li>
-              <strong className="text-fg-2">Build Pipeline Decoupling:</strong> Retired legacy prebuild extraction hooks, reducing Next.js production build compile time to under 600ms.
             </li>
             <li>
               <strong className="text-fg-2">Dynamic Best-In-Slot Resolution:</strong> Repointed late-game gear recommendations to dynamically consume <code className="text-accent">public/game-data/current.json</code> with synthetic fixture fallbacks for CI.

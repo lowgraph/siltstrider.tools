@@ -6,7 +6,20 @@ import { duplicateCloudSave, generateBuildShareUrl } from "../../lib/character-v
 
 const LOCAL_SAVES_KEY = "siltstrider-saved-characters";
 
-export function useCloudVault({ activeBuild, onApplyBuild } = {}) {
+const PROFILE_LABELS = { vanilla: "Morrowind", tr: "Tamriel Rebuilt", tr_arce: "Tamriel Rebuilt + ARCE" };
+
+/** One line on what loading a save did, including what it could not carry across. */
+export function describeLoadedSave(loaded) {
+  const identity = loaded?.save?.identity || {};
+  const parts = [`Loaded ${identity.name || "the save"}, level ${identity.level ?? 1}, as ${PROFILE_LABELS[loaded?.profile] || loaded?.profile}`];
+  const missing = (loaded?.unresolved?.length || 0) + (loaded?.unworn?.length || 0);
+  if (missing) parts.push(`${missing} item${missing === 1 ? "" : "s"} or field${missing === 1 ? "" : "s"} not in this profile's data`);
+  const differing = loaded?.rules?.differences?.length || 0;
+  if (differing) parts.push(`${differing} value${differing === 1 ? "" : "s"} where the save's mods differ from the site's rules`);
+  return parts.join("; ") + ". See the Character Builder, Level Simulator and Journal.";
+}
+
+export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -358,6 +371,25 @@ export function useCloudVault({ activeBuild, onApplyBuild } = {}) {
     [refreshCloudSaves]
   );
 
+  // Hand a parsed game save to the character provider, which resolves it and feeds the
+  // builder, the Level Simulator, the Equipment Studio and the Journal.
+  const applyOpenMwSave = useCallback(
+    async (data) => {
+      if (typeof onApplySave !== "function") {
+        throw new Error("Loading a game save needs the character provider.");
+      }
+      setStatusMessage(`Resolving ${data?.identity?.name || "the save"} against the site's data…`);
+      const loaded = await onApplySave(data);
+      setStatusMessage(describeLoadedSave(loaded));
+      setTimeout(() => {
+        setStatusMessage(null);
+        setIsOpen(false);
+      }, 4000);
+      return { success: true, loaded };
+    },
+    [onApplySave]
+  );
+
   // Load a save into active session
   const loadSaveIntoSession = useCallback(
     async (id) => {
@@ -372,31 +404,13 @@ export function useCloudVault({ activeBuild, onApplyBuild } = {}) {
         const data = save.data;
         let buildToApply = null;
 
+        if (save.save_type === SAVE_TYPES.OPENMW_SAVE) {
+          // A game save is more than a build: the character provider resolves it
+          // against its own profile and hands the other tools their parts.
+          return await applyOpenMwSave(data);
+        }
         if (save.save_type === SAVE_TYPES.CHARACTER_BUILD) {
           buildToApply = data.build || data;
-        } else if (save.save_type === SAVE_TYPES.OPENMW_SAVE) {
-          // Extract build representation from OpenMW save
-          const ident = data.identity || {};
-          const bld = data.build || {};
-          const skills = bld.skills || [];
-
-          const maj = skills.filter((s) => s.kind === "Major").map((s) => s.id);
-          const min = skills.filter((s) => s.kind === "Minor").map((s) => s.id);
-
-          buildToApply = {
-            version: 1,
-            name: ident.name || save.name || "OpenMW Character",
-            race: ident.race || "Dark Elf",
-            gender: "Male",
-            className: ident.class?.name || ident.class?.id || "Custom",
-            sign: ident.birthsign || "The Lady",
-            spec: "Combat",
-            fav1: "Strength",
-            fav2: "Endurance",
-            maj: maj.length >= 5 ? maj.slice(0, 5) : ["Long Blade", "Heavy Armor", "Block", "Armorer", "Athletics"],
-            min: min.length >= 5 ? min.slice(0, 5) : ["Restoration", "Medium Armor", "Spear", "Mercantile", "Speechcraft"],
-            bitterCup: false,
-          };
         }
 
         if (buildToApply) {
@@ -422,7 +436,36 @@ export function useCloudVault({ activeBuild, onApplyBuild } = {}) {
         setActionBusy(false);
       }
     },
-    [onApplyBuild]
+    [onApplyBuild, applyOpenMwSave]
+  );
+
+  // Open a .omwsave in Silt Strider without uploading it: no account needed, and the
+  // save never leaves the browser.
+  const openSaveFile = useCallback(
+    async (file) => {
+      setActionBusy(true);
+      setErrorMessage(null);
+      setStatusMessage(`Reading "${file.name}"…`);
+      try {
+        let data;
+        if (file.name.toLowerCase().endsWith(".omwsave")) {
+          data = parseOmwSave(await file.arrayBuffer());
+        } else {
+          data = JSON.parse(await file.text());
+          if (!data?.identity || !data?.stuff) {
+            throw new Error("That JSON is not a converted OpenMW save.");
+          }
+        }
+        return await applyOpenMwSave(data);
+      } catch (err) {
+        const msg = err.message || "Failed to open save";
+        setErrorMessage(msg);
+        return { success: false, error: msg };
+      } finally {
+        setActionBusy(false);
+      }
+    },
+    [applyOpenMwSave]
   );
 
   // Export save as JSON file download
@@ -550,6 +593,7 @@ export function useCloudVault({ activeBuild, onApplyBuild } = {}) {
     duplicateSave,
     shareBuildLink,
     loadSaveIntoSession,
+    openSaveFile,
     exportSaveJson,
     openSignIn,
     openSignUp,

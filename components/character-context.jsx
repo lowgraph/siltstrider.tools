@@ -4,6 +4,14 @@ import { computeSheet, swapSkill as mathSwapSkill } from "../lib/character-math.
 import { useShell } from "./shell-context";
 import { getGameDataLoader } from "./use-game-data";
 import { createCharacterCatalogService } from "../lib/character-catalogs.mjs";
+import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
+import {
+  buildFromSave,
+  loadoutFromSave,
+  profileForSave,
+  rulesCheck,
+  sheetFromSave
+} from "../lib/omwsave-import.mjs";
 
 export const DEFAULT_BUILD = {
   version: 1,
@@ -368,6 +376,44 @@ export function CharacterProvider({ children }) {
     }
   }, [sheet]);
 
+  // A loaded .omwsave: the build it resolves to, plus what the other tools read from
+  // it -- the Level Simulator's starting sheet, the worn loadout, journal progress --
+  // and everything that could not be resolved against the save's own profile.
+  const [activeSave, setActiveSave] = useState(null);
+  const buildRef = useRef(build);
+  buildRef.current = build;
+
+  const loadSave = useCallback(async (save) => {
+    const { profile, reason, contentFileCount } = profileForSave(save);
+    const loader = getGameDataLoader();
+    const service = (window.siltCharacters ||= createCharacterCatalogService(loader));
+    // Resolved against the save's profile, not whichever one the site is showing.
+    const [character, equipment] = await Promise.all([
+      service.prepare(profile),
+      loader.loadFeature(profile, "equipment")
+    ]);
+    const { build: next, unresolved } = buildFromSave(save, character, { current: buildRef.current, profile });
+    const { loadout, unresolved: unworn } = loadoutFromSave(save, equipment.catalogs);
+    const loaded = {
+      token: Date.now(),
+      save,
+      profile,
+      reason,
+      contentFileCount,
+      className: save.identity?.class?.name || save.identity?.class?.id || null,
+      unresolved,
+      unworn,
+      rules: rulesCheck(save, character, next),
+      sheet: sheetFromSave(save, character, next)
+    };
+    setActiveSave(loaded);
+    setBuild({ ...next, loadouts: [loadout, ...createDefaultLoadoutPresets().slice(1)] });
+    if (shell.profile !== profile && typeof shell.setProfile === "function") shell.setProfile(profile);
+    return loaded;
+  }, [shell]);
+
+  const clearSave = useCallback(() => setActiveSave(null), []);
+
   const value = useMemo(
     () => ({
       build,
@@ -379,9 +425,13 @@ export function CharacterProvider({ children }) {
       swapSkill,
       selectClassPreset,
       selectPremade,
-      syncToCalculators: forceSyncToCalculators
+      syncToCalculators: forceSyncToCalculators,
+      activeSave,
+      loadSave,
+      clearSave
     }),
-    [build, sheet, catalogs, updateField, swapSkill, selectClassPreset, selectPremade, forceSyncToCalculators]
+    [build, sheet, catalogs, updateField, swapSkill, selectClassPreset, selectPremade, forceSyncToCalculators,
+     activeSave, loadSave, clearSave]
   );
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;
@@ -400,7 +450,10 @@ export function useActiveCharacter() {
       swapSkill: () => {},
       selectClassPreset: () => {},
       selectPremade: () => {},
-      syncToCalculators: () => {}
+      syncToCalculators: () => {},
+      activeSave: null,
+      loadSave: async () => null,
+      clearSave: () => {}
     };
   }
   return ctx;

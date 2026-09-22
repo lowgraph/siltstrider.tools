@@ -2,6 +2,7 @@
 import { useState, useRef, useMemo } from "react";
 import { useCloudVault } from "./use-cloud-vault";
 import CloudVaultCard from "./cloud-vault-card";
+import OpenSavePanel from "./open-save-panel";
 import { useActiveCharacter } from "../character-context";
 import { useShell } from "../shell-context";
 
@@ -12,7 +13,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
   try { charCtx = useActiveCharacter(); } catch {}
   const build = propBuild !== undefined ? propBuild : charCtx?.build;
   const setBuild = propSetBuild || charCtx?.setBuild;
-  const vault = useCloudVault({ activeBuild: build, onApplyBuild: setBuild });
+  const vault = useCloudVault({ activeBuild: build, onApplyBuild: setBuild, onApplySave: charCtx?.loadSave });
 
   const [activeTab, setActiveTab] = useState("all"); // "all" | "openmw" | "builds" | "challenges" | "local"
   const [saveName, setSaveName] = useState("");
@@ -114,6 +115,11 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
           <span>{vault.errorMessage}</span>
         </div>
       )}
+
+      {/* Open a save locally: needs no account, so it sits above the sign-in split */}
+      <div className="mb-4">
+        <OpenSavePanel vault={vault} />
+      </div>
 
       {/* Sign-In CTA (if signed out) */}
       {!vault.signedIn ? (

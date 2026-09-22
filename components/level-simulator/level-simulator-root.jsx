@@ -5,6 +5,7 @@ import LevelStepEditor from "./level-step-editor";
 import ProgressionSheet from "./progression-sheet";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
+import SaveImportNotice from "../character-vault/save-import-notice";
 import {
   PROGRESSION_MODES,
   ARCHETYPES,
@@ -16,11 +17,16 @@ import {
 
 export default function LevelSimulatorRoot() {
   const shell = useShell();
-  const { build, sheet, catalogs } = useActiveCharacter();
+  const { build, sheet, catalogs, activeSave } = useActiveCharacter();
+  // With a save loaded, plan from where that character actually is; the build's fresh
+  // level-1 sheet stays one click away.
+  const [startFrom, setStartFrom] = useState("save");
+  const fromSave = Boolean(activeSave?.sheet) && startFrom === "save";
 
   // Normalize initial base character
   const initialSheet = useMemo(() => {
     try {
+      if (fromSave) return normalizeCharacterState(activeSave.sheet, catalogs);
       return normalizeCharacterState(
         sheet || build,
         catalogs,
@@ -29,7 +35,7 @@ export default function LevelSimulatorRoot() {
     } catch (e) {
       return null;
     }
-  }, [build, sheet, catalogs]);
+  }, [build, sheet, catalogs, fromSave, activeSave]);
 
   // Detected archetype for the character
   const detectedArchetype = useMemo(() => {
@@ -56,7 +62,10 @@ export default function LevelSimulatorRoot() {
   // Run full simulation
   const simulation = useMemo(() => {
     if (!initialSheet) return null;
-    return simulateProgression(initialSheet, {
+    // simulateProgression normalizes its input again. A normalized state has lost the
+    // `attrs` block, so a second pass would rebuild level-1 values from the build and
+    // overwrite the save's; the save's own sheet survives that pass intact.
+    return simulateProgression(fromSave ? activeSave.sheet : initialSheet, {
       targetLevel,
       archetype: archetypeId !== "custom" ? archetypeId : undefined,
       priority: customPriority,
@@ -64,7 +73,7 @@ export default function LevelSimulatorRoot() {
       mode,
       catalogs
     });
-  }, [initialSheet, targetLevel, archetypeId, customPriority, strategy, mode, catalogs]);
+  }, [initialSheet, targetLevel, archetypeId, customPriority, strategy, mode, catalogs, fromSave, activeSave]);
 
   const steps = simulation?.steps || [];
   const levelCap = simulation?.levelCap || initialSheet?.levelCap || 60;
@@ -181,6 +190,35 @@ export default function LevelSimulatorRoot() {
           role="status"
         >
           {toastMessage}
+        </div>
+      )}
+
+      {/* A loaded save: plan from it or from the build, and say where its mods differ */}
+      {activeSave?.sheet && (
+        <div className="level-save-start">
+          <SaveImportNotice />
+          <div className="flex flex-wrap items-center gap-2 text-xs font-serif text-fg-5">
+            <span>Plan from:</span>
+            <button
+              type="button"
+              className={`mw-btn px-3 py-1 font-bold ${startFrom === "save" ? "active ring-1 ring-accent" : ""}`}
+              onClick={() => { setStartFrom("save"); setStepIndex(0); }}
+            >
+              The save (level {activeSave.sheet.level})
+            </button>
+            <button
+              type="button"
+              className={`mw-btn px-3 py-1 font-bold ${startFrom === "build" ? "active ring-1 ring-accent" : ""}`}
+              onClick={() => { setStartFrom("build"); setStepIndex(0); }}
+            >
+              The build (level 1)
+            </button>
+            {fromSave && (activeSave.rules?.differences?.length > 0 || activeSave.rules?.unchecked?.length > 0) && (
+              <span className="text-fg-14">
+                Progression follows Morrowind's rules; this save's mods may level differently.
+              </span>
+            )}
+          </div>
         </div>
       )}
 

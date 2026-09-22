@@ -5,6 +5,7 @@ import PremadeBrowser from "./premade-browser";
 import GearAdvisor from "./gear-advisor";
 import LocalCharactersPanel from "./local-characters-panel";
 import EquipmentStudioRoot from "../equipment-studio/equipment-studio-root";
+import SaveImportNotice from "../character-vault/save-import-notice";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 
@@ -17,7 +18,8 @@ export default function CharacterBuilderRoot() {
     updateField,
     swapSkill,
     selectClassPreset,
-    selectPremade
+    selectPremade,
+    activeSave
   } = useActiveCharacter();
   const [activeTab, setActiveTab] = useState("builder"); // "builder" | "equipment" | "premade"
   const [mobileTab, setMobileTab] = useState("config"); // "config" | "sheet" (screens < 1024px)
@@ -74,6 +76,9 @@ export default function CharacterBuilderRoot() {
 
   return (
     <div className="character-builder-root w-full mx-auto space-y-6">
+      {/* A loaded .omwsave, and whatever it could not carry across */}
+      <SaveImportNotice />
+
       {/* Top Mode Selectors: 3-Way CRPG Studio Bar */}
       <div className="mode-bar-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
@@ -146,9 +151,12 @@ export default function CharacterBuilderRoot() {
         />
       ) : activeTab === "equipment" ? (
         <EquipmentStudioRoot
+          key={activeSave?.token ?? "build"}
           character={build}
-          skills={sheet?.skills || {}}
-          attributes={sheet?.attrs || {}}
+          // A loaded save is the character wearing this gear: its real skills and
+          // attributes decide armour rating and carrying capacity, not level-1 values.
+          skills={activeSave?.sheet?.skills || sheet?.skills || {}}
+          attributes={activeSave?.sheet?.attrs || sheet?.attrs || {}}
           initialLoadouts={build.loadouts}
           onLoadoutsChange={(newLoadouts) => updateField("loadouts", newLoadouts)}
         />

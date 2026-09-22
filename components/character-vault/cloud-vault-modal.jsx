@@ -2,14 +2,16 @@
 import { useState, useRef, useMemo } from "react";
 import { useCloudVault } from "./use-cloud-vault";
 import CloudVaultCard from "./cloud-vault-card";
+import OpenSavePanel from "./open-save-panel";
 
 export default function CloudVaultModal({
   activeBuild,
   onApplyBuild,
+  onApplySave,
   isOpen: propIsOpen,
   onClose: propOnClose,
 }) {
-  const vault = useCloudVault({ activeBuild, onApplyBuild });
+  const vault = useCloudVault({ activeBuild, onApplyBuild, onApplySave });
   const isOpen = propIsOpen !== undefined ? propIsOpen : vault.isOpen;
   const onClose = propOnClose || vault.closeModal;
 
@@ -133,6 +135,9 @@ export default function CloudVaultModal({
 
         {/* Body Container (Scrollable) */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          {/* Open a save locally: needs no account, so it sits above the sign-in split */}
+          <OpenSavePanel vault={vault} />
+
           {/* Sign-In CTA (if signed out) */}
           {!vault.signedIn ? (
             <div className="bg-surface-2 border border-line-7 p-5 space-y-3 mw-groove-panel text-center sm:text-left">
