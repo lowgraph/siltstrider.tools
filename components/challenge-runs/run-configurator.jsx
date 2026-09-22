@@ -11,6 +11,8 @@ export default function RunConfigurator({
   onObjectiveCountChange,
   allowedBands,
   onToggleBand,
+  usingPreferred = true,
+  onRestorePreferred,
   locks,
   onToggleLock,
   character,
@@ -41,6 +43,20 @@ export default function RunConfigurator({
           Rolls character identity, victory condition, and gameplay modifiers based on chosen settings.
         </p>
       </div>
+
+      {/* Preferred settings: remembered on this device; a loaded seed's are temporary */}
+      <p className="text-[11px] text-fg-11 font-serif m-0" id="cfg-preferred-note">
+        {usingPreferred ? (
+          "Your settings are remembered on this device for your next run."
+        ) : (
+          <>
+            These settings came with a loaded seed.{" "}
+            <button type="button" className="underline text-accent font-bold" onClick={onRestorePreferred}>
+              Back to my settings
+            </button>
+          </>
+        )}
+      </p>
 
       {/* Difficulty Presets Strip */}
       <div className="border-t border-line-11 pt-4">

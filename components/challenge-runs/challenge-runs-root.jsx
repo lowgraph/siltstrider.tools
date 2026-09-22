@@ -17,11 +17,12 @@ export default function ChallengeRunsRoot() {
 
   // The run, its locks and the roll settings live in ChallengeRunProvider, above the
   // views, so they survive a trip to the Build Optimizer and back.
-  const { run, setRun, locks, setLocks, settings, updateSettings } = useChallengeRun();
+  const { run, setRun, locks, setLocks, settings, updateSettings, usingPreferred, restorePreferred } = useChallengeRun();
   const { preset, restrictionCount, objectiveCount, allowedBands } = settings;
   const setPreset = useCallback((id) => updateSettings({ preset: id }), [updateSettings]);
-  const setRestrictionCount = useCallback((value) => updateSettings({ restrictionCount: value }), [updateSettings]);
-  const setObjectiveCount = useCallback((value) => updateSettings({ objectiveCount: value }), [updateSettings]);
+  // A count picked by hand no longer matches a named preset.
+  const setRestrictionCount = useCallback((value) => updateSettings({ restrictionCount: value, preset: "custom" }), [updateSettings]);
+  const setObjectiveCount = useCallback((value) => updateSettings({ objectiveCount: value, preset: "custom" }), [updateSettings]);
   const setAllowedBands = useCallback(
     (next) => updateSettings((prev) => ({ allowedBands: typeof next === "function" ? next(prev.allowedBands) : next })),
     [updateSettings]
@@ -53,50 +54,25 @@ export default function ChallengeRunsRoot() {
   const handleSelectPreset = useCallback((presetId) => {
     const p = DIFFICULTY_PRESETS[presetId];
     if (!p) return;
-    setPreset(p.id);
-    if (p.id !== "custom") {
-      setRestrictionCount(String(p.restrictionsCount));
-      setObjectiveCount(String(p.objectivesCount));
-      setAllowedBands({ ...p.bands });
-
-      // Sync to legacy hidden checkboxes if present
-      if (typeof document !== "undefined") {
-        const easyEl = document.getElementById("tog-easy");
-        const medEl = document.getElementById("tog-medium");
-        const hardEl = document.getElementById("tog-hard");
-        const grindEl = document.getElementById("tog-grind");
-        const countEl = document.getElementById("count");
-        const objCountEl = document.getElementById("obj-count");
-        if (easyEl) easyEl.checked = p.bands.Easy;
-        if (medEl) medEl.checked = p.bands.Medium;
-        if (hardEl) hardEl.checked = p.bands.Hard;
-        if (grindEl) grindEl.checked = p.bands.Grind;
-        if (countEl) countEl.value = String(p.restrictionsCount);
-        if (objCountEl) objCountEl.value = String(p.objectivesCount);
-      }
+    if (p.id === "custom") {
+      setPreset(p.id);
+    } else {
+      updateSettings({
+        preset: p.id,
+        restrictionCount: String(p.restrictionsCount),
+        objectiveCount: String(p.objectivesCount),
+        allowedBands: { ...p.bands }
+      });
     }
-  }, [setPreset, setRestrictionCount, setObjectiveCount, setAllowedBands]);
+  }, [setPreset, updateSettings]);
 
   const handleToggleBand = useCallback((bandId) => {
     setPreset("custom");
-    setAllowedBands((prev) => {
-      const next = { ...prev, [bandId]: !prev[bandId] };
-      const el = document.getElementById(`tog-${bandId.toLowerCase()}`);
-      if (el) el.checked = next[bandId];
-      return next;
-    });
+    setAllowedBands((prev) => ({ ...prev, [bandId]: !prev[bandId] }));
   }, [setPreset, setAllowedBands]);
 
   const handleToggleLock = useCallback((slotKey) => {
-    setLocks((prev) => {
-      const next = { ...prev, [slotKey]: !prev[slotKey] };
-      if (typeof window !== "undefined" && typeof window.setLock === "function") {
-        try {
-          window.setLock(slotKey, next[slotKey]);
-        } catch (e) {}
-      }
-      return next;
-    });
+    setLocks((prev) => ({ ...prev, [slotKey]: !prev[slotKey] }));
   }, [setLocks]);
 
   // Roll a whole run from a seed. Unlocked cards come from the seed alone, so the seed
@@ -148,12 +124,13 @@ export default function ChallengeRunsRoot() {
           (p) => p.id !== "custom" && p.restrictionsCount === s.restrictionCount && p.objectivesCount === s.objectiveCount &&
             Object.keys(p.bands).every((b) => Boolean(p.bands[b]) === Boolean(s.allowedBands[b]))
         );
+        // For this run only: the player's preferred settings stay remembered.
         updateSettings({
           preset: match ? match.id : "custom",
           allowedBands: { ...s.allowedBands },
           restrictionCount: String(s.restrictionCount),
           objectiveCount: String(s.objectiveCount)
-        });
+        }, { preferred: false });
       }
       setLocks((prev) => Object.fromEntries(Object.keys(prev).map((k) => [k, false])));
       if (parsed.profile !== (shell.profile || "vanilla") && typeof shell.setProfile === "function") {
@@ -365,6 +342,8 @@ export default function ChallengeRunsRoot() {
             onObjectiveCountChange={setObjectiveCount}
             allowedBands={allowedBands}
             onToggleBand={handleToggleBand}
+            usingPreferred={usingPreferred}
+            onRestorePreferred={restorePreferred}
             locks={locks}
             onToggleLock={handleToggleLock}
             character={run}

@@ -9,9 +9,15 @@ import { decodeShareHash, encodeShareHash } from "../lib/permalink-codec.mjs";
  * Challenge Runs page (to open the rolled character in the Build Optimizer, say) and
  * coming back finds the same run. The run and its locks are also kept in this browser,
  * so a reload does not lose them, and a shared link (#challenge&run=...) opens its run.
+ *
+ * The roll settings the player picks (preset, difficulty bands, counts) are their
+ * preferred run and are remembered too. Settings a loaded seed brings are used for that
+ * run without replacing the preferred ones.
  */
 
 export const RUN_STORAGE_KEY = "silt-challenge-run";
+export const SETTINGS_STORAGE_KEY = "silt-challenge-settings";
+const COUNTS = ["random", "1", "2", "3", "4", "5"];
 
 const EMPTY_LOCKS = Object.freeze({ race: false, cls: false, sign: false, major: false, rest: false, obj: false });
 
@@ -47,6 +53,26 @@ export function readStoredRun(store = storage()) {
   }
 }
 
+/** The remembered preferred settings, or null when there are none or they are unreadable. */
+export function readStoredSettings(store = storage()) {
+  try {
+    const saved = JSON.parse(store?.getItem(SETTINGS_STORAGE_KEY) || "null");
+    if (!saved || typeof saved !== "object") return null;
+    const fallback = defaultSettings();
+    return {
+      preset: Object.hasOwn(DIFFICULTY_PRESETS, saved.preset) ? saved.preset : "custom",
+      restrictionCount: COUNTS.includes(String(saved.restrictionCount)) ? String(saved.restrictionCount) : fallback.restrictionCount,
+      objectiveCount: COUNTS.includes(String(saved.objectiveCount)) ? String(saved.objectiveCount) : fallback.objectiveCount,
+      allowedBands: Object.fromEntries(Object.keys(fallback.allowedBands).map((b) => [b, Boolean(saved.allowedBands?.[b])]))
+    };
+  } catch {
+    return null;
+  }
+}
+
+const sameSettings = (a, b) => Boolean(a && b) && a.preset === b.preset && a.restrictionCount === b.restrictionCount &&
+  a.objectiveCount === b.objectiveCount && Object.keys(a.allowedBands).every((k) => Boolean(a.allowedBands[k]) === Boolean(b.allowedBands?.[k]));
+
 function writeStoredRun(run, locks, store = storage()) {
   try {
     store?.setItem(RUN_STORAGE_KEY, JSON.stringify({ run, locks }));
@@ -73,6 +99,8 @@ function useChallengeRunState({ persist }) {
   const [run, setRun] = useState(createEmptyRun);
   const [locks, setLocks] = useState(() => ({ ...EMPTY_LOCKS }));
   const [settings, setSettings] = useState(defaultSettings);
+  const [preferred, setPreferred] = useState(defaultSettings);
+  const remember = useRef(false);
   const restored = useRef(!persist);
 
   // Read after mount: the server render has no storage, and hydration must match it.
@@ -93,6 +121,11 @@ function useChallengeRunState({ persist }) {
         setLocks(saved.locks);
       }
     }
+    const savedSettings = readStoredSettings();
+    if (savedSettings) {
+      setSettings(savedSettings);
+      setPreferred(savedSettings);
+    }
     restored.current = true;
     // A link pasted into an open tab changes only the hash.
     window.addEventListener("hashchange", openLink);
@@ -103,13 +136,29 @@ function useChallengeRunState({ persist }) {
     if (persist && restored.current) writeStoredRun(run, locks);
   }, [persist, run, locks]);
 
-  const updateSettings = useCallback((patch) => {
+  // The player's own choices become the preferred settings; a seed's do not.
+  const updateSettings = useCallback((patch, { preferred: isPreferred = true } = {}) => {
+    remember.current = isPreferred;
     setSettings((prev) => ({ ...prev, ...(typeof patch === "function" ? patch(prev) : patch) }));
   }, []);
 
+  useEffect(() => {
+    if (!remember.current) return;
+    remember.current = false;
+    setPreferred(settings);
+    if (persist) {
+      try {
+        storage()?.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+      } catch {}
+    }
+  }, [persist, settings]);
+
+  const restorePreferred = useCallback(() => setSettings(preferred), [preferred]);
+  const usingPreferred = sameSettings(settings, preferred);
+
   return useMemo(
-    () => ({ run, setRun, locks, setLocks, settings, updateSettings }),
-    [run, locks, settings, updateSettings]
+    () => ({ run, setRun, locks, setLocks, settings, updateSettings, usingPreferred, restorePreferred }),
+    [run, locks, settings, updateSettings, usingPreferred, restorePreferred]
   );
 }
 

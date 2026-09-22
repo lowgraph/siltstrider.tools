@@ -584,6 +584,69 @@ test("Challenge Runs: a character sent to the Build Optimizer can be sent back, 
   }
 });
 
+test("Challenge Runs: your settings are remembered; a loaded seed's are only for its run", async () => {
+  const dom = setupDom("#challenge");
+  const container = dom.window.document.getElementById("root");
+  let root = createRoot(container);
+  const doc = dom.window.document;
+  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
+  const button = (text) => [...doc.querySelectorAll("main button")].find((b) => b.textContent.trim() === text);
+  const active = () => [...doc.querySelectorAll(".run-configurator button")].filter((b) => b.className.includes("active")).map((b) => b.textContent.trim());
+  const reload = async () => {
+    await act(async () => root.unmount());
+    root = createRoot(container);
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+  };
+  const pick = async (id, value) => {
+    const select = doc.getElementById(id);
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(dom.window.HTMLSelectElement.prototype, "value").set.call(select, value);
+      select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+    });
+  };
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+    await act(async () => button("Hardcore").click());
+    await pick("cfg-obj-count", "5");
+    await reload();
+    assert.equal(doc.getElementById("cfg-obj-count").value, "5", "the count survives a reload");
+    assert.equal(doc.getElementById("cfg-rest-count").value, "4", "so do the Hardcore settings");
+    assert.deepEqual(active(), ["Custom"], "a hand-picked count is Custom");
+    assert.match(doc.getElementById("cfg-preferred-note").textContent, /remembered on this device/);
+
+    const input = doc.getElementById("challenge-seed-input");
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value").set.call(input, "ABCDE-VANILLA-E-R1O1");
+      input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    });
+    await act(async () => [...input.form.querySelectorAll("button")].find((b) => b.textContent.trim() === "Load").click());
+    await settle();
+    assert.equal(doc.getElementById("cfg-rest-count").value, "1", "the seed's settings roll its run");
+    assert.match(doc.getElementById("cfg-preferred-note").textContent, /came with a loaded seed/);
+
+    await reload();
+    assert.equal(doc.getElementById("cfg-rest-count").value, "4", "but the remembered ones are still yours");
+    assert.equal(doc.getElementById("cfg-obj-count").value, "5");
+
+    await act(async () => button("Standard").click());
+    await pick("cfg-rest-count", "2");
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value").set.call(input.isConnected ? input : doc.getElementById("challenge-seed-input"), "ABCDE-VANILLA-E-R1O1");
+      doc.getElementById("challenge-seed-input").dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    });
+    await act(async () => [...doc.getElementById("challenge-seed-input").form.querySelectorAll("button")].find((b) => b.textContent.trim() === "Load").click());
+    await settle();
+    await act(async () => button("Back to my settings").click());
+    assert.equal(doc.getElementById("cfg-rest-count").value, "2", "Back to my settings restores them");
+    assert.match(doc.getElementById("cfg-preferred-note").textContent, /remembered on this device/);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
   const dom = setupDom("#challenge");
   const container = dom.window.document.getElementById("root");
