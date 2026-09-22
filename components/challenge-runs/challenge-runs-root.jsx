@@ -241,6 +241,9 @@ export default function ChallengeRunsRoot() {
       clearSave();
     }
 
+    // The builder offers to send the character back while this flag is set.
+    setRun((prev) => ({ ...prev, sentToBuilder: true }));
+
     if (typeof setBuild === "function") {
       setBuild(targetBuild);
     }
@@ -275,7 +278,7 @@ export default function ChallengeRunsRoot() {
     if (shell?.navigate) {
       shell.navigate("builder");
     }
-  }, [run, catalogs, shell, setBuild, clearSave]);
+  }, [run, catalogs, shell, setBuild, clearSave, setRun]);
 
   // Copy Summary (Markdown)
   const handleCopySummary = useCallback(() => {

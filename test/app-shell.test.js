@@ -549,6 +549,41 @@ test("Challenge Runs: Share copies a link that opens the same run, in its world"
   }
 });
 
+test("Challenge Runs: a character sent to the Build Optimizer can be sent back, with its changes", async () => {
+  const dom = setupDom("#challenge");
+  const root = createRoot(dom.window.document.getElementById("root"));
+  const doc = dom.window.document;
+  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
+  const button = (text) => [...doc.querySelectorAll("main button")].find((b) => b.textContent.trim() === text);
+  const restrictions = () => [...doc.querySelectorAll(".restrictions-tablet li")].map((li) => li.textContent);
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    assert.equal(doc.querySelector(".challenge-handoff"), null);
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    const identity = doc.querySelector(".character-overview-card h3").textContent;
+    const rolledRests = restrictions();
+    const gender = /Female/.test(identity) ? "Female" : "Male";
+    const other = gender === "Female" ? "Male" : "Female";
+
+    await act(async () => doc.getElementById("react-btn-to-optimizer").click());
+    await settle();
+    assert.match(dom.window.location.hash, /^#builder/);
+    assert.ok(doc.querySelector(".challenge-handoff"), "the builder offers to send it back");
+
+    await act(async () => button(other).click());
+    await act(async () => button("Send build back to the challenge run").click());
+    await settle();
+    assert.match(dom.window.location.hash, /^#challenge/);
+    const back = doc.querySelector(".character-overview-card h3").textContent;
+    assert.equal(back, identity.replace(gender, other), "the change came back with it");
+    assert.deepEqual(restrictions(), rolledRests, "objectives and restrictions stay");
+    assert.match(doc.getElementById("challenge-seed-note").textContent, /seed alone rolls a different run/);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
   const dom = setupDom("#challenge");
   const container = dom.window.document.getElementById("root");
