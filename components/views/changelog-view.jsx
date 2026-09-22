@@ -38,10 +38,10 @@ export default function ChangelogView() {
               <strong className="text-fg-2">Send to Build Optimizer Fix:</strong> Rewired the Challenge Runs &quot;Send to Build Optimizer&quot; bridge to write through CharacterContext, fixing the broken handoff after the Phase 13 legacy cleanup.
             </li>
             <li>
-              <strong className="text-fg-2">OpenMW .omwsave Import:</strong> Import your OpenMW save files directly into the Cloud Vault — the parser extracts race, class, birthsign, skills, and attributes from the binary ESS/SAVE format.
+              <strong className="text-fg-2">Open an OpenMW Save:</strong> Open a <code className="text-accent">.omwsave</code> from the Cloud Vault without signing in; it is read in your browser and never uploaded. The builder takes over the character (custom classes included) and switches to the save&apos;s game profile, and anything the save&apos;s mods add that Silt Strider does not know is listed rather than guessed.
             </li>
             <li>
-              <strong className="text-fg-2">Cloud Vault Improvements:</strong> Enhanced multi-save management, compact save codec, and smoother load/save flows across all workstations.
+              <strong className="text-fg-2">Your Save Across the Tools:</strong> The Equipment Studio gets a &quot;Worn by&quot; loadout with the character&apos;s gear and real stats, the Level Simulator can plan from the save&apos;s level, and the Journal shows its factions and quests. Cloud saves now keep gender, specialization and favoured attributes.
             </li>
           </ul>
         </section>

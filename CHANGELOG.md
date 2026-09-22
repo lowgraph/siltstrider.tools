@@ -2,6 +2,18 @@
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
+## Open a Save — 2026-09-22
+
+### Highlights
+- **Open an OpenMW save without signing in:** the vault's new "Open a Save in Silt Strider" input reads a `.omwsave` in the browser; nothing is uploaded.
+- **The builder takes the character over:** name, race, gender, birthsign, class (custom classes included, with specialization and favoured attributes) and the matching game profile (Vanilla, TR or TR + ARCE, chosen from the save's content files).
+- **Everything the save could not carry is listed, not guessed:** a notice names mod classes, races, signs and items the catalogs do not know, and, for level-1 saves, every value where the save's mods differ from Morrowind's rules.
+- **Equipment Studio:** a "Worn by <name>" loadout with the gear the character is wearing, rated with their real skills and attributes.
+- **Level Simulator:** plan from the save's level and stats, or from the build at level 1.
+- **Journal:** factions, ranks and quest progress come from the save.
+- **Cloud saves** keep gender, specialization and favoured attributes; older saved payloads still load.
+- 356 site tests pass.
+
 ## [Phase 13] Legacy Cleanup & Architecture Archival — 2026-09-21
 
 ### Highlights
