@@ -1,88 +1,357 @@
-# Three-agent architecture
+Silt Strider Tools
 
-The Silt Strider project is developed collaboratively by three agents:
-- **Codex (Site Agent):** Implements the Next.js 16 App Router web application in this repository.
-- **Claude (Data Agent):** Builds the game data pipelines, extraction databases, and app bundles in `lowgraph/openmw-decompiler`.
-- **Antigravity (UI Transformation Lead):** Guides UI/UX architecture and CRPG fidelity per [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md).
+A data-driven companion application for The Elder Scrolls III: Morrowind and Tamriel Rebuilt.
 
-See [COORDINATION.md](COORDINATION.md) and [AGENTS.md](AGENTS.md) for governance and collaboration rules.
+Silt Strider turns complex game data into interactive planning and decision tools for character builds, equipment, magic, progression, and challenge runs.
 
-# Two repositories
+Live application: "siltstrider.tools" (https://siltstrider.tools/)
+Data pipeline: "lowgraph/openmw-decompiler" (https://github.com/lowgraph/openmw-decompiler)
 
-The game data this app serves is built in a separate repository, and the bundle
-under `public/game-data/` is the only interface between them. The frontend transformation
-roadmap is documented in [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md). Read
-[COORDINATION.md](COORDINATION.md) before changing anything that touches it:
-`lib/bundle-loader.mjs`, `scripts/stage-game-data.mjs`, or the contract those two
-hold up. `test/bundle-contract.test.js` pins which bundle changes must keep
-loading and which must fail.
+---
 
-Do not edit the data repository from here, and do not open a SQLite database or
-run an extractor in this one.
+Overview
 
-# Next.js migration checkpoint
+Silt Strider began as a standalone browser tool and has grown into a larger data-driven application with a dedicated extraction pipeline, versioned data contracts, persistent character state, authentication groundwork, and an incremental migration to Next.js and React.
 
-The working app now has a Next.js App Router entrypoint. Run `npm run dev` and
-open http://localhost:8765/. Run `npm run build` for the production build check.
-See [MIGRATION.md](MIGRATION.md) for the compatibility boundary and next steps.
-The original `index.html` remains the regression reference; `npm run dev:legacy`
-starts its former preview. Stop either server before starting the other.
+The application supports multiple game-data profiles, including:
 
-The notes below describe the original implementation and its auth behavior.
+- Vanilla Morrowind
+- Tamriel Rebuilt
+- Tamriel Rebuilt + ARCE
 
-# Silt Strider
+Its tools share structured character and game data rather than operating as unrelated calculators.
 
-Morrowind Build Planner & Challenge Run Generator — a single self-contained
-`index.html` (no build step; optional account controls load Clerk at runtime).
+The larger system is split across two repositories:
 
-## Running it
+OpenMW / Morrowind / mod data
+             │
+             ▼
+   openmw-decompiler
+ extraction + normalization
+ policy + derived datasets
+ bundle generation
+             │
+             │ versioned, validated bundle
+             ▼
+     siltstrider.tools
+ character tools + calculators
+ recommendations + persistence
+             │
+             ▼
+          Player
 
-Just open [index.html](index.html) in a browser.
+The browser application never reads the extraction databases directly. Its only data interface is the published application bundle.
 
-### Local authentication preview
+---
 
-Use Node 22.11 or later and run `npm run dev`, then open
-`http://localhost:8765/`. The preview loads ignored `.env.local` through Node;
-only `CLERK_PUBLISHABLE_KEY` is inserted into the page. It serves only the HTML
-page, never environment files or repository contents. Without a configured
-public key, the standalone tools and local saves continue to work offline.
+What the application does
 
-Clerk application `app_3JT2Lq5GbWQWzABTMGaOqEygOnp` is linked through the Git
-remote. The CLI could not detect this static HTML project, so the integration
-uses the official vanilla JavaScript SDK instead of scaffolding a framework.
-Run `clerk doctor` to verify the local link. Google, Discord, and email/password
-with email verification are enabled in the development instance.
+Silt Strider combines several related tools around a shared character model.
 
-The header exposes Sign in, Sign up, and Clerk's signed-in user menu. Account
-names and credentials are handled by Clerk. Authentication never uploads local
-saves or changes canonical character state. The small `siltStriderAuth` adapter
-provides `ready()` and `getToken()` for later API integration; browser state is
-not server authorization. A future API must verify tokens and enforce ownership.
-Clerk's router callbacks handle same-document permalink returns without a hard
-navigation. This lets Clerk finish activating the session immediately; its default
-unload signal would otherwise leave the account controls stale on hash URLs.
-Other paths, query changes, and external redirects use Clerk's normal navigation.
+Current areas include:
 
-Production authentication is not configured. Development keys are restricted
-to localhost in this integration. Deployment must supply a production public
-key and configure the Clerk production instance and social providers. Never
-embed `CLERK_SECRET_KEY` in HTML or commit environment files. Cloud storage,
-backend authorization, and D1 are not implemented by this authentication setup.
+- character and build planning
+- premade and custom builds
+- challenge-run generation
+- equipment and gear recommendations
+- alchemy calculations
+- enchanting calculations
+- spellmaking calculations
+- cross-tool character-stat synchronization
+- shareable character and challenge links
+- browser-local saved characters
+- multiple game-data profiles
 
-Manual verification: open the preview, choose Sign up, complete a test signup,
-confirm that a profile icon replaces the signed-out buttons, and sign out using
-that menu. Repeat sign-in using the enabled providers. Automated tests mock the
-SDK; they do not replace these real provider-flow checks.
+The goal is not simply to reproduce game tables. The application uses normalized data and game rules to answer practical player questions such as:
 
-## Testing
+- What does this build look like at creation?
+- Which equipment fits this character and play style?
+- What can realistically be acquired under a given set of constraints?
+- How do character stats affect enchanting, spellmaking, or alchemy?
+- How can a build or challenge setup be shared and restored reliably?
 
-The app ships with its own internal self-tests (`runOptimizerTests()`,
-`regressionRankingsDiffer()`) that check the build-optimizer logic. A small
-jsdom harness in [test/site.test.js](test/site.test.js) loads `index.html`
-into a real DOM (via Node's `node:test` runner) and runs those self-tests,
-plus a couple of basic smoke checks, so regressions can be caught headlessly:
+---
 
-```bash
+Architecture
+
+Application
+
+The current application uses:
+
+- Next.js 16
+- React 19
+- Tailwind CSS 4
+- Node.js test runner
+- jsdom
+- Clerk for authentication integration
+- Cloudflare deployment infrastructure
+
+The project is undergoing an incremental migration from its original DOM-driven browser application to a React/Next.js architecture.
+
+That migration is deliberately evolutionary rather than a full rewrite. Existing behavior is preserved through regression tests while state, UI, and data access are progressively moved behind clearer boundaries.
+
+Data layer
+
+Game data is built separately in:
+
+"github.com/lowgraph/openmw-decompiler" (https://github.com/lowgraph/openmw-decompiler)
+
+The application consumes immutable releases under:
+
+public/game-data/<bundleId>/
+
+Each release is described by a manifest and selected through "current.json".
+
+The application does not read the pipeline's SQLite databases.
+
+---
+
+Versioned data contract
+
+"lib/bundle-loader.mjs" is the boundary between the data pipeline and the application.
+
+A loader pins one manifest for its lifetime so a page session cannot accidentally combine data from different releases.
+
+Before data is accepted, the loader validates:
+
+- bundle and snapshot identity
+- schema version
+- profile structure
+- catalog availability
+- asset paths
+- byte counts
+- SHA-256 hashes
+- payload identity
+- record counts
+- duplicate record keys
+- inheritance and delta relationships
+
+Tamriel Rebuilt + ARCE can inherit unchanged catalogs from the Tamriel Rebuilt profile and receive only record-level deltas for changed data.
+
+This keeps releases smaller while preserving deterministic reconstruction of the complete profile.
+
+Compatibility philosophy
+
+The producer/consumer contract intentionally distinguishes additive and breaking changes.
+
+Examples:
+
+Accepted
+────────
+extra record fields
+extra payload metadata
+extra manifest metadata
+new catalogs emitted consistently
+
+Rejected
+────────
+unsupported schema versions
+missing declared catalogs
+record-count drift
+invalid profile inheritance
+tampered payloads
+invalid deltas
+
+These behaviors are pinned by "test/bundle-contract.test.js".
+
+See:
+
+- "DATA_LOADER.md" (DATA_LOADER.md)
+- "COORDINATION.md" (COORDINATION.md)
+
+---
+
+Character state and persistence
+
+The project separates several different kinds of state instead of treating the DOM or storage as a single undifferentiated object.
+
+The canonical character format is a versioned, JSON-safe representation containing the character inputs required to reconstruct the build.
+
+Validation happens before mutation.
+
+Saved values are checked against the appropriate game-data profile before being restored.
+
+Browser-local saved characters add:
+
+- stable generated IDs
+- explicit schema versions
+- created/updated timestamps
+- validated loading
+- stale-edit detection
+- malformed-data handling
+- storage failure handling
+- cross-tab coordination through Web Locks
+
+Concurrent tabs do not blindly overwrite one another.
+
+A stale modification is rejected rather than silently replacing a newer revision.
+
+See "STATE.md" (STATE.md) for the full persistence and serialization design.
+
+---
+
+Cross-tool behavior
+
+Character data can seed calculator inputs, but synchronization is designed not to override explicit user intent.
+
+For example:
+
+1. a character's Enchant skill can initialize the enchanting calculator;
+2. the user can manually change that calculator value to model future progression;
+3. later passive character updates preserve the manual value;
+4. an explicit force-sync restores the character baseline.
+
+This distinction between automatic synchronization and deliberate user overrides is tested in "test/cross-tool.test.js".
+
+---
+
+Testing
+
+The project contains dedicated regression coverage for areas including:
+
+- bundle loading
+- producer/consumer contracts
+- character calculations
+- character catalogs
+- character UI
+- canonical state
+- local saves
+- cross-tab persistence
+- authentication
+- cross-tool synchronization
+- gear data
+- alchemy data
+- migrations
+- skill selection
+- broader application behavior
+
+Run the suite with:
+
 npm install
 npm test
-```
+
+Check the production build with:
+
+npm run build
+
+The test suite is particularly focused on failure modes and compatibility behavior rather than only happy-path rendering.
+
+---
+
+Development
+
+Install dependencies:
+
+npm install
+
+Run the Next.js development server:
+
+npm run dev
+
+Then open:
+
+http://localhost:8765/
+
+Build for production:
+
+npm run build
+
+The original browser application remains available as a regression reference:
+
+npm run dev:legacy
+
+Staging game data
+
+A completed bundle produced by the data repository can be validated and staged with:
+
+npm run data:stage -- <path-to-app-bundle>
+
+Staging validates the entire release before switching "current.json".
+
+The previous release therefore remains selected if validation fails.
+
+---
+
+Authentication and backend status
+
+Clerk integration provides the authentication boundary and token adapter used by the application.
+
+Authentication is deliberately separate from application authorization.
+
+A browser session or user ID supplied by a client is not treated as proof that a user owns a stored record.
+
+Development work under "cloudflare/" explores D1-backed persistence with queries scoped to the authenticated Clerk user and optimistic revision checks.
+
+Cloud persistence remains a separate architectural layer from browser-local saves and should not be inferred from authentication alone.
+
+See "cloudflare/README.md" (cloudflare/README.md).
+
+---
+
+Human-directed, AI-assisted development
+
+Silt Strider is built using specialized AI coding agents with explicit ownership boundaries.
+
+Current responsibilities are divided between:
+
+- Codex — application implementation
+- Claude — data extraction and pipeline implementation
+- Antigravity — UI/UX architecture and transformation specifications
+
+The development model is intentionally more structured than using one general-purpose coding agent across the entire codebase.
+
+Subsystems communicate through explicit contracts, and cross-cutting changes are validated through regression tests and staging checks.
+
+The human role centers on:
+
+- product requirements
+- problem decomposition
+- system boundaries
+- acceptance criteria
+- research and policy decisions
+- integration decisions
+- validation of generated implementations
+- release decisions
+
+See "COORDINATION.md" (COORDINATION.md) and "AGENTS.md" (AGENTS.md).
+
+---
+
+Repository boundaries
+
+This repository owns the application.
+
+It does not own raw game extraction or the source databases used to derive the published data.
+
+siltstrider.tools
+├── UI and application behavior
+├── React / Next.js integration
+├── state and persistence
+├── authentication integration
+├── browser data loader
+├── bundle contract tests
+└── deployment
+
+openmw-decompiler
+├── plugin extraction
+├── normalized SQLite models
+├── catalog generation
+├── acquisition analysis
+├── policy evaluation
+├── derived recommendations
+├── provenance and validation
+└── application bundle production
+
+The bundle is the contract between them.
+
+---
+
+Project status
+
+Silt Strider is under active development.
+
+The codebase currently combines a mature legacy runtime with an ongoing Next.js/React migration. That transitional architecture is intentional: existing calculations and application behavior remain covered by regression tests while functionality is progressively moved behind modern components and clearer state boundaries.
+
+For the extraction, analytics, and bundle-generation side of the project, see:
+
+"lowgraph/openmw-decompiler" (https://github.com/lowgraph/openmw-decompiler)
