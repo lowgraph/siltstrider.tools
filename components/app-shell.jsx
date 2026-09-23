@@ -18,7 +18,6 @@ import JournalFactionsRoot from './journal-factions/journal-factions-root';
 import EnchantingWorkstation from './calculators/enchanting/enchanting-workstation';
 import SpellmakingWorkstation from './calculators/spellmaking/spellmaking-workstation';
 import AlchemyWorkstation from './calculators/alchemy/alchemy-workstation';
-import AlchemyDataBridge from './alchemy-data-bridge';
 import TravelWorkstation from './calculators/travel/travel-workstation';
 import CloudVaultWorkstation from './character-vault/cloud-vault-workstation';
 import AboutView from './views/about-view';
@@ -140,8 +139,7 @@ function AppShellMain() {
           hidden={activeView !== 'alchemy'}
         >
           <div id="react-alchemy-hud">
-            <AlchemyDataBridge />
-            {activeView === 'alchemy' && <AlchemyWorkstation />}
+            {activeView === 'alchemy' && <AlchemyWorkstation key={shell.profile} />}
           </div>
         </section>
 

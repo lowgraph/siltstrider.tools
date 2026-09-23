@@ -116,3 +116,17 @@ Legacy tables remain compatibility fixtures/fallbacks for standalone HTML tests.
 The character-catalogs tests check calculation parity, changed source facts,
 identity mapping, profile failures, and asynchronous restores using synthetic
 records. Full extractions are never run by these tests.
+
+## Native alchemy
+
+Alchemy loads Ingredients, Apparatus, MagicEffects, GameSettings, Attributes, Skills,
+and EffectRules on demand. Engine flags and base costs travel with ingredient effects;
+attribute/skill targets participate in matching. Missing data produces an error/retry
+state, not a static ingredient fallback. Switching profiles clears the workstation.
+The old AlchemyDataBridge is unmounted; the React workstation owns loading.
+
+Potion strength, apparatus modifiers, rounding, and value follow
+https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/apps/openmw/mwmechanics/alchemy.cpp
+with the selected profile's four potion settings. Unknown rules block calculation;
+no-magnitude/no-duration effects omit those fields in the preview. Synthetic adapter,
+math, and native React checks live in `test/alchemy-live.test.js`.

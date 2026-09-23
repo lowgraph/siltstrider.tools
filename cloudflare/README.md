@@ -1,3 +1,5 @@
+> **Historical setup notes:** The development-only description below predates the current Cloud Save Vault. The repository now includes `worker.mjs`, `routes/saves.mjs`, `routes/entitlements.mjs`, and `migrations/0002_cloud_save_vault.sql`. Consult those files and `wrangler.jsonc` for the implemented routes and bindings. Their presence does not verify deployed configuration or live account flows.
+
 # Development D1 and protected route
 
 Created database: `siltstrider-characters-dev`.

@@ -1,88 +1,144 @@
-# Three-agent architecture
+# Silt Strider Tools
 
-The Silt Strider project is developed collaboratively by three agents:
-- **Codex (Site Agent):** Implements the Next.js 16 App Router web application in this repository.
-- **Claude (Data Agent):** Builds the game data pipelines, extraction databases, and app bundles in `lowgraph/openmw-decompiler`.
-- **Antigravity (UI Transformation Lead):** Guides UI/UX architecture and CRPG fidelity per [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md).
+A data-driven companion for **Morrowind and Tamriel Rebuilt**: plan characters,
+compare equipment, calculate potions and spells, and explore progression using
+structured game data.
 
-See [COORDINATION.md](COORDINATION.md) and [AGENTS.md](AGENTS.md) for governance and collaboration rules.
+[Live application](https://siltstrider.tools/) ·
+[Engineering case study](docs/CASE_STUDY.md) ·
+[Five-minute demo](docs/DEMO.md) ·
+[Data pipeline](https://github.com/lowgraph/openmw-decompiler)
 
-# Two repositories
+## Project and contribution
 
-The game data this app serves is built in a separate repository, and the bundle
-under `public/game-data/` is the only interface between them. The frontend transformation
-roadmap is documented in [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md). Read
-[COORDINATION.md](COORDINATION.md) before changing anything that touches it:
-`lib/bundle-loader.mjs`, `scripts/stage-game-data.mjs`, or the contract those two
-hold up. `test/bundle-contract.test.js` pins which bundle changes must keep
-loading and which must fail.
+This is a human-directed, AI-assisted portfolio project. My work centers on product
+requirements, decomposition, data and application boundaries, game research,
+recommendation policies, acceptance criteria, hands-on validation, and release
+decisions. Specialized coding agents contributed implementation: Codex on the
+application, Claude on the pipeline, and Antigravity on UI architecture.
 
-Do not edit the data repository from here, and do not open a SQLite database or
-run an extractor in this one.
+The code is not presented as entirely hand-written. The case study explains the
+choices, defects, and validation behind it, with links to inspectable implementation.
 
-# Next.js migration checkpoint
+## What you can explore
 
-The working app now has a Next.js App Router entrypoint. Run `npm run dev` and
-open http://localhost:8765/. Run `npm run build` for the production build check.
-See [MIGRATION.md](MIGRATION.md) for the compatibility boundary and next steps.
-The original `index.html` remains the regression reference; `npm run dev:legacy`
-starts its former preview. Stop either server before starting the other.
+- **Character planning:** premade and custom builds, skill and attribute calculations,
+  early-game recommendations, and late-game best-in-slot comparisons.
+- **Shared tools:** alchemy, enchanting, spellmaking, travel, a level simulator, and
+  faction progression requirements.
+- **Existing characters:** parse an OpenMW `.omwsave` in the browser and use its
+  observations in character, equipment, progression, and journal views.
+- **Repeatable challenges:** seeded runs, saved preferences, and shareable links.
+- **Three profiles:** Vanilla, Tamriel Rebuilt, and TR + ARCE. The TR profile includes
+  Tamriel_Data, Cyr_Main, and Sky_Main.
 
-The notes below describe the original implementation and its auth behavior.
+Try the public site first; a game installation is not needed to browse its tools.
+A save file is optional. Cloud account features depend on deployed service configuration.
 
-# Silt Strider
+## Architecture
 
-Morrowind Build Planner & Challenge Run Generator — a single self-contained
-`index.html` (no build step; optional account controls load Clerk at runtime).
-
-## Running it
-
-Just open [index.html](index.html) in a browser.
-
-### Local authentication preview
-
-Use Node 22.11 or later and run `npm run dev`, then open
-`http://localhost:8765/`. The preview loads ignored `.env.local` through Node;
-only `CLERK_PUBLISHABLE_KEY` is inserted into the page. It serves only the HTML
-page, never environment files or repository contents. Without a configured
-public key, the standalone tools and local saves continue to work offline.
-
-Clerk application `app_3JT2Lq5GbWQWzABTMGaOqEygOnp` is linked through the Git
-remote. The CLI could not detect this static HTML project, so the integration
-uses the official vanilla JavaScript SDK instead of scaffolding a framework.
-Run `clerk doctor` to verify the local link. Google, Discord, and email/password
-with email verification are enabled in the development instance.
-
-The header exposes Sign in, Sign up, and Clerk's signed-in user menu. Account
-names and credentials are handled by Clerk. Authentication never uploads local
-saves or changes canonical character state. The small `siltStriderAuth` adapter
-provides `ready()` and `getToken()` for later API integration; browser state is
-not server authorization. A future API must verify tokens and enforce ownership.
-Clerk's router callbacks handle same-document permalink returns without a hard
-navigation. This lets Clerk finish activating the session immediately; its default
-unload signal would otherwise leave the account controls stale on hash URLs.
-Other paths, query changes, and external redirects use Clerk's normal navigation.
-
-Production authentication is not configured. Development keys are restricted
-to localhost in this integration. Deployment must supply a production public
-key and configure the Clerk production instance and social providers. Never
-embed `CLERK_SECRET_KEY` in HTML or commit environment files. Cloud storage,
-backend authorization, and D1 are not implemented by this authentication setup.
-
-Manual verification: open the preview, choose Sign up, complete a test signup,
-confirm that a profile icon replaces the signed-out buttons, and sign out using
-that menu. Repeat sign-in using the enabled providers. Automated tests mock the
-SDK; they do not replace these real provider-flow checks.
-
-## Testing
-
-The app ships with its own internal self-tests (`runOptimizerTests()`,
-`regressionRankingsDiffer()`) that check the build-optimizer logic. A small
-jsdom harness in [test/site.test.js](test/site.test.js) loads `index.html`
-into a real DOM (via Node's `node:test` runner) and runs those self-tests,
-plus a couple of basic smoke checks, so regressions can be caught headlessly:
-
-```bash
-npm install
-npm test
+```mermaid
+flowchart LR
+    A[Game and mod files] --> B[Python extraction and normalized SQLite]
+    B --> C[Evidence, policies, and derived catalogs]
+    C --> D[Versioned JSON bundle]
+    D --> E[Hash-verifying browser loader]
+    E --> F[React tools and shared character state]
+    F --> G[Local saves and share links]
+    F --> H[Clerk-authenticated Worker and D1 API]
 ```
+
+The [pipeline repository](https://github.com/lowgraph/openmw-decompiler) owns extraction
+and analytical datasets. This repository owns the web application. The browser reads
+published catalogs, never extraction databases.
+
+| Layer | Implementation |
+| --- | --- |
+| Application | Next.js 16 App Router, React 19, Tailwind CSS 4 |
+| Data consumption | On-demand catalogs, SHA-256 validation, pinned release, profile inheritance/deltas |
+| State | Shared character context, validated local saves, permalink codecs |
+| Backend | Cloudflare Worker routes, D1 schema, Clerk token verification |
+| Verification | Node test runner, jsdom, synthetic fixtures, contract tests |
+
+The current entry point is a **native React AppShell**. The original HTML and
+archived adapters remain regression references; production no longer depends on
+extracting that HTML before development or builds.
+
+## Engineering evidence
+
+| Decision or problem | Inspect the implementation |
+| --- | --- |
+| Prevent mixed or tampered data releases | [Bundle loader](lib/bundle-loader.mjs), [contract tests](test/bundle-contract.test.js) |
+| Keep derived recommendations traceable to policy and data | [Data contract](DATA_LOADER.md), [pipeline](https://github.com/lowgraph/openmw-decompiler) |
+| Preserve character inputs across storage and links | [State design](STATE.md), [permalink codec](lib/permalink-codec.mjs) |
+| Turn binary saves into usable observations | [Save parser](lib/omwsave-parser.mjs), [import adapter](lib/omwsave-import.mjs) |
+| Catch a real catalog-to-calculator integration defect | [Alchemy regression tests](test/alchemy-live.test.js), [case study](docs/CASE_STUDY.md#case-study-alchemy-integration) |
+| Separate login from record ownership | [Worker authentication](cloudflare/auth.mjs), [save routes](cloudflare/routes/saves.mjs) |
+
+## Run locally
+
+Use Node.js **22.11 or newer** and npm.
+
+```powershell
+npm ci
+npm run dev
+```
+
+Open <http://localhost:8765/>. Generated game bundles are deliberately excluded from
+Git. A fresh clone can run code and synthetic tests, but catalog-backed tools need
+a staged bundle to function. It is not a complete offline demo out of the box.
+
+If you have an already-built bundle from the data pipeline:
+
+```powershell
+npm run data:stage -- A:\Cache\OpenMWFoundation\app-bundle
+```
+
+Staging validates the release before changing `public/game-data/current.json`.
+See [DATA_LOADER.md](DATA_LOADER.md) for the contract and configuration. A full
+extraction requires separately installed game/mod files; it is not a frontend setup step.
+
+For optional local authentication, set `CLERK_PUBLISHABLE_KEY` in an ignored
+`.env.local`. Never put a secret key in public assets. Worker secrets and D1 bindings
+are separate backend configuration; see [backend notes](cloudflare/README.md).
+
+## Verify
+
+```powershell
+npm test
+npm run build
+```
+
+For this project's Windows workflow, set `TEMP` and `TMP` to an existing `A:\Cache`
+before running tests. Builds use `next/font/google` and may need network access
+when font assets are not cached.
+
+Most checks use synthetic fixtures. Some optionally read a locally staged bundle,
+so a fresh-clone result is not equivalent to validating a complete game-data release.
+The local checkpoint on **23 September 2026** passed **392 tests** and a production
+build after the alchemy corrections. This is a dated local result, not a CI badge
+or a claim about the currently deployed revision.
+
+## Status and limits
+
+- Native tools, save import, cloud-save routes, and codecs are implemented. Their
+  presence in source does not prove a particular production environment is configured.
+- Gear recommendations depend on published candidates and authored policy. They do
+  not simulate every possible script or guarantee every acquisition route.
+- Alchemy now consumes engine rules and profile settings; the latest corrections
+  have automated coverage. Browser visual verification and release are still pending.
+- No adoption, performance, or production-reliability metrics are claimed here.
+- The [demo guide](docs/DEMO.md) includes the checks required before presenting a release.
+
+## Further reading
+
+- [Case study and tradeoffs](docs/CASE_STUDY.md)
+- [Demo walkthrough and presentation checklist](docs/DEMO.md)
+- [Data loader contract](DATA_LOADER.md)
+- [Character state and persistence](STATE.md)
+- [Migration history](MIGRATION.md)
+- [Team coordination](COORDINATION.md)
+
+Silt Strider is an unofficial fan project, unaffiliated with Bethesda or the mod teams.
+Game and mod ownership remains with their respective creators. See the site's About
+page and bundled font notices for credits.

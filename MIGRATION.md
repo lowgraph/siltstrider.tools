@@ -1,3 +1,5 @@
+> **Historical checkpoint:** This document records the earlier DOM-to-React transition. The current entry point is `components/app-shell.jsx`; transition adapters/scripts are in `archive/legacy/`. The `predev`/`prebuild` extraction hooks are retired. Use [README.md](README.md) for current setup.
+
 # Next.js migration: compatibility checkpoint
 
 The root page now runs on standard Next.js App Router with React and Tailwind.
