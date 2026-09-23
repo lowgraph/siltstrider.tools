@@ -119,6 +119,11 @@ The local checkpoint on **23 September 2026** passed **392 tests** and a product
 build after the alchemy corrections. This is a dated local result, not a CI badge
 or a claim about the currently deployed revision.
 
+## Deployment
+
+`main` is the release branch. GitHub pushes do not automatically deploy the site.
+See the [release procedure](docs/DEPLOYMENT.md) for the manual Cloudflare workflow.
+
 ## Status and limits
 
 - Native tools, save import, cloud-save routes, and codecs are implemented. Their
