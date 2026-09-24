@@ -19,15 +19,15 @@ export default function AttributeGrid({ attrs = {}, signName = "" }) {
             }`}
             title={`${attr}: ${ATTR_TIP[attr] || ""}`}
           >
-            <div className="flex items-center gap-2 min-w-0 pr-2">
-              <span className="font-serif text-fg-2 text-sm sm:text-base font-medium truncate">{attr}</span>
+            <div className="flex flex-wrap items-center gap-x-2 min-w-0 pr-2">
+              <span className="font-serif text-fg-2 text-sm sm:text-base font-medium">{attr}</span>
               {bonusText && (
-                <span className="text-xs text-fg-8 font-mono truncate" title={bonusText}>
+                <span className="text-xs text-fg-8 font-mono" title={bonusText}>
                   {bonusText}
                 </span>
               )}
             </div>
-            <strong className="font-mono text-accent text-base sm:text-lg font-bold pl-2">
+            <strong className="shrink-0 whitespace-nowrap font-mono text-accent text-base sm:text-lg font-bold pl-2">
               {data.v}
             </strong>
           </div>
