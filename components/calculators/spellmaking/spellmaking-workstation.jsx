@@ -1,5 +1,5 @@
 "use client";
-import {allowedRanges, effectDraft} from "../../../lib/effect-editor.mjs";
+import {allowedRanges, effectDraft, selectedEffect} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
@@ -62,7 +62,7 @@ export default function SpellmakingWorkstation() {
   // Effect Stack
   const [effectsList, setEffectsList] = useState([
     {
-      effectIndex: 0,
+      effectKey: "",
       min: 10,
       max: 20,
       dur: 5,
@@ -89,35 +89,9 @@ export default function SpellmakingWorkstation() {
           school: r.school ? (r.school.charAt(0).toUpperCase() + r.school.slice(1)) : "Destruction"
         }))
         .sort((a, b) => a.n.localeCompare(b.n));
-      if (live.length > 0) return live;
+      return live;
     }
-    if (typeof window !== "undefined" && Array.isArray(window.__MW_EFFECTS) && window.__MW_EFFECTS.length > 0) {
-      return window.__MW_EFFECTS;
-    }
-    return [
-      { n: "Fire Damage", b: 5, mag: 1, dur: 1, school: "Destruction" },
-      { n: "Frost Damage", b: 5, mag: 1, dur: 1, school: "Destruction" },
-      { n: "Shock Damage", b: 7, mag: 1, dur: 1, school: "Destruction" },
-      { n: "Weakness to Fire", b: 2, mag: 1, dur: 1, school: "Destruction" },
-      { n: "Restore Health", b: 5, mag: 1, dur: 1, school: "Restoration" },
-      { n: "Restore Fatigue", b: 1, mag: 1, dur: 1, school: "Restoration" },
-      { n: "Fortify Strength", b: 1, mag: 1, dur: 1, school: "Restoration" },
-      { n: "Fortify Intelligence", b: 1, mag: 1, dur: 1, school: "Restoration" },
-      { n: "Fortify Agility", b: 1, mag: 1, dur: 1, school: "Restoration" },
-      { n: "Levitate", b: 3, mag: 1, dur: 1, school: "Alteration" },
-      { n: "Shield", b: 2, mag: 1, dur: 1, school: "Alteration" },
-      { n: "Open", b: 6, mag: 1, dur: 0, school: "Alteration" },
-      { n: "Water Walking", b: 3, mag: 0, dur: 1, school: "Alteration" },
-      { n: "Summon Ancestral Ghost", b: 7, mag: 0, dur: 1, school: "Conjuration" },
-      { n: "Summon Flame Atronach", b: 18, mag: 0, dur: 1, school: "Conjuration" },
-      { n: "Bound Longsword", b: 2, mag: 0, dur: 1, school: "Conjuration" },
-      { n: "Chameleon", b: 1, mag: 1, dur: 1, school: "Illusion" },
-      { n: "Paralyze", b: 40, mag: 0, dur: 1, school: "Illusion" },
-      { n: "Invisibility", b: 20, mag: 0, dur: 1, school: "Illusion" },
-      { n: "Telekinesis", b: 1, mag: 1, dur: 1, school: "Mysticism" },
-      { n: "Absorb Health", b: 8, mag: 1, dur: 1, school: "Mysticism" },
-      { n: "Dispel", b: 5, mag: 1, dur: 0, school: "Mysticism" }
-    ];
+    return [];
   }, [gameData.status, gameData.data]);
 
   const filteredEffectsBySchool = useMemo(() => {
@@ -143,7 +117,7 @@ export default function SpellmakingWorkstation() {
     setEffectsList((prev) => [
       ...prev,
       {
-        effectIndex: 0,
+        effectKey: "",
         min: 10,
         max: 20,
         dur: 5,
@@ -166,8 +140,8 @@ export default function SpellmakingWorkstation() {
   };
 
   const calculatedEffects = useMemo(() => {
-    return effectsList.map((row) => {
-      const effectObj = availableEffects[row.effectIndex] || availableEffects[0];
+    return effectsList.filter(row => selectedEffect(availableEffects,row.effectKey)).map((row) => {
+      const effectObj = selectedEffect(availableEffects,row.effectKey);
       return {
         ...effectDraft(row, effectObj, gameData.data?.catalogs, false),
         effect: effectObj
@@ -365,6 +339,7 @@ export default function SpellmakingWorkstation() {
                 type="button"
                 className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
                 onClick={handleAddEffect}
+                disabled={gameData.status !== "ready"}
               >
                 Add Effect
               </button>
@@ -372,8 +347,8 @@ export default function SpellmakingWorkstation() {
 
             <div className="space-y-2.5">
               {effectsList.map((draft, idx) => {
-                const row = effectDraft(draft, availableEffects[draft.effectIndex] || availableEffects[0], gameData.data?.catalogs, false);
-                const eff = availableEffects[row.effectIndex] || availableEffects[0];
+                const row = effectDraft(draft, selectedEffect(availableEffects,draft.effectKey), gameData.data?.catalogs, false);
+                const eff = selectedEffect(availableEffects,row.effectKey);
                 const showRange = true;
                 const showDuration = eff?.dur;
                 const showArea = row.range !== "self";
@@ -383,13 +358,16 @@ export default function SpellmakingWorkstation() {
                     <div className="flex items-center justify-between gap-2">
                       <select
                         className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-                        value={row.effectIndex}
-                        onChange={(e) => handleEffectChange(idx, "effectIndex", Number(e.target.value))}
+                        aria-label={`Effect ${idx+1}`}
+                        disabled={gameData.status !== "ready"}
+                        value={row.effectKey}
+                        onChange={(e) => handleEffectChange(idx, "effectKey", e.target.value)}
                       >
-                        {filteredEffectsBySchool.map((item) => {
+                        <option value="">Choose an effect</option>
+                        {availableEffects.filter(item => filteredEffectsBySchool.includes(item) || item.key === row.effectKey).map((item) => {
                           const originalIdx = availableEffects.indexOf(item);
                           return (
-                            <option key={originalIdx} value={originalIdx}>
+                            <option key={item.key} value={item.key}>
                               {item.n} ({item.school}, base {item.b})
                             </option>
                           );
@@ -413,8 +391,9 @@ export default function SpellmakingWorkstation() {
                         {(gameData.data?.catalogs?.[eff.targetsAttribute ? 'Attributes' : 'Skills'] || []).map(target => <option key={target.id} value={target.id}>{target.name}</option>)}
                       </select>
                     </label>}
+                    {!eff && row.effectKey && <p role="alert">This effect is unavailable in this profile. Choose another effect.</p>}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                      {showRange && (
+                      {eff && showRange && (
                         <div>
                           <label className="text-[10px] text-fg-13 block mb-0.5">Range</label>
                           <select
@@ -466,7 +445,7 @@ export default function SpellmakingWorkstation() {
                         </div>
                       )}
 
-                      {showArea && (
+                      {eff && showArea && (
                         <div>
                           <label className="text-[10px] text-fg-13 block mb-0.5">Area</label>
                           <input

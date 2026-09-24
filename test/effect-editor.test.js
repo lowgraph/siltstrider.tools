@@ -18,3 +18,8 @@ test('constant effects clear area and duration; unknown range flags grant no per
  const draft=effectDraft({range:'target',min:20,max:5,dur:40,area:30},{mag:1,dur:1,castTarget:true},{},true);
  assert.equal(draft.range,'self');assert.equal(draft.max,20);assert.equal(draft.dur,1);assert.equal(draft.area,0);
 });
+for (const [label,effects,key,expected] of [
+ ['reordered catalog',[{key:'b',n:'Second'},{key:'a',n:'First'}],'a','First'],
+ ['missing mod effect',[{key:'b',n:'Second'}],'a',undefined],
+ ['loading catalog',[],'a',undefined]
+]) test('stable effect identity: '+label,async()=>{const {selectedEffect}=await import('../lib/effect-editor.mjs');assert.equal(selectedEffect(effects,key)?.n,expected);});
