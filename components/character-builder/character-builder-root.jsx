@@ -213,6 +213,7 @@ export default function CharacterBuilderRoot() {
 
           {/* Decoupled Gear Advisor */}
           <GearAdvisor
+            onEquip={(loadouts) => { updateField("loadouts", loadouts); setActiveTab("equipment"); }}
             attrs={Object.fromEntries(Object.entries(sheet?.attrs || {}).map(([key, value]) => [key, value.v]))}
             beast={Boolean(catalogs?.races?.[build.race]?.beast)}
             build={{ ...build, world: shell.world, arce: shell.arce }}

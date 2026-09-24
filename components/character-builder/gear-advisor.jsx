@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
-import { QUICK_LOADOUT_KITS } from '../equipment-studio/loadout-tabs-bar';
+import { buildGearGroups } from '../../lib/gear-rows.mjs';
+import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
+import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
 // Keep the verified endgame tables and notes; the bundle supplies early rows.
 function endgameHtml(html){
@@ -22,7 +24,7 @@ export default function GearAdvisor(props){
   return <GearAdvisorView {...props} result={result} bisResult={bisResult} onLoad={()=>setEnabled(true)}/>;
 }
 
-export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResult, onLoad }) {
+export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResult, onLoad, onEquip }) {
   const [ranking,setRanking]=useState(null);
   const [rankError,setRankError]=useState(null);
   const [nearStart, setNearStart] = useState(() => document.getElementById("gear-near-start")?.checked ?? false);
@@ -112,24 +114,13 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
     }
   };
 
-  const handleEquipToLoadout = (isEndgame = false) => {
-    const isHeavy = build?.maj?.includes("Heavy Armor") || build?.min?.includes("Heavy Armor");
-    const isMedium = build?.maj?.includes("Medium Armor") || build?.min?.includes("Medium Armor");
-    let kitId = "kit-starter-light";
-    if (isEndgame) {
-      kitId = "kit-endgame-daedric";
-    } else if (isHeavy) {
-      kitId = "kit-starter-heavy";
-    } else if (isMedium) {
-      kitId = "kit-starter-medium";
-    }
-
-    const kit = QUICK_LOADOUT_KITS.find((k) => k.id === kitId) || QUICK_LOADOUT_KITS[0];
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("silt-equip-kit", { detail: { kitItems: kit.items } }));
-      window.dispatchEvent(new CustomEvent("silt-open-equipment"));
-      window.dispatchEvent(new CustomEvent("silt-open-paperdoll"));
-    }
+  const handleEquipToLoadout = (late = false) => {
+    try {
+      const groups = late
+        ? resolveBestInSlotPicks(bisResult.data, build, { beast, weaponSetup, allowFormidableSources:endgameEarly }).groups
+        : buildGearGroups(result.data.catalogs, build, {theft:stealEarly,endgame:endgameEarly,nearStart}, displayedRanking, {beast});
+      onEquip(recommendedLoadouts(groups, bisResult.data.catalogs, build, {late}));
+    } catch (error) { setRankError(error.message); }
   };
 
   useEffect(() => {
@@ -205,11 +196,13 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
           <button
             type="button"
             className="w-full sm:w-auto mw-btn py-2.5 px-5 font-serif font-bold text-sm tracking-wide shadow-md whitespace-nowrap text-center text-accent"
-            onClick={() => handleEquipToLoadout(endgameEarly)}
+            disabled={!hasRun || result.status !== "ready" || bisResult?.status !== "ready"}
+            onClick={() => handleEquipToLoadout(false)}
             title="Equip recommended gear kit directly into your active loadout"
           >
-            Equip Kit to Loadout →
+            Equip early recommendations →
           </button>
+          <button type="button" className="mw-btn px-5 py-2.5" disabled={!hasRun || bisResult?.status !== "ready"} onClick={() => handleEquipToLoadout(true)}>Equip late-game recommendations →</button>
         </div>
       </div>
 
