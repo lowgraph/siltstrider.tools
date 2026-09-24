@@ -1,4 +1,5 @@
 "use client";
+import {allowedRanges, effectDraft} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
@@ -80,6 +81,7 @@ export default function SpellmakingWorkstation() {
       const live = gameData.data.catalogs.EffectRules
         .filter((r) => r.allowSpellmaking)
         .map((r) => ({
+          ...r,
           n: r.name,
           b: r.baseCost,
           mag: r.noMagnitude ? 0 : 1,
@@ -167,11 +169,11 @@ export default function SpellmakingWorkstation() {
     return effectsList.map((row) => {
       const effectObj = availableEffects[row.effectIndex] || availableEffects[0];
       return {
-        ...row,
+        ...effectDraft(row, effectObj, gameData.data?.catalogs, false),
         effect: effectObj
       };
     });
-  }, [effectsList, availableEffects]);
+  }, [effectsList, availableEffects, gameData.data]);
 
   const magickaCost = useMemo(() => {
     return calcTotalSpellMagickaCost(calculatedEffects);
@@ -369,7 +371,8 @@ export default function SpellmakingWorkstation() {
             </div>
 
             <div className="space-y-2.5">
-              {effectsList.map((row, idx) => {
+              {effectsList.map((draft, idx) => {
+                const row = effectDraft(draft, availableEffects[draft.effectIndex] || availableEffects[0], gameData.data?.catalogs, false);
                 const eff = availableEffects[row.effectIndex] || availableEffects[0];
                 const showRange = true;
                 const showDuration = eff?.dur;
@@ -405,6 +408,11 @@ export default function SpellmakingWorkstation() {
                       )}
                     </div>
 
+                    {(eff?.targetsAttribute || eff?.targetsSkill) && <label className="block text-xs">{eff.targetsAttribute ? 'Attribute' : 'Skill'}
+                      <select aria-label={`Effect target ${idx+1}`} className="mw-select" value={row.target} onChange={event => handleEffectChange(idx, 'target', event.target.value)}>
+                        {(gameData.data?.catalogs?.[eff.targetsAttribute ? 'Attributes' : 'Skills'] || []).map(target => <option key={target.id} value={target.id}>{target.name}</option>)}
+                      </select>
+                    </label>}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                       {showRange && (
                         <div>
@@ -414,14 +422,12 @@ export default function SpellmakingWorkstation() {
                             value={row.range}
                             onChange={(e) => handleEffectChange(idx, "range", e.target.value)}
                           >
-                            <option value="self">Self</option>
-                            <option value="touch">Touch</option>
-                            <option value="target">Target</option>
+                            {allowedRanges(eff).map(range => <option key={range} value={range}>{range[0].toUpperCase()+range.slice(1)}</option>)}
                           </select>
                         </div>
                       )}
 
-                      <div>
+                      {Boolean(eff?.mag) && <><div>
                         <label className="text-[10px] text-fg-13 block mb-0.5">Min Mag</label>
                         <input
                           type="number"
@@ -445,7 +451,8 @@ export default function SpellmakingWorkstation() {
                         />
                       </div>
 
-                      {showDuration && (
+                      </>}
+                      {Boolean(showDuration) && (
                         <div>
                           <label className="text-[10px] text-fg-13 block mb-0.5">Duration</label>
                           <input
@@ -515,7 +522,7 @@ export default function SpellmakingWorkstation() {
                 <div key={idx} className="flex justify-between text-xs font-serif text-fg-4">
                   <span>{item.effect?.n || "Effect"}</span>
                   <span className="font-mono text-[11px] text-accent">
-                    {item.range.toUpperCase()}: {item.min}-{item.max} pts, {item.dur}s
+                    {item.range.toUpperCase()}{item.effect?.mag ? `: ${item.min}-${item.max} pts` : ""}{item.effect?.dur ? `, ${item.dur}s` : ""}{item.target ? ` (${item.target})` : ""}
                   </span>
                 </div>
               ))}
