@@ -71,6 +71,7 @@ test("Equipment Studio UI: Renders root component with all 19 canonical slots an
   await act(async () => {
     root.render(
       React.createElement(EquipmentStudioRoot, {
+        equipmentResult: {status:"ready",data:{catalogs:{Weapons:[{key:"steel_claymore",name:"Steel Claymore",type:"LB2H",recordType:"WEAP"}],Armor:[{key:"fixture_cuirass",name:"Fixture Cuirass",type:"cuirass",armorRating:20,weight:10}]}}},
         character: mockCharacter,
         skills: mockSkills,
         attributes: mockAttributes,
@@ -108,6 +109,7 @@ test("Equipment Studio UI: Opening ItemPickerDrawer and equipping an item update
   await act(async () => {
     root.render(
       React.createElement(EquipmentStudioRoot, {
+        equipmentResult: {status:"ready",data:{catalogs:{Weapons:[{key:"steel_claymore",name:"Steel Claymore",type:"LB2H",recordType:"WEAP"}],Armor:[{key:"fixture_cuirass",name:"Fixture Cuirass",type:"cuirass",armorRating:20,weight:10}]}}},
         character: mockCharacter,
         skills: mockSkills,
         attributes: mockAttributes,
@@ -195,6 +197,7 @@ test("Equipment Studio UI: Multi-loadout switching and kit equipping", async () 
   await act(async () => {
     root.render(
       React.createElement(EquipmentStudioRoot, {
+        equipmentResult: {status:"ready",data:{catalogs:{Weapons:[{key:"steel_claymore",name:"Steel Claymore",type:"LB2H",recordType:"WEAP"}],Armor:[{key:"fixture_cuirass",name:"Fixture Cuirass",type:"cuirass",armorRating:20,weight:10}]}}},
         character: mockCharacter,
         skills: mockSkills,
         attributes: mockAttributes,
@@ -295,6 +298,7 @@ test("Equipment Studio UI (Adversarial): Extreme carry weight triggers Over-Encu
   await act(async () => {
     root.render(
       React.createElement(EquipmentStudioRoot, {
+        equipmentResult: {status:"ready",data:{catalogs:{Weapons:[{key:"steel_claymore",name:"Steel Claymore",type:"LB2H",recordType:"WEAP"}],Armor:[{key:"fixture_cuirass",name:"Fixture Cuirass",type:"cuirass",armorRating:20,weight:10}]}}},
         character: mockCharacter,
         skills: mockSkills,
         attributes: { Strength: { v: 10 } }, // Max carry weight = 50 lbs
@@ -328,6 +332,7 @@ test("Equipment Studio UI (Adversarial): Two-Handed weapon auto-unequips Carried
   await act(async () => {
     root.render(
       React.createElement(EquipmentStudioRoot, {
+        equipmentResult: {status:"ready",data:{catalogs:{Weapons:[{key:"steel_claymore",name:"Steel Claymore",type:"LB2H",recordType:"WEAP"}],Armor:[{key:"fixture_cuirass",name:"Fixture Cuirass",type:"cuirass",armorRating:20,weight:10}]}}},
         character: mockCharacter,
         skills: mockSkills,
         attributes: mockAttributes,

@@ -1,4 +1,5 @@
 "use client";
+import { describeEffect } from "../../lib/effect-text.mjs";
 import { memo } from "react";
 import {
   computeTotalArmorRating,
@@ -197,7 +198,7 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
                   </span>
                 </div>
                 <div className="text-right font-mono text-fg-5">
-                  {item.effects.map((ef) => `${ef.effect || "Enchantment"} ${ef.magnitude ? `${ef.magnitude} pts` : ""}`).join(" · ")}
+                  {item.effects.map((ef) => ef.name ? describeEffect(ef, null, {}, {constant:true}) : ef.effect || "Enchantment").join(" · ")}
                 </div>
               </div>
             ))}

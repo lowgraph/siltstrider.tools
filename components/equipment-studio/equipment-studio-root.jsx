@@ -1,5 +1,7 @@
 "use client";
 import { useState, useCallback, useMemo, useEffect } from "react";
+import {useGameData} from '../use-game-data';
+import {equipmentCatalog} from '../../lib/equipment-catalog.mjs';
 import EquipmentLedger from "./equipment-ledger";
 import EquipmentStatsSummary from "./equipment-stats-summary";
 import LoadoutTabsBar from "./loadout-tabs-bar";
@@ -13,12 +15,16 @@ import {
  * Root Equipment Studio & Equipped Loadout Inspector
  */
 export default function EquipmentStudioRoot({
+  equipmentResult = null,
   character = {},
   skills = {},
   attributes = {},
   initialLoadouts = null,
   onLoadoutsChange = null,
 }) {
+  const liveEquipment = useGameData("equipment", {enabled: !equipmentResult});
+  const result = equipmentResult || liveEquipment;
+  const catalog = useMemo(() => equipmentCatalog(result.data?.catalogs), [result.data]);
   const [loadouts, setLoadouts] = useState(() => {
     if (initialLoadouts && Array.isArray(initialLoadouts) && initialLoadouts.length > 0) {
       return initialLoadouts;
@@ -34,7 +40,7 @@ export default function EquipmentStudioRoot({
     return loadouts.find((l) => l.id === activeLoadoutId) || loadouts[0];
   }, [loadouts, activeLoadoutId]);
 
-  const activeItems = activeLoadout?.items || {};
+  const activeItems = Object.fromEntries(Object.entries(activeLoadout?.items || {}).map(([slot,item]) => [slot, catalog.items.find(record => item?.key && record.key === item.key) || item]));
 
   // Notify parent / update state helper
   const commitLoadouts = useCallback(
@@ -195,6 +201,7 @@ export default function EquipmentStudioRoot({
 
         <div className="xl:col-span-4">
           <EquipmentStatsSummary
+            enchantmentsMap={catalog.enchantments}
             loadout={activeItems}
             skills={skills}
             attributes={attributes}
@@ -205,6 +212,9 @@ export default function EquipmentStudioRoot({
       {/* Item Picker Drawer Modal */}
       {activePickerSlot && (
         <ItemPickerDrawer
+          catalogItems={catalog.items}
+          catalogStatus={result.status}
+          onRetry={result.retry}
           slot={activePickerSlot}
           race={character.race}
           currentLoadout={activeItems}
