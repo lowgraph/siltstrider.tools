@@ -22,6 +22,7 @@ const descriptions = {
 // The everyday tools sit in the nav row; the rest wait in the two menus, and the
 // Cloud Vault is the account button beside search.
 const PRIMARY_VIEWS = [
+  { view: 'challenge', label: 'Challenge Runs', id: 'react-nav-challenge' },
   { view: 'builder', label: 'Build Optimizer', id: 'react-nav-build' },
   { view: 'leveler', label: 'Level Simulator', id: 'react-nav-leveler' },
   { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
@@ -33,7 +34,6 @@ const CALC_MENU = [
   { view: 'spellmaking', label: 'Spellmaking' }
 ];
 const MORE_MENU = [
-  { view: 'challenge', label: 'Challenge Runs' },
   { view: 'about', label: 'About Silt Strider' },
   { view: 'changelog', label: 'Changelog' }
 ];

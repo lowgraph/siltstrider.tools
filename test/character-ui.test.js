@@ -117,11 +117,11 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   assert.equal(document.querySelector('.account-bar').classList.contains('drawer-open'),true);
 
   // Mobile drawer contains all sections; the everyday tools lead, the occasional ones follow
-  assert.match(drawer.textContent,/^ToolsBuild OptimizerLevel SimulatorAlchemyTravelFaction Journal/);
+  assert.match(drawer.textContent,/^ToolsChallenge RunsBuild OptimizerLevel SimulatorAlchemyTravelFaction Journal/);
   assert.match(drawer.textContent,/More CalculatorsEnchantingSpellmaking/);
-  assert.match(drawer.textContent,/Extras & SiteHomeChallenge Runs/);
+  assert.match(drawer.textContent,/Extras & SiteHomeAbout Silt Strider/);
   assert.match(drawer.textContent,/Game World Profile/);
-  assert.equal(document.querySelector('#react-nav-challenge'),null,'Challenge Runs is not in the nav row');
+  assert.ok(document.querySelector('.nav-primary #react-nav-challenge'),'Challenge Runs is directly accessible');
   assert.equal(document.querySelector('#react-nav-vault').getAttribute('aria-label'),'Cloud Vault: your saved characters');
 
   // Click a drawer calculator button (e.g. Enchanting)
