@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import LevelModeToggle from "./level-mode-toggle";
 import LevelStepEditor from "./level-step-editor";
 import ProgressionSheet from "./progression-sheet";
@@ -51,6 +51,10 @@ export default function LevelSimulatorRoot() {
     return initialSheet ? Math.min(initialSheet.levelCap, 50) : 50;
   });
   const [stepIndex, setStepIndex] = useState(0);
+  const [manualPlan, setManualSteps] = useState({});
+  const planKey = JSON.stringify([initialSheet, mode, strategy, customPriority]);
+  const manualSteps = manualPlan.key === planKey ? manualPlan.steps : undefined;
+  useEffect(() => { setManualSteps({}); setStepIndex(0); }, [initialSheet, mode, strategy, customPriority]);
   const [mobileTab, setMobileTab] = useState("controls"); // "controls" | "sheet"
   const [toastMessage, setToastMessage] = useState("");
 
@@ -71,9 +75,10 @@ export default function LevelSimulatorRoot() {
       priority: customPriority,
       strategy,
       mode,
+      manualSteps,
       catalogs
     });
-  }, [initialSheet, sheet, build, targetLevel, archetypeId, customPriority, strategy, mode, catalogs, fromSave, activeSave]);
+  }, [initialSheet, sheet, build, targetLevel, archetypeId, customPriority, strategy, mode, catalogs, fromSave, activeSave, manualSteps]);
 
   const steps = simulation?.steps || [];
   const levelCap = simulation?.levelCap || initialSheet?.levelCap || 60;
@@ -118,14 +123,17 @@ export default function LevelSimulatorRoot() {
     setStrategy("auto");
     setTargetLevel(initialSheet?.level || 1);
     setStepIndex(0);
+    setManualSteps({});
     showToast(`Progression reset to Level ${initialSheet?.level || 1}`);
   }, [initialSheet]);
 
   const handleApplyManualStep = useCallback((stepData) => {
     if (!currentState) return;
     const nextState = applyLevelStep(currentState, stepData);
+    setManualSteps({key:planKey, steps:{...Object.fromEntries(Object.entries(manualSteps || {}).filter(([level]) => Number(level) < currentState.level)), [currentState.level]:stepData}});
+    setTargetLevel(target => Math.max(target, nextState.level));
     showToast(`Level ${nextState.level} applied manually`);
-  }, [currentState]);
+  }, [currentState, manualSteps, planKey]);
 
   // Export leveled character JSON dossier
   const handleExportJSON = useCallback(() => {
