@@ -194,13 +194,13 @@ export default function LevelStepEditor({
               ◀ Prev
             </button>
             <span className="font-mono text-xs text-fg-2 px-2 py-0.5 bg-surface-2 border border-line-11">
-              Step {stepIndex + 1} of {Math.max(1, steps.length)}
+              {stepIndex >= steps.length ? "Plan complete" : `Step ${stepIndex + 1} of ${steps.length}`}
             </span>
             <button
               type="button"
               className="mw-btn py-1 px-2 text-xs font-serif font-bold disabled:opacity-30"
-              onClick={() => onStepIndexChange(Math.min(steps.length - 1, stepIndex + 1))}
-              disabled={stepIndex >= steps.length - 1}
+              onClick={() => onStepIndexChange(Math.min(steps.length, stepIndex + 1))}
+              disabled={stepIndex >= steps.length}
               aria-label="Next level step"
             >
               Next ▶

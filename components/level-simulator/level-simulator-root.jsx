@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo, useCallback, useEffect } from "react";
+import {progressionState} from "../../lib/progression-step.mjs";
 import LevelModeToggle from "./level-mode-toggle";
 import LevelStepEditor from "./level-step-editor";
 import ProgressionSheet from "./progression-sheet";
@@ -84,22 +85,7 @@ export default function LevelSimulatorRoot() {
   const levelCap = simulation?.levelCap || initialSheet?.levelCap || 60;
 
   // Current state at active stepIndex
-  const currentState = useMemo(() => {
-    if (!simulation) return initialSheet;
-    if (steps.length === 0 || stepIndex === 0) {
-      return simulation.initialSheet;
-    }
-    const step = steps[Math.min(stepIndex, steps.length - 1)];
-    return {
-      ...initialSheet,
-      level: step.nextLevel,
-      attributes: step.stateAfter.attributes,
-      skills: step.stateAfter.skills,
-      health: step.stateAfter.health,
-      magicka: step.stateAfter.magicka,
-      fatigue: step.stateAfter.fatigue
-    };
-  }, [simulation, initialSheet, steps, stepIndex]);
+  const currentState = useMemo(() => progressionState(simulation,stepIndex) || initialSheet, [simulation,stepIndex,initialSheet]);
 
   // Handlers
   const handleSelectArchetype = useCallback((id) => {
