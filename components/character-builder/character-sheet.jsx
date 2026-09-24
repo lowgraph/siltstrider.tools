@@ -2,6 +2,7 @@
 import VitalsBar from "./vitals-bar";
 import AttributeGrid from "./attribute-grid";
 import SkillDisplayGrid from "./skill-display-grid";
+import RaceMagic from "./race-magic";
 import { startingSpells } from "../../lib/character-math.mjs";
 import { useShell } from "../shell-context";
 
@@ -30,6 +31,7 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
 
   const spells = startingSpells(build, sheet, catalogs);
   const raceAbilities = sheet.race?.abilities || "";
+  const raceMagic = catalogs.raceMagic?.[build.race] || [];
   const signAbilities = sheet.sign?.abil || "";
 
   return (
@@ -113,7 +115,8 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
           Starting Magic & Abilities
         </h4>
 
-        {spells.race.length > 0 && (
+        <RaceMagic spells={raceMagic} />
+        {!raceMagic.length && spells.race.length > 0 && (
           <div>
             <span className="text-fg-8 font-serif font-bold">Race Spells: </span>
             <span className="text-fg-2">{spells.race.join(" · ")}</span>
@@ -134,7 +137,7 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
           </div>
         )}
 
-        {raceAbilities && (
+        {!raceMagic.length && raceAbilities && (
           <div>
             <span className="text-fg-14 font-serif font-semibold">Race Traits: </span>
             <span className="text-fg-5">{raceAbilities}</span>

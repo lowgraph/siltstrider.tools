@@ -170,3 +170,22 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
  }finally{await act(async()=>root.unmount());dom.window.close();assert.equal(document.querySelector?.('.account-bar')?.classList.contains('drawer-open')||false,false,'unmount removes drawer-open');}
 });
 
+test('race magic shows power magnitude, range, duration and daily limit',()=>{
+ const {renderToStaticMarkup}=require('react-dom/server');
+ const RaceMagic=component('components/character-builder/race-magic.jsx');
+ const html=renderToStaticMarkup(React.createElement(RaceMagic,{spells:[{key:'dragon',name:'Dragon Skin',type:'power',effects:[{name:'Shield',magnitude:{min:50,max:50},durationSeconds:60,range:'self'}]}]}));
+ assert.match(html,/once per day/); assert.match(html,/Shield 50 for 60s on self/);
+});
+test('passive race abilities never display a timed duration or recharge',()=>{
+ const {renderToStaticMarkup}=require('react-dom/server');
+ const RaceMagic=component('components/character-builder/race-magic.jsx');
+ const html=renderToStaticMarkup(React.createElement(RaceMagic,{spells:[{name:'Resistance',type:'ability',effects:[{name:'Resist Magicka',magnitude:{min:50,max:50},durationSeconds:1}]}]}));
+ assert.match(html,/Passive ability/); assert.doesNotMatch(html,/for 1s|once per day/);
+});
+test('empty race magic and magnitude-free spells render without invented values',()=>{
+ const {renderToStaticMarkup}=require('react-dom/server');
+ const RaceMagic=component('components/character-builder/race-magic.jsx');
+ assert.equal(renderToStaticMarkup(React.createElement(RaceMagic)), '');
+ const html=renderToStaticMarkup(React.createElement(RaceMagic,{spells:[{name:'Breathing',type:'spell',cost:5,effects:[{name:'Water Breathing',magnitude:{min:0,max:0},durationSeconds:30}]}]}));
+ assert.match(html,/5 magicka/); assert.match(html,/Water Breathing for 30s/); assert.doesNotMatch(html,/Breathing 0/);
+});
