@@ -118,7 +118,7 @@ export default function LevelSimulatorRoot() {
     setStrategy("auto");
     setTargetLevel(initialSheet?.level || 1);
     setStepIndex(0);
-    showToast("Progression reset to Level 1");
+    showToast(`Progression reset to Level ${initialSheet?.level || 1}`);
   }, [initialSheet]);
 
   const handleApplyManualStep = useCallback((stepData) => {
