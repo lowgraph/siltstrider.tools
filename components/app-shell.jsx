@@ -17,6 +17,7 @@ import LevelSimulatorRoot from './level-simulator/level-simulator-root';
 import JournalFactionsRoot from './journal-factions/journal-factions-root';
 import EnchantingWorkstation from './calculators/enchanting/enchanting-workstation';
 import SpellmakingWorkstation from './calculators/spellmaking/spellmaking-workstation';
+import RetainedTool from './retained-tool';
 import AlchemyWorkstation from './calculators/alchemy/alchemy-workstation';
 import TravelWorkstation from './calculators/travel/travel-workstation';
 import CloudVaultWorkstation from './character-vault/cloud-vault-workstation';
@@ -86,7 +87,7 @@ function AppShellMain() {
           className={`panel ${activeView === 'builder' ? 'show' : ''}`}
           hidden={activeView !== 'builder'}
         >
-          {activeView === 'builder' && <CharacterBuilderRoot />}
+          <RetainedTool active={activeView === 'builder'}><CharacterBuilderRoot /></RetainedTool>
         </section>
 
         <section
@@ -102,7 +103,7 @@ function AppShellMain() {
           className={`panel ${activeView === 'leveler' ? 'show' : ''}`}
           hidden={activeView !== 'leveler'}
         >
-          {activeView === 'leveler' && <LevelSimulatorRoot />}
+          <RetainedTool active={activeView === 'leveler'}><LevelSimulatorRoot /></RetainedTool>
         </section>
 
         <section
@@ -110,7 +111,7 @@ function AppShellMain() {
           className={`panel ${activeView === 'factions' ? 'show' : ''}`}
           hidden={activeView !== 'factions'}
         >
-          {activeView === 'factions' && <JournalFactionsRoot />}
+          <RetainedTool active={activeView === 'factions'}><JournalFactionsRoot /></RetainedTool>
         </section>
 
         <section
@@ -119,7 +120,7 @@ function AppShellMain() {
           hidden={activeView !== 'enchanting'}
         >
           <div id="react-enchant-hud">
-            {activeView === 'enchanting' && <EnchantingWorkstation />}
+            <RetainedTool active={activeView === 'enchanting'}><EnchantingWorkstation /></RetainedTool>
           </div>
         </section>
 
@@ -129,7 +130,7 @@ function AppShellMain() {
           hidden={activeView !== 'spellmaking'}
         >
           <div id="react-spell-hud">
-            {activeView === 'spellmaking' && <SpellmakingWorkstation />}
+            <RetainedTool active={activeView === 'spellmaking'}><SpellmakingWorkstation /></RetainedTool>
           </div>
         </section>
 
@@ -139,7 +140,7 @@ function AppShellMain() {
           hidden={activeView !== 'alchemy'}
         >
           <div id="react-alchemy-hud">
-            {activeView === 'alchemy' && <AlchemyWorkstation key={shell.profile} />}
+            <RetainedTool active={activeView === 'alchemy'}><AlchemyWorkstation key={shell.profile} /></RetainedTool>
           </div>
         </section>
 
@@ -149,7 +150,7 @@ function AppShellMain() {
           hidden={activeView !== 'travel'}
         >
           <div id="react-travel-hud">
-            {activeView === 'travel' && <TravelWorkstation />}
+            <RetainedTool active={activeView === 'travel'}><TravelWorkstation /></RetainedTool>
           </div>
         </section>
 
