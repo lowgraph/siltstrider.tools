@@ -13,17 +13,24 @@ import {
 } from "../../../lib/alchemy-math.mjs";
 
 export default function AlchemyWorkstation() {
-  const { build, sheet, syncToCalculators } = useActiveCharacter();
+  const { build, sheet: buildSheet, activeSave, syncToCalculators } = useActiveCharacter();
+  const sheet = activeSave?.sheet || buildSheet;
   const { profile } = useShell();
 
   // Character stats
   const baseSkill = sheet?.skills?.["Alchemy"]?.v ?? 50;
-  const baseInt = sheet?.attributes?.["Intelligence"]?.v ?? 40;
-  const baseLuck = sheet?.attributes?.["Luck"]?.v ?? 40;
+  const baseInt = sheet?.attrs?.["Intelligence"]?.v ?? 40;
+  const baseLuck = sheet?.attrs?.["Luck"]?.v ?? 40;
 
   const [skill, setSkill] = useState(baseSkill);
   const [intelligence, setIntelligence] = useState(baseInt);
   const [luck, setLuck] = useState(baseLuck);
+
+  useEffect(() => {
+    setSkill(baseSkill);
+    setIntelligence(baseInt);
+    setLuck(baseLuck);
+  }, [baseSkill, baseInt, baseLuck]);
 
   // Apparatus selection
   const [mortarId, setMortarId] = useState("apparatus_j_mortar_01");

@@ -15,15 +15,16 @@ import {
 } from "../../../lib/enchant-math.mjs";
 
 export default function EnchantingWorkstation() {
-  const { build, sheet, syncToCalculators } = useActiveCharacter();
+  const { build, sheet: buildSheet, activeSave, syncToCalculators } = useActiveCharacter();
+  const sheet = activeSave?.sheet || buildSheet;
   const { world } = useShell();
 
   // Character stats
   const baseSkill = sheet?.skills?.["Enchant"]?.v ?? 50;
-  const baseInt = sheet?.attributes?.["Intelligence"]?.v ?? 40;
-  const baseLuck = sheet?.attributes?.["Luck"]?.v ?? 40;
+  const baseInt = sheet?.attrs?.["Intelligence"]?.v ?? 40;
+  const baseLuck = sheet?.attrs?.["Luck"]?.v ?? 40;
   const baseMerc = sheet?.skills?.["Mercantile"]?.v ?? 40;
-  const basePers = sheet?.attributes?.["Personality"]?.v ?? 40;
+  const basePers = sheet?.attrs?.["Personality"]?.v ?? 40;
 
   const [skill, setSkill] = useState(baseSkill);
   const [intelligence, setIntelligence] = useState(baseInt);
@@ -31,6 +32,14 @@ export default function EnchantingWorkstation() {
   const [mercantile, setMercantile] = useState(baseMerc);
   const [personality, setPersonality] = useState(basePers);
   const [disposition, setDisposition] = useState(50);
+
+  useEffect(() => {
+    setSkill(baseSkill);
+    setIntelligence(baseInt);
+    setLuck(baseLuck);
+    setMercantile(baseMerc);
+    setPersonality(basePers);
+  }, [baseSkill, baseInt, baseLuck, baseMerc, basePers]);
 
   // Configuration
   const [selectedBaseItem, setSelectedBaseItem] = useState("Exquisite Ring");

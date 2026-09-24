@@ -14,7 +14,8 @@ import {
 } from "../../../lib/spell-math.mjs";
 
 export default function SpellmakingWorkstation() {
-  const { build, sheet, syncToCalculators } = useActiveCharacter();
+  const { build, sheet: buildSheet, activeSave, syncToCalculators } = useActiveCharacter();
+  const sheet = activeSave?.sheet || buildSheet;
   const { world } = useShell();
 
   // Character Magic Skills & Stats
@@ -24,10 +25,10 @@ export default function SpellmakingWorkstation() {
   const baseIll = sheet?.skills?.["Illusion"]?.v ?? 50;
   const baseMys = sheet?.skills?.["Mysticism"]?.v ?? 50;
   const baseRes = sheet?.skills?.["Restoration"]?.v ?? 50;
-  const baseWil = sheet?.attributes?.["Willpower"]?.v ?? 40;
-  const baseLuck = sheet?.attributes?.["Luck"]?.v ?? 40;
+  const baseWil = sheet?.attrs?.["Willpower"]?.v ?? 40;
+  const baseLuck = sheet?.attrs?.["Luck"]?.v ?? 40;
   const baseMerc = sheet?.skills?.["Mercantile"]?.v ?? 40;
-  const basePers = sheet?.attributes?.["Personality"]?.v ?? 40;
+  const basePers = sheet?.attrs?.["Personality"]?.v ?? 40;
 
   const [alt, setAlt] = useState(baseAlt);
   const [con, setCon] = useState(baseCon);
@@ -43,6 +44,19 @@ export default function SpellmakingWorkstation() {
 
   const [activeSchoolTab, setActiveSchoolTab] = useState("All");
   const [spellName, setSpellName] = useState("Custom Spell");
+
+  useEffect(() => {
+    setAlt(baseAlt);
+    setCon(baseCon);
+    setDes(baseDes);
+    setIll(baseIll);
+    setMys(baseMys);
+    setRes(baseRes);
+    setWillpower(baseWil);
+    setLuck(baseLuck);
+    setMercantile(baseMerc);
+    setPersonality(basePers);
+  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers]);
 
   // Effect Stack
   const [effectsList, setEffectsList] = useState([
