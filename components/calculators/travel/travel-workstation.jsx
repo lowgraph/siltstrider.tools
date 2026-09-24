@@ -29,16 +29,17 @@ export default function TravelWorkstation() {
   const { world } = useShell();
   const isTr = world === "tr";
   const gameData = useGameData('travel', { enabled: true });
+  const [mageGuild,setMageGuild] = useState(true);
+  const [conjurer,setConjurer] = useState(false);
 
   const liveNetworkGraph = useMemo(() => {
     if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Travel)) {
       const records = gameData.data.catalogs.Travel;
       const nodes = gameData.data.metadata?.Travel?.nodes || {};
-      const adapted = adaptTravelGraph(records, nodes);
-      if (Object.keys(adapted).length > 0) return adapted;
+      return adaptTravelGraph(records, nodes, {mageGuild,conjurer:isTr && conjurer});
     }
-    return null;
-  }, [gameData.status, gameData.data]);
+    return {};
+  }, [gameData.status, gameData.data,mageGuild,conjurer,isTr]);
 
   // Stop positions, network edges and region labels for the transit map (live bundle only).
   const mapData = useMemo(() => {
@@ -224,6 +225,12 @@ export default function TravelWorkstation() {
       </div>
 
       {/* Quick Hub Jump Presets */}
+      <div className="flex flex-wrap gap-4 p-3 text-sm">
+        <label><input type="checkbox" checked={mageGuild} onChange={event=>setMageGuild(event.target.checked)}/> Mages Guild member</label>
+        {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>setConjurer(event.target.checked)}/> Conjurer rank or higher</label>}
+        {gameData.status === 'loading' && <p role="status">Loading travel network...</p>}
+        {gameData.status === 'error' && <p role="alert">Travel network unavailable. <button onClick={gameData.retry}>Retry</button></p>}
+      </div>
       <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
         <div className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider">
           Fast Origin Selector
