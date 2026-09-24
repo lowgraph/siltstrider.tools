@@ -231,7 +231,7 @@ export default function AlchemyWorkstation() {
               >
                 {apparatusTiers.mortar.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name.replace(" Mortar and Pestle", "")} ({a.quality}x)
+                    {a.name.replace(" Mortar and Pestle", "")} ({Number(a.quality.toFixed(3))}x)
                   </option>
                 ))}
               </select>
@@ -249,7 +249,7 @@ export default function AlchemyWorkstation() {
               >
                 {apparatusTiers.alembic.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name.replace(" Alembic", "")} {a.quality > 0 ? `(${a.quality}x)` : ""}
+                    {a.name.replace(" Alembic", "")} {a.quality > 0 ? `(${Number(a.quality.toFixed(3))}x)` : ""}
                   </option>
                 ))}
               </select>
@@ -267,7 +267,7 @@ export default function AlchemyWorkstation() {
               >
                 {apparatusTiers.calcinator.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name.replace(" Calcinator", "")} {a.quality > 0 ? `(${a.quality}x)` : ""}
+                    {a.name.replace(" Calcinator", "")} {a.quality > 0 ? `(${Number(a.quality.toFixed(3))}x)` : ""}
                   </option>
                 ))}
               </select>
@@ -285,7 +285,7 @@ export default function AlchemyWorkstation() {
               >
                 {apparatusTiers.retort.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name.replace(" Retort", "")} {a.quality > 0 ? `(${a.quality}x)` : ""}
+                    {a.name.replace(" Retort", "")} {a.quality > 0 ? `(${Number(a.quality.toFixed(3))}x)` : ""}
                   </option>
                 ))}
               </select>
