@@ -594,3 +594,12 @@ test('Adversarial QA 3: Empty custom character produces valid fallbacks without 
 });
 
 
+for (const setup of ['one-handed','two-handed']) test('endgame weapon setup filters exact premade picks: '+setup,async()=>{
+ const {resolveBestInSlotPicks}=await modulePromise;
+ const items={one:{key:'one',name:'Sword',slot:'weapon',type:'LB1H'},two:{key:'two',name:'Spear',slot:'weapon',type:'SP2H'},unknown:{key:'unknown',slot:'weapon'},shield:{key:'shield',slot:'shield'}};
+ const data={catalogs:{BestInSlot:[{build:'Fixture',toggles:{allowFormidableSources:false},slots:{weapon:[{item:'two'},{item:'unknown'},{item:'one'}],shield:[{item:'shield'}]}}]},metadata:{BestInSlot:{items}}};
+ const result=resolveBestInSlotPicks(data,{name:'Fixture'},{weaponSetup:setup});
+ const rows=result.groups.flatMap(g=>g.rows);
+ assert.deepEqual(rows.find(r=>r.slotKey==='weapon').picks.map(p=>p.item.key),[setup==='one-handed'?'one':'two']);
+ assert.equal(rows.some(r=>r.slotKey==='shield'),setup==='one-handed');
+});

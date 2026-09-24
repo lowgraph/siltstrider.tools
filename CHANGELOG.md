@@ -4,6 +4,8 @@ All notable changes to the **Silt Strider** Morrowind character planner, calcula
 
 ## Builder and Level Optimizer fixes — 2026-09-24
 
+- Gear recommendations now switch between one-handed + shield and two-handed setups, updating both early-game and endgame picks immediately.
+
 - Restored Challenge Runs to the primary navigation and mobile menu.
 - Show catalog-backed racial powers, passive abilities, and spells with their effects.
 - Keep attribute totals on one line while long bonus explanations wrap.

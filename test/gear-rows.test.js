@@ -77,3 +77,12 @@ test('enchant capacity is shown on the game\'s scale: points times fEnchantmentM
  assert.equal(enchantCapacity(600,enchantMultiplier([{id:'fEnchantmentMult',value:0.2}])),120,'a mod that changes the setting is followed');
  assert.equal(enchantMultiplier(undefined),0.1,'the vanilla value until settings load');
 });
+test('explicit weapon setup never falls back to the wrong number of hands',async()=>{
+ const {buildGearGroups}=await mod;
+ const data={GearRows:[gear(null,{category:'weapon',skill:'long_blade',hands:2}),gear('shield',{category:'shield'})]};
+ const groups=buildGearGroups(data,{maj:['Long Blade','Heavy Armor']},toggles,{...profile,weaponSetup:'one-handed'});
+ assert.ok(!groups.some(g=>g.rows.some(r=>r.category==='weapon')));
+ const two=buildGearGroups(data,{maj:['Long Blade','Heavy Armor']},toggles,{...profile,weaponSetup:'two-handed',twoHand:true});
+ assert.ok(two.some(g=>g.rows.some(r=>r.hands===2)));
+ assert.ok(!two.some(g=>g.rows.some(r=>r.category==='shield')));
+});

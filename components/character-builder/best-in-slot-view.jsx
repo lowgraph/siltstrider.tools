@@ -165,10 +165,12 @@ export function BestInSlotView({
   featureData,
   build,
   beast = false,
+  weaponSetup = null,
   allowFormidableSources = false
 }) {
   const resolved = resolveBestInSlotPicks(featureData, build, {
     allowFormidableSources,
+    weaponSetup,
     beast
   });
 

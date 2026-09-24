@@ -31,6 +31,8 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const [gearHtml, setGearHtml] = useState("");
   const [optimizing, setOptimizing] = useState(false);
   const [hasRun, setHasRun] = useState(false);
+  const [weaponSetup, setWeaponSetup] = useState('one-handed');
+  const displayedRanking = ranking && { ...ranking, weaponSetup, twoHand: weaponSetup === 'two-handed', shield: weaponSetup === 'one-handed' ? 'recommended' : 'none' };
 
   // Sync with DOM checkboxes if legacy runtime is present
   const handleToggleSteal = (val) => {
@@ -212,15 +214,22 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       </div>
 
       {/* Rendered Gear Recommendations */}
+      <div role="group" aria-label="Weapon setup" className="flex flex-wrap gap-2">
+        {[['one-handed', 'One-handed + shield'], ['two-handed', 'Two-handed']].map(([value, label]) => (
+          <button key={value} type="button" className={'mw-btn px-4 py-2' + (weaponSetup === value ? ' active ring-1 ring-accent' : '')} aria-pressed={weaponSetup === value}
+            onClick={() => setWeaponSetup(value)}>{label}</button>
+        ))}
+      </div>
       {rankError&&<p role="alert">{rankError}</p>}
       {gearHtml || (hasRun && bisResult?.status === "ready") ? (
         <div className="gear-results-container text-sm overflow-x-auto text-fg-2">
-          <GearSourcesView ranking={ranking} build={build} beast={beast} result={result} toggles={{theft:stealEarly,endgame:endgameEarly,nearStart}}/>
+          <GearSourcesView ranking={displayedRanking} build={build} beast={beast} result={result} toggles={{theft:stealEarly,endgame:endgameEarly,nearStart}}/>
           {bisResult?.status === "ready" ? (
             <BestInSlotView
               featureData={bisResult.data}
               build={build}
               beast={beast}
+              weaponSetup={weaponSetup}
               allowFormidableSources={endgameEarly}
             />
           ) : (
