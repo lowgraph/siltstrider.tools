@@ -1,4 +1,5 @@
 "use client";
+import {saveMemberships} from "../lib/faction-memberships.mjs";
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { computeSheet, swapSkill as mathSwapSkill } from "../lib/character-math.mjs";
 import { useShell } from "./shell-context";
@@ -403,7 +404,7 @@ export function CharacterProvider({ children }) {
       sheet: sheetFromSave(save, character, next)
     };
     setActiveSave(loaded);
-    setBuild({ ...next, loadouts: [loadout, ...createDefaultLoadoutPresets().slice(1)] });
+    setBuild({ ...next, factionMemberships:saveMemberships(save.progress), loadouts: [loadout, ...createDefaultLoadoutPresets().slice(1)] });
     if (shell.profile !== profile && typeof shell.setProfile === "function") shell.setProfile(profile);
     return loaded;
   }, [shell]);

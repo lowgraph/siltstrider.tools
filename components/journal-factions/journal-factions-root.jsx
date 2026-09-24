@@ -5,6 +5,7 @@ import { useSearchIntent } from "../use-search-intent";
 import { clearSearchIntent } from "../../lib/search-intent.mjs";
 import { useActiveCharacter } from "../character-context";
 import { useShell } from "../shell-context";
+import {updateMembership} from "../../lib/faction-memberships.mjs";
 import FactionRoster from "./faction-roster";
 import FactionDetailView from "./faction-detail-view";
 import { getFactionQuests } from "../../lib/faction-math.mjs";
@@ -188,7 +189,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   } catch {
     shell = { profile: "vanilla", ready: false };
   }
-  const { sheet, build, activeSave } = useActiveCharacter();
+  const { sheet, build, activeSave, updateField } = useActiveCharacter();
   const saveProgress = activeSave?.save?.progress || null;
   const gameData = useGameData('factions', { enabled: Boolean(shell?.ready) });
 
@@ -200,20 +201,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
-  // Factions from a loaded save; without one, the tool's own example membership.
-  // Only factions the save shows the character in: a rank of -1 is a faction the save
-  // merely mentions, such as one the character was expelled from before joining.
-  const saveFactions = useMemo(() => (saveProgress?.factions || [])
-    .filter((f) => f.rank >= 0 || f.expelled)
-    .map((f) => ({ ...f, id: String(f.id).toLowerCase() })), [saveProgress]);
-  const [joinedFactions, setJoinedFactions] = useState(() => (
-    saveProgress ? saveFactions : [{ id: "fighters guild", rank: 1, reputation: 10, expelled: false }]
-  ));
-
-  // Loading a different save replaces the membership list, edits and all.
-  useEffect(() => {
-    if (saveProgress) setJoinedFactions(saveFactions);
-  }, [saveProgress, saveFactions]);
+  const joinedFactions = build.factionMemberships || [];
+  const setJoinedFactions = updater => updateField('factionMemberships', updater(joinedFactions));
 
   const joinedFactionKeys = useMemo(() => {
     return joinedFactions.map(j => j.id.toLowerCase());
@@ -256,15 +245,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   }, [revealKey]);
 
   const handleUpdateMembership = (updatedMembership) => {
-    setJoinedFactions(prev => {
-      const idx = prev.findIndex(j => j.id.toLowerCase() === updatedMembership.id.toLowerCase());
-      if (idx >= 0) {
-        const next = [...prev];
-        next[idx] = updatedMembership;
-        return next;
-      }
-      return [...prev, updatedMembership];
-    });
+    setJoinedFactions(prev => updateMembership(prev, updatedMembership));
   };
 
   const handleToggleJoin = (factionKey) => {
