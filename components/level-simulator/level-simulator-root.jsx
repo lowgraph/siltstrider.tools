@@ -17,7 +17,7 @@ import {
 
 export default function LevelSimulatorRoot() {
   const shell = useShell();
-  const { build, sheet, catalogs, activeSave } = useActiveCharacter();
+  const { build, sheet, catalogs, activeSave, updateField } = useActiveCharacter();
   // With a save loaded, plan from where that character actually is; the build's fresh
   // level-1 sheet stays one click away.
   const [startFrom, setStartFrom] = useState("save");
@@ -65,7 +65,7 @@ export default function LevelSimulatorRoot() {
     // simulateProgression normalizes its input again. A normalized state has lost the
     // `attrs` block, so a second pass would rebuild level-1 values from the build and
     // overwrite the save's; the save's own sheet survives that pass intact.
-    return simulateProgression(fromSave ? activeSave.sheet : initialSheet, {
+    return simulateProgression(fromSave ? activeSave.sheet : sheet || build, {
       targetLevel,
       archetype: archetypeId !== "custom" ? archetypeId : undefined,
       priority: customPriority,
@@ -73,7 +73,7 @@ export default function LevelSimulatorRoot() {
       mode,
       catalogs
     });
-  }, [initialSheet, targetLevel, archetypeId, customPriority, strategy, mode, catalogs, fromSave, activeSave]);
+  }, [initialSheet, sheet, build, targetLevel, archetypeId, customPriority, strategy, mode, catalogs, fromSave, activeSave]);
 
   const steps = simulation?.steps || [];
   const levelCap = simulation?.levelCap || initialSheet?.levelCap || 60;
@@ -253,6 +253,17 @@ export default function LevelSimulatorRoot() {
       </div>
 
       {/* Dual Mode Progression Toggle */}
+      <div className="p-3 bg-surface-5 border border-line-9 text-sm space-y-2">
+        <label className="flex items-center gap-2 font-serif text-accent">
+          <input type="checkbox" id="level-bittercup" checked={!fromSave && Boolean(build.bitterCup)} disabled={fromSave}
+            onChange={event => { updateField('bitterCup', event.target.checked); setStepIndex(0); }} />
+          Drink Bitter Cup before leveling (+20 highest, −20 lowest)
+        </label>
+        <p className="text-xs text-fg-8">
+          {fromSave ? 'The save already includes any permanent attribute changes. Switch to the build to plan Bitter Cup.' : 'Applied to starting attributes, capped at 100. Ties use the game’s attribute order.'}
+        </p>
+        {!fromSave && sheet?.bitterCup && <p className="text-xs text-accent">+{sheet.bitterCup.bonus} {sheet.bitterCup.highest} / −{sheet.bitterCup.penalty} {sheet.bitterCup.lowest}</p>}
+      </div>
       <LevelModeToggle mode={mode} onModeChange={setMode} />
 
       {/* Mobile Tab Bar (< 1024px) */}

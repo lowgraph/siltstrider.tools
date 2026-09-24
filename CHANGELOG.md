@@ -2,6 +2,13 @@
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
+## Builder and Level Optimizer fixes — 2026-09-24
+
+- Restored Challenge Runs to the primary navigation and mobile menu.
+- Show catalog-backed racial powers, passive abilities, and spells with their effects.
+- Keep attribute totals on one line while long bonus explanations wrap.
+- Moved Bitter Cup to the Level Optimizer; the build remembers the choice and progression recalculates. Imported saves retain their recorded attributes.
+
 ## Open a Save — 2026-09-22
 
 ### Highlights

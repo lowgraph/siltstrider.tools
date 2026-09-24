@@ -277,28 +277,6 @@ export default function Configurator({
         <SkillAttributeSummary maj={build.maj} min={build.min} />
       </div>
 
-      {/* Bitter Cup Artifact Option */}
-      <div className="p-3 bg-surface-5 border border-line-9 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <label htmlFor="c-bittercup" className="flex items-center gap-2.5 cursor-pointer font-serif text-sm font-bold text-accent">
-          <input
-            type="checkbox"
-            id="c-bittercup"
-            className="w-4 h-4 accent-accent cursor-pointer"
-            checked={Boolean(build.bitterCup)}
-            onChange={(e) => onUpdateField("bitterCup", e.target.checked)}
-          />
-          <span>Drink Bitter Cup (+20 highest, -20 lowest)</span>
-        </label>
-        <div className="flex items-center gap-2">
-          {sheet?.bitterCup && (
-            <span className="text-[11px] font-mono text-accent">
-              +{sheet.bitterCup.bonus} {sheet.bitterCup.highest} / -{sheet.bitterCup.penalty} {sheet.bitterCup.lowest}
-            </span>
-          )}
-          <InfoTip text="The Bitter Cup (artifact from Ald Redaynia) permanently raises your highest attribute by 20 points (up to 100) and lowers your lowest attribute by 20 points. Ties follow Morrowind canonical order: STR, INT, WIL, AGI, SPD, END, PER, LUC." />
-        </div>
-      </div>
-
       {/* Preset Class Customization Quick-Action Banner */}
       {build.className !== "Custom" && (
         <div className="flex items-center justify-between p-2.5 bg-surface-5 border border-line-9 text-xs">

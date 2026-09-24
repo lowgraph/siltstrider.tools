@@ -746,3 +746,20 @@ test("Adversarial QA 5: Send to Build Optimizer clears activeSave state and sets
   }
 });
 
+test("Bitter Cup is controlled in the level optimizer and survives navigation", async () => {
+ const dom=setupDom("#leveler"), root=createRoot(dom.window.document.getElementById("root"));
+ const go=async(view)=>act(async()=>{dom.window.location.hash="#"+view;dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));});
+ try {
+  await act(async()=>root.render(React.createElement(AppShell)));
+  const checkbox=dom.window.document.getElementById("level-bittercup");
+  assert.ok(checkbox); assert.equal(checkbox.checked,false);
+  await act(async()=>checkbox.click());
+  assert.equal(checkbox.checked,true);
+  await go("builder");
+  assert.equal(dom.window.document.getElementById("c-bittercup"),null);
+  await go("leveler");
+  assert.equal(dom.window.document.getElementById("level-bittercup").checked,true);
+  await act(async()=>dom.window.document.getElementById("level-bittercup").click());
+  assert.equal(dom.window.document.getElementById("level-bittercup").checked,false);
+ } finally {await act(async()=>root.unmount());dom.window.close();}
+});
