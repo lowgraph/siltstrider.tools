@@ -1,5 +1,5 @@
 "use client";
-import {allowedRanges, effectDraft, selectedEffect} from "../../../lib/effect-editor.mjs";
+import {effectNumber, allowedRanges, effectDraft, selectedEffect} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
@@ -414,7 +414,7 @@ export default function SpellmakingWorkstation() {
                           max="500"
                           className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                           value={row.min}
-                          onChange={(e) => handleEffectChange(idx, "min", Math.max(1, Number(e.target.value) || 1))}
+                          onChange={(e) => handleEffectChange(idx, "min", effectNumber(e.target.value))}
                         />
                       </div>
 
@@ -426,7 +426,7 @@ export default function SpellmakingWorkstation() {
                           max="500"
                           className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                           value={row.max}
-                          onChange={(e) => handleEffectChange(idx, "max", Math.max(1, Number(e.target.value) || 1))}
+                          onChange={(e) => handleEffectChange(idx, "max", effectNumber(e.target.value))}
                         />
                       </div>
 
@@ -440,7 +440,7 @@ export default function SpellmakingWorkstation() {
                             max="500"
                             className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                             value={row.dur}
-                            onChange={(e) => handleEffectChange(idx, "dur", Math.max(1, Number(e.target.value) || 1))}
+                            onChange={(e) => handleEffectChange(idx, "dur", effectNumber(e.target.value))}
                           />
                         </div>
                       )}
@@ -454,7 +454,7 @@ export default function SpellmakingWorkstation() {
                             max="500"
                             className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
                             value={row.area}
-                            onChange={(e) => handleEffectChange(idx, "area", Math.max(0, Number(e.target.value) || 0))}
+                            onChange={(e) => handleEffectChange(idx, "area", effectNumber(e.target.value, 0))}
                           />
                         </div>
                       )}

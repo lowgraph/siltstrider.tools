@@ -1,0 +1,4 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+test('clamp upper and lower UI values',async()=>{const {effectNumber:n}=await import('../lib/effect-editor.mjs');assert.equal(n(999999999),500);assert.equal(n(-50),1);assert.equal(n(-50,0),0);});
+test('nonfinite and fractional values',async()=>{const {effectNumber:n}=await import('../lib/effect-editor.mjs');for(const v of [NaN,Infinity,'invalid'])assert.equal(n(v),1);assert.equal(n(4.9),4);});
+test('calculation drafts clamp bypassed state too',async()=>{const {effectDraft}=await import('../lib/effect-editor.mjs');const row=effectDraft({min:900,max:Infinity,dur:999999999,area:-1,range:'target'},{mag:true,dur:true,castTarget:true});assert.equal(row.min,500);assert.equal(row.max,500);assert.equal(row.dur,500);assert.equal(row.area,0);});
