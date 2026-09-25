@@ -290,7 +290,7 @@ test("Equipment Studio UI (Adversarial): Extreme carry weight triggers Over-Encu
       id: "loadout-1",
       name: "Heavy Test",
       items: {
-        Cuirass: { id: "anvil", name: "Solid Gold Anvil", type: "cuirass", weight: 9999, armorRating: 50 },
+        Cuirass: { id: "anvil", isCustom: true, name: "Solid Gold Anvil", type: "cuirass", weight: 9999, armorRating: 50 },
       },
     },
   ];
