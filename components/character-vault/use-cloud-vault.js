@@ -149,8 +149,8 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
       ]);
 
       setSaves(savesRes?.saves || []);
-      if (entRes?.entitlements) {
-        setEntitlements(entRes.entitlements);
+      if (entRes) {
+        setEntitlements(entRes.entitlements || entRes);
       }
     } catch (err) {
       console.warn("Cloud vault fetch error:", err);
@@ -201,7 +201,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
         setStatusMessage(`Character "${name}" saved to Cloud Vault!`);
         setTimeout(() => setStatusMessage(null), 3000);
         await refreshCloudSaves();
-        return { success: true, save: res?.save };
+        return { success: true, save: res?.save || res };
       } catch (err) {
         const msg = err instanceof QuotaExceededError
           ? `Quota exceeded: Free accounts are limited to ${entitlements.maxSaves} saves. Delete or overwrite a save to make room.`
@@ -269,7 +269,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
         setStatusMessage(`Uploaded "${defaultName}" successfully!`);
         setTimeout(() => setStatusMessage(null), 3000);
         await refreshCloudSaves();
-        return { success: true, save: res?.save };
+        return { success: true, save: res?.save || res };
       } catch (err) {
         const msg = err instanceof QuotaExceededError
           ? `Quota exceeded: Your account limit of ${entitlements.maxSaves} saves has been reached.`
@@ -311,7 +311,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
         setStatusMessage(`Synced "${localRecord.name}" to Cloud Vault!`);
         setTimeout(() => setStatusMessage(null), 3000);
         await refreshCloudSaves();
-        return { success: true, save: res?.save };
+        return { success: true, save: res?.save || res };
       } catch (err) {
         const msg = err instanceof QuotaExceededError
           ? `Quota exceeded (${entitlements.maxSaves} saves limit).`
@@ -399,7 +399,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
       setStatusMessage("Fetching save data from Cloud Vault…");
       try {
         const res = await clientRef.current.getSave(id);
-        const save = res?.save;
+        const save = res?.save || res;
         if (!save) throw new Error("Save not found");
 
         const data = save.data;
@@ -468,7 +468,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
       setStatusMessage("Preparing export download…");
       try {
         const res = await clientRef.current.getSave(id);
-        const save = res?.save;
+        const save = res?.save || res;
         if (!save) throw new Error("Save not found");
 
         const jsonStr = JSON.stringify(save.data, null, 2);
@@ -503,10 +503,10 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
       setStatusMessage("Duplicating save in Cloud Vault…");
       try {
         const res = await duplicateCloudSave(clientRef.current, id);
-        setStatusMessage(`Created duplicate save: "${res.save?.name}"!`);
+        setStatusMessage(`Created duplicate save: "${(res.save || res)?.name}"!`);
         setTimeout(() => setStatusMessage(null), 3000);
         await refreshCloudSaves();
-        return { success: true, save: res.save };
+        return { success: true, save: res.save || res };
       } catch (err) {
         const msg = err instanceof QuotaExceededError
           ? `Quota exceeded (${entitlements.maxSaves} saves limit).`
@@ -526,7 +526,8 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
         let build = null;
         if (save.save_type === SAVE_TYPES.CHARACTER_BUILD) {
           const res = await clientRef.current.getSave(save.id);
-          build = res?.save?.data?.build || res?.save?.data;
+          const record = res?.save || res;
+          build = record?.data?.build || record?.data;
         } else {
           build = {
             race: save.race || "Dark Elf",
