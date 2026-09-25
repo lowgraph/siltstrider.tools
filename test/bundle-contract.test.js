@@ -170,6 +170,8 @@ test('travel, enchanting, and spellmaking features load matching catalogs accord
     .catalog('Places')
     .catalog('MagicEffects', { rows: [{ key: 'fire_damage', name: 'Fire Damage' }] })
     .catalog('GameSettings')
+    .catalog('Attributes')
+    .catalog('Skills')
     .catalog('Enchantments')
     .catalog('EffectRules', { rows: [{ key: 'fire_damage', allowEnchanting: true, allowSpellmaking: true }] })
     .catalog('Merchants', { rows: [{ id: 'galbedir', servicesRaw: 65536 | 32768, cell: 'Balmora, Guild of Mages' }] })

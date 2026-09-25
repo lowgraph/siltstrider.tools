@@ -49,8 +49,8 @@ test('adaptTravelGraph handles adversarial edge cases cleanly', async () => {
   const emptyGraph = adaptTravelGraph([], {});
   assert.deepEqual(emptyGraph, {});
   const emptyStops = getAvailableTransitStops('vanilla', emptyGraph);
-  // Falls back to static graph when customGraph is empty
-  assert.ok(emptyStops.length > 0);
+  // An empty filtered network must not resurrect forbidden fallback routes.
+  assert.deepEqual(emptyStops, []);
 
   // Edge Case 2: Malformed records (missing 'from', 'to', or self-loops)
   const malformedRecords = [
