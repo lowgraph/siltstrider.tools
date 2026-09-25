@@ -1,4 +1,5 @@
 "use client";
+import {resolveProfileEquipment} from "../../lib/profile-equipment.mjs";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import {useGameData} from '../use-game-data';
 import {equipmentCatalog} from '../../lib/equipment-catalog.mjs';
@@ -40,7 +41,7 @@ export default function EquipmentStudioRoot({
     return loadouts.find((l) => l.id === activeLoadoutId) || loadouts[0];
   }, [loadouts, activeLoadoutId]);
 
-  const activeItems = Object.fromEntries(Object.entries(activeLoadout?.items || {}).map(([slot,item]) => [slot, catalog.items.find(record => item?.key && record.key === item.key) || item]));
+  const {active: activeItems, unavailable} = resolveProfileEquipment(activeLoadout?.items, catalog.items);
 
   // Notify parent / update state helper
   const commitLoadouts = useCallback(
@@ -175,6 +176,7 @@ export default function EquipmentStudioRoot({
         </div>
       </div>
 
+      {unavailable.length > 0 && <p role="status">Unavailable in this profile; excluded from totals: {unavailable.map(item => `${item.name} (${item.slot})`).join(", ")}. Your selections are kept for switching back.</p>}
       {/* Loadout Preset Selector Bar */}
       <LoadoutTabsBar
         loadouts={loadouts}

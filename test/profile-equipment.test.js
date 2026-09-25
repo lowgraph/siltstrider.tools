@@ -1,0 +1,4 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+test('foreign items excluded and recover on switching back',async()=>{const {resolveProfileEquipment:r}=await import('../lib/profile-equipment.mjs');const item={key:'tr_helm',name:'TR helm',weight:3};assert.deepEqual(r({Helmet:item},[]).active,{});assert.equal(r({Helmet:item},[]).unavailable.length,1);assert.equal(r({Helmet:item},[item]).active.Helmet,item);});
+test('custom items survive without a catalog key',async()=>{const {resolveProfileEquipment:r}=await import('../lib/profile-equipment.mjs');const item={isCustom:true,weight:2};assert.equal(r({Helmet:item},[]).active.Helmet,item);});
+test('current profile record replaces stale values; empty slots tolerated',async()=>{const {resolveProfileEquipment:r}=await import('../lib/profile-equipment.mjs');assert.equal(r({Helmet:{key:'helm',weight:9},Boots:null},[{key:'helm',weight:3}]).active.Helmet.weight,3);});
