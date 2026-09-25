@@ -13,7 +13,8 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
   try { charCtx = useActiveCharacter(); } catch {}
   const build = propBuild !== undefined ? propBuild : charCtx?.build;
   const setBuild = propSetBuild || charCtx?.setBuild;
-  const vault = useCloudVault({ activeBuild: build, onApplyBuild: setBuild, onApplySave: charCtx?.loadSave });
+  const activeSave = charCtx?.activeSave;
+  const vault = useCloudVault({ activeSave, activeBuild: build, onApplyBuild: setBuild, onApplySave: charCtx?.loadSave });
 
   const [activeTab, setActiveTab] = useState("all"); // "all" | "openmw" | "builds" | "challenges" | "local"
   const [saveName, setSaveName] = useState("");
@@ -45,7 +46,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
 
   const handleSaveActive = async (e) => {
     e.preventDefault();
-    const name = saveName.trim() || build?.name || build?.className || "Custom Build";
+    const name = saveName.trim() || activeSave?.save?.identity?.name || build?.name || build?.className || "Custom Build";
     const res = await vault.saveActiveBuild(name);
     if (res.success) {
       setSaveName("");
@@ -179,7 +180,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
             {/* Save Current Build */}
             <div className="bg-surface-2 border border-line-11 p-4 space-y-3">
               <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
-                Save Active Build to Cloud
+                Save Character to Cloud
               </h4>
               <form onSubmit={handleSaveActive} className="space-y-2">
                 <input
@@ -198,7 +199,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
                   onClick={handleSaveActive}
                   disabled={vault.actionBusy || isAtQuota}
                 >
-                  {vault.actionBusy ? "Saving…" : "Save Active Build to Cloud"}
+                  {vault.actionBusy ? "Saving…" : "Save Character to Cloud"}
                 </button>
               </form>
             </div>

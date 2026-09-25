@@ -6,12 +6,13 @@ import OpenSavePanel from "./open-save-panel";
 
 export default function CloudVaultModal({
   activeBuild,
+  activeSave,
   onApplyBuild,
   onApplySave,
   isOpen: propIsOpen,
   onClose: propOnClose,
 }) {
-  const vault = useCloudVault({ activeBuild, onApplyBuild, onApplySave });
+  const vault = useCloudVault({ activeSave, activeBuild, onApplyBuild, onApplySave });
   const isOpen = propIsOpen !== undefined ? propIsOpen : vault.isOpen;
   const onClose = propOnClose || vault.closeModal;
 
@@ -42,7 +43,7 @@ export default function CloudVaultModal({
 
   const handleSaveActive = async (e) => {
     e.preventDefault();
-    const name = saveName.trim() || activeBuild?.name || activeBuild?.className || "Custom Build";
+    const name = saveName.trim() || activeSave?.save?.identity?.name || activeBuild?.name || activeBuild?.className || "Custom Build";
     const res = await vault.saveActiveBuild(name);
     if (res.success) {
       setSaveName("");
@@ -197,7 +198,7 @@ export default function CloudVaultModal({
                 {/* Save Current Build */}
                 <div className="bg-surface-2 border border-line-11 p-4 space-y-3">
                   <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
-                    Save Active Build to Cloud
+                    Save Character to Cloud
                   </h4>
                   <form onSubmit={handleSaveActive} className="space-y-2">
                     <input
@@ -216,7 +217,7 @@ export default function CloudVaultModal({
                       onClick={handleSaveActive}
                       disabled={vault.actionBusy || isAtQuota}
                     >
-                      {vault.actionBusy ? "Saving…" : "Save Active Build to Cloud"}
+                      {vault.actionBusy ? "Saving…" : "Save Character to Cloud"}
                     </button>
                   </form>
                 </div>

@@ -200,7 +200,7 @@ test("CloudVaultModal renders closed/open, displays quota badge, and respects ti
 
     // Check account info and quota badge
     assert.ok(document.body.textContent.includes("Nerevarine"));
-    assert.ok(document.body.textContent.includes("Save Active Build to Cloud"));
+    assert.ok(document.body.textContent.includes("Save Character to Cloud"));
     assert.ok(document.body.textContent.includes("Import Save (.omwsave or .json)"));
 
     // Check tabs
@@ -368,7 +368,7 @@ test("Adversarial Test 1: Quota boundary enforcement (5 free, 25 paid) displays 
 
     // Verify modal is open and shows account controls
     assert.ok(document.getElementById("cloud-vault-title"));
-    assert.ok(document.body.textContent.includes("Save Active Build to Cloud"));
+    assert.ok(document.body.textContent.includes("Save Character to Cloud"));
   } finally {
     root.unmount();
   }

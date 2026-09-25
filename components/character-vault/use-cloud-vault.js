@@ -22,7 +22,7 @@ export function describeLoadedSave(loaded) {
   return parts.join("; ") + ". See the Character Builder, Level Simulator and Journal.";
 }
 
-export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
+export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySave } = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -206,25 +206,25 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
         setErrorMessage("Please sign in to save to your Cloud Vault");
         return { success: false, error: "UNAUTHORIZED" };
       }
-      if (!activeBuild) {
+      if (!activeBuild && !activeSave?.save) {
         setErrorMessage("No active build to save");
         return { success: false, error: "NO_BUILD" };
       }
 
-      const name = (saveName || activeBuild.name || activeBuild.className || "Custom Build").trim();
+      const name = (saveName || activeSave?.save?.identity?.name || activeBuild?.name || activeBuild?.className || "Custom Build").trim();
       setActionBusy(true);
       setErrorMessage(null);
       setStatusMessage("Packing and uploading character build…");
 
       try {
-        const payload = {
+        const payload = activeSave?.save || {
           ...activeBuild,
           exportedAt: new Date().toISOString(),
           version: 1,
         };
 
         const res = await clientRef.current.createSave({
-          saveType: SAVE_TYPES.CHARACTER_BUILD,
+          saveType: activeSave?.save ? SAVE_TYPES.OPENMW_SAVE : SAVE_TYPES.CHARACTER_BUILD,
           data: payload,
           name,
         });
@@ -243,7 +243,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
         setActionBusy(false);
       }
     },
-    [signedIn, activeBuild, entitlements.maxSaves, refreshCloudSaves]
+    [signedIn, activeBuild, activeSave, entitlements.maxSaves, refreshCloudSaves]
   );
 
   // Upload a .omwsave or .json file
