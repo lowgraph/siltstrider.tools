@@ -1,3 +1,4 @@
+import { handleAccount } from './routes/account.mjs';
 /**
  * Silt Strider Cloudflare Worker
  *
@@ -60,6 +61,8 @@ export default {
         return auth.response;
       }
       const userId = auth.userId;
+
+      if (pathname === '/api/account') return handleAccount(request, env, userId);
 
       // Collection route: /api/saves
       if (pathname === '/api/saves') {

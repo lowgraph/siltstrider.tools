@@ -122,7 +122,7 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   assert.match(drawer.textContent,/Extras & SiteHomeAbout Silt Strider/);
   assert.match(drawer.textContent,/Game World Profile/);
   assert.ok(document.querySelector('.nav-primary #react-nav-challenge'),'Challenge Runs is directly accessible');
-  assert.equal(document.querySelector('#react-nav-vault').getAttribute('aria-label'),'Cloud Vault: your saved characters');
+  assert.equal(document.querySelector('#react-nav-vault').getAttribute('aria-label'),'Your account');
 
   // Click a drawer calculator button (e.g. Enchanting)
   const enchantBtn=[...drawer.querySelectorAll('button')].find(b=>b.textContent==='Enchanting');

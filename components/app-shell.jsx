@@ -1,6 +1,8 @@
 "use client";
 import Script from 'next/script';
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import { AccountProvider } from './account-context';
+import AccountPage from './account-page';
 import SiteHeader from './site-header';
 import SiteFooter from './site-footer';
 import { ShellProvider, useShell } from './shell-context';
@@ -35,6 +37,7 @@ const KNOWN_VIEWS = [
   'alchemy',
   'travel',
   'vault',
+  'account',
   'about',
   'changelog'
 ];
@@ -50,6 +53,7 @@ const VIEW_BODY_CLASSES = [
   'view-alchemy',
   'view-travel',
   'view-vault',
+  'view-account',
   'view-about',
   'view-changelog'
 ];
@@ -74,6 +78,7 @@ function AppShellMain() {
 
       {/* Main View Router - Declarative Mounting Without Portals */}
       <main className="site-main flex-1 w-full max-w-(--page-width) mx-auto px-2 sm:px-4 py-3 sm:py-4">
+        {activeView === 'account' && <AccountPage />}
         <section
           id="panel-home"
           className={`panel ${activeView === 'home' ? 'show' : ''}`}
@@ -201,7 +206,7 @@ export default function AppShell({ revision = '' } = {}) {
     <ShellProvider>
       <CharacterProvider>
         <ChallengeRunProvider>
-          <AppShellMain />
+          <AccountProvider><AppShellMain /></AccountProvider>
         </ChallengeRunProvider>
         {revision && (
           <>

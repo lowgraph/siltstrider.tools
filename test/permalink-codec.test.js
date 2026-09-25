@@ -25,10 +25,10 @@ test('toBase64Url and fromBase64Url correctly round-trip UTF-8 strings', async (
   }
 });
 
-test('encodeShareHash and decodeShareHash round-trip all 12 canonical views', async () => {
+test('encodeShareHash and decodeShareHash round-trip all 13 canonical views', async () => {
   const { KNOWN_VIEWS, encodeShareHash, decodeShareHash } = await modulePromise;
 
-  assert.equal(KNOWN_VIEWS.length, 12);
+  assert.equal(KNOWN_VIEWS.length, 13);
 
   for (const view of KNOWN_VIEWS) {
     const hash = encodeShareHash({ view, world: 'vanilla', arce: false });

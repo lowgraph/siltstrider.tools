@@ -2,9 +2,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useShell } from './shell-context';
 import SearchPalette from './search/search-palette';
+import { useAccount } from './account-context';
+import ProfileIcon from './profile-icon';
 import ThemeToggle from './theme-toggle';
 
 const descriptions = {
+  account: 'Your username and profile icon.',
   home: 'Pick a planner for this playthrough.',
   challenge: 'Roll a character, a major goal, side tasks, and restrictions.',
   builder: 'Premade sheets and a custom class builder. Optimize gear when you are ready.',
@@ -72,6 +75,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
   let contextShell = null;
   try { contextShell = useShell(); } catch {}
   const shell = propShell || contextShell;
+  const account = useAccount();
   if (!shell) throw new Error('Shell required');
   const [open, setOpen] = useState(false);
   const [calcOpen, setCalcOpen] = useState(false);
@@ -294,14 +298,14 @@ export default function SiteHeader({ shell: propShell } = {}) {
       <button
         type="button"
         id="react-nav-vault"
-        className={'vault-trigger' + (shell.view === 'vault' ? ' on' : '')}
+        className={'vault-trigger' + (shell.view === 'account' ? ' on' : '')}
         disabled={!shell.ready}
-        aria-label="Cloud Vault: your saved characters"
-        title="Cloud Vault"
-        aria-current={shell.view === 'vault' ? 'page' : undefined}
-        onClick={e => navigate(e, 'vault')}
+        aria-label="Your account"
+        title="Your account"
+        aria-current={shell.view === 'account' ? 'page' : undefined}
+        onClick={e => navigate(e, 'account')}
       >
-        <TabIcon name="vault" />
+        <ProfileIcon id={account?.profile?.iconId ?? 0} size={26} />
       </button>
       </div>
       <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} profile={shell.profile} navigate={view => shell.navigate(view)} />
@@ -449,12 +453,12 @@ export default function SiteHeader({ shell: propShell } = {}) {
             <button
               type="button"
               id="react-drawer-vault"
-              className={'btn w-full' + (shell.view === 'vault' ? ' on' : '')}
+              className={'btn w-full' + (shell.view === 'account' ? ' on' : '')}
               disabled={!shell.ready}
-              aria-current={shell.view === 'vault' ? 'page' : undefined}
-              onClick={e => navigate(e, 'vault')}
+              aria-current={shell.view === 'account' ? 'page' : undefined}
+              onClick={e => navigate(e, 'account')}
             >
-              Cloud Character Vault
+              Your account
             </button>
           </div>
         </div>
