@@ -1,3 +1,4 @@
+import {readSaveJson, MAX_PACKED_BYTES} from '../../lib/cloud-save-limits.mjs';
 /**
  * Silt Strider Cloudflare API: Cloud Save Vault Routes
  *
@@ -209,9 +210,10 @@ export async function handleCreateSave(request, env, userId) {
 
   let body;
   try {
-    body = await request.json();
-  } catch {
-    return json({ error: 'BAD_REQUEST', message: 'Request body must be valid JSON' }, 400, cors);
+    body = await readSaveJson(request);
+  } catch (err) {
+    const large = /limit/.test(err.message);
+    return json({ error: large ? 'PAYLOAD_TOO_LARGE' : 'BAD_REQUEST', message: err.message }, large ? 413 : 400, cors);
   }
 
   if (!body || typeof body !== 'object') {
@@ -255,10 +257,12 @@ export async function handleCreateSave(request, env, userId) {
     try {
       packed = toUint8Array(body.packedPayload);
       packedSize = packed.length;
+      if (packedSize > MAX_PACKED_BYTES) throw new Error('Packed payload exceeds size limit');
       const unpacked = unpackCloudSave(packed);
+      validateSaveData(unpacked.saveType, unpacked.data);
       dataForMeta = unpacked.data;
       effectiveSaveType = unpacked.saveType || saveType;
-      uncompressedSize = body.unpackedSize ?? unpacked.uncompressedSize ?? packedSize;
+      uncompressedSize = unpacked.uncompressedSize;
       encoding = (packed[6] & 1) ? 'slt1_deflate' : 'slt1_raw';
       payloadHash = computeSha256Sync(packed);
     } catch (err) {
@@ -356,9 +360,10 @@ export async function handleUpdateSave(request, env, userId, saveId) {
 
   let body;
   try {
-    body = await request.json();
-  } catch {
-    return json({ error: 'BAD_REQUEST', message: 'Request body must be valid JSON' }, 400, cors);
+    body = await readSaveJson(request);
+  } catch (err) {
+    const large = /limit/.test(err.message);
+    return json({ error: large ? 'PAYLOAD_TOO_LARGE' : 'BAD_REQUEST', message: err.message }, large ? 413 : 400, cors);
   }
 
   if (!body || typeof body !== 'object') {
@@ -511,10 +516,12 @@ export async function handleUpdateSave(request, env, userId, saveId) {
     try {
       packed = toUint8Array(body.packedPayload);
       packedSize = packed.length;
+      if (packedSize > MAX_PACKED_BYTES) throw new Error('Packed payload exceeds size limit');
       const unpacked = unpackCloudSave(packed);
+      validateSaveData(unpacked.saveType, unpacked.data);
       dataForMeta = unpacked.data;
       saveType = unpacked.saveType || saveType;
-      uncompressedSize = body.unpackedSize ?? unpacked.uncompressedSize ?? packedSize;
+      uncompressedSize = unpacked.uncompressedSize;
       encoding = (packed[6] & 1) ? 'slt1_deflate' : 'slt1_raw';
       payloadHash = computeSha256Sync(packed);
     } catch (err) {
