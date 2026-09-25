@@ -1,4 +1,5 @@
 "use client";
+import { factionCharacter } from "../../lib/faction-math.mjs";
 import { useState, useMemo, useEffect } from "react";
 import { useGameData } from "../use-game-data";
 import { useSearchIntent } from "../use-search-intent";
@@ -190,6 +191,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
     shell = { profile: "vanilla", ready: false };
   }
   const { sheet, build, activeSave, updateField } = useActiveCharacter();
+  const character = factionCharacter(sheet, activeSave?.sheet);
   const saveProgress = activeSave?.save?.progress || null;
   const gameData = useGameData('factions', { enabled: Boolean(shell?.ready) });
 
@@ -317,7 +319,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
             activeCategory={activeCategory}
             onCategoryChange={setActiveCategory}
             joinedFactions={joinedFactions}
-            character={sheet}
+            character={character}
           />
         </div>
 
@@ -325,7 +327,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
         <div className="flex-1 h-full overflow-hidden flex flex-col">
           <FactionDetailView
             faction={selectedFaction}
-            character={sheet}
+            character={character}
             membership={currentMembership}
             joinedFactionKeys={joinedFactionKeys}
             quests={factionQuests}

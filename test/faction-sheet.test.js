@@ -1,0 +1,2 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+for (const [label,sheet,saved,expected] of [['builder',{attrs:{Strength:{v:50}}},null,50],['save',{attrs:{Strength:{v:50}}},{attrs:{Strength:{v:85}}},85],['legacy',{attributes:{Strength:30}},null,30]]) test(label+' faction attributes',async()=>{const {factionCharacter,getStatValue}=await import('../lib/faction-math.mjs');assert.equal(getStatValue(factionCharacter(sheet,saved).attributes,'Strength'),expected);});
