@@ -1,4 +1,5 @@
 "use client";
+import { validateSave } from "../lib/omwsave-import.mjs";
 import {saveMemberships} from "../lib/faction-memberships.mjs";
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { computeSheet, swapSkill as mathSwapSkill } from "../lib/character-math.mjs";
@@ -381,6 +382,7 @@ export function CharacterProvider({ children }) {
   buildRef.current = build;
 
   const loadSave = useCallback(async (save) => {
+    validateSave(save);
     const { profile, reason, contentFileCount } = profileForSave(save);
     const loader = getGameDataLoader();
     const service = (window.siltCharacters ||= createCharacterCatalogService(loader));
@@ -403,8 +405,9 @@ export function CharacterProvider({ children }) {
       rules: rulesCheck(save, character, next),
       sheet: sheetFromSave(save, character, next)
     };
+    const nextBuild = { ...next, factionMemberships:saveMemberships(save.progress), loadouts: [loadout, ...createDefaultLoadoutPresets().slice(1)] };
     setActiveSave(loaded);
-    setBuild({ ...next, factionMemberships:saveMemberships(save.progress), loadouts: [loadout, ...createDefaultLoadoutPresets().slice(1)] });
+    setBuild(nextBuild);
     if (shell.profile !== profile && typeof shell.setProfile === "function") shell.setProfile(profile);
     return loaded;
   }, [shell]);
