@@ -1,4 +1,5 @@
 "use client";
+import {distinctFavored} from "../lib/favored-attributes.mjs";
 import { validateSave } from "../lib/omwsave-import.mjs";
 import {saveMemberships} from "../lib/faction-memberships.mjs";
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from "react";
@@ -155,10 +156,11 @@ export function CharacterProvider({ children }) {
   if (!shell) {
     shell = { world: "vanilla", arce: false, profile: "vanilla" };
   }
-  const [build, setBuild] = useState(() => {
+  const [build, setBuildState] = useState(() => {
     const fromDom = typeof window !== "undefined" ? readBuildFromDom(shell) : null;
-    return fromDom || DEFAULT_BUILD;
+    return distinctFavored(fromDom || DEFAULT_BUILD);
   });
+  const setBuild = useCallback((next) => setBuildState(previous => distinctFavored(typeof next === 'function' ? next(previous) : next, previous)), []);
   const [catalogs, setCatalogs] = useState(() => getFallbackCatalogs());
   const isInternalSyncRef = useRef(false);
 

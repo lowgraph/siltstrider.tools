@@ -1,0 +1,4 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+test('editing second swaps first',async()=>{const {distinctFavored:f}=await import('../lib/favored-attributes.mjs');assert.deepEqual(f({fav1:'Strength',fav2:'Strength'},{fav1:'Strength',fav2:'Endurance'}),{fav1:'Endurance',fav2:'Strength'});});
+test('editing first swaps second',async()=>{const {distinctFavored:f}=await import('../lib/favored-attributes.mjs');assert.deepEqual(f({fav1:'Endurance',fav2:'Endurance'},{fav1:'Strength',fav2:'Endurance'}),{fav1:'Endurance',fav2:'Strength'});});
+test('incoming duplicate build normalizes without previous values',async()=>{const {distinctFavored:f}=await import('../lib/favored-attributes.mjs');const b=f({fav1:'Luck',fav2:'Luck'});assert.notEqual(b.fav1,b.fav2);assert.equal(b.fav1,'Luck');});
