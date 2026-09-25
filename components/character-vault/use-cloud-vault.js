@@ -5,6 +5,8 @@ import { parseOmwSave } from "../../lib/omwsave-parser.mjs";
 import { readSaveFile } from "../../lib/omwsave-import.mjs";
 import { duplicateCloudSave, generateBuildShareUrl } from "../../lib/character-vault.mjs";
 
+import { ensureClerk } from "../../lib/clerk-browser.mjs";
+
 const LOCAL_SAVES_KEY = "siltstrider-saved-characters";
 
 const PROFILE_LABELS = { vanilla: "Morrowind", tr: "Tamriel Rebuilt", tr_arce: "Tamriel Rebuilt + ARCE" };
@@ -97,6 +99,9 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
 
     // Listen to clerk auth listener if available
     let listener = null;
+    function attachClerk() {
+    checkAuth();
+    if (listener || !window.Clerk?.addListener) return;
     if (window.Clerk?.addListener) {
       try {
         listener = window.Clerk.addListener((state) => {
@@ -116,6 +121,12 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
       } catch {}
     }
 
+    }
+    window.addEventListener("silt-auth-ready", attachClerk);
+    attachClerk();
+    let disposed = false;
+    ensureClerk().catch(error => { if (!disposed) setErrorMessage(error.message); });
+
     // Also listen for modal trigger custom event
     const handleOpenVault = () => setIsOpen(true);
     const handleCloseVault = () => setIsOpen(false);
@@ -123,6 +134,8 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
     window.addEventListener("silt-close-vault", handleCloseVault);
 
     return () => {
+      disposed = true;
+      window.removeEventListener("silt-auth-ready", attachClerk);
       accountEpoch.current++;
       if (typeof listener === 'function') listener();
       window.removeEventListener("silt-open-vault", handleOpenVault);
@@ -569,17 +582,15 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
     []
   );
 
-  const openSignIn = useCallback(() => {
-    if (typeof window !== "undefined" && window.Clerk?.openSignIn) {
-      window.Clerk.openSignIn({ forceRedirectUrl: window.location.href });
-    }
+  const openAuth = useCallback(async (method) => {
+    setErrorMessage(null);
+    try {
+      const clerk = await ensureClerk();
+      clerk[method]({ forceRedirectUrl: window.location.href });
+    } catch (error) { setErrorMessage(error.message); }
   }, []);
-
-  const openSignUp = useCallback(() => {
-    if (typeof window !== "undefined" && window.Clerk?.openSignUp) {
-      window.Clerk.openSignUp({ forceRedirectUrl: window.location.href });
-    }
-  }, []);
+  const openSignIn = useCallback(() => openAuth('openSignIn'), [openAuth]);
+  const openSignUp = useCallback(() => openAuth('openSignUp'), [openAuth]);
 
   return {
     isOpen,
