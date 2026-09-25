@@ -4,6 +4,12 @@ All notable changes to the **Silt Strider** Morrowind character planner, calcula
 
 ## Builder and Level Optimizer fixes — 2026-09-24
 
+- QA fixes: calculators use current character/save attributes; gear transfer equips displayed recommendations; Equipment Studio uses full profile catalogs, source plugins, and extracted enchantments.
+- Level reset retains its planning range, manual choices update subsequent progression, and the stepper shows every level including the final state.
+- Magic editors enforce casting ranges and effect targets and retain stable effect IDs during catalog loading.
+- Travel respects guild membership and Conjurer requirements. Faction edits and tool drafts survive navigation.
+- Apparatus quality labels are rounded, and the public changelog includes the September 24 changes.
+
 - Gear recommendations now switch between one-handed + shield and two-handed setups, updating both early-game and endgame picks immediately.
 
 - Restored Challenge Runs to the primary navigation and mobile menu.

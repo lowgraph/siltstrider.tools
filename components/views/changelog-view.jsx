@@ -13,6 +13,18 @@ export default function ChangelogView() {
       </div>
 
       <div className="space-y-6 text-sm text-fg-2">
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-24">September 24, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Challenge Runs is back in the main navigation. Character sheets show racial powers and keep attribute totals on one line.</li>
+            <li>Bitter Cup is available in the Level Optimizer. Gear recommendations support one-handed and shield or two-handed setups.</li>
+            <li>Equip the displayed early- or late-game recommendations directly into a loadout. Equipment browsing uses the selected profile’s full catalog, enchantments, and source plugins.</li>
+            <li>Alchemy, Enchanting, and Spellmaking use character and imported-save attributes. Apparatus quality labels are rounded for readability.</li>
+            <li>The level planner keeps its range after reset, applies manual choices to later progression, and shows every level in sequence.</li>
+            <li>Magic editors respect allowed casting ranges and attribute or skill targets. Selected effects keep their identity as catalogs load.</li>
+            <li>Travel respects Mages Guild membership and TR Conjurer rank. Faction membership edits and unfinished tool drafts survive page navigation.</li>
+          </ul>
+        </section>
         {/* September 22, 2026 */}
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12">
