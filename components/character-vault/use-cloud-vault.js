@@ -37,12 +37,15 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
   const [statusMessage, setStatusMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const accountEpoch = useRef(0);
+  const accountId = useRef(null);
   const clientRef = useRef(null);
 
   // Initialize client once or when token provider is called
   if (!clientRef.current) {
     clientRef.current = createCloudSaveClient({
       baseUrl: "",
+      getSessionKey: () => accountEpoch.current,
       getToken: async () => {
         if (typeof window === "undefined") return null;
         if (window.siltStriderAuth?.getToken) {
@@ -65,9 +68,18 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    function resetAccount(id) {
+      if (accountId.current === id) return;
+      accountId.current = id;
+      accountEpoch.current++;
+      setSaves([]);
+      setEntitlements({tier:'free',maxSaves:5,currentSaves:0,remainingSaves:5});
+      setStatusMessage(null); setErrorMessage(null); setActionBusy(false); setLoading(false);
+    }
     function checkAuth() {
       const clerk = window.Clerk;
       const isAuth = Boolean(clerk?.user && clerk?.session);
+      resetAccount(isAuth ? clerk.user.id : null);
       setSignedIn(isAuth);
       if (isAuth && clerk.user) {
         setUser({
@@ -87,8 +99,9 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
     let listener = null;
     if (window.Clerk?.addListener) {
       try {
-        window.Clerk.addListener((state) => {
+        listener = window.Clerk.addListener((state) => {
           const isAuth = Boolean(state?.user && state?.session);
+          resetAccount(isAuth ? state.user.id : null);
           setSignedIn(isAuth);
           if (isAuth && state.user) {
             setUser({
@@ -110,6 +123,8 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
     window.addEventListener("silt-close-vault", handleCloseVault);
 
     return () => {
+      accountEpoch.current++;
+      if (typeof listener === 'function') listener();
       window.removeEventListener("silt-open-vault", handleOpenVault);
       window.removeEventListener("silt-close-vault", handleCloseVault);
     };
@@ -140,6 +155,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
     if (!signedIn || !clientRef.current) {
       return;
     }
+    const epoch = accountEpoch.current;
     setLoading(true);
     setErrorMessage(null);
     try {
@@ -148,22 +164,24 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
         clientRef.current.getEntitlements().catch(() => null),
       ]);
 
+      if (epoch !== accountEpoch.current) return;
       setSaves(savesRes?.saves || []);
       if (entRes) {
         setEntitlements(entRes.entitlements || entRes);
       }
     } catch (err) {
+      if (epoch !== accountEpoch.current) return;
       console.warn("Cloud vault fetch error:", err);
       setErrorMessage(err.message || "Could not load cloud saves");
     } finally {
-      setLoading(false);
+      if (epoch === accountEpoch.current) setLoading(false);
     }
-  }, [signedIn]);
+  }, [signedIn, user?.id]);
 
   // Refresh when signedIn or isOpen changes
   useEffect(() => {
     refreshLocalSaves();
-    if (signedIn && isOpen) {
+    if (signedIn) {
       refreshCloudSaves();
     }
   }, [signedIn, isOpen, refreshLocalSaves, refreshCloudSaves]);
