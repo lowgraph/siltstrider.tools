@@ -234,6 +234,7 @@ export async function handleCreateSave(request, env, userId) {
 
   if (body.data !== undefined && body.data !== null) {
     try {
+      if (saveType === SAVE_TYPES.CHARACTER_BUILD && body.data?.build) body.data = body.data.build;
       validateSaveData(saveType, body.data);
     } catch (err) {
       return json({ error: 'VALIDATION_FAILED', message: err.message }, 400, cors);
@@ -489,6 +490,7 @@ export async function handleUpdateSave(request, env, userId, saveId) {
 
   if (body.data !== undefined && body.data !== null) {
     try {
+      if (saveType === SAVE_TYPES.CHARACTER_BUILD && body.data?.build) body.data = body.data.build;
       validateSaveData(saveType, body.data);
     } catch (err) {
       return json({ error: 'VALIDATION_FAILED', message: err.message }, 400, cors);

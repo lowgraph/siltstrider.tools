@@ -187,7 +187,7 @@ export function useCloudVault({ activeBuild, onApplyBuild, onApplySave } = {}) {
 
       try {
         const payload = {
-          build: activeBuild,
+          ...activeBuild,
           exportedAt: new Date().toISOString(),
           version: 1,
         };
