@@ -1,4 +1,5 @@
 "use client";
+import {boundedLevel} from "../../lib/level-bounds.mjs";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {progressionState} from "../../lib/progression-step.mjs";
 import LevelModeToggle from "./level-mode-toggle";
@@ -48,9 +49,12 @@ export default function LevelSimulatorRoot() {
   const [archetypeId, setArchetypeId] = useState(() => detectedArchetype.id);
   const [customPriority, setCustomPriority] = useState(() => [...detectedArchetype.priority]);
   const [strategy, setStrategy] = useState("auto");
-  const [targetLevel, setTargetLevel] = useState(() => {
+  const [requestedTargetLevel, setTargetLevel] = useState(() => {
     return initialSheet ? Math.min(initialSheet.levelCap, 50) : 50;
   });
+  const targetCap = mode === PROGRESSION_MODES.STATS_ONLY ? Math.max(100, initialSheet?.level || 1) : initialSheet?.levelCap;
+  const targetLevel = boundedLevel(requestedTargetLevel, initialSheet?.level, targetCap);
+  useEffect(() => { setTargetLevel(targetLevel); }, [targetLevel]);
   const [stepIndex, setStepIndex] = useState(0);
   const [manualPlan, setManualSteps] = useState({});
   const planKey = JSON.stringify([initialSheet, mode, strategy, customPriority]);
@@ -82,6 +86,7 @@ export default function LevelSimulatorRoot() {
   }, [initialSheet, sheet, build, targetLevel, archetypeId, customPriority, strategy, mode, catalogs, fromSave, activeSave, manualSteps]);
 
   const steps = simulation?.steps || [];
+  useEffect(() => { setStepIndex(index => Math.min(index, steps.length)); }, [steps.length]);
   const levelCap = simulation?.levelCap || initialSheet?.levelCap || 60;
 
   // Current state at active stepIndex
