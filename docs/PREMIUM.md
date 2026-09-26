@@ -20,7 +20,7 @@ The signed-in supporter requests a stable random code, copies it into their
 Ko-fi payment message, and follows the Ko-fi link. They then select Check payment
 status. No upgrade is granted just for returning from Ko-fi or claiming payment.
 
-Verified Donation notifications must contain exactly one recognized account code,
+Verified Tip notifications (or legacy Donation notifications) must contain exactly one recognized account code,
 a positive USD amount, and a transaction ID. Subscription and shop payments are
 ignored. The webhook uses a timing-safe token comparison, a 32 KB body limit,
 and an atomic D1 batch. Transaction IDs are unique; repeated notifications cannot

@@ -18,7 +18,8 @@ export function verifyKofi(data,secret) {
   return a.length===b.length&&timingSafeEqual(a,b);
 }
 export function paymentDetails(data) {
-  if(data.type!=='Donation'||data.is_subscription_payment!==false||data.currency!=='USD')return null;
+  // Current Ko-fi events use Tip; retain compatibility with older Donation events.
+  if(!['Tip','Donation'].includes(data.type)||data.is_subscription_payment!==false||data.currency!=='USD')return null;
   if(typeof data.amount!=='string'||!/^\d{1,7}(\.\d{1,2})?$/.test(data.amount))return null;
   const cents=Math.round(Number(data.amount)*100);
   if(cents<1)return null;

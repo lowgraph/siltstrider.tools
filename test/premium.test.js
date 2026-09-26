@@ -1,6 +1,28 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');
 const code='SS-'+'a'.repeat(32);
-const valid={verification_token:'secret',type:'Donation',is_subscription_payment:false,currency:'USD',amount:'3.00',message:code,kofi_transaction_id:'payment-one'};
+const valid={verification_token:'secret',type:'Tip',is_subscription_payment:false,currency:'USD',amount:'3.00',message:code,kofi_transaction_id:'payment-one'};
+
+test('current Tip and legacy Donation accept a one-dollar payment',async()=>{
+  const {paymentDetails}=await import('../cloudflare/routes/premium.mjs');
+  for(const type of ['Tip','Donation']) assert.deepEqual(paymentDetails({...valid,type,amount:'1.00'}),{code,cents:100,transactionId:'payment-one'});
+});
+
+test('other Ko-fi event types and recurring tips do not qualify',async()=>{
+  const {paymentDetails}=await import('../cloudflare/routes/premium.mjs');
+  for(const type of ['Subscription','Commission','Shop Order','Unknown']) assert.equal(paymentDetails({...valid,type}),null);
+  for(const is_subscription_payment of [true,undefined,'false']) assert.equal(paymentDetails({...valid,is_subscription_payment}),null);
+});
+
+test('private form-encoded dollar tip activates without retaining its message',async()=>{
+  const {handleKofiWebhook}=await import('../cloudflare/routes/premium.mjs');
+  let writes;
+  const env={KOFI_VERIFICATION_TOKEN:'secret',DB:{prepare:sql=>({bind:(...args)=>({sql,args,first:async()=>({clerk_user_id:'owner'})})}),batch:async statements=>{writes=statements;}}};
+  const data={...valid,amount:'1.00',is_public:false,message:'Private thank-you '+code};
+  const response=await handleKofiWebhook(new Request('https://site/api/webhooks/kofi',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({data:JSON.stringify(data)})}),env);
+  assert.equal(response.status,200);
+  assert.deepEqual(writes[0].args.slice(0,3),['payment-one','owner',100]);
+  assert.equal(JSON.stringify(writes).includes('Private thank-you'),false);
+});
 test('Ko-fi secret and positive one-time USD payment required',async()=>{const {verifyKofi,paymentDetails}=await import('../cloudflare/routes/premium.mjs');assert.equal(verifyKofi(valid,'secret'),true);for(const token of ['', 'wrong',undefined])assert.equal(verifyKofi({...valid,verification_token:token},'secret'),false);assert.equal(verifyKofi(valid,''),false);assert.equal(paymentDetails(valid).cents,300);assert.equal(paymentDetails({...valid,amount:'0.01'}).cents,1);for(const changes of [{amount:'0'},{amount:'-3'},{amount:'Infinity'},{currency:'EUR'},{is_subscription_payment:true},{type:'Shop Order'},{message:null},{message:code+' SS-'+'b'.repeat(32)}])assert.equal(paymentDetails({...valid,...changes}),null);});
 test('invalid notifications cannot write entitlements',async()=>{const {handleKofiWebhook}=await import('../cloudflare/routes/premium.mjs');let queries=0;const env={KOFI_VERIFICATION_TOKEN:'secret',DB:{prepare:()=>{queries++;throw Error('Unexpected database access');}}};for(const changes of [{verification_token:'fake'},{amount:'0'},{message:''}]){const r=await handleKofiWebhook(new Request('https://site/api/webhooks/kofi',{method:'POST',body:new URLSearchParams({data:JSON.stringify({...valid,...changes})})}),env);assert.ok([200,401].includes(r.status));}assert.equal(queries,0);});
 test('verified payment upgrades recorded owner atomically without storing email',async()=>{const {handleKofiWebhook}=await import('../cloudflare/routes/premium.mjs');let batch;const env={KOFI_VERIFICATION_TOKEN:'secret',DB:{prepare:sql=>({bind:(...args)=>({sql,args,first:async()=>({clerk_user_id:'owner'})})}),batch:async statements=>{batch=statements;}}};const r=await handleKofiWebhook(new Request('https://site/api/webhooks/kofi',{method:'POST',body:new URLSearchParams({data:JSON.stringify({...valid,email:'private@example.test'})})}),env);assert.equal(r.status,200);assert.equal(batch.length,2);assert.deepEqual(batch[0].args.slice(0,3),['payment-one','owner',300]);assert.match(batch[0].sql,/INSERT OR IGNORE/);assert.match(batch[1].sql,/FROM premium_payments WHERE transaction_id/);assert.equal(JSON.stringify(batch).includes('private@example.test'),false);});
