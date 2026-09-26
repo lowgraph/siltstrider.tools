@@ -305,7 +305,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
         aria-current={shell.view === 'account' ? 'page' : undefined}
         onClick={e => navigate(e, 'account')}
       >
-        <ProfileIcon id={account?.profile?.iconId ?? 0} size={26} />
+        <ProfileIcon premium={account?.profile?.premium === true} id={account?.profile?.iconId ?? 0} size={26} />
       </button>
       </div>
       <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} profile={shell.profile} navigate={view => shell.navigate(view)} />

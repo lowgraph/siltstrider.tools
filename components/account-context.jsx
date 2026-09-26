@@ -6,14 +6,14 @@ export const useAccount=()=>useContext(Context);
 export function AccountProvider({children}) {
  const [profile,setProfile]=useState(null),[user,setUser]=useState(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);
  const owner=useRef(null),epoch=useRef(0);
- async function request(method,data,refreshed=false) {
+ async function request(method,data,refreshed=false,path='/api/account') {
   const generation=epoch.current;
   const clerk=await ensureClerk();const token=await clerk.session?.getToken({skipCache:refreshed});
   if(!token||generation!==epoch.current)throw new Error('Please sign in again.');
-  const res=await fetch('/api/account',{method,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},...(data?{body:JSON.stringify(data)}:{})});
+  const res=await fetch(path,{method,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},...(data?{body:JSON.stringify(data)}:{})});
   const body=await res.json();
   if(generation!==epoch.current)throw new Error('Account changed. Please retry.');
-  if(res.status===401&&!refreshed)return request(method,data,true);
+  if(res.status===401&&!refreshed)return request(method,data,true,path);
   if(res.status===401)throw new Error('Your session could not be renewed. Sign out and sign in again.');
   if(!res.ok)throw new Error(body.message||'Could not load account.');
   return body;
@@ -29,6 +29,6 @@ export function AccountProvider({children}) {
   });}).catch(e=>{if(!disposed){setError(e.message);setLoading(false);}});
   return()=>{disposed=true;epoch.current++;owner.current=null;unsubscribe?.();};
  },[]);
- async function save(data){const result=await request('PUT',data);setProfile(result);return result;}
- return <Context.Provider value={{profile,user,error,loading,save}}>{children}</Context.Provider>;
+ async function save(data){const result=await request('PUT',data);setProfile(previous=>({...previous,...result}));return result;}
+ return <Context.Provider value={{profile,user,error,loading,save, refresh: async()=>{const result=await request('GET');setProfile(result);return result;}, premiumCode:()=>request('POST',null,false,'/api/premium/code')}}>{children}</Context.Provider>;
 }

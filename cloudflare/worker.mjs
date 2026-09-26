@@ -1,3 +1,4 @@
+import { handlePremiumCode, handleKofiWebhook } from './routes/premium.mjs';
 import { handleAccount } from './routes/account.mjs';
 /**
  * Silt Strider Cloudflare Worker
@@ -44,6 +45,8 @@ export default {
       });
     }
 
+    if (pathname === '/api/webhooks/kofi') return handleKofiWebhook(request, env);
+
     // 2. Development test character endpoint
     if (pathname === '/api/test-character') {
       return insertTestCharacter(request, env);
@@ -62,6 +65,7 @@ export default {
       }
       const userId = auth.userId;
 
+      if (pathname === '/api/premium/code') return handlePremiumCode(request, env, userId);
       if (pathname === '/api/account') return handleAccount(request, env, userId);
 
       // Collection route: /api/saves

@@ -116,7 +116,7 @@ test('AboutView renders authentic legal, credits, colophon, and support links', 
   assert.ok(html.includes('About Silt Strider'));
   assert.ok(html.includes('tmarcalferreira@gmail.com'), 'corrections mailto missing');
   assert.ok(html.includes('https://ko-fi.com/tmarcalferreira'), 'ko-fi link missing');
-  assert.ok(html.includes('https://www.paypal.com/ncp/payment/CELX7C97ZJ2D6'), 'paypal link missing');
+  assert.ok(!html.includes('paypal.com'), 'support should only link to Ko-fi');
   assert.ok(html.includes('Pelagiad by Isak Larborn'), 'font credits missing');
   assert.ok(html.includes('Bethesda Softworks'), 'legal disclaimer missing');
 });

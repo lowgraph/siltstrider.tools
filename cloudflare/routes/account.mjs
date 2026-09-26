@@ -4,8 +4,8 @@ import { validateProfile } from '../../lib/account-profile.mjs';
 export async function handleAccount(request, env, userId) {
   const cors = getCorsHeaders(request, env);
   if (request.method === 'GET') {
-    const row = await env.DB.prepare('SELECT username, icon_id AS iconId FROM account_profiles WHERE clerk_user_id = ?').bind(userId).first();
-    return json(row || {username:'', iconId:0}, 200, cors);
+    const row = await env.DB.prepare("SELECT p.username, p.icon_id AS iconId, t.tier, t.max_saves AS maxSaves FROM (SELECT ? AS user_id) u LEFT JOIN account_profiles p ON p.clerk_user_id=u.user_id LEFT JOIN user_tiers t ON t.clerk_user_id=u.user_id").bind(userId).first();
+    return json({username:row?.username || '', iconId:row?.iconId ?? 0, premium:['paid','supporter'].includes(row?.tier), maxSaves:row?.maxSaves ?? 5}, 200, cors);
   }
   if (request.method !== 'PUT') return json({message:'Method not allowed'},405,cors);
   let profile;

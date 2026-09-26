@@ -61,10 +61,6 @@ export default function AboutView() {
               <a href="https://ko-fi.com/tmarcalferreira" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-fg-2">
                 Ko-fi
               </a>
-              , or{" "}
-              <a href="https://www.paypal.com/ncp/payment/CELX7C97ZJ2D6" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-fg-2">
-                PayPal
-              </a>
               .
             </p>
           </div>

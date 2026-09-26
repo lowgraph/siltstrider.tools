@@ -15,7 +15,6 @@ export default function HomeColophon({ onNavigate }) {
         <div className="home-sub">A free, unofficial toolbox for The Elder Scrolls III: Morrowind.</div>
         <div className="home-support">
           <a href="https://ko-fi.com/tmarcalferreira" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>
-          <a href="https://www.paypal.com/ncp/payment/CELX7C97ZJ2D6" target="_blank" rel="noopener noreferrer">PayPal</a>
         </div>
       </div>
       {COLUMNS.map(column => (

@@ -1,5 +1,5 @@
 import { PROFILE_ICONS } from '../lib/account-profile.mjs';
-export default function ProfileIcon({id=0, size=40}) {
+export default function ProfileIcon({id=0, size=40, premium=false}) {
  const shapes=[
   <><path d="M20 5a11 11 0 1 0 7 18A12 12 0 0 1 20 5Z"/><path d="m26 5 2 5 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1Z"/></>,
   <g transform="scale(1.25)"><ellipse cx="16" cy="10" rx="8.5" ry="5" fill="currentColor"/><path d="M9.5 12.5 5.5 20 3.5 29M13.5 14.6 11.5 22 10.5 29M18.5 14.6 20.5 22 21.5 29M22.5 12.5 26.5 20 28.5 29" strokeWidth="2.2" strokeLinecap="round"/></g>,
@@ -9,5 +9,5 @@ export default function ProfileIcon({id=0, size=40}) {
   <><path d="M5 19C3 0 37 0 35 19Q20 25 5 19Z M10 22q-6 7 1 12m6-10q-4 7 0 13m6-13q5 6 0 13m7-15q7 7 1 12"/></>
  ];
  const safe=Number.isInteger(id)&&id>=0&&id<shapes.length?id:0;
- return <svg width={size} height={size} viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-label={PROFILE_ICONS[safe]} role="img">{shapes[safe]}</svg>;
+ return <svg width={size} height={size} viewBox={premium ? "-7 -7 54 54" : "0 0 40 40"} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-label={`${PROFILE_ICONS[safe]}${premium ? ", Premium supporter" : ""}`} role="img">{premium && <g stroke="var(--color-accent)"><circle cx="20" cy="20" r="25" strokeWidth="1.5"/><circle cx="20" cy="20" r="22" strokeWidth=".6"/><path d="m20-7 2 3-2 3-2-3Z M20 41l2 3-2 3-2-3Z" fill="var(--color-accent)"/></g>}{shapes[safe]}</svg>;
 }
