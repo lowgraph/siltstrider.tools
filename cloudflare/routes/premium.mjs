@@ -19,14 +19,14 @@ export function verifyKofi(data,secret) {
 }
 export function paymentDetails(data) {
   // Current Ko-fi events use Tip; retain compatibility with older Donation events.
-  if(!['Tip','Donation'].includes(data.type)||data.is_subscription_payment!==false||data.currency!=='USD')return null;
-  if(typeof data.amount!=='string'||!/^\d{1,7}(\.\d{1,2})?$/.test(data.amount))return null;
-  const cents=Math.round(Number(data.amount)*100);
-  if(cents<1)return null;
+  if(!['Tip','Donation'].includes(data.type)||data.is_subscription_payment!==false)return null;
+  if(typeof data.currency!=='string'||!/^[A-Z]{3}$/.test(data.currency))return null;
+  if(typeof data.amount!=='string'||!/^\d{1,7}(\.\d{1,6})?$/.test(data.amount))return null;
+  if(!/[1-9]/.test(data.amount))return null;
   const codes=typeof data.message==='string'?data.message.match(/\bSS-[a-f0-9]{32}\b/g):null;
   if(!codes||new Set(codes).size!==1)return null;
   if(typeof data.kofi_transaction_id!=='string'||!data.kofi_transaction_id||data.kofi_transaction_id.length>200)return null;
-  return {code:codes[0],cents,transactionId:data.kofi_transaction_id};
+  return {code:codes[0],amount:data.amount,currency:data.currency,transactionId:data.kofi_transaction_id};
 }
 export async function handleKofiWebhook(request,env) {
   if(request.method!=='POST')return json({message:'Method not allowed'},405);
@@ -44,7 +44,7 @@ export async function handleKofiWebhook(request,env) {
   const now=new Date().toISOString();
   // Atomic and replay-safe: the transaction's recorded owner controls the upgrade.
   await env.DB.batch([
-    env.DB.prepare('INSERT OR IGNORE INTO premium_payments (transaction_id,clerk_user_id,amount_cents,received_at) VALUES (?,?,?,?)').bind(payment.transactionId,owner.clerk_user_id,payment.cents,now),
+    env.DB.prepare('INSERT OR IGNORE INTO premium_payments (transaction_id,clerk_user_id,amount,currency,received_at) VALUES (?,?,?,?,?)').bind(payment.transactionId,owner.clerk_user_id,payment.amount,payment.currency,now),
     env.DB.prepare("INSERT INTO user_tiers (clerk_user_id,tier,max_saves,max_loadouts,max_challenges,created_at,updated_at) SELECT clerk_user_id,'supporter',25,5,5,?,? FROM premium_payments WHERE transaction_id=? ON CONFLICT(clerk_user_id) DO UPDATE SET tier='supporter',max_saves=MAX(user_tiers.max_saves,25),updated_at=excluded.updated_at").bind(now,now,payment.transactionId)
   ]);
   return json({received:true});

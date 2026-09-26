@@ -26,7 +26,7 @@ export default function TermsPage() {
     </section>
 
     <section><h2>Optional support and premium benefits</h2>
-      <p>Optional support is handled through Ko-fi. The suggested amount is US$3; Ko-fi displays the available amount choices, currency, and final payment details. Eligible one-time USD support linked to your account provides 25 shared cloud-save slots and a special profile-icon border. Use the account support code as instructed so the payment can be matched.</p>
+      <p>Optional support is handled through Ko-fi. The suggested amount is US$3; Ko-fi displays the available amount choices, currency, and final payment details. Eligible positive one-time support in any currency linked to your account provides 25 shared cloud-save slots and a special profile-icon border. Use the account support code as instructed so the payment can be matched.</p>
       <p>This is a one-time payment, not a subscription or automatic renewal. Premium has no scheduled expiry while the service and these benefits remain available; it is not a promise that the service will operate forever. Unmatched payments may need manual review.</p>
       <p>For missing benefits, mistaken payments, or refund requests, contact <a href="mailto:tmarcalferreira@gmail.com">tmarcalferreira@gmail.com</a> with your transaction reference, not card details. Refunds and disputes are reviewed manually through the payment provider. Any mandatory consumer rights remain unaffected.</p>
     </section>

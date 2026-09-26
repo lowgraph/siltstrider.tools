@@ -26,6 +26,6 @@ export default function AccountPage(){
  <button type="submit" disabled={busy}>{busy?'Saving…':'Save profile'}</button><button type="button" onClick={()=>auth('signOut')}>Sign out</button></form>}
  {account.user&&!account.profile?.premium&&<section aria-label="Premium"><h3>Become a Premium supporter</h3><p>25 shared cloud-save slots and a gold border around your icon. One-time support, no subscription. Pay what you want on Ko-fi; suggested US$3.</p>
  <button disabled={busy} onClick={prepareSupport}>Support on Ko-fi</button>
- {support&&<div><p>Copy this code into your Ko-fi payment message so we can upgrade your account:</p><code style={{overflowWrap:'anywhere'}}>{support.code}</code><p><a href={support.url} target="_blank" rel="noopener noreferrer">Continue to Ko-fi →</a></p><p>Choose a one-time USD tip. After paying, return here to check your upgrade.</p><button disabled={busy} onClick={checkPayment}>Check payment status</button></div>}</section>}
+ {support&&<div><p>Copy this code into your Ko-fi payment message so we can upgrade your account:</p><code style={{overflowWrap:'anywhere'}}>{support.code}</code><p><a href={support.url} target="_blank" rel="noopener noreferrer">Continue to Ko-fi →</a></p><p>Choose a one-time tip in any currency. After paying, return here to check your upgrade.</p><button disabled={busy} onClick={checkPayment}>Check payment status</button></div>}</section>}
  {(message||account.error)&&<p role="status">{message||account.error}</p>}</section>;
 }
