@@ -48,17 +48,17 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
     clientRef.current = createCloudSaveClient({
       baseUrl: "",
       getSessionKey: () => accountEpoch.current,
-      getToken: async () => {
+      getToken: async (options) => {
         if (typeof window === "undefined") return null;
         if (window.siltStriderAuth?.getToken) {
           try {
-            const tok = await window.siltStriderAuth.getToken();
+            const tok = await window.siltStriderAuth.getToken(options);
             if (tok) return tok;
           } catch {}
         }
         if (window.Clerk?.session?.getToken) {
           try {
-            return await window.Clerk.session.getToken();
+            return await window.Clerk.session.getToken(options);
           } catch {}
         }
         return null;
