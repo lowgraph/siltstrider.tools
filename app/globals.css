@@ -2453,3 +2453,16 @@ body.view-travel .hero {
 .account-page{max-width:760px;margin:2rem auto;padding:1.5rem;width:100%}.account-page h2{font-size:2rem}.account-page button{margin:1rem .75rem 1rem 0;padding:.65rem 1rem;border:1px solid currentColor;border-radius:6px}.account-page input:not([type=radio]){display:block;padding:.7rem;margin:.5rem 0;width:100%;background:var(--surface-2,#222);border:1px solid currentColor}.account-preview{display:flex;align-items:center;gap:1rem;margin:2rem 0}.account-icons{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:1rem 0}.account-icons label{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border:2px solid transparent;border-radius:8px;cursor:pointer}.account-icons .selected{border-color:currentColor;background:var(--surface-2,#222)}.account-page fieldset{margin-top:1.5rem}
 
 .account-page button{background:var(--color-surface-3,#211e1a);color:var(--color-accent,#c99858)}.account-page button:hover{background:var(--color-surface-4,#302a22)}.account-page button:focus-visible,.account-icons label:focus-within{outline:2px solid var(--color-accent,#c99858);outline-offset:3px}.account-page button:disabled{opacity:.6}.account-icons svg,.account-preview svg{color:var(--color-accent,#c99858)}
+
+/* Public legal documents remain readable without JavaScript or authentication. */
+.legal-page { max-width: 52rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; color: var(--color-fg-2); line-height: 1.75; overflow-wrap: anywhere; }
+.legal-page nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+.legal-page a { color: var(--color-accent); text-decoration: underline; text-underline-offset: .2em; }
+.legal-page a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+.legal-page h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.2; }
+.legal-page h2 { font-size: 1.4rem; margin: 2rem 0 .65rem; line-height: 1.35; }
+.legal-page p { margin: 1rem 0; }
+.legal-page ul { list-style: disc; padding-left: 1.5rem; }
+.legal-page li { margin: .75rem 0; }
+.legal-page .legal-date, .legal-page footer { color: var(--color-fg-7); }
+.legal-page footer { margin-top: 3rem; border-top: 1px solid var(--color-line-3); padding-top: 1rem; }

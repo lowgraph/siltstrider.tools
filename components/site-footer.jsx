@@ -38,7 +38,9 @@ export default function SiteFooter() {
           onClick={(e) => handleNavigate(e, "changelog")}
         >
           Changelog
-        </a>
+        </a>{" · "}
+        <a href="/privacy">Privacy Policy</a>{" · "}
+        <a href="/terms">Terms of Service</a>
       </p>
     </footer>
   );

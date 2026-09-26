@@ -7,6 +7,10 @@
   "main": "cloudflare/worker.mjs",
   "workers_dev": true,
   "preview_urls": false,
+  "vars": {
+    "APP_ORIGIN": "https://siltstrider.tools",
+    "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuc2lsdHN0cmlkZXIudG9vbHMk"
+  },
   "routes": [{ "pattern": "siltstrider.tools", "custom_domain": true }],
   "assets": { "directory": "./.next-export", "html_handling": "auto-trailing-slash", "not_found_handling": "404-page" },
   "d1_databases": [

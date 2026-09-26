@@ -16,6 +16,9 @@ export default function HomeColophon({ onNavigate }) {
         <div className="home-support">
           <a href="https://ko-fi.com/tmarcalferreira" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>
         </div>
+        <div className="home-support">
+          <a href="/privacy">Privacy Policy</a>{" · "}<a href="/terms">Terms of Service</a>
+        </div>
       </div>
       {COLUMNS.map(column => (
         <nav className="home-colophon-column" key={column.title} aria-label={column.title}>
