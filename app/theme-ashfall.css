@@ -1,7 +1,7 @@
 /*
  * Ashfall: the modern theme (the default). Loaded after every other stylesheet.
  *
- * 1. Tokens: every --color-* token from theme.css, re-valued on the Ashfall
+ * 1. Tokens: every --color-* token from globals.css, re-valued on the Ashfall
  *    palette (Basalt surfaces, Bone text, one Ember accent), plus fonts.
  * 2. Frames: the Morrowind 9-slice textures (--mw-border, --mw-bevel,
  *    --mw-groove) become hairlines with rounded corners.

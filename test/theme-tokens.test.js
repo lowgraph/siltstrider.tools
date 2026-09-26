@@ -1,4 +1,4 @@
-// Guards the theme-token contract: components take every color from app/theme.css,
+// Guards the theme-token contract: components take every color from app/globals.css,
 // so a theme can restyle the site by overriding CSS custom properties.
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
@@ -6,7 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
-const THEME = fs.readFileSync(path.join(ROOT, "app/theme.css"), "utf8");
+const THEME = fs.readFileSync(path.join(ROOT, "app/globals.css"), "utf8");
 
 function componentFiles(dir = path.join(ROOT, "components")) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -24,7 +24,7 @@ const definedGradients = new Set([...THEME.matchAll(/--gradient-([a-z0-9-]+)\s*:
 // Tailwind color utilities that resolve to a theme token: text-fg-3, hover:bg-surface-5/40, ...
 const TOKEN_CLASS = /(?<![\w-])(?:[a-z-]+:)*!?(?:text|bg|border|ring|accent|placeholder|outline|fill|stroke|divide|from|via|to|decoration|caret)-((?:fg|surface|line)-\d+|accent(?:-\d+)?|(?:danger|success|warning|info|teal)(?:-(?:surface|line))?(?:-\d+)?|health|magicka|fatigue)(?:\/\d+)?(?![\w-])/g;
 
-test("theme.css defines the token ramps and vitals", () => {
+test("globals.css defines the token ramps and vitals", () => {
   assert.ok(definedTokens.size >= 60, `expected a full token set, found ${definedTokens.size}`);
   for (const name of ["fg-1", "surface-1", "line-1", "accent", "danger", "health", "magicka", "fatigue"]) {
     assert.ok(definedTokens.has(name) || [...definedTokens].some((t) => t.startsWith(name + "-")), `missing token family ${name}`);

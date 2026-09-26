@@ -65,7 +65,7 @@ All game logic and formulas live in pure, zero-dependency ECMAScript modules in 
 
 ### C. CRPG Authenticity with Modern React 19
 - **App Shell**: Single-page architecture mounted by `components/app-shell.jsx`, rendering 13 specialized workstations.
-- **Design Tokens**: Standardized Morrowind CRPG design tokens (`app/globals.css`, `app/theme.css`, `app/theme-ashfall.css`) using native CSS custom properties, 9-slice borders, and the Pelagiad font.
+- **Design Tokens**: Standardized Morrowind CRPG design tokens (`app/globals.css`, `app/theme-ashfall.css`) using native CSS custom properties, 9-slice borders, and the Pelagiad font.
 - **Responsive Layout**: Adapts from full desktop workstations to mobile viewports with a dedicated mobile tab bar and responsive drawers.
 
 ### D. Save Import & Cloud Vault Architecture

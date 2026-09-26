@@ -11,7 +11,7 @@ This guide defines canonical repository locations, path migrations, and operatio
 
 | Area | Canonical Path | Description |
 |---|---|---|
-| **App Routing & Styles** | `app/` | Next.js App Router root (`layout.jsx`, `page.jsx`, `globals.css`, `theme.css`, `theme-ashfall.css`, `legacy-compat.css`) |
+| **App Routing & Styles** | `app/` | Next.js App Router root (`layout.jsx`, `page.jsx`, `globals.css`, `theme-ashfall.css`, `legacy-compat.css`) |
 | **UI Workstations** | `components/` | React 19 UI workstation components organized by domain (`character-builder/`, `level-simulator/`, `calculators/`, `equipment-studio/`, `journal-factions/`, `character-vault/`, etc.) |
 | **Pure ESM Domain Logic**| `lib/` | Math calculation engines, binary codecs, parsers, and bundle loader (`*-math.mjs`, `cloud-save-codec.mjs`, `omwsave-parser.mjs`, `bundle-loader.mjs`) |
 | **Backend & Database** | `cloudflare/` | Cloudflare Worker (`worker.mjs`), API routes (`routes/`), and D1 SQL migrations (`migrations/`) |

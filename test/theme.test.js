@@ -195,7 +195,7 @@ test("the provider's J shortcut toggles the theme but leaves typing alone", asyn
 });
 
 test("Ashfall re-values every color token, so nothing falls back to the classic palette", () => {
-  const base = fs.readFileSync(path.join(__dirname, "..", "app", "theme.css"), "utf8");
+  const base = fs.readFileSync(path.join(__dirname, "..", "app", "globals.css"), "utf8");
   const ashfall = fs.readFileSync(path.join(__dirname, "..", "app", "theme-ashfall.css"), "utf8");
   const block = ashfall.slice(ashfall.indexOf(':root[data-theme="ashfall"] {'), ashfall.indexOf("}", ashfall.indexOf(':root[data-theme="ashfall"] {')));
   const names = css => [...css.matchAll(/(--(?:color|gradient)-[a-z0-9-]+)\s*:/g)].map(m => m[1]);
