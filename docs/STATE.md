@@ -9,7 +9,7 @@ This document specifies the current React 19 state architecture, active save syn
 The application state is managed by `CharacterProvider` via `useActiveCharacter()`. It unifies two distinct character modes:
 
 ### A. Planner Builds (`build`)
-- **Structure**: `{ version: 1, world: 'vanilla'|'tr'|'tr_arce', arce: 0|1, name, race, gender: 'M'|'F', className, sign, spec, fav1, fav2, maj: string[5], min: string[5], bitterCup: null|string }`.
+- **Structure**: `{ version: 1, world: 'vanilla' | 'tr' | 'tr_arce', arce: boolean, name: string, race: string, gender: 'Male' | 'Female', className: string, sign: string, spec: string, fav1: string, fav2: string, maj: string[5], min: string[5], bitterCup: boolean }`.
 - **Derivation**: Attributes and skill levels are derived deterministically using `computeSheet(build, catalogs)` in `lib/character-math.mjs`.
 - **Mutations**: Controlled via `updateField`, `swapSkill`, `selectClassPreset`, and `selectPremade`.
 
