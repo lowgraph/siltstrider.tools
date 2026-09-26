@@ -1,4 +1,8 @@
-# Phase 1: serialization boundary
+# [HISTORICAL ARCHIVE] Phase 1: Serialization Boundary
+
+> [!NOTE]
+> **Historical Document**: This document reflects Phase 1 of the migration when the DOM was still the live application state.
+> For the current React 19 character state architecture, SLT1 binary codec, and active save synchronization, see [docs/STATE.md](../STATE.md).
 
 The DOM remains the live application state. This phase adds detached, JSON-safe
 snapshots and validated restoration, not a new reactive store or calculation engine.

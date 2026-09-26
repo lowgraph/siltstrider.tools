@@ -6,6 +6,7 @@ structured game data.
 
 [Live application](https://siltstrider.tools/) ·
 [Engineering case study](docs/CASE_STUDY.md) ·
+[Architecture](docs/ARCHITECTURE.md) ·
 [Five-minute demo](docs/DEMO.md) ·
 [Data pipeline](https://github.com/lowgraph/openmw-decompiler)
 
@@ -139,10 +140,16 @@ See the [release procedure](docs/DEPLOYMENT.md) for the manual Cloudflare workfl
 
 - [Case study and tradeoffs](docs/CASE_STUDY.md)
 - [Demo walkthrough and presentation checklist](docs/DEMO.md)
-- [Data loader contract](DATA_LOADER.md)
-- [Character state and persistence](STATE.md)
-- [Migration history](MIGRATION.md)
+- [System architecture & data discipline](docs/ARCHITECTURE.md)
+- [Data loader contract](docs/DATA_LOADER.md)
+- [Character state & persistence](docs/STATE.md)
+- [Account profiles specification](docs/ACCOUNT_PROFILES.md)
+- [Supporter & Ko-fi entitlements](docs/PREMIUM.md)
+- [Agent path migration](docs/AGENT_PATH_MIGRATION.md)
+- [Historical migration notes](docs/archive/MIGRATION.md)
+- [Historical state notes](docs/archive/STATE.md)
 - [Team coordination](COORDINATION.md)
+- [UI transformation roadmap](UI_TRANSFORMATION.md)
 
 Silt Strider is an unofficial fan project, unaffiliated with Bethesda or the mod teams.
 Game and mod ownership remains with their respective creators. See the site's About
