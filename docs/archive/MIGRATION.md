@@ -1,4 +1,4 @@
-> **Historical checkpoint:** This document records the earlier DOM-to-React transition. The current entry point is `components/app-shell.jsx`; transition adapters/scripts are in `archive/legacy/`. The `predev`/`prebuild` extraction hooks are retired. Use [README.md](README.md) for current setup.
+> **Historical checkpoint:** This document records the earlier DOM-to-React transition. The current entry point is `components/app-shell.jsx`; transition adapters/scripts are in `archive/legacy/`. The `predev`/`prebuild` extraction hooks are retired. Use [README.md](../../README.md) for current setup.
 
 # Next.js migration: compatibility checkpoint
 
@@ -83,7 +83,7 @@ and navigation checks. This checkpoint has not been published.
 
 ## Game-data loader
 
-The on-demand loader and React hook are ready. See [DATA_LOADER.md](DATA_LOADER.md)
+The on-demand loader and React hook are ready. See [DATA_LOADER.md](../DATA_LOADER.md)
 for feature groups, local staging, caching, and integration. This adds the data
 access layer. Character catalogs now feed the builder and challenge generator through
 the character adapter and bridge; other tools still use their legacy tables.

@@ -70,8 +70,8 @@ extracting that HTML before development or builds.
 | Decision or problem | Inspect the implementation |
 | --- | --- |
 | Prevent mixed or tampered data releases | [Bundle loader](lib/bundle-loader.mjs), [contract tests](test/bundle-contract.test.js) |
-| Keep derived recommendations traceable to policy and data | [Data contract](DATA_LOADER.md), [pipeline](https://github.com/lowgraph/openmw-decompiler) |
-| Preserve character inputs across storage and links | [State design](STATE.md), [permalink codec](lib/permalink-codec.mjs) |
+| Keep derived recommendations traceable to policy and data | [Data contract](docs/DATA_LOADER.md), [pipeline](https://github.com/lowgraph/openmw-decompiler) |
+| Preserve character inputs across storage and links | [State design](docs/STATE.md), [permalink codec](lib/permalink-codec.mjs) |
 | Turn binary saves into usable observations | [Save parser](lib/omwsave-parser.mjs), [import adapter](lib/omwsave-import.mjs) |
 | Catch a real catalog-to-calculator integration defect | [Alchemy regression tests](test/alchemy-live.test.js), [case study](docs/CASE_STUDY.md#case-study-alchemy-integration) |
 | Separate login from record ownership | [Worker authentication](cloudflare/auth.mjs), [save routes](cloudflare/routes/saves.mjs) |
@@ -96,7 +96,7 @@ npm run data:stage -- A:\Cache\OpenMWFoundation\app-bundle
 ```
 
 Staging validates the release before changing `public/game-data/current.json`.
-See [DATA_LOADER.md](DATA_LOADER.md) for the contract and configuration. A full
+See [DATA_LOADER.md](docs/DATA_LOADER.md) for the contract and configuration. A full
 extraction requires separately installed game/mod files; it is not a frontend setup step.
 
 For optional local authentication, set `CLERK_PUBLISHABLE_KEY` in an ignored

@@ -40,7 +40,7 @@ materializing every route. This trades an oversized flat export for more explici
 logic and uncertainty handling.
 
 The counts above are observations from development, not a controlled benchmark.
-See the [pipeline acquisition design](https://github.com/lowgraph/openmw-decompiler/blob/master/ACQUISITION_INDEX.md).
+See the [pipeline acquisition design](https://github.com/lowgraph/openmw-decompiler/blob/master/docs/stages/ACQUISITION_INDEX.md).
 
 ## Decision: one release contract between repositories
 
@@ -65,8 +65,8 @@ pretending that the extracted facts changed.
 That separation also limits claims: a published recommendation is a result under a
 particular policy and snapshot, not proof that every conceivable route was simulated.
 
-Evidence: [pipeline policy](https://github.com/lowgraph/openmw-decompiler/blob/master/POLICY.md)
-and [site consumption contract](../DATA_LOADER.md).
+Evidence: [pipeline policy](https://github.com/lowgraph/openmw-decompiler/blob/master/docs/stages/POLICY.md)
+and [site consumption contract](DATA_LOADER.md).
 
 ## Case study: alchemy integration
 
