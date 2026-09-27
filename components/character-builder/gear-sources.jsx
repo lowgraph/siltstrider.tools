@@ -1,14 +1,17 @@
 "use client";
 import {Fragment} from 'react';
-import {buildGearGroups,enchantCapacity,enchantMultiplier,gearRowLabel,sourceLabel,summonNotes} from '../../lib/gear-rows.mjs';
+import {buildGearGroups,enchantCapacity,enchantMultiplier,enchantmentNote,gearRowLabel,sourceLabel,summonNotes} from '../../lib/gear-rows.mjs';
 
 function SourceRow({row,pick,alternative=false,enchantMult=0.1}){
   const source=sourceLabel(pick);
+  const spell=enchantmentNote(pick);
+  // Clothing is for its enchantment: an enchanted ring says what it does, not its room.
+  const base=row.category==='clothing'&&spell?'':`Base ${row.category==='weapon'?'damage':row.category==='clothing'?'enchant capacity':'armor rating'}: ${row.category==='clothing'?enchantCapacity(pick?.strength,enchantMult):(pick?.baseStrength??pick?.strength)}.`;
   return <tr className={alternative?'gear-alt':undefined}>
     <td className="capitalize">{alternative?'or':gearRowLabel(row)}</td>
     <td><span className="gear-name">{pick?.name || 'None found'}</span>
       {pick&&<span className="gear-note">
-        Base {row.category==='weapon'?'damage':row.category==='clothing'?'enchant capacity':'armor rating'}: {row.category==='clothing'?enchantCapacity(pick.strength,enchantMult):(pick.baseStrength??pick.strength)}.
+        {[base,spell].filter(Boolean).join(' ')}
         {summonNotes(pick).map(note=>' '+note).join('')}
         {pick.condition&&` Condition: ${pick.condition.raw}/${pick.condition.maximum}.`}
         {pick.needsRepair&&' Broken: repair before use. Repair cost is not included.'}

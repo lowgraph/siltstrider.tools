@@ -138,3 +138,28 @@ test('Dark Brotherhood rows join their slot only under their own toggle',async()
  assert.equal(helm(false).key,'chitin helm');
  assert.equal(helm(true).key,'darkbrotherhood helm','30 armor beats 10, both come to hand early');
 });
+test('a ring already enchanted is recommended before a blank one with more room',async()=>{
+ const {buildGearGroups}=await mod;
+ const ring=(key,strength,enchanted,extra={})=>row({key:key+extra.objective,category:'clothing',slot:'ring',armorClass:null,objective:'power',...extra,
+  primary:{...pick(key,strength),...(enchanted===undefined?{}:{enchanted:{castType:'constant_effect',worth:enchanted,charges:null,effects:[]}})}});
+ const mentor=ring('mentor',100,100.1),exquisite=ring('exquisite',1200,undefined,{objective:'enchantment'}),cursed=ring('cursed',5000,-12.5);
+ const unarmored={...profile,armRanked:[{n:'Unarmored'}],primaryArmor:'Unarmored'};
+ const slot=rows=>buildGearGroups({GearRows:rows},{maj:['Unarmored']},toggles,unarmored).find(g=>g.label==='Clothing and jewelry').rows[0];
+ assert.equal(slot([exquisite,mentor,cursed]).primary.key,'mentor');
+ assert.equal(slot([exquisite,mentor,cursed]).alternative,null,'room for an enchantment is not stronger than one');
+ assert.equal(slot([exquisite,cursed]).primary.key,'exquisite','a curse is worse than nothing');
+});
+test('an enchantment reads as its effects, in the game\'s words',async()=>{
+ const {enchantmentNote}=await mod;
+ const fortify=(attribute,n)=>({name:'Fortify Attribute',attribute,skill:null,min:n,max:n,seconds:null,range:'self',drawback:false});
+ assert.equal(enchantmentNote({enchanted:{castType:'constant_effect',charges:null,worth:100.1,effects:[fortify('intelligence',10),fortify('willpower',10)]}}),
+  'Enchanted (constant effect): Fortify Intelligence 10, Fortify Willpower 10.');
+ assert.equal(enchantmentNote({enchanted:{castType:'when_used',charges:50,worth:3.6,effects:[
+  {name:'Frost Damage',attribute:null,skill:null,min:2,max:4,seconds:3,range:'target',drawback:false},
+  {name:'Recall',attribute:null,skill:null,min:null,max:null,seconds:null,range:'self',drawback:false}]}}),
+  'Enchanted (cast when used, 50 charge): Frost Damage 2-4 for 3 s on target, Recall.');
+ assert.equal(enchantmentNote({enchanted:{castType:'constant_effect',charges:null,worth:-12.5,effects:[
+  {name:'Drain Skill',attribute:null,skill:'long_blade',min:5,max:5,seconds:null,range:'self',drawback:true}]}}),
+  'Enchanted (constant effect): Drain Long Blade 5 (a curse).');
+ assert.equal(enchantmentNote({}),'');
+});
