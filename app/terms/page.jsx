@@ -1,15 +1,25 @@
 import LegalPage from '../../components/legal-page';
+import { getBreadcrumbJsonLd } from '../../lib/seo-breadcrumbs.mjs';
 
 export const dynamic = 'force-static';
 
 export const metadata = {
   title: 'Terms of Service',
   description: 'Terms for using Silt Strider planning tools, Cloud Vault, and optional supporter benefits.',
-  alternates: { canonical: 'https://siltstrider.tools/terms' }
+  alternates: { canonical: 'https://siltstrider.tools/terms' },
+  openGraph: {
+    title: 'Terms of Service | Silt Strider Tools',
+    description: 'Terms for using Silt Strider planning tools, Cloud Vault, and optional supporter benefits.',
+    url: 'https://siltstrider.tools/terms',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Silt Strider Tools — Terms of Service' }]
+  }
 };
 
 export default function TermsPage() {
-  return <LegalPage title="Terms of Service">
+  const breadcrumb = getBreadcrumbJsonLd('terms');
+  return <>
+    {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
+    <LegalPage title="Terms of Service">
     <p>These terms apply to your use of Silt Strider at siltstrider.tools. By using the service, you agree to these terms. If you do not agree, do not use the service. Questions can be sent to <a href="mailto:tmarcalferreira@gmail.com">tmarcalferreira@gmail.com</a>.</p>
 
     <section><h2>The service</h2>
@@ -42,5 +52,6 @@ export default function TermsPage() {
       <p>You can stop using the service at any time, delete individual cloud saves, and request account and associated data deletion by email. Information that must be retained is described in the Privacy Policy.</p>
       <p>We may revise these terms and will update the date above. Material changes will be described on the site. These terms do not replace the separate terms of Clerk, Google, Discord, Ko-fi, or other services you choose to use.</p>
     </section>
-  </LegalPage>;
+  </LegalPage>
+  </>;
 }

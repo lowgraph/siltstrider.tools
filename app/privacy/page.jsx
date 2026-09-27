@@ -1,15 +1,25 @@
 import LegalPage from '../../components/legal-page';
+import { getBreadcrumbJsonLd } from '../../lib/seo-breadcrumbs.mjs';
 
 export const dynamic = 'force-static';
 
 export const metadata = {
   title: 'Privacy Policy',
   description: 'How Silt Strider handles account information, game saves, and supporter payments.',
-  alternates: { canonical: 'https://siltstrider.tools/privacy' }
+  alternates: { canonical: 'https://siltstrider.tools/privacy' },
+  openGraph: {
+    title: 'Privacy Policy | Silt Strider Tools',
+    description: 'How Silt Strider handles account information, game saves, and supporter payments.',
+    url: 'https://siltstrider.tools/privacy',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Silt Strider Tools — Privacy Policy' }]
+  }
 };
 
 export default function PrivacyPage() {
-  return <LegalPage title="Privacy Policy">
+  const breadcrumb = getBreadcrumbJsonLd('privacy');
+  return <>
+    {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
+    <LegalPage title="Privacy Policy">
     <p>This policy explains how Silt Strider at siltstrider.tools handles information when you use its Morrowind planning tools, accounts, and Cloud Vault. For privacy questions or requests, contact the site operator at <a href="mailto:tmarcalferreira@gmail.com">tmarcalferreira@gmail.com</a>.</p>
 
     <section><h2>Information we process</h2>
@@ -46,5 +56,6 @@ export default function PrivacyPage() {
       <p>We use authenticated access to protect cloud records, but no online service can guarantee complete security. Keep your own backups and avoid putting sensitive personal information into character names or save titles.</p>
       <p>We may update this policy as the service changes. The date above identifies the latest revision. Material changes will be described on the site.</p>
     </section>
-  </LegalPage>;
+  </LegalPage>
+  </>;
 }
