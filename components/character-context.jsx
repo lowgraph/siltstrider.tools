@@ -202,7 +202,7 @@ export function CharacterProvider({ children }) {
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
     const openLink = () => {
-      const raw = window.location.hash || window.location.search;
+      const raw = window.location.href || ((window.location.search || '') + (window.location.hash || ''));
       const decoded = decodeShareHash(raw);
       const linked = sanitizeBuild(decoded.build);
       if (!linked) return;

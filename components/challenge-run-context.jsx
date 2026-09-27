@@ -88,7 +88,8 @@ export function runFromLink(hash) {
 // a reload should find the latest run, not the link's.
 function dropRunFromAddress() {
   try {
-    const { view } = decodeShareHash(window.location.hash || window.location.search);
+    const raw = window.location.href || ((window.location.search || '') + (window.location.hash || ''));
+    const { view } = decodeShareHash(raw);
     const cleanPath = view === "home" ? "/" : "/" + view;
     window.history.replaceState({ ...(window.history.state || {}), view }, "", cleanPath);
     window.dispatchEvent(new Event("silt-shell-change"));
@@ -107,7 +108,8 @@ function useChallengeRunState({ persist }) {
   useEffect(() => {
     if (!persist) return undefined;
     const openLink = () => {
-      const linked = runFromLink(window.location.hash || window.location.search);
+      const raw = window.location.href || ((window.location.search || '') + (window.location.hash || ''));
+      const linked = runFromLink(raw);
       if (!linked) return false;
       setRun(linked);
       setLocks({ ...EMPTY_LOCKS });
