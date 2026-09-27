@@ -31,8 +31,8 @@ test("AboutView contains dedicated System Accuracy & Game Mechanics section", ()
   assert.match(aboutSrc, /2× to 5× attribute multipliers/, "must describe attribute multipliers");
 
   // Travel routing mechanics
-  assert.match(aboutSrc, /breadth-first search/, "must mention breadth-first search / BFS");
-  assert.match(aboutSrc, /Fewest-hops/, "must describe fewest-hops routing");
+  assert.match(aboutSrc, /shortest-path search/, "must name the routing search");
+  assert.match(aboutSrc, /fewest legs, the cheapest fare or the fastest trip/, "must describe the three objectives");
   assert.match(aboutSrc, /Mages Guild membership/, "must mention Mages Guild transit requirements");
 
   // Spellcraft mechanics
@@ -138,8 +138,8 @@ test("Travel Workstation has transit engine rules and routing microcopy", () => 
   );
 
   assert.match(travelSrc, /Transit Engine Rules:/, "must contain transit engine rules header");
-  assert.match(travelSrc, /breadth-first search \(BFS\)/, "must mention BFS routing");
-  assert.match(travelSrc, /fewest hops/, "must mention fewest hops");
+  assert.match(travelSrc, /shortest-path search over fewest legs, least gold or fewest in-game hours/, "must explain the routing objectives");
+  assert.match(travelSrc, /fTravelMult/, "must show the fare formula");
   assert.match(travelSrc, /Mages Guild membership/, "must explain Mages Guild requirement");
 });
 

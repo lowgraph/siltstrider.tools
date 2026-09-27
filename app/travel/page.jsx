@@ -5,18 +5,18 @@ export const dynamic = 'force-static';
 
 export const metadata = {
   title: 'Morrowind Travel Map & Transport Route Planner',
-  description: 'Interactive travel route planner for Morrowind and Tamriel Rebuilt. Find the fewest hops between settlements via silt strider, boat, and Guild Guides.',
+  description: 'Interactive travel route planner for Morrowind and Tamriel Rebuilt. Find the fewest legs, the cheapest fare or the fastest trip between settlements via silt strider, boat, and Guild Guides.',
   alternates: { canonical: 'https://siltstrider.tools/travel' },
   openGraph: {
     title: 'Morrowind Travel Map & Transport Route Planner | Silt Strider Tools',
-    description: 'Interactive travel route planner for Morrowind and Tamriel Rebuilt. Find the fewest hops between settlements via silt strider, boat, and Guild Guides.',
+    description: 'Interactive travel route planner for Morrowind and Tamriel Rebuilt. Find the fewest legs, the cheapest fare or the fastest trip between settlements via silt strider, boat, and Guild Guides.',
     url: 'https://siltstrider.tools/travel',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Silt Strider Tools — Morrowind Travel Map' }]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Morrowind Travel Map & Transport Route Planner | Silt Strider Tools',
-    description: 'Interactive travel route planner for Morrowind and Tamriel Rebuilt. Find the fewest hops between settlements via silt strider, boat, and Guild Guides.',
+    description: 'Interactive travel route planner for Morrowind and Tamriel Rebuilt. Find the fewest legs, the cheapest fare or the fastest trip between settlements via silt strider, boat, and Guild Guides.',
     images: ['/og-image.png']
   }
 };

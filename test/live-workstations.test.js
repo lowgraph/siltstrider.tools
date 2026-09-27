@@ -207,5 +207,6 @@ test('pack guar caravans, sky lamps and carriages keep their own names, not Boat
   assert.deepEqual(graph['Ald Marak'], [{ to: 'Ald Iuval', kind: 'Sky Lamp' }]);
   const anvil = Object.keys(graph).find((stop) => stop.startsWith('Anvil'));
   assert.deepEqual(graph[anvil], [{ to: 'Brina Cross', kind: 'Carriage' }]);
-  assert.deepEqual(graph['Ebonheart'], [{ to: 'Holamayan', kind: 'Boat' }], 'a one-off transport with no mode is a boat');
+  assert.deepEqual(graph['Ebonheart'], [{ to: 'Holamayan', kind: 'Other Transport' }],
+    'a one-off transport with no mode (a slave, a fisherman, a monk) is not called a boat');
 });

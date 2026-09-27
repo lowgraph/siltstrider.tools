@@ -52,7 +52,7 @@ export default function AboutView() {
                 <strong className="text-fg-2">Level Progression:</strong> Health gains on level-up are strictly non-retroactive, calculated as 10% of current Endurance (<span className="font-mono text-accent">⌊Endurance / 10⌋</span>). Governing skill increases generate 2× to 5× attribute multipliers (10 skill increases for a 5× multiplier) up to the 100 attribute cap.
               </li>
               <li>
-                <strong className="text-fg-2">Travel Routing:</strong> Fewest-hops pathfinding computes optimal routes via breadth-first search across silt striders, boats, river striders, and Guild Guides, accounting for Mages Guild membership and rank requirements.
+                <strong className="text-fg-2">Travel Routing:</strong> A shortest-path search finds the fewest legs, the cheapest fare or the fastest trip across silt striders, boats, river striders, and Guild Guides. Fares and travel hours follow OpenMW&apos;s travel window and your character&apos;s haggling, and the search accounts for Mages Guild membership and rank requirements.
               </li>
               <li>
                 <strong className="text-fg-2">Spellcraft:</strong> Magicka costs derive from effect base cost, magnitude, duration, area, and range. Casting success chance accurately evaluates governing magic skill, Willpower, Luck, and fatigue state.

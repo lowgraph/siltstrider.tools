@@ -16,7 +16,7 @@ const descriptions = {
   enchanting: 'Effects, souls, and named enchanters.',
   spellmaking: 'Magicka, cast chance, and spellmaker gold.',
   alchemy: 'Apparatus, ingredients, and brew numbers.',
-  travel: 'Fewest hops between towns.',
+  travel: 'Cheapest, fastest or fewest legs between towns.',
   leveler: 'Progression simulator, 5x multiplier training, and health projection.',
   factions: 'Track memberships, rank requirements, promotion eligibility, and inter-faction standing.',
   vault: 'Cloud character storage, OpenMW save ingestion, and build synchronization.'

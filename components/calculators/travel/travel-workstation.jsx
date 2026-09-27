@@ -7,10 +7,11 @@ import { useSearchIntent } from "../../use-search-intent";
 import { clearSearchIntent } from "../../../lib/search-intent.mjs";
 import {
   getAvailableTransitStops,
-  findFewestHopsRoute,
+  planRoute,
+  journeyGold,
+  travelDisposition,
   adaptTravelGraph,
-  RAW_GRAPH,
-  VANILLA_STOPS
+  ROUTE_OBJECTIVES
 } from "../../../lib/travel-graph.mjs";
 import { resolveStopPositions, regionLabels, mapEdges } from "../../../lib/travel-map.mjs";
 import TransitMap from "./transit-map";
@@ -25,21 +26,42 @@ const POPULAR_HUBS = [
 ];
 
 export default function TravelWorkstation() {
-  const { build } = useActiveCharacter();
+  const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
+  const sheet = activeSave?.sheet || buildSheet;
   const { world } = useShell();
   const isTr = world === "tr";
   const gameData = useGameData('travel', { enabled: true });
   const [mageGuild,setMageGuild] = useState(true);
   const [conjurer,setConjurer] = useState(false);
+  const [objective, setObjective] = useState("hops");
+  const [followers, setFollowers] = useState(0);
 
   const liveNetworkGraph = useMemo(() => {
     if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Travel)) {
       const records = gameData.data.catalogs.Travel;
       const nodes = gameData.data.metadata?.Travel?.nodes || {};
-      return adaptTravelGraph(records, nodes, {mageGuild,conjurer:isTr && conjurer});
+      const providers = gameData.data.metadata?.Travel?.providers || {};
+      return adaptTravelGraph(records, nodes, {mageGuild,conjurer:isTr && conjurer,providers});
     }
     return {};
   }, [gameData.status, gameData.data,mageGuild,conjurer,isTr]);
+
+  // The haggle: this character's side of getBarterOffer, and the game settings it reads.
+  const player = useMemo(() => ({
+    mercantile: sheet?.skills?.["Mercantile"]?.v ?? 5,
+    personality: sheet?.attrs?.["Personality"]?.v ?? 40,
+    luck: sheet?.attrs?.["Luck"]?.v ?? 40,
+    races: [build.race, activeSave?.save?.identity?.race?.id, activeSave?.save?.identity?.race?.name].filter(Boolean),
+    followers
+  }), [sheet, build.race, activeSave, followers]);
+  const settings = useMemo(() => Object.fromEntries(
+    (gameData.data?.catalogs?.GameSettings || []).map((r) => [r.id, r.value])
+  ), [gameData.data]);
+  // Releases before travel policy 2026.09.27.2 carry no fares; plan by legs alone then.
+  const priced = useMemo(
+    () => Object.values(liveNetworkGraph).some((edges) => edges.some((e) => Number.isFinite(e.price))),
+    [liveNetworkGraph]
+  );
 
   // Stop positions, network edges and region labels for the transit map (live bundle only).
   const mapData = useMemo(() => {
@@ -119,10 +141,20 @@ export default function TravelWorkstation() {
     );
   }, [availableStops, destSearch]);
 
-  // Compute route
+  // Compute route: fewest legs, least gold for this character, or fewest in-game hours.
   const route = useMemo(() => {
-    return findFewestHopsRoute(origin, destination, world, liveNetworkGraph);
-  }, [origin, destination, world, liveNetworkGraph]);
+    return planRoute(origin, destination, liveNetworkGraph, {
+      objective: priced ? objective : "hops",
+      goldOf: (edge) => journeyGold(edge, player, settings)
+    });
+  }, [origin, destination, liveNetworkGraph, objective, priced, player, settings]);
+  const firstSeller = useMemo(() => {
+    for (const edges of Object.values(liveNetworkGraph)) {
+      const found = edges.find((e) => e.barter && e.barter.haggles);
+      if (found) return found.barter;
+    }
+    return null;
+  }, [liveNetworkGraph]);
 
   // Service color helper (gold / wood / dark themes, NO rainbows)
   const getServiceBadge = (kind) => {
@@ -157,7 +189,7 @@ export default function TravelWorkstation() {
             Morrowind Travel &amp; Transport Route Planner
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
-            Find fewest-hops transit routes across silt striders, pack guar caravans, sky lamps, boats, river striders, and Guild Guides in Vvardenfell and mainland Tamriel.
+            Plan the fewest legs, the cheapest fare for your character, or the fastest trip across silt striders, pack guar caravans, sky lamps, boats, river striders, and Guild Guides in Vvardenfell and mainland Tamriel.
           </p>
         </div>
       </div>
@@ -212,6 +244,40 @@ export default function TravelWorkstation() {
       <div className="flex flex-wrap gap-4 p-3 text-sm">
         <label><input type="checkbox" checked={mageGuild} onChange={event=>setMageGuild(event.target.checked)}/> Mages Guild member</label>
         {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>setConjurer(event.target.checked)}/> Conjurer rank or higher</label>}
+        {priced && (
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Route objective">
+            <span className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider">Plan for:</span>
+            {Object.entries(ROUTE_OBJECTIVES).map(([id, o]) => (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={objective === id}
+                onClick={() => setObjective(id)}
+                className={`px-2.5 py-1 text-xs font-serif font-bold border transition-colors ${
+                  objective === id
+                    ? "border-accent bg-surface-17 text-accent"
+                    : "border-line-9 bg-surface-3 text-fg-9 hover:border-line-1 hover:text-fg-2"
+                }`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        )}
+        {priced && (
+          <label className="flex items-center gap-1.5 whitespace-nowrap">
+            Followers
+            <input
+              type="number"
+              min={0}
+              max={9}
+              value={followers}
+              onChange={(event) => setFollowers(Math.max(0, Math.min(9, Math.trunc(Number(event.target.value) || 0))))}
+              className="flex-none"
+              style={{ width: "5rem" }}
+            />
+          </label>
+        )}
         {gameData.status === 'loading' && <p role="status">Loading travel network...</p>}
         {gameData.status === 'error' && <p role="alert">Travel network unavailable. <button onClick={gameData.retry}>Retry</button></p>}
       </div>
@@ -320,7 +386,9 @@ export default function TravelWorkstation() {
           <div className="p-3 bg-surface-2 border border-line-11 text-xs text-fg-13 space-y-1 font-serif">
             <div className="font-bold text-fg-7 uppercase tracking-wider text-[10px]">Transit Engine Rules:</div>
             <ul className="list-disc list-inside space-y-1 text-[11px] text-fg-11 leading-relaxed">
-              <li>Shortest route calculated via breadth-first search (BFS) for minimum transit connections (fewest hops).</li>
+              <li>Routes come from a shortest-path search over fewest legs, least gold or fewest in-game hours, each breaking ties with the other two.</li>
+              <li>Fares follow OpenMW&apos;s travel window: distance ÷ fTravelMult (4000), at least 1 gold, times one plus your followers, then haggled with your Mercantile, Personality and Luck. Guild Guides charge a flat 10 gold and take no time; other journeys take distance ÷ fTravelTimeMult (16000) hours.</li>
+              <li>Each provider&apos;s disposition is estimated from their base value, a shared race and your Personality. Faction standing, a bounty or a disease moves it further, so a fare can differ by a few gold.</li>
               <li>Network covers Silt Striders, Pack Guar caravans, Sky Lamps, carriages, Boats, Guild Guides, Gondoliers, and Mainland River Striders.</li>
               <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
               <li>Fast travel excludes Propylon chambers, Divine Intervention, and Almsivi Intervention scrolls.</li>
@@ -346,7 +414,9 @@ export default function TravelWorkstation() {
               {route.isValid
                 ? route.hops === 0
                   ? "At Destination"
-                  : `${route.hops} ${route.hops === 1 ? "Hop" : "Hops"}`
+                  : `${route.hops} ${route.hops === 1 ? "Leg" : "Legs"}${
+                      route.totals?.goldKnown && priced ? ` · ${route.totals.gold} gold` : ""
+                    }${route.totals?.hoursKnown && priced ? ` · ${route.totals.hours} h` : ""}`
                 : "No Route"}
             </span>
           </div>
@@ -392,8 +462,17 @@ export default function TravelWorkstation() {
                           Leg {step.stepNumber}: {step.from} to {step.to}
                         </div>
                         <div className="text-[11px] text-fg-13">
-                          Take the {step.kind} service from {step.from}
+                          Take the {step.kind}
+                          {step.providerName ? ` (${step.providerName})` : ""} from {step.from}
+                          {step.board ? `, ${step.board}` : ""}
+                          {step.alight ? ` to ${step.to}, ${step.alight}` : ""}
                         </div>
+                        {(Number.isFinite(step.gold) || Number.isFinite(step.hours)) && (
+                          <div className="text-[11px] font-mono text-fg-9">
+                            {Number.isFinite(step.gold) ? `${step.gold} gold` : "price unknown"}
+                            {Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes" : `${step.hours} h`}` : ""}
+                          </div>
+                        )}
                       </div>
                       <span
                         className={`px-2 py-0.5 text-xs font-serif font-bold border ${getServiceBadge(
@@ -412,6 +491,13 @@ export default function TravelWorkstation() {
               </div>
             )}
           </div>
+
+          {route.isValid && route.hops > 0 && priced && firstSeller && (
+            <p className="text-[11px] text-fg-13 font-serif m-0">
+              Fares for {sheet ? "your character" : "a starting character"}: Mercantile {player.mercantile}, Personality {player.personality}, Luck {player.luck}
+              {followers > 0 ? `, ${followers} follower${followers === 1 ? "" : "s"}` : ""}. A typical caravaner&apos;s estimated disposition toward you is {travelDisposition(firstSeller, player, settings)}.
+            </p>
+          )}
 
           {/* Full Path Overview */}
           {route.isValid && route.path.length > 1 && (
