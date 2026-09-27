@@ -1,7 +1,7 @@
 import LegalPage from '../../components/legal-page';
 
 export const metadata = {
-  title: 'Privacy Policy | Silt Strider',
+  title: 'Privacy Policy',
   description: 'How Silt Strider handles account information, game saves, and supporter payments.',
   alternates: { canonical: 'https://siltstrider.tools/privacy' }
 };

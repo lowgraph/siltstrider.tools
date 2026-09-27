@@ -101,10 +101,9 @@ export default function HomeHero({
           <span>Search every item, spell and place</span>
           <kbd>{searchKey}</kbd>
         </button>
-        <h2 className="home-title" id="home-title">Plan the perfect <span>Morrowind</span> run.</h2>
+        <h1 className="home-title" id="home-title">Plan the perfect <span>Morrowind</span> run.</h1>
         <div className="home-lead">
-          A free toolbox for The Elder Scrolls III. Build a character, simulate every level-up, brew potions and plan
-          your travel, with every number read straight from the game files.
+          A free, data-driven companion for The Elder Scrolls III. Build a character, simulate every level-up for ×5 multipliers, brew exact potions and plan your travel across Vvardenfell and Tamriel Rebuilt, with every number read straight from the game files.
         </div>
         <HomeSaveDrop
           activeSave={save?.activeSave}

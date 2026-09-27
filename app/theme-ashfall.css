@@ -264,7 +264,8 @@
 :root[data-theme="ashfall"] body :is(#react-nav-challenge, #react-nav-build) { background: transparent; color: var(--color-fg-8); box-shadow: none; }
 :root[data-theme="ashfall"] body:is(.view-challenge) #react-nav-challenge,
 :root[data-theme="ashfall"] body:is(.view-builder) #react-nav-build { background: var(--color-surface-15); border-color: var(--color-line-7); color: var(--color-fg-1); }
-:root[data-theme="ashfall"] .topbar .brand h1 {
+:root[data-theme="ashfall"] .topbar .brand h1,
+:root[data-theme="ashfall"] .topbar .brand .brand-title {
   font-family: var(--font-display);
   font-size: clamp(2rem, 3.2vw, 2.6rem);
   line-height: 1;
