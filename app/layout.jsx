@@ -16,6 +16,15 @@ export const metadata = {
   },
   description:
     'The definitive data-driven character builder, 5x multiplier level simulator, alchemy calculator, and travel planner for The Elder Scrolls III: Morrowind, Tamriel Rebuilt, and ARCE.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180' },
+    ],
+  },
   alternates: {
     canonical: 'https://siltstrider.tools',
   },

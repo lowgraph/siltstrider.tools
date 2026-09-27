@@ -190,3 +190,28 @@ test("legal pages do not redundantly append site title to metadata title", () =>
   assert.doesNotMatch(termsSrc, /title:\s*['"]Terms of Service \| Silt Strider['"]/, "terms page title must not duplicate brand name");
 });
 
+test("Silt Strider favicon and icon assets exist and are valid", () => {
+  const icoPath = path.join(ROOT, "public", "favicon.ico");
+  assert.ok(fs.existsSync(icoPath), "public/favicon.ico must exist");
+  const icoBuf = fs.readFileSync(icoPath);
+  assert.ok(icoBuf.length > 0, "favicon.ico must not be empty");
+  // Check ICO header: 0x0000 0x0001
+  assert.equal(icoBuf.readUInt16LE(0), 0, "ICO reserved word must be 0");
+  assert.equal(icoBuf.readUInt16LE(2), 1, "ICO type must be 1 (icon)");
+  assert.ok(icoBuf.readUInt16LE(4) >= 1, "ICO must contain at least 1 image");
+
+  const svgPath = path.join(ROOT, "app", "icon.svg");
+  assert.ok(fs.existsSync(svgPath), "app/icon.svg must exist");
+  const svgContent = fs.readFileSync(svgPath, "utf8");
+  assert.match(svgContent, /<ellipse/, "icon.svg must contain silt strider shell ellipse");
+  assert.match(svgContent, /viewBox=['"]0 0 48 48['"]/, "icon.svg must use 48x48 viewBox");
+
+  const appleIcon = path.join(ROOT, "public", "apple-touch-icon.png");
+  assert.ok(fs.existsSync(appleIcon), "apple-touch-icon.png must exist");
+
+  const layout = fs.readFileSync(path.join(ROOT, "app", "layout.jsx"), "utf8");
+  assert.match(layout, /favicon\.ico/, "layout must specify favicon.ico");
+  assert.match(layout, /icon\.svg/, "layout must specify icon.svg");
+});
+
+
