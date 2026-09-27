@@ -971,3 +971,27 @@ test("Query permalink payload: /builder?build=... loads build and cleans query s
     dom.window.close();
   }
 });
+
+test('hydrating the shell raises no snapshot warning', async () => {
+  // useSyncExternalStore compares snapshots by identity; a new server snapshot on every
+  // call makes React warn "The result of getServerSnapshot should be cached".
+  const dom = setupDom('/alchemy');
+  const { ShellProvider } = component('components/shell-context.jsx');
+  const { renderToString } = require('react-dom/server');
+  const { hydrateRoot } = require('react-dom/client');
+  const tree = React.createElement(ShellProvider, { initialView: 'alchemy' }, React.createElement('span', null, 'ok'));
+  const container = dom.window.document.getElementById('root');
+  container.innerHTML = renderToString(tree);
+  const errors = [];
+  const original = console.error;
+  console.error = (...args) => { errors.push(args.map(String).join(' ')); };
+  let root;
+  try {
+    await act(async () => { root = hydrateRoot(container, tree); });
+  } finally {
+    console.error = original;
+    await act(async () => root?.unmount());
+    dom.window.close();
+  }
+  assert.deepEqual(errors.filter(e => /getServerSnapshot|getSnapshot/.test(e)), []);
+});

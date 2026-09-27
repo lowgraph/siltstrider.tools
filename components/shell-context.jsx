@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useSyncExternalStore, useCallback, useEffect } from 'react';
+import { createContext, useContext, useSyncExternalStore, useCallback, useEffect, useMemo } from 'react';
 import { decodeShareHash, normalizeProfile, normalizeView, KNOWN_VIEWS } from '../lib/permalink-codec.mjs';
 
 const initial = Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: 'home' });
@@ -93,9 +93,16 @@ function readCurrentState(initialView) {
 const ShellContext = createContext(null);
 
 export function ShellProvider({ children, initialView = 'home' }) {
+  // One object per initialView: useSyncExternalStore compares snapshots by identity, so
+  // a fresh object on every call reads as a change and React warns of a render loop.
+  const serverState = useMemo(
+    () => Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: initialView }),
+    [initialView]
+  );
+
   const getSnapshot = useCallback(() => {
     if (typeof window === 'undefined') {
-      return Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: initialView });
+      return serverState;
     }
 
     const pathname = window.location.pathname || '/';
@@ -117,11 +124,9 @@ export function ShellProvider({ children, initialView = 'home' }) {
     lastCacheKey = cacheKey;
     cachedState = readCurrentState(initialView);
     return cachedState;
-  }, [initialView]);
+  }, [initialView, serverState]);
 
-  const getServerSnapshot = useCallback(() => {
-    return Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: initialView });
-  }, [initialView]);
+  const getServerSnapshot = useCallback(() => serverState, [serverState]);
 
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
