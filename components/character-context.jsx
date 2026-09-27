@@ -10,6 +10,7 @@ import { createCharacterCatalogService } from "../lib/character-catalogs.mjs";
 import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
 import { decodeShareHash, encodeShareHash } from "../lib/permalink-codec.mjs";
 import { sanitizeBuild } from "../lib/character-vault.mjs";
+import { rememberSave, recallSave, forgetSave } from "../lib/active-save-store.mjs";
 import {
   buildFromSave,
   loadoutFromSave,
@@ -164,7 +165,9 @@ export function CharacterProvider({ children }) {
   const buildRef = useRef(build);
   buildRef.current = build;
 
-  const loadSave = useCallback(async (save) => {
+  // `restored`: brought back from this browser on a page load, so it is already kept,
+  // and the world the visitor has chosen since stays as it is.
+  const loadSave = useCallback(async (save, { restored = false } = {}) => {
     validateSave(save);
     const { profile, reason, contentFileCount } = profileForSave(save);
     const loader = getGameDataLoader();
@@ -178,6 +181,7 @@ export function CharacterProvider({ children }) {
     const { loadout, unresolved: unworn } = loadoutFromSave(save, equipment.catalogs);
     const loaded = {
       token: Date.now(),
+      restored,
       save,
       profile,
       reason,
@@ -191,11 +195,33 @@ export function CharacterProvider({ children }) {
     const nextBuild = { ...next, factionMemberships:saveMemberships(save.progress), loadouts: [loadout, ...createDefaultLoadoutPresets().slice(1)] };
     setActiveSave(loaded);
     setBuild(nextBuild);
-    if (shell.profile !== profile && typeof shell.setProfile === "function") shell.setProfile(profile);
+    if (!restored) {
+      rememberSave(save).then((kept) => { if (!kept) console.warn("The save could not be kept in this browser; it lasts until the page reloads."); });
+      if (shell.profile !== profile && typeof shell.setProfile === "function") shell.setProfile(profile);
+    }
     return loaded;
   }, [shell]);
 
-  const clearSave = useCallback(() => setActiveSave(null), []);
+  const clearSave = useCallback(() => {
+    setActiveSave(null);
+    forgetSave();
+  }, []);
+
+  // A save loaded before this page load comes back, until it is cleared. A shared
+  // build link opened with the page wins: it replaces the character, save and all.
+  const restoring = useRef(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || restoring.current) return;
+    restoring.current = true;
+    const raw = window.location.href || "";
+    if (sanitizeBuild(decodeShareHash(raw).build)) return;
+    recallSave()
+      .then((kept) => (kept ? loadSave(kept, { restored: true }) : null))
+      .catch((err) => {
+        console.warn("Could not restore the saved character:", err);
+        forgetSave();
+      });
+  }, [loadSave]);
 
   // A shared build link (#builder&build=... or ?build=...) opens its character, on load or when pasted
   // into an open tab, then leaves the address bar with a clean path so later edits are not confused with it.
@@ -207,6 +233,7 @@ export function CharacterProvider({ children }) {
       const linked = sanitizeBuild(decoded.build);
       if (!linked) return;
       setActiveSave(null);
+      forgetSave();
       setBuild((prev) => ({ ...DEFAULT_BUILD, world: decoded.world || prev.world, arce: decoded.arce ?? prev.arce, ...linked }));
       if (decoded.profile && typeof shell?.setProfile === "function" && shell.profile !== decoded.profile) {
         shell.setProfile(decoded.profile);

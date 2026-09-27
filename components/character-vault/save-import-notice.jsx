@@ -28,6 +28,7 @@ export default function SaveImportNotice({ compact = false }) {
           {activeSave.className ? ` ${activeSave.className}` : ""}
           {` · loaded from a save as ${PROFILE_LABELS[activeSave.profile] || activeSave.profile}`}
           {activeSave.contentFileCount ? ` · the save loads ${activeSave.contentFileCount} content files` : ""}
+          {" · kept in this browser until you clear it"}
         </span>
         <button type="button" className="mw-btn px-2 py-1 text-[11px] font-bold" onClick={clearSave}>
           Clear save

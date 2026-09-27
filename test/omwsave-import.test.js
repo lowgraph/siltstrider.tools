@@ -138,10 +138,11 @@ test('the codec round-trips gender, specialization and favoured attributes', asy
 
 test('a payload stored before the identity extension still decodes, with it unknown', async () => {
   const { serializeOmwSave, deserializeOmwSave } = await codec;
-  // No favoured attributes means the extension is exactly three bytes: gender, spec, count.
+  // No favoured attributes means the extension is exactly three bytes: gender, spec, count;
+  // no position means the position extension after it is one flag byte.
   const save = parsedSave({ identity: { class: { id: 'x', name: null, custom: false, specialization: 'Magic', favoredAttributes: [] } } });
   const full = serializeOmwSave(save);
-  const old = deserializeOmwSave(full.subarray(0, full.length - 3));
+  const old = deserializeOmwSave(full.subarray(0, full.length - 4));
   assert.equal(old.identity.gender, null);
   assert.equal(old.identity.class.specialization, null);
   assert.deepEqual(old.identity.class.favoredAttributes, []);
@@ -300,4 +301,21 @@ test('the parser reads where the player stands and the last exterior position', 
   assert.equal(bare.lastExteriorPosition, null);
   const short = parseOmwSave(Buffer.concat([saveFile(), rec('PLAY', [sub('POS_', f32s(1, 2))])])).identity;
   assert.equal(short.position, null, 'a truncated position is not guessed at');
+});
+
+test('the codec carries where the player stands, and older payloads read it as unknown', async () => {
+  const { serializeOmwSave, deserializeOmwSave } = await codec;
+  const at = parsedSave({ identity: { position: [3979.66, 4408.77, 14485.88], lastExteriorPosition: [53998.4, -141929.08, 2082.33] } });
+  const back = deserializeOmwSave(serializeOmwSave(at));
+  assert.deepEqual(back.identity.position, [3979.66, 4408.77, 14485.88]);
+  assert.deepEqual(back.identity.lastExteriorPosition, [53998.4, -141929.08, 2082.33]);
+  const outside = deserializeOmwSave(serializeOmwSave(parsedSave({ identity: { position: [1.5, 2.5, 3.5] } })));
+  assert.deepEqual(outside.identity.position, [1.5, 2.5, 3.5]);
+  assert.equal('lastExteriorPosition' in outside.identity, false, 'only what the save had');
+  const garbage = deserializeOmwSave(serializeOmwSave(parsedSave({ identity: { position: [NaN, 1, 2], lastExteriorPosition: [1, 2] } })));
+  assert.equal('position' in garbage.identity || 'lastExteriorPosition' in garbage.identity, false, 'nothing unreadable is stored');
+  const full = serializeOmwSave(parsedSave());
+  const before = deserializeOmwSave(full.subarray(0, full.length - 1));
+  assert.equal('position' in before.identity, false, 'a payload written before the position extension');
+  assert.equal(before.identity.name, 'Tester');
 });
