@@ -33,6 +33,11 @@ export {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.hostname === 'www.siltstrider.tools') {
+      url.hostname = 'siltstrider.tools';
+      url.protocol = 'https:';
+      return Response.redirect(url.toString(), 301);
+    }
     const rawPathname = url.pathname;
     const pathname = rawPathname.length > 1 && rawPathname.endsWith('/') ? rawPathname.slice(0, -1) : rawPathname;
     const cors = getCorsHeaders(request, env);

@@ -44,3 +44,12 @@ test('the fixed D1 fixture is accepted unchanged by the canonical character vali
   t.after(() => dom.window.close());
   assert.deepEqual(JSON.parse(JSON.stringify(dom.window.normalizeCharacter(TEST_CHARACTER))), TEST_CHARACTER);
 });
+
+test('Worker permanently redirects www.siltstrider.tools requests to https://siltstrider.tools', async () => {
+  const worker = (await import('../cloudflare/worker.mjs')).default;
+  const req = new Request('http://www.siltstrider.tools/builder?build=test123');
+  const res = await worker.fetch(req, {}, {});
+  assert.equal(res.status, 301);
+  assert.equal(res.headers.get('Location'), 'https://siltstrider.tools/builder?build=test123');
+});
+
