@@ -12,6 +12,12 @@ export const metadata = {
     description: 'How Silt Strider handles account information, game saves, and supporter payments.',
     url: 'https://siltstrider.tools/privacy',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Silt Strider Tools — Privacy Policy' }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy | Silt Strider Tools',
+    description: 'How Silt Strider handles account information, game saves, and supporter payments.',
+    images: ['/og-image.png']
   }
 };
 

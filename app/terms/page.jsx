@@ -12,6 +12,12 @@ export const metadata = {
     description: 'Terms for using Silt Strider planning tools, Cloud Vault, and optional supporter benefits.',
     url: 'https://siltstrider.tools/terms',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Silt Strider Tools — Terms of Service' }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms of Service | Silt Strider Tools',
+    description: 'Terms for using Silt Strider planning tools, Cloud Vault, and optional supporter benefits.',
+    images: ['/og-image.png']
   }
 };
 
