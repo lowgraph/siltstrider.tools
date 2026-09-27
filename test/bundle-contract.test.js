@@ -188,6 +188,7 @@ test('travel, enchanting, and spellmaking features load matching catalogs accord
   const travelData = await loader.loadFeature('vanilla', 'travel');
   assert.equal(travelData.catalogs.Travel.length, 1);
   assert.equal(travelData.catalogs.Places.length, 2);
+  assert.equal(travelData.catalogs.Intervention, undefined, 'an optional catalog the release lacks is simply absent');
 
   const enchData = await loader.loadFeature('vanilla', 'enchanting');
   assert.equal(enchData.catalogs.EffectRules.length, 1);
@@ -244,5 +245,20 @@ test('bestInSlot feature loads BestInSlot, Armor, Clothing, and Weapons catalogs
   assert.equal(bisData.catalogs.Weapons.length, 1);
 });
 
-
-
+test('an optional feature catalog loads when the release has it', async () => {
+  const b = bundle()
+    .catalog('Travel', { rows: [{ key: 'travel_1', from: 'exterior:-2,-9', to: 'exterior:3,-9', mode: 'silt_strider' }] })
+    .catalog('Places')
+    .catalog('GameSettings')
+    .catalog('Intervention', { rows: [{ key: 'exterior:-2,-9', divine: 0, almsivi: 0 }] })
+    .publish();
+  const { createBundleLoader, FEATURE_OPTIONAL_CATALOGS } = await modulePromise;
+  assert.deepEqual([...FEATURE_OPTIONAL_CATALOGS.travel], ['Intervention', 'Access']);
+  const loader = createBundleLoader({
+    baseUrl: ROOT, crypto: webcrypto, cacheStorage: null,
+    fetcher: async url => new Response(b.routes.get(url))
+  });
+  const travelData = await loader.loadFeature('vanilla', 'travel');
+  assert.equal(travelData.catalogs.Intervention.length, 1);
+  assert.ok(travelData.metadata.Intervention, 'its carried fields come with it');
+});

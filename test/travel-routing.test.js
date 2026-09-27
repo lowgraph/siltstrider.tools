@@ -140,3 +140,64 @@ test("the live graph merges a town's stops and keeps each provider's price", asy
     barter: STRIDER, price: 3, hours: 0, board: "Docks" });
   assert.equal(graph["Old Ebonheart"].find(e => e.kind === "Guild Guide").alight, "Guild of Mages");
 });
+
+// Seyda Neen casts to Pelagiad (Divine) and Vivec (Almsivi); the fort is no travel stop.
+const INTERVENTION = {
+  markers: {
+    divine: [{ reference: "d0", cell: "exterior:0,-7", pos: [5738, -56059], name: "Pelagiad", town: "Pelagiad" }],
+    almsivi: [{ reference: "t0", cell: "exterior:4,-13", pos: [32879, -99093], name: "Vivec, Temple", town: "Vivec" }]
+  },
+  records: [
+    { key: "exterior:-2,-9", divine: 0, almsivi: 0 },
+    { key: "interior:census office", divine: 0, almsivi: 0, ambiguous: { divine: [null] } },
+    { key: "exterior:0,-7", divine: 0, almsivi: 0 },
+    { key: "exterior:4,-13", divine: 0, almsivi: 0 },
+    { key: "interior:sealed", divine: null, almsivi: null }
+  ]
+};
+const TRAVEL_NODES = {
+  "exterior:-2,-9": { name: "Seyda Neen", town: "Seyda Neen", district: null },
+  "interior:census office": { name: "Seyda Neen, Census Office", town: "Seyda Neen", district: "Census Office" },
+  "exterior:3,-9": { name: "Vivec", town: "Vivec", district: null },
+  "interior:sealed": { name: "Sealed", town: "Sealed", district: null }
+};
+
+test("intervention legs are free, instant and land where the catalog says", async () => {
+  const { addInterventionEdges, planRoute, journeyGold } = await lib();
+  const travel = { "Seyda Neen": [{ to: "Vivec", kind: "Silt Strider", price: 10, hours: 2, barter: STRIDER }], Vivec: [] };
+  const graph = addInterventionEdges(travel, INTERVENTION, TRAVEL_NODES, { divine: true, almsivi: true });
+  const almsivi = graph["Seyda Neen"].find(e => e.kind === "Almsivi Intervention");
+  assert.deepEqual(almsivi, { to: "Vivec", kind: "Almsivi Intervention", spell: "almsivi", free: true, price: 0, hours: 0, alight: "Temple" });
+  assert.ok(graph.Pelagiad, "a landing spot no journey reaches becomes a place to route to");
+  assert.equal(journeyGold(almsivi, { mercantile: 5 }), 0);
+  const fastest = planRoute("Seyda Neen", "Vivec", graph, { objective: "time", goldOf: e => journeyGold(e, { mercantile: 5, luck: 40, personality: 40 }, SETTINGS) });
+  assert.equal(fastest.steps[0].spell, "almsivi");
+  assert.deepEqual(fastest.totals, { gold: 0, hours: 0, goldKnown: true, hoursKnown: true });
+  assert.equal(travel["Seyda Neen"].length, 1, "the travel graph itself is untouched");
+});
+
+test("only the spells the character has are used", async () => {
+  const { addInterventionEdges } = await lib();
+  const kinds = g => (g["Seyda Neen"] || []).map(e => e.kind).sort();
+  assert.deepEqual(kinds(addInterventionEdges({}, INTERVENTION, TRAVEL_NODES, { divine: true })), ["Divine Intervention"]);
+  assert.deepEqual(addInterventionEdges({ A: [] }, INTERVENTION, TRAVEL_NODES, {}), { A: [] });
+  assert.deepEqual(addInterventionEdges({ A: [] }, null, TRAVEL_NODES, { divine: true }), { A: [] }, "an older bundle has no catalog");
+});
+
+test("a sealed place casts nowhere, a landing casts onward, and ambiguity is carried", async () => {
+  const { addInterventionEdges } = await lib();
+  const graph = addInterventionEdges({}, INTERVENTION, TRAVEL_NODES, { divine: true, almsivi: true });
+  assert.equal(graph.Sealed, undefined, "no leg from where the spell fails");
+  assert.ok(graph.Pelagiad.some(e => e.to === "Vivec" && e.kind === "Almsivi Intervention"), "cast again from the fort");
+  const divine = graph["Seyda Neen"].find(e => e.kind === "Divine Intervention");
+  assert.equal(divine.ambiguous, true, "the census office might land elsewhere");
+  assert.equal(graph.Vivec.some(e => e.to === "Vivec"), false, "no leg from a town to itself");
+});
+
+test("a save's spells and scrolls say which interventions it can cast", async () => {
+  const { interventionsFromSave } = await lib();
+  assert.deepEqual(interventionsFromSave({ stuff: { spells: ["almsivi intervention"], inventory: [] } }), { divine: false, almsivi: true });
+  assert.deepEqual(interventionsFromSave({ stuff: { spells: [], inventory: [{ id: "sc_DivineIntervention", count: 2 }] } }), { divine: true, almsivi: false });
+  assert.deepEqual(interventionsFromSave(null), { divine: false, almsivi: false });
+  assert.deepEqual(interventionsFromSave({ stuff: { spells: [42, null], inventory: [null, {}] } }), { divine: false, almsivi: false });
+});
