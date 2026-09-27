@@ -400,6 +400,17 @@ export default function Configurator({
           })}
         </div>
       </div>
+
+      {/* Character Math Invariants Cue */}
+      <div className="p-3 bg-surface-2 border border-line-11 text-xs text-fg-11 font-serif space-y-1">
+        <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Character Math Invariants:</span>
+        <p className="leading-relaxed">
+          Base Health = <span className="font-mono text-accent">⌊(Strength + Endurance) / 2⌋</span>. Base Magicka = <span className="font-mono text-accent">Intelligence × Sign Multiplier</span>. Fatigue = <span className="font-mono text-accent">Strength + Willpower + Agility + Endurance</span>.
+        </p>
+        <p className="leading-relaxed text-[11px] text-fg-13">
+          Specialization adds +5 to matching skills; Major skills start at base +25, Minor skills at base +10.
+        </p>
+      </div>
     </div>
   );
 }

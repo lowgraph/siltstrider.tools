@@ -299,12 +299,13 @@ export default function TravelWorkstation() {
           </div>
 
           {/* Network Notes */}
-          <div className="p-3 bg-surface-2 border border-line-11 text-xs text-fg-13 space-y-1">
-            <div className="font-serif font-bold text-fg-7">Transit Rules:</div>
-            <ul className="list-disc list-inside space-y-0.5">
-              <li>Includes Silt Striders, Boats, Guild Guides, and River Striders.</li>
-              <li>Propylon Chambers and Divine/Almsivi Intervention are excluded.</li>
-              <li>Shortest path calculated by minimum transit connections (hops).</li>
+          <div className="p-3 bg-surface-2 border border-line-11 text-xs text-fg-13 space-y-1 font-serif">
+            <div className="font-bold text-fg-7 uppercase tracking-wider text-[10px]">Transit Engine Rules:</div>
+            <ul className="list-disc list-inside space-y-1 text-[11px] text-fg-11 leading-relaxed">
+              <li>Shortest route calculated via breadth-first search (BFS) for minimum transit connections (fewest hops).</li>
+              <li>Network covers Silt Striders, Boats, Guild Guides, Gondoliers, and Mainland River Striders.</li>
+              <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
+              <li>Fast travel excludes Propylon chambers, Divine Intervention, and Almsivi Intervention scrolls.</li>
             </ul>
           </div>
         </div>

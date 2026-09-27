@@ -335,6 +335,14 @@ export default function EnchantingWorkstation() {
             </div>
           </div>
 
+          {/* Constant Effect Rule Note */}
+          <div className="p-2.5 bg-surface-2 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
+            <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Soul Capacity &amp; Constant Effect:</span>
+            <p className="leading-relaxed">
+              Constant Effect requires a minimum soul capacity of <strong className="text-accent">400</strong> (Grand Soul Gem or Azura&apos;s Star trapping a Golden Saint or Ascended Sleeper).
+            </p>
+          </div>
+
           {/* Effects Stack */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
@@ -528,6 +536,17 @@ export default function EnchantingWorkstation() {
                   </span>
                 </div>
               ))}
+            </div>
+
+            {/* Self-Enchant Formula Cue */}
+            <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
+              <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Enchanting Formula:</span>
+              <p className="leading-relaxed">
+                Self-Enchant: <span className="font-mono text-accent">(0.75×Enchant + 0.25×Int + 0.1×Luck − 2.5×Points) × Fatigue</span>.
+              </p>
+              <p className="leading-relaxed text-fg-13">
+                Barter enchanter price scales with Merchant mercantile, disposition, and your character&apos;s barter attributes.
+              </p>
             </div>
           </div>
 

@@ -291,6 +291,14 @@ export default function AlchemyWorkstation() {
             </div>
           </div>
 
+          {/* Apparatus Mechanics Note */}
+          <div className="p-2.5 bg-surface-2 border border-line-11 text-[11px] text-fg-11 space-y-1 font-serif">
+            <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Apparatus Modifiers:</span>
+            <p className="leading-relaxed">
+              <strong className="text-fg-2">Mortar &amp; Pestle</strong> determines base potion strength and duration. <strong className="text-fg-2">Retort</strong> boosts positive magnitudes, <strong className="text-fg-2">Alembic</strong> diminishes negative side-effects, and <strong className="text-fg-2">Calcinator</strong> increases overall potency.
+            </p>
+          </div>
+
           {/* Filter Option */}
           <div className="flex items-center gap-2 pt-1">
             <input
@@ -462,6 +470,14 @@ export default function AlchemyWorkstation() {
                   {potion.message}
                 </div>
               )}
+            </div>
+
+            {/* Engine Formula Cue */}
+            <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
+              <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Engine Brewing Formula:</span>
+              <p className="leading-relaxed">
+                Brew chance: <span className="font-mono text-accent">⌊Alchemy + 0.1×Int + 0.1×Luck⌋%</span> at standard fatigue. Magnitude and duration scale with Mortar quality and character Alchemy skill.
+              </p>
             </div>
           </div>
         </div>

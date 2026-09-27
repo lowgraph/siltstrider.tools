@@ -81,6 +81,18 @@ export default function CharacterBuilderRoot() {
       {/* A character sent over from a challenge run can go back to it */}
       <ChallengeHandoff build={build} sheet={sheet} onNavigate={(view) => shell.navigate?.(view)} />
 
+      {/* Top Controls & Header Bar */}
+      <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
+            Morrowind Character Builder &amp; Class Planner
+          </h2>
+          <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
+            Craft custom classes, calculate initial vitals and skill ratings from race and birthsign, and discover optimal starting gear.
+          </p>
+        </div>
+      </div>
+
       {/* Top Mode Selectors: 3-Way CRPG Studio Bar */}
       <div className="mode-bar-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>

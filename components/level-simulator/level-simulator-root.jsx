@@ -265,6 +265,14 @@ export default function LevelSimulatorRoot() {
       </div>
       <LevelModeToggle mode={mode} onModeChange={setMode} />
 
+      {/* Leveling Mechanics Invariant Reference */}
+      <div className="p-3 bg-surface-5 border border-line-9 text-xs text-fg-11 font-serif space-y-1">
+        <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Morrowind Leveling Invariants:</span>
+        <p className="leading-relaxed">
+          Each level requires 10 Major or Minor skill increases. Attribute multipliers depend on governing skill advances: <span className="font-mono text-accent">1–4 = 2×</span>, <span className="font-mono text-accent">5–7 = 3×</span>, <span className="font-mono text-accent">8–9 = 4×</span>, and <span className="font-mono text-accent">10+ = 5×</span> (Luck has no multiplier). Health gain is strictly non-retroactive: <span className="font-mono text-accent">⌊Endurance / 10⌋</span> per level-up.
+        </p>
+      </div>
+
       {/* Mobile Tab Bar (< 1024px) */}
       <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-surface-2 border border-line-11 mb-4">
         <button

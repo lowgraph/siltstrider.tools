@@ -28,6 +28,42 @@ export default function AboutView() {
           </p>
         </div>
 
+        <div className="about-mechanics space-y-4 bg-surface-7 p-4 border border-line-9 rounded-none">
+          <div>
+            <h3 className="text-base font-serif text-accent mb-2">System Accuracy &amp; Game Mechanics</h3>
+            <p className="text-xs text-fg-7 leading-relaxed">
+              Calculations across Silt Strider reflect verified engine source code transcribed directly from OpenMW 0.51.0 (<span className="font-mono text-accent">apps/openmw/mwmechanics/</span>). Game math is evaluated using exact engine algorithms rather than approximations:
+            </p>
+            <ul className="list-disc list-inside text-xs text-fg-7 space-y-1.5 mt-2.5 leading-relaxed">
+              <li>
+                <strong className="text-fg-2">Alchemy:</strong> Mortar and pestle quality sets base potion strength and duration; the Retort amplifies positive effects, the Alembic suppresses negative side-effects, and the Calcinator magnifies all effect magnitudes. Brew chance scales directly with Alchemy skill, Intelligence, and Luck.
+              </li>
+              <li>
+                <strong className="text-fg-2">Level Progression:</strong> Health gains on level-up are strictly non-retroactive, calculated as 10% of current Endurance (<span className="font-mono text-accent">⌊Endurance / 10⌋</span>). Governing skill increases generate 2× to 5× attribute multipliers (10 skill increases for a 5× multiplier) up to the 100 attribute cap.
+              </li>
+              <li>
+                <strong className="text-fg-2">Travel Routing:</strong> Fewest-hops pathfinding computes optimal routes via breadth-first search across silt striders, boats, river striders, and Guild Guides, accounting for Mages Guild membership and rank requirements.
+              </li>
+              <li>
+                <strong className="text-fg-2">Spellcraft:</strong> Magicka costs derive from effect base cost, magnitude, duration, area, and range. Casting success chance accurately evaluates governing magic skill, Willpower, Luck, and fatigue state.
+              </li>
+              <li>
+                <strong className="text-fg-2">Enchanting:</strong> Enchantment point capacity, soul gem charges, and constant effect thresholds (strictly requiring 400+ soul capacity, such as Golden Saints or Ascended Sleepers) match engine formulas, alongside barter pricing and self-enchant success chance.
+              </li>
+            </ul>
+          </div>
+
+          <div className="border-t border-line-12 pt-3">
+            <h4 className="text-sm font-serif text-accent mb-1">Multi-World Coverage &amp; Privacy</h4>
+            <p className="text-xs text-fg-7 leading-relaxed">
+              Full data pipeline support is provided for The Elder Scrolls III: Morrowind (Tribunal, Bloodmoon), Tamriel Rebuilt 26.08 (Poison Song), and ARCE.
+            </p>
+            <p className="text-xs text-fg-7 mt-1.5 leading-relaxed">
+              OpenMW save inspection (<span className="font-mono text-accent">.omwsave</span>) and character permalink sharing are zero-tracking and strictly client-side. All binary parsing and progression planning take place in your browser—no saves or character data are ever sent to an external server.
+            </p>
+          </div>
+        </div>
+
         <div className="about-credits space-y-4 bg-surface-7 p-4 border border-line-9 rounded-none">
           <div>
             <h3 className="text-base font-serif text-accent mb-1">Credits</h3>

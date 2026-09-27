@@ -483,6 +483,17 @@ export default function SpellmakingWorkstation() {
                 </div>
               ))}
             </div>
+
+            {/* Casting Mechanics Cue */}
+            <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
+              <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Casting Mechanics &amp; Costs:</span>
+              <p className="leading-relaxed">
+                Cast chance: <span className="font-mono text-accent">(2×Skill + Willpower/5 + Luck/10 − MagickaCost) × Fatigue</span>.
+              </p>
+              <p className="leading-relaxed text-fg-13">
+                Primary school is determined by the highest-cost effect in the stack. Target spells add a 1.5× cost modifier.
+              </p>
+            </div>
           </div>
 
           {/* Spellmakers Ranked Barter Table */}
