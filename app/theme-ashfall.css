@@ -244,23 +244,6 @@
 :root[data-theme="ashfall"] .hero::after { display: none; }
 
 /* Header */
-:root[data-theme="ashfall"] .topbar { padding-top: 18px; }
-/* Room for the nav row and the actions row under it whatever the description's length. */
-@media (min-width: 900px) { :root[data-theme="ashfall"] .topbar { min-height: 150px; } }
-/* Between phone and wide desktop the nav row needs the full width: the brand
-   takes its own row, with the theme switch and search to its right. */
-@media (min-width: 900px) and (max-width: 1299px) {
-  :root[data-theme="ashfall"] .topbar { flex-wrap: wrap; row-gap: 14px; min-height: 0; }
-  :root[data-theme="ashfall"] .topbar .brand { flex: 1 1 100%; max-width: calc(100% - 480px); padding-right: 0; }
-  :root[data-theme="ashfall"] .topbar .header-tools { flex: 1 1 100%; flex-wrap: wrap; row-gap: 8px; justify-content: flex-start; margin-left: 0; }
-  :root[data-theme="ashfall"] .topbar .nav-primary { justify-content: flex-start; flex-wrap: wrap; }
-  :root[data-theme="ashfall"] .topbar .world-bar { width: auto; margin-left: auto; }
-  :root[data-theme="ashfall"] .header-actions { top: 18px; bottom: auto; }
-}
-@media (min-width: 900px) and (max-width: 999px) {
-  :root[data-theme="ashfall"] .topbar .nav-primary .btn { padding: 0 8px; font-size: 13.5px; }
-  :root[data-theme="ashfall"] .topbar .nav-primary { gap: 2px; }
-}
 :root[data-theme="ashfall"] body :is(#react-nav-challenge, #react-nav-build) { background: transparent; color: var(--color-fg-8); box-shadow: none; }
 :root[data-theme="ashfall"] body:is(.view-challenge) #react-nav-challenge,
 :root[data-theme="ashfall"] body:is(.view-builder) #react-nav-build { background: var(--color-surface-15); border-color: var(--color-line-7); color: var(--color-fg-1); }
