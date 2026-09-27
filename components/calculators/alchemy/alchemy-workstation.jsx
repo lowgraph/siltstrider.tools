@@ -13,7 +13,7 @@ import {
 } from "../../../lib/alchemy-math.mjs";
 
 export default function AlchemyWorkstation() {
-  const { build, sheet: buildSheet, activeSave, syncToCalculators } = useActiveCharacter();
+  const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
   const { profile } = useShell();
 
@@ -97,8 +97,7 @@ export default function AlchemyWorkstation() {
     setSkill(baseSkill);
     setIntelligence(baseInt);
     setLuck(baseLuck);
-    if (syncToCalculators) syncToCalculators();
-  }, [baseSkill, baseInt, baseLuck, syncToCalculators]);
+  }, [baseSkill, baseInt, baseLuck]);
 
   const apparatusTiers = useMemo(() => Object.fromEntries(
     ['mortar','alembic','calcinator','retort'].map(type=>[type,
@@ -350,7 +349,7 @@ export default function AlchemyWorkstation() {
                   </div>
 
                   <div className="flex gap-2">
-                    {/* Inline sizes: the legacy #panel-alchemy rule makes every input and select 100% wide. */}
+                    {/* Inline sizes: the shared #panel-alchemy rule makes every input and select 100% wide. */}
                     <select
                       className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
                       style={{ flex: "1 1 0", minWidth: 0 }}

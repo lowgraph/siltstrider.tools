@@ -336,8 +336,6 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
                       onClick={() => {
                         if (typeof setBuild === "function") {
                           setBuild(char);
-                        } else if (typeof window !== "undefined" && window.siltShell?.navigate) {
-                          window.siltShell.navigate("builder");
                         }
                       }}
                     >

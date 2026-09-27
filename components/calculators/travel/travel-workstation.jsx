@@ -81,42 +81,8 @@ export default function TravelWorkstation() {
     }
   }, [world, availableStops, origin, destination]);
 
-  // Sync with legacy DOM elements if they exist
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const domFrom = document.getElementById("trv-from");
-    const domTo = document.getElementById("trv-to");
-
-    if (domFrom && domFrom.value !== origin && availableStops.includes(domFrom.value)) {
-      setOrigin(domFrom.value);
-    }
-    if (domTo && domTo.value !== destination && availableStops.includes(domTo.value)) {
-      setDestination(domTo.value);
-    }
-  }, [availableStops, origin, destination]);
-
-  // Push updates to legacy DOM
-  const handleOriginChange = (val) => {
-    setOrigin(val);
-    if (typeof document !== "undefined") {
-      const domFrom = document.getElementById("trv-from");
-      if (domFrom && domFrom.value !== val) {
-        domFrom.value = val;
-        domFrom.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    }
-  };
-
-  const handleDestinationChange = (val) => {
-    setDestination(val);
-    if (typeof document !== "undefined") {
-      const domTo = document.getElementById("trv-to");
-      if (domTo && domTo.value !== val) {
-        domTo.value = val;
-        domTo.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    }
-  };
+  const handleOriginChange = setOrigin;
+  const handleDestinationChange = setDestination;
 
   // "Plan a trip here" from site search: set the destination once the stop list has it.
   const intent = useSearchIntent("travel");

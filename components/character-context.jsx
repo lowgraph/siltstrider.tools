@@ -35,115 +35,6 @@ export const DEFAULT_BUILD = {
   bitterCup: false
 };
 
-function readBuildFromDom(shell) {
-  if (typeof document === "undefined") return null;
-  const raceEl = document.getElementById("c-race");
-  if (!raceEl || !raceEl.value) return null;
-
-  const getVal = (id, fallback) => {
-    const el = document.getElementById(id);
-    return el && el.value ? el.value : fallback;
-  };
-
-  const maj = [0, 1, 2, 3, 4].map((i) => getVal("maj" + i, DEFAULT_BUILD.maj[i]));
-  const min = [0, 1, 2, 3, 4].map((i) => getVal("min" + i, DEFAULT_BUILD.min[i]));
-  const bitterCupEl = document.getElementById("c-bittercup");
-
-  return {
-    version: 1,
-    world: shell?.world || "vanilla",
-    arce: !!shell?.arce,
-    name: "",
-    race: getVal("c-race", DEFAULT_BUILD.race),
-    gender: getVal("c-gender", DEFAULT_BUILD.gender),
-    className: getVal("c-class", DEFAULT_BUILD.className),
-    sign: getVal("c-sign", DEFAULT_BUILD.sign),
-    spec: getVal("c-spec", DEFAULT_BUILD.spec),
-    fav1: getVal("c-fav1", DEFAULT_BUILD.fav1),
-    fav2: getVal("c-fav2", DEFAULT_BUILD.fav2),
-    maj,
-    min,
-    bitterCup: bitterCupEl ? bitterCupEl.checked : false
-  };
-}
-
-function getFallbackCatalogs() {
-  if (typeof window === "undefined") return null;
-  const races = window.RACES;
-  const signs = window.SIGNS;
-  const classes = window.VANILLA_CLASS;
-  const skills = window.SKILLS;
-  const specSkills = window.SPEC_SKILLS;
-  if (!races || !signs || !classes || !skills || !specSkills) return null;
-
-  return {
-    profile: "vanilla",
-    races,
-    signs,
-    classes,
-    skills,
-    specSkills,
-    raceSpells: window.RACE_SPELLS || {},
-    signSpells: window.SIGN_SPELLS || {}
-  };
-}
-
-export function syncStatsToCalculators(sheet, { force = false } = {}) {
-  if (typeof document === "undefined" || !sheet) return;
-
-  const setCalcField = (id, val) => {
-    const el = document.getElementById(id);
-    if (!el || val === undefined) return;
-    if (force || !el.dataset.userEdited) {
-      el.value = String(val);
-      el.dispatchEvent(new Event("input", { bubbles: true }));
-      el.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-  };
-
-  // Track user edits so we never overwrite manual progression testing unless forced
-  const trackEdit = (id) => {
-    const el = document.getElementById(id);
-    if (el && !el.dataset.boundTrack) {
-      el.dataset.boundTrack = "1";
-      el.addEventListener("input", () => {
-        el.dataset.userEdited = "1";
-      });
-    }
-  };
-
-  const calcIds = [
-    "enc-skill", "enc-int", "enc-luck", "enc-merc", "enc-pers",
-    "spl-alt", "spl-con", "spl-des", "spl-ill", "spl-mys", "spl-res", "spl-wil", "spl-luck", "spl-merc", "spl-pers",
-    "alc-skill", "alc-int", "alc-luck"
-  ];
-  calcIds.forEach(trackEdit);
-
-  // Enchanting
-  setCalcField("enc-skill", sheet.skills?.["Enchant"]?.v);
-  setCalcField("enc-int", sheet.attributes?.["Intelligence"]?.v);
-  setCalcField("enc-luck", sheet.attributes?.["Luck"]?.v);
-  setCalcField("enc-merc", sheet.skills?.["Mercantile"]?.v);
-  setCalcField("enc-pers", sheet.attributes?.["Personality"]?.v);
-
-  // Spellmaking
-  setCalcField("spl-alt", sheet.skills?.["Alteration"]?.v);
-  setCalcField("spl-con", sheet.skills?.["Conjuration"]?.v);
-  setCalcField("spl-des", sheet.skills?.["Destruction"]?.v);
-  setCalcField("spl-ill", sheet.skills?.["Illusion"]?.v);
-  setCalcField("spl-mys", sheet.skills?.["Mysticism"]?.v);
-  setCalcField("spl-res", sheet.skills?.["Restoration"]?.v);
-  setCalcField("spl-wil", sheet.attributes?.["Willpower"]?.v);
-  setCalcField("spl-luck", sheet.attributes?.["Luck"]?.v);
-  setCalcField("spl-merc", sheet.skills?.["Mercantile"]?.v);
-  setCalcField("spl-pers", sheet.attributes?.["Personality"]?.v);
-
-  // Alchemy
-  setCalcField("alc-skill", sheet.skills?.["Alchemy"]?.v);
-  setCalcField("alc-int", sheet.attributes?.["Intelligence"]?.v);
-  setCalcField("alc-luck", sheet.attributes?.["Luck"]?.v);
-}
-
 const CharacterContext = createContext(null);
 
 export function CharacterProvider({ children }) {
@@ -156,23 +47,14 @@ export function CharacterProvider({ children }) {
   if (!shell) {
     shell = { world: "vanilla", arce: false, profile: "vanilla" };
   }
-  const [build, setBuildState] = useState(() => {
-    const fromDom = typeof window !== "undefined" ? readBuildFromDom(shell) : null;
-    return distinctFavored(fromDom || DEFAULT_BUILD);
-  });
+  const [build, setBuildState] = useState(() => distinctFavored(DEFAULT_BUILD));
   const setBuild = useCallback((next) => setBuildState(previous => distinctFavored(typeof next === 'function' ? next(previous) : next, previous)), []);
-  const [catalogs, setCatalogs] = useState(() => getFallbackCatalogs());
-  const isInternalSyncRef = useRef(false);
+  const [catalogs, setCatalogs] = useState(null);
 
   // Catalog service subscription
   useEffect(() => {
     let current = true;
     if (typeof window === "undefined") return;
-
-    if (!catalogs) {
-      const fb = getFallbackCatalogs();
-      if (fb) setCatalogs(fb);
-    }
 
     const service = (window.siltCharacters ||= createCharacterCatalogService(getGameDataLoader()));
     const profile = shell.profile || "vanilla";
@@ -189,11 +71,7 @@ export function CharacterProvider({ children }) {
           }
         })
         .catch((err) => {
-          console.warn("Could not load bundle catalogs; falling back to global tables:", err);
-          if (current && !catalogs) {
-            const fb = getFallbackCatalogs();
-            if (fb) setCatalogs(fb);
-          }
+          console.warn("Could not load bundle catalogs:", err);
         });
     }
 
@@ -208,50 +86,6 @@ export function CharacterProvider({ children }) {
       window.removeEventListener("silt-character-status", onStatus);
     };
   }, [shell.profile]);
-
-  // Two-way synchronization: detect external DOM updates ("Send to Build Optimizer", hash permalinks, local storage restore)
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const syncFromDom = () => {
-      if (isInternalSyncRef.current) return;
-      const domBuild = readBuildFromDom(shell);
-      if (!domBuild) return;
-
-      setBuild((prev) => {
-        const isDiff =
-          prev.race !== domBuild.race ||
-          prev.gender !== domBuild.gender ||
-          prev.className !== domBuild.className ||
-          prev.sign !== domBuild.sign ||
-          prev.spec !== domBuild.spec ||
-          prev.fav1 !== domBuild.fav1 ||
-          prev.fav2 !== domBuild.fav2 ||
-          Boolean(prev.bitterCup) !== Boolean(domBuild.bitterCup) ||
-          JSON.stringify(prev.maj) !== JSON.stringify(domBuild.maj) ||
-          JSON.stringify(prev.min) !== JSON.stringify(domBuild.min);
-        return isDiff ? domBuild : prev;
-      });
-    };
-
-    const target = document.getElementById("panel-build") || document.body;
-    const observer = new MutationObserver(syncFromDom);
-    if (target) {
-      observer.observe(target, { attributes: true, subtree: true, attributeFilter: ["value", "selected", "checked"] });
-    }
-
-    const onStorageOrHash = () => syncFromDom();
-    window.addEventListener("hashchange", onStorageOrHash);
-    window.addEventListener("storage", onStorageOrHash);
-    window.addEventListener("silt-shell-change", onStorageOrHash);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("hashchange", onStorageOrHash);
-      window.removeEventListener("storage", onStorageOrHash);
-      window.removeEventListener("silt-shell-change", onStorageOrHash);
-    };
-  }, [shell]);
 
   // Keep build in sync with world/arce profile changes
   useEffect(() => {
@@ -322,59 +156,6 @@ export function CharacterProvider({ children }) {
     },
     [shell.world, shell.arce]
   );
-
-  // Sync React state to legacy DOM controls in background
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    isInternalSyncRef.current = true;
-    const setVal = (id, val) => {
-      const el = document.getElementById(id);
-      if (el && el.value !== val) {
-        el.value = val;
-      }
-    };
-    setVal("c-race", build.race);
-    setVal("c-gender", build.gender);
-    setVal("c-sign", build.sign);
-    setVal("c-spec", build.spec);
-    setVal("c-fav1", build.fav1);
-    setVal("c-fav2", build.fav2);
-    setVal("c-class", build.className);
-    build.maj?.forEach((s, i) => setVal("maj" + i, s));
-    build.min?.forEach((s, i) => setVal("min" + i, s));
-
-    const bcEl = document.getElementById("c-bittercup");
-    if (bcEl && bcEl.checked !== Boolean(build.bitterCup)) {
-      bcEl.checked = Boolean(build.bitterCup);
-    }
-
-    if (typeof window !== "undefined" && typeof window.syncSkillPrev === "function") {
-      try {
-        window.syncSkillPrev();
-      } catch (e) {}
-    }
-
-    const timer = setTimeout(() => {
-      isInternalSyncRef.current = false;
-    }, 100);
-    return () => {
-      clearTimeout(timer);
-      isInternalSyncRef.current = false;
-    };
-  }, [build]);
-
-  // Seed baseline stats to calculators once sheet is ready without forcing over user edits
-  useEffect(() => {
-    if (sheet) {
-      syncStatsToCalculators(sheet, { force: false });
-    }
-  }, [sheet]);
-
-  const forceSyncToCalculators = useCallback(() => {
-    if (sheet) {
-      syncStatsToCalculators(sheet, { force: true });
-    }
-  }, [sheet]);
 
   // A loaded .omwsave: the build it resolves to, plus what the other tools read from
   // it -- the Level Simulator's starting sheet, the worn loadout, journal progress --
@@ -448,12 +229,11 @@ export function CharacterProvider({ children }) {
       swapSkill,
       selectClassPreset,
       selectPremade,
-      syncToCalculators: forceSyncToCalculators,
       activeSave,
       loadSave,
       clearSave
     }),
-    [build, sheet, catalogs, updateField, swapSkill, selectClassPreset, selectPremade, forceSyncToCalculators,
+    [build, sheet, catalogs, updateField, swapSkill, selectClassPreset, selectPremade,
      activeSave, loadSave, clearSave]
   );
 
@@ -473,7 +253,6 @@ export function useActiveCharacter() {
       swapSkill: () => {},
       selectClassPreset: () => {},
       selectPremade: () => {},
-      syncToCalculators: () => {},
       activeSave: null,
       loadSave: async () => null,
       clearSave: () => {}

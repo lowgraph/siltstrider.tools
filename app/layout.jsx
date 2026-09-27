@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono, Instrument_Serif } from 'next/font/google';
 import { DEFAULT_THEME, THEME_INIT_SCRIPT } from '../lib/theme.mjs';
-import './legacy-compat.css';
 import './globals.css';
 import './theme-ashfall.css';
 

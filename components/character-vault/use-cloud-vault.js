@@ -50,12 +50,6 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
       getSessionKey: () => accountEpoch.current,
       getToken: async (options) => {
         if (typeof window === "undefined") return null;
-        if (window.siltStriderAuth?.getToken) {
-          try {
-            const tok = await window.siltStriderAuth.getToken(options);
-            if (tok) return tok;
-          } catch {}
-        }
         if (window.Clerk?.session?.getToken) {
           try {
             return await window.Clerk.session.getToken(options);
@@ -448,8 +442,6 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
         if (buildToApply) {
           if (typeof onApplyBuild === "function") {
             onApplyBuild(buildToApply);
-          } else if (typeof window !== "undefined" && window.siltShell?.navigate) {
-            window.siltShell.navigate("builder");
           }
           setStatusMessage(`Loaded "${save.name}" into Character Builder!`);
           setTimeout(() => {

@@ -64,6 +64,8 @@ All game logic and formulas live in pure, zero-dependency ECMAScript modules in 
 - `best-in-slot.mjs`: Policy-driven gear ranking and equipment optimization.
 
 ### C. CRPG Authenticity with Modern React 19
+- Shared character state and the four calculators use React contexts and props. The app does not load the retired JavaScript runtime or consult its shell/catalog/auth globals. `silt-shell-change` remains a current notification for history replacements; old permalink decoding remains supported. Two builder components still contain DOM bridges awaiting removal: `gear-advisor.jsx` and `local-characters-panel.jsx`.
+- `app/globals.css` owns shared element, navigation, panel and form styles, theme tokens, and component overrides. Shared rules retain their unlayered precedence; `app/theme-ashfall.css` loads afterward. Retired-control selectors and duplicate definitions have been removed. `index.html` remains a regression fixture, not a production entry point.
 - **App Shell**: Single-page architecture mounted by `components/app-shell.jsx`, rendering 13 specialized workstations.
 - **Design Tokens**: Standardized Morrowind CRPG design tokens (`app/globals.css`, `app/theme-ashfall.css`) using native CSS custom properties, 9-slice borders, and the Pelagiad font.
 - **Responsive Layout**: Adapts from full desktop workstations to mobile viewports with a dedicated mobile tab bar and responsive drawers.

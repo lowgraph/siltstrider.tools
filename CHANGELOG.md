@@ -1,5 +1,18 @@
 # Changelog
 
+## Stylesheet consolidation — 2026-09-27
+
+- Consolidated shared styles into `app/globals.css` and removed the separate legacy stylesheet import.
+- Removed retired control selectors and duplicate definitions while preserving cascade order, both themes, dynamic vital bars, and the Pelagiad license.
+- Added stylesheet guards and desktop/mobile visual comparisons across all 13 views in both themes.
+
+## Native JavaScript state cleanup — 2026-09-27
+
+- Removed the dormant legacy script loader, old DOM synchronization, global catalog/shell fallbacks, and unused calculator HUD and alchemy bridge.
+- Calculator stat ingestion continues through React state; the vault uses Clerk directly for session tokens.
+- Preserved existing permalink formats, shared legacy CSS, and the historical HTML regression fixture.
+- Added adversarial tests for stale DOM controls, poisoned legacy globals, and malformed build links.
+
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
 
 ## Builder and Level Optimizer fixes — 2026-09-24

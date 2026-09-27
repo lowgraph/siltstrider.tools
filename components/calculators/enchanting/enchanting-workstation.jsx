@@ -16,7 +16,7 @@ import {
 } from "../../../lib/enchant-math.mjs";
 
 export default function EnchantingWorkstation() {
-  const { build, sheet: buildSheet, activeSave, syncToCalculators } = useActiveCharacter();
+  const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
   const { world } = useShell();
 
@@ -92,8 +92,7 @@ export default function EnchantingWorkstation() {
     setLuck(baseLuck);
     setMercantile(baseMerc);
     setPersonality(basePers);
-    if (syncToCalculators) syncToCalculators();
-  }, [baseSkill, baseInt, baseLuck, baseMerc, basePers, syncToCalculators]);
+  }, [baseSkill, baseInt, baseLuck, baseMerc, basePers]);
 
   // Handle Base Item change
   const handleBaseItemChange = (e) => {
@@ -199,30 +198,6 @@ export default function EnchantingWorkstation() {
 
   const isOverCapacity = totalPoints > capacity;
   const isCeEligible = soul >= 400;
-
-  // Bi-directional legacy DOM synchronization
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const domItem = document.getElementById("enc-item");
-    const domSoul = document.getElementById("enc-soul");
-    const domType = document.getElementById("enc-type");
-    const domSkill = document.getElementById("enc-skill");
-    const domInt = document.getElementById("enc-int");
-    const domLuck = document.getElementById("enc-luck");
-    const domMerc = document.getElementById("enc-merc");
-    const domPers = document.getElementById("enc-pers");
-    const domDisp = document.getElementById("enc-disp");
-
-    if (domItem && domItem.value !== String(capacity)) domItem.value = String(capacity);
-    if (domSoul && domSoul.value !== String(soul)) domSoul.value = String(soul);
-    if (domType && domType.value !== enchantType) domType.value = enchantType;
-    if (domSkill && domSkill.value !== String(skill)) domSkill.value = String(skill);
-    if (domInt && domInt.value !== String(intelligence)) domInt.value = String(intelligence);
-    if (domLuck && domLuck.value !== String(luck)) domLuck.value = String(luck);
-    if (domMerc && domMerc.value !== String(mercantile)) domMerc.value = String(mercantile);
-    if (domPers && domPers.value !== String(personality)) domPers.value = String(personality);
-    if (domDisp && domDisp.value !== String(disposition)) domDisp.value = String(disposition);
-  }, [capacity, soul, enchantType, skill, intelligence, luck, mercantile, personality, disposition]);
 
   return (
     <div className="enchanting-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">

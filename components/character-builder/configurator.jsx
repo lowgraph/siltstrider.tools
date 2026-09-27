@@ -53,8 +53,6 @@ export default function Configurator({
     const raw =
       Object.keys(catalogs?.races || {}).length > 0
         ? Object.keys(catalogs.races)
-        : typeof window !== "undefined" && window.RACES
-        ? Object.keys(window.RACES)
         : ["Argonian", "Breton", "Dark Elf", "High Elf", "Imperial", "Khajiit", "Nord", "Orc", "Redguard", "Wood Elf"];
     return raw.slice().sort((a, b) => a.localeCompare(b));
   }, [catalogs]);
@@ -62,35 +60,30 @@ export default function Configurator({
   const classes =
     Object.keys(catalogs?.classes || {}).length > 0
       ? Object.keys(catalogs.classes)
-      : typeof window !== "undefined" && window.VANILLA_CLASS
-      ? Object.keys(window.VANILLA_CLASS)
       : [];
 
   const signs =
     Object.keys(catalogs?.signs || {}).length > 0
       ? Object.keys(catalogs.signs)
-      : typeof window !== "undefined" && window.SIGNS
-      ? Object.keys(window.SIGNS)
       : ["The Warrior", "The Mage", "The Thief", "The Serpent", "The Lady", "The Steed", "The Lord", "The Apprentice", "The Atronach", "The Ritual", "The Lover", "The Shadow", "The Tower"];
 
   const specSkills =
     catalogs?.specSkills ||
-    (typeof window !== "undefined" && window.SPEC_SKILLS) || {
+    {
       Combat: ["Block", "Armorer", "Medium Armor", "Heavy Armor", "Blunt Weapon", "Long Blade", "Axe", "Spear", "Athletics"],
       Magic: ["Enchant", "Destruction", "Alteration", "Illusion", "Conjuration", "Mysticism", "Restoration", "Alchemy", "Unarmored"],
       Stealth: ["Security", "Sneak", "Acrobatics", "Light Armor", "Short Blade", "Marksman", "Mercantile", "Speechcraft", "Hand-to-hand"]
     };
 
-  const activeRace = catalogs?.races?.[build.race] || (typeof window !== "undefined" && window.RACES?.[build.race]);
-  const activeSign = catalogs?.signs?.[build.sign] || (typeof window !== "undefined" && window.SIGNS?.[build.sign]);
+  const activeRace = catalogs?.races?.[build.race];
+  const activeSign = catalogs?.signs?.[build.sign];
 
   const handleClassChange = (className) => {
     if (className === "Custom") {
       onUpdateField("className", "Custom");
     } else {
       const preset =
-        catalogs?.classes?.[className] ||
-        (typeof window !== "undefined" && window.VANILLA_CLASS?.[className]);
+        catalogs?.classes?.[className];
       if (preset) {
         onSelectClassPreset(className, preset);
       } else {

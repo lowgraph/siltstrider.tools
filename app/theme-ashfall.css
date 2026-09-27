@@ -5,11 +5,11 @@
  *    palette (Basalt surfaces, Bone text, one Ember accent), plus fonts.
  * 2. Frames: the Morrowind 9-slice textures (--mw-border, --mw-bevel,
  *    --mw-groove) become hairlines with rounded corners.
- * 3. Components: legacy classes (.mw-btn, .btn, .seg, selects, panels...) and
+ * 3. Components: shared classes (.mw-btn, .btn, .seg, selects, panels...) and
  *    the newer React pieces restyled to the Ashfall component sheet.
  *
  * Everything is scoped to :root[data-theme="ashfall"]; the classic theme is
- * the base CSS with no overrides. Selectors that must beat legacy ID rules or
+ * the base CSS with no overrides. Selectors that must beat shared ID rules or
  * !important declarations say so.
  */
 
@@ -148,7 +148,7 @@
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-display: var(--font-instrument), "Iowan Old Style", Georgia, serif;
 
-  /* Legacy aliases that legacy-compat.css reads. */
+  /* Shared color aliases used by globals.css. */
   --offblack: #0c0b0a;
   --journal: #0c0b0a;
   --radius: 12px;
@@ -180,7 +180,7 @@
 /* Elements and classes in separate rules: one :is() would take the class
    specificity and outrank the heading rule below. */
 :root[data-theme="ashfall"] :is(h3, h4, table, input, select, option, optgroup, button, textarea) { font-family: var(--font-sans); }
-:root[data-theme="ashfall"] :is(.kicker, .btn, .sheet-grid) { font-family: var(--font-sans); }
+:root[data-theme="ashfall"] :is(.kicker, .btn) { font-family: var(--font-sans); }
 /* Page and section titles take the editorial serif. */
 :root[data-theme="ashfall"] :is(h1, h2) {
   font-family: var(--font-display);
@@ -368,17 +368,6 @@
 :root[data-theme="ashfall"] .seg .seg-btn + .seg-btn { border-left: 0; }
 :root[data-theme="ashfall"] .seg .seg-btn:hover:not(:disabled) { color: var(--color-fg-2); }
 :root[data-theme="ashfall"] :is(.seg .seg-btn.on, .seg .seg-btn[aria-pressed="true"]) { background: var(--color-surface-16); color: var(--color-fg-1); }
-:root[data-theme="ashfall"] .arce-toggle {
-  padding: 5px 12px;
-  border: 1px solid var(--color-line-5);
-  border-image: none;
-  border-radius: 999px;
-  background: #1a1816;
-  color: var(--color-fg-8);
-  font-family: var(--font-sans);
-  font-size: 13px;
-}
-:root[data-theme="ashfall"] .arce-toggle.on { color: var(--color-accent); border-color: color-mix(in srgb, var(--color-accent) 45%, transparent); background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
 
 /* Phone menu */
 :root[data-theme="ashfall"] .hamburger {
@@ -488,7 +477,6 @@
 }
 :root[data-theme="ashfall"] :is(.home-cta--primary, #btn-gear):hover:not(:disabled) { background: var(--color-accent-1) !important; color: #140a04 !important; }
 :root[data-theme="ashfall"] #btn-gear { border-radius: var(--af-radius-control); }
-:root[data-theme="ashfall"] .icon-btn { border: 1px solid var(--color-line-5); border-image: none; border-radius: 10px; }
 
 /* Fields */
 :root[data-theme="ashfall"] :is(select, .mw-select, .mw-input, #local-characters select, #local-characters input[type="text"]) {
@@ -504,8 +492,7 @@
   font-family: var(--font-sans) !important;
 }
 :root[data-theme="ashfall"] :is(.mw-input, #local-characters input[type="text"]) { background-image: none !important; }
-:root[data-theme="ashfall"] :is(#panel-enchant, #panel-spell, #panel-travel, #panel-alchemy) :is(input[type="number"], input[type="text"], select, .enc-eff-search, .alc-dd-btn),
-:root[data-theme="ashfall"] #saved-character-name {
+:root[data-theme="ashfall"] :is(#panel-enchant, #panel-spell, #panel-travel, #panel-alchemy) :is(input[type="number"], input[type="text"], select) {
   border: 1px solid var(--color-line-9) !important;
   border-image: none !important;
   border-radius: 10px !important;
@@ -549,12 +536,12 @@
   color: var(--color-fg-12);
 }
 :root[data-theme="ashfall"] :is(.gear-results-container th[colspan], #gear-box th[colspan]) { border-image: none; }
-:root[data-theme="ashfall"] :is(.gear-results-container details, #gear-box details, .cat-row, .build-sheet, .save-row, #local-characters, #run-summary .sum-row) {
+:root[data-theme="ashfall"] :is(.gear-results-container details, #gear-box details, .save-row, #local-characters) {
   border-image: none !important;
   border-color: var(--color-line-9) !important;
   border-radius: 14px;
 }
-:root[data-theme="ashfall"] :is(.region-tag, .gear-tag, .gear-ar-tag) { border-radius: var(--af-radius-chip); font-family: var(--font-sans); }
+:root[data-theme="ashfall"] :is(.region-tag, .gear-ar-tag) { border-radius: var(--af-radius-chip); font-family: var(--font-sans); }
 :root[data-theme="ashfall"] .vital-bar { border-image: none; border-radius: 999px; overflow: hidden; }
 :root[data-theme="ashfall"] .site-footer { color: var(--color-fg-12); font-family: var(--font-sans); font-size: 13px; }
 

@@ -1,5 +1,4 @@
 "use client";
-import Script from 'next/script';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { AccountProvider } from './account-context';
 import AccountPage from './account-page';
@@ -63,7 +62,7 @@ function AppShellMain() {
   const { build, setBuild, loadSave, activeSave } = useActiveCharacter();
   const activeView = shell?.view && KNOWN_VIEWS.includes(shell.view) ? shell.view : 'home';
 
-  // Synchronize body class with the active view for legacy CSS selectors and full compatibility
+  // Synchronize body class with the active view for shared page styles
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const body = document.body;
@@ -197,10 +196,7 @@ function AppShellMain() {
  * AppShell: Native modern layout for Silt Strider.
  * Replaces LegacyWorkbench and eliminates dangerouslySetInnerHTML and DOM portals.
  */
-export default function AppShell({ revision = '' } = {}) {
-  const isClient = typeof window !== 'undefined';
-  const [dataReady, setDataReady] = useState(() => isClient && Boolean(window.POOL || window.MAJORS));
-
+export default function AppShell() {
   return (
     <ThemeProvider>
     <ShellProvider>
@@ -208,23 +204,6 @@ export default function AppShell({ revision = '' } = {}) {
         <ChallengeRunProvider>
           <AccountProvider><AppShellMain /></AccountProvider>
         </ChallengeRunProvider>
-        {revision && (
-          <>
-            <Script
-              id="legacy-data"
-              src={`/legacy/legacy-data.js?v=${revision}`}
-              strategy="afterInteractive"
-              onReady={() => setDataReady(true)}
-            />
-            {dataReady && (
-              <Script
-                id="legacy-runtime"
-                src={`/legacy/legacy-runtime.js?v=${revision}`}
-                strategy="afterInteractive"
-              />
-            )}
-          </>
-        )}
       </CharacterProvider>
     </ShellProvider>
     </ThemeProvider>

@@ -30,7 +30,7 @@ test("globals.css defines the token ramps and vitals", () => {
     assert.ok(definedTokens.has(name) || [...definedTokens].some((t) => t.startsWith(name + "-")), `missing token family ${name}`);
   }
   for (const g of ["health", "magicka", "fatigue"]) assert.ok(definedGradients.has(g), `missing --gradient-${g}`);
-  assert.match(THEME, /@theme\s+static\s*\{/, "tokens must stay emitted even when only legacy CSS reads them");
+  assert.match(THEME, /@theme\s+static\s*\{/, "tokens must stay emitted even when only shared CSS reads them");
 });
 
 test("components use no hard-coded color classes", () => {
@@ -62,7 +62,7 @@ test("every token a component references is defined", () => {
     for (const m of text.matchAll(/var\(--color-([a-z0-9-]+)\)/g)) if (!definedTokens.has(m[1])) unknown.add(`${file}: var(--color-${m[1]})`);
     for (const m of text.matchAll(/var\(--gradient-([a-z0-9-]+)\)/g)) if (!definedGradients.has(m[1])) unknown.add(`${file}: var(--gradient-${m[1]})`);
   }
-  for (const css of ["app/globals.css", "app/legacy-compat.css"]) {
+  for (const css of ["app/globals.css"]) {
     const text = fs.readFileSync(path.join(ROOT, css), "utf8");
     for (const m of text.matchAll(/var\(--color-([a-z0-9-]+)\)/g)) if (!definedTokens.has(m[1])) unknown.add(`${css}: var(--color-${m[1]})`);
   }

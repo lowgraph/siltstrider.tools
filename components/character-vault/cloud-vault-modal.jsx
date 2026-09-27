@@ -338,8 +338,6 @@ export default function CloudVaultModal({
                           onClick={() => {
                             if (typeof onApplyBuild === "function") {
                               onApplyBuild(char);
-                            } else if (typeof window !== "undefined" && window.siltShell?.navigate) {
-                              window.siltShell.navigate("builder");
                             }
                             onClose();
                           }}

@@ -15,7 +15,7 @@ import {
 } from "../../../lib/spell-math.mjs";
 
 export default function SpellmakingWorkstation() {
-  const { build, sheet: buildSheet, activeSave, syncToCalculators } = useActiveCharacter();
+  const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
   const { world } = useShell();
 
@@ -110,8 +110,7 @@ export default function SpellmakingWorkstation() {
     setLuck(baseLuck);
     setMercantile(baseMerc);
     setPersonality(basePers);
-    if (syncToCalculators) syncToCalculators();
-  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers, syncToCalculators]);
+  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers]);
 
   const handleAddEffect = () => {
     setEffectsList((prev) => [
@@ -220,28 +219,6 @@ export default function SpellmakingWorkstation() {
     const q = vendorSearch.toLowerCase();
     return spellmakersList.filter((s) => s.n.toLowerCase().includes(q));
   }, [spellmakersList, vendorSearch]);
-
-  // Sync with legacy DOM elements
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const ids = {
-      "spl-alt": alt,
-      "spl-con": con,
-      "spl-des": des,
-      "spl-ill": ill,
-      "spl-mys": mys,
-      "spl-res": res,
-      "spl-wil": willpower,
-      "spl-luck": luck,
-      "spl-merc": mercantile,
-      "spl-pers": personality,
-      "spl-disp": disposition
-    };
-    for (const [id, val] of Object.entries(ids)) {
-      const el = document.getElementById(id);
-      if (el && el.value !== String(val)) el.value = String(val);
-    }
-  }, [alt, con, des, ill, mys, res, willpower, luck, mercantile, personality, disposition]);
 
   return (
     <div className="spellmaking-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">

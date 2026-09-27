@@ -4,7 +4,7 @@ import { decodeShareHash, encodeShareHash, normalizeProfile } from '../lib/perma
 
 const initial = Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: 'home' });
 
-// Listen for both legacy silt-shell-change and standard browser hashchange/popstate events
+// Listen for app history replacements and browser hashchange/popstate events
 const subscribe = listener => {
   if (typeof window === 'undefined') return () => {};
   window.addEventListener('silt-shell-change', listener);
@@ -23,13 +23,6 @@ let lastHash = null;
 const getSnapshot = () => {
   if (typeof window === 'undefined') return initial;
 
-  // If legacy siltShell has booted and is ready, prioritize its snapshot for compatibility
-  const legacySnapshot = window.siltShell?.getSnapshot();
-  if (legacySnapshot && legacySnapshot.ready) {
-    return legacySnapshot;
-  }
-
-  // Otherwise, derive snapshot from current location.hash via permalink-codec
   const currentHash = window.location.hash || '';
   if (cachedState && currentHash === lastHash) {
     return cachedState;
@@ -56,10 +49,6 @@ export function ShellProvider({ children }) {
 
   const navigate = view => {
     if (typeof window === 'undefined') return;
-    if (window.siltShell?.navigate) {
-      window.siltShell.navigate(view);
-      return;
-    }
     const nextHash = encodeShareHash({
       view,
       world: state.world,
@@ -74,10 +63,6 @@ export function ShellProvider({ children }) {
 
   const setProfile = profile => {
     if (typeof window === 'undefined') return;
-    if (window.siltShell?.setProfile) {
-      Promise.resolve(window.siltShell.setProfile(profile)).catch(() => {});
-      return;
-    }
     const { world, arce } = normalizeProfile({ profile });
     const nextHash = encodeShareHash({
       view: state.view,
