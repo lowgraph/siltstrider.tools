@@ -113,3 +113,13 @@ test('a summoner says what it conjures, in the unit of the conjured piece',async
  assert.deepEqual(summonNotes({strength:30}),[],'ordinary picks say nothing extra');
  assert.deepEqual(summonNotes(null),[]);
 });
+test('a source reads as a place and a merchant, not a grid key and a crate',async()=>{
+ const {sourceLabel}=await mod;
+ assert.deepEqual(sourceLabel({name:'Domina Helmet',cellKey:'exterior:-2,6',place:'Ald-ruhn',acquisition:'purchase',holder:'Crate',seller:'Dandera Selaro'}),
+  {where:'Ald-ruhn',who:'sold by Dandera Selaro'});
+ assert.deepEqual(sourceLabel({name:'Wenbone Bow',cellKey:'interior:glisterpike',place:'Glisterpike',acquisition:'take',holder:'Chest'}),
+  {where:'Glisterpike',who:'Chest'},'a container you take from is still named');
+ assert.deepEqual(sourceLabel({name:'Dwemer Helm',cellKey:'interior:old ebonheart, briricca private bank',acquisition:'direct',holder:'Dwemer Helm'}),
+  {where:'old ebonheart, briricca private bank',who:''},'an older release falls back to the key, and a loose item is not its own holder');
+ assert.deepEqual(sourceLabel({name:'X',cellKey:'interior:shop',acquisition:'purchase',holder:'Crate'}),{where:'shop',who:'Crate'},'no seller published: the holder, as before');
+});

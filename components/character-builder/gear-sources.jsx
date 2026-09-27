@@ -1,8 +1,9 @@
 "use client";
 import {Fragment} from 'react';
-import {buildGearGroups,enchantCapacity,enchantMultiplier,gearRowLabel,summonNotes} from '../../lib/gear-rows.mjs';
+import {buildGearGroups,enchantCapacity,enchantMultiplier,gearRowLabel,sourceLabel,summonNotes} from '../../lib/gear-rows.mjs';
 
 function SourceRow({row,pick,alternative=false,enchantMult=0.1}){
+  const source=sourceLabel(pick);
   return <tr className={alternative?'gear-alt':undefined}>
     <td className="capitalize">{alternative?'or':gearRowLabel(row)}</td>
     <td><span className="gear-name">{pick?.name || 'None found'}</span>
@@ -14,7 +15,7 @@ function SourceRow({row,pick,alternative=false,enchantMult=0.1}){
         {pick.evidenceTruncated&&' Source search was capped; a better source may exist.'}
       </span>}
     </td>
-    <td>{pick?<><span className="where">{pick.cellKey.replace(/^interior:/,'')}{pick.holder?` — ${pick.holder}`:''}</span>
+    <td>{pick?<><span className="where">{source.where}{source.who?` — ${source.who}`:''}</span>
       <span className="gear-note">{pick.acquisition}{pick.acquisition==='purchase'?` · Estimated value: ${pick.price ?? 'unknown'} gold`:''}{pick.theftRequired?' · Theft required':''} · {pick.nearStart?'Near starting area':'Farther away'}</span>
     </>:<span>No eligible source found in the published evidence.</span>}</td>
   </tr>;
