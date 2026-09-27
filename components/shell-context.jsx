@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useSyncExternalStore } from 'react';
+import { createContext, useContext, useSyncExternalStore, useCallback } from 'react';
 import { decodeShareHash, encodeShareHash, normalizeProfile } from '../lib/permalink-codec.mjs';
 
 const initial = Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: 'home' });
@@ -19,32 +19,38 @@ const subscribe = listener => {
 
 let cachedState = null;
 let lastHash = null;
-
-const getSnapshot = () => {
-  if (typeof window === 'undefined') return initial;
-
-  const currentHash = window.location.hash || '';
-  if (cachedState && currentHash === lastHash) {
-    return cachedState;
-  }
-
-  lastHash = currentHash;
-  const decoded = decodeShareHash(currentHash);
-  cachedState = Object.freeze({
-    ready: true,
-    world: decoded.world,
-    arce: decoded.arce,
-    profile: decoded.profile,
-    view: decoded.view
-  });
-  return cachedState;
-};
-
-const getServerSnapshot = () => initial;
+let cachedInitialView = null;
 
 const ShellContext = createContext(null);
 
-export function ShellProvider({ children }) {
+export function ShellProvider({ children, initialView = 'home' }) {
+  const getSnapshot = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: initialView });
+    }
+
+    const currentHash = window.location.hash || '';
+    if (cachedState && currentHash === lastHash && cachedInitialView === initialView) {
+      return cachedState;
+    }
+
+    lastHash = currentHash;
+    cachedInitialView = initialView;
+    const decoded = decodeShareHash(currentHash, { defaultView: initialView });
+    cachedState = Object.freeze({
+      ready: true,
+      world: decoded.world,
+      arce: decoded.arce,
+      profile: decoded.profile,
+      view: decoded.view
+    });
+    return cachedState;
+  }, [initialView]);
+
+  const getServerSnapshot = useCallback(() => {
+    return Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: initialView });
+  }, [initialView]);
+
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const navigate = view => {

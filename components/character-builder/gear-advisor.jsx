@@ -9,6 +9,7 @@ import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
 // Keep the verified endgame tables and notes; the bundle supplies early rows.
 function endgameHtml(html){
+  if (typeof document === 'undefined') return html;
   const template=document.createElement('template');
   template.innerHTML=html;
   for(const details of template.content.querySelectorAll('details')){
@@ -27,9 +28,9 @@ export default function GearAdvisor(props){
 export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResult, onLoad, onEquip }) {
   const [ranking,setRanking]=useState(null);
   const [rankError,setRankError]=useState(null);
-  const [nearStart, setNearStart] = useState(() => document.getElementById("gear-near-start")?.checked ?? false);
-  const [stealEarly, setStealEarly] = useState(() => document.getElementById("gear-steal")?.checked ?? true);
-  const [endgameEarly, setEndgameEarly] = useState(() => document.getElementById("gear-endgame")?.checked ?? false);
+  const [nearStart, setNearStart] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-near-start")?.checked : false) ?? false);
+  const [stealEarly, setStealEarly] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-steal")?.checked : true) ?? true);
+  const [endgameEarly, setEndgameEarly] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-endgame")?.checked : false) ?? false);
   const [gearHtml, setGearHtml] = useState("");
   const [optimizing, setOptimizing] = useState(false);
   const [hasRun, setHasRun] = useState(false);

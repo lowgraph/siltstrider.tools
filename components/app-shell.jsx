@@ -57,10 +57,10 @@ const VIEW_BODY_CLASSES = [
   'view-changelog'
 ];
 
-function AppShellMain() {
+function AppShellMain({ initialView = 'home' }) {
   const shell = useShell();
   const { build, setBuild, loadSave, activeSave } = useActiveCharacter();
-  const activeView = shell?.view && KNOWN_VIEWS.includes(shell.view) ? shell.view : 'home';
+  const activeView = shell?.view && KNOWN_VIEWS.includes(shell.view) ? shell.view : initialView;
 
   // Synchronize body class with the active view for shared page styles
   useEffect(() => {
@@ -196,13 +196,13 @@ function AppShellMain() {
  * AppShell: Native modern layout for Silt Strider.
  * Replaces LegacyWorkbench and eliminates dangerouslySetInnerHTML and DOM portals.
  */
-export default function AppShell() {
+export default function AppShell({ initialView = 'home' }) {
   return (
     <ThemeProvider>
-    <ShellProvider>
+    <ShellProvider initialView={initialView}>
       <CharacterProvider>
         <ChallengeRunProvider>
-          <AccountProvider><AppShellMain /></AccountProvider>
+          <AccountProvider><AppShellMain initialView={initialView} /></AccountProvider>
         </ChallengeRunProvider>
       </CharacterProvider>
     </ShellProvider>

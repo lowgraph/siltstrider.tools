@@ -1,5 +1,7 @@
 import LegalPage from '../../components/legal-page';
 
+export const dynamic = 'force-static';
+
 export const metadata = {
   title: 'Terms of Service',
   description: 'Terms for using Silt Strider planning tools, Cloud Vault, and optional supporter benefits.',

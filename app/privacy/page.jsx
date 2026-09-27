@@ -1,5 +1,7 @@
 import LegalPage from '../../components/legal-page';
 
+export const dynamic = 'force-static';
+
 export const metadata = {
   title: 'Privacy Policy',
   description: 'How Silt Strider handles account information, game saves, and supporter payments.',
