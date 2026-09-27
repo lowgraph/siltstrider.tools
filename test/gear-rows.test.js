@@ -163,3 +163,13 @@ test('an enchantment reads as its effects, in the game\'s words',async()=>{
   'Enchanted (constant effect): Drain Long Blade 5 (a curse).');
  assert.equal(enchantmentNote({}),'');
 });
+test('the shield shows once, not once per objective',async()=>{
+ const {buildGearGroups}=await mod;
+ const shield=(objective,p)=>row({key:'shield/-/heavy/000/'+objective,category:'shield',slot:null,armorClass:'heavy',objective,primary:p,alternative:null});
+ const tower=pick('tower',12),capacious={...pick('capacious',5),enchantment:900};
+ const groups=buildGearGroups({GearRows:[shield('power',tower),shield('enchantment',capacious),row({key:'sword',category:'weapon',slot:null,skill:'long_blade',hands:1,primary:pick('sword')})]},
+  {maj:['Heavy Armor','Long Blade']},toggles,{...profile,armRanked:[{n:'Heavy Armor'}],wepRanked:[{n:'Long Blade'}]});
+ const rows=groups.find(g=>g.label==='Shield').rows;
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].primary.key,'tower','the stronger shield leads');
+});
