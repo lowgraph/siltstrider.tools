@@ -286,3 +286,18 @@ test('the worn loadout uses catalog records and lists what the profile does not 
   assert.deepEqual(unresolved, [{ slot: 'Skirt', id: 'NOD_WAR_MISC_SKIRT04a' }]);
   assert.equal(loadout.name, 'Worn by Tester');
 });
+
+test('the parser reads where the player stands and the last exterior position', async () => {
+  const { parseOmwSave } = await parser;
+  const f32s = (...values) => { const b = Buffer.alloc(4 * values.length); values.forEach((v, i) => b.writeFloatLE(v, 4 * i)); return b; };
+  const withPlay = Buffer.concat([saveFile(), rec('PLAY', [sub('POS_', f32s(3979.5, 4408.25, 14485.75, 0, 0, 1)),
+                                                          sub('LKEP', f32s(53998.5, -141929, 2082.25))])]);
+  const { identity } = parseOmwSave(withPlay);
+  assert.deepEqual(identity.position, [3979.5, 4408.25, 14485.75]);
+  assert.deepEqual(identity.lastExteriorPosition, [53998.5, -141929, 2082.25]);
+  const bare = parseOmwSave(saveFile()).identity;
+  assert.equal(bare.position, null, 'no player record, no position');
+  assert.equal(bare.lastExteriorPosition, null);
+  const short = parseOmwSave(Buffer.concat([saveFile(), rec('PLAY', [sub('POS_', f32s(1, 2))])])).identity;
+  assert.equal(short.position, null, 'a truncated position is not guessed at');
+});

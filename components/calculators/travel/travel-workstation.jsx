@@ -13,6 +13,7 @@ import {
   adaptTravelGraph,
   addInterventionEdges,
   interventionsFromSave,
+  guildFromSave,
   INTERVENTION_KINDS,
   ROUTE_OBJECTIVES
 } from "../../../lib/travel-graph.mjs";
@@ -26,10 +27,12 @@ import {
   placePoints,
   doorChain,
   isPlace,
+  placeFromSave,
   PLACE_PREFIX,
   CELL
 } from "../../../lib/travel-walk.mjs";
 import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-teleports.mjs";
+import { readRouteLink, writeRouteLink } from "../../../lib/travel-link.mjs";
 import TransitMap from "./transit-map";
 
 const POPULAR_HUBS = [
@@ -49,6 +52,8 @@ export default function TravelWorkstation() {
   const gameData = useGameData('travel', { enabled: true });
   const [origin, setOrigin] = useState("Seyda Neen");
   const [destination, setDestination] = useState("Vivec");
+  const [originSearch, setOriginSearch] = useState("");
+  const [destSearch, setDestSearch] = useState("");
   const [mageGuild,setMageGuild] = useState(true);
   const [conjurer,setConjurer] = useState(false);
   const [objective, setObjective] = useState("hops");
@@ -63,6 +68,12 @@ export default function TravelWorkstation() {
     if (activeSave?.save) {
       setSpells(interventionsFromSave(activeSave.save));
       setHeld(heldFromSave(activeSave.save));
+      // The save's own standing with the Mages Guild decides which guides will serve.
+      const guild = guildFromSave(activeSave.save);
+      if (guild) {
+        setMageGuild(guild.mageGuild);
+        setConjurer(guild.conjurer);
+      }
     }
   }, [activeSave]);
 
@@ -144,6 +155,49 @@ export default function TravelWorkstation() {
     () => new Map((gameData.data?.catalogs?.Places || []).map((record) => [record.key, record])),
     [gameData.data]
   );
+  // Where the loaded save's character stands, and starting there once per save.
+  const saveOrigin = useMemo(() => {
+    const key = activeSave?.save ? placeFromSave(activeSave.save, places) : null;
+    return key ? PLACE_PREFIX + key : null;
+  }, [activeSave, places]);
+  const [startedFrom, setStartedFrom] = useState(null);
+
+  // A shared route opens as it was shared, and wins over the save's starting point.
+  const [linkRead, setLinkRead] = useState(false);
+  useEffect(() => {
+    if (linkRead || typeof window === "undefined") return;
+    setLinkRead(true);
+    const link = readRouteLink(window.location.search, ROUTE_OBJECTIVES);
+    if (link.from) { setOrigin(link.from); setStartedFrom(activeSave?.token ?? "link"); }
+    if (link.to) setDestination(link.to);
+    if (link.plan) setObjective(link.plan);
+    if (link.walk === false) setWalking(false);
+    if (link.quest === true) setQuestTeleports(true);
+  }, [linkRead, activeSave]);
+  useEffect(() => {
+    // Only while the travel page is the one on screen: tools stay mounted behind others.
+    if (!linkRead || typeof window === "undefined" || window.location.pathname !== "/travel") return;
+    const search = writeRouteLink(window.location.search, { from: origin, to: destination, plan: objective, walk: walking, quest: questTeleports });
+    if (search !== window.location.search) {
+      window.history.replaceState(window.history.state, "", window.location.pathname + search + window.location.hash);
+    }
+  }, [linkRead, origin, destination, objective, walking, questTeleports]);
+  const [copied, setCopied] = useState(false);
+  const copyRouteLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { setCopied(false); }
+  }, []);
+
+  useEffect(() => {
+    if (!saveOrigin || startedFrom === activeSave?.token) return;
+    setStartedFrom(activeSave?.token ?? null);
+    setOrigin(saveOrigin);
+    setOriginSearch("");
+  }, [saveOrigin, activeSave, startedFrom]);
+
   const labelOf = useCallback((id) => {
     if (!isPlace(id)) return id;
     const key = id.slice(PLACE_PREFIX.length);
@@ -194,8 +248,6 @@ export default function TravelWorkstation() {
     return getAvailableTransitStops(world, routingGraph).filter((stop) => !isPlace(stop));
   }, [world, routingGraph]);
 
-  const [originSearch, setOriginSearch] = useState("");
-  const [destSearch, setDestSearch] = useState("");
 
   // Ensure selected stops exist in current world; a chosen place stays while the world has it.
   useEffect(() => {
@@ -398,6 +450,14 @@ export default function TravelWorkstation() {
           >
             Swap Origin and Destination
           </button>
+          <button
+            type="button"
+            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
+            onClick={copyRouteLink}
+            title="Copy a link to this route"
+          >
+            {copied ? "Link copied" : "Copy route link"}
+          </button>
         </div>
       </div>
 
@@ -493,6 +553,19 @@ export default function TravelWorkstation() {
           Fast Origin Selector
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {saveOrigin && (
+            <button
+              type="button"
+              onClick={() => { handleOriginChange(saveOrigin); setOriginSearch(""); }}
+              className={`px-2.5 py-1 text-xs font-serif font-bold border transition-colors ${
+                origin === saveOrigin
+                  ? "border-accent bg-surface-17 text-accent"
+                  : "border-line-9 bg-surface-3 text-fg-9 hover:border-line-1 hover:text-fg-2"
+              }`}
+            >
+              {labelOf(saveOrigin)} <span className="text-[10px] opacity-75">(where {activeSave?.save?.identity?.name || "your save"} stands)</span>
+            </button>
+          )}
           {POPULAR_HUBS.filter((h) => !h.trOnly || isTr).map((hub) => {
             const isSelected = origin === hub.name;
             return (
@@ -776,6 +849,12 @@ export default function TravelWorkstation() {
             )}
           </div>
 
+          {route.isValid && route.totals?.goldKnown && Number.isFinite(activeSave?.save?.vitals?.gold)
+            && route.totals.gold > activeSave.save.vitals.gold && (
+            <p role="alert" className="text-[11px] text-warning-2 font-serif m-0">
+              This route costs {route.totals.gold} gold; {activeSave.save.identity?.name || "your character"} carries {activeSave.save.vitals.gold}.
+            </p>
+          )}
           {route.isValid && route.hops > 0 && priced && firstSeller && (
             <p className="text-[11px] text-fg-13 font-serif m-0">
               Fares for {sheet ? "your character" : "a starting character"}: Mercantile {player.mercantile}, Personality {player.personality}, Luck {player.luck}

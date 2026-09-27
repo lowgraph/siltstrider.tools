@@ -201,3 +201,15 @@ test("a save's spells and scrolls say which interventions it can cast", async ()
   assert.deepEqual(interventionsFromSave(null), { divine: false, almsivi: false });
   assert.deepEqual(interventionsFromSave({ stuff: { spells: [42, null], inventory: [null, {}] } }), { divine: false, almsivi: false });
 });
+
+test("a save's Mages Guild rank decides the guild guides", async () => {
+  const { guildFromSave, CONJURER_RANK } = await lib();
+  const save = factions => ({ progress: { factions } });
+  assert.equal(CONJURER_RANK, 4, "Associate 0, Apprentice, Journeyman, Evoker, Conjurer 4");
+  assert.deepEqual(guildFromSave(save([{ id: "Mages Guild", rank: 0, expelled: false }])), { mageGuild: true, conjurer: false });
+  assert.deepEqual(guildFromSave(save([{ id: "mages guild", rank: 4, expelled: false }])), { mageGuild: true, conjurer: true });
+  assert.deepEqual(guildFromSave(save([{ id: "Mages Guild", rank: 6, expelled: true }])), { mageGuild: false, conjurer: false }, "expelled");
+  assert.deepEqual(guildFromSave(save([{ id: "Mages Guild", rank: -1, expelled: false }])), { mageGuild: false, conjurer: false }, "known, not joined");
+  assert.deepEqual(guildFromSave(save([{ id: "Fighters Guild", rank: 9 }])), { mageGuild: false, conjurer: false });
+  assert.equal(guildFromSave({}), null, "no faction list: keep the page's settings");
+});

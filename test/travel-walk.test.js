@@ -113,3 +113,33 @@ test("interventions can be cast from a chosen place", async () => {
   assert.deepEqual(graph[PLACE_PREFIX + "exterior:1,0"].map(e => [e.to, e.spell]), [["Fort", "divine"]]);
   assert.deepEqual(addPlaces({}, ["exterior:1,0"], { intervention, spells: {} })[PLACE_PREFIX + "exterior:1,0"], []);
 });
+
+test("a save is placed by its room indoors and its position outdoors", async () => {
+  const { placeFromSave } = await lib();
+  const places = new Set(["interior:seyda neen, arrille's tradehouse", "exterior:5,-7", "exterior:-2,-9"]);
+  assert.equal(placeFromSave({ identity: { cell: "Seyda Neen, Arrille's Tradehouse", position: [-265, -78, 129] } }, places),
+    "interior:seyda neen, arrille's tradehouse", "indoors the position is local; the name decides");
+  assert.equal(placeFromSave({ identity: { cell: "Ascadian Isles Region", position: [43832.1, -51202.3, 124.9] } }, places),
+    "exterior:5,-7", "a region name says nothing precise; the position does");
+  assert.equal(placeFromSave({ identity: { cell: "Somewhere Unknown", position: [1e7, 1e7, 0], lastExteriorPosition: [-12414.8, -70046.3, 426] } }, places),
+    "exterior:-2,-9", "the last exterior position when the position leads nowhere");
+  assert.equal(placeFromSave({ identity: { cell: null, position: null } }, places), null);
+  assert.equal(placeFromSave(null, places), null);
+  assert.equal(placeFromSave({ identity: { cell: "x", position: ["a", 1] } }, places), null);
+  assert.equal(placeFromSave({ identity: { cell: "Seyda Neen, Arrille's Tradehouse" } }, new Map([["interior:seyda neen, arrille's tradehouse", {}]])),
+    "interior:seyda neen, arrille's tradehouse", "a Map of places works too");
+});
+
+test("a save with no position, reopened from the cloud, is placed by its town's name", async () => {
+  const { placeFromSave } = await lib();
+  const places = new Map([
+    ["exterior:-2,-9", { key: "exterior:-2,-9", name: "Seyda Neen", interior: false }],
+    ["exterior:-3,-9", { key: "exterior:-3,-9", name: "Seyda Neen", interior: false }],
+    ["interior:seyda neen", { key: "interior:seyda neen", name: "Seyda Neen", interior: true }],
+    ["exterior:4,-4", { key: "exterior:4,-4", interior: false, region: "ascadian isles region" }]]);
+  assert.equal(placeFromSave({ identity: { cell: "Seyda Neen" } }, places), "interior:seyda neen", "an interior of that name first");
+  places.delete("interior:seyda neen");
+  assert.equal(placeFromSave({ identity: { cell: "seyda neen" } }, places), "exterior:-2,-9", "the town's first cell, case aside");
+  assert.equal(placeFromSave({ identity: { cell: "Ascadian Isles Region" } }, places), null, "a region is too vague to start from");
+  assert.equal(placeFromSave({ identity: { cell: "Seyda Neen" } }, new Set(["exterior:-2,-9"])), null, "a Set carries no names");
+});
