@@ -86,3 +86,19 @@ test('explicit weapon setup never falls back to the wrong number of hands',async
  assert.ok(two.some(g=>g.rows.some(r=>r.hands===2)));
  assert.ok(!two.some(g=>g.rows.some(r=>r.category==='shield')));
 });
+test('marksman recommends a bow, not thrown weapons that are used up, whatever the melee setup',async()=>{
+ const {buildGearGroups}=await mod;
+ const darts=gear('darts',{category:'weapon',skill:'marksman',hands:1});
+ const bow=gear('bow',{category:'weapon',skill:'marksman',hands:2});
+ const sword=gear('sword',{category:'weapon',skill:'long_blade',hands:1});
+ const archer={...profile,wepRanked:[{n:'Marksman'}],primaryWep:'Marksman',twoHand:false};
+ const primary=groups=>groups.find(g=>g.label.startsWith('Primary weapon')).rows[0];
+ assert.equal(primary(buildGearGroups({GearRows:[darts,bow]},{maj:['Marksman']},toggles,archer)).key,'bow');
+ assert.equal(primary(buildGearGroups({GearRows:[darts,bow]},{maj:['Marksman']},toggles,{...archer,weaponSetup:'one-handed'})).key,'bow',
+  'a one-handed melee setup does not turn the bow into darts');
+ assert.equal(primary(buildGearGroups({GearRows:[darts]},{maj:['Marksman']},toggles,archer)).key,'darts','thrown fills in when no bow qualifies');
+ const fighter={...profile,wepRanked:[{n:'Long Blade'},{n:'Marksman'}],primaryWep:'Long Blade'};
+ const groups=buildGearGroups({GearRows:[sword,darts,bow,gear(null,{category:'shield'})]},{maj:['Long Blade','Marksman']},toggles,fighter);
+ assert.ok(groups.some(g=>g.label==='Shield'),'sword and board up front');
+ assert.equal(groups.find(g=>g.label.startsWith('Secondary')).rows[0].key,'bow','and a bow for range, not darts');
+});
