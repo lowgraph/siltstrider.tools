@@ -188,3 +188,24 @@ test('Workstation adapters enforce effect rule permissions and merchant service 
   assert.ok(!spellmakingEffects.some(e => e.key === 'almsivi_intervention'));
   assert.ok(!spellmakingEffects.some(e => e.key === 'corprus'));
 });
+
+test('pack guar caravans, sky lamps and carriages keep their own names, not Boat or Silt Strider', async () => {
+  const { adaptTravelGraph } = await import('../lib/travel-graph.mjs');
+  const nodes = {
+    'exterior:1,-44': { name: 'Hlerynhul' }, 'exterior:1,-50': { name: 'Shipal-Sharai' },
+    'exterior:5,-42': { name: 'Ald Marak' }, 'exterior:3,-42': { name: 'Ald Iuval' },
+    'exterior:-120,-55': { name: 'Anvil, Marina' }, 'exterior:-115,-47': { name: 'Brina Cross' },
+    'exterior:19,-5': { name: 'Holamayan' }, 'exterior:2,-13': { name: 'Ebonheart' }
+  };
+  const graph = adaptTravelGraph([
+    { from: 'exterior:1,-44', to: 'exterior:1,-50', mode: 'pack_guar' },
+    { from: 'exterior:5,-42', to: 'exterior:3,-42', mode: 'sky_lamp' },
+    { from: 'exterior:-120,-55', to: 'exterior:-115,-47', mode: 'carriage' },
+    { from: 'exterior:2,-13', to: 'exterior:19,-5', mode: null }
+  ], nodes);
+  assert.deepEqual(graph['Hlerynhul'], [{ to: 'Shipal-Sharai', kind: 'Pack Guar' }]);
+  assert.deepEqual(graph['Ald Marak'], [{ to: 'Ald Iuval', kind: 'Sky Lamp' }]);
+  const anvil = Object.keys(graph).find((stop) => stop.startsWith('Anvil'));
+  assert.deepEqual(graph[anvil], [{ to: 'Brina Cross', kind: 'Carriage' }]);
+  assert.deepEqual(graph['Ebonheart'], [{ to: 'Holamayan', kind: 'Boat' }], 'a one-off transport with no mode is a boat');
+});

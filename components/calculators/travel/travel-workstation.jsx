@@ -137,6 +137,12 @@ export default function TravelWorkstation() {
         return "border-line-2 bg-surface-10 text-accent";
       case "Gondolier":
         return "border-line-3 bg-surface-9 text-fg-7";
+      case "Pack Guar":
+        return "border-line-5 bg-surface-15 text-accent-2";
+      case "Sky Lamp":
+        return "border-line-2 bg-surface-10 text-warning-2";
+      case "Carriage":
+        return "border-line-5 bg-surface-9 text-fg-5";
       default:
         return "border-line-9 bg-surface-5 text-accent";
     }
@@ -151,7 +157,7 @@ export default function TravelWorkstation() {
             Morrowind Travel &amp; Transport Route Planner
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
-            Find fewest-hops transit routes across silt striders, boats, river striders, and Guild Guides in Vvardenfell and mainland Tamriel.
+            Find fewest-hops transit routes across silt striders, pack guar caravans, sky lamps, boats, river striders, and Guild Guides in Vvardenfell and mainland Tamriel.
           </p>
         </div>
       </div>
@@ -315,7 +321,7 @@ export default function TravelWorkstation() {
             <div className="font-bold text-fg-7 uppercase tracking-wider text-[10px]">Transit Engine Rules:</div>
             <ul className="list-disc list-inside space-y-1 text-[11px] text-fg-11 leading-relaxed">
               <li>Shortest route calculated via breadth-first search (BFS) for minimum transit connections (fewest hops).</li>
-              <li>Network covers Silt Striders, Boats, Guild Guides, Gondoliers, and Mainland River Striders.</li>
+              <li>Network covers Silt Striders, Pack Guar caravans, Sky Lamps, carriages, Boats, Guild Guides, Gondoliers, and Mainland River Striders.</li>
               <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
               <li>Fast travel excludes Propylon chambers, Divine Intervention, and Almsivi Intervention scrolls.</li>
             </ul>
