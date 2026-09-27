@@ -118,7 +118,7 @@ export default function HomeTools({ character, health, route, alchemy, onNavigat
         {HOME_TOOLS.map(tool => (
           <a
             key={tool.view}
-            href={"#" + tool.view}
+            href={tool.view === 'home' ? '/' : '/' + tool.view}
             className={`home-tool home-tool--${tool.view}${MINOR.has(tool.view) ? " home-tool--minor" : ""}`}
             onClick={e => { e.preventDefault(); onNavigate(tool.view); }}
           >

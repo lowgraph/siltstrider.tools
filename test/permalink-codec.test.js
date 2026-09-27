@@ -258,3 +258,49 @@ test('links encode and decode in browsers, whose Buffer polyfill has no base64ur
     globalThis.Buffer = realBuffer;
   }
 });
+
+test('HTML5 pathname and query string permalink decoding handles clean routes, query payloads and legacy hashes', async () => {
+  const { decodeShareHash, profileFromLocation } = await modulePromise;
+
+  // 1. Clean pathnames for all tool views
+  assert.equal(decodeShareHash('/builder').view, 'builder');
+  assert.equal(decodeShareHash('/leveler').view, 'leveler');
+  assert.equal(decodeShareHash('/alchemy').view, 'alchemy');
+  assert.equal(decodeShareHash('/travel').view, 'travel');
+  assert.equal(decodeShareHash('/enchanting').view, 'enchanting');
+  assert.equal(decodeShareHash('/spellmaking').view, 'spellmaking');
+  assert.equal(decodeShareHash('/factions').view, 'factions');
+  assert.equal(decodeShareHash('/challenge').view, 'challenge');
+  assert.equal(decodeShareHash('/vault').view, 'vault');
+  assert.equal(decodeShareHash('/about').view, 'about');
+  assert.equal(decodeShareHash('/changelog').view, 'changelog');
+  assert.equal(decodeShareHash('/').view, 'home');
+  assert.equal(decodeShareHash('').view, 'home');
+
+  // 2. Full URLs with pathnames
+  assert.equal(decodeShareHash('https://siltstrider.tools/builder').view, 'builder');
+  assert.equal(decodeShareHash('https://siltstrider.tools/alchemy?world=tr&arce=0').world, 'tr');
+
+  // 3. Query string payloads on clean paths
+  const runPayload = { race: 'Dark Elf', major: 'Beat game' };
+  const b64Run = Buffer.from(JSON.stringify(runPayload), 'utf-8').toString('base64url');
+  const decodedRun = decodeShareHash('/challenge?run=' + b64Run);
+  assert.equal(decodedRun.view, 'challenge');
+  assert.deepEqual(decodedRun.run, runPayload);
+
+  const buildPayload = { race: 'Nord', className: 'Warrior', sign: 'The Lady' };
+  const b64Build = Buffer.from(JSON.stringify(buildPayload), 'utf-8').toString('base64url');
+  const decodedBuild = decodeShareHash('/builder?build=' + b64Build + '&world=tr');
+  assert.equal(decodedBuild.view, 'builder');
+  assert.equal(decodedBuild.world, 'tr');
+  assert.deepEqual(decodedBuild.build, buildPayload);
+
+  // 4. profileFromLocation with clean paths
+  const dummyStorage = {
+    store: { 'mw-world': 'tr', 'mw-arce': '1' },
+    getItem(k) { return this.store[k] || null; }
+  };
+  assert.equal(profileFromLocation('/', dummyStorage), 'tr_arce');
+  assert.equal(profileFromLocation('/builder?world=vanilla', dummyStorage), 'vanilla');
+  assert.equal(profileFromLocation('#TR', dummyStorage), 'tr');
+});

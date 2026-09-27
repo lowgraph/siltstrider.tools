@@ -31,9 +31,12 @@ function component(file, exportName = "default") {
 const SiteFooter = component("components/site-footer.jsx");
 const AppShell = component("components/app-shell.jsx");
 
-function setupDom(initialHash = "#home") {
+function setupDom(initialLocation = "#home") {
+  const url = initialLocation.startsWith("http")
+    ? initialLocation
+    : "http://localhost:8765" + (initialLocation.startsWith("/") || initialLocation.startsWith("#") ? initialLocation : "/" + initialLocation);
   const dom = new JSDOM("<!DOCTYPE html><html><body><div id='root'></div></body></html>", {
-    url: "http://localhost:8765/" + initialHash
+    url
   });
   global.window = dom.window;
   global.document = dom.window.document;
@@ -76,12 +79,14 @@ test("SiteFooter renders authentic disclaimer and handles navigation clicks", as
     await act(async () => {
       aboutLink.click();
     });
-    assert.equal(dom.window.location.hash, "#about");
+    assert.equal(dom.window.location.pathname, "/about");
+    assert.equal(dom.window.location.hash, "");
 
     await act(async () => {
       changelogLink.click();
     });
-    assert.equal(dom.window.location.hash, "#changelog");
+    assert.equal(dom.window.location.pathname, "/changelog");
+    assert.equal(dom.window.location.hash, "");
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
@@ -304,8 +309,9 @@ test("Challenge Runs: Send to Build Optimizer transfers rolled character into Ch
       sendBtn.click();
     });
 
-    // Hash must navigate to #builder
-    assert.match(dom.window.location.hash, /^#builder/);
+    // Pathname must navigate to /builder
+    assert.equal(dom.window.location.pathname, "/builder");
+    assert.equal(dom.window.location.hash, "");
 
     // Active panel must now be #panel-build
     const buildPanel = dom.window.document.getElementById("panel-build");
@@ -348,7 +354,7 @@ test("Challenge Runs: the run survives a trip to the Build Optimizer and back, a
     assert.doesNotMatch(rolled, /Not rolled yet/i);
 
     await act(async () => dom.window.document.getElementById("react-btn-to-optimizer").click());
-    assert.match(dom.window.location.hash, /^#builder/);
+    assert.equal(dom.window.location.pathname, "/builder");
     await go("#challenge");
     assert.equal(summary(), rolled, "the same run is waiting on return");
 
@@ -419,7 +425,7 @@ test("The character sheet's Level Optimizer button opens the Level Simulator", a
     await act(async () => root.render(React.createElement(ShellProvider, null,
       React.createElement(CharacterSheet, { build, sheet: computeSheet(build, catalogs), catalogs }))));
     await act(async () => dom.window.document.getElementById("btn-sheet-leveler").click());
-    assert.match(dom.window.location.hash, /^#leveler/);
+    assert.equal(dom.window.location.pathname, "/leveler");
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
@@ -449,14 +455,14 @@ test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcu
     await act(async () => root.render(React.createElement(AppShell)));
     await settle();
     await press("← Back to Character Builder");
-    assert.match(dom.window.location.hash, /^#builder/);
+    assert.equal(dom.window.location.pathname, "/builder");
 
     await go("#vault");
     await press("Level Simulator →");
-    assert.match(dom.window.location.hash, /^#leveler/);
+    assert.equal(dom.window.location.pathname, "/leveler");
     await go("#vault");
     await press("← Character Builder");
-    assert.match(dom.window.location.hash, /^#builder/);
+    assert.equal(dom.window.location.pathname, "/builder");
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
@@ -534,8 +540,8 @@ test("Challenge Runs: Share copies a link that opens the same run, in its world"
     await act(async () => root.render(React.createElement(AppShell)));
     await settle();
     assert.equal(sheet(), shared, "the link opens the same run");
-    assert.doesNotMatch(dom.window.location.hash, /run=/, "and then leaves the address bar");
-    assert.match(dom.window.location.hash, /^#challenge&TR/, "in the link's world");
+    assert.equal(dom.window.location.pathname, "/challenge");
+    assert.equal(dom.window.location.hash, "", "hash is stripped from the address bar");
 
     // Without a clipboard, the link is shown to copy by hand.
     clipboard(undefined);
@@ -567,13 +573,13 @@ test("Challenge Runs: a character sent to the Build Optimizer can be sent back, 
 
     await act(async () => doc.getElementById("react-btn-to-optimizer").click());
     await settle();
-    assert.match(dom.window.location.hash, /^#builder/);
+    assert.equal(dom.window.location.pathname, "/builder");
     assert.ok(doc.querySelector(".challenge-handoff"), "the builder offers to send it back");
 
     await act(async () => button(other).click());
     await act(async () => button("Send build back to the challenge run").click());
     await settle();
-    assert.match(dom.window.location.hash, /^#challenge/);
+    assert.equal(dom.window.location.pathname, "/challenge");
     const back = doc.querySelector(".character-overview-card h3").textContent;
     assert.equal(back, identity.replace(gender, other), "the change came back with it");
     assert.deepEqual(restrictions(), rolledRests, "objectives and restrictions stay");
@@ -674,8 +680,8 @@ test("Copy Build Link copies a link that opens the same character, in its world"
     await act(async () => root.render(React.createElement(AppShell)));
     await settle();
     assert.deepEqual(gender(), ["Female"], "the link opens the same character");
-    assert.doesNotMatch(dom.window.location.hash, /build=/, "and then leaves the address bar");
-    assert.match(dom.window.location.hash, /^#builder&TR/, "in the link's world");
+    assert.equal(dom.window.location.pathname, "/builder");
+    assert.equal(dom.window.location.hash, "", "hash is stripped from the address bar");
 
     clipboard(undefined);
     await act(async () => button("Copy Build Link").click());
@@ -705,8 +711,8 @@ test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applie
       sendBtn.click();
     });
 
-    // Must navigate to #builder safely without unhandled exception
-    assert.match(dom.window.location.hash, /^#builder/);
+    // Must navigate to /builder safely without unhandled exception
+    assert.equal(dom.window.location.pathname, "/builder");
     const buildPanel = dom.window.document.getElementById("panel-build");
     assert.ok(buildPanel.classList.contains("show"), "panel-build must be shown");
   } finally {
@@ -737,7 +743,7 @@ test("Adversarial QA 5: Send to Build Optimizer clears activeSave state and sets
       sendBtn.click();
     });
 
-    assert.match(dom.window.location.hash, /^#builder/);
+    assert.equal(dom.window.location.pathname, "/builder");
     const buildPanel = dom.window.document.getElementById("panel-build");
     assert.ok(buildPanel.classList.contains("show"));
   } finally {
@@ -762,4 +768,159 @@ test("Bitter Cup is controlled in the level optimizer and survives navigation", 
   await act(async()=>dom.window.document.getElementById("level-bittercup").click());
   assert.equal(dom.window.document.getElementById("level-bittercup").checked,false);
  } finally {await act(async()=>root.unmount());dom.window.close();}
+});
+
+test("Legacy fallback: setting location.hash mounts tool and auto-migrates to clean HTML5 pathname", async () => {
+  const dom = setupDom("#home");
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
+
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+
+    // User or legacy script sets location.hash = "#alchemy"
+    await act(async () => {
+      dom.window.location.hash = "#alchemy";
+      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+    });
+    await settle();
+
+    // Shell mounts alchemy panel
+    const alchemyPanel = dom.window.document.getElementById("panel-alchemy");
+    assert.ok(alchemyPanel.classList.contains("show"), "#panel-alchemy must be shown");
+    // URL auto-migrates to /alchemy and hash is stripped
+    assert.equal(dom.window.location.pathname, "/alchemy");
+    assert.equal(dom.window.location.hash, "");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
+test("HTML5 History traversal: popstate Back and Forward navigates seamlessly between workstations", async () => {
+  const dom = setupDom("#home");
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+  const settle = () => act(async () => { for (let i = 0; i < 15; i++) await new Promise((r) => setTimeout(r, 0)); });
+
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+
+    assert.equal(dom.window.location.pathname, "/");
+    assert.ok(dom.window.document.getElementById("panel-home").classList.contains("show"));
+
+    // Navigate to /builder via top bar button
+    await act(async () => dom.window.document.getElementById("react-nav-build").click());
+    await settle();
+    assert.equal(dom.window.location.pathname, "/builder");
+    assert.ok(dom.window.document.getElementById("panel-build").classList.contains("show"));
+
+    // Navigate to /travel via top bar button
+    await act(async () => dom.window.document.getElementById("react-nav-travel").click());
+    await settle();
+    assert.equal(dom.window.location.pathname, "/travel");
+    assert.ok(dom.window.document.getElementById("panel-travel").classList.contains("show"));
+
+    // Press browser Back button -> /builder
+    await act(async () => {
+      dom.window.history.back();
+    });
+    await settle();
+    assert.equal(dom.window.location.pathname, "/builder");
+    assert.ok(dom.window.document.getElementById("panel-build").classList.contains("show"));
+    assert.ok(!dom.window.document.getElementById("panel-travel").classList.contains("show"));
+
+    // Press browser Back button again -> /
+    await act(async () => {
+      dom.window.history.back();
+    });
+    await settle();
+    assert.equal(dom.window.location.pathname, "/");
+    assert.ok(dom.window.document.getElementById("panel-home").classList.contains("show"));
+    assert.ok(!dom.window.document.getElementById("panel-build").classList.contains("show"));
+
+    // Press browser Forward button -> /builder
+    await act(async () => {
+      dom.window.history.forward();
+    });
+    await settle();
+    assert.equal(dom.window.location.pathname, "/builder");
+    assert.ok(dom.window.document.getElementById("panel-build").classList.contains("show"));
+
+    // Press browser Forward button again -> /travel
+    await act(async () => {
+      dom.window.history.forward();
+    });
+    await settle();
+    assert.equal(dom.window.location.pathname, "/travel");
+    assert.ok(dom.window.document.getElementById("panel-travel").classList.contains("show"));
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
+test("Legacy hash auto-migration on direct page load: /#TR and /#ARCE cleanly migrate to / and update stored profile", async () => {
+  const settle = () => act(async () => { for (let i = 0; i < 15; i++) await new Promise((r) => setTimeout(r, 0)); });
+
+  // 1. Direct load on /#TR
+  {
+    const dom = setupDom("#TR");
+    const root = createRoot(dom.window.document.getElementById("root"));
+    try {
+      await act(async () => root.render(React.createElement(AppShell)));
+      await settle();
+
+      assert.equal(dom.window.location.pathname, "/");
+      assert.equal(dom.window.location.hash, "");
+      assert.equal(dom.window.localStorage.getItem("mw-world"), "tr");
+      assert.ok(dom.window.document.getElementById("panel-home").classList.contains("show"));
+    } finally {
+      await act(async () => root.unmount());
+      dom.window.close();
+    }
+  }
+
+  // 2. Direct load on /#ARCE
+  {
+    const dom = setupDom("#ARCE");
+    const root = createRoot(dom.window.document.getElementById("root"));
+    try {
+      await act(async () => root.render(React.createElement(AppShell)));
+      await settle();
+
+      assert.equal(dom.window.location.pathname, "/");
+      assert.equal(dom.window.location.hash, "");
+      assert.equal(dom.window.localStorage.getItem("mw-world"), "tr");
+      assert.equal(dom.window.localStorage.getItem("mw-arce"), "1");
+      assert.ok(dom.window.document.getElementById("panel-home").classList.contains("show"));
+    } finally {
+      await act(async () => root.unmount());
+      dom.window.close();
+    }
+  }
+});
+
+test("Query permalink payload: /builder?build=... loads build and cleans query string from address bar", async () => {
+  const buildPayload = { race: "Nord", className: "Custom", sign: "The Lady" };
+  const b64 = Buffer.from(JSON.stringify(buildPayload), "utf-8").toString("base64url");
+  const dom = setupDom("/builder?build=" + b64);
+  const root = createRoot(dom.window.document.getElementById("root"));
+  const settle = () => act(async () => { for (let i = 0; i < 15; i++) await new Promise((r) => setTimeout(r, 0)); });
+
+  try {
+    await act(async () => root.render(React.createElement(AppShell, { initialView: "builder" })));
+    await settle();
+
+    assert.equal(dom.window.location.pathname, "/builder");
+    assert.equal(dom.window.location.hash, "");
+    assert.equal(dom.window.location.search, "");
+    assert.ok(dom.window.document.getElementById("panel-build").classList.contains("show"));
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
 });

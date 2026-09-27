@@ -44,7 +44,7 @@ export default function CharacterBuilderRoot() {
     if (typeof window === "undefined") return;
     const url = generateBuildShareUrl(
       { ...build, world: shell.world, arce: shell.arce },
-      window.location.origin + window.location.pathname
+      window.location.origin
     );
     try {
       await navigator.clipboard.writeText(url);

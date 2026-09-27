@@ -55,6 +55,15 @@ test('decodeShareHash adversarial edge cases for defaultView', async () => {
   assert.equal(decodeShareHash('#optimizer', { defaultView: 'factions' }).view, 'builder');
   assert.equal(decodeShareHash('#spell', { defaultView: 'builder' }).view, 'spellmaking');
   assert.equal(decodeShareHash('#enchant', { defaultView: 'builder' }).view, 'enchanting');
+
+  // 4. Clean HTML5 pathnames and query strings
+  assert.equal(decodeShareHash('/builder').view, 'builder');
+  assert.equal(decodeShareHash('/leveler').view, 'leveler');
+  assert.equal(decodeShareHash('/alchemy').view, 'alchemy');
+  assert.equal(decodeShareHash('/travel').view, 'travel');
+  assert.equal(decodeShareHash('/travel?world=tr').world, 'tr');
+  assert.equal(decodeShareHash('/challenge?run=any_data').view, 'challenge');
+  assert.equal(decodeShareHash('/builder?build=any_data').view, 'builder');
 });
 
 test('all static route files exist, force static export, and provide SEO metadata', async () => {

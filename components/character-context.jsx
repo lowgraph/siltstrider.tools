@@ -197,26 +197,31 @@ export function CharacterProvider({ children }) {
 
   const clearSave = useCallback(() => setActiveSave(null), []);
 
-  // A shared build link (#builder&build=...) opens its character, on load or when pasted
-  // into an open tab, then leaves the address bar so later edits are not confused with it.
+  // A shared build link (#builder&build=... or ?build=...) opens its character, on load or when pasted
+  // into an open tab, then leaves the address bar with a clean path so later edits are not confused with it.
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
     const openLink = () => {
-      const decoded = decodeShareHash(window.location.hash);
+      const raw = window.location.hash || window.location.search;
+      const decoded = decodeShareHash(raw);
       const linked = sanitizeBuild(decoded.build);
       if (!linked) return;
       setActiveSave(null);
-      setBuild((prev) => ({ ...DEFAULT_BUILD, world: prev.world, arce: prev.arce, ...linked }));
+      setBuild((prev) => ({ ...DEFAULT_BUILD, world: decoded.world || prev.world, arce: decoded.arce ?? prev.arce, ...linked }));
+      if (decoded.profile && typeof shell?.setProfile === "function" && shell.profile !== decoded.profile) {
+        shell.setProfile(decoded.profile);
+      }
       try {
-        const { view, world, arce, profile } = decoded;
-        window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search + encodeShareHash({ view, world, arce, profile }));
+        const { view } = decoded;
+        const cleanPath = view === "home" ? "/" : "/" + view;
+        window.history.replaceState({ ...(window.history.state || {}), view }, "", cleanPath);
         window.dispatchEvent(new Event("silt-shell-change"));
       } catch {}
     };
     openLink();
     window.addEventListener("hashchange", openLink);
     return () => window.removeEventListener("hashchange", openLink);
-  }, []);
+  }, [shell]);
 
   const value = useMemo(
     () => ({

@@ -280,7 +280,7 @@ export default function ChallengeRunsRoot() {
     if (typeof window === "undefined") return;
     const { restNote, ...linked } = run;
     const hash = encodeShareHash({ view: "challenge", world: shell.world, arce: shell.arce, profile: shell.profile, run: linked });
-    const url = window.location.origin + window.location.pathname + window.location.search + hash;
+    const url = window.location.origin + '/' + hash;
     try {
       await navigator.clipboard.writeText(url);
       setShareLink(null);

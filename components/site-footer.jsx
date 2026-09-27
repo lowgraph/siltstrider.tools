@@ -16,7 +16,8 @@ export default function SiteFooter() {
     if (shell?.navigate) {
       shell.navigate(view);
     } else if (typeof window !== 'undefined') {
-      window.location.hash = '#' + view;
+      window.history.pushState({ view }, '', view === 'home' ? '/' : '/' + view);
+      window.dispatchEvent(new Event('silt-shell-change'));
     }
   };
 
@@ -25,7 +26,7 @@ export default function SiteFooter() {
       <p>
         Unofficial fan project — not affiliated with Bethesda.{" "}
         <a
-          href="#about"
+          href="/about"
           id="link-about-footer"
           onClick={(e) => handleNavigate(e, "about")}
         >
@@ -33,7 +34,7 @@ export default function SiteFooter() {
         </a>{" "}
         ·{" "}
         <a
-          href="#changelog"
+          href="/changelog"
           id="link-changelog-footer"
           onClick={(e) => handleNavigate(e, "changelog")}
         >

@@ -1,5 +1,16 @@
 # Changelog
 
+## Clean HTML5 path routing and hash migration — 2026-09-27
+
+- Transitioned workstation and tool navigation from URL hash fragments (`#builder`, `#alchemy`, etc.) to clean HTML5 History API path routing (`/builder`, `/leveler`, etc.).
+- Added automatic legacy hash migration via `window.history.replaceState` and `popstate` support for browser Back and Forward history traversal.
+- Maintained full backward compatibility for permalink payloads (`#builder&build=...`, `#challenge&run=...`, `?build=...`).
+
+## Distinct Khajiit vault labels — 2026-09-27
+
+- Reused the builder's seven Khajiit variant labels in cloud-save cards, such as Khajiit (Cathay-raht) and Khajiit (Ohmes).
+- Exact record IDs take precedence over shared in-game names; unknown races retain their original fallback.
+
 ## Readable cloud-save identities — 2026-09-27
 
 - OpenMW cloud-save cards resolve race and birthsign IDs to published catalog names, including Chimeri-Quey and The Atronach.

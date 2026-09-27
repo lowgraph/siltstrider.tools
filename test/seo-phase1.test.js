@@ -90,7 +90,7 @@ test("app/layout.jsx defines complete OpenGraph, Twitter, and JSON-LD metadata",
 test("semantic heading hierarchy: header has no h1 and hero has exactly h1", () => {
   const header = fs.readFileSync(path.join(ROOT, "components", "site-header.jsx"), "utf8");
   assert.doesNotMatch(header, /<div className="brand">\s*<h1>/, "header brand must not be an h1");
-  assert.match(header, /<div className="brand-title">\s*<a href="#home"/, "header must use .brand-title container");
+  assert.match(header, /<div className="brand-title">\s*<a href="\/"/, "header must use .brand-title container");
   
   const hero = fs.readFileSync(path.join(ROOT, "components", "home-hub", "home-hero.jsx"), "utf8");
   assert.match(hero, /<h1 className="home-title" id="home-title">Plan the perfect <span>Morrowind<\/span> run\.<\/h1>/, "hero must use h1 for page title");

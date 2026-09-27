@@ -24,7 +24,7 @@ export default function HomeColophon({ onNavigate }) {
         <nav className="home-colophon-column" key={column.title} aria-label={column.title}>
           <span className="home-kicker">{column.title}</span>
           {column.links.map(link => (
-            <a key={link.view} href={"#" + link.view} onClick={e => { e.preventDefault(); onNavigate(link.view); }}>{link.title}</a>
+            <a key={link.view} href={link.view === 'home' ? '/' : '/' + link.view} onClick={e => { e.preventDefault(); onNavigate(link.view); }}>{link.title}</a>
           ))}
         </nav>
       ))}

@@ -265,7 +265,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
   return (
     <div className="topbar" ref={root}>
       <div className="brand">
-        <div className="brand-title"><a href="#home" className="brand-home" onClick={e => navigate(e, 'home')}>Silt Strider</a></div>
+        <div className="brand-title"><a href="/" className="brand-home" onClick={e => navigate(e, 'home')}>Silt Strider</a></div>
         <p className="kicker">siltstrider.tools — Morrowind build planner &amp; challenge run generator<span className="page-sub">{descriptions[shell.view]}</span></p>
       </div>
       <button

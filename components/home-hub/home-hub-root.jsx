@@ -65,7 +65,10 @@ export default function HomeHubRoot({ loader, shell: shellOverride, character: c
 
   const navigate = view => {
     if (shell?.navigate) shell.navigate(view);
-    else if (typeof window !== "undefined") window.location.hash = "#" + view;
+    else if (typeof window !== "undefined") {
+      window.history.pushState({ view }, "", view === "home" ? "/" : "/" + view);
+      window.dispatchEvent(new Event("silt-shell-change"));
+    }
   };
   const openSearch = () => {
     if (typeof window !== "undefined") window.dispatchEvent(new window.CustomEvent("silt-open-search"));
