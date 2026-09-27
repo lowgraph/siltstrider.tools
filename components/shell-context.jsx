@@ -66,14 +66,8 @@ function readCurrentState(initialView) {
 
   // If a hash exists (e.g. legacy #builder, #alchemy, #TR, #builder&build=...), decode from it
   let decoded = null;
-  if (hash && hash !== '#') {
-    decoded = decodeShareHash(hash, {
-      defaultView: baseView,
-      defaultWorld: stored.world,
-      defaultArce: stored.arce
-    });
-  } else if (search) {
-    decoded = decodeShareHash(search, {
+  if (search || (hash && hash !== '#')) {
+    decoded = decodeShareHash(search + hash, {
       defaultView: baseView,
       defaultWorld: stored.world,
       defaultArce: stored.arce
@@ -139,15 +133,17 @@ export function ShellProvider({ children, initialView = 'home' }) {
       const rawHash = window.location.hash;
       if (!rawHash || rawHash === '#') return;
 
-      const hasPayload = /(?:^|[?&#])(run|build)=/i.test(rawHash);
+      const rawLocation = (window.location.search || '') + rawHash;
+      const hasPayload = /(?:^|[?&#])(run|build)=/i.test(rawLocation);
       if (hasPayload) {
         // Child context (CharacterProvider or ChallengeRunProvider) consumes and strips the payload
         return;
       }
 
       // Plain legacy hash without payload
-      const decoded = decodeShareHash(rawHash, { defaultView: state.view });
-      if (/(?:^|[&#?/_])(tr|tamriel|arce)\b/i.test(rawHash) || /world=|arce=/i.test(rawHash)) {
+      const stored = getStoredProfile();
+      const decoded = decodeShareHash(rawLocation, { defaultView: state.view, defaultWorld: stored.world, defaultArce: stored.arce });
+      if (/(?:^|[&#?/_])(tr|tamriel|arce)\b/i.test(rawLocation) || /world=|arce=/i.test(rawLocation)) {
         try {
           window.localStorage.setItem('mw-world', decoded.world);
           window.localStorage.setItem('mw-arce', decoded.arce ? '1' : '0');
@@ -166,6 +162,11 @@ export function ShellProvider({ children, initialView = 'home' }) {
 
   const navigate = useCallback(view => {
     if (typeof window === 'undefined') return;
+    const current = readCurrentState(initialView);
+    try {
+      window.localStorage.setItem('mw-world', current.world);
+      window.localStorage.setItem('mw-arce', current.arce ? '1' : '0');
+    } catch {}
     const targetPath = view === 'home' ? '/' : '/' + view;
     const currentPath = window.location.pathname || '/';
     const currentHash = window.location.hash || '';
@@ -174,7 +175,7 @@ export function ShellProvider({ children, initialView = 'home' }) {
       window.history.pushState({ view }, '', targetPath);
     }
     window.dispatchEvent(new Event('silt-shell-change'));
-  }, []);
+  }, [initialView]);
 
   const setProfile = useCallback(profile => {
     if (typeof window === 'undefined') return;
@@ -184,10 +185,13 @@ export function ShellProvider({ children, initialView = 'home' }) {
       window.localStorage.setItem('mw-arce', arce ? '1' : '0');
     } catch {}
 
-    if (window.location.hash) {
-      const cleanPath = state.view === 'home' ? '/' : '/' + state.view;
-      window.history.replaceState({ view: state.view }, '', cleanPath + (window.location.search || ''));
-    }
+    const cleanPath = state.view === 'home' ? '/' : '/' + state.view;
+    const params = new URLSearchParams(window.location.search);
+    // Explicit URL settings must agree with the user's new selection, including
+    // when localStorage is unavailable. Preserve unrelated query parameters.
+    params.set('world', world);
+    params.set('arce', arce ? '1' : '0');
+    window.history.replaceState({ ...window.history.state, view: state.view }, '', cleanPath + '?' + params);
     window.dispatchEvent(new Event('silt-shell-change'));
   }, [state.view]);
 

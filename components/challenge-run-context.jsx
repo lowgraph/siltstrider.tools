@@ -89,7 +89,11 @@ export function runFromLink(hash) {
 function dropRunFromAddress() {
   try {
     const raw = window.location.href || ((window.location.search || '') + (window.location.hash || ''));
-    const { view } = decodeShareHash(raw);
+    const { view, world, arce } = decodeShareHash(raw);
+    try {
+      window.localStorage.setItem('mw-world', world);
+      window.localStorage.setItem('mw-arce', arce ? '1' : '0');
+    } catch {}
     const cleanPath = view === "home" ? "/" : "/" + view;
     window.history.replaceState({ ...(window.history.state || {}), view }, "", cleanPath);
     window.dispatchEvent(new Event("silt-shell-change"));

@@ -31,6 +31,52 @@ function component(file, exportName = "default") {
 const SiteFooter = component("components/site-footer.jsx");
 const AppShell = component("components/app-shell.jsx");
 
+test("every shell destination has an exported page for reloads and bookmarks", async () => {
+  const { KNOWN_VIEWS } = await import('../lib/permalink-codec.mjs');
+  for (const view of KNOWN_VIEWS) {
+    const file = view === 'home' ? 'app/page.jsx' : `app/${view}/page.jsx`;
+    assert.ok(require('node:fs').existsSync(file), `Missing route: ${view}`);
+  }
+});
+
+for (const [name, location, blocked] of [
+  ['query profile', '/alchemy?world=tr&arce=1&campaign=test', false],
+  ['mixed query and hash', '/?world=tr&arce=1&campaign=test#alchemy', false],
+  ['unavailable storage', '/alchemy?world=tr&arce=1&campaign=test', true],
+]) test(`world selection overrides ${name} without losing unrelated parameters`, async () => {
+  const dom = setupDom(location);
+  if (blocked) Object.defineProperty(dom.window, 'localStorage', { get() { throw new Error('blocked'); } });
+  const { ShellProvider, useShell } = component('components/shell-context.jsx');
+  let shell;
+  function Probe() { shell = useShell(); return null; }
+  const root = createRoot(dom.window.document.getElementById('root'));
+  try {
+    await act(async () => root.render(React.createElement(ShellProvider, null, React.createElement(Probe))));
+    assert.equal(shell.profile, 'tr_arce');
+    assert.equal(shell.view, 'alchemy');
+    await act(async () => shell.setProfile('vanilla'));
+    assert.equal(shell.profile, 'vanilla');
+    assert.equal(new URLSearchParams(dom.window.location.search).get('campaign'), 'test');
+    await act(async () => shell.setProfile('tr'));
+    assert.equal(shell.profile, 'tr');
+  } finally { await act(async () => root.unmount()); dom.window.close(); }
+});
+
+test('navigation preserves a profile opened through query parameters', async () => {
+  const dom = setupDom('/alchemy?world=tr&arce=1');
+  const { ShellProvider, useShell } = component('components/shell-context.jsx');
+  let shell;
+  function Probe() { shell = useShell(); return null; }
+  const root = createRoot(dom.window.document.getElementById('root'));
+  try {
+    await act(async () => root.render(React.createElement(ShellProvider, null, React.createElement(Probe))));
+    await act(async () => shell.navigate('account'));
+    assert.equal(shell.view, 'account');
+    assert.equal(shell.profile, 'tr_arce');
+    assert.equal(dom.window.location.pathname, '/account');
+  } finally { await act(async () => root.unmount()); dom.window.close(); }
+});
+
 function setupDom(initialLocation = "#home") {
   const url = initialLocation.startsWith("http")
     ? initialLocation
@@ -540,6 +586,7 @@ test("Challenge Runs: Share copies a link that opens the same run, in its world"
     await act(async () => root.render(React.createElement(AppShell)));
     await settle();
     assert.equal(sheet(), shared, "the link opens the same run");
+    assert.equal(dom.window.localStorage.getItem('mw-world'), 'tr', 'consuming the run link preserves its profile');
     assert.equal(dom.window.location.pathname, "/challenge");
     assert.equal(dom.window.location.hash, "", "hash is stripped from the address bar");
 
