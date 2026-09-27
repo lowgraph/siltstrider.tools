@@ -1,6 +1,6 @@
 # Silt Strider Tools — System Architecture & Data Discipline
 
-`siltstrider.tools` is a high-performance web platform for character planning, progression optimization, and game system simulation across **Morrowind**, **Tamriel Rebuilt**, and **ARCE**.
+`siltstrider.tools` is a web platform for character planning, progression analysis, and game-system simulation across **Morrowind**, **Tamriel Rebuilt**, and **ARCE**.
 
 The project exemplifies **data architecture, release discipline, and producer–consumer contract validation**: turning complex 20-year-old binary game files into verified, content-addressed web artifacts consumed by a modern React 19 interface.
 

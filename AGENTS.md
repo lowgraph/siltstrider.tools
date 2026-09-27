@@ -5,11 +5,11 @@ for canonical repository paths and restructuring notes. Read [docs/DATA_LOADER.m
 for the data consumption contract, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for system architecture,
 and [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md) for the frontend transformation roadmap.
 
-1. **Codex (Site Agent):** Owns this repository (`A:\Claude\morrowind-tools`). Implements
+1. **Codex (Site Agent):** Owns this web application repository (`lowgraph/siltstrider.tools`). Implements
    Next.js 16 App Router, React 19 components, Tailwind styling, Clerk auth, and Cloudflare
    D1 migrations. Executes the UI transformation specified in [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md).
-2. **Claude (Data Agent):** Owns the data pipeline at `C:\Users\tiago\OneDrive\Documents\ChatGPT\OpenMW Decompiler`
-   and publishes the content-addressed bundle under `public/game-data/`. Do not edit that repository
+2. **Claude (Data Agent):** Owns the sibling data pipeline repository (`lowgraph/openmw-decompiler`)
+   and publishes content-addressed bundles under `public/game-data/`. Do not edit that repository
    or open raw SQLite databases here.
 3. **Antigravity (UI Transformation Lead):** Directs the UI/UX architecture,
    component design, and CRPG authenticity across the project.
@@ -18,20 +18,20 @@ and [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md) for the frontend transformation
 
 ### 1. Shell & Environment Invariants (CRITICAL)
 - **PowerShell Only:** Never emit bash chained operators (`&&`). Always use PowerShell command separators (`;`) or execute statements sequentially.
-- **Temp Isolation:** All temp fixtures, staging databases, artifacts, and test caches must strictly reside in `A:\Cache`. Always prefix pipeline test invocations with:
+- **Temp Isolation:** All temp fixtures, staging databases, artifacts, and test caches must strictly reside in the configured local cache directory (e.g., `A:\Cache`). Always prefix pipeline test invocations with:
   `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; python -B -m unittest discover -s . -p "test_*.py"`
 - **Scratch & Secret Isolation:** Never stage scratch files (e.g., `<scratchDir>/capture-*.js`), `Char Creation.png`, or `Hey.html`. Always clean up temporary runner scripts after visual evaluation.
 - **No Real-Data Rebuilds Without Instruction:** The user runs full game-data extraction commands locally in VS Code. Build code and provide commands; do not rebuild real-data catalogues unless explicitly asked. Verify changes with synthetic fixtures instead.
 - **Provenance:** Preserve separate vanilla, tr, and tr_arce profiles and source provenance.
 
 ### 2. Cross-Repo Boundary Enforcement
-- **Strict Boundary:** The Pipeline agent (`OpenMW Decompiler`) must NEVER directly modify files inside `A:\Claude\morrowind-tools`.
+- **Strict Boundary:** The Pipeline agent must NEVER directly modify files inside this web application repository.
 - **Contract Sync:** Changes to game parsing outputs or schemas pass exclusively via exported JSON bundles to `public/game-data/` and synchronized updates to `COORDINATION.md` and `UI_TRANSFORMATION.md`.
 - **No Stale Extraction Hooks:** The legacy prebuild extraction hook (`npm run extract:legacy`) was retired in Phase 13. Never attempt to run it. `index.html` remains at root as an active regression fixture.
 
 ### 3. Verification & Adversarial QA Protocols
-- **Pipeline Tests (233 suites):** Must pass cleanly with zero uncaught warnings. Summarize output; do not flood context with raw passing test logs.
-- **Site Tests (155 suites) & CDP Screenshots:** Run `npm test` in `A:\Claude\morrowind-tools`. For UI modifications, execute headless visual capture via Chrome CDP on port 8765 (`node <scratchDir>/capture-*.js`) to confirm layout integrity before ticket completion.
+- **Pipeline Tests:** Must pass cleanly with zero uncaught warnings. Summarize output; do not flood context with raw passing test logs.
+- **Site Tests & CDP Screenshots:** Run `npm test` in this repository. For UI modifications, execute headless visual capture via Chrome CDP on port 8765 (`node <scratchDir>/capture-*.js`) to confirm layout integrity before ticket completion.
 - **Adversarial Edge Cases:** Do not approve schema/logic changes on baseline tests alone. Before marking a logic task complete, write at least 3 automated tests targeting edge conditions (malformed record tags, missing SQLite indices, null/undefined properties, or boundary values).
 
 ### 4. Two-Failure Revert & Escalation Policy

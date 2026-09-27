@@ -1,7 +1,11 @@
 # Agent Path Migration Guide — Silt Strider Tools
 
 Date: 2026-09-26  
-Branch: `portfolio/restructure`
+Migration branch: `portfolio/restructure` — merged on 2026-09-26  
+Canonical branch: `main`
+
+> [!NOTE]
+> The historical migration branch (`portfolio/restructure`) has been merged into `main` and retired. Agents must work directly on the canonical default branch (`main`) using the canonical paths defined below. Do not search for, checkout, or recreate the retired migration branch.
 
 This guide defines canonical repository locations, path migrations, and operational guidelines for AI agents working in `siltstrider.tools`.
 
@@ -52,17 +56,17 @@ The following files deliberately remain at the repository root:
 ## 4. Supported Commands & Verification
 
 - **Install dependencies**: `npm ci` (Node.js >=22.11.0)
-- **Run automated test suite**: `npm test` (executes 477+ tests via `node --test test/*.test.js`)
+- **Run automated test suite**: `npm test` (executes the complete test suite via `node --test test/*.test.js`)
 - **Local dev server**: `npm run dev` (starts Next.js at `http://127.0.0.1:8765`)
 - **Production Next.js build**: `npm run build`
 - **Cloudflare static export build**: `npm run build:cloudflare` (runs `node scripts/build-cloudflare.cjs`)
-- **Stage game data**: `npm run data:stage` (validates and stages bundle from `A:\Cache\OpenMWFoundation`)
+- **Stage game data**: `npm run data:stage` (validates and stages bundle from the configured local data workspace)
 
 ---
 
 ## 5. Agent Invariants
 
-1. **Cross-Repo Boundary**: Never modify data extraction logic inside `A:\Claude\morrowind-tools`. Game data is authored and extracted exclusively by `lowgraph/openmw-decompiler` and ingested via versioned bundles.
+1. **Cross-Repo Boundary**: Never modify data extraction logic inside this web application repository. Game data is authored and extracted exclusively by the sibling data pipeline repository (`lowgraph/openmw-decompiler`) and ingested via versioned bundles.
 2. **Deterministic Domain Core**: `lib/` must remain pure ESM without JSX, DOM, or framework dependencies.
 3. **No Stale Extraction Hooks**: The legacy prebuild extraction hook (`npm run extract:legacy`) was retired in Phase 13. Never attempt to run it.
 4. **No Secrets**: Never commit `.env.local`, `.env.production.local`, or live Clerk keys.

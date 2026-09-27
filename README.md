@@ -92,7 +92,9 @@ a staged bundle to function. It is not a complete offline demo out of the box.
 If you have an already-built bundle from the data pipeline:
 
 ```powershell
-npm run data:stage -- A:\Cache\OpenMWFoundation\app-bundle
+npm run data:stage -- <path-to-bundle-output>/app-bundle
+# Example local workflow:
+# npm run data:stage -- A:\Cache\OpenMWFoundation\app-bundle
 ```
 
 Staging validates the release before changing `public/game-data/current.json`.
@@ -110,7 +112,7 @@ npm test
 npm run build
 ```
 
-For this project's Windows workflow, set `TEMP` and `TMP` to an existing `A:\Cache`
+For Windows workflows with restricted default temp paths, set `TEMP` and `TMP` (e.g., to an existing local cache like `A:\Cache`)
 before running tests. Builds use `next/font/google` and may need network access
 when font assets are not cached.
 
