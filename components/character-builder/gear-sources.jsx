@@ -1,13 +1,14 @@
 "use client";
 import {Fragment} from 'react';
-import {buildGearGroups,enchantCapacity,enchantMultiplier,gearRowLabel} from '../../lib/gear-rows.mjs';
+import {buildGearGroups,enchantCapacity,enchantMultiplier,gearRowLabel,summonNotes} from '../../lib/gear-rows.mjs';
 
 function SourceRow({row,pick,alternative=false,enchantMult=0.1}){
   return <tr className={alternative?'gear-alt':undefined}>
     <td className="capitalize">{alternative?'or':gearRowLabel(row)}</td>
     <td><span className="gear-name">{pick?.name || 'None found'}</span>
       {pick&&<span className="gear-note">
-        Base {row.category==='weapon'?'damage':row.category==='clothing'?'enchant capacity':'armor rating'}: {row.category==='clothing'?enchantCapacity(pick.strength,enchantMult):pick.strength}.
+        Base {row.category==='weapon'?'damage':row.category==='clothing'?'enchant capacity':'armor rating'}: {row.category==='clothing'?enchantCapacity(pick.strength,enchantMult):(pick.baseStrength??pick.strength)}.
+        {summonNotes(pick).map(note=>' '+note).join('')}
         {pick.condition&&` Condition: ${pick.condition.raw}/${pick.condition.maximum}.`}
         {pick.needsRepair&&' Broken: repair before use. Repair cost is not included.'}
         {pick.evidenceTruncated&&' Source search was capped; a better source may exist.'}

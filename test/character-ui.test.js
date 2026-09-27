@@ -90,6 +90,22 @@ test('clothing sources show enchant capacity as the game does, not the record\'s
  }finally{await act(async()=>root.unmount());dom.window.close();}
 });
 
+test('a Devil weapon shows its own damage and the Bound weapon it conjures',async()=>{
+ const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
+ global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+ const View=component('components/character-builder/gear-sources.jsx','GearSourcesView');
+ const root=createRoot(document.getElementById('root'));
+ const tanto={key:'devil tanto',name:'Devil Tanto',cellKey:'interior:vivec, telvanni enchanter',holder:'Audenian Valius',strength:20,baseStrength:6,
+  summons:[{key:'bound_dagger',name:'Bound Dagger',recordType:'WEAP',strength:20,seconds:60,uses:5,sameRow:true}],acquisition:'purchase',price:157,nearStart:true};
+ const row={key:'weapon/short_blade-1h/-/010/power',category:'weapon',skill:'short_blade',hands:1,toggles:{theft:false,endgame:true,nearStart:false},primary:tanto};
+ const result={status:'ready',data:{profile:'vanilla',catalogs:{GearRows:[row]},metadata:{}}};
+ try{
+  const props={build:{maj:['Short Blade']},ranking:{armRanked:[{n:'Unarmored'}],primaryArmor:'Unarmored',wepRanked:[{n:'Short Blade'}],primaryWep:'Short Blade',twoHand:false,shield:'none'},result,toggles:{theft:false,endgame:true,nearStart:false}};
+  await act(async()=>root.render(React.createElement(View,props)));
+  assert.match(document.body.textContent,/Base damage: 6\. Summons Bound Dagger \(damage 20\) for 60 s, 5 casts per charge\./);
+ }finally{await act(async()=>root.unmount());dom.window.close();}
+});
+
 test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns with all views',async()=>{
  const dom=new JSDOM('<div id="root"></div><div class="account-bar"></div>',{url:'http://localhost/'});
  global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;

@@ -102,3 +102,14 @@ test('marksman recommends a bow, not thrown weapons that are used up, whatever t
  assert.ok(groups.some(g=>g.label==='Shield'),'sword and board up front');
  assert.equal(groups.find(g=>g.label.startsWith('Secondary')).rows[0].key,'bow','and a bow for range, not darts');
 });
+test('a summoner says what it conjures, in the unit of the conjured piece',async()=>{
+ const {summonNotes}=await mod;
+ const tanto={strength:20,baseStrength:6,summons:[{key:'bound_dagger',name:'Bound Dagger',recordType:'WEAP',strength:20,seconds:60,uses:5,sameRow:true}]};
+ assert.deepEqual(summonNotes(tanto),['Summons Bound Dagger (damage 20) for 60 s, 5 casts per charge.']);
+ const gauntlet={summons:[{key:'bound_longbow',name:'Bound Longbow',recordType:'WEAP',strength:50,seconds:30,uses:1,sameRow:false}]};
+ assert.deepEqual(summonNotes(gauntlet),['Summons Bound Longbow (damage 50) for 30 s, 1 cast per charge.'],'armor that conjures a bow still speaks of damage');
+ const helm={summons:[{key:'bound_gauntlet_left',name:'Bound Gauntlet',recordType:'ARMO',strength:80,seconds:60,uses:5,sameRow:false}]};
+ assert.match(summonNotes(helm)[0],/armor rating 80/);
+ assert.deepEqual(summonNotes({strength:30}),[],'ordinary picks say nothing extra');
+ assert.deepEqual(summonNotes(null),[]);
+});
