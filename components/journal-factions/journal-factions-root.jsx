@@ -266,9 +266,9 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
       {/* Top Bar / Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-surface-6 border-b-2 border-line-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl md:text-2xl font-serif font-bold text-accent tracking-wide">
-            Faction Journal
-          </h1>
+          <h2 className="text-xl md:text-2xl font-serif font-bold text-accent tracking-wide">
+            Morrowind Faction Journal &amp; Guild Progression
+          </h2>
           {/* Live Bundle Status Badge */}
           {isLive ? (
             <span className="px-2 py-0.5 text-[11px] font-mono uppercase bg-success-surface-2 border border-success-line-4 text-success-4" title="Loaded from verified game data bundle">

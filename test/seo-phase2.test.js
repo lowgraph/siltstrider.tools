@@ -223,13 +223,18 @@ test("Adversarial QA 2: Potion calculation handles boundary, zero-apparatus, and
 test("Adversarial QA 3: All newly modified components avoid undefined, null, and non-token classes", () => {
   const filesToCheck = [
     "components/views/about-view.jsx",
+    "components/views/changelog-view.jsx",
     "components/calculators/alchemy/alchemy-workstation.jsx",
     "components/calculators/spellmaking/spellmaking-workstation.jsx",
     "components/calculators/enchanting/enchanting-workstation.jsx",
     "components/calculators/travel/travel-workstation.jsx",
     "components/level-simulator/level-simulator-root.jsx",
     "components/character-builder/character-builder-root.jsx",
-    "components/character-builder/configurator.jsx"
+    "components/character-builder/configurator.jsx",
+    "components/journal-factions/journal-factions-root.jsx",
+    "components/journal-factions/faction-detail-view.jsx",
+    "components/challenge-runs/challenge-runs-root.jsx",
+    "components/character-vault/cloud-vault-workstation.jsx"
   ];
 
   for (const rel of filesToCheck) {
@@ -240,3 +245,35 @@ test("Adversarial QA 3: All newly modified components avoid undefined, null, and
     assert.doesNotMatch(content, /className="[^"]*undefined[^"]*"/, `${rel} must not contain undefined class`);
   }
 });
+
+test("Faction Journal has semantic h2 heading and advancement invariants microcopy", () => {
+  const rootSrc = fs.readFileSync(path.join(ROOT, "components", "journal-factions", "journal-factions-root.jsx"), "utf8");
+  assert.match(rootSrc, /<h2[^>]*>\s*Morrowind Faction Journal &amp; Guild Progression\s*<\/h2>/, "must have h2 title in factions root");
+  assert.doesNotMatch(rootSrc, /<h1[^>]*>\s*Faction Journal\s*<\/h1>/, "must not use h1 in factions root");
+
+  const detailSrc = fs.readFileSync(path.join(ROOT, "components", "journal-factions", "faction-detail-view.jsx"), "utf8");
+  assert.match(detailSrc, /Faction Advancement Invariants:/, "must contain faction advancement invariants header");
+  assert.match(detailSrc, /two Favored Attributes/, "must explain two favored attributes requirement");
+  assert.match(detailSrc, /Great House Exclusivity:/, "must explain Great House exclusivity rule");
+});
+
+test("Challenge Runs has semantic h2 heading and deterministic seed engine microcopy", () => {
+  const challengeSrc = fs.readFileSync(path.join(ROOT, "components", "challenge-runs", "challenge-runs-root.jsx"), "utf8");
+  assert.match(challengeSrc, /<h2[^>]*>\s*Morrowind Challenge Run Generator &amp; Permalinks\s*<\/h2>/, "must have h2 title in challenge root");
+  assert.match(challengeSrc, /Challenge Engine Invariants:/, "must contain challenge engine invariants header");
+  assert.match(challengeSrc, /deterministic 32-bit pseudorandom seed engine/, "must describe PRNG seed engine");
+});
+
+test("Cloud Vault has semantic h2 heading and zero-tracking inspection microcopy", () => {
+  const vaultSrc = fs.readFileSync(path.join(ROOT, "components", "character-vault", "cloud-vault-workstation.jsx"), "utf8");
+  assert.match(vaultSrc, /<h2[^>]*>\s*Cloud Character Vault\s*<\/h2>/, "must have h2 title in vault workstation");
+  assert.match(vaultSrc, /Save Inspection &amp; Vault Invariants:/, "must contain save inspection invariants header");
+  assert.match(vaultSrc, /Zero-Server Binary Parsing:/, "must explain zero-server binary parsing");
+  assert.match(vaultSrc, /Cloud Sync Quotas:/, "must describe free and supporter cloud quotas");
+});
+
+test("Changelog has enriched h2 heading", () => {
+  const changelogSrc = fs.readFileSync(path.join(ROOT, "components", "views", "changelog-view.jsx"), "utf8");
+  assert.match(changelogSrc, /<h2[^>]*>\s*Silt Strider Tools Changelog &amp; Version History\s*<\/h2>/, "must have enriched h2 in changelog view");
+});
+

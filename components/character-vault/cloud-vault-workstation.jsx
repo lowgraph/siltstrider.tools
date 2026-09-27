@@ -118,6 +118,21 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <OpenSavePanel vault={vault} />
       </div>
 
+      {/* Zero-Tracking Client Save Parsing & Quota Invariants */}
+      <div className="bg-surface-7 p-3 sm:p-4 border border-line-9 text-xs text-fg-7 font-serif mb-6 space-y-1">
+        <h4 className="text-xs font-serif uppercase tracking-wider text-accent font-bold">
+          Save Inspection &amp; Vault Invariants:
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] leading-relaxed">
+          <div>
+            <strong className="text-fg-2">• Zero-Server Binary Parsing:</strong> OpenMW <span className="font-mono text-accent">.omwsave</span> files are parsed entirely in your browser memory via ArrayBuffer. No save data is ever uploaded during inspection.
+          </div>
+          <div>
+            <strong className="text-fg-2">• Cloud Sync Quotas:</strong> Free tier accounts provide 5 cloud slots; Supporter tier accounts provide 25 cloud slots. Quotas are protected by atomic SQLite triggers in Cloudflare D1.
+          </div>
+        </div>
+      </div>
+
       {/* Sign-In CTA (if signed out) */}
       {!vault.signedIn ? (
         <div className="bg-surface-2 border border-line-7 p-5 space-y-3 mw-groove-panel text-center sm:text-left mb-6">

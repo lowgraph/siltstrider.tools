@@ -293,6 +293,18 @@ export default function ChallengeRunsRoot() {
 
   return (
     <div className="challenge-runs-root w-full mx-auto space-y-5">
+      {/* Semantic Workstation Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-line-11">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-accent tracking-wide">
+            Morrowind Challenge Run Generator &amp; Permalinks
+          </h2>
+          <p className="text-xs text-fg-14 font-serif mt-1">
+            Deterministic seed generator, difficulty presets, and roleplay restrictions for Vvardenfell and Tamriel Rebuilt.
+          </p>
+        </div>
+      </div>
+
       {/* Top Bar: Seed Engine, Presets & Quick Share */}
       <SeedBar
         seed={run.seed}
@@ -396,6 +408,16 @@ export default function ChallengeRunsRoot() {
           </button>
         </div>
       )}
+
+      {/* Challenge Engine Mechanics & Permalinks Cue */}
+      <div className="bg-surface-7 p-3 sm:p-4 border border-line-9 text-xs text-fg-7 font-serif space-y-1">
+        <h4 className="text-xs font-serif uppercase tracking-wider text-accent font-bold">
+          Challenge Engine Invariants:
+        </h4>
+        <p className="text-[11px] leading-relaxed">
+          Runs are generated via a <strong>deterministic 32-bit pseudorandom seed engine</strong>. Entering the same seed and difficulty preset always yields identical restrictions, classes, and objectives. Seamlessly hand off rolls to the <strong className="text-fg-2">Build Optimizer</strong> (<span className="font-mono text-accent">/builder</span>) or share permalink hashes across devices.
+        </p>
+      </div>
 
       {/* Searchable Pool Explorer Modal */}
       <PoolBrowserModal
