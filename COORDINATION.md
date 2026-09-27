@@ -273,3 +273,18 @@ and opening the native vault; no JavaScript errors. Desktop gear and mobile vaul
 screenshots were inspected. Next agent: first run `npm test`; review the task's
 explicit files before committing because other work shares this checkout.
 No commit, push, deployment, extraction, or bundle rebuild in this batch.
+
+
+## Cloud-save identity labels, 27 September 2026
+
+No schema or extraction changes. OpenMW vault cards use lib/vault-identity.mjs to
+resolve raw race/sign IDs case-insensitively against Races/Birthsigns. Save headers
+have no profile field, so only unambiguous names across the three published profiles
+are displayed; the selected builder profile is not used. Unknown/conflicting IDs
+and unavailable catalogs retain their original values. Requests are shared per
+bundle loader; full save payloads are not fetched, and stored values are untouched.
+
+Validation: 525 tests and production build passed. Browser verification with
+synthetic headers and real catalogs displayed Chimeri-Quey / The Atronach, retained
+unknown IDs after switching cards, and made no save API requests. Next agent: run
+`npm test` before release. No deployment or migration in this batch.

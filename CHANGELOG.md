@@ -1,5 +1,10 @@
 # Changelog
 
+## Readable cloud-save identities — 2026-09-27
+
+- OpenMW cloud-save cards resolve race and birthsign IDs to published catalog names, including Chimeri-Quey and The Atronach.
+- Requests are shared across cards. Unknown or conflicting IDs and unavailable catalogs fall back to the original values; stored saves remain unchanged.
+
 ## Remaining builder bridges removed — 2026-09-27
 
 - Gear Advisor now uses React state and bundle data exclusively, with independent loading, error, and retry states for early and late-game recommendations.

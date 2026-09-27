@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {getGameDataLoader} from '../use-game-data';
+import {loadVaultIdentityLabels} from '../../lib/vault-identity.mjs';
 
 export default function CloudVaultCard({
   save,
@@ -19,6 +21,17 @@ export default function CloudVaultCard({
   const isOmwSave = save.save_type === "openmw_save";
   const isBuild = save.save_type === "character_build";
   const isChallenge = save.save_type === "challenge_run";
+  const identityKey = JSON.stringify([save.save_type, save.race, save.birthsign]);
+  const [resolvedIdentity, setResolvedIdentity] = useState(null);
+  const identity = resolvedIdentity?.key === identityKey ? resolvedIdentity : save;
+  useEffect(() => {
+    if (!isOmwSave) return;
+    let current = true;
+    loadVaultIdentityLabels(getGameDataLoader(), {race: save.race, birthsign: save.birthsign})
+      .then(labels => { if (current) setResolvedIdentity({...labels, key: identityKey}); })
+      .catch(() => { /* Offline or missing catalogs: preserve the original IDs. */ });
+    return () => { current = false; };
+  }, [identityKey, isOmwSave, save.race, save.birthsign]);
 
   const typeLabel = isOmwSave
     ? "OpenMW Save"
@@ -133,8 +146,8 @@ export default function CloudVaultCard({
         <div className="bg-surface-1 p-2 border border-line-12">
           <span className="text-fg-14 block text-[10px] uppercase tracking-wider">Race &amp; Sign</span>
           <span className="text-fg-2 font-bold">
-            {save.race || "Dark Elf"}
-            {save.birthsign ? ` · ${save.birthsign}` : ""}
+            {identity.race || "Unknown race"}
+            {identity.birthsign ? ` · ${identity.birthsign}` : ""}
           </span>
         </div>
 
