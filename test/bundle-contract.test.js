@@ -253,7 +253,7 @@ test('an optional feature catalog loads when the release has it', async () => {
     .catalog('Intervention', { rows: [{ key: 'exterior:-2,-9', divine: 0, almsivi: 0 }] })
     .publish();
   const { createBundleLoader, FEATURE_OPTIONAL_CATALOGS } = await modulePromise;
-  assert.deepEqual([...FEATURE_OPTIONAL_CATALOGS.travel], ['Intervention', 'Access']);
+  assert.deepEqual([...FEATURE_OPTIONAL_CATALOGS.travel], ['Intervention', 'Access', 'Teleports']);
   const loader = createBundleLoader({
     baseUrl: ROOT, crypto: webcrypto, cacheStorage: null,
     fetcher: async url => new Response(b.routes.get(url))

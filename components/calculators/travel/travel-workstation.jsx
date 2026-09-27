@@ -29,6 +29,7 @@ import {
   PLACE_PREFIX,
   CELL
 } from "../../../lib/travel-walk.mjs";
+import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-teleports.mjs";
 import TransitMap from "./transit-map";
 
 const POPULAR_HUBS = [
@@ -54,10 +55,15 @@ export default function TravelWorkstation() {
   const [followers, setFollowers] = useState(0);
   const [spells, setSpells] = useState({ divine: false, almsivi: false });
   const [walking, setWalking] = useState(true);
+  const [held, setHeld] = useState(() => new Set());
+  const [questTeleports, setQuestTeleports] = useState(false);
 
   // A loaded save says which intervention the character can cast: the spell or a scroll.
   useEffect(() => {
-    if (activeSave?.save) setSpells(interventionsFromSave(activeSave.save));
+    if (activeSave?.save) {
+      setSpells(interventionsFromSave(activeSave.save));
+      setHeld(heldFromSave(activeSave.save));
+    }
   }, [activeSave]);
 
   const liveNetworkGraph = useMemo(() => {
@@ -113,10 +119,25 @@ export default function TravelWorkstation() {
     nodes: gameData.data?.metadata?.Travel?.nodes || {},
     access, intervention
   }), [gameData.data, access, intervention]);
-  const routingGraph = useMemo(
+  const walkGraph = useMemo(
     () => (walking && access ? addStopWalks(spellGraph, points, access.land, speed) : spellGraph),
     [walking, access, spellGraph, points, speed]
   );
+
+  // Propylons, dialogue transports and teleporting items: the ones the items the
+  // character carries open, and quest teleports only when asked for.
+  const teleports = useMemo(() => {
+    const records = gameData.data?.catalogs?.Teleports;
+    return Array.isArray(records) ? { records, items: gameData.data?.metadata?.Teleports?.items || {} } : null;
+  }, [gameData.data]);
+  const carriedOptions = useMemo(() => teleportItems(teleports), [teleports]);
+  const routingGraph = useMemo(() => {
+    if (!teleports) return walkGraph;
+    return addTeleports(walkGraph, teleports, {
+      nodes: gameData.data?.metadata?.Travel?.nodes || {}, held, includeQuest: questTeleports,
+      walk: { points, access, land: walking ? access?.land : null, speed, intervention, spells }
+    }).graph;
+  }, [walkGraph, teleports, gameData.data, held, questTeleports, points, access, walking, speed, intervention, spells]);
 
   // Every place in the game, for the pickers and for naming a place on the route.
   const places = useMemo(
@@ -169,7 +190,8 @@ export default function TravelWorkstation() {
   }, [routingGraph, liveNetworkGraph, intervention, gameData.data, origin, destination, access, labelOf]);
 
   const availableStops = useMemo(() => {
-    return getAvailableTransitStops(world, routingGraph);
+    // Places a teleport lands in are routed through, not listed as stops; search finds them.
+    return getAvailableTransitStops(world, routingGraph).filter((stop) => !isPlace(stop));
   }, [world, routingGraph]);
 
   const [originSearch, setOriginSearch] = useState("");
@@ -261,11 +283,22 @@ export default function TravelWorkstation() {
     return planned;
   }, [origin, destination, planGraph, objective, priced, player, settings, access, labelOf]);
   const routeSpellEdges = useMemo(() => (route.isValid ? route.steps : [])
-    .filter((step) => step.spell || step.walk)
+    .filter((step) => step.spell || step.walk || step.teleport)
     .map((step) => {
       const [a, b] = step.from < step.to ? [step.from, step.to] : [step.to, step.from];
       return { a, b, kind: step.kind };
     }), [route]);
+  // Places a route passes through (a Propylon chamber) sit where you walk out of them.
+  const routePositions = useMemo(() => {
+    if (!mapData) return null;
+    const out = { ...mapData.positions };
+    for (const id of route.isValid ? route.path : []) {
+      if (!isPlace(id) || out[id]) continue;
+      const [point] = placePoints(id.slice(PLACE_PREFIX.length), access);
+      if (point) out[id] = [point[0] / CELL, point[1] / CELL];
+    }
+    return out;
+  }, [mapData, route, access]);
   const firstSeller = useMemo(() => {
     for (const edges of Object.values(liveNetworkGraph)) {
       const found = edges.find((e) => e.barter && e.barter.haggles);
@@ -297,6 +330,12 @@ export default function TravelWorkstation() {
         return "border-info-line-1 bg-surface-9 text-info";
       case "Almsivi Intervention":
         return "border-warning-line bg-surface-9 text-warning-2";
+      case "Propylon":
+        return "border-info-line-1 bg-surface-15 text-info";
+      case "Dialogue Teleport":
+      case "Item Teleport":
+      case "Teleport":
+        return "border-line-2 bg-surface-9 text-accent";
       default:
         return "border-line-9 bg-surface-5 text-accent";
     }
@@ -396,6 +435,11 @@ export default function TravelWorkstation() {
             {label}
           </label>
         ))}
+        {teleports && (
+          <label className="whitespace-nowrap">
+            <input type="checkbox" checked={questTeleports} onChange={(event) => setQuestTeleports(event.target.checked)} /> Include quest teleports
+          </label>
+        )}
         {access && (
           <label className="whitespace-nowrap">
             <input type="checkbox" checked={walking} onChange={(event) => setWalking(event.target.checked)} /> Walk between nearby places
@@ -418,6 +462,32 @@ export default function TravelWorkstation() {
         {gameData.status === 'loading' && <p role="status">Loading travel network...</p>}
         {gameData.status === 'error' && <p role="alert">Travel network unavailable. <button onClick={gameData.retry}>Retry</button></p>}
       </div>
+      {carriedOptions.length > 0 && (
+        <details className="p-3 bg-surface-5 border border-line-11">
+          <summary className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider cursor-pointer">
+            Items you carry ({carriedOptions.filter((item) => held.has(item.id)).length} of {carriedOptions.length})
+          </summary>
+          <p className="text-[11px] text-fg-13 mt-2 mb-2">
+            Propylon indices and teleporting amulets open routes. A loaded save ticks the ones in its pack.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
+            {carriedOptions.map((item) => (
+              <label key={item.id} className="flex items-center gap-1.5">
+                <input
+                  type="checkbox"
+                  checked={held.has(item.id)}
+                  onChange={(event) => setHeld((prev) => {
+                    const next = new Set(prev);
+                    if (event.target.checked) next.add(item.id); else next.delete(item.id);
+                    return next;
+                  })}
+                />
+                {item.name}
+              </label>
+            ))}
+          </div>
+        </details>
+      )}
       <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
         <div className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider">
           Fast Origin Selector
@@ -578,7 +648,8 @@ export default function TravelWorkstation() {
               <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
               <li>Divine and Almsivi Intervention land where OpenMW&apos;s marker search puts you: the markers on the smallest square ring of cells around you, not the nearest in a straight line, and indoors the first door out. Tick the spells your character can cast; a loaded save ticks them for you.</li>
               <li>Walking joins any place to the network: a straight line at your run speed (Speed and Athletics, carrying nothing), refused where it would swim more than 2,048 units of open sea. Real paths around hills take longer. Indoors, the route names the doors on the way in and out.</li>
-              <li>Propylon chambers, Mark and Recall are not included yet.</li>
+              <li>Propylons, dialogue transports (Mournhold) and teleporting items come from the game&apos;s own scripts: a Propylon needs its index, and the Master Index sends every Propylon to Caldera. Tick the items you carry. Quest teleports, taken once in a quest, are left out unless you include them.</li>
+              <li>Mark and Recall are not included.</li>
             </ul>
           </div>
         </div>
@@ -648,7 +719,7 @@ export default function TravelWorkstation() {
                         <div className="text-xs font-serif font-bold text-fg-2">
                           Leg {step.stepNumber}: {labelOf(step.from)} to {labelOf(step.to)}
                         </div>
-                        {step.stepNumber === 1 && isPlace(step.from) && doorChain(step.from.slice(PLACE_PREFIX.length), access).length > 0 && (
+                        {step.stepNumber === 1 && step.walk && isPlace(step.from) && doorChain(step.from.slice(PLACE_PREFIX.length), access).length > 0 && (
                           <div className="text-[11px] text-fg-9">
                             Leave by the doors: {doorChain(step.from.slice(PLACE_PREFIX.length), access).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")} → outside
                           </div>
@@ -656,6 +727,8 @@ export default function TravelWorkstation() {
                         <div className="text-[11px] text-fg-13">
                           {step.walk
                             ? `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, in a straight line`
+                            : step.teleport
+                            ? `${step.label} at ${labelOf(step.from)}${step.board ? `, ${step.board}` : ""}`
                             : <>
                                 {step.spell ? `Cast ${step.kind}` : `Take the ${step.kind}`}
                                 {step.providerName ? ` (${step.providerName})` : ""} from {labelOf(step.from)}
@@ -663,9 +736,14 @@ export default function TravelWorkstation() {
                                 {step.alight ? ` to ${labelOf(step.to)}, ${step.alight}` : ""}
                               </>}
                         </div>
-                        {step.stepNumber === route.steps.length && isPlace(step.to) && doorChain(step.to.slice(PLACE_PREFIX.length), access).length > 0 && (
+                        {step.stepNumber === route.steps.length && step.walk && isPlace(step.to) && doorChain(step.to.slice(PLACE_PREFIX.length), access).length > 0 && (
                           <div className="text-[11px] text-fg-9">
                             Go in by the doors: outside → {doorChain(step.to.slice(PLACE_PREFIX.length), access).reverse().map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}
+                          </div>
+                        )}
+                        {step.questGated && (
+                          <div className="text-[11px] text-warning-2">
+                            Quest teleport{step.conditions?.length ? `: ${step.conditions.join("; ")}` : ""}.
                           </div>
                         )}
                         {step.ambiguous && (
@@ -734,8 +812,8 @@ export default function TravelWorkstation() {
 
           {mapData && (
             <TransitMap
-              positions={mapData.positions}
               edges={[...mapData.edges, ...routeSpellEdges]}
+              positions={routePositions}
               regions={mapData.regions}
               unplaced={mapData.unplaced}
               route={route}
