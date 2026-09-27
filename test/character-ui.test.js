@@ -10,6 +10,53 @@ function component(file,exportName="default"){
  const result=require('esbuild').buildSync({entryPoints:[path.resolve(file)],bundle:true,write:false,platform:'node',format:'cjs',jsx:'automatic',external:['react','react/jsx-runtime']});
  const m=new Module(path.resolve(file),module);m.paths=module.paths;m._compile(result.outputFiles[0].text,path.resolve(file));return m.exports[exportName];
 }
+
+test('Gear Advisor renders without a browser document',()=>{
+ const previous=global.document;
+ try {
+  delete global.document;
+  const Gear=component('components/character-builder/gear-advisor.jsx','GearAdvisorView');
+  const html=require('react-dom/server').renderToString(React.createElement(Gear,{build:{},result:{status:'idle'},onLoad(){}}));
+  assert.match(html,/Optimize Gear/);
+  assert.doesNotMatch(html,/Loading late-game/);
+ } finally { global.document=previous; }
+});
+
+test('Gear Advisor surfaces independent catalog failures and retry actions',async()=>{
+ const dom=new JSDOM('<div id="root"></div><div id="gear-box">Stale equipment</div>',{url:'http://localhost/'});
+ global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+ const Gear=component('components/character-builder/gear-advisor.jsx','GearAdvisorView');
+ const root=createRoot(document.getElementById('root'));let early=0,late=0;
+ try {
+  await act(async()=>root.render(React.createElement(Gear,{build:{},result:{status:'error',retry:()=>early++},bisResult:{status:'error',retry:()=>late++},onLoad(){}})));
+  await act(async()=>[...document.querySelectorAll('#root button')].find(b=>b.textContent==='Optimize Gear').click());
+  assert.equal(document.querySelectorAll('#root [role="alert"]').length,2);
+  assert.doesNotMatch(document.getElementById('root').textContent,/Stale equipment/);
+  assert.equal(document.getElementById('gear-box').textContent,'Stale equipment');
+  for(const b of [...document.querySelectorAll('#root button')].filter(b=>b.textContent==='Retry'))await act(async()=>b.click());
+  assert.deepEqual([early,late],[1,1]);
+  assert.ok([...document.querySelectorAll('#root button')].filter(b=>b.textContent.startsWith('Equip ')).every(b=>b.disabled));
+ } finally {await act(async()=>root.unmount());dom.window.close();}
+});
+
+test('saved-characters entry opens the native vault without moving legacy nodes or changing storage',async()=>{
+ const dom=new JSDOM('<div id="root"></div><div id="custom"><div id="local-characters">Old UI</div></div>',{url:'http://localhost/'});
+ global.window=dom.window;global.document=dom.window.document;global.CustomEvent=dom.window.CustomEvent;global.IS_REACT_ACT_ENVIRONMENT=true;
+ const Panel=component('components/character-builder/local-characters-panel.jsx');
+ const root=createRoot(document.getElementById('root'));let opened=0;
+ window.localStorage.setItem('siltstrider-saved-characters','existing personal data');
+ window.addEventListener('silt-open-vault',()=>opened++);
+ try {
+  await act(async()=>root.render(React.createElement(Panel)));
+  assert.equal(document.getElementById('local-characters').parentElement.id,'custom');
+  assert.equal(document.getElementById('local-characters-slot'),null);
+  await act(async()=>document.getElementById('btn-open-cloud-vault').click());
+  assert.equal(opened,1);
+ } finally {await act(async()=>root.unmount());}
+ assert.equal(document.getElementById('local-characters').parentElement.id,'custom');
+ assert.equal(window.localStorage.getItem('siltstrider-saved-characters'),'existing personal data');
+ dom.window.close();
+});
 test('React builder locks preset fields, names every dropdown, and enables custom edits',async()=>{
  const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
  global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
@@ -28,17 +75,19 @@ test('React builder locks preset fields, names every dropdown, and enables custo
   assert.equal(document.querySelectorAll('select:disabled').length,0);
  }finally{await act(async()=>root.unmount());dom.window.close();}
 });
-test('React optimizer uses one action, preserves endgame and clears results on character changes',async()=>{
+test('React optimizer ignores legacy controls and clears results on character changes',async()=>{
  const dom=new JSDOM('<div id="root"></div><input id="gear-steal" type="checkbox" checked><input id="gear-endgame" type="checkbox"><button id="btn-gear"></button><div id="gear-box"></div>',{url:'http://localhost/'});
  global.window=dom.window;global.document=dom.window.document;global.Event=dom.window.Event;global.MutationObserver=dom.window.MutationObserver;global.IS_REACT_ACT_ENVIRONMENT=true;
  const Gear=component('components/character-builder/gear-advisor.jsx','GearAdvisorView');
  const root=createRoot(document.getElementById('root'));
- window.makeBuildProfile=()=>({armRanked:[],wepRanked:[]});
+ window.makeBuildProfile=()=>{throw new Error('Retired ranking called');};
+ window.optimizeGear=()=>{throw new Error('Retired optimizer called');};
  document.getElementById('btn-gear').onclick=()=>document.getElementById('gear-box').innerHTML='<details><summary>Early game</summary>Old early rows</details><details><summary>Optimized endgame kit</summary>Argonian equipment</details>';
  try{
   await act(async()=>root.render(React.createElement(Gear,{build:{race:'Argonian'},result:{status:'loading'},onLoad(){}})));
   await act(async()=>document.querySelector('#root button').click());
-  assert.match(document.getElementById('root').textContent,/Argonian equipment/);
+  assert.match(document.getElementById('root').textContent,/Loading early-game equipment/);
+  assert.doesNotMatch(document.getElementById('root').textContent,/Argonian equipment/);
   assert.doesNotMatch(document.getElementById('root').textContent,/Old early rows/);
   assert.equal(document.querySelectorAll('#root details').length,2);
   assert.equal(document.querySelectorAll('#root input').length,4);
@@ -48,7 +97,8 @@ test('React optimizer uses one action, preserves endgame and clears results on c
   assert.doesNotMatch(document.getElementById('root').textContent,/Argonian equipment/);
   assert.equal(document.getElementById('gear-box').innerHTML,'');
   const [steal,endgame]=document.querySelectorAll('#root input');
-  await act(async()=>endgame.click());assert.equal(document.getElementById('gear-endgame').checked,true);
+  await act(async()=>endgame.click());assert.equal(document.getElementById('gear-endgame').checked,false);
+  assert.equal(endgame.checked,true);
   await act(async()=>steal.click());assert.equal(endgame.disabled,false);assert.equal(endgame.checked,true);
   await act(async()=>steal.click());assert.equal(endgame.disabled,false);assert.equal(endgame.checked,true);
  }finally{await act(async()=>root.unmount());dom.window.close();}

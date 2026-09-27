@@ -439,7 +439,7 @@ test('BestInSlotView renders complete late-game gear tables with scores and warn
   }
 });
 
-test('GearAdvisorView wires BestInSlotView when bisResult is ready and falls back cleanly', async () => {
+test('GearAdvisorView wires BestInSlotView and shows loading instead of stale legacy HTML', async () => {
   const dom = new JSDOM(
     '<div id="root"></div><input id="gear-steal" type="checkbox" checked><input id="gear-endgame" type="checkbox"><button id="btn-gear"></button><div id="gear-box"></div>',
     { url: 'http://localhost/' }
@@ -482,7 +482,7 @@ test('GearAdvisorView wires BestInSlotView when bisResult is ready and falls bac
     assert.match(content, /Masque of Clavicus Vile/);
     assert.match(content, /Keening/);
 
-    // 2. Fallback when bisResult is not ready uses legacy gearHtml
+    // 2. A pending bundle must not display stale legacy HTML
     document.getElementById('btn-gear').onclick = () => {
       document.getElementById('gear-box').innerHTML = '<details><summary>Optimized endgame kit</summary>Legacy HTML Gear</details>';
     };
@@ -499,7 +499,8 @@ test('GearAdvisorView wires BestInSlotView when bisResult is ready and falls bac
 
     const optBtnFallback = [...document.querySelectorAll('#root button')].find(b => b.textContent.includes('Optimize Gear'));
     await act(async () => optBtnFallback.click());
-    assert.match(document.getElementById('root').textContent, /Legacy HTML Gear/);
+    assert.doesNotMatch(document.getElementById('root').textContent, /Legacy HTML Gear/);
+    assert.match(document.getElementById('root').textContent, /Loading late-game equipment/);
   } finally {
     await act(async () => root.unmount());
     dom.window.close();

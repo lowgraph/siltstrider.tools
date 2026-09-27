@@ -256,3 +256,20 @@ Validation: 510 site tests passed (`npm test`); 498 pipeline tests passed; stati
 
 Next agent: first run `npm test` in `A:\Claude\morrowind-tools`. No extraction or bundle rebuild required.
 
+
+
+## Final builder DOM bridges removed, 27 September 2026
+
+No schema or data changes. Gear Advisor no longer reads/writes legacy controls,
+calls global optimizers, observes #gear-box, or injects its HTML. Native bundle
+results show independent early/late loading and failure states with retries.
+The local-characters panel no longer relocates old DOM nodes; its existing
+silt-open-vault event still opens the native vault. Browser storage is untouched.
+Concurrent Dark Brotherhood and gear-source improvements were preserved.
+
+Validation: 522 tests passed and static build succeeded. Browser verification
+covered optimization, two-handed selection, equipping early and late recommendations,
+and opening the native vault; no JavaScript errors. Desktop gear and mobile vault
+screenshots were inspected. Next agent: first run `npm test`; review the task's
+explicit files before committing because other work shares this checkout.
+No commit, push, deployment, extraction, or bundle rebuild in this batch.

@@ -1,5 +1,11 @@
 # Changelog
 
+## Remaining builder bridges removed — 2026-09-27
+
+- Gear Advisor now uses React state and bundle data exclusively, with independent loading, error, and retry states for early and late-game recommendations.
+- Removed legacy optimizer calls, HTML injection, DOM checkbox synchronization, and mutation observers.
+- The saved-characters entry retains its native vault action without moving old DOM nodes or modifying browser saves.
+
 ## Stylesheet consolidation — 2026-09-27
 
 - Consolidated shared styles into `app/globals.css` and removed the separate legacy stylesheet import.

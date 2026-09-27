@@ -7,17 +7,6 @@ import { buildGearGroups } from '../../lib/gear-rows.mjs';
 import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
 import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
-// Keep the verified endgame tables and notes; the bundle supplies early rows.
-function endgameHtml(html){
-  if (typeof document === 'undefined') return html;
-  const template=document.createElement('template');
-  template.innerHTML=html;
-  for(const details of template.content.querySelectorAll('details')){
-    if(details.querySelector('summary')?.textContent.trim()==='Early game')details.remove();
-  }
-  return template.innerHTML;
-}
-
 export default function GearAdvisor(props){
   const [enabled,setEnabled]=useState(false);
   const result=useGameData('gear',{enabled});
@@ -28,49 +17,17 @@ export default function GearAdvisor(props){
 export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResult, onLoad, onEquip }) {
   const [ranking,setRanking]=useState(null);
   const [rankError,setRankError]=useState(null);
-  const [nearStart, setNearStart] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-near-start")?.checked : false) ?? false);
-  const [stealEarly, setStealEarly] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-steal")?.checked : true) ?? true);
-  const [endgameEarly, setEndgameEarly] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-endgame")?.checked : false) ?? false);
+  const [nearStart, setNearStart] = useState(false);
+  const [stealEarly, setStealEarly] = useState(true);
+  const [endgameEarly, setEndgameEarly] = useState(false);
   const [darkBrotherhood, setDarkBrotherhood] = useState(false);
   const gearToggles = {theft:stealEarly,endgame:endgameEarly,nearStart,darkBrotherhood};
-  const [gearHtml, setGearHtml] = useState("");
   const [optimizing, setOptimizing] = useState(false);
   const [hasRun, setHasRun] = useState(false);
   const [weaponSetup, setWeaponSetup] = useState('one-handed');
   const displayedRanking = ranking && { ...ranking, weaponSetup, twoHand: weaponSetup === 'two-handed', shield: weaponSetup === 'one-handed' ? 'recommended' : 'none' };
 
-  // Sync with DOM checkboxes if legacy runtime is present
-  const handleToggleSteal = (val) => {
-    setStealEarly(val);
-    const el = document.getElementById("gear-steal");
-    if (el) {
-      el.checked = val;
-      el.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-  };
-
-  const handleToggleEndgame = (val) => {
-    setEndgameEarly(val);
-    const el = document.getElementById("gear-endgame");
-    if (el) {
-      el.checked = val;
-      el.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-  };
-
-  const handleToggleNearStart = (val) => {
-    setNearStart(val);
-    const el = document.getElementById("gear-near-start");
-    if (el) {
-      el.checked = val;
-      el.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-  };
-
   const resolveRanking = () => {
-    if (typeof window !== "undefined" && typeof window.makeBuildProfile === 'function') {
-      return window.makeBuildProfile(build?.maj || [], build?.min || [], build?.spec || '', build?.race || '', attrs, build?.sign || '');
-    }
     const maj = build?.maj || [];
     const min = build?.min || [];
     const skills = [...maj, ...min];
@@ -90,12 +47,9 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const buildKey = JSON.stringify(build);
   // A result is valid only for the character used to compute it.
   useEffect(() => {
-    setGearHtml("");
     setRanking(null);
     setRankError(null);
     setHasRun(false);
-    const box = document.getElementById("gear-box");
-    if (box) box.innerHTML = "";
   }, [buildKey]);
 
   const handleOptimize = () => {
@@ -106,10 +60,6 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       const prof = resolveRanking();
       setRanking(prof);
       setRankError(null);
-      const btn = document.getElementById("btn-gear");
-      if (btn) btn.click();
-      else if (typeof window !== "undefined" && typeof window.optimizeGear === "function") window.optimizeGear();
-      setGearHtml(endgameHtml(document.getElementById("gear-box")?.innerHTML || ""));
     } catch(error) {
       setRankError(error.message);
     } finally {
@@ -125,14 +75,6 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       onEquip(recommendedLoadouts(groups, bisResult.data.catalogs, build, {late}));
     } catch (error) { setRankError(error.message); }
   };
-
-  useEffect(() => {
-    const box = document.getElementById("gear-box");
-    if (!box) return;
-    const observer = new MutationObserver(() => setGearHtml(endgameHtml(box.innerHTML)));
-    observer.observe(box, { childList: true, subtree: true, characterData: true });
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <div
@@ -162,7 +104,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
                 type="checkbox"
                 className="accent-accent w-4 h-4"
                 checked={stealEarly}
-                onChange={(e) => handleToggleSteal(e.target.checked)}
+                onChange={(e) => setStealEarly(e.target.checked)}
               />
               <span>Steal early gear</span>
             </label>
@@ -172,7 +114,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
                 type="checkbox"
                 className="accent-accent w-4 h-4"
                 checked={endgameEarly}
-                onChange={(e) => handleToggleEndgame(e.target.checked)}
+                onChange={(e) => setEndgameEarly(e.target.checked)}
               />
               <span>Endgame gear early</span>
             </label>
@@ -181,7 +123,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
                 type="checkbox"
                 className="accent-accent w-4 h-4"
                 checked={nearStart}
-                onChange={(e) => handleToggleNearStart(e.target.checked)}
+                onChange={(e) => setNearStart(e.target.checked)}
               />
               <span>Near starting areas</span>
             </label>
@@ -227,7 +169,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
         ))}
       </div>
       {rankError&&<p role="alert">{rankError}</p>}
-      {gearHtml || (hasRun && bisResult?.status === "ready") ? (
+      {hasRun ? (
         <div className="gear-results-container text-sm overflow-x-auto text-fg-2">
           <GearSourcesView ranking={displayedRanking} build={build} beast={beast} result={result} toggles={gearToggles}/>
           {bisResult?.status === "ready" ? (
@@ -239,7 +181,11 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
               allowFormidableSources={endgameEarly}
             />
           ) : (
-            <div dangerouslySetInnerHTML={{ __html: gearHtml }}/>
+            <details open><summary>Optimized endgame kit</summary>
+              {bisResult?.status === "error" ? (
+                <p role="alert">Late-game equipment could not be loaded. <button type="button" className="mw-btn" onClick={bisResult.retry}>Retry</button></p>
+              ) : <p role="status">Loading late-game equipment...</p>}
+            </details>
           )}
         </div>
       ) : (
