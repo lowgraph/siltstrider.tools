@@ -54,6 +54,11 @@ test("AboutView contains dedicated System Accuracy & Game Mechanics section", ()
   assert.match(aboutSrc, /\.omwsave/, "must mention .omwsave parsing");
   assert.match(aboutSrc, /strictly client-side/, "must affirm client-side execution");
 
+  // Disambiguation
+  assert.match(aboutSrc, /about-disambiguation/, "must contain about-disambiguation container");
+  assert.match(aboutSrc, /Tales from Nirn: Silt Strider/, "must cite Tales from Nirn: Silt Strider server");
+  assert.match(aboutSrc, /https:\/\/siltstrider\.com/, "must provide disambiguation link to siltstrider.com");
+
   // Negative assertion: no prohibited overstatements
   assert.doesNotMatch(aboutSrc, /verified by hand against UESP/i, "About must not overstate checking methodology");
 });

@@ -64,8 +64,8 @@ test("app/layout.jsx defines complete OpenGraph, Twitter, and JSON-LD metadata",
   assert.match(layout, /metadataBase:\s*new URL\(['"]https:\/\/siltstrider\.tools['"]\)/, "metadataBase must be https://siltstrider.tools");
   
   // Title template
-  assert.match(layout, /title:\s*\{[^}]*default:\s*['"]Silt Strider — Morrowind Build Planner & Progression Toolbox['"]/, "default title must match");
-  assert.match(layout, /template:\s*['"]%s \| Silt Strider['"]/, "title template must match");
+  assert.match(layout, /title:\s*\{[^}]*default:\s*['"]Silt Strider Tools — Morrowind Build Planner & Progression Toolbox['"]/, "default title must match");
+  assert.match(layout, /template:\s*['"]%s \| Silt Strider Tools['"]/, "title template must match");
   
   // Canonical alternate
   assert.match(layout, /canonical:\s*['"]https:\/\/siltstrider\.tools['"]/, "canonical link must be defined");

@@ -8,11 +8,21 @@ export default function AboutView() {
   return (
     <div className="about-view-root w-full max-w-4xl mx-auto p-4 md:p-6 space-y-6" id="about-content">
       <div className="border-b border-accent pb-4">
-        <h2 className="text-2xl md:text-3xl font-serif text-accent tracking-wide">About Silt Strider</h2>
+        <h2 className="text-2xl md:text-3xl font-serif text-accent tracking-wide">About Silt Strider Tools</h2>
         <p className="text-sm text-fg-11 mt-1 font-serif">Morrowind Build Planner &amp; Challenge Run Generator</p>
       </div>
 
       <div className="space-y-4 text-sm leading-relaxed text-fg-2">
+        <div className="about-disambiguation space-y-2 bg-surface-7 p-4 border border-line-9 rounded-none">
+          <h3 className="text-base font-serif text-accent mb-1">Disambiguation</h3>
+          <p className="text-xs text-fg-7 leading-relaxed">
+            <strong className="text-fg-2">Silt Strider Tools</strong> (<a href="https://siltstrider.tools" className="text-accent underline hover:text-fg-2">siltstrider.tools</a>) is an independent web companion, character builder, and game calculation toolbox for single-player <em>The Elder Scrolls III: Morrowind</em> and <em>OpenMW</em>.
+          </p>
+          <p className="text-xs text-fg-7 leading-relaxed">
+            It is completely separate and not affiliated with the multiplayer roleplay server project <em>Tales from Nirn: Silt Strider</em> on TES3MP. If you are looking for their persistent roleplay server and modpack, visit <a href="https://siltstrider.com" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-fg-2">siltstrider.com</a>.
+          </p>
+        </div>
+
         <div className="about-legal space-y-3 bg-surface-7 p-4 border border-line-9 rounded-none">
           <p>
             Silt Strider is an unofficial fan project. It is neither directly nor indirectly affiliated with, endorsed by, or sponsored by Bethesda Softworks, Bethesda Game Studios, or ZeniMax Media.

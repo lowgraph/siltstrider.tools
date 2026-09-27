@@ -11,8 +11,8 @@ const instrumentSerif = Instrument_Serif({ subsets: ['latin'], weight: '400', st
 export const metadata = {
   metadataBase: new URL('https://siltstrider.tools'),
   title: {
-    default: 'Silt Strider — Morrowind Build Planner & Progression Toolbox',
-    template: '%s | Silt Strider',
+    default: 'Silt Strider Tools — Morrowind Build Planner & Progression Toolbox',
+    template: '%s | Silt Strider Tools',
   },
   description:
     'The definitive data-driven character builder, 5x multiplier level simulator, alchemy calculator, and travel planner for The Elder Scrolls III: Morrowind, Tamriel Rebuilt, and ARCE.',
@@ -21,17 +21,17 @@ export const metadata = {
   },
   canonical: 'https://siltstrider.tools',
   openGraph: {
-    title: 'Silt Strider — Morrowind Build Planner & Progression Toolbox',
+    title: 'Silt Strider Tools — Morrowind Build Planner & Progression Toolbox',
     description:
       'The definitive data-driven character builder, 5x multiplier level simulator, alchemy calculator, and travel planner for The Elder Scrolls III: Morrowind, Tamriel Rebuilt, and ARCE.',
     url: 'https://siltstrider.tools',
-    siteName: 'Silt Strider',
+    siteName: 'Silt Strider Tools',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Silt Strider — Morrowind Build Planner & Progression Toolbox',
+        alt: 'Silt Strider Tools — Morrowind Build Planner & Progression Toolbox',
       },
     ],
     locale: 'en_US',
@@ -39,7 +39,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Silt Strider — Morrowind Build Planner & Progression Toolbox',
+    title: 'Silt Strider Tools — Morrowind Build Planner & Progression Toolbox',
     description:
       'The definitive data-driven character builder, 5x multiplier level simulator, alchemy calculator, and travel planner for The Elder Scrolls III: Morrowind, Tamriel Rebuilt, and ARCE.',
     images: ['/og-image.png'],
@@ -64,7 +64,7 @@ export const metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'Silt Strider',
+  name: 'Silt Strider Tools',
   url: 'https://siltstrider.tools',
   description:
     'The definitive data-driven character builder, 5x multiplier level simulator, alchemy calculator, and travel planner for The Elder Scrolls III: Morrowind, Tamriel Rebuilt, and ARCE.',

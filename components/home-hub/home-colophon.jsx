@@ -11,7 +11,7 @@ export default function HomeColophon({ onNavigate }) {
   return (
     <section className="home-colophon" aria-label="Site links and credits">
       <div className="home-colophon-brand">
-        <span className="home-colophon-name">Silt Strider</span>
+        <span className="home-colophon-name">Silt Strider Tools</span>
         <div className="home-sub">A free, unofficial toolbox for The Elder Scrolls III: Morrowind.</div>
         <div className="home-support">
           <a href="https://ko-fi.com/tmarcalferreira" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>
@@ -30,7 +30,8 @@ export default function HomeColophon({ onNavigate }) {
       ))}
       <div className="home-colophon-note">
         Game data read straight from Morrowind.esm, Tribunal.esm, Bloodmoon.esm, Tamriel_Data and TR_Mainland (26.08 Poison
-        Song). Typeface: Pelagiad by Isak Larborn.
+        Song). Typeface: Pelagiad by Isak Larborn. Looking for the <em>Tales from Nirn</em> TES3MP server? Visit{" "}
+        <a href="https://siltstrider.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>siltstrider.com</a>.
       </div>
     </section>
   );
