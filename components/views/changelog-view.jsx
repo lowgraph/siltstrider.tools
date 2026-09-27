@@ -14,6 +14,17 @@ export default function ChangelogView() {
 
       <div className="space-y-6 text-sm text-fg-2">
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-27">September 27, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Early gear respects the rules a new character plays by: vault and chapel gear is theft, gear behind locked doors is refused, and Ordinator uniforms are left out.</li>
+            <li>Merchants sell what they keep near them, and sources name the merchant and the place instead of a crate and a grid cell.</li>
+            <li>Marksman gets a bow over darts. Devil, Demon and Fiend weapons rank by the Bound weapon they conjure and count as endgame gear.</li>
+            <li>New Dark Brotherhood armor toggle: the light set worn by the assassin who may attack while you rest.</li>
+            <li>Enchanted rings and amulets come before blank ones, and enchanted items list their effects.</li>
+            <li>Travel names pack guar caravans, sky lamps and carriages.</li>
+          </ul>
+        </section>
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-24">September 24, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Challenge Runs is back in the main navigation. Character sheets show racial powers and keep attribute totals on one line.</li>

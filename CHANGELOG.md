@@ -1,5 +1,26 @@
 # Changelog
 
+## Account routing and profile-link fixes — 2026-09-27
+
+- Added an exported Account route so direct links and refreshes work.
+- World selection overrides query-string settings while retaining unrelated parameters.
+- Navigation, mixed query/hash links, and shared challenges preserve their selected game profile.
+
+## Early-game gear, from testing — 2026-09-27
+
+Gear recommendations follow new early-game gear rows. They appear once the rows are rebuilt and the site is redeployed.
+
+- **Vault and chapel gear is theft:** a new character belongs to no faction, so Redoran vault and Imperial Cult chapel gear needs the steal toggle.
+- **No Ordinator uniforms:** the Indoril helmets and cuirasses that make Ordinators attack you are no longer recommended. The rest of the set still is.
+- **A bow for Marksman:** darts and stars are used up as you throw them, so they only appear when no bow qualifies.
+- **Devil, Demon and Fiend weapons:** each is ranked by the Bound weapon it conjures, which says its damage, duration and casts per charge. They now count as endgame gear.
+- **Travel names its vehicles:** pack guar caravans, sky lamps and carriages instead of generic transport.
+- **Where and from whom:** a source names the place ("Ald-ruhn", not a grid cell) and, on a purchase, the merchant rather than their crate.
+- **Locked doors count:** gear behind a locked door is refused, like a locked chest. This covers the Dwemer Helm in Briricca's bank vault and the Old Ebonheart Mages Guild storeroom.
+- **Merchants sell what is near them:** a merchant's stock kept in their house or another building is theft, as in the game. Tamriel Rebuilt's hidden holding cells no longer count.
+- **Dark Brotherhood armor toggle:** the light armor worn by Tribunal's assassin, who may attack while you rest from level 1, at 30 armor a piece.
+- **Enchanted before blank:** rings and amulets that are already enchanted come before blank ones with more room, so Mentor's Ring beats an Exquisite Ring. Enchanted items list their effects.
+
 ## Clean HTML5 path routing and hash migration — 2026-09-27
 
 - Transitioned workstation and tool navigation from URL hash fragments (`#builder`, `#alchemy`, etc.) to clean HTML5 History API path routing (`/builder`, `/leveler`, etc.).

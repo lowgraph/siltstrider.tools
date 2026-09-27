@@ -142,6 +142,24 @@ test('clothing sources show enchant capacity as the game does, not the record\'s
  }finally{await act(async()=>root.unmount());dom.window.close();}
 });
 
+test('an enchanted ring says what it does, not how much room it has',async()=>{
+ const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
+ global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+ const View=component('components/character-builder/gear-sources.jsx','GearSourcesView');
+ const root=createRoot(document.getElementById('root'));
+ const fortify=attribute=>({name:'Fortify Attribute',attribute,skill:null,min:10,max:10,seconds:null,range:'self',drawback:false});
+ const mentor={key:'ring_mentor_unique',name:"Mentor's Ring",cellKey:'interior:samarys ancestral tomb',place:'Samarys Ancestral Tomb',strength:100,acquisition:'take',price:null,nearStart:true,
+  enchanted:{castType:'constant_effect',worth:100.1,charges:null,effects:[fortify('intelligence'),fortify('willpower')]}};
+ const row={key:'clothing/ring/-/000/power',category:'clothing',slot:'ring',toggles:{theft:false,endgame:false,nearStart:false},primary:mentor};
+ const result={status:'ready',data:{profile:'vanilla',catalogs:{GearRows:[row]},metadata:{}}};
+ try{
+  const props={build:{maj:[]},ranking:{armRanked:[{n:'Heavy Armor'}],primaryArmor:'Heavy Armor',wepRanked:[]},result,toggles:{theft:false,endgame:false,nearStart:false}};
+  await act(async()=>root.render(React.createElement(View,props)));
+  assert.match(document.body.textContent,/Enchanted \(constant effect\): Fortify Intelligence 10, Fortify Willpower 10\./);
+  assert.doesNotMatch(document.body.textContent,/enchant capacity/);
+ }finally{await act(async()=>root.unmount());dom.window.close();}
+});
+
 test('a Devil weapon shows its own damage and the Bound weapon it conjures',async()=>{
  const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
  global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
