@@ -123,3 +123,18 @@ test('a source reads as a place and a merchant, not a grid key and a crate',asyn
   {where:'old ebonheart, briricca private bank',who:''},'an older release falls back to the key, and a loose item is not its own holder');
  assert.deepEqual(sourceLabel({name:'X',cellKey:'interior:shop',acquisition:'purchase',holder:'Crate'}),{where:'shop',who:'Crate'},'no seller published: the holder, as before');
 });
+test('Dark Brotherhood rows join their slot only under their own toggle',async()=>{
+ const {selectGearRows,buildGearGroups,rowMatches}=await mod;
+ const ambush=row({key:'db',slot:'helmet',armorClass:'light',toggles:{darkBrotherhood:true},
+  primary:{...pick('darkbrotherhood helm',30),acquisition:'ambush',note:'Worn by the assassin.'}});
+ const plain=row({key:'chitin',slot:'helmet',armorClass:'light',primary:pick('chitin helm',10)});
+ assert.equal(rowMatches(ambush,toggles),false,'off by default');
+ assert.equal(rowMatches(ambush,{...toggles,theft:true,darkBrotherhood:true}),true,'whatever the policy toggles');
+ assert.equal(rowMatches(plain,{...toggles,darkBrotherhood:true}),true,'policy rows stay');
+ assert.equal(rowMatches(plain,{theft:false,endgame:false,nearStart:false}),true,'callers without the new toggle still match');
+ assert.deepEqual(selectGearRows([plain,ambush],{maj:['Light Armor']},toggles),[plain]);
+ const light={...profile,armRanked:[{n:'Light Armor'}],primaryArmor:'Light Armor'};
+ const helm=on=>buildGearGroups({GearRows:[plain,ambush]},{maj:['Light Armor']},{...toggles,darkBrotherhood:on},light)[0].rows[0].primary;
+ assert.equal(helm(false).key,'chitin helm');
+ assert.equal(helm(true).key,'darkbrotherhood helm','30 armor beats 10, both come to hand early');
+});

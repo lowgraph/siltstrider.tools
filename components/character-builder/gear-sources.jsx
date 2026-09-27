@@ -13,10 +13,11 @@ function SourceRow({row,pick,alternative=false,enchantMult=0.1}){
         {pick.condition&&` Condition: ${pick.condition.raw}/${pick.condition.maximum}.`}
         {pick.needsRepair&&' Broken: repair before use. Repair cost is not included.'}
         {pick.evidenceTruncated&&' Source search was capped; a better source may exist.'}
+        {pick.note&&' '+pick.note}
       </span>}
     </td>
     <td>{pick?<><span className="where">{source.where}{source.who?` — ${source.who}`:''}</span>
-      <span className="gear-note">{pick.acquisition}{pick.acquisition==='purchase'?` · Estimated value: ${pick.price ?? 'unknown'} gold`:''}{pick.theftRequired?' · Theft required':''} · {pick.nearStart?'Near starting area':'Farther away'}</span>
+      <span className="gear-note">{pick.acquisition}{pick.acquisition==='purchase'?` · Estimated value: ${pick.price ?? 'unknown'} gold`:''}{pick.theftRequired?' · Theft required':''} · {pick.acquisition==='ambush'?'Comes to you':pick.nearStart?'Near starting area':'Farther away'}</span>
     </>:<span>No eligible source found in the published evidence.</span>}</td>
   </tr>;
 }

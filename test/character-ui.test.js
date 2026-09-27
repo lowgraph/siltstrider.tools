@@ -41,7 +41,9 @@ test('React optimizer uses one action, preserves endgame and clears results on c
   assert.match(document.getElementById('root').textContent,/Argonian equipment/);
   assert.doesNotMatch(document.getElementById('root').textContent,/Old early rows/);
   assert.equal(document.querySelectorAll('#root details').length,2);
-  assert.equal(document.querySelectorAll('#root input').length,3);
+  assert.equal(document.querySelectorAll('#root input').length,4);
+  const brotherhood=[...document.querySelectorAll('#root label')].find(l=>/Dark Brotherhood armor/.test(l.textContent));
+  assert.equal(brotherhood.querySelector('input').checked,false,'the assassins are opt-in');
   await act(async()=>root.render(React.createElement(Gear,{build:{race:'Breton'},result:{status:'loading'},onLoad(){}})));
   assert.doesNotMatch(document.getElementById('root').textContent,/Argonian equipment/);
   assert.equal(document.getElementById('gear-box').innerHTML,'');
@@ -103,6 +105,28 @@ test('a Devil weapon shows its own damage and the Bound weapon it conjures',asyn
   const props={build:{maj:['Short Blade']},ranking:{armRanked:[{n:'Unarmored'}],primaryArmor:'Unarmored',wepRanked:[{n:'Short Blade'}],primaryWep:'Short Blade',twoHand:false,shield:'none'},result,toggles:{theft:false,endgame:true,nearStart:false}};
   await act(async()=>root.render(React.createElement(View,props)));
   assert.match(document.body.textContent,/Base damage: 6\. Summons Bound Dagger \(damage 20\) for 60 s, 5 casts per charge\./);
+ }finally{await act(async()=>root.unmount());dom.window.close();}
+});
+
+test('Dark Brotherhood armor says the assassin comes to you, not where it lies',async()=>{
+ const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
+ global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+ const View=component('components/character-builder/gear-sources.jsx','GearSourcesView');
+ const root=createRoot(document.getElementById('root'));
+ const helm={key:'darkbrotherhood helm',name:'Dark Brotherhood Helm',cellKey:null,place:'Wherever you rest',holder:'Assassin',strength:30,
+  acquisition:'ambush',price:null,nearStart:true,note:'Worn by the Dark Brotherhood assassin Tribunal sends while you sleep.'};
+ const row={key:'armor/helmet/light/darkBrotherhood/power',category:'armor',slot:'helmet',armorClass:'light',toggles:{darkBrotherhood:true},primary:helm};
+ const result={status:'ready',data:{profile:'vanilla',catalogs:{GearRows:[row]},metadata:{}}};
+ const props={build:{maj:['Light Armor']},ranking:{armRanked:[{n:'Light Armor'}],primaryArmor:'Light Armor',wepRanked:[{n:'Hand-to-hand'}],primaryWep:'Hand-to-hand',twoHand:true,shield:'none'},result};
+ try{
+  await act(async()=>root.render(React.createElement(View,{...props,toggles:{theft:false,endgame:false,nearStart:false,darkBrotherhood:true}})));
+  const text=document.body.textContent;
+  assert.match(text,/Dark Brotherhood Helm/);
+  assert.match(text,/Base armor rating: 30\. Worn by the Dark Brotherhood assassin Tribunal sends while you sleep\./);
+  assert.match(text,/Wherever you rest — Assassin/);
+  assert.match(text,/ambush · Comes to you/);
+  await act(async()=>root.render(React.createElement(View,{...props,toggles:{theft:false,endgame:false,nearStart:false,darkBrotherhood:false}})));
+  assert.doesNotMatch(document.body.textContent,/Dark Brotherhood Helm/);
  }finally{await act(async()=>root.unmount());dom.window.close();}
 });
 

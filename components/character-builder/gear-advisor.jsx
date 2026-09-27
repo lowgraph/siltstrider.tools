@@ -31,6 +31,8 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const [nearStart, setNearStart] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-near-start")?.checked : false) ?? false);
   const [stealEarly, setStealEarly] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-steal")?.checked : true) ?? true);
   const [endgameEarly, setEndgameEarly] = useState(() => (typeof document !== 'undefined' ? document.getElementById("gear-endgame")?.checked : false) ?? false);
+  const [darkBrotherhood, setDarkBrotherhood] = useState(false);
+  const gearToggles = {theft:stealEarly,endgame:endgameEarly,nearStart,darkBrotherhood};
   const [gearHtml, setGearHtml] = useState("");
   const [optimizing, setOptimizing] = useState(false);
   const [hasRun, setHasRun] = useState(false);
@@ -119,7 +121,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
     try {
       const groups = late
         ? resolveBestInSlotPicks(bisResult.data, build, { beast, weaponSetup, allowFormidableSources:endgameEarly }).groups
-        : buildGearGroups(result.data.catalogs, build, {theft:stealEarly,endgame:endgameEarly,nearStart}, displayedRanking, {beast});
+        : buildGearGroups(result.data.catalogs, build, gearToggles, displayedRanking, {beast});
       onEquip(recommendedLoadouts(groups, bisResult.data.catalogs, build, {late}));
     } catch (error) { setRankError(error.message); }
   };
@@ -183,6 +185,16 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
               />
               <span>Near starting areas</span>
             </label>
+            <label className="flex items-center gap-2 cursor-pointer text-fg-2"
+              title="Tribunal's assassins may attack while you rest, from level 1, each wearing the whole light armor set">
+              <input
+                type="checkbox"
+                className="accent-accent w-4 h-4"
+                checked={darkBrotherhood}
+                onChange={(e) => setDarkBrotherhood(e.target.checked)}
+              />
+              <span>Dark Brotherhood armor</span>
+            </label>
           </div>
 
           <button
@@ -217,7 +229,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       {rankError&&<p role="alert">{rankError}</p>}
       {gearHtml || (hasRun && bisResult?.status === "ready") ? (
         <div className="gear-results-container text-sm overflow-x-auto text-fg-2">
-          <GearSourcesView ranking={displayedRanking} build={build} beast={beast} result={result} toggles={{theft:stealEarly,endgame:endgameEarly,nearStart}}/>
+          <GearSourcesView ranking={displayedRanking} build={build} beast={beast} result={result} toggles={gearToggles}/>
           {bisResult?.status === "ready" ? (
             <BestInSlotView
               featureData={bisResult.data}
