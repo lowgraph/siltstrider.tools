@@ -201,6 +201,18 @@ export default function EnchantingWorkstation() {
 
   return (
     <div className="enchanting-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">
+      {/* Workstation Header Bar */}
+      <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
+            Morrowind Enchanting &amp; Soul Gem Calculator
+          </h2>
+          <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
+            Calculate enchantment points, constant effect soul requirements, self-enchant probabilities, and enchanter barter fees.
+          </p>
+        </div>
+      </div>
+
       {/* Top Banner: Active Character Stats Strip & Live Game-Data Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-5 border border-line-11">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
@@ -542,10 +554,13 @@ export default function EnchantingWorkstation() {
             <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
               <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Enchanting Formula:</span>
               <p className="leading-relaxed">
+                Points: <span className="font-mono text-accent">((Min + Max) × Duration + Area) × BaseCost × 0.025</span> (Target range adds 1.5×; Constant Effect uses fixed Duration = 100).
+              </p>
+              <p className="leading-relaxed">
                 Self-Enchant: <span className="font-mono text-accent">(0.75×Enchant + 0.25×Int + 0.1×Luck − 2.5×Points) × Fatigue</span>.
               </p>
               <p className="leading-relaxed text-fg-13">
-                Barter enchanter price scales with Merchant mercantile, disposition, and your character&apos;s barter attributes.
+                Total points cannot exceed item capacity. Barter enchanter price scales with Merchant mercantile, disposition, and your character&apos;s barter attributes.
               </p>
             </div>
           </div>

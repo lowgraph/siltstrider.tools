@@ -222,6 +222,18 @@ export default function SpellmakingWorkstation() {
 
   return (
     <div className="spellmaking-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">
+      {/* Workstation Header Bar */}
+      <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
+            Morrowind Spellmaking &amp; Casting Calculator
+          </h2>
+          <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
+            Compute Magicka costs, casting chance percentages, and spellmaker barter pricing across all magic schools.
+          </p>
+        </div>
+      </div>
+
       {/* Top Banner: Character Skills & Stats & Live Game-Data Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-5 border border-line-11">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
@@ -488,10 +500,13 @@ export default function SpellmakingWorkstation() {
             <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
               <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Casting Mechanics &amp; Costs:</span>
               <p className="leading-relaxed">
+                Magicka Cost: <span className="font-mono text-accent">⌊∑ ((Min + Max) × Duration + Area) × BaseCost × 0.05⌋</span> (Target spells add a 1.5× cost modifier).
+              </p>
+              <p className="leading-relaxed">
                 Cast chance: <span className="font-mono text-accent">(2×Skill + Willpower/5 + Luck/10 − MagickaCost) × Fatigue</span>.
               </p>
               <p className="leading-relaxed text-fg-13">
-                Primary school is determined by the highest-cost effect in the stack. Target spells add a 1.5× cost modifier.
+                Primary school is determined by the highest-cost effect in the stack. Fatigue term is 1.25× at full fatigue, dropping to 0.75× when exhausted.
               </p>
             </div>
           </div>

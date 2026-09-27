@@ -58,7 +58,23 @@ test("AboutView contains dedicated System Accuracy & Game Mechanics section", ()
   assert.doesNotMatch(aboutSrc, /verified by hand against UESP/i, "About must not overstate checking methodology");
 });
 
-test("Alchemy Workstation has contextual apparatus modifiers and engine formula cues", () => {
+test("Primary workstations provide semantic h2 heading hierarchy", () => {
+  const workstations = [
+    { file: "components/character-builder/character-builder-root.jsx", title: /Morrowind Character Builder &amp; Class Planner/ },
+    { file: "components/level-simulator/level-simulator-root.jsx", title: /Character Level Simulator &amp; Progression Optimizer/ },
+    { file: "components/calculators/alchemy/alchemy-workstation.jsx", title: /Morrowind Alchemy Potion Recipe Calculator/ },
+    { file: "components/calculators/spellmaking/spellmaking-workstation.jsx", title: /Morrowind Spellmaking &amp; Casting Calculator/ },
+    { file: "components/calculators/enchanting/enchanting-workstation.jsx", title: /Morrowind Enchanting &amp; Soul Gem Calculator/ },
+    { file: "components/calculators/travel/travel-workstation.jsx", title: /Morrowind Travel &amp; Transport Route Planner/ }
+  ];
+
+  for (const ws of workstations) {
+    const src = fs.readFileSync(path.join(ROOT, ws.file), "utf8");
+    assert.match(src, new RegExp(`<h2[^>]*>\\s*${ws.title.source}\\s*<\\/h2>`), `${ws.file} must have semantic h2 heading matching ${ws.title}`);
+  }
+});
+
+test("Alchemy Workstation has contextual apparatus modifiers and verified engine formula cues", () => {
   const alchemySrc = fs.readFileSync(
     path.join(ROOT, "components", "calculators", "alchemy", "alchemy-workstation.jsx"),
     "utf8"
@@ -74,6 +90,8 @@ test("Alchemy Workstation has contextual apparatus modifiers and engine formula 
   // Engine brewing formula cue
   assert.match(alchemySrc, /Engine Brewing Formula:/, "must contain engine brewing formula cue");
   assert.match(alchemySrc, /⌊Alchemy \+ 0\.1×Int \+ 0\.1×Luck⌋%/, "must state exact brew chance formula");
+  // Negative check: must not state that fatigue modifies brewing chance (fatigue does not apply in OpenMW alchemy)
+  assert.doesNotMatch(alchemySrc, /at standard fatigue/, "must not make false fatigue claims in alchemy brewing");
 });
 
 test("Spellmaking Workstation has casting mechanics and cost formula cues", () => {
@@ -82,14 +100,16 @@ test("Spellmaking Workstation has casting mechanics and cost formula cues", () =
     "utf8"
   );
 
-  // Casting mechanics cue
+  // Casting mechanics and magicka cost cue
   assert.match(spellSrc, /Casting Mechanics &amp; Costs:/, "must contain casting mechanics header");
+  assert.match(spellSrc, /Magicka Cost:/, "must include Magicka Cost formula header");
+  assert.match(spellSrc, /⌊∑ \(\(Min \+ Max\) × Duration \+ Area\) × BaseCost × 0\.05⌋/, "must show exact magicka cost formula");
   assert.match(spellSrc, /\(2×Skill \+ Willpower\/5 \+ Luck\/10 − MagickaCost\) × Fatigue/, "must show cast chance formula");
   assert.match(spellSrc, /Primary school is determined by the highest-cost effect/, "must explain primary school rule");
   assert.match(spellSrc, /Target spells add a 1\.5× cost modifier/, "must explain target range multiplier");
 });
 
-test("Enchanting Workstation has constant effect soul rule and self-enchant formula cues", () => {
+test("Enchanting Workstation has constant effect soul rule, point formula, and self-enchant cues", () => {
   const enchantSrc = fs.readFileSync(
     path.join(ROOT, "components", "calculators", "enchanting", "enchanting-workstation.jsx"),
     "utf8"
@@ -100,8 +120,9 @@ test("Enchanting Workstation has constant effect soul rule and self-enchant form
   assert.match(enchantSrc, /minimum soul capacity of <strong[^>]*>400<\/strong>/, "must specify 400 soul minimum");
   assert.match(enchantSrc, /Golden Saint or Ascended Sleeper/, "must cite Golden Saint or Ascended Sleeper");
 
-  // Self-enchant formula cue
+  // Enchantment points and Self-enchant formula cues
   assert.match(enchantSrc, /Enchanting Formula:/, "must contain enchanting formula header");
+  assert.match(enchantSrc, /Points: <span[^>]*>\(\(Min \+ Max\) × Duration \+ Area\) × BaseCost × 0\.025<\/span>/, "must show enchantment points formula");
   assert.match(enchantSrc, /\(0\.75×Enchant \+ 0\.25×Int \+ 0\.1×Luck − 2\.5×Points\) × Fatigue/, "must show self-enchant formula");
 });
 
@@ -145,11 +166,56 @@ test("Character Builder Root and Configurator have header hierarchy and math inv
 
   assert.match(configSrc, /Character Math Invariants:/, "must contain math invariants header");
   assert.match(configSrc, /Base Health = <span[^>]*>⌊\(Strength \+ Endurance\) \/ 2⌋<\/span>/, "must show base health formula");
-  assert.match(configSrc, /Base Magicka = <span[^>]*>Intelligence × Sign Multiplier<\/span>/, "must show base magicka formula");
+  assert.match(configSrc, /Base Magicka = <span[^>]*>Intelligence × \(1 \+ Race &amp; Sign Multiplier\)<\/span>/, "must show base magicka formula with race and sign");
   assert.match(configSrc, /Fatigue = <span[^>]*>Strength \+ Willpower \+ Agility \+ Endurance<\/span>/, "must show fatigue formula");
 });
 
-test("All newly modified components avoid undefined, null, and non-token classes", () => {
+test("Adversarial QA 1: Spell casting chance and self-enchant math safely clamp boundary and extreme values", async () => {
+  const { calcSpellCastChance } = await import("../lib/spell-math.mjs");
+  const { calcSelfEnchantChance } = await import("../lib/enchant-math.mjs");
+
+  // Zero/negative stats clamp safely to 0 (no NaN, no negative percentages)
+  assert.equal(calcSpellCastChance(100, 0, 0, 0, 0.0), 0, "cast chance with zero stats must clamp to 0%");
+  assert.equal(calcSpellCastChance(500, 10, 10, 10, 0.5), 0, "extreme magicka cost must clamp to 0%");
+
+  // Extreme over-cap stats clamp safely to 100 (no overflow beyond 100%)
+  assert.equal(calcSpellCastChance(1, 200, 200, 200, 1.25), 100, "over-cap stats must clamp to 100%");
+  assert.equal(calcSpellCastChance(0, 50, 40, 40, 1.0), 100, "zero cost spell must always succeed (100%)");
+
+  // Enchanting clamps
+  assert.equal(calcSelfEnchantChance(0, 0, 0, 100), 0, "zero stats with high points must clamp to 0%");
+  assert.equal(calcSelfEnchantChance(200, 200, 200, 1), 100, "over-cap enchanting must clamp to 100%");
+});
+
+test("Adversarial QA 2: Potion calculation handles boundary, zero-apparatus, and malformed inputs gracefully", async () => {
+  const { calculatePotion } = await import("../lib/alchemy-math.mjs");
+
+  // Empty ingredient list
+  const emptyRes = calculatePotion({ ingredients: [] });
+  assert.equal(emptyRes.isValid, false);
+  assert.equal(emptyRes.effects.length, 0);
+  assert.equal(emptyRes.goldValue, 0);
+
+  // Single ingredient (cannot brew alone)
+  const singleRes = calculatePotion({
+    ingredients: [{ id: "ing_1", effects: [{ n: "Restore Health", b: 1 }] }]
+  });
+  assert.equal(singleRes.isValid, false);
+  assert.match(singleRes.message, /at least two ingredients/i);
+
+  // Zero-quality mortar (impossible to brew without mortar)
+  const noMortarRes = calculatePotion({
+    ingredients: [
+      { id: "ing_1", effects: [{ n: "Restore Health", b: 1 }] },
+      { id: "ing_2", effects: [{ n: "Restore Health", b: 1 }] }
+    ],
+    mortarQuality: 0
+  });
+  assert.equal(noMortarRes.isValid, false);
+  assert.match(noMortarRes.message, /mortar and pestle are required/i);
+});
+
+test("Adversarial QA 3: All newly modified components avoid undefined, null, and non-token classes", () => {
   const filesToCheck = [
     "components/views/about-view.jsx",
     "components/calculators/alchemy/alchemy-workstation.jsx",

@@ -144,6 +144,18 @@ export default function TravelWorkstation() {
 
   return (
     <div className="travel-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">
+      {/* Workstation Header Bar */}
+      <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
+            Morrowind Travel &amp; Transport Route Planner
+          </h2>
+          <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
+            Find fewest-hops transit routes across silt striders, boats, river striders, and Guild Guides in Vvardenfell and mainland Tamriel.
+          </p>
+        </div>
+      </div>
+
       {/* Top Banner: Active Character & World Profile Strip & Live Game-Data Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-5 border border-line-11">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
