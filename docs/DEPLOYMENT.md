@@ -7,6 +7,11 @@ Cloudflare Worker `plain-disk-78e6` serves `siltstrider.tools`. As checked on
 23 September 2026, there are no Workers Builds triggers: Git pushes do not deploy.
 Deployment is a deliberate local release, using the separately staged game bundle.
 
+Before releasing, capture the recovery record and follow the
+[launch operations checklist](LAUNCH_OPERATIONS.md). It covers error logs, database
+exports, and schema-compatible rollback. Final browser checks should target a frozen
+equipment optimizer revision; Discord sign-in is a separate production check.
+
 ## Release procedure (PowerShell)
 
 Start from a clean `main` checkout synchronized with `origin/main`. Inspect the staged

@@ -1,5 +1,6 @@
 "use client";
 import { useShell } from './shell-context';
+import BugReportLink from './bug-report-link';
 
 /**
  * SiteFooter: Native React implementation of the CRPG site footer.
@@ -41,7 +42,8 @@ export default function SiteFooter() {
           Changelog
         </a>{" · "}
         <a href="/privacy">Privacy Policy</a>{" · "}
-        <a href="/terms">Terms of Service</a>
+        <a href="/terms">Terms of Service</a>{" · "}
+        <BugReportLink />
       </p>
     </footer>
   );

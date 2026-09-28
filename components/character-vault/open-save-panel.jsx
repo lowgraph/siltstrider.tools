@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import SaveImportNotice from "./save-import-notice";
+import CompatibilityNotice from "../compatibility-notice";
 
 /**
  * Open a .omwsave in Silt Strider without an account. The file is parsed in the browser
@@ -27,6 +28,7 @@ export default function OpenSavePanel({ vault }) {
           Loads an OpenMW .omwsave into the Character Builder, Level Simulator, Equipped Loadouts
           and Journal. It stays in this browser; nothing is uploaded and no account is needed.
         </p>
+        <CompatibilityNotice />
       </div>
       <input
         type="file"

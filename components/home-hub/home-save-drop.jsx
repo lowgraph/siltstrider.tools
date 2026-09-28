@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { readSaveFile } from "../../lib/omwsave-import.mjs";
 import { worldLabel } from "../../lib/home-data.mjs";
+import CompatibilityNotice from "../compatibility-notice";
 
 const UploadIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -92,6 +93,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
           Every tool now works with this character.
           {issues > 0 && ` ${issues} thing${issues === 1 ? "" : "s"} from the save's mods could not be matched; the Build Optimizer lists them.`}
         </div>
+        <CompatibilityNotice />
         <div className="home-save-actions">
           <button type="button" className="mw-btn home-cta home-cta--primary" onClick={() => onNavigate("builder")}>Open the character</button>
           <button type="button" className="mw-btn home-cta" onClick={() => onNavigate("leveler")}>Plan level-ups</button>
@@ -123,6 +125,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
           Your character, gear, level and quests fill every tool. It is read in your browser: nothing is uploaded and
           no account is needed.
         </div>
+        <CompatibilityNotice />
         <div className="home-save-row">
           <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!enabled || Boolean(busy)} onClick={() => input.current?.click()}>
             Choose a save file

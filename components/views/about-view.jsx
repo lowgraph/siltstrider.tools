@@ -1,4 +1,6 @@
 "use client";
+import CompatibilityNotice from "../compatibility-notice";
+import BugReportLink from "../bug-report-link";
 
 /**
  * AboutView: Native modern React implementation of the About Silt Strider panel.
@@ -65,11 +67,14 @@ export default function AboutView() {
 
           <div className="border-t border-line-12 pt-3">
             <h4 className="text-sm font-serif text-accent mb-1">Multi-World Coverage &amp; Privacy</h4>
+            <CompatibilityNotice />
             <p className="text-xs text-fg-7 leading-relaxed">
               Full data pipeline support is provided for The Elder Scrolls III: Morrowind (Tribunal, Bloodmoon), Tamriel Rebuilt 26.08 (Poison Song), and ARCE.
             </p>
             <p className="text-xs text-fg-7 mt-1.5 leading-relaxed">
-              OpenMW save inspection (<span className="font-mono text-accent">.omwsave</span>) and character permalink sharing are zero-tracking and strictly client-side. All binary parsing and progression planning take place in your browser—no saves or character data are ever sent to an external server.
+              Opening an OpenMW save (<span className="font-mono text-accent">.omwsave</span>) parses it in your browser without uploading it.
+              Choosing to save it to Cloud Vault sends its parsed character data to our service.
+              Share links contain the character information you choose to share. See our <a href="/privacy" className="text-accent underline hover:text-fg-2">Privacy Policy</a> for details.
             </p>
           </div>
         </div>
@@ -94,9 +99,11 @@ export default function AboutView() {
           </div>
 
           <div className="border-t border-line-12 pt-3">
-            <h3 className="text-base font-serif text-accent mb-1">Corrections</h3>
+            <h3 className="text-base font-serif text-accent mb-1">Bugs &amp; Corrections</h3>
             <p className="text-xs text-fg-7">
-              Spotted a mistake? Email <a href="mailto:tmarcalferreira@gmail.com" className="text-accent underline hover:text-fg-2">tmarcalferreira@gmail.com</a>.
+              <BugReportLink className="text-accent underline hover:text-fg-2" /> by email, or write to <a href="mailto:tmarcalferreira@gmail.com" className="text-accent underline hover:text-fg-2">tmarcalferreira@gmail.com</a>.
+              Include the tool, selected profile, steps to reproduce, browser, and any error reference.
+              No email app set up? Copy the address and send the report through your usual email service.
             </p>
           </div>
 

@@ -147,6 +147,7 @@ See the [release procedure](docs/DEPLOYMENT.md) for the manual Cloudflare workfl
 - [Character state & persistence](docs/STATE.md)
 - [Account profiles specification](docs/ACCOUNT_PROFILES.md)
 - [Supporter & Ko-fi entitlements](docs/PREMIUM.md)
+- [Launch operations, monitoring, backups & rollback](docs/LAUNCH_OPERATIONS.md)
 - [Agent path migration](docs/AGENT_PATH_MIGRATION.md)
 - [Historical migration notes](docs/archive/MIGRATION.md)
 - [Historical state notes](docs/archive/STATE.md)

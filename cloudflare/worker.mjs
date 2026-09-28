@@ -9,6 +9,7 @@ import { handleAccount } from './routes/account.mjs';
 
 import { authenticateUser } from './auth.mjs';
 import { getCorsHeaders, json } from './cors.mjs';
+import { withErrorReporting } from './error-reporting.mjs';
 import {
   handleListSaves,
   handleGetSave,
@@ -28,7 +29,7 @@ export {
   handleGetEntitlements
 };
 
-export default {
+const worker = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.hostname === 'www.siltstrider.tools') {
@@ -112,3 +113,5 @@ export default {
     return json({ error: 'NOT_FOUND', message: 'Resource not found' }, 404, cors);
   }
 };
+
+export default { fetch: withErrorReporting(worker.fetch) };

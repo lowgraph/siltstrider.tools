@@ -7,6 +7,12 @@
   "main": "cloudflare/worker.mjs",
   "workers_dev": true,
   "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "redact_query_string": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1, "invocation_logs": false },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  },
   "vars": {
     "APP_ORIGIN": "https://siltstrider.tools",
     "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuc2lsdHN0cmlkZXIudG9vbHMk"

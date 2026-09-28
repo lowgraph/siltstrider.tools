@@ -49,10 +49,11 @@ test("AboutView contains dedicated System Accuracy & Game Mechanics section", ()
   assert.match(aboutSrc, /Tamriel Rebuilt 26\.08 \(Poison Song\)/, "must cover TR 26.08 Poison Song");
   assert.match(aboutSrc, /ARCE/, "must cover ARCE");
 
-  // Privacy and zero-tracking
-  assert.match(aboutSrc, /zero-tracking/, "must emphasize zero tracking");
+  // Local import is private; optional cloud storage is a separate server operation.
+  assert.match(aboutSrc, /in your browser without uploading it/, "must explain local import");
   assert.match(aboutSrc, /\.omwsave/, "must mention .omwsave parsing");
-  assert.match(aboutSrc, /strictly client-side/, "must affirm client-side execution");
+  assert.match(aboutSrc, /Choosing to save it to Cloud Vault sends its parsed character data to our service/, "must disclose cloud storage");
+  assert.doesNotMatch(aboutSrc, /zero-tracking|no saves or character data are ever sent/, "must not promise all operations stay local");
 
   // Disambiguation
   assert.match(aboutSrc, /about-disambiguation/, "must contain about-disambiguation container");
