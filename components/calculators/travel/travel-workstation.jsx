@@ -23,6 +23,8 @@ import {
   addStopWalks,
   addPlaces,
   runSpeed,
+  swimSpeed,
+  walkGrid,
   formatDuration,
   placePoints,
   doorChain,
@@ -117,22 +119,26 @@ export default function TravelWorkstation() {
     liveNetworkGraph, intervention, gameData.data?.metadata?.Travel?.nodes || {}, spells
   ), [liveNetworkGraph, intervention, gameData.data, spells]);
 
-  // Walking: straight lines between nearby stops, and to any place in the game, kept out
-  // of the sea by the Access catalog's land mask and timed by this character's run speed.
+  // Walking: between nearby stops, and to any place in the game, over the Access
+  // catalog's walkable grid (around steep ground, the Ghostfence and open sea) where the
+  // release has one and in a straight line kept out of the sea where it does not, timed
+  // by this character's run and swim speeds.
   const access = useMemo(() => {
     const records = gameData.data?.catalogs?.Access;
     const land = gameData.data?.metadata?.Access?.land;
     return Array.isArray(records) && land ? { records, land } : null;
   }, [gameData.data]);
+  const grid = useMemo(() => walkGrid(gameData.data?.metadata?.Access?.walkable), [gameData.data]);
   const speed = useMemo(() => runSpeed(player, settings), [player, settings]);
+  const swim = useMemo(() => swimSpeed(player, settings), [player, settings]);
   const points = useMemo(() => stopPoints({
     records: gameData.data?.catalogs?.Travel || [],
     nodes: gameData.data?.metadata?.Travel?.nodes || {},
     access, intervention
   }), [gameData.data, access, intervention]);
   const walkGraph = useMemo(
-    () => (walking && access ? addStopWalks(spellGraph, points, access.land, speed) : spellGraph),
-    [walking, access, spellGraph, points, speed]
+    () => (walking && access ? addStopWalks(spellGraph, points, access.land, speed, { grid, swim }) : spellGraph),
+    [walking, access, spellGraph, points, speed, grid, swim]
   );
 
   // Propylons, dialogue transports and teleporting items: the ones the items the
@@ -146,9 +152,9 @@ export default function TravelWorkstation() {
     if (!teleports) return walkGraph;
     return addTeleports(walkGraph, teleports, {
       nodes: gameData.data?.metadata?.Travel?.nodes || {}, held, includeQuest: questTeleports,
-      walk: { points, access, land: walking ? access?.land : null, speed, intervention, spells }
+      walk: { points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells }
     }).graph;
-  }, [walkGraph, teleports, gameData.data, held, questTeleports, points, access, walking, speed, intervention, spells]);
+  }, [walkGraph, teleports, gameData.data, held, questTeleports, points, access, walking, speed, swim, grid, intervention, spells]);
 
   // Every place in the game, for the pickers and for naming a place on the route.
   const places = useMemo(
@@ -321,9 +327,9 @@ export default function TravelWorkstation() {
     const chosen = [origin, destination].filter(isPlace).map((id) => id.slice(PLACE_PREFIX.length));
     if (!chosen.length) return routingGraph;
     return addPlaces(routingGraph, chosen, {
-      points, access, land: walking ? access?.land : null, speed, intervention, spells
+      points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells
     });
-  }, [origin, destination, routingGraph, points, access, walking, speed, intervention, spells]);
+  }, [origin, destination, routingGraph, points, access, walking, speed, swim, grid, intervention, spells]);
   const route = useMemo(() => {
     const planned = planRoute(origin, destination, planGraph, {
       objective: priced ? objective : "hops",
@@ -720,7 +726,7 @@ export default function TravelWorkstation() {
               <li>Network covers Silt Striders, Pack Guar caravans, Sky Lamps, carriages, Boats, Guild Guides, Gondoliers, and Mainland River Striders.</li>
               <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
               <li>Divine and Almsivi Intervention land where OpenMW&apos;s marker search puts you: the markers on the smallest square ring of cells around you, not the nearest in a straight line, and indoors the first door out. Tick the spells your character can cast; a loaded save ticks them for you.</li>
-              <li>Walking joins any place to the network: a straight line at your run speed (Speed and Athletics, carrying nothing), refused where it would swim more than 2,048 units of open sea. Real paths around hills take longer. Indoors, the route names the doors on the way in and out.</li>
+              <li>Walking joins any place to the network at your run speed (Speed and Athletics, carrying nothing). It follows the ground: round slopes steeper than the 46° OpenMW lets you climb, through the Ghostgate rather than the Ghostfence, and swimming only near land, at your swim speed. Only the terrain is read, so a boulder or a building can still be in the way. Indoors, the route names the doors on the way in and out.</li>
               <li>Propylons, dialogue transports (Mournhold) and teleporting items come from the game&apos;s own scripts: a Propylon needs its index, and the Master Index sends every Propylon to Caldera. Tick the items you carry. Quest teleports, taken once in a quest, are left out unless you include them.</li>
               <li>Mark and Recall are not included.</li>
             </ul>
@@ -786,9 +792,9 @@ export default function TravelWorkstation() {
                   {route.steps.map((step) => (
                     <div
                       key={step.stepNumber}
-                      className="flex items-center justify-between p-2.5 bg-surface-3 border border-line-11"
+                      className="flex items-center justify-between gap-3 p-2.5 bg-surface-3 border border-line-11"
                     >
-                      <div className="space-y-0.5">
+                      <div className="min-w-0 flex-1 space-y-0.5">
                         <div className="text-xs font-serif font-bold text-fg-2">
                           Leg {step.stepNumber}: {labelOf(step.from)} to {labelOf(step.to)}
                         </div>
@@ -799,7 +805,13 @@ export default function TravelWorkstation() {
                         )}
                         <div className="text-[11px] text-fg-13">
                           {step.walk
-                            ? `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, in a straight line`
+                            ? step.terrain
+                              ? `Walk about ${(step.distance / CELL).toFixed(1)} cells, heading ${step.direction}, to ${labelOf(step.to)}`
+                                + (step.straight && step.distance > step.straight * 1.15
+                                  ? `, round high ground: ${(step.distance / step.straight).toFixed(1)}× the straight line`
+                                  : "")
+                                + (step.water ? `, swimming about ${Math.max(0.1, step.water / CELL).toFixed(1)} cells of it` : "")
+                              : `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, in a straight line`
                             : step.teleport
                             ? `${step.label} at ${labelOf(step.from)}${step.board ? `, ${step.board}` : ""}`
                             : <>
@@ -832,7 +844,7 @@ export default function TravelWorkstation() {
                         )}
                       </div>
                       <span
-                        className={`px-2 py-0.5 text-xs font-serif font-bold border ${getServiceBadge(
+                        className={`shrink-0 whitespace-nowrap px-2 py-0.5 text-xs font-serif font-bold border ${getServiceBadge(
                           step.kind
                         )}`}
                       >
@@ -878,7 +890,7 @@ export default function TravelWorkstation() {
                           : "text-fg-2"
                       }`}
                     >
-                      {node}
+                      {labelOf(node)}
                     </span>
                     {i < route.path.length - 1 && (
                       <span className="text-fg-13 mx-1">→</span>

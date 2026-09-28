@@ -143,3 +143,151 @@ test("a save with no position, reopened from the cloud, is placed by its town's 
   assert.equal(placeFromSave({ identity: { cell: "Ascadian Isles Region" } }, places), null, "a region is too vague to start from");
   assert.equal(placeFromSave({ identity: { cell: "Seyda Neen" } }, new Set(["exterior:-2,-9"])), null, "a Set carries no names");
 });
+
+// A walkable grid drawn as rows north first: "." land, "#" too steep or a wall, "~" water
+// to swim, " " open sea. Four squares of 2,048 units a cell, so cell (0, 0) is the
+// bottom-left four by four.
+const CODE = { " ": 0, ".": 1, "#": 2, "~": 3 };
+function drawGrid(rows) {
+  const per = 4, height = rows.length, cells = {};
+  rows.forEach((row, r) => [...row].forEach((ch, gx) => {
+    const gy = height - 1 - r, key = `exterior:${Math.floor(gx / per)},${Math.floor(gy / per)}`;
+    const codes = cells[key] ||= new Array(per * per).fill(0);
+    codes[(gy % per) * per + (gx % per)] = CODE[ch];
+  }));
+  const encoded = Object.fromEntries(Object.entries(cells).map(([key, codes]) => {
+    const packed = Buffer.alloc(Math.ceil(codes.length / 4));
+    codes.forEach((code, i) => { packed[i >> 2] |= code << ((i & 3) * 2); });
+    return [key, packed.toString("base64")];
+  }));
+  return { squaresPerCell: per, squareSize: 2048, cells: encoded };
+}
+const at = (gx, gy) => [(gx + 0.5) * 2048, (gy + 0.5) * 2048];
+
+test("the walkable grid decodes two bits a square, south-west first, and refuses what it cannot read", async () => {
+  const { walkGrid, squareAt, SEA, LAND, BLOCKED, SWIM } = await lib();
+  const grid = walkGrid(drawGrid(["~#..", "....", "....", ".#.."]));
+  assert.equal(squareAt(grid, 0, 0), LAND);
+  assert.equal(squareAt(grid, 1, 0), BLOCKED, "the second square of the bottom row");
+  assert.equal(squareAt(grid, 0, 3), SWIM, "the top-left square is the last row");
+  assert.equal(squareAt(grid, 1, 3), BLOCKED);
+  assert.equal(squareAt(grid, 5, 0), SEA, "a cell the grid lacks is open sea");
+  assert.equal(squareAt(grid, -1, -1), SEA, "and so is one to the south-west");
+  assert.equal(walkGrid(null), null);
+  assert.equal(walkGrid({ squaresPerCell: 4, squareSize: 1000, cells: {} }), null, "squares must tile a cell");
+  assert.equal(walkGrid({ squaresPerCell: 4, squareSize: 2048 }), null, "no cells");
+  const broken = walkGrid({ squaresPerCell: 4, squareSize: 2048, cells: { "exterior:0,0": "AA==" } });
+  assert.equal(squareAt(broken, 0, 0), SEA, "a cell too short to hold its squares is sea, not garbage");
+});
+
+test("a walk over the grid goes round a wall, and none crosses a closed one", async () => {
+  const { walkGrid, findWalk } = await lib();
+  const open = walkGrid(drawGrid([
+    "........",
+    ".######.",
+    "........",
+    "........"]));
+  const round = findWalk(open, at(3, 3), at(3, 1));
+  assert.ok(round, "a way round the end of the wall");
+  assert.ok(round.distance > 2 * 2048 * 1.5, `longer than the straight line, got ${round.distance}`);
+  assert.equal(round.water, 0);
+  const closed = walkGrid(drawGrid([
+    "........",
+    "########",
+    "........",
+    "........"]));
+  assert.equal(findWalk(closed, at(3, 3), at(3, 1)), null, "a wall end to end, and sea beyond the grid");
+  assert.equal(findWalk(open, at(3, 3), at(3, 1), { maxCost: 2048 * 3 }), null, "nothing within the cost allowed");
+});
+
+test("a diagonal step cannot slip between two blocked squares", async () => {
+  const { walkGrid, findWalk } = await lib();
+  const grid = walkGrid(drawGrid([
+    "        ",
+    "   #.   ",
+    "   .#   ",
+    "        "]));
+  assert.equal(findWalk(grid, at(4, 2), at(3, 1)), null, "the two land squares only touch at a corner");
+});
+
+test("a walk's ends move onto ground it can stand on, but not far", async () => {
+  const { walkGrid, findWalk } = await lib();
+  const grid = walkGrid(drawGrid([
+    "#.......",
+    "........",
+    "........",
+    "........"]));
+  const walk = findWalk(grid, at(0, 3), at(7, 3));
+  assert.ok(walk, "a door in a cliff face: the walk starts from the land beside it");
+  const far = walkGrid(drawGrid([
+    "####....",
+    "####....",
+    "####....",
+    "####...."]));
+  assert.equal(findWalk(far, at(0, 3), at(7, 3)), null, "more than two squares from any footing");
+});
+
+test("water is swum near land, timed at the swim speed, and never for long", async () => {
+  const { walkGrid, findWalk, swimSpeed, runSpeed, MAX_SWIM } = await lib();
+  const strait = walkGrid(drawGrid([".~~.", ".~~.", ".~~.", ".~~."]));
+  const across = findWalk(strait, at(0, 1), at(3, 1));
+  assert.equal(across.water, 2 * 2048, "two squares swum");
+  assert.equal(across.land, 2048, "half a square either side, from each end to its middle");
+  // Run 287 x (0.5 + 0.01 x 30 x 0.1) = 287 x 0.53.
+  assert.equal(Math.round(swimSpeed({ speed: 40, athletics: 30 }) * 100) / 100, Math.round(287 * 0.53 * 100) / 100);
+  assert.ok(swimSpeed({ speed: 40, athletics: 30 }) < runSpeed({ speed: 40, athletics: 30 }));
+  const wide = walkGrid(drawGrid([".~~~~~~~~~~~~~~.", "................"]));
+  const dry = findWalk(wide, at(0, 1), at(15, 1), { swimCost: 1.9 });
+  assert.equal(dry.water, 0, "swimming costs more than running, so the path keeps to land");
+  const sea = walkGrid(drawGrid([".~~~~~~~~~~~~~~."]));
+  assert.ok(14 * 2048 > MAX_SWIM);
+  assert.equal(findWalk(sea, at(0, 0), at(15, 0)), null, "no walk swims the length of a coast");
+});
+
+test("stops are joined over the grid when there is one, as legs that say so", async () => {
+  const { walkGrid, addStopWalks } = await lib();
+  const grid = walkGrid(drawGrid([
+    "................",
+    "................",
+    "######.#########",
+    "................"]));
+  const points = new Map([["North", [at(2, 3)]], ["South", [at(2, 0)]]]);
+  const land = { "exterior:0,0": "f".repeat(16), "exterior:1,0": "f".repeat(16), "exterior:2,0": "f".repeat(16), "exterior:3,0": "f".repeat(16) };
+  const straight = addStopWalks({ North: [], South: [] }, points, land, 287);
+  assert.equal(straight.North[0].terrain, undefined, "without a grid, a straight line as before");
+  assert.equal(straight.North[0].distance, 3 * 2048);
+  const walked = addStopWalks({ North: [], South: [] }, points, land, 287, { grid, swim: 150 });
+  const leg = walked.North.find(e => e.to === "South");
+  assert.ok(leg.terrain);
+  assert.equal(leg.straight, 3 * 2048);
+  assert.ok(leg.distance > leg.straight, "through the gap at the sixth square");
+  assert.equal(leg.water, 0);
+  assert.ok(walked.South.some(e => e.to === "North" && e.distance === leg.distance), "and back the same way");
+  const shut = walkGrid(drawGrid(["................", "################", "................"]));
+  assert.deepEqual(addStopWalks({ North: [], South: [] }, new Map([["North", [at(2, 2)]], ["South", [at(2, 0)]]]), land, 287, { grid: shut }).North, [],
+    "a wall end to end: no walk, though the straight line is short");
+});
+
+test("a place walled in reaches the network the long way round", async () => {
+  const { walkGrid, addPlaces, PLACE_PREFIX, PLACE_WALK_LIMIT } = await lib();
+  // A ring wall three cells wide with its only gate at the far end: the stop is just
+  // outside the near side, but the walk out goes all the way round.
+  const grid = walkGrid(drawGrid([
+    "................",
+    "#########.##....",
+    ...Array(10).fill("#..........#...."),
+    "############....",
+    "................"]));
+  const points = new Map([["Outside", [at(14, 7)]]]);
+  const land = Object.fromEntries([0, 1, 2, 3].flatMap(x => [0, 1, 2, 3].map(y => [`exterior:${x},${y}`, "f".repeat(16)])));
+  const inside = "exterior:1,1";
+  const graph = addPlaces({ Outside: [] }, [inside], { points, land, speed: 287, grid, limit: 4 * 8192 });
+  const walk = graph[PLACE_PREFIX + inside].find(e => e.to === "Outside");
+  assert.ok(walk, "a walk, through the gate");
+  assert.ok(walk.distance > walk.straight * 1.5, `beyond the usual detour: ${walk.distance} against ${walk.straight}`);
+  // With a reach of 1.6 cells the stop (2.2 cells off) is out of reach in a straight line, so
+  // only the further search finds it; a place that reaches something needs no second one.
+  const far = addPlaces({ Outside: [] }, [inside], { points, land, speed: 287, grid, limit: 1.6 * 8192 });
+  assert.ok(far[PLACE_PREFIX + inside].some(e => e.to === "Outside"), "found by the search three times as far");
+  assert.ok(PLACE_WALK_LIMIT > 1.6 * 8192);
+});

@@ -213,3 +213,16 @@ test("a save's Mages Guild rank decides the guild guides", async () => {
   assert.deepEqual(guildFromSave(save([{ id: "Fighters Guild", rank: 9 }])), { mageGuild: false, conjurer: false });
   assert.equal(guildFromSave({}), null, "no faction list: keep the page's settings");
 });
+
+test("a walk over the ground keeps its straight line and its swim on the route step", async () => {
+  const { planRoute } = await import("../lib/travel-graph.mjs");
+  const graph = {
+    A: [{ to: "B", kind: "Walk", walk: true, free: true, price: 0, hours: 1, distance: 30000, direction: "north",
+          terrain: true, straight: 20000, water: 1500 }],
+    B: [{ to: "C", kind: "Walk", walk: true, free: true, price: 0, hours: 1, distance: 8000, direction: "east" }],
+    C: []
+  };
+  const [first, second] = planRoute("A", "C", graph).steps;
+  assert.deepEqual([first.terrain, first.straight, first.water], [true, 20000, 1500]);
+  assert.deepEqual([second.terrain, second.straight, second.water], [false, null, null], "a straight-line walk as before");
+});
