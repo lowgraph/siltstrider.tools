@@ -13,6 +13,25 @@
 - Removed the alchemy effect-name fallback. Effect support now comes only from canonical EffectRules, with malformed or missing rules marked unsupported.
 - Retired the old alchemy bridge test in favor of native coverage and removed the dev:legacy command. The remaining standalone fixtures and their obsolete-only tests were subsequently removed.
 
+## Travel planning, save persistence and gear ranking — 2026-09-27
+
+- Choose routes by fewest legs, lowest fare, or shortest estimated travel time.
+- Start or finish at any catalogued place. Walking legs connect nearby transport stops and name the doors used to enter or leave interiors; connected interior rooms can reach teleport stops without an exterior door.
+- Terrain-aware walking avoids steep ground, the Ghostfence, and open sea, with limited near-shore swimming. Fixed overly long walking connections that displaced sensible transit routes.
+- Include Divine and Almsivi Intervention, Propylon indices, Mournhold transport, and item teleports. Quest teleports are optional; item routes depend on the required items.
+- Imported saves supply the starting location, guild ranks, carried gold, pack weight, and constant movement effects. Travel warns when a fare exceeds the character's gold.
+- Carrying weight, Feather, Burden, constant Levitate, and Water Walking affect movement estimates. Player-made equipment retains its weight and constant effects when imported.
+- Copy route links containing origin, destination, planning objective, and walking/quest choices.
+- Loaded OpenMW saves persist in this browser across reloads until cleared or replaced by a shared build or challenge handoff.
+- Enchanted gear ranks by useful effect value; removed duplicate shield recommendations.
+
+## Navigation, presentation and discoverability — 2026-09-27
+
+- Added consistent two-row desktop headers across themes, fixing overlapping navigation and clipped titles.
+- Added Silt Strider favicons and app icons, clearer site branding, and a permanent www-to-apex redirect.
+- Expanded tool headings, descriptions, social sharing cards, breadcrumbs, and structured data. Added mechanics explanations to tool pages.
+- Stabilized the shell's server snapshot to avoid React render-loop warnings.
+
 ## Account routing and profile-link fixes — 2026-09-27
 
 - Added an exported Account route so direct links and refreshes work.
@@ -38,7 +57,7 @@ Gear recommendations follow new early-game gear rows. They appear once the rows 
 
 - Transitioned workstation and tool navigation from URL hash fragments (`#builder`, `#alchemy`, etc.) to clean HTML5 History API path routing (`/builder`, `/leveler`, etc.).
 - Added automatic legacy hash migration via `window.history.replaceState` and `popstate` support for browser Back and Forward history traversal.
-- Maintained full backward compatibility for permalink payloads (`#builder&build=...`, `#challenge&run=...`, `?build=...`).
+- Initially retained hash permalink compatibility during the routing transition; the September 28 cleanup replaced it with path/query links only.
 
 ## Distinct Khajiit vault labels — 2026-09-27
 
@@ -70,6 +89,21 @@ Gear recommendations follow new early-game gear rows. They appear once the rows 
 - Added adversarial tests for stale DOM controls, poisoned legacy globals, and malformed build links.
 
 All notable changes to the **Silt Strider** Morrowind character planner, calculators, and tools will be documented in this file.
+
+## Support payments, legal pages and theme build — 2026-09-26
+
+- One-time Ko-fi tips activate premium through the current Tip webhook event and accept any positive supported currency amount, including tips below the suggested US$3.
+- Published Privacy Policy and Terms of Service pages; preserved production sign-in configuration in builds and deployments.
+- Inlined theme tokens to eliminate the CSS import-resolution diagnostic in production builds.
+
+## Accounts, premium and cloud-save reliability — 2026-09-25
+
+- Added Your account with a chosen username and built-in Morrowind profile icons.
+- Added permanent premium upgrades through one-time, pay-what-you-want Ko-fi tips: 25 cloud-save slots instead of 5, plus a profile-icon badge. No subscription is required.
+- Wired production vault sign-in and retry a rejected session token once after refreshing it. Account changes isolate cached saves and in-flight requests.
+- Saving an imported OpenMW character now preserves its actual level, class, gold, and progress instead of saving a level-one build. Build snapshots retain loadouts, factions, and Bitter Cup.
+- Validated imports before changing the active character and bounded cloud upload parsing and magic-effect inputs.
+- Kept favored attributes distinct, clamped level-planning bounds, excluded unavailable profile equipment from totals, and used live character attributes for faction eligibility.
 
 ## Builder and Level Optimizer fixes — 2026-09-24
 

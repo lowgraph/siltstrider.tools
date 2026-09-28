@@ -14,6 +14,16 @@ export default function ChangelogView() {
 
       <div className="space-y-6 text-sm text-fg-2">
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-28">September 28, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Removed the old standalone application and compatibility bridges. The tools now use the native application throughout.</li>
+            <li>Share links now use page paths and query parameters. Old hash links no longer restore characters or challenge runs; create a new link with the Share buttons.</li>
+            <li>Updated the site-save format. Older cloud saves and browser-kept binary saves must be recreated; reimport the original .omwsave file for an imported character. Current OpenMW file import remains available.</li>
+            <li>Removed the unused prototype save API and its empty database table.</li>
+          </ul>
+        </section>
+
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-27">September 27, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Early gear respects the rules a new character plays by: vault and chapel gear is theft, gear behind locked doors is refused, and Ordinator uniforms are left out.</li>
@@ -22,6 +32,34 @@ export default function ChangelogView() {
             <li>New Dark Brotherhood armor toggle: the light set worn by the assassin who may attack while you rest.</li>
             <li>Enchanted rings and amulets come before blank ones, and enchanted items list their effects.</li>
             <li>Travel names pack guar caravans, sky lamps and carriages.</li>
+            <li>Travel can optimize for fewest legs, cheapest fare, or shortest estimated time, with walking connections to catalogued places and directions through interior doors.</li>
+            <li>Walking routes follow terrain around steep ground, the Ghostfence, and open sea, with limited swimming near shore. Fixed overly long walking legs that bypassed useful transport.</li>
+            <li>Routes can include Divine and Almsivi Intervention, Propylons, Mournhold transport, and item teleports. Quest teleports are optional and required items can be selected.</li>
+            <li>Loaded saves provide your starting location, guild ranks, gold, pack weight, and constant movement effects. Carrying weight, Feather, Burden, Levitate, and Water Walking affect travel estimates.</li>
+            <li>Copy route links to share the destination and planning choices. Loaded saves stay in this browser across reloads until cleared or replaced.</li>
+            <li>Player-made equipment keeps its weight and constant enchantments on import. Gear recommendations rank useful enchantment effects and no longer repeat the same shield.</li>
+            <li>Vault cards show readable race and birthsign names, including distinct Khajiit variants. Account links work on refresh, and navigation keeps the selected world.</li>
+            <li>Fixed overlapping desktop navigation and title clipping in both themes. Added site icons, richer search and social previews, tool explanations, and a www redirect.</li>
+
+          </ul>
+        </section>
+
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-26">September 26, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Ko-fi premium activation accepts one-time tips in any supported currency, including amounts below the suggested US$3.</li>
+            <li>Published Privacy Policy and Terms of Service pages and corrected the theme-token build issue.</li>
+          </ul>
+        </section>
+
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-25">September 25, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Added Your account: choose a username and a built-in Morrowind profile icon.</li>
+            <li>One-time, pay-what-you-want Ko-fi support unlocks 25 cloud-save slots instead of 5 and a special profile-icon badge. No recurring payment.</li>
+            <li>Cloud saves preserve imported characters with their actual level, class, gold, and progress. Build snapshots retain equipment loadouts, factions, and Bitter Cup.</li>
+            <li>Improved sign-in and session renewal, isolated saves when switching accounts, and validated imports before changing the active character.</li>
+            <li>Fixed duplicate favored attributes, out-of-range level plans, unavailable equipment affecting totals, and faction eligibility using outdated stats.</li>
           </ul>
         </section>
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
