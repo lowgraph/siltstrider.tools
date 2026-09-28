@@ -285,9 +285,16 @@ test("a place walled in reaches the network the long way round", async () => {
   const walk = graph[PLACE_PREFIX + inside].find(e => e.to === "Outside");
   assert.ok(walk, "a walk, through the gate");
   assert.ok(walk.distance > walk.straight * 1.5, `beyond the usual detour: ${walk.distance} against ${walk.straight}`);
-  // With a reach of 1.6 cells the stop (2.2 cells off) is out of reach in a straight line, so
-  // only the further search finds it; a place that reaches something needs no second one.
-  const far = addPlaces({ Outside: [] }, [inside], { points, land, speed: 287, grid, limit: 1.6 * 8192 });
-  assert.ok(far[PLACE_PREFIX + inside].some(e => e.to === "Outside"), "found by the search three times as far");
-  assert.ok(PLACE_WALK_LIMIT > 1.6 * 8192);
+  // With a reach of 2.2 cells the stop (2.16 cells off) is in reach in a straight line, but
+  // the walk round (4.7 cells) is longer than 1.5 times the reach: only the further search
+  // finds it. That search still counts only stops within the reach in a straight line:
+  // "Distant" (3 cells off) is never walked to, though its path is within three times it.
+  const reach = 2.2 * 8192;
+  const both = new Map([...points, ["Distant", [at(15, 13)]]]);
+  const far = addPlaces({ Outside: [], Distant: [] }, [inside], { points: both, land, speed: 287, grid, limit: reach });
+  const walks = far[PLACE_PREFIX + inside];
+  const out = walks.find(e => e.to === "Outside");
+  assert.ok(out && out.distance > reach * 1.5 && out.distance <= reach * 3, "found by the search three times as far");
+  assert.equal(walks.some(e => e.to === "Distant"), false, "a stop beyond the reach in a straight line stays out");
+  assert.ok(PLACE_WALK_LIMIT > reach);
 });
