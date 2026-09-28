@@ -34,22 +34,26 @@ const CUSTOM_CASTER = {
   maj: ['Destruction', 'Restoration', 'Alteration', 'Mysticism', 'Conjuration'],
   min: ['Illusion', 'Enchant', 'Alchemy', 'Unarmored', 'Speechcraft']
 };
-// Tamriel Rebuilt considers 172 eligible rings and publishes only the winner, Ring of
-// Toxic Cloud, so Mentor's Ring is not in its rows at all. Remove this once the rows
-// carry candidates and the advisor ranks them for the build.
-const PENDING = {
-  tr: 'TR rows publish only the winning ring; needs per-row candidates ranked for the build'
-};
+// Rows built before candidate shortlists publish only each slot's winner: Tamriel
+// Rebuilt's ring row kept Ring of Toxic Cloud out of 172 eligible rings, so Mentor's
+// Ring never reached the site there. Once the staged rows carry shortlists, TR is held
+// to the benchmark like vanilla.
+const pending = (profile, catalogs) => profile !== 'vanilla' && catalogs
+  && !catalogs.GearRows.some(row => Array.isArray(row.candidates))
+  ? 'the staged rows predate candidate shortlists; rebuild the gear rows' : undefined;
 
 for (const profile of ['vanilla', 'tr']) {
   const catalogs = staged(profile);
   test(`every spellcaster is shown Mentor's Ring (${profile})`,
-    { skip: !catalogs && 'no staged game bundle', todo: PENDING[profile] }, async () => {
+    { skip: !catalogs && 'no staged game bundle', todo: pending(profile, catalogs) }, async () => {
       const { buildGearGroups, gearRanking } = await gearRows;
       const { adaptCharacterCatalogs } = await characterCatalogs;
       const { classes } = adaptCharacterCatalogs({ catalogs }, catalogs.Spells);
       const builds = [...CASTERS.map(name => [name, classes[name]]), ['a custom caster', CUSTOM_CASTER]];
       const missing = [];
+      const { buildTraits } = await import('../lib/build-traits.mjs');
+      const casters = Object.entries(classes).filter(([, c]) => buildTraits(c).caster).map(([n]) => n).sort();
+      assert.deepEqual(casters, [...CASTERS].sort(), 'the caster classes are exactly the benchmark\'s');
       for (const [name, cls] of builds) {
         assert.ok(cls, `${name} is a playable class in ${profile}`);
         const build = { race: 'Breton', sign: 'The Mage', className: name, spec: cls.spec,
@@ -57,8 +61,9 @@ for (const profile of ['vanilla', 'tr']) {
         for (const theft of [false, true]) {
           const toggles = { theft, endgame: false, nearStart: false, darkBrotherhood: false };
           const groups = buildGearGroups(catalogs, build, toggles, gearRanking(build));
-          const ring = groups.find(g => g.label === 'Clothing and jewelry')?.rows.find(r => r.slot === 'ring');
-          const shown = [ring?.primary, ring?.alternative].filter(Boolean);
+          // Two hands, two ring rows: either may carry it.
+          const rings = groups.find(g => g.label === 'Clothing and jewelry')?.rows.filter(r => r.slot === 'ring') || [];
+          const shown = rings.flatMap(r => [r.primary, r.alternative]).filter(Boolean);
           if (!shown.some(p => p.key === MENTOR)) {
             missing.push(`${name}${theft ? ' (steal on)' : ''}: ${shown.map(p => p.name).join(', ') || 'no ring'}`);
           }

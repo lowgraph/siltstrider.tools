@@ -224,3 +224,49 @@ test('a build without weapon or armour skills, or without a build, falls back as
  assert.equal(gearRanking({maj:['Block'],min:[]}).shield,'recommended');
  assert.deepEqual(gearRanking({maj:[]},{attrs:{Strength:40}}).attrs,{Strength:40});
 });
+const share=(name,target,value,extra={})=>({name,attribute:target,skill:null,value,worth:value,range:'self',drawback:false,...extra});
+const jewel=(key,value,effects,near=true)=>({...pick(key,100,near),enchantment:100,beastWearable:true,enchanted:{castType:'constant_effect',value,worth:value,effects}});
+const MENTOR_PICK=jewel('ring_mentor_unique',100,[share('Fortify Attribute','intelligence',50),share('Fortify Attribute','willpower',50)]);
+const POISON_PICK=jewel('ring of toxic cloud',144,[share('Poison',null,144,{range:'touch'})]);
+const STRENGTH_PICK=jewel('ring of might',60,[share('Fortify Attribute','strength',60)]);
+const MAGE_BUILD={className:'Mage',spec:'Magic',fav1:'Intelligence',fav2:'Willpower',maj:['Mysticism','Destruction','Alteration','Illusion','Restoration'],min:['Enchant','Alchemy','Unarmored','Conjuration','Short Blade']};
+const WARRIOR_BUILD={className:'Warrior',spec:'Combat',fav1:'Strength',fav2:'Endurance',maj:['Long Blade','Medium Armor','Heavy Armor','Athletics','Block'],min:['Armorer','Spear','Blunt Weapon','Axe','Hand-to-hand']};
+const ringRow=(extra={})=>row({key:'clothing/ring/-/000/power',category:'clothing',slot:'ring',armorClass:null,objective:'power',primary:POISON_PICK,alternative:null,candidates:[POISON_PICK,MENTOR_PICK,STRENGTH_PICK],...extra});
+const rings=(build,rows,options)=>{
+ return mod.then(({buildGearGroups,gearRanking})=>buildGearGroups({GearRows:rows},build,toggles,gearRanking(build),options)
+  .find(g=>g.label==='Clothing and jewelry').rows.filter(r=>r.slot==='ring'));
+};
+test('the ring slot is ranked for the build from the shortlist, two rings for two hands',async()=>{
+ const mage=await rings(MAGE_BUILD,[ringRow()]);
+ assert.deepEqual(mage.map(r=>r.primary.key),['ring_mentor_unique','ring of toxic cloud'],'a mage wears the Intelligence ring first');
+ const warrior=await rings(WARRIOR_BUILD,[ringRow()]);
+ assert.deepEqual(warrior.map(r=>r.primary.key),['ring of toxic cloud','ring of might']);
+ assert.equal(warrior[1].slotKey,'ring_2','the second ring goes on the other hand');
+ const {gearRowLabel}=await mod;
+ assert.equal(gearRowLabel(warrior[1]),'second ring');
+ assert.notEqual(warrior[0].key,warrior[1].key,'each row has its own key');
+});
+test('a far ring that beats the close one is an "or", never also the second ring',async()=>{
+ const far=jewel('far ring',500,[share('Fortify Attribute','intelligence',500)],false);
+ const mage=await rings(MAGE_BUILD,[ringRow({candidates:[POISON_PICK,MENTOR_PICK,far]})]);
+ assert.equal(mage[0].primary.key,'ring_mentor_unique');
+ assert.equal(mage[0].alternative.key,'far ring');
+ assert.equal(mage[1].primary.key,'ring of toxic cloud');
+});
+test('rows without a shortlist still give one ring and rank as before',async()=>{
+ const old=await rings(MAGE_BUILD,[ringRow({candidates:undefined})]);
+ assert.equal(old.length,1);
+ assert.equal(old[0].primary.key,'ring of toxic cloud');
+ const lone=await rings(MAGE_BUILD,[ringRow({candidates:[POISON_PICK]})]);
+ assert.equal(lone.length,1,'no second ring when the only one is already worn');
+});
+test('a shortlist is filtered for beast races like the rows are',async()=>{
+ const {buildGearGroups,gearRanking}=await mod;
+ const shoes=(key,value)=>({...jewel(key,value,[share('Fortify Attribute','speed',value)]),beastWearable:false});
+ const Clothing=[{key:'open sandals',bodyParts:[{slot:3}]},{key:'boots of speed',bodyParts:[{slot:15}]}];
+ const sandals={...jewel('open sandals',5,[share('Fortify Attribute','speed',5)])};
+ const shoeRow=row({key:'clothing/shoes/-/000/power',category:'clothing',slot:'shoes',armorClass:null,primary:sandals,alternative:null,candidates:[shoes('boots of speed',90),sandals]});
+ const build={maj:['Hand-to-hand','Unarmored'],min:[]};
+ const clothing=buildGearGroups({GearRows:[shoeRow],Clothing},build,toggles,{...gearRanking(build),armRanked:[{n:'Unarmored'}],primaryArmor:'Unarmored'},{beast:true}).find(g=>g.label==='Clothing and jewelry');
+ assert.deepEqual(clothing.rows.map(r=>r.primary.key),['open sandals'],'boots cover a foot');
+});

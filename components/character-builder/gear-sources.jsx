@@ -1,17 +1,19 @@
 "use client";
 import {Fragment} from 'react';
 import {buildGearGroups,enchantCapacity,enchantMultiplier,enchantmentNote,gearRowLabel,sourceLabel,summonNotes} from '../../lib/gear-rows.mjs';
+import {buildTraits,fitNote} from '../../lib/build-traits.mjs';
 
-function SourceRow({row,pick,alternative=false,enchantMult=0.1}){
+function SourceRow({row,pick,alternative=false,enchantMult=0.1,traits=null}){
   const source=sourceLabel(pick);
   const spell=enchantmentNote(pick);
+  const fit=fitNote(pick,traits);
   // Clothing is for its enchantment: an enchanted ring says what it does, not its room.
   const base=row.category==='clothing'&&spell?'':`Base ${row.category==='weapon'?'damage':row.category==='clothing'?'enchant capacity':'armor rating'}: ${row.category==='clothing'?enchantCapacity(pick?.strength,enchantMult):(pick?.baseStrength??pick?.strength)}.`;
   return <tr className={alternative?'gear-alt':undefined}>
     <td className="capitalize">{alternative?'or':gearRowLabel(row)}</td>
     <td><span className="gear-name">{pick?.name || 'None found'}</span>
       {pick&&<span className="gear-note">
-        {[base,spell].filter(Boolean).join(' ')}
+        {[base,spell,fit].filter(Boolean).join(' ')}
         {summonNotes(pick).map(note=>' '+note).join('')}
         {pick.condition&&` Condition: ${pick.condition.raw}/${pick.condition.maximum}.`}
         {pick.needsRepair&&' Broken: repair before use. Repair cost is not included.'}
@@ -28,8 +30,9 @@ function SourceRow({row,pick,alternative=false,enchantMult=0.1}){
 export function GearSourcesView({build,beast=false,result,toggles,ranking}){
   const groups=result.status==='ready'?buildGearGroups(result.data.catalogs,build,toggles,ranking,{beast}):[];
   const enchantMult=enchantMultiplier(result.data?.catalogs?.GameSettings);
+  const traits=buildTraits(build);
   return <details open><summary>Early game</summary>
-    <p className="muted">Equipment for your major and minor skills, within the published early-game acquisition rules. Choose one armor set and one weapon. Ring recommendations identify one copy; a second copy is not assumed. Broken equipment must be repaired before use. Purchase values are condition-scaled estimates, not merchant quotes.</p>
+    <p className="muted">Equipment for your major and minor skills, within the published early-game acquisition rules. Choose one armor set and one weapon. Enchanted clothing and jewelry are ranked for this build; the two rings are different rings, since a second copy is not assumed. Broken equipment must be repaired before use. Purchase values are condition-scaled estimates, not merchant quotes.</p>
     {beast&&<p className="muted">Equipment covering the head or feet is excluded for this race. Open helmets are checked against item body parts.</p>}
     {(result.status==='idle'||result.status==='loading')&&<p role="status">Loading early-game equipment...</p>}
     {result.status==='error'&&<p role="alert">Early-game equipment could not be loaded. <button type="button" className="mw-btn" onClick={result.retry}>Retry</button></p>}
@@ -37,7 +40,7 @@ export function GearSourcesView({build,beast=false,result,toggles,ranking}){
       <table><thead><tr><th>Slot</th><th>Item</th><th>Where</th></tr></thead><tbody>
         {groups.map(group=>{
           return group.rows.length?<Fragment key={group.label}><tr><th colSpan="3">{group.label}</th></tr>
-            {group.rows.map(row=><Fragment key={row.key}><SourceRow row={row} pick={row.primary} enchantMult={enchantMult}/>{row.alternative&&<SourceRow row={row} pick={row.alternative} alternative enchantMult={enchantMult}/>}</Fragment>)}
+            {group.rows.map(row=><Fragment key={row.key}><SourceRow row={row} pick={row.primary} enchantMult={enchantMult} traits={traits}/>{row.alternative&&<SourceRow row={row} pick={row.alternative} alternative enchantMult={enchantMult} traits={traits}/>}</Fragment>)}
           </Fragment>:null;
         })}
       </tbody></table>

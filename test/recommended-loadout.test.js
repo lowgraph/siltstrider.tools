@@ -21,3 +21,10 @@ test('missing or empty recommendations refuse to overwrite a loadout',async()=>{
  assert.throws(()=>recommendedLoadouts([],{},{}),/No eligible/);
  assert.throws(()=>recommendedLoadouts([{label:'Primary weapon',rows:[{category:'weapon',primary:{key:'missing'}}]}],{},{}),/missing from this profile/);
 });
+test('two recommended rings go on both hands',async()=>{
+ const {recommendedLoadouts}=await import('../lib/recommended-loadout.mjs');
+ const mentor={key:'ring_mentor_unique',name:"Mentor's Ring",type:'ring'},might={key:'ring of might',name:'Ring of Might',type:'ring'};
+ const groups=[{label:'Clothing and jewelry',rows:[{category:'clothing',slot:'ring',primary:{key:mentor.key}},{category:'clothing',slot:'ring',slotKey:'ring_2',primary:{key:might.key}}]}];
+ const items=recommendedLoadouts(groups,{Clothing:[mentor,might]},{})[0].items;
+ assert.equal(items.LeftRing,mentor);assert.equal(items.RightRing,might);
+});
