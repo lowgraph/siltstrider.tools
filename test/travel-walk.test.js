@@ -298,3 +298,58 @@ test("a place walled in reaches the network the long way round", async () => {
   assert.equal(walks.some(e => e.to === "Distant"), false, "a stop beyond the reach in a straight line stays out");
   assert.ok(PLACE_WALK_LIMIT > reach);
 });
+
+// Mournhold: no door outside anywhere. The transport arrives in the courtyard; the
+// bazaar and the temple are through doors; a sewer loops back; a vault has no doors.
+const MOURNHOLD = { records: [
+  { key: "interior:mournhold, courtyard", depth: null, exits: [], doors: ["interior:mournhold, plaza"] },
+  { key: "interior:mournhold, plaza", depth: null, exits: [], doors: ["interior:mournhold, bazaar", "interior:mournhold, courtyard", "interior:mournhold, temple"] },
+  { key: "interior:mournhold, bazaar", depth: null, exits: [], doors: ["interior:mournhold, plaza", "interior:mournhold, sewers"] },
+  { key: "interior:mournhold, sewers", depth: null, exits: [], doors: ["interior:mournhold, bazaar", "interior:mournhold, temple"] },
+  { key: "interior:mournhold, temple", depth: null, exits: [], doors: ["interior:mournhold, plaza", "interior:mournhold, sewers"] },
+  { key: "interior:vault", depth: null, exits: [], doors: [] },
+  { key: "interior:tomb", depth: 0, exits: [[600, 4000]] }] };
+
+test("a sealed room's doors are searched nearest first, and a room with a way out has none", async () => {
+  const { roomsThrough } = await lib();
+  const rooms = roomsThrough("interior:mournhold, bazaar", MOURNHOLD);
+  assert.deepEqual(rooms.get("interior:mournhold, courtyard"),
+    ["interior:mournhold, bazaar", "interior:mournhold, plaza", "interior:mournhold, courtyard"]);
+  assert.deepEqual(rooms.get("interior:mournhold, temple"),
+    ["interior:mournhold, bazaar", "interior:mournhold, plaza", "interior:mournhold, temple"],
+    "two doors either way round; ties go to the order the doors are listed");
+  assert.equal(rooms.has("interior:mournhold, bazaar"), false, "not the room itself");
+  assert.equal(rooms.size, 4);
+  assert.equal(roomsThrough("interior:vault", MOURNHOLD).size, 0, "no doors, nowhere to go");
+  assert.equal(roomsThrough("interior:tomb", MOURNHOLD).size, 0, "a room with a way out walks outside instead");
+  assert.equal(roomsThrough("interior:mournhold, bazaar", { records: [{ key: "interior:mournhold, bazaar", depth: null, exits: [] }] }).size, 0,
+    "a release before Access 1.2.0 lists no doors");
+  assert.equal(roomsThrough("interior:mournhold, bazaar", null).size, 0);
+});
+
+test("a sealed place joins the rooms the network knows through its doors, both ways", async () => {
+  const { addPlaces, PLACE_PREFIX } = await lib();
+  const courtyard = PLACE_PREFIX + "interior:mournhold, courtyard";
+  const bazaar = PLACE_PREFIX + "interior:mournhold, bazaar";
+  const graph = { [courtyard]: [], Ebonheart: [{ to: courtyard, kind: "Dialogue Teleport" }] };
+  const nodes = { "interior:mournhold, temple": { name: "Mournhold, Temple", town: "Mournhold Temple" } };
+  const out = addPlaces({ ...graph, "Mournhold Temple": [] }, ["interior:mournhold, bazaar"], { access: MOURNHOLD, nodes });
+  const legs = out[bazaar].filter(e => e.indoors);
+  assert.deepEqual(legs.map(e => e.to).sort(), ["Mournhold Temple", courtyard].sort(), "a teleport's room and a stop");
+  const toCourtyard = legs.find(e => e.to === courtyard);
+  assert.deepEqual([toCourtyard.kind, toCourtyard.hours, toCourtyard.price, toCourtyard.doors.length], ["Indoors", 0, 0, 3]);
+  const back = out[courtyard].find(e => e.to === bazaar);
+  assert.deepEqual(back.doors, [...toCourtyard.doors].reverse(), "and back, the rooms in the other order");
+  const alone = addPlaces({}, ["interior:mournhold, bazaar"], { access: MOURNHOLD });
+  assert.deepEqual(alone[bazaar], [], "nothing the network knows is through the doors");
+  assert.deepEqual(addPlaces({}, ["interior:vault"], { access: MOURNHOLD })[PLACE_PREFIX + "interior:vault"], []);
+});
+
+test("two sealed places added together can reach each other through the doors", async () => {
+  const { addPlaces, PLACE_PREFIX } = await lib();
+  const out = addPlaces({}, ["interior:mournhold, temple", "interior:mournhold, courtyard"], { access: MOURNHOLD });
+  assert.ok(out[PLACE_PREFIX + "interior:mournhold, temple"].some(e => e.to === PLACE_PREFIX + "interior:mournhold, courtyard" && e.indoors),
+    "the first place added links to the second, though it was added after");
+  assert.equal(out[PLACE_PREFIX + "interior:mournhold, courtyard"].filter(e => e.to === PLACE_PREFIX + "interior:mournhold, temple").length, 1,
+    "one leg each way, not two");
+});

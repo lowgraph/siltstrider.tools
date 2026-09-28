@@ -83,3 +83,30 @@ test("a Propylon asked for in conversation says who to ask", async () => {
   assert.equal(graph.Caldera[0].label, 'Ask Folms Mirel about "andasreth" (needs Master Propylon Index)');
   assert.equal(graph.Caldera[0].kind, "Propylon");
 });
+
+test("a room with no door outside is reached through the doors from the teleport's room", async () => {
+  const { addTeleports } = await lib();
+  const { planRoute } = await import("../lib/travel-graph.mjs");
+  const { addPlaces, PLACE_PREFIX } = await import("../lib/travel-walk.mjs");
+  const access = { records: [
+    { key: "interior:mournhold, courtyard", depth: null, exits: [], doors: ["interior:mournhold, bazaar"] },
+    { key: "interior:mournhold, bazaar", depth: null, exits: [], doors: ["interior:mournhold, courtyard"] }] };
+  const catalog = { items: {}, records: [
+    { kind: "dialogue", from: ["interior:ebonheart, grand council chambers"], to: "interior:mournhold, courtyard",
+      topic: "transport to mournhold", speaker: "effe-tei" },
+    { kind: "dialogue", from: ["interior:mournhold, courtyard"], to: "interior:ebonheart, grand council chambers",
+      topic: "transport to ebonheart", speaker: "effe-tei", questGated: true }] };
+  const walk = { access, nodes: NODES };
+  const { graph } = addTeleports({ Ebonheart: [], Caldera: [] }, catalog, { nodes: NODES, walk });
+  const bazaar = "interior:mournhold, bazaar";
+  const planned = addPlaces(graph, [bazaar], { access, nodes: NODES });
+  const route = planRoute("Ebonheart", PLACE_PREFIX + bazaar, planned);
+  assert.ok(route.isValid, route.message);
+  assert.deepEqual(route.steps.map(s => s.kind), ["Dialogue Teleport", "Indoors"]);
+  assert.deepEqual(route.steps[1].doors, ["interior:mournhold, courtyard", bazaar]);
+  assert.equal(route.steps[1].indoors, true);
+  const home = planRoute(PLACE_PREFIX + bazaar, "Ebonheart", planned);
+  assert.equal(home.isValid, false, "the way back is a quest teleport, not taken unless asked for");
+  const { graph: quest } = addTeleports({ Ebonheart: [], Caldera: [] }, catalog, { nodes: NODES, walk, includeQuest: true });
+  assert.ok(planRoute(PLACE_PREFIX + bazaar, "Ebonheart", addPlaces(quest, [bazaar], { access, nodes: NODES })).isValid);
+});

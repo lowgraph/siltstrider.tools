@@ -30,6 +30,7 @@ import {
   doorChain,
   isPlace,
   placeFromSave,
+  roomsThrough,
   PLACE_PREFIX,
   CELL
 } from "../../../lib/travel-walk.mjs";
@@ -152,7 +153,8 @@ export default function TravelWorkstation() {
     if (!teleports) return walkGraph;
     return addTeleports(walkGraph, teleports, {
       nodes: gameData.data?.metadata?.Travel?.nodes || {}, held, includeQuest: questTeleports,
-      walk: { points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells }
+      walk: { points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells,
+        nodes: gameData.data?.metadata?.Travel?.nodes || {} }
     }).graph;
   }, [walkGraph, teleports, gameData.data, held, questTeleports, points, access, walking, speed, swim, grid, intervention, spells]);
 
@@ -321,15 +323,37 @@ export default function TravelWorkstation() {
   const originPlaces = useMemo(() => placeMatches(originSearch), [placeMatches, originSearch]);
   const destPlaces = useMemo(() => placeMatches(destSearch), [placeMatches, destSearch]);
   const sealed = useCallback((record) => record.interior && !placePoints(record.key, access).length, [access]);
+  // How a room with no door out is reached: through its doors to a teleport's end or a
+  // stop, if any; quest teleports only count when asked for on the route, so say so.
+  const teleportEnds = useMemo(() => {
+    const ends = new Map();
+    for (const t of teleports?.records || []) {
+      for (const cell of [t.to, ...(t.from || [])]) {
+        if (cell && ends.get(cell) !== "everyday") ends.set(cell, t.questGated ? "quest" : "everyday");
+      }
+    }
+    return ends;
+  }, [teleports]);
+  const sealedWay = useCallback((cellKey) => {
+    const nodes = gameData.data?.metadata?.Travel?.nodes || {};
+    let way = null;
+    for (const room of [cellKey, ...roomsThrough(cellKey, access).keys()]) {
+      const end = nodes[room] ? "everyday" : teleportEnds.get(room);
+      if (end === "everyday") { way = end; break; }
+      if (end) way = end;
+    }
+    return way === "everyday" ? "inside, by teleport" : way === "quest" ? "inside, by quest teleport" : "inside, no way in known";
+  }, [access, teleportEnds, gameData.data]);
 
   // Compute route: fewest legs, least gold for this character, or fewest in-game hours.
   const planGraph = useMemo(() => {
     const chosen = [origin, destination].filter(isPlace).map((id) => id.slice(PLACE_PREFIX.length));
     if (!chosen.length) return routingGraph;
     return addPlaces(routingGraph, chosen, {
-      points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells
+      points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells,
+      nodes: gameData.data?.metadata?.Travel?.nodes || {}
     });
-  }, [origin, destination, routingGraph, points, access, walking, speed, swim, grid, intervention, spells]);
+  }, [origin, destination, routingGraph, points, access, walking, speed, swim, grid, intervention, spells, gameData.data]);
   const route = useMemo(() => {
     const planned = planRoute(origin, destination, planGraph, {
       objective: priced ? objective : "hops",
@@ -390,6 +414,8 @@ export default function TravelWorkstation() {
         return "border-warning-line bg-surface-9 text-warning-2";
       case "Propylon":
         return "border-info-line-1 bg-surface-15 text-info";
+      case "Indoors":
+        return "border-line-6 bg-surface-5 text-fg-7";
       case "Dialogue Teleport":
       case "Item Teleport":
       case "Teleport":
@@ -648,7 +674,7 @@ export default function TravelWorkstation() {
                       >
                         {record.name}{" "}
                         <span className="text-[10px] text-fg-13">
-                          {record.interior ? (sealed(record) ? "inside, no door out" : "inside") : formatRegionName(record.region || "") || "outdoors"}
+                          {record.interior ? (sealed(record) ? sealedWay(record.key) : "inside") : formatRegionName(record.region || "") || "outdoors"}
                         </span>
                       </button>
                     </li>
@@ -706,7 +732,7 @@ export default function TravelWorkstation() {
                       >
                         {record.name}{" "}
                         <span className="text-[10px] text-fg-13">
-                          {record.interior ? (sealed(record) ? "inside, no door out" : "inside") : formatRegionName(record.region || "") || "outdoors"}
+                          {record.interior ? (sealed(record) ? sealedWay(record.key) : "inside") : formatRegionName(record.region || "") || "outdoors"}
                         </span>
                       </button>
                     </li>
@@ -727,6 +753,7 @@ export default function TravelWorkstation() {
               <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
               <li>Divine and Almsivi Intervention land where OpenMW&apos;s marker search puts you: the markers on the smallest square ring of cells around you, not the nearest in a straight line, and indoors the first door out. Tick the spells your character can cast; a loaded save ticks them for you.</li>
               <li>Walking joins any place to the network at your run speed (Speed and Athletics, carrying nothing). It follows the ground: round slopes steeper than the 46° OpenMW lets you climb, through the Ghostgate rather than the Ghostfence, and swimming only near land, at your swim speed. Only the terrain is read, so a boulder or a building can still be in the way. Indoors, the route names the doors on the way in and out.</li>
+              <li>Some rooms have no door outside at all: Mournhold, Sotha Sil, Bamz-Amschend. The route reaches them through their doors from the room a teleport arrives in, and names the rooms passed; time spent indoors is not counted. The place list says how each is reached, and which need a quest teleport.</li>
               <li>Propylons, dialogue transports (Mournhold) and teleporting items come from the game&apos;s own scripts: a Propylon needs its index, and the Master Index sends every Propylon to Caldera. Tick the items you carry. Quest teleports, taken once in a quest, are left out unless you include them.</li>
               <li>Mark and Recall are not included.</li>
             </ul>
@@ -804,7 +831,9 @@ export default function TravelWorkstation() {
                           </div>
                         )}
                         <div className="text-[11px] text-fg-13">
-                          {step.walk
+                          {step.indoors
+                            ? `Go through the doors: ${(step.doors || []).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}`
+                            : step.walk
                             ? step.terrain
                               ? `Walk about ${(step.distance / CELL).toFixed(1)} cells, heading ${step.direction}, to ${labelOf(step.to)}`
                                 + (step.straight && step.distance > step.straight * 1.15
@@ -839,7 +868,8 @@ export default function TravelWorkstation() {
                         {(Number.isFinite(step.gold) || Number.isFinite(step.hours)) && (
                           <div className="text-[11px] font-mono text-fg-9">
                             {Number.isFinite(step.gold) ? `${step.gold} gold` : "price unknown"}
-                            {Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes" : formatDuration(step.hours)}` : ""}
+                            {step.indoors ? " · time indoors not counted"
+                              : Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes" : formatDuration(step.hours)}` : ""}
                           </div>
                         )}
                       </div>
