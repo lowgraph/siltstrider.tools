@@ -173,3 +173,14 @@ test('the shield shows once, not once per objective',async()=>{
  assert.equal(rows.length,1);
  assert.equal(rows[0].primary.key,'tower','the stronger shield leads');
 });
+
+test('an enchantment ranks on its useful value when the rows carry one, and its cost when not', async () => {
+  const { pickRank } = await import('../lib/gear-rows.mjs');
+  const row = { category: 'clothing' };
+  const feather = { strength: 0, enchanted: { worth: 120, value: 24, effects: [] } };
+  const fortify = { strength: 0, enchanted: { worth: 60, value: 60, effects: [] } };
+  assert.ok(pickRank(fortify, row)[1] > pickRank(feather, row)[1], 'a Fortify ring over a costlier Feather one');
+  assert.deepEqual(pickRank({ strength: 0, enchanted: { worth: 120, effects: [] } }, row), [2, 120], 'older rows: the cost');
+  assert.deepEqual(pickRank({ strength: 0, enchanted: { worth: 5, value: 0, effects: [] } }, row), [0, 0],
+    'a value of 0 (only none-tier effects) ranks with the curses, as the builder ranks it, not on its cost');
+});
