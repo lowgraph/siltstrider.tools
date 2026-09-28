@@ -26,6 +26,7 @@ The application state is managed by `CharacterProvider` via `useActiveCharacter(
 
 To store comprehensive character saves within Cloudflare D1's row size constraints and localStorage, Silt Strider implements a specialized binary format:
 
+- **Format version**: 2 only. Version 1 site saves are rejected; import the original OpenMW save again. Identity, positions, created items and full build snapshot fields are required in the binary layout.
 - **Magic Header**: `SLT1` (0x53, 0x4C, 0x54, 0x31)
 - **Compression**: Combines variable-length integer encoding (varints), bitmasks, enumerated integer tables for attributes/skills/factions, and dictionary string pools for arbitrary cell names and IDs.
 - **Efficiency**: Achieves approximately 96% compression compared to raw JSON (~4 KB binary vs ~100 KB JSON), enabling complete game state persistence within minimal storage footprints.
@@ -35,18 +36,20 @@ To store comprehensive character saves within Cloudflare D1's row size constrain
 
 ## 3. Shell State & Permalinks (`components/shell-context.jsx`, `lib/permalink-codec.mjs`)
 
-- **Routing**: Silt Strider is a client-side single-page application. Tool navigation is hash-based (`#builder`, `#level`, `#challenge`, `#factions`, `#gear`, `#vault`, `#alchemy`, `#enchanting`, `#spellmaking`, `#travel`).
-- **Permalinks**: State is encoded into URL hashes using a pure ESM Base64URL codec (`lib/permalink-codec.mjs`). URLs preserve character build configurations and challenge seeds across browsers without requiring backend storage.
+- **Routing**: Canonical paths (`/builder`, `/challenge`, `/account`, etc.) with explicit `world` and `arce` query parameters.
+- **Permalinks**: Build and run payloads use Base64URL query parameters. Retired hash routes and view aliases are not decoded.
 
 ---
 
 ## 4. Cloud Character Vault & Account Architecture
 
 ### A. Cloudflare D1 Schema (`cloudflare/migrations/`)
-1. `0001_saved_characters.sql`: Legacy character builder sheet table.
+1. `0001_saved_characters.sql`: Historical prototype schema; retained as applied migration history.
 2. `0002_cloud_save_vault.sql`: Comprehensive `cloud_saves` table, user tier quotas, triggers, and views (`v_cloud_save_headers`, `v_user_entitlements`).
 3. `0003_account_profiles.sql`: Account display settings, preferences, and default profile options.
 4. `0004_premium_support.sql`: Supporter entitlements and verification mappings.
+5. `0005_premium_currencies.sql`: One-time tips in any currency.
+6. `0006_remove_empty_prototype.sql`: Retires the prototype table only if empty; refuses to discard rows.
 
 ### B. Entitlements & Ko-fi Integration
 - **Free Tier**: 5 cloud save slots.

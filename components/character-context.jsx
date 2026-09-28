@@ -8,7 +8,7 @@ import { useShell } from "./shell-context";
 import { getGameDataLoader } from "./use-game-data";
 import { createCharacterCatalogService } from "../lib/character-catalogs.mjs";
 import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
-import { decodeShareHash, encodeShareHash } from "../lib/permalink-codec.mjs";
+import { decodeShareUrl } from "../lib/permalink-codec.mjs";
 import { sanitizeBuild } from "../lib/character-vault.mjs";
 import { rememberSave, recallSave, forgetSave } from "../lib/active-save-store.mjs";
 import {
@@ -52,12 +52,13 @@ export function CharacterProvider({ children }) {
   const setBuild = useCallback((next) => setBuildState(previous => distinctFavored(typeof next === 'function' ? next(previous) : next, previous)), []);
   const [catalogs, setCatalogs] = useState(null);
 
-  // Catalog service subscription
+  const service = useMemo(() => createCharacterCatalogService(getGameDataLoader()), []);
+
+  // Load the selected profile.
   useEffect(() => {
     let current = true;
     if (typeof window === "undefined") return;
 
-    const service = (window.siltCharacters ||= createCharacterCatalogService(getGameDataLoader()));
     const profile = shell.profile || "vanilla";
 
     if (service.active && service.active.profile === profile) {
@@ -76,17 +77,8 @@ export function CharacterProvider({ children }) {
         });
     }
 
-    const onStatus = () => {
-      if (service.active && current) {
-        setCatalogs(service.active);
-      }
-    };
-    window.addEventListener("silt-character-status", onStatus);
-    return () => {
-      current = false;
-      window.removeEventListener("silt-character-status", onStatus);
-    };
-  }, [shell.profile]);
+    return () => { current = false; };
+  }, [shell.profile, service]);
 
   // Keep build in sync with world/arce profile changes
   useEffect(() => {
@@ -171,7 +163,6 @@ export function CharacterProvider({ children }) {
     validateSave(save);
     const { profile, reason, contentFileCount } = profileForSave(save);
     const loader = getGameDataLoader();
-    const service = (window.siltCharacters ||= createCharacterCatalogService(loader));
     // Resolved against the save's profile, not whichever one the site is showing.
     const [character, equipment] = await Promise.all([
       service.prepare(profile),
@@ -200,7 +191,7 @@ export function CharacterProvider({ children }) {
       if (shell.profile !== profile && typeof shell.setProfile === "function") shell.setProfile(profile);
     }
     return loaded;
-  }, [shell]);
+  }, [shell, service]);
 
   const clearSave = useCallback(() => {
     setActiveSave(null);
@@ -214,7 +205,7 @@ export function CharacterProvider({ children }) {
     if (typeof window === "undefined" || restoring.current) return;
     restoring.current = true;
     const raw = window.location.href || "";
-    if (sanitizeBuild(decodeShareHash(raw).build)) return;
+    if (sanitizeBuild(decodeShareUrl(raw).build)) return;
     recallSave()
       .then((kept) => (kept ? loadSave(kept, { restored: true }) : null))
       .catch((err) => {
@@ -223,13 +214,13 @@ export function CharacterProvider({ children }) {
       });
   }, [loadSave]);
 
-  // A shared build link (#builder&build=... or ?build=...) opens its character, on load or when pasted
+  // A shared build link (/builder?build=...) opens its character, on load or when pasted
   // into an open tab, then leaves the address bar with a clean path so later edits are not confused with it.
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
     const openLink = () => {
-      const raw = window.location.href || ((window.location.search || '') + (window.location.hash || ''));
-      const decoded = decodeShareHash(raw);
+      const raw = window.location.href || (window.location.pathname + window.location.search);
+      const decoded = decodeShareUrl(raw);
       const linked = sanitizeBuild(decoded.build);
       if (!linked) return;
       setActiveSave(null);
@@ -246,9 +237,9 @@ export function CharacterProvider({ children }) {
       } catch {}
     };
     openLink();
-    window.addEventListener("hashchange", openLink);
-    return () => window.removeEventListener("hashchange", openLink);
-  }, [shell]);
+    window.addEventListener("popstate", openLink);
+    return () => window.removeEventListener("popstate", openLink);
+  }, [shell, service]);
 
   const value = useMemo(
     () => ({

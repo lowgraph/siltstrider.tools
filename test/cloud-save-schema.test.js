@@ -28,7 +28,7 @@ test('Cloud Save Schema: D1 schema and migrations exist and adhere to Cloudflare
   assert.match(wranglerText, /"nodejs_compat"/);
 
   // Check table definitions
-  const expectedTables = ['saved_characters', 'cloud_saves', 'saved_challenges', 'saved_loadouts'];
+  const expectedTables = ['cloud_saves', 'saved_challenges', 'saved_loadouts'];
   for (const table of expectedTables) {
     assert.ok(schemaSql.includes(`TABLE IF NOT EXISTS ${table}`) || schemaSql.includes(`TABLE ${table}`), `Schema must define ${table}`);
   }

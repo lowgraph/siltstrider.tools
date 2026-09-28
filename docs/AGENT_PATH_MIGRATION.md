@@ -21,7 +21,6 @@ This guide defines canonical repository locations, path migrations, and operatio
 | **Backend & Database** | `cloudflare/` | Cloudflare Worker (`worker.mjs`), API routes (`routes/`), and D1 SQL migrations (`migrations/`) |
 | **Documentation** | `docs/` | System architecture (`ARCHITECTURE.md`), state design (`STATE.md`), loader contracts (`DATA_LOADER.md`), and account specs (`ACCOUNT_PROFILES.md`, `PREMIUM.md`) |
 | **Historical Archive** | `docs/archive/` | Historical migration records (`docs/archive/STATE.md`, `docs/archive/MIGRATION.md`) |
-| **Legacy Code Archive** | `archive/legacy/` | Phase 13 archival of retired DOM workbench and prebuild extraction scripts |
 | **Static Assets & Data** | `public/` | Fonts, textures, and immutable staged game bundles (`public/game-data/<bundleId>/`) |
 | **Tooling & Build Scripts**| `scripts/` | Data staging (`stage-game-data.mjs`), Cloudflare static export build (`build-cloudflare.cjs`), asset deployer (`cloudflare-assets.cjs`) |
 | **Automated Tests** | `test/` | Node test runner test suites (`test/*.test.js`) |
@@ -45,7 +44,6 @@ This guide defines canonical repository locations, path migrations, and operatio
 ## 3. Invariants Kept at Root
 
 The following files deliberately remain at the repository root:
-- `index.html`: Monolithic reference implementation used as an active regression fixture by `test/site.test.js` and `archive/legacy/scripts/dev-server.cjs`.
 - `README.md`: Primary public project documentation.
 - `CHANGELOG.md`: Detailed chronological release log.
 - `COORDINATION.md`: Multi-agent contract sync document, shared with the data pipeline repository.

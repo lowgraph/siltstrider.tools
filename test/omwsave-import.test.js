@@ -136,18 +136,10 @@ test('the codec round-trips gender, specialization and favoured attributes', asy
   assert.deepEqual(back.identity.class.favoredAttributes, ['Endurance', 'Agility']);
 });
 
-test('a payload stored before the identity extension still decodes, with it unknown', async () => {
-  const { serializeOmwSave, deserializeOmwSave } = await codec;
-  // No favoured attributes means the extension is exactly three bytes: gender, spec, count;
-  // no position means the position extension after it is one flag byte, and no
-  // player-made items the one after that one count byte.
-  const save = parsedSave({ identity: { class: { id: 'x', name: null, custom: false, specialization: 'Magic', favoredAttributes: [] } } });
-  const full = serializeOmwSave(save);
-  const old = deserializeOmwSave(full.subarray(0, full.length - 5));
-  assert.equal(old.identity.gender, null);
-  assert.equal(old.identity.class.specialization, null);
-  assert.deepEqual(old.identity.class.favoredAttributes, []);
-  assert.equal(old.identity.name, 'Tester', 'everything before the extension is intact');
+test('truncated identity payloads are rejected', async () => {
+ const { serializeOmwSave, deserializeOmwSave } = await codec;
+ const full = serializeOmwSave(parsedSave());
+ for (const missing of [1,2,5]) assert.throws(()=>deserializeOmwSave(full.subarray(0,full.length-missing)));
 });
 
 test('an unrecognised gender or specialization is stored as unknown, not as a wrong value', async () => {
@@ -317,9 +309,7 @@ test('the codec carries where the player stands, and older payloads read it as u
   assert.equal('position' in garbage.identity || 'lastExteriorPosition' in garbage.identity, false, 'nothing unreadable is stored');
   const full = serializeOmwSave(parsedSave());
   // No positions and no player-made items: section 10 is one flag byte, section 11 one count.
-  const before = deserializeOmwSave(full.subarray(0, full.length - 2));
-  assert.equal('position' in before.identity, false, 'a payload written before the position extension');
-  assert.equal(before.identity.name, 'Tester');
+  assert.throws(() => deserializeOmwSave(full.subarray(0, full.length - 2)));
 });
 
 /* ---- Player-made items: dynamic ENCH and item records in the save ---- */
@@ -374,9 +364,7 @@ test('the codec carries the player-made items, and older payloads read none', as
   assert.deepEqual(back.stuff.inventory, save.stuff.inventory, 'the inventory is untouched');
   const full = serializeOmwSave(save);
   assert.equal('created' in deserializeOmwSave(full).stuff, false, 'none held, none stored');
-  const older = deserializeOmwSave(full.subarray(0, full.length - 1));
-  assert.equal('created' in older.stuff, false, 'a payload written before section 11');
-  assert.equal(older.identity.name, 'Tester');
+  assert.throws(() => deserializeOmwSave(full.subarray(0, full.length - 1)));
   const odd = deserializeOmwSave(serializeOmwSave({ ...save, stuff: { ...save.stuff, created: [
     { id: '', kind: 'CLOT' }, null, { id: '$generated:9', constant: [{ effectId: -1, magnitude: 5 }, { effectId: 8, magnitude: -3 }] }] } }));
   assert.deepEqual(odd.stuff.created, [{ id: '$generated:9', kind: null, name: null, weight: null, constant: [{ effectId: 8, magnitude: 0 }] }],

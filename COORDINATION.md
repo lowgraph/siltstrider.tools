@@ -1,5 +1,9 @@
 # Coordination
 
+## Current-only site contract — 2026-09-28
+
+The user authorized removal of pre-release compatibility. Site sharing uses canonical paths and query parameters; hash aliases are retired. The SLT1 envelope now requires format version 2 and all snapshot sections; original OpenMW import remains supported. No game-data catalog schema changed. Standalone index.html, archive/legacy, global catalog hooks and the prototype test API were removed; database history and stored rows were not modified. Migration 0006 is prepared but not applied: production saved_characters was verified empty, and the migration refuses populated tables before removing it. First verification command: `npm test` in the site repository, then `npm run build:cloudflare`. Old version 1 cloud payloads need reimport from the original OpenMW save after deployment.
+
 Three agents work on Silt Strider in parallel. This file is identical in both
 repositories. If you change it, change both copies in the same session.
 

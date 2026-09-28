@@ -2,13 +2,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { DIFFICULTY_PRESETS } from "../lib/challenge-math.mjs";
 import { createEmptyRun, sanitizeRun } from "../lib/challenge-engine.mjs";
-import { decodeShareHash, encodeShareHash } from "../lib/permalink-codec.mjs";
+import { decodeShareUrl } from "../lib/permalink-codec.mjs";
 
 /**
  * The challenge run lives above the views, like the character build, so leaving the
  * Challenge Runs page (to open the rolled character in the Build Optimizer, say) and
  * coming back finds the same run. The run and its locks are also kept in this browser,
- * so a reload does not lose them, and a shared link (#challenge&run=...) opens its run.
+ * so a reload does not lose them, and a shared link (/challenge?run=...) opens its run.
  *
  * The roll settings the player picks (preset, difficulty bands, counts) are their
  * preferred run and are remembered too. Settings a loaded seed brings are used for that
@@ -81,15 +81,15 @@ function writeStoredRun(run, locks, store = storage()) {
 
 /** The run a shared link carries, or null. */
 export function runFromLink(hash) {
-  return sanitizeRun(decodeShareHash(hash || "").run);
+  return sanitizeRun(decodeShareUrl(hash || "").run);
 }
 
 // Once a linked run is open, take it out of the address bar: later rolls are not it, and
 // a reload should find the latest run, not the link's.
 function dropRunFromAddress() {
   try {
-    const raw = window.location.href || ((window.location.search || '') + (window.location.hash || ''));
-    const { view, world, arce } = decodeShareHash(raw);
+    const raw = window.location.href || (window.location.pathname + window.location.search);
+    const { view, world, arce } = decodeShareUrl(raw);
     try {
       window.localStorage.setItem('mw-world', world);
       window.localStorage.setItem('mw-arce', arce ? '1' : '0');
@@ -112,7 +112,7 @@ function useChallengeRunState({ persist }) {
   useEffect(() => {
     if (!persist) return undefined;
     const openLink = () => {
-      const raw = window.location.href || ((window.location.search || '') + (window.location.hash || ''));
+      const raw = window.location.href || (window.location.pathname + window.location.search);
       const linked = runFromLink(raw);
       if (!linked) return false;
       setRun(linked);
@@ -133,9 +133,9 @@ function useChallengeRunState({ persist }) {
       setPreferred(savedSettings);
     }
     restored.current = true;
-    // A link pasted into an open tab changes only the hash.
-    window.addEventListener("hashchange", openLink);
-    return () => window.removeEventListener("hashchange", openLink);
+    // Browser history may restore a shared link.
+    window.addEventListener("popstate", openLink);
+    return () => window.removeEventListener("popstate", openLink);
   }, [persist]);
 
   useEffect(() => {

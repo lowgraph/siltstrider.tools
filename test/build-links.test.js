@@ -15,7 +15,7 @@ const BUILD = {
 
 test("a build link opens the same character in the same world, in browsers too", async () => {
   const { generateBuildShareUrl, sanitizeBuild } = await vault;
-  const { decodeShareHash } = await codec;
+  const { decodeShareUrl } = await codec;
   const realBuffer = globalThis.Buffer;
   // What Next.js ships to the browser: a Buffer without the 'base64url' encoding.
   globalThis.Buffer = { from: () => ({ toString: () => { throw new TypeError("Unknown encoding: base64url"); } }) };
@@ -25,12 +25,12 @@ test("a build link opens the same character in the same world, in browsers too",
   } finally {
     globalThis.Buffer = realBuffer;
   }
-  assert.match(url, /^https:\/\/siltstrider\.tools\/#builder&TR&ARCE&build=[A-Za-z0-9_-]+&world=tr&arce=1$/);
-  const decoded = decodeShareHash(url.slice(url.indexOf("#")));
+  assert.match(url, /^https:\/\/siltstrider\.tools\/builder\?world=tr&arce=1&build=[A-Za-z0-9_-]+$/);
+  const decoded = decodeShareUrl(url);
   assert.equal(decoded.profile, "tr_arce");
   const { world, arce, loadouts, ...character } = BUILD;
   assert.deepEqual(sanitizeBuild(decoded.build), character, "every character field, and no loadouts");
-  assert.equal(generateBuildShareUrl(null), "#builder");
+  assert.equal(generateBuildShareUrl(null), "/builder");
 });
 
 test("a build from a link keeps only what a build has", async () => {

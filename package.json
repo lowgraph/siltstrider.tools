@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1 --port 8765",
     "test": "node --test test/*.test.js",
-    "dev:legacy": "node --env-file-if-exists=.env.local archive/legacy/scripts/dev-server.cjs",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1 --port 8765",
     "build:cloudflare": "node scripts/build-cloudflare.cjs",

@@ -15,11 +15,10 @@ mod._compile(result.outputFiles[0].text, path.resolve('native-state-fixture.cjs'
 const {CharacterProvider, useActiveCharacter, ShellProvider, useShell} = mod.exports;
 
 async function harness(hash, check) {
-  const dom = new JSDOM('<div id="root"></div><input id="c-race" value="Orc"><input id="enc-skill" value="999">', {url: 'http://localhost/' + hash});
+  const dom = new JSDOM('<div id="root"></div><input id="c-race" value="Orc"><input id="enc-skill" value="999">', {url: 'http://localhost' + hash});
   Object.assign(global, {window: dom.window, document: dom.window.document, Event: dom.window.Event, IS_REACT_ACT_ENVIRONMENT: true});
   // Loading catalogs must not reactivate global-table fallbacks.
-  window.siltCharacters = {prepare: () => new Promise(() => {})};
-  for (const key of ['RACES', 'SIGNS', 'VANILLA_CLASS', 'SPEC_SKILLS', 'siltShell', 'syncSkillPrev']) {
+  for (const key of ['siltCharacters', 'RACES', 'SIGNS', 'VANILLA_CLASS', 'SPEC_SKILLS', 'siltShell', 'syncSkillPrev']) {
     Object.defineProperty(window, key, {get() {throw new Error(`Retired global read: ${key}`);}});
   }
   let state;
@@ -35,7 +34,7 @@ async function harness(hash, check) {
 }
 
 test('stale DOM controls and storage events cannot overwrite a React build', async () => {
-  await harness('#builder', async state => {
+  await harness('/builder', async state => {
     assert.equal(state().character.build.race, 'Dark Elf');
     await React.act(async () => state().character.updateField('name', 'Native character'));
     await React.act(async () => {
@@ -50,8 +49,8 @@ test('stale DOM controls and storage events cannot overwrite a React build', asy
   });
 });
 
-test('old profile links and navigation work even with a poisoned legacy shell', async () => {
-  await harness('#builder&TR&ARCE', async state => {
+test('profile links and navigation work even with a poisoned legacy shell', async () => {
+  await harness('/builder?world=tr&arce=1', async state => {
     assert.equal(state().shell.profile, 'tr_arce');
     await React.act(async () => state().shell.navigate('travel'));
     assert.equal(state().shell.view, 'travel');
@@ -62,7 +61,7 @@ test('old profile links and navigation work even with a poisoned legacy shell', 
 });
 
 test('malformed build links preserve defaults without consulting retired controls', async () => {
-  await harness('#builder&build=%%%invalid', async state => {
+  await harness('/builder?build=%%%invalid', async state => {
     assert.equal(state().character.build.className, 'Custom');
     assert.equal(state().character.build.race, 'Dark Elf');
     await React.act(async () => state().shell.navigate('alchemy'));

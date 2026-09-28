@@ -489,8 +489,8 @@ test("Hybrid Sync Engine in lib/character-vault.mjs manages local storage and co
 
   // 3. Share URL generation
   const shareUrl = generateBuildShareUrl(mockBuild, "https://siltstrider.tools");
-  assert.ok(shareUrl.startsWith("https://siltstrider.tools/#builder&build="));
-  assert.ok(shareUrl.includes("&world=vanilla&arce=0"));
+  assert.ok(shareUrl.startsWith("https://siltstrider.tools/builder?world=vanilla&arce=0&build="));
+  assert.ok(new URL(shareUrl).searchParams.get("world") === "vanilla");
 
   // 4. Duplicate Cloud Save
   let createdPayload = null;

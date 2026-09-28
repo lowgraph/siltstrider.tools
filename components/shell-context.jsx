@@ -1,18 +1,16 @@
 "use client";
-import { createContext, useContext, useSyncExternalStore, useCallback, useEffect, useMemo } from 'react';
-import { decodeShareHash, normalizeProfile, normalizeView, KNOWN_VIEWS } from '../lib/permalink-codec.mjs';
+import { createContext, useContext, useSyncExternalStore, useCallback, useMemo } from 'react';
+import { decodeShareUrl, normalizeProfile, normalizeView, KNOWN_VIEWS } from '../lib/permalink-codec.mjs';
 
 const initial = Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: 'home' });
 
-// Listen for app history replacements and browser hashchange/popstate events
+// Listen for app history replacements and browser history events
 const subscribe = listener => {
   if (typeof window === 'undefined') return () => {};
   window.addEventListener('silt-shell-change', listener);
-  window.addEventListener('hashchange', listener);
   window.addEventListener('popstate', listener);
   return () => {
     window.removeEventListener('silt-shell-change', listener);
-    window.removeEventListener('hashchange', listener);
     window.removeEventListener('popstate', listener);
   };
 };
@@ -49,7 +47,6 @@ function readCurrentState(initialView) {
   }
 
   const pathname = window.location.pathname || '/';
-  const hash = window.location.hash || '';
   const search = window.location.search || '';
   const historyView = window.history?.state?.view;
 
@@ -64,10 +61,10 @@ function readCurrentState(initialView) {
     baseView = resolvePathView(pathname, initialView);
   }
 
-  // If a hash exists (e.g. legacy #builder, #alchemy, #TR, #builder&build=...), decode from it
+  // Explicit query settings override the stored profile.
   let decoded = null;
-  if (search || (hash && hash !== '#')) {
-    decoded = decodeShareHash(search + hash, {
+  if (search) {
+    decoded = decodeShareUrl(pathname + search, {
       defaultView: baseView,
       defaultWorld: stored.world,
       defaultArce: stored.arce
@@ -106,7 +103,6 @@ export function ShellProvider({ children, initialView = 'home' }) {
     }
 
     const pathname = window.location.pathname || '/';
-    const hash = window.location.hash || '';
     const search = window.location.search || '';
     const historyView = window.history?.state?.view || '';
     let storedWorld = 'vanilla';
@@ -116,7 +112,7 @@ export function ShellProvider({ children, initialView = 'home' }) {
       storedArce = window.localStorage.getItem('mw-arce') || '0';
     } catch {}
 
-    const cacheKey = `${pathname}|${hash}|${search}|${historyView}|${storedWorld}|${storedArce}|${initialView}`;
+    const cacheKey = `${pathname}|${search}|${historyView}|${storedWorld}|${storedArce}|${initialView}`;
     if (cachedState && cacheKey === lastCacheKey) {
       return cachedState;
     }
@@ -129,41 +125,6 @@ export function ShellProvider({ children, initialView = 'home' }) {
   const getServerSnapshot = useCallback(() => serverState, [serverState]);
 
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-
-  // Auto-migrate legacy hash fragments (#builder, #alchemy, #TR, etc.) to clean HTML5 paths
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const migrateLegacyHash = () => {
-      const rawHash = window.location.hash;
-      if (!rawHash || rawHash === '#') return;
-
-      const rawLocation = (window.location.search || '') + rawHash;
-      const hasPayload = /(?:^|[?&#])(run|build)=/i.test(rawLocation);
-      if (hasPayload) {
-        // Child context (CharacterProvider or ChallengeRunProvider) consumes and strips the payload
-        return;
-      }
-
-      // Plain legacy hash without payload
-      const stored = getStoredProfile();
-      const decoded = decodeShareHash(rawLocation, { defaultView: state.view, defaultWorld: stored.world, defaultArce: stored.arce });
-      if (/(?:^|[&#?/_])(tr|tamriel|arce)\b/i.test(rawLocation) || /world=|arce=/i.test(rawLocation)) {
-        try {
-          window.localStorage.setItem('mw-world', decoded.world);
-          window.localStorage.setItem('mw-arce', decoded.arce ? '1' : '0');
-        } catch {}
-      }
-
-      const cleanPath = decoded.view === 'home' ? '/' : '/' + decoded.view;
-      window.history.replaceState({ view: decoded.view }, '', cleanPath + (window.location.search || ''));
-      window.dispatchEvent(new Event('silt-shell-change'));
-    };
-
-    migrateLegacyHash();
-    window.addEventListener('hashchange', migrateLegacyHash);
-    return () => window.removeEventListener('hashchange', migrateLegacyHash);
-  }, [state.view]);
 
   const navigate = useCallback(view => {
     if (typeof window === 'undefined') return;

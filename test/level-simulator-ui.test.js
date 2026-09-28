@@ -333,32 +333,3 @@ test("LevelStepEditor provides 1-click presets and target level slider", async (
   }
 });
 
-test("index.html handles showView('leveler') and hash navigation", async () => {
-  const dom = await JSDOM.fromFile(path.join(__dirname, "../index.html"), {
-    url: "https://example.test/",
-    runScripts: "dangerously",
-    pretendToBeVisual: true
-  });
-  await new Promise((r) => setTimeout(r, 50));
-
-  const { window } = dom;
-  const { document } = window;
-
-  // Navigate to leveler
-  window.showView("leveler");
-
-  const panelLeveler = document.getElementById("panel-leveler");
-  assert.ok(panelLeveler, "#panel-leveler must exist");
-  assert.ok(panelLeveler.classList.contains("show"), "#panel-leveler must have .show class");
-  assert.ok(document.body.classList.contains("view-leveler"), "body must have .view-leveler class");
-
-  const deskBtn = document.getElementById("btn-desk-leveler");
-  assert.ok(deskBtn, "#btn-desk-leveler must exist");
-  assert.ok(deskBtn.classList.contains("on"), "#btn-desk-leveler must have .on class");
-
-  const pageSub = document.getElementById("page-sub");
-  assert.match(pageSub.textContent, /Progression simulator/);
-
-  dom.window.close();
-});
-

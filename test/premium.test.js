@@ -2,9 +2,9 @@ const {test}=require('node:test');const assert=require('node:assert/strict');
 const code='SS-'+'a'.repeat(32);
 const valid={verification_token:'secret',type:'Tip',is_subscription_payment:false,currency:'USD',amount:'3.00',message:code,kofi_transaction_id:'payment-one'};
 
-test('current Tip and legacy Donation accept a one-dollar payment',async()=>{
+test('Tip accepts a one-dollar payment',async()=>{
   const {paymentDetails}=await import('../cloudflare/routes/premium.mjs');
-  for(const type of ['Tip','Donation']) assert.deepEqual(paymentDetails({...valid,type,amount:'1.00'}),{code,amount:'1.00',currency:'USD',transactionId:'payment-one'});
+  for(const type of ['Tip']) assert.deepEqual(paymentDetails({...valid,type,amount:'1.00'}),{code,amount:'1.00',currency:'USD',transactionId:'payment-one'});
 });
 
 test('other Ko-fi event types and recurring tips do not qualify',async()=>{

@@ -27,7 +27,7 @@ and [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md) for the frontend transformation
 ### 2. Cross-Repo Boundary Enforcement
 - **Strict Boundary:** The Pipeline agent must NEVER directly modify files inside this web application repository.
 - **Contract Sync:** Changes to game parsing outputs or schemas pass exclusively via exported JSON bundles to `public/game-data/` and synchronized updates to `COORDINATION.md` and `UI_TRANSFORMATION.md`.
-- **No Stale Extraction Hooks:** The legacy prebuild extraction hook (`npm run extract:legacy`) was retired in Phase 13. Never attempt to run it. `index.html` remains at root as an active regression fixture.
+- **No Stale Extraction Hooks:** The legacy prebuild extraction hook (`npm run extract:legacy`) was retired in Phase 13. Never attempt to run it. The standalone `index.html` and archived bridges were removed; tests target the native application.
 
 ### 3. Verification & Adversarial QA Protocols
 - **Pipeline Tests:** Must pass cleanly with zero uncaught warnings. Summarize output; do not flood context with raw passing test logs.
@@ -45,7 +45,7 @@ and [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md) for the frontend transformation
 - Keep `COORDINATION.md` and `UI_TRANSFORMATION.md` identical across both repositories.
 - When completing a batch or milestone, update `COORDINATION.md` with:
   - Exported dataset schema changes.
-  - Invariants assumed by the downstream Next.js / legacy JS runtime.
+  - Invariants assumed by the downstream Next.js runtime.
   - Exactly which script/command the next agent must run first.
 
 # Technology Stack

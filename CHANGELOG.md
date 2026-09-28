@@ -1,5 +1,18 @@
 # Changelog
 
+## Current-only application and saves — 2026-09-28
+
+- Removed the standalone HTML application, archived runtimes, bridges, extraction harness and prototype test API. Native tests cover the current tools.
+- Share URLs now use canonical paths plus query parameters; hash routes and view aliases are no longer supported.
+- Cloud codec version 2 requires all snapshot sections and rejects version 1 payloads and wrapped builds. Existing old binary saves must be reimported from their original OpenMW files.
+- React owns the character catalog service; retired global hooks and events are gone. Applied migration history is retained. A guarded migration retires the empty prototype table, refusing if rows appear; current cloud saves are untouched.
+
+## Native handoff and alchemy cleanup — 2026-09-28
+
+- Removed retired DOM writes and synthetic optimizer clicks from Challenge → Builder; React owns the handoff.
+- Removed the alchemy effect-name fallback. Effect support now comes only from canonical EffectRules, with malformed or missing rules marked unsupported.
+- Retired the old alchemy bridge test in favor of native coverage and removed the dev:legacy command. The remaining standalone fixtures and their obsolete-only tests were subsequently removed.
+
 ## Account routing and profile-link fixes — 2026-09-27
 
 - Added an exported Account route so direct links and refreshes work.

@@ -9,7 +9,7 @@ import { useActiveCharacter } from "../character-context";
 import { useChallengeRun } from "../challenge-run-context";
 import { DIFFICULTY_PRESETS, formatRunMarkdown } from "../../lib/challenge-math.mjs";
 import { formatRunSeed, generateSeededRun, newSeedCode, parseRunSeed, rollCardAspect } from "../../lib/challenge-engine.mjs";
-import { encodeShareHash } from "../../lib/permalink-codec.mjs";
+import { encodeShareUrl } from "../../lib/permalink-codec.mjs";
 
 export default function ChallengeRunsRoot() {
   const shell = useShell();
@@ -225,33 +225,6 @@ export default function ChallengeRunsRoot() {
       setBuild(targetBuild);
     }
 
-    // Set legacy DOM values if present (for test environments and fallback scripts)
-    const setDomVal = (id, val) => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.value = val;
-        el.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    };
-    setDomVal("c-race", targetBuild.race);
-    setDomVal("c-gender", targetBuild.gender);
-    setDomVal("c-sign", targetBuild.sign);
-    setDomVal("c-spec", targetBuild.spec);
-    setDomVal("c-fav1", targetBuild.fav1);
-    setDomVal("c-fav2", targetBuild.fav2);
-    setDomVal("c-class", targetBuild.className);
-    targetBuild.maj.forEach((s, i) => setDomVal("maj" + i, s));
-    targetBuild.min.forEach((s, i) => setDomVal("min" + i, s));
-
-    // Use legacy bridge function if available
-    const btn = document.getElementById("btn-to-optimizer");
-    if (btn) {
-      try {
-        btn.click();
-      } catch (e) {}
-    }
-
-    // Direct navigation fallback
     if (shell?.navigate) {
       shell.navigate("builder");
     }
@@ -279,8 +252,8 @@ export default function ChallengeRunsRoot() {
   const handleCopyPermalink = useCallback(async () => {
     if (typeof window === "undefined") return;
     const { restNote, ...linked } = run;
-    const hash = encodeShareHash({ view: "challenge", world: shell.world, arce: shell.arce, profile: shell.profile, run: linked });
-    const url = window.location.origin + '/' + hash;
+    const hash = encodeShareUrl({ view: "challenge", world: shell.world, arce: shell.arce, profile: shell.profile, run: linked });
+    const url = window.location.origin + hash;
     try {
       await navigator.clipboard.writeText(url);
       setShareLink(null);

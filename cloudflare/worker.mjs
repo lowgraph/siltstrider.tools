@@ -17,7 +17,6 @@ import {
   handleDeleteSave
 } from './routes/saves.mjs';
 import { handleGetEntitlements } from './routes/entitlements.mjs';
-import { insertTestCharacter } from './test-route.mjs';
 
 export {
   authenticateUser,
@@ -26,8 +25,7 @@ export {
   handleCreateSave,
   handleUpdateSave,
   handleDeleteSave,
-  handleGetEntitlements,
-  insertTestCharacter
+  handleGetEntitlements
 };
 
 export default {
@@ -51,11 +49,6 @@ export default {
     }
 
     if (pathname === '/api/webhooks/kofi') return handleKofiWebhook(request, env);
-
-    // 2. Development test character endpoint
-    if (pathname === '/api/test-character') {
-      return insertTestCharacter(request, env);
-    }
 
     // 3. API Routes (/api/*)
     if (pathname.startsWith('/api/')) {

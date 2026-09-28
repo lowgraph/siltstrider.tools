@@ -31,6 +31,26 @@ function component(file, exportName = "default") {
 const SiteFooter = component("components/site-footer.jsx");
 const AppShell = component("components/app-shell.jsx");
 
+for (const id of ['c-race', 'maj0', 'btn-to-optimizer']) test(`challenge handoff ignores retired control ${id}`, async () => {
+  const dom = setupDom('/challenge');
+  const stale = document.createElement(id === 'btn-to-optimizer' ? 'button' : 'input');
+  stale.id = id; stale.value = 'untouched';
+  document.body.append(stale);
+  let events = 0;
+  stale.addEventListener('change', () => events++);
+  stale.addEventListener('click', () => events++);
+  const root = createRoot(document.getElementById('root'));
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    const send = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Send to Build Optimizer'));
+    assert.ok(send);
+    await act(async () => send.click());
+    assert.equal(stale.value, 'untouched');
+    assert.equal(events, 0);
+    assert.equal(dom.window.location.pathname, '/builder');
+  } finally { await act(async () => root.unmount()); dom.window.close(); }
+});
+
 test("every shell destination has an exported page for reloads and bookmarks", async () => {
   const { KNOWN_VIEWS } = await import('../lib/permalink-codec.mjs');
   for (const view of KNOWN_VIEWS) {
@@ -41,7 +61,7 @@ test("every shell destination has an exported page for reloads and bookmarks", a
 
 for (const [name, location, blocked] of [
   ['query profile', '/alchemy?world=tr&arce=1&campaign=test', false],
-  ['mixed query and hash', '/?world=tr&arce=1&campaign=test#alchemy', false],
+  ['irrelevant fragment', '/alchemy?world=tr&arce=1&campaign=test#ignored', false],
   ['unavailable storage', '/alchemy?world=tr&arce=1&campaign=test', true],
 ]) test(`world selection overrides ${name} without losing unrelated parameters`, async () => {
   const dom = setupDom(location);
@@ -96,7 +116,7 @@ function setupDom(initialLocation = "#home") {
 }
 
 test("SiteFooter renders authentic disclaimer and handles navigation clicks", async () => {
-  const dom = setupDom("#home");
+  const dom = setupDom("/");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -140,7 +160,7 @@ test("SiteFooter renders authentic disclaimer and handles navigation clicks", as
 });
 
 test("AppShell mounts cleanly and renders semantic panels for all 12 views", async () => {
-  const dom = setupDom("#home");
+  const dom = setupDom("/");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -194,7 +214,7 @@ test("AppShell mounts cleanly and renders semantic panels for all 12 views", asy
 });
 
 test("AppShell updates active panel and body class on hash navigation", async () => {
-  const dom = setupDom("#home");
+  const dom = setupDom("/");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -205,8 +225,8 @@ test("AppShell updates active panel and body class on hash navigation", async ()
 
     // Simulate navigation to #builder
     await act(async () => {
-      dom.window.location.hash = "#builder";
-      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+      dom.window.history.pushState(null, "", "/builder");
+      dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));
     });
 
     const buildPanel = dom.window.document.getElementById("panel-build");
@@ -220,8 +240,8 @@ test("AppShell updates active panel and body class on hash navigation", async ()
 
     // Simulate navigation to #factions
     await act(async () => {
-      dom.window.location.hash = "#factions";
-      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+      dom.window.history.pushState(null, "", "/factions");
+      dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));
     });
 
     const factionsPanel = dom.window.document.getElementById("panel-factions");
@@ -256,7 +276,7 @@ test("Adversarial QA 1: Unknown or invalid hash defaults safely to 'home' withou
 });
 
 test("Adversarial QA 2: Rapid successive view changes maintain state consistency", async () => {
-  const dom = setupDom("#home");
+  const dom = setupDom("/");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -269,8 +289,8 @@ test("Adversarial QA 2: Rapid successive view changes maintain state consistency
     const views = ["builder", "challenge", "leveler", "factions", "alchemy", "travel", "about"];
     for (const view of views) {
       await act(async () => {
-        dom.window.location.hash = "#" + view;
-        dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+        dom.window.history.pushState(null, "", "/" + view);
+        dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));
       });
     }
 
@@ -290,7 +310,7 @@ test("Adversarial QA 2: Rapid successive view changes maintain state consistency
 });
 
 test("Adversarial QA 3: Inactive panels do not render child content", async () => {
-  const dom = setupDom("#home");
+  const dom = setupDom("/");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -305,8 +325,8 @@ test("Adversarial QA 3: Inactive panels do not render child content", async () =
 
     // Switch to #builder
     await act(async () => {
-      dom.window.location.hash = "#builder";
-      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+      dom.window.history.pushState(null, "", "/builder");
+      dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));
     });
 
     // Now CharacterBuilderRoot should be rendered inside #panel-build
@@ -322,7 +342,7 @@ test("Adversarial QA 3: Inactive panels do not render child content", async () =
 });
 
 test("Challenge Runs: Send to Build Optimizer transfers rolled character into CharacterContext and switches to #builder", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -378,7 +398,7 @@ test("Challenge Runs: Send to Build Optimizer transfers rolled character into Ch
 });
 
 test("Challenge Runs: the run survives a trip to the Build Optimizer and back, and a reload", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const container = dom.window.document.getElementById("root");
   let root = createRoot(container);
   const summary = () => {
@@ -387,8 +407,8 @@ test("Challenge Runs: the run survives a trip to the Build Optimizer and back, a
   };
   const go = async (hash) => {
     await act(async () => {
-      dom.window.location.hash = hash;
-      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+      dom.window.history.pushState(null, "", hash);
+      dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));
       await new Promise((r) => setTimeout(r, 0));
     });
   };
@@ -401,7 +421,7 @@ test("Challenge Runs: the run survives a trip to the Build Optimizer and back, a
 
     await act(async () => dom.window.document.getElementById("react-btn-to-optimizer").click());
     assert.equal(dom.window.location.pathname, "/builder");
-    await go("#challenge");
+    await go("/challenge");
     assert.equal(summary(), rolled, "the same run is waiting on return");
 
     const stored = JSON.parse(dom.window.localStorage.getItem("silt-challenge-run"));
@@ -419,7 +439,7 @@ test("Challenge Runs: the run survives a trip to the Build Optimizer and back, a
 });
 
 test("Challenge Runs: Generate keeps to the ticked difficulty bands (no Hard or Grind by default)", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
   try {
@@ -439,7 +459,7 @@ test("Challenge Runs: Generate keeps to the ticked difficulty bands (no Hard or 
 });
 
 test("The character sheet's Level Optimizer button opens the Level Simulator", async () => {
-  const dom = setupDom("#builder");
+  const dom = setupDom("/builder");
   const root = createRoot(dom.window.document.getElementById("root"));
   // One bundle, so the sheet and the provider share a single shell context.
   const bundled = require("esbuild").buildSync({
@@ -479,7 +499,7 @@ test("The character sheet's Level Optimizer button opens the Level Simulator", a
 });
 
 test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcuts", async () => {
-  const dom = setupDom("#leveler");
+  const dom = setupDom("/leveler");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
   const settle = () => act(async () => { for (let i = 0; i < 20; i++) await new Promise((r) => setTimeout(r, 0)); });
@@ -492,8 +512,8 @@ test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcu
   };
   const go = async (hash) => {
     await act(async () => {
-      dom.window.location.hash = hash;
-      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+      dom.window.history.pushState(null, "", hash);
+      dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));
     });
     await settle();
   };
@@ -503,10 +523,10 @@ test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcu
     await press("← Back to Character Builder");
     assert.equal(dom.window.location.pathname, "/builder");
 
-    await go("#vault");
+    await go("/vault");
     await press("Level Simulator →");
     assert.equal(dom.window.location.pathname, "/leveler");
-    await go("#vault");
+    await go("/vault");
     await press("← Character Builder");
     assert.equal(dom.window.location.pathname, "/builder");
   } finally {
@@ -516,7 +536,7 @@ test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcu
 });
 
 test("Challenge Runs: the seed box shows the run's seed, and loading it under other settings rolls the same run", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const root = createRoot(dom.window.document.getElementById("root"));
   const doc = dom.window.document;
   const sheet = () => doc.querySelector(".run-summary-sheet").textContent;
@@ -557,7 +577,7 @@ test("Challenge Runs: the seed box shows the run's seed, and loading it under ot
 
 test("Challenge Runs: Share copies a link that opens the same run, in its world", async () => {
   const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
-  let dom = setupDom("#challenge&TR&world=tr&arce=0");
+  let dom = setupDom("/challenge?world=tr&arce=0");
   let root = createRoot(dom.window.document.getElementById("root"));
   // The sheet's cards; the Copy Permalink button reads "Copied" for a moment after sharing.
   const sheet = () => dom.window.document.querySelector(".run-summary-sheet").textContent.replace(/Copied$/, "Copy Permalink");
@@ -575,13 +595,13 @@ test("Challenge Runs: Share copies a link that opens the same run, in its world"
     assert.match(dom.window.document.getElementById("challenge-seed-note").textContent, /seed alone rolls a different run/);
     await act(async () => [...dom.window.document.querySelectorAll("main button")].find((b) => b.textContent.trim() === "Share").click());
     await settle();
-    assert.match(copied, /^http:\/\/localhost:8765\/#challenge&TR&run=[A-Za-z0-9_-]+&world=tr&arce=0$/);
+    assert.match(copied, /^http:\/\/localhost:8765\/challenge\?world=tr&arce=0&run=[A-Za-z0-9_-]+$/);
     const shared = sheet();
     await act(async () => root.unmount());
     dom.window.close();
 
     // Someone else opens the link: no stored run, a different device.
-    dom = setupDom(copied.slice(copied.indexOf("#")));
+    dom = setupDom(copied);
     root = createRoot(dom.window.document.getElementById("root"));
     await act(async () => root.render(React.createElement(AppShell)));
     await settle();
@@ -603,7 +623,7 @@ test("Challenge Runs: Share copies a link that opens the same run, in its world"
 });
 
 test("Challenge Runs: a character sent to the Build Optimizer can be sent back, with its changes", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const root = createRoot(dom.window.document.getElementById("root"));
   const doc = dom.window.document;
   const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
@@ -638,7 +658,7 @@ test("Challenge Runs: a character sent to the Build Optimizer can be sent back, 
 });
 
 test("Challenge Runs: your settings are remembered; a loaded seed's are only for its run", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const container = dom.window.document.getElementById("root");
   let root = createRoot(container);
   const doc = dom.window.document;
@@ -702,7 +722,7 @@ test("Challenge Runs: your settings are remembered; a loaded seed's are only for
 
 test("Copy Build Link copies a link that opens the same character, in its world", async () => {
   const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
-  let dom = setupDom("#builder&TR&world=tr&arce=0");
+  let dom = setupDom("/builder?world=tr&arce=0");
   let root = createRoot(dom.window.document.getElementById("root"));
   const button = (text) => [...dom.window.document.querySelectorAll("main button")].find((b) => b.textContent.trim() === text);
   const gender = () => [...dom.window.document.querySelectorAll("main button")].filter((b) => ["Male", "Female"].includes(b.textContent.trim()) && b.className.includes("active")).map((b) => b.textContent.trim());
@@ -717,12 +737,12 @@ test("Copy Build Link copies a link that opens the same character, in its world"
     await act(async () => button("Female").click());
     await act(async () => button("Copy Build Link").click());
     await settle();
-    assert.match(copied, /^http:\/\/localhost:8765\/#builder&TR&build=[A-Za-z0-9_-]+&world=tr&arce=0$/);
+    assert.match(copied, /^http:\/\/localhost:8765\/builder\?world=tr&arce=0&build=[A-Za-z0-9_-]+$/);
     await act(async () => root.unmount());
     dom.window.close();
 
     // Someone else opens it: a fresh page, Male by default.
-    dom = setupDom(copied.slice(copied.indexOf("#")));
+    dom = setupDom(copied);
     root = createRoot(dom.window.document.getElementById("root"));
     await act(async () => root.render(React.createElement(AppShell)));
     await settle();
@@ -741,7 +761,7 @@ test("Copy Build Link copies a link that opens the same character, in its world"
 });
 
 test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applies safe default character state without error", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -769,7 +789,7 @@ test("Adversarial QA 4: Send to Build Optimizer on unrolled challenge run applie
 });
 
 test("Adversarial QA 5: Send to Build Optimizer clears activeSave state and sets valid class and skills", async () => {
-  const dom = setupDom("#challenge");
+  const dom = setupDom("/challenge");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
 
@@ -800,8 +820,8 @@ test("Adversarial QA 5: Send to Build Optimizer clears activeSave state and sets
 });
 
 test("Bitter Cup is controlled in the level optimizer and survives navigation", async () => {
- const dom=setupDom("#leveler"), root=createRoot(dom.window.document.getElementById("root"));
- const go=async(view)=>act(async()=>{dom.window.location.hash="#"+view;dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));});
+ const dom=setupDom("/leveler"), root=createRoot(dom.window.document.getElementById("root"));
+ const go=async(view)=>act(async()=>{dom.window.history.pushState(null, "", "/"+view);dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));});
  try {
   await act(async()=>root.render(React.createElement(AppShell)));
   const checkbox=dom.window.document.getElementById("level-bittercup");
@@ -817,37 +837,9 @@ test("Bitter Cup is controlled in the level optimizer and survives navigation", 
  } finally {await act(async()=>root.unmount());dom.window.close();}
 });
 
-test("Legacy fallback: setting location.hash mounts tool and auto-migrates to clean HTML5 pathname", async () => {
-  const dom = setupDom("#home");
-  const container = dom.window.document.getElementById("root");
-  const root = createRoot(container);
-  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
-
-  try {
-    await act(async () => root.render(React.createElement(AppShell)));
-    await settle();
-
-    // User or legacy script sets location.hash = "#alchemy"
-    await act(async () => {
-      dom.window.location.hash = "#alchemy";
-      dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
-    });
-    await settle();
-
-    // Shell mounts alchemy panel
-    const alchemyPanel = dom.window.document.getElementById("panel-alchemy");
-    assert.ok(alchemyPanel.classList.contains("show"), "#panel-alchemy must be shown");
-    // URL auto-migrates to /alchemy and hash is stripped
-    assert.equal(dom.window.location.pathname, "/alchemy");
-    assert.equal(dom.window.location.hash, "");
-  } finally {
-    await act(async () => root.unmount());
-    dom.window.close();
-  }
-});
 
 test("HTML5 History traversal: popstate Back and Forward navigates seamlessly between workstations", async () => {
-  const dom = setupDom("#home");
+  const dom = setupDom("/");
   const container = dom.window.document.getElementById("root");
   const root = createRoot(container);
   const settle = () => act(async () => { for (let i = 0; i < 15; i++) await new Promise((r) => setTimeout(r, 0)); });
@@ -910,46 +902,6 @@ test("HTML5 History traversal: popstate Back and Forward navigates seamlessly be
   }
 });
 
-test("Legacy hash auto-migration on direct page load: /#TR and /#ARCE cleanly migrate to / and update stored profile", async () => {
-  const settle = () => act(async () => { for (let i = 0; i < 15; i++) await new Promise((r) => setTimeout(r, 0)); });
-
-  // 1. Direct load on /#TR
-  {
-    const dom = setupDom("#TR");
-    const root = createRoot(dom.window.document.getElementById("root"));
-    try {
-      await act(async () => root.render(React.createElement(AppShell)));
-      await settle();
-
-      assert.equal(dom.window.location.pathname, "/");
-      assert.equal(dom.window.location.hash, "");
-      assert.equal(dom.window.localStorage.getItem("mw-world"), "tr");
-      assert.ok(dom.window.document.getElementById("panel-home").classList.contains("show"));
-    } finally {
-      await act(async () => root.unmount());
-      dom.window.close();
-    }
-  }
-
-  // 2. Direct load on /#ARCE
-  {
-    const dom = setupDom("#ARCE");
-    const root = createRoot(dom.window.document.getElementById("root"));
-    try {
-      await act(async () => root.render(React.createElement(AppShell)));
-      await settle();
-
-      assert.equal(dom.window.location.pathname, "/");
-      assert.equal(dom.window.location.hash, "");
-      assert.equal(dom.window.localStorage.getItem("mw-world"), "tr");
-      assert.equal(dom.window.localStorage.getItem("mw-arce"), "1");
-      assert.ok(dom.window.document.getElementById("panel-home").classList.contains("show"));
-    } finally {
-      await act(async () => root.unmount());
-      dom.window.close();
-    }
-  }
-});
 
 test("Query permalink payload: /builder?build=... loads build and cleans query string from address bar", async () => {
   const buildPayload = { race: "Nord", className: "Custom", sign: "The Lady" };

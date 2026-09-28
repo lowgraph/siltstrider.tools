@@ -7,65 +7,6 @@ const codecPromise = import('../lib/permalink-codec.mjs');
 const sitemapPromise = import('../app/sitemap.js');
 const robotsPromise = import('../app/robots.js');
 
-test('decodeShareHash respects defaultView when hash contains no explicit view', async () => {
-  const { decodeShareHash } = await codecPromise;
-
-  // Empty hash defaults to defaultView
-  const alc = decodeShareHash('', { defaultView: 'alchemy' });
-  assert.equal(alc.view, 'alchemy');
-  assert.equal(alc.world, 'vanilla');
-
-  // Hash with only world parameters still resolves defaultView
-  const trTravel = decodeShareHash('#world=tr&arce=0', { defaultView: 'travel' });
-  assert.equal(trTravel.view, 'travel');
-  assert.equal(trTravel.world, 'tr');
-  assert.equal(trTravel.profile, 'tr');
-
-  // Explicit view in hash overrides defaultView
-  const explicitOverride = decodeShareHash('#spellmaking', { defaultView: 'alchemy' });
-  assert.equal(explicitOverride.view, 'spellmaking');
-
-  // Explicit #home overrides defaultView
-  const homeOverride = decodeShareHash('#home', { defaultView: 'alchemy' });
-  assert.equal(homeOverride.view, 'home');
-});
-
-test('decodeShareHash adversarial edge cases for defaultView', async () => {
-  const { decodeShareHash } = await codecPromise;
-
-  // 1. Unknown or malformed defaultView falls back to 'home'
-  assert.equal(decodeShareHash('', { defaultView: 'nonexistent_tool' }).view, 'home');
-  assert.equal(decodeShareHash('', { defaultView: null }).view, 'home');
-  assert.equal(decodeShareHash('', { defaultView: undefined }).view, 'home');
-  assert.equal(decodeShareHash('', { defaultView: 12345 }).view, 'home');
-  assert.equal(decodeShareHash('', { defaultView: {} }).view, 'home');
-
-  // 2. Corrupted hash syntax with multiple ampersands and leading question mark
-  const corrupted = decodeShareHash('#?&&&world=tr&&&junk=corrupt_payload_data', { defaultView: 'leveler' });
-  assert.equal(corrupted.view, 'leveler');
-  assert.equal(corrupted.world, 'tr');
-
-  // Payload presence (run= or build=) takes precedence over defaultView
-  const runPayload = decodeShareHash('#run=any_data', { defaultView: 'leveler' });
-  assert.equal(runPayload.view, 'challenge');
-  const buildPayload = decodeShareHash('#build=any_data', { defaultView: 'leveler' });
-  assert.equal(buildPayload.view, 'builder');
-
-  // 3. View aliases in hash take precedence over defaultView
-  assert.equal(decodeShareHash('#optimizer', { defaultView: 'factions' }).view, 'builder');
-  assert.equal(decodeShareHash('#spell', { defaultView: 'builder' }).view, 'spellmaking');
-  assert.equal(decodeShareHash('#enchant', { defaultView: 'builder' }).view, 'enchanting');
-
-  // 4. Clean HTML5 pathnames and query strings
-  assert.equal(decodeShareHash('/builder').view, 'builder');
-  assert.equal(decodeShareHash('/leveler').view, 'leveler');
-  assert.equal(decodeShareHash('/alchemy').view, 'alchemy');
-  assert.equal(decodeShareHash('/travel').view, 'travel');
-  assert.equal(decodeShareHash('/travel?world=tr').world, 'tr');
-  assert.equal(decodeShareHash('/challenge?run=any_data').view, 'challenge');
-  assert.equal(decodeShareHash('/builder?build=any_data').view, 'builder');
-});
-
 test('all static route files exist, force static export, and provide SEO metadata', async () => {
   const routes = [
     'builder',
