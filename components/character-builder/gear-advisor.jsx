@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
-import { buildGearGroups } from '../../lib/gear-rows.mjs';
+import { buildGearGroups, gearRanking } from '../../lib/gear-rows.mjs';
 import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
 import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
@@ -27,22 +27,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const [weaponSetup, setWeaponSetup] = useState('one-handed');
   const displayedRanking = ranking && { ...ranking, weaponSetup, twoHand: weaponSetup === 'two-handed', shield: weaponSetup === 'one-handed' ? 'recommended' : 'none' };
 
-  const resolveRanking = () => {
-    const maj = build?.maj || [];
-    const min = build?.min || [];
-    const skills = [...maj, ...min];
-    const armPool = ["Heavy Armor", "Medium Armor", "Light Armor", "Unarmored"].filter(s => skills.includes(s));
-    const wepPool = ["Long Blade", "Short Blade", "Blunt Weapon", "Axe", "Spear", "Marksman", "Hand-to-hand"].filter(s => skills.includes(s));
-    return {
-      maj, min, spec: build?.spec || '', raceName: build?.race || '', attrs, sign: build?.sign || '',
-      primaryWep: wepPool[0] || "Long Blade",
-      primaryArmor: armPool[0] || "Light Armor",
-      wepRanked: (wepPool.length ? wepPool : ["Long Blade"]).map(n => ({ n, s: maj.includes(n) ? 50 : 30 })),
-      armRanked: (armPool.length ? armPool : ["Light Armor"]).map(n => ({ n, s: maj.includes(n) ? 50 : 30 })),
-      twoHand: false,
-      shield: skills.includes("Block") ? "recommended" : "optional"
-    };
-  };
+  const resolveRanking = () => gearRanking(build, { attrs });
 
   const buildKey = JSON.stringify(build);
   // A result is valid only for the character used to compute it.

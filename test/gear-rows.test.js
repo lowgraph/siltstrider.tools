@@ -184,3 +184,43 @@ test('an enchantment ranks on its useful value when the rows carry one, and its 
   assert.deepEqual(pickRank({ strength: 0, enchanted: { worth: 5, value: 0, effects: [] } }, row), [0, 0],
     'a value of 0 (only none-tier effects) ranks with the curses, as the builder ranks it, not on its cost');
 });
+test('an Assassin fights with the short blade it majors in, not its minor long blade',async()=>{
+ const {gearRanking,buildGearGroups}=await mod;
+ const assassin={maj:['Sneak','Marksman','Light Armor','Short Blade','Acrobatics'],min:['Security','Long Blade','Alchemy','Block','Athletics']};
+ const ranking=gearRanking(assassin);
+ assert.equal(ranking.primaryWep,'Short Blade');
+ assert.deepEqual(ranking.wepRanked.map(w=>w.n),['Short Blade','Marksman','Long Blade'],'majors first, then minors');
+ assert.deepEqual(ranking.wepRanked.map(w=>w.s),[50,50,30]);
+ const weapon=(skill)=>row({key:skill,category:'weapon',slot:null,armorClass:null,skill,hands:1,primary:pick(skill)});
+ const groups=buildGearGroups({GearRows:[weapon('long_blade'),weapon('short_blade')]},assassin,toggles,{...ranking,weaponSetup:'one-handed'});
+ assert.equal(groups.find(g=>/Primary weapon/.test(g.label)).label,'Primary weapon (Short Blade)');
+});
+test('a major armour skill leads, and a minor one never becomes the alternative set',async()=>{
+ const {gearRanking,buildGearGroups}=await mod;
+ const scout={maj:['Light Armor','Long Blade'],min:['Heavy Armor','Block']};
+ const ranking=gearRanking(scout);
+ assert.equal(ranking.primaryArmor,'Light Armor');
+ assert.deepEqual(ranking.armRanked.map(a=>a.n),['Light Armor','Heavy Armor']);
+ const labels=buildGearGroups({GearRows:[gear('cuirass',{armorClass:'light'}),gear('cuirass',{armorClass:'heavy'})]},scout,toggles,ranking).map(g=>g.label);
+ assert.ok(labels.includes('Primary armor (Light Armor)'));
+ assert.ok(!labels.some(l=>/Alternative set/.test(l)),'heavy armour is only a minor skill');
+});
+test('within majors the order stays fixed, and two major armour skills still give an alternative set',async()=>{
+ const {gearRanking}=await mod;
+ const ranking=gearRanking({maj:['Axe','Long Blade','Medium Armor','Heavy Armor'],min:[]});
+ assert.deepEqual(ranking.wepRanked.map(w=>w.n),['Long Blade','Axe']);
+ assert.deepEqual(ranking.armRanked.map(a=>a.n),['Heavy Armor','Medium Armor']);
+});
+test('a build without weapon or armour skills, or without a build, falls back as before',async()=>{
+ const {gearRanking}=await mod;
+ for(const build of [undefined,null,{},{maj:'Destruction',min:null},{maj:['Destruction','Alteration'],min:['Illusion']}]){
+  const ranking=gearRanking(build);
+  assert.equal(ranking.primaryWep,'Long Blade');
+  assert.equal(ranking.primaryArmor,'Light Armor');
+  assert.deepEqual(ranking.wepRanked,[{n:'Long Blade',s:30}]);
+  assert.equal(ranking.shield,'optional');
+  assert.deepEqual(ranking.maj,Array.isArray(build?.maj)?build.maj:[]);
+ }
+ assert.equal(gearRanking({maj:['Block'],min:[]}).shield,'recommended');
+ assert.deepEqual(gearRanking({maj:[]},{attrs:{Strength:40}}).attrs,{Strength:40});
+});
