@@ -22,8 +22,6 @@ import {
   stopPoints,
   addStopWalks,
   addPlaces,
-  runSpeed,
-  swimSpeed,
   walkGrid,
   formatDuration,
   placePoints,
@@ -36,6 +34,7 @@ import {
 } from "../../../lib/travel-walk.mjs";
 import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-teleports.mjs";
 import { readRouteLink, writeRouteLink } from "../../../lib/travel-link.mjs";
+import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../../lib/travel-movement.mjs";
 import TransitMap from "./transit-map";
 
 const POPULAR_HUBS = [
@@ -65,6 +64,13 @@ export default function TravelWorkstation() {
   const [walking, setWalking] = useState(true);
   const [held, setHeld] = useState(() => new Set());
   const [questTeleports, setQuestTeleports] = useState(false);
+  // What the character carries and the movement effects always on them. A loaded save
+  // fills them in once the item catalogs arrive; without one they are yours to set.
+  const [carried, setCarried] = useState(0);
+  const [levitate, setLevitate] = useState(0);
+  const [waterWalking, setWaterWalking] = useState(false);
+  const [fromSave, setFromSave] = useState(null);
+  const carryingData = useGameData('carrying', { enabled: Boolean(activeSave?.save) });
 
   // A loaded save says which intervention the character can cast: the spell or a scroll.
   useEffect(() => {
@@ -79,6 +85,19 @@ export default function TravelWorkstation() {
       }
     }
   }, [activeSave]);
+
+  useEffect(() => {
+    if (!activeSave?.save) { setFromSave(null); return; }
+    if (carryingData.status !== 'ready') return;
+    const catalogs = carryingData.data?.catalogs || {};
+    const items = itemIndex(catalogs);
+    const { weight, unknown } = carriedWeight(activeSave.save, items);
+    const effects = constantEffects(activeSave.save, items, { enchantments: catalogs.Enchantments, spells: catalogs.Spells });
+    setCarried(weight);
+    setLevitate(effects.levitate);
+    setWaterWalking(effects.waterWalking > 0);
+    setFromSave({ weight, unknown, ...effects });
+  }, [activeSave, carryingData.status, carryingData.data]);
 
   const liveNetworkGraph = useMemo(() => {
     if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Travel)) {
@@ -98,6 +117,7 @@ export default function TravelWorkstation() {
     races: [build.race, activeSave?.save?.identity?.race?.id, activeSave?.save?.identity?.race?.name].filter(Boolean),
     speed: sheet?.attrs?.["Speed"]?.v ?? 40,
     athletics: sheet?.skills?.["Athletics"]?.v ?? 5,
+    strength: sheet?.attrs?.["Strength"]?.v ?? 40,
     followers
   }), [sheet, build.race, activeSave, followers]);
   const settings = useMemo(() => Object.fromEntries(
@@ -130,16 +150,20 @@ export default function TravelWorkstation() {
     return Array.isArray(records) && land ? { records, land } : null;
   }, [gameData.data]);
   const grid = useMemo(() => walkGrid(gameData.data?.metadata?.Access?.walkable), [gameData.data]);
-  const speed = useMemo(() => runSpeed(player, settings), [player, settings]);
-  const swim = useMemo(() => swimSpeed(player, settings), [player, settings]);
+  // Run, swim and fly speeds, slowed by what is carried (OpenMW 0.51.0); Feather and
+  // Burden come from the save alone, since they are only ever always-on from gear.
+  const movement = useMemo(() => movementFor(player, settings, {
+    carried, levitate, waterWalking, feather: fromSave?.feather || 0, burden: fromSave?.burden || 0
+  }), [player, settings, carried, levitate, waterWalking, fromSave]);
+  const speed = movement.run, swim = movement.swim, fly = movement.fly;
   const points = useMemo(() => stopPoints({
     records: gameData.data?.catalogs?.Travel || [],
     nodes: gameData.data?.metadata?.Travel?.nodes || {},
     access, intervention
   }), [gameData.data, access, intervention]);
   const walkGraph = useMemo(
-    () => (walking && access ? addStopWalks(spellGraph, points, access.land, speed, { grid, swim }) : spellGraph),
-    [walking, access, spellGraph, points, speed, grid, swim]
+    () => (walking && access ? addStopWalks(spellGraph, points, access.land, speed, { grid, swim, fly, waterWalk: waterWalking }) : spellGraph),
+    [walking, access, spellGraph, points, speed, grid, swim, fly, waterWalking]
   );
 
   // Propylons, dialogue transports and teleporting items: the ones the items the
@@ -153,10 +177,10 @@ export default function TravelWorkstation() {
     if (!teleports) return walkGraph;
     return addTeleports(walkGraph, teleports, {
       nodes: gameData.data?.metadata?.Travel?.nodes || {}, held, includeQuest: questTeleports,
-      walk: { points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells,
-        nodes: gameData.data?.metadata?.Travel?.nodes || {} }
+      walk: { points, access, land: walking ? access?.land : null, speed, swim, fly, waterWalk: waterWalking, grid,
+        intervention, spells, nodes: gameData.data?.metadata?.Travel?.nodes || {} }
     }).graph;
-  }, [walkGraph, teleports, gameData.data, held, questTeleports, points, access, walking, speed, swim, grid, intervention, spells]);
+  }, [walkGraph, teleports, gameData.data, held, questTeleports, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells]);
 
   // Every place in the game, for the pickers and for naming a place on the route.
   const places = useMemo(
@@ -350,10 +374,10 @@ export default function TravelWorkstation() {
     const chosen = [origin, destination].filter(isPlace).map((id) => id.slice(PLACE_PREFIX.length));
     if (!chosen.length) return routingGraph;
     return addPlaces(routingGraph, chosen, {
-      points, access, land: walking ? access?.land : null, speed, swim, grid, intervention, spells,
+      points, access, land: walking ? access?.land : null, speed, swim, fly, waterWalk: waterWalking, grid, intervention, spells,
       nodes: gameData.data?.metadata?.Travel?.nodes || {}
     });
-  }, [origin, destination, routingGraph, points, access, walking, speed, swim, grid, intervention, spells, gameData.data]);
+  }, [origin, destination, routingGraph, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells, gameData.data]);
   const route = useMemo(() => {
     const planned = planRoute(origin, destination, planGraph, {
       objective: priced ? objective : "hops",
@@ -537,6 +561,38 @@ export default function TravelWorkstation() {
             <input type="checkbox" checked={walking} onChange={(event) => setWalking(event.target.checked)} /> Walk between nearby places
           </label>
         )}
+        {access && walking && (
+          <>
+            <label className="flex items-center gap-1.5 whitespace-nowrap" title="Weight carried; it slows every walk, and past your capacity (Strength x 5) you cannot move.">
+              Carrying
+              <input
+                type="number"
+                min={0}
+                step="0.5"
+                value={carried}
+                onChange={(event) => setCarried(Math.max(0, Number(event.target.value) || 0))}
+                className="flex-none"
+                style={{ width: "5.5rem" }}
+              />
+              <span className="text-fg-13">of {Math.round(movement.capacity)}</span>
+            </label>
+            <label className="flex items-center gap-1.5 whitespace-nowrap" title="Magnitude of a Levitate always on, from gear or an ability; 0 for none.">
+              Constant Levitate
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={levitate}
+                onChange={(event) => setLevitate(Math.max(0, Math.min(100, Math.trunc(Number(event.target.value) || 0))))}
+                className="flex-none"
+                style={{ width: "4.5rem" }}
+              />
+            </label>
+            <label className="whitespace-nowrap">
+              <input type="checkbox" checked={waterWalking} onChange={(event) => setWaterWalking(event.target.checked)} /> Constant Water Walking
+            </label>
+          </>
+        )}
         {priced && (
           <label className="flex items-center gap-1.5 whitespace-nowrap">
             Followers
@@ -551,6 +607,19 @@ export default function TravelWorkstation() {
             />
           </label>
         )}
+        {access && walking && movement.overloaded && (
+          <p role="alert" className="basis-full text-[11px] text-warning-2">
+            Carrying more than you can ({Math.round(movement.load)} of {Math.round(movement.capacity)}): you cannot move, so no route walks.
+          </p>
+        )}
+        {access && walking && fromSave && (
+          <p className="basis-full text-[11px] text-fg-13">
+            From your save: carrying {fromSave.weight}{fromSave.unknown ? ` (${fromSave.unknown} item${fromSave.unknown === 1 ? "" : "s"} this world's data does not know, not weighed)` : ""}
+            {fromSave.feather ? `, Feather ${fromSave.feather}` : ""}{fromSave.burden ? `, Burden ${fromSave.burden}` : ""}
+            {fromSave.sources.length ? `; always on from ${fromSave.sources.join(", ")}` : ""}.
+          </p>
+        )}
+        {activeSave?.save && carryingData.status === 'loading' && <p role="status" className="basis-full text-[11px]">Weighing your pack...</p>}
         {gameData.status === 'loading' && <p role="status">Loading travel network...</p>}
         {gameData.status === 'error' && <p role="alert">Travel network unavailable. <button onClick={gameData.retry}>Retry</button></p>}
       </div>
@@ -752,7 +821,7 @@ export default function TravelWorkstation() {
               <li>Network covers Silt Striders, Pack Guar caravans, Sky Lamps, carriages, Boats, Guild Guides, Gondoliers, and Mainland River Striders.</li>
               <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
               <li>Divine and Almsivi Intervention land where OpenMW&apos;s marker search puts you: the markers on the smallest square ring of cells around you, not the nearest in a straight line, and indoors the first door out. Tick the spells your character can cast; a loaded save ticks them for you.</li>
-              <li>Walking joins any place to the network at your run speed (Speed and Athletics, carrying nothing). It follows the ground: round slopes steeper than the 46° OpenMW lets you climb, through the Ghostgate rather than the Ghostfence, and swimming only near land, at your swim speed. Only the terrain is read, so a boulder or a building can still be in the way. Indoors, the route names the doors on the way in and out.</li>
+              <li>Walking joins any place to the network at your run speed (Speed and Athletics). It follows the ground: round slopes steeper than the 46° OpenMW lets you climb, through the Ghostgate rather than the Ghostfence, and swimming only near land, at your swim speed. What you carry slows you (a loaded save weighs its pack), constant Water Walking walks any water, and constant Levitate flies straight over everything wherever that is quicker. Only the terrain is read, so a boulder or a building can still be in the way. Indoors, the route names the doors on the way in and out.</li>
               <li>Some rooms have no door outside at all: Mournhold, Sotha Sil, Bamz-Amschend. The route reaches them through their doors from the room a teleport arrives in, and names the rooms passed; time spent indoors is not counted. The place list says how each is reached, and which need a quest teleport.</li>
               <li>Propylons, dialogue transports (Mournhold) and teleporting items come from the game&apos;s own scripts: a Propylon needs its index, and the Master Index sends every Propylon to Caldera. Tick the items you carry. Quest teleports, taken once in a quest, are left out unless you include them.</li>
               <li>Mark and Recall are not included.</li>
@@ -833,13 +902,15 @@ export default function TravelWorkstation() {
                         <div className="text-[11px] text-fg-13">
                           {step.indoors
                             ? `Go through the doors: ${(step.doors || []).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}`
+                            : step.walk && step.levitate
+                            ? `Levitate about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, straight over whatever is below`
                             : step.walk
                             ? step.terrain
                               ? `Walk about ${(step.distance / CELL).toFixed(1)} cells, heading ${step.direction}, to ${labelOf(step.to)}`
                                 + (step.straight && step.distance > step.straight * 1.15
                                   ? `, round high ground: ${(step.distance / step.straight).toFixed(1)}× the straight line`
                                   : "")
-                                + (step.water ? `, swimming about ${Math.max(0.1, step.water / CELL).toFixed(1)} cells of it` : "")
+                                + (step.water ? `, ${step.waterWalk ? "walking on the water for" : "swimming"} about ${Math.max(0.1, step.water / CELL).toFixed(1)} cells of it` : "")
                               : `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, in a straight line`
                             : step.teleport
                             ? `${step.label} at ${labelOf(step.from)}${step.board ? `, ${step.board}` : ""}`

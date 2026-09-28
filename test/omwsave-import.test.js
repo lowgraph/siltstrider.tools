@@ -139,10 +139,11 @@ test('the codec round-trips gender, specialization and favoured attributes', asy
 test('a payload stored before the identity extension still decodes, with it unknown', async () => {
   const { serializeOmwSave, deserializeOmwSave } = await codec;
   // No favoured attributes means the extension is exactly three bytes: gender, spec, count;
-  // no position means the position extension after it is one flag byte.
+  // no position means the position extension after it is one flag byte, and no
+  // player-made items the one after that one count byte.
   const save = parsedSave({ identity: { class: { id: 'x', name: null, custom: false, specialization: 'Magic', favoredAttributes: [] } } });
   const full = serializeOmwSave(save);
-  const old = deserializeOmwSave(full.subarray(0, full.length - 4));
+  const old = deserializeOmwSave(full.subarray(0, full.length - 5));
   assert.equal(old.identity.gender, null);
   assert.equal(old.identity.class.specialization, null);
   assert.deepEqual(old.identity.class.favoredAttributes, []);
@@ -315,7 +316,69 @@ test('the codec carries where the player stands, and older payloads read it as u
   const garbage = deserializeOmwSave(serializeOmwSave(parsedSave({ identity: { position: [NaN, 1, 2], lastExteriorPosition: [1, 2] } })));
   assert.equal('position' in garbage.identity || 'lastExteriorPosition' in garbage.identity, false, 'nothing unreadable is stored');
   const full = serializeOmwSave(parsedSave());
-  const before = deserializeOmwSave(full.subarray(0, full.length - 1));
+  // No positions and no player-made items: section 10 is one flag byte, section 11 one count.
+  const before = deserializeOmwSave(full.subarray(0, full.length - 2));
   assert.equal('position' in before.identity, false, 'a payload written before the position extension');
   assert.equal(before.identity.name, 'Tester');
+});
+
+/* ---- Player-made items: dynamic ENCH and item records in the save ---- */
+function enam(effectId, min, max = min) {
+  const b = Buffer.alloc(24);
+  b.writeInt16LE(effectId, 0); b.writeInt8(-1, 2); b.writeInt8(-1, 3);
+  b.writeInt32LE(0, 4); b.writeInt32LE(0, 8); b.writeInt32LE(0, 12);
+  b.writeInt32LE(min, 16); b.writeInt32LE(max, 20);
+  return b;
+}
+function endt(type) { const b = Buffer.alloc(16); b.writeInt32LE(type, 0); return b; }
+function createdSave() {
+  const ctdt = Buffer.alloc(12); ctdt.writeInt32LE(8, 0); ctdt.writeFloatLE(0.5, 4); // a ring
+  const aodt = Buffer.alloc(24); aodt.writeInt32LE(1, 0); aodt.writeFloatLE(15.5, 4);
+  const wpdt = Buffer.alloc(32); wpdt.writeFloatLE(42, 0);
+  return Buffer.concat([
+    saveFile(),
+    rec('ENCH', [sub('NAME', generated(900)), sub('ENDT', endt(3)), sub('ENAM', enam(10, 20, 30)), sub('ENAM', enam(2, 1))]),
+    rec('ENCH', [sub('NAME', generated(901)), sub('ENDT', endt(1)), sub('ENAM', enam(14, 10))]),
+    rec('CLOT', [sub('NAME', generated(1)), sub('FNAM', text('Ring of Striding')), sub('CTDT', ctdt), sub('ENAM', generated(900))]),
+    rec('ARMO', [sub('NAME', generated(2)), sub('FNAM', text('Heavy Boots')), sub('AODT', aodt)]),
+    rec('WEAP', [sub('NAME', generated(3)), sub('FNAM', text('Daedric Spear')), sub('WPDT', wpdt), sub('ENAM', generated(901))]),
+    rec('CLOT', [sub('NAME', generated(4)), sub('FNAM', text('Sold Long Ago')), sub('CTDT', ctdt), sub('ENAM', generated(900))])
+  ]);
+}
+
+test('the parser reads the player-made items held: weight, and the effects of a constant enchantment', async () => {
+  const { parseCreatedItems } = await parser;
+  const items = parseCreatedItems(createdSave(), ['$generated:1', '$GENERATED:2', '$generated:3']);
+  assert.deepEqual(items.map((i) => [i.id, i.kind, i.name, i.weight]), [
+    ['$generated:1', 'CLOT', 'Ring of Striding', 0.5],
+    ['$generated:2', 'ARMO', 'Heavy Boots', 15.5],
+    ['$generated:3', 'WEAP', 'Daedric Spear', 42]]);
+  assert.deepEqual(items[0].constant, [{ effectId: 10, magnitude: 20 }, { effectId: 2, magnitude: 1 }],
+    'Levitate at its low end, and Water Walking');
+  assert.deepEqual(items[1].constant, [], 'no enchantment');
+  assert.deepEqual(items[2].constant, [], 'a cast-on-strike enchantment is not on while worn');
+  assert.deepEqual(parseCreatedItems(createdSave(), []), [], 'items made but no longer held are left out');
+  const { parseOmwSave } = await parser;
+  assert.deepEqual(parseOmwSave(saveFile()).stuff.created, [], 'a save without a player record has none');
+});
+
+test('the codec carries the player-made items, and older payloads read none', async () => {
+  const { serializeOmwSave, deserializeOmwSave } = await codec;
+  const created = [
+    { id: '$generated:1', kind: 'CLOT', name: 'Ring of Striding', weight: 0.5, constant: [{ effectId: 10, magnitude: 20 }, { effectId: 2, magnitude: 1 }] },
+    { id: '$generated:2', kind: 'ARMO', name: 'Heavy Boots', weight: 15.5, constant: [] },
+    { id: '$generated:3', kind: 'WEAP', name: null, weight: null, constant: [] }];
+  const save = parsedSave();
+  const back = deserializeOmwSave(serializeOmwSave({ ...save, stuff: { ...save.stuff, created } }));
+  assert.deepEqual(back.stuff.created, created);
+  assert.deepEqual(back.stuff.inventory, save.stuff.inventory, 'the inventory is untouched');
+  const full = serializeOmwSave(save);
+  assert.equal('created' in deserializeOmwSave(full).stuff, false, 'none held, none stored');
+  const older = deserializeOmwSave(full.subarray(0, full.length - 1));
+  assert.equal('created' in older.stuff, false, 'a payload written before section 11');
+  assert.equal(older.identity.name, 'Tester');
+  const odd = deserializeOmwSave(serializeOmwSave({ ...save, stuff: { ...save.stuff, created: [
+    { id: '', kind: 'CLOT' }, null, { id: '$generated:9', constant: [{ effectId: -1, magnitude: 5 }, { effectId: 8, magnitude: -3 }] }] } }));
+  assert.deepEqual(odd.stuff.created, [{ id: '$generated:9', kind: null, name: null, weight: null, constant: [{ effectId: 8, magnitude: 0 }] }],
+    'nameless entries dropped, a bad effect left out, a negative magnitude stored as none');
 });
