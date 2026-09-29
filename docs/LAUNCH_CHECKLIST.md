@@ -46,10 +46,10 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 ### 1. Before launch: wrong answers and trust
 
 - [x] **C** Push the usability audit and this checklist. (started 2026-09-29 17:35 UTC, C; done with this commit)
-- [x] **C** **LVL-1** (started 2026-09-29 17:35 UTC, C; done `ff3a894`, not yet deployed) `detectArchetype`: Mercantile and Speechcraft as minors must not make a
+- [x] **C** **LVL-1** (started 2026-09-29 17:35 UTC, C; done `ff3a894`, live as `6be6a2d4`) `detectArchetype`: Mercantile and Speechcraft as minors must not make a
       warrior a Diplomat; score minors below majors and compare instead of returning early;
       show why an archetype was chosen; test the default build (home page and simulator).
-- [x] **C** **TRV-1 (as decided)** (started 2026-09-29 17:47 UTC, C; done `62b8219`) With a loaded save that is not a Mages Guild member, a
+- [x] **C** **TRV-1 (as decided)** (started 2026-09-29 17:47 UTC, C; done `62b8219`, live as `6be6a2d4`) With a loaded save that is not a Mages Guild member, a
       warning by the route options: Guild Guides work from Mages Guild halls and need
       membership. Keep today's defaults without a save.
 - [ ] **C** **TRV-6 (label)** Mark the options a loaded save set: "from your save".
