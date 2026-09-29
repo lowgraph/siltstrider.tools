@@ -1,5 +1,6 @@
 "use client";
-import { memo, useState, useMemo } from "react";
+import { memo, useState, useMemo, useRef } from "react";
+import { useModalDialog } from "../use-modal-dialog";
 import {itemsForSlot} from '../../lib/equipment-catalog.mjs';
 import {
   SLOT_DISPLAY_NAMES,
@@ -23,6 +24,9 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
   onUnequipSlot,
   onClose,
 }) {
+  // Mounted only while open (equipment-studio-root renders it for the chosen slot).
+  const dialogRef = useRef(null);
+  useModalDialog(true, dialogRef, onClose);
   const [activeTab, setActiveTab] = useState("catalog"); // "catalog" | "custom"
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -87,6 +91,11 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="item-picker-title"
+        tabIndex={-1}
         className="w-full max-w-2xl max-h-[90vh] flex flex-col p-6 space-y-4 text-sm"
         style={{
           border: "6px solid transparent",
@@ -98,7 +107,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
         {/* Drawer Header */}
         <div className="flex items-center justify-between border-b border-line-11 pb-3">
           <div>
-            <h3 className="font-serif text-lg font-bold text-fg-2 flex items-center gap-2">
+            <h3 id="item-picker-title" className="font-serif text-lg font-bold text-fg-2 flex items-center gap-2">
               <span>Equip: {slotName}</span>
             </h3>
             <p className="text-xs text-fg-14 mt-0.5">
@@ -111,6 +120,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
             onClick={onClose}
             className="w-7 h-7 flex items-center justify-center mw-btn font-bold text-sm text-fg-14 hover:text-fg-2"
             title="Close Drawer"
+            aria-label="Close"
           >
             ✕
           </button>

@@ -1,5 +1,6 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import { useModalDialog } from "../use-modal-dialog";
 import { POOL, MAJORS, TR_MAJORS, OBJECTIVES, band, regionsIn } from "../../lib/challenge-math.mjs";
 
 export default function PoolBrowserModal({
@@ -32,15 +33,25 @@ export default function PoolBrowserModal({
     return POOL.filter((r) => r.toLowerCase().includes(q) || band(r).toLowerCase().includes(q));
   }, [query]);
 
+  const dialogRef = useRef(null);
+  useModalDialog(isOpen, dialogRef, onClose);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-surface-3 border-2 border-accent w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl text-fg-2">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pool-browser-title"
+        tabIndex={-1}
+        className="bg-surface-3 border-2 border-accent w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl text-fg-2"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-line-9 bg-surface-6">
           <div>
-            <h3 className="text-lg font-serif font-bold text-accent">
+            <h3 id="pool-browser-title" className="text-lg font-serif font-bold text-accent">
               Challenge Runs Pool Browser
             </h3>
             <p className="text-xs text-fg-11 font-serif">
@@ -90,7 +101,7 @@ export default function PoolBrowserModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="p-4 overflow-y-auto flex-1 space-y-6">
+        <div tabIndex={0} role="region" aria-label="Pool entries" className="p-4 overflow-y-auto flex-1 space-y-6">
           {/* Major Objectives */}
           {(activeTab === "all" || activeTab === "major") && (
             <div>

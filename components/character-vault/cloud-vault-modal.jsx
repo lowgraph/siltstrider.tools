@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useMemo } from "react";
+import { useModalDialog } from "../use-modal-dialog";
 import { useCloudVault } from "./use-cloud-vault";
 import CloudVaultCard from "./cloud-vault-card";
 import OpenSavePanel from "./open-save-panel";
@@ -15,6 +16,8 @@ export default function CloudVaultModal({
   const vault = useCloudVault({ activeSave, activeBuild, onApplyBuild, onApplySave });
   const isOpen = propIsOpen !== undefined ? propIsOpen : vault.isOpen;
   const onClose = propOnClose || vault.closeModal;
+  const dialogRef = useRef(null);
+  useModalDialog(isOpen, dialogRef, onClose);
 
   const [activeTab, setActiveTab] = useState("all"); // "all" | "openmw" | "builds" | "challenges" | "local"
   const [saveName, setSaveName] = useState("");
@@ -72,9 +75,11 @@ export default function CloudVaultModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm"
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="cloud-vault-title"
+      tabIndex={-1}
     >
       <div
         className="w-full max-w-4xl max-h-[90vh] flex flex-col text-fg-2 overflow-hidden"
