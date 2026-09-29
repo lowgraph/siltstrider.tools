@@ -11,13 +11,14 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `5bd4e04` (site `main`, pushed) |
-| Live Worker version | `9efa1a55-b2d7-49da-8077-910c08840991`, deployed 2026-09-29 11:08 UTC, tagged `5bd4e04` |
+| Live commit | `6a744c0` (site `main`, pushed; later commits on `main` are docs only) |
+| Live Worker version | `64cf5d59-4efa-4406-8828-c844e55c13cd`, deployed 2026-09-29 12:45 UTC, tagged `6a744c0` |
+| Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `3da0320236da77ec085d105d`, snapshot `1613a1123ed9…` |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0006 applied; `wrangler d1 migrations list siltstrider-db --remote` reports none pending |
 | D1 Time Travel bookmark | `0000003e-00000002-000050f5-376b3c432b1be8aa90f68a30d28ab5d1`, captured 10:57 UTC with the backup |
-| Pipeline repo | `master` at `db38feb`, one docs commit not yet pushed |
+| Pipeline repo | `master` at `d55fdd1`, pushed |
 
 Deployment history since the last tagged release before this batch:
 
@@ -26,11 +27,15 @@ Deployment history since the last tagged release before this batch:
 | `329f6c2e-7ca2-4a0f-a3f5-b8ff7902a804` | 09-28 18:25 | `7e72528` | tagged; build-aware gear ranking; predates launch preparation and the Ko-fi fix |
 | `972dee9c-60f5-4d72-8861-5d5b32ffe794` | 09-29 09:15 | unknown | **no tag or message**; do not use as a rollback target without identifying it |
 | `eb9adb1c-55cc-44c5-9da8-485ed5220bb6` | 09-29 09:31 | `85801eb` (inferred) | no tag; the favicons from `ad1fc0b` were live under it, consistent with `85801eb` |
-| `9efa1a55-b2d7-49da-8077-910c08840991` | 09-29 11:08 | `5bd4e04` | tagged; current |
+| `9efa1a55-b2d7-49da-8077-910c08840991` | 09-29 11:08 | `5bd4e04` | tagged; privacy text in structured data |
+| `8c8fe551-ccb0-4888-91ad-f0ecf6943e71` | 09-29 12:04 | `74a9c9f` | tagged; API-only Worker, Clerk on demand, Privacy Policy cookies section |
+| `64cf5d59-4efa-4406-8828-c844e55c13cd` | 09-29 12:45 | `6a744c0` | tagged; sign-in keeps the character, changelog, no "open-source" claim; current |
 
-Rollback from `9efa1a55`: `eb9adb1c` keeps the launch notice, error references and the
-Ko-fi fix but is untagged, so confirm its commit first; `329f6c2e` is the last tagged
-version before this batch and drops all three. Both commits `7e72528` and `85801eb` come
+Rollback from `64cf5d59`: `8c8fe551` drops only the sign-in fix and wording; `9efa1a55`
+also restores Worker-for-every-request routing and Clerk on every page (it still works,
+since the redirect rule only duplicates the Worker's own `www` redirect). `eb9adb1c`
+keeps the launch notice, error references and the Ko-fi fix but is untagged, so confirm
+its commit first; `329f6c2e` is the last tagged version before this batch and drops all three. Both commits `7e72528` and `85801eb` come
 after `c8f84e4` (`git merge-base --is-ancestor c8f84e4 7e72528` → yes), so they match the
 current schema and codec. `972dee9c` is an unknown commit: do not roll back to it.
 
