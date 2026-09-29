@@ -142,9 +142,87 @@ test("AttributePriorityRanker allows archetype selection and rank reordering", a
     // Check detected badge
     assert.match(document.body.textContent, /Stealth \/ Assassin \/ Marksman/);
 
-    // Click move down on Agility (index 1)
-    const downButtons = document.querySelectorAll('button[title^="Move"]');
-    assert.ok(downButtons.length > 0);
+    // Verify all attribute reorder buttons meet the 24px target size (w-6 h-6)
+    const moveButtons = Array.from(document.querySelectorAll('button[title^="Move"]'));
+    assert.equal(moveButtons.length, priority.length * 2, "must have 2 buttons per attribute");
+    for (const btn of moveButtons) {
+      assert.ok(btn.classList.contains("w-6"), `button ${btn.getAttribute("aria-label")} must have w-6 (24px)`);
+      assert.ok(btn.classList.contains("h-6"), `button ${btn.getAttribute("aria-label")} must have h-6 (24px)`);
+    }
+
+    // Boundary disabled states
+    const firstUp = document.querySelector('button[aria-label="Move Endurance up"]');
+    const firstDown = document.querySelector('button[aria-label="Move Endurance down"]');
+    const lastUp = document.querySelector('button[aria-label="Move Luck up"]');
+    const lastDown = document.querySelector('button[aria-label="Move Luck down"]');
+
+    assert.ok(firstUp.disabled, "First attribute up button must be disabled");
+    assert.ok(!firstDown.disabled, "First attribute down button must be enabled");
+    assert.ok(!lastUp.disabled, "Last attribute up button must be enabled");
+    assert.ok(lastDown.disabled, "Last attribute down button must be disabled");
+
+    // Click move down on Endurance
+    await act(async () => {
+      firstDown.click();
+    });
+    assert.ok(updatedPriority, "onReorderPriority should be invoked on click");
+    assert.equal(updatedPriority[0], "Agility");
+    assert.equal(updatedPriority[1], "Endurance");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
+test("Adversarial: AttributePriorityRanker handles single-item and empty arrays gracefully", async () => {
+  const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
+  global.window = dom.window;
+  global.document = dom.window.document;
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+
+  const AttributePriorityRanker = component("components/level-simulator/attribute-priority-ranker.jsx");
+  const root = createRoot(document.getElementById("root"));
+
+  try {
+    // 1. Single attribute in list
+    let singleReorderCalled = false;
+    await act(async () => {
+      root.render(
+        React.createElement(AttributePriorityRanker, {
+          priority: ["Endurance"],
+          archetypeId: "custom",
+          detectedArchetype: null,
+          onSelectArchetype() {},
+          onReorderPriority() {
+            singleReorderCalled = true;
+          }
+        })
+      );
+    });
+
+    const buttons = document.querySelectorAll('button[title^="Move"]');
+    assert.equal(buttons.length, 2);
+    assert.ok(buttons[0].disabled, "single-item list up button must be disabled");
+    assert.ok(buttons[1].disabled, "single-item list down button must be disabled");
+    for (const btn of buttons) {
+      assert.ok(btn.classList.contains("w-6") && btn.classList.contains("h-6"));
+    }
+
+    // 2. Empty priority array
+    await act(async () => {
+      root.render(
+        React.createElement(AttributePriorityRanker, {
+          priority: [],
+          archetypeId: "custom",
+          detectedArchetype: null,
+          onSelectArchetype() {},
+          onReorderPriority() {}
+        })
+      );
+    });
+
+    const emptyButtons = document.querySelectorAll('button[title^="Move"]');
+    assert.equal(emptyButtons.length, 0, "empty list renders zero buttons without throw");
   } finally {
     await act(async () => root.unmount());
     dom.window.close();

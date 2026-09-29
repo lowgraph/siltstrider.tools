@@ -76,7 +76,7 @@ export default function AttributePriorityRanker({
             <div className="flex items-center gap-0.5 shrink-0 ml-1">
               <button
                 type="button"
-                className="w-5 h-5 flex items-center justify-center mw-btn text-[10px] font-mono disabled:opacity-30"
+                className="w-6 h-6 flex items-center justify-center mw-btn text-[10px] font-mono disabled:opacity-30"
                 onClick={() => moveAttr(idx, -1)}
                 disabled={idx === 0}
                 title={`Move ${attr} up`}
@@ -86,7 +86,7 @@ export default function AttributePriorityRanker({
               </button>
               <button
                 type="button"
-                className="w-5 h-5 flex items-center justify-center mw-btn text-[10px] font-mono disabled:opacity-30"
+                className="w-6 h-6 flex items-center justify-center mw-btn text-[10px] font-mono disabled:opacity-30"
                 onClick={() => moveAttr(idx, 1)}
                 disabled={idx === priority.length - 1}
                 title={`Move ${attr} down`}
