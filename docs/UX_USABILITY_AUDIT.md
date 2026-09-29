@@ -69,6 +69,9 @@ answer is "1 leg · 11 gold · no time" by Guild Guide, which that player cannot
 the real answer is 2 legs, 36 gold, 8 hours. *Default effect; error prevention.*
 Recommendation: default to what a level 1 character has (no guild, no spells, no items), and
 say so in one line: "Planning for a new character: no guild, no spells. Change". (S)
+**Decision (owner, 29 September):** keep Mages Guild on and Conjurer rank off when no save is
+loaded. With a loaded save, use what the character has, and when it is not a Mages Guild
+member, warn that Guild Guides work from Mages Guild halls and need membership.
 
 **TRV-2 — Two lists answer one search. High.**
 Typing in Origin filters a native list of stops *and* opens a separate "Places" list of every
@@ -257,6 +260,8 @@ Transport Route Planner; Level Simulator / Level Optimizer / Character Level Sim
 Progression Optimizer; Cloud Vault / Cloud Character Vault / OpenMW Save File Inspector.
 *Consistency; wayfinding.* Recommendation: one short name per tool, used in nav, headings,
 buttons and cards; keep the long SEO names for titles only. (S)
+**Decision (owner, 29 September):** Character Builder (with its Gear Advisor), Level Simulator,
+Travel Planner, Alchemy, Enchanting, Spellmaking, Faction Journal, Challenge Runs, Cloud Vault.
 
 **SITE-2 — Developer-facing text. Medium.** "Invariants" boxes (Builder, Level Simulator,
 Challenge, Vault), "Transit engine rules", "Engine brewing formula", "Live:" pills, "Ingest".
@@ -298,6 +303,9 @@ categorised, keyboard-first); the plain privacy line on save import ("read in yo
 nothing is uploaded"); and the social card.
 
 ## Suggested order for the UX pass
+
+The working order, with the owner's decisions and fixed dates, is
+[LAUNCH_CHECKLIST.md](LAUNCH_CHECKLIST.md); this section is the audit's original grouping.
 
 **Before launch (small, high impact):** TRV-1, BLD-1, TRV-3, LVL-1, HOME-2, CHL-1, CALC-1,
 FAC-1, FAC-2, SITE-1, SITE-2 (collapse, not rewrite), MOB-3, and TRV-6's "from your save" label.
