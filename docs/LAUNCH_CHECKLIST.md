@@ -63,7 +63,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** **SITE-1** (started 2026-09-29 19:21 UTC, C; done `6e45e9a` on branch `launch/site-1-names`, not merged or deployed; page titles, the hidden h1 and structured data keep the long SEO names) Apply the decided names in nav, headings, buttons, cards and the
       footer; long SEO titles stay as page titles only. The social card's tiles say "Build
       Optimizer" and "Travel Optimizer", so it is regenerated at the freeze.
-- [ ] **C** **LINK-1** (found 29 September; started 2026-09-29 19:41 UTC, C; branch `launch/site-1-names`) A shared build link opens in the visitor's stored
+- [x] **C** **LINK-1** (found 29 September; started 2026-09-29 19:41 UTC, C; done `e93dbef` on branch `launch/site-1-names`, not merged or deployed; challenge run links fixed too: one without a world no longer resets yours to vanilla) A shared build link opens in the visitor's stored
       world, not the link's: a vanilla link opened by someone who chose TR or TR + ARCE shows
       the character in that world. The link's world must win. First-time visitors at launch
       have nothing stored, so it mostly reaches returning TR players sharing builds. Cause:
