@@ -11,8 +11,8 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `6ada7bd` (site `main`, pushed; later commits on `main` are docs only) |
-| Live Worker version | `343fa189-95ee-47fc-9ea6-0128ea2cbc1d`, deployed 2026-09-29 13:01 UTC, tagged `6ada7bd` |
+| Live commit | `dc5b777` (site `main`, pushed) |
+| Live Worker version | `e0103bde-7264-4574-9a4c-2873a77b08bf`, deployed 2026-09-29 14:03 UTC, tagged `dc5b777` |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `3da0320236da77ec085d105d`, snapshot `1613a1123ed9…` |
@@ -31,9 +31,10 @@ Deployment history since the last tagged release before this batch:
 | `9efa1a55-b2d7-49da-8077-910c08840991` | 09-29 11:08 | `5bd4e04` | tagged; privacy text in structured data |
 | `8c8fe551-ccb0-4888-91ad-f0ecf6943e71` | 09-29 12:04 | `74a9c9f` | tagged; API-only Worker, Clerk on demand, Privacy Policy cookies section |
 | `64cf5d59-4efa-4406-8828-c844e55c13cd` | 09-29 12:45 | `6a744c0` | tagged; sign-in keeps the character, changelog, no "open-source" claim |
-| `343fa189-95ee-47fc-9ea6-0128ea2cbc1d` | 09-29 13:01 | `6ada7bd` | tagged; AGPL-3.0 licence, About says open source again; current |
+| `343fa189-95ee-47fc-9ea6-0128ea2cbc1d` | 09-29 13:01 | `6ada7bd` | tagged; AGPL-3.0 licence, About says open source again |
+| `e0103bde-7264-4574-9a4c-2873a77b08bf` | 09-29 14:03 | `dc5b777` | tagged; bundle-derived social card, launch post checklist and subreddit rules; current |
 
-Rollback from `343fa189`: `64cf5d59` differs only in the About wording (it drops the
+Rollback from `e0103bde`: `343fa189` differs only in the social card graphic and launch docs. From `343fa189`: `64cf5d59` differs only in the About wording (it drops the
 "open-source" claim, which stays true either way). From `64cf5d59`: `8c8fe551` drops only the sign-in fix and wording; `9efa1a55`
 also restores Worker-for-every-request routing and Clerk on every page (it still works,
 since the redirect rule only duplicates the Worker's own `www` redirect). `eb9adb1c`
