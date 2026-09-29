@@ -38,28 +38,10 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 In order. The launch posts' exact text is in the sections below; each line links to
 it. Answers change what you post: record them here.
 
-**Now, a week before launch (by Wednesday 30 September)**
-
-- [ ] **r/OpenMW moderators.** Modmail: "Message the mods" on r/OpenMW, or
-      https://www.reddit.com/message/compose?to=/r/OpenMW.
-      Subject: `Is a post about a free OpenMW tool OK?`
-
-> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. I'd like to post it next week: would a post introducing it be OK under rule 6, or is there a better place for it? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
-
-- [ ] **OpenMW Discord.** A private message to one staff member (rule 9 asks for
-      staff questions in private).
-
-> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. I've asked the r/OpenMW moderators too. Would it be OK to share it on this server next week, and in which channel? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
-
+- [x] **r/OpenMW moderators: Sent (29 September 2026).** Modmail sent asking about Rule 6 permission.
+- [x] **OpenMW Discord: Sent (29 September 2026).** Direct message sent to PR coordinator (`testman`).
 - [x] **Tamriel Rebuilt Discord: Skipped.** Dropped by owner to avoid server overlap and unwanted spam. TR players are reached directly via r/TamrielRebuilt.
-
-- [ ] **Morrowind Discord.** First pick a House Role in #house-roles (needed for links
-      and images). Then post this in #suggestions, which invites questions; it has no
-      link, so it needs no role. Change the second sentence if it does not describe
-      how you made the site.
-
-> Hi, I'd like to share a free, open-source Morrowind toolbox I made (builder, level planner, travel routes, built from the game's data) in #original-content. Before I do: much of it, the code and the look, was made with AI coding assistants, though the game data is read from the game's own files. Is that OK for #original-content, or is there a better channel for it?
-
+- [x] **Morrowind Discord ("Morrowserver"): Sent (29 September 2026).** Posted in `#offtopic` (per Admin guidelines directing server questions there) asking whether tools belong in `#modding` or `#morrowind`. Pick a House Role in `#house-roles` for launch day permissions.
 - [ ] Nothing to send beforehand for r/Morrowind, r/TamrielRebuilt or the Morrowind
       Modding Community.
 
@@ -128,7 +110,7 @@ September 2026.
 | OpenMW Discord | The same rules as r/OpenMW, including 6 (no blatant advertising) and 9 (staff decisions stand; raise concerns privately with that staff member) | Ask one staff member first, privately, with the r/OpenMW message; post only where they say. |
 | Tamriel Rebuilt Discord | 2, no advertisements; a development-focused server; posts with unauthorised links are deleted with a short timeout, and mass DMs count as spam | Do not post the link unless a moderator authorises it. Ask one moderator first. r/TamrielRebuilt reaches TR players either way. |
 | Morrowind Modding Community | No spam, stay on topic; moderators have wide discretion | The safest server: nothing bans sharing a tool. Post once, in the channel whose topic fits tools or projects. |
-| Morrowind Discord ("Morrowserver") | Links and images need a House Role; self-made work is encouraged in #original-content; no AI content in media channels, including #original-content, "claiming to be art or original works"; no unsolicited DMs, including self-promotion | Get a House Role in #house-roles first. Ask about AI before posting: much of the code and the look (the border textures, the social card) was made by AI coding agents, and the public repository says so (`AGENTS.md`). Never DM members about the site. |
+| Morrowind Discord ("Morrowserver") | Links and images need a House Role; self-made work is encouraged in #modding/#morrowind; media channels have strict AI rules | Get a House Role in #house-roles first. Asked in #offtopic (29 Sept) whether #modding or #morrowind is the best channel for tool releases. Never DM members about the site. |
 
 The messages to the moderators, and when to send them, are under
 [Messages to send](#messages-to-send).
