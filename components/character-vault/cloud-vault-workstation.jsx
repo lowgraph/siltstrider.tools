@@ -131,9 +131,9 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <div className="bg-surface-2 border border-line-7 p-5 space-y-3 mw-groove-panel text-center sm:text-left mb-6">
           <div className="sm:flex items-center justify-between gap-4">
             <div className="space-y-1">
-              <h4 className="font-serif text-base font-bold text-accent">
+              <h3 className="font-serif text-base font-bold text-accent">
                 Connect Your Account for Cloud Sync
-              </h4>
+              </h3>
               <p className="text-xs text-fg-5 font-serif">
                 Sign in with Google, Discord, or Email to unlock 5 free cloud save slots, upload OpenMW .omwsave files, and sync character builds across devices.
               </p>
@@ -187,9 +187,9 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {/* Save Current Build */}
             <div className="bg-surface-2 border border-line-11 p-4 space-y-3">
-              <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
+              <h3 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
                 Save Character to Cloud
-              </h4>
+              </h3>
               <form onSubmit={handleSaveActive} className="space-y-2">
                 <input
                   type="text"
@@ -227,9 +227,9 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
               onDrop={handleDrop}
             >
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
+                <h3 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
                   Import Save (.omwsave or .json)
-                </h4>
+                </h3>
                 <p className="text-[11px] text-fg-14 font-serif mt-1">
                   Drag and drop your OpenMW save file or character JSON here.
                 </p>
@@ -259,6 +259,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
       )}
 
       {/* Filter Tabs */}
+      <h3 className="sr-only">Saved Characters</h3>
       <div className="flex items-center gap-1 border-b border-line-11 pb-2 overflow-x-auto mb-6">
         <button
           type="button"
@@ -325,9 +326,9 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
                 >
                   <div>
                     <div className="flex items-center justify-between">
-                      <h5 className="font-serif font-bold text-sm text-fg-2">
+                      <h4 className="font-serif font-bold text-sm text-fg-2">
                         {rec.name || char.name || "Local Character"}
-                      </h5>
+                      </h4>
                       <span className="text-[10px] font-mono text-fg-14">
                         Level {char.level || 1}
                       </span>

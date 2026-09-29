@@ -78,9 +78,9 @@ export default function LevelStepEditor({
     >
       {/* 1-Click Optimization Presets */}
       <div className="optimizer-presets-section space-y-2.5 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
-        <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1.5 mb-2">
+        <h3 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1.5 mb-2">
           Leveling Presets
-        </h4>
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button
             type="button"
@@ -180,9 +180,9 @@ export default function LevelStepEditor({
       {/* Step Stepper & Itinerary */}
       <div className="step-stepper-section space-y-3">
         <div className="flex items-center justify-between gap-2 border-b border-line-11 pb-2">
-          <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
+          <h3 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
             Level-by-Level Training Itinerary
-          </h4>
+          </h3>
           <div className="flex items-center gap-1">
             <button
               type="button"
