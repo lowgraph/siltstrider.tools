@@ -144,7 +144,7 @@ export default function RunConfigurator({
                 className={`flex items-center justify-between p-2 border cursor-pointer select-none transition-colors ${
                   isChecked
                     ? "bg-surface-14 border-accent/50 text-fg-2"
-                    : "bg-surface-2 border-line-12 text-fg-15 opacity-75"
+                    : "bg-surface-2 border-line-12 text-fg-15"
                 }`}
               >
                 <div className="flex items-center gap-1.5">

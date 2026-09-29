@@ -29,6 +29,7 @@
 - Effect lists in Spellmaking and Enchanting show base costs as the game does (Light: base 0.2, not 0.20000000298023224).
 - **One row of difficulty presets:** Challenge Runs showed Standard, Hardcore, Cursed and Custom twice, in the seed bar and again in the settings. They are now only in the settings, beside the counts and difficulty bands a preset sets, and screen readers hear which one is on.
 - **The Faction Journal in plain words:** ranks go by name and count from 1 ("Eligible for Journeyman", "Swordsman, rank 4 of 10" instead of "Rank 0"), skills by name (Long Blade, not long_blade), and what a promotion still needs reads as "Raise Strength by 5, to 30". "Landlord: 186 placements" and "186 spots" now say the faction owns 186 objects in the world, and its explanation says members of high enough rank can take them without stealing.
+- **Clearer text contrast:** muted and secondary text (faction ranks and requirements, equipped loadout stats, premade build details, challenge restrictions, and travel labels) now passes WCAG AA contrast against every surface in both the modern Ashfall and classic Morrowind themes.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

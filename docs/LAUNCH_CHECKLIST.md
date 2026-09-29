@@ -89,7 +89,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 
 ### 3. Before launch if time allows (can slip without breaking anything)
 
-- [ ] **C** Contrast: retune `fg-13`–`fg-15` against every panel they sit on (Faction
+- [x] **C** Contrast (started 2026-09-29 20:51 UTC, C; done `241f58f` on branch `launch/contrast-fg13-fg15`) retune `fg-13`–`fg-15` against every panel they sit on (Faction
       Journal, Equipped Loadouts, premade catalog, Challenge, Travel labels), both themes.
 - [ ] **C** Target size: the Level Simulator's attribute buttons to 24px.
 - [ ] **C** Heading levels on the Level Simulator and Vault.
