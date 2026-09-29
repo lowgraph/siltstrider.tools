@@ -40,6 +40,7 @@ export default function ChangelogView() {
             <li>Spellmaking, Enchanting and Alchemy show a dash and a prompt until you add an effect or ingredients, instead of numbers that looked like answers.</li>
             <li>Effect lists show base costs as the game does: Light is base 0.2, not 0.20000000298023224.</li>
             <li>Challenge Runs has one row of difficulty presets, in the settings beside what they change, instead of two identical rows.</li>
+            <li>The Faction Journal names ranks and counts them from 1, shows skills by name, says plainly what a promotion still needs, and explains the objects a faction owns.</li>
           </ul>
         </section>
 

@@ -258,6 +258,39 @@ test("FactionDetailView renders rank steppers, promotion solver, and deficits", 
   }
 });
 
+test("FactionDetailView names ranks, counts them from 1 and shows skills by name (FAC-1)", async () => {
+  const dom = setupDom();
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+  const text = () => container.textContent;
+  const character = { attributes: { Strength: 30, Endurance: 30 }, skills: { LongBlade: 25, Block: 10, Armorer: 4 } };
+  const render = (membership) => act(async () => root.render(React.createElement(FactionDetailView, {
+    faction: mockFightersGuild, character, membership, joinedFactionKeys: membership ? ["fighters guild"] : [], quests: [], onUpdateMembership: () => {}
+  })));
+  try {
+    await render(null);
+    assert.match(text(), /Eligible for Associate/, "the highest rank the character meets, by name (no reputation yet)");
+    assert.match(text(), /Owns 186 objects in the world/);
+    assert.match(text(), /Ranks 1 to 10/);
+    const steps = [...container.querySelectorAll(".rank-stepper-btn")].map((b) => b.textContent);
+    assert.match(steps[0], /^Rank 1/, "the first rank is Rank 1");
+    assert.match(steps[9], /^Rank 10/);
+    assert.doesNotMatch(text(), /Rank 0|Landlord|placements|Named Ranks|Under Threshold|Primary \(|Favoured #/, "no internal words");
+    assert.doesNotMatch(text(), /[a-z]_[a-z]/, "no ids such as long_blade");
+    assert.match(text(), /Long Blade/);
+
+    await act(async () => [...container.querySelectorAll(".rank-stepper-btn")][3].click());
+    assert.match(text(), /Swordsman, rank 4 of 10/);
+    assert.match(text(), /One favoured skill at 30: your highest, Long Blade, is 25 \(\+5\)/);
+
+    await render({ id: "fighters guild", rank: 1, reputation: 5 });
+    assert.match(text(), /Member · Apprentice/, "a member's badge names the rank");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("FactionDetailView displays mutual exclusivity warning for rival Great Houses", async () => {
   const dom = setupDom();
   const container = dom.window.document.getElementById("root");

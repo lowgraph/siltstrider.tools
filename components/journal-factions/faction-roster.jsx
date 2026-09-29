@@ -146,7 +146,7 @@ export default function FactionRoster({
             let rankLabel = null;
             if (membership) {
               const currentRankObj = faction.ranks.find(r => r.index === membership.rank);
-              rankLabel = currentRankObj?.name || `Rank ${membership.rank}`;
+              rankLabel = currentRankObj?.name || `Rank ${Number(membership.rank) + 1}`;
             }
 
             return (
@@ -169,8 +169,8 @@ export default function FactionRoster({
                     {faction.name || faction.key}
                   </span>
                   {faction.ownedPlacements > 0 && (
-                    <span className="text-[10px] text-fg-14 font-mono shrink-0" title="Owned World Placements">
-                      {faction.ownedPlacements.toLocaleString()} spots
+                    <span className="text-[10px] text-fg-14 font-mono shrink-0" title="Goods, containers and beds that belong to the faction">
+                      owns {faction.ownedPlacements.toLocaleString()} objects
                     </span>
                   )}
                 </div>

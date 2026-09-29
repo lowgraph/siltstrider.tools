@@ -5,7 +5,8 @@ import {
   getHighestEligibleRank,
   getFactionReactions,
   getMutualExclusionConflict,
-  getStatValue
+  getStatValue,
+  statLabel
 } from "../../lib/faction-math.mjs";
 
 export default function FactionDetailView({
@@ -25,6 +26,7 @@ export default function FactionDetailView({
   }
 
   const hasRanks = Array.isArray(faction.ranks) && faction.ranks.length > 0;
+  const rankName = index => faction.ranks?.find(r => r.index === index)?.name || `rank ${Number(index) + 1}`;
   const currentRankIdx = membership?.rank ?? -1;
   const isExpelled = Boolean(membership?.expelled);
 
@@ -80,10 +82,14 @@ export default function FactionDetailView({
             </h2>
             <div className="flex items-center gap-3 mt-1 text-xs text-fg-14 font-serif">
               {faction.ownedPlacements > 0 && (
-                <span>Landlord: <strong className="text-fg-6">{faction.ownedPlacements.toLocaleString()}</strong> placements</span>
+                <>
+                  <span title="Goods, containers and beds that belong to the faction">
+                    Owns <strong className="text-fg-6">{faction.ownedPlacements.toLocaleString()}</strong> objects in the world
+                  </span>
+                  <span>•</span>
+                </>
               )}
-              <span>•</span>
-              <span>{hasRanks ? `${faction.ranks.length} Named Ranks` : "Non-Joinable"}</span>
+              <span>{hasRanks ? `${faction.ranks.length} ranks` : "Non-Joinable"}</span>
               {faction.hidden && (
                 <>
                   <span>•</span>
@@ -98,7 +104,7 @@ export default function FactionDetailView({
             {membership ? (
               <div className="text-right">
                 <span className="inline-block px-2.5 py-1 text-xs uppercase font-bold bg-surface-22 text-accent border border-accent">
-                  {isExpelled ? "⚠ Expelled Member" : `Member · Rank ${membership.rank}`}
+                  {isExpelled ? "⚠ Expelled Member" : `Member · ${rankName(membership.rank)}`}
                 </span>
                 <div className="text-[11px] text-fg-14 mt-0.5">
                   Standing: <strong className="text-fg-6">{membership.reputation}</strong> Rep
@@ -107,11 +113,11 @@ export default function FactionDetailView({
             ) : hasRanks ? (
               highestEligibleRankIdx >= 0 ? (
                 <span className="px-2.5 py-1 text-xs font-serif text-success-4 bg-success-surface-2 border border-success-line-4">
-                  Eligible for Rank {highestEligibleRankIdx}
+                  Eligible for {rankName(highestEligibleRankIdx)}
                 </span>
               ) : (
                 <span className="px-2.5 py-1 text-xs font-serif text-fg-14 bg-surface-12 border border-line-9">
-                  Stats Under Threshold
+                  Not eligible yet
                 </span>
               )
             ) : null}
@@ -143,7 +149,7 @@ export default function FactionDetailView({
             <div className="flex flex-wrap gap-1.5">
               {(faction.favouredAttributes || []).map(attr => (
                 <span key={attr} className="px-2 py-0.5 text-xs font-serif bg-surface-12 border border-line-4 text-fg-2">
-                  {attr.charAt(0).toUpperCase() + attr.slice(1)}: <strong className="text-accent">{getStatValue(character?.attributes, attr)}</strong>
+                  {statLabel(attr)}: <strong className="text-accent">{getStatValue(character?.attributes, attr)}</strong>
                 </span>
               ))}
             </div>
@@ -151,12 +157,12 @@ export default function FactionDetailView({
 
           <div>
             <span className="text-[11px] font-serif uppercase tracking-wider text-fg-14 block mb-1.5">
-              Favoured Skills (1 Primary + 2 Favoured Required)
+              Favoured Skills (any three count toward a rank)
             </span>
             <div className="flex flex-wrap gap-1.5">
               {(faction.skills || []).map(sk => (
                 <span key={sk} className="px-2 py-0.5 text-xs font-serif bg-surface-12 border border-line-4 text-fg-2">
-                  {sk.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}: <strong className="text-accent">{getStatValue(character?.skills, sk)}</strong>
+                  {statLabel(sk)}: <strong className="text-accent">{getStatValue(character?.skills, sk)}</strong>
                 </span>
               ))}
             </div>
@@ -168,8 +174,8 @@ export default function FactionDetailView({
       {hasRanks ? (
         <section className="mb-8">
           <h3 className="text-base font-serif font-bold text-accent mb-3 flex items-center justify-between">
-            <span>Rank Progression Track (0 to {faction.ranks.length - 1})</span>
-            <span className="text-xs text-fg-14 font-normal">Click rank to inspect requirements</span>
+            <span>Ranks 1 to {faction.ranks.length}</span>
+            <span className="text-xs text-fg-14 font-normal">Pick a rank to see what it asks</span>
           </h3>
 
           {/* Stepper Grid */}
@@ -195,7 +201,7 @@ export default function FactionDetailView({
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-[10px] font-mono text-fg-14">Rank {r.index}</span>
+                    <span className="text-[10px] font-mono text-fg-14">Rank {r.index + 1}</span>
                     {isHeld && (
                       <span className="text-[9px] uppercase font-bold text-accent bg-surface-3 px-1 py-0.2 border border-accent/50">
                         Current
@@ -230,7 +236,7 @@ export default function FactionDetailView({
                 <div>
                   <span className="text-xs uppercase font-serif tracking-wider text-fg-14">Target Rank Qualification</span>
                   <h4 className="text-lg font-serif font-bold text-accent">
-                    Rank {solver.targetRank.index}: {solver.targetRank.name}
+                    {solver.targetRank.name}, rank {solver.targetRank.index + 1} of {faction.ranks.length}
                   </h4>
                 </div>
 
@@ -241,7 +247,7 @@ export default function FactionDetailView({
                     </span>
                   ) : (
                     <span className="px-3 py-1 bg-danger-surface-3 border border-danger-line-1 text-danger-4 font-serif font-bold text-xs uppercase tracking-wide">
-                      ✕ Requirements Deficient
+                      ✕ Not Yet Eligible
                     </span>
                   )}
                 </div>
@@ -270,7 +276,7 @@ export default function FactionDetailView({
                     {solver.attributes.map(a => (
                       <div key={a.name}>
                         <div className="flex justify-between mb-0.5">
-                          <span>{a.name.charAt(0).toUpperCase() + a.name.slice(1)}</span>
+                          <span>{a.label}</span>
                           <span className={a.met ? "text-success-4" : "text-danger-7"}>
                             {a.current} / {a.required} {a.met ? "✓" : `(Need +${a.gap})`}
                           </span>
@@ -289,14 +295,14 @@ export default function FactionDetailView({
                 {/* 2. Favoured Skills */}
                 <div className="bg-surface-6 p-3 border border-line-9">
                   <span className="text-fg-14 uppercase text-[10px] tracking-wider block mb-2 font-bold">
-                    Skills Thresholds
+                    Favoured Skills
                   </span>
                   <div className="space-y-2">
                     {/* Primary */}
                     {solver.skills.primary && (
                       <div>
                         <div className="flex justify-between mb-0.5">
-                          <span>Primary ({solver.skills.primary.name})</span>
+                          <span>{solver.skills.primary.label} (your highest)</span>
                           <span className={solver.skills.primary.met ? "text-success-4" : "text-danger-7"}>
                             {solver.skills.primary.current} / {solver.skills.primary.required} {solver.skills.primary.met ? "✓" : `(+${solver.skills.primary.gap})`}
                           </span>
@@ -314,7 +320,7 @@ export default function FactionDetailView({
                     {solver.skills.favoured.map((f, i) => (
                       <div key={i}>
                         <div className="flex justify-between mb-0.5">
-                          <span>Favoured #{i+2} ({f.name})</span>
+                          <span>{f.label}</span>
                           <span className={f.met ? "text-success-4" : "text-danger-7"}>
                             {f.current} / {f.required} {f.met ? "✓" : `(+${f.gap})`}
                           </span>
@@ -472,6 +478,7 @@ export default function FactionDetailView({
         <div>
           <p>For a promotion, your character needs the required values in the faction&apos;s two favored attributes, one favored skill at the higher threshold, and two other favored skills at the lower threshold. You also need enough reputation with that faction.</p>
           <p>The journal compares these requirements with your character to show what is missing. Meeting the numbers does not complete any quests or other conditions required in the game.</p>
+          <p>The objects a faction owns, such as the goods, containers and beds in its halls, are yours to take or use once your rank in it is high enough; before that, taking them is theft.</p>
           <p>You normally join only one Great House: Hlaalu, Redoran or Telvanni. A faction&apos;s opinion of your factions affects how its members treat you, with a larger effect at higher ranks.</p>
         </div>
       </details>

@@ -287,3 +287,38 @@ test('Adversarial edge cases: extreme stats, corrupted records, empty ranks', as
   const oneSkillGaps = solvePromotionGaps(oneSkillFaction, -1, godChar, 0);
   assert.equal(oneSkillGaps.eligible, false);
 });
+
+test('statLabel shows attributes and skills as the game names them (FAC-1)', async () => {
+  const { statLabel } = await import('../lib/faction-math.mjs');
+  for (const [key, label] of [['long_blade', 'Long Blade'], ['longblade', 'Long Blade'], ['LongBlade', 'Long Blade'], ['handtohand', 'Hand-to-hand'],
+    ['hand_to_hand', 'Hand-to-hand'], ['strength', 'Strength'], ['Personality', 'Personality'], ['medium_armor', 'Medium Armor']]) {
+    assert.equal(statLabel(key), label, key);
+  }
+  assert.equal(statLabel('t_custom_skill'), 'T Custom Skill', 'an unknown id is still readable');
+  for (const empty of ['', '   ', null, undefined, 42]) assert.equal(statLabel(empty), '', String(empty));
+});
+
+test('promotion shortfalls read in plain words, with skill names, not ids (FAC-1)', async () => {
+  const { solvePromotionGaps } = await import('../lib/faction-math.mjs');
+  const guild = {
+    key: 'fighters guild', name: 'Fighters Guild', favouredAttributes: ['strength', 'endurance'],
+    skills: ['axe', 'long_blade', 'blunt_weapon', 'heavy_armor', 'armorer', 'block'],
+    ranks: [
+      { index: 0, name: 'Associate', attribute1: 30, attribute2: 30, primarySkill: 0, favouredSkill: 0, reputation: 0 },
+      { index: 1, name: 'Swordsman', attribute1: 30, attribute2: 30, primarySkill: 30, favouredSkill: 5, reputation: 20 }
+    ]
+  };
+  const gaps = solvePromotionGaps(guild, 0, { attributes: { strength: 25, endurance: 30 }, skills: { long_blade: 25, block: 10, armorer: 4 }, factionReputation: 15 }, 1);
+  assert.deepEqual(gaps.deficits, [
+    'Raise Strength by 5, to 30',
+    'One favoured skill at 30: your highest, Long Blade, is 25 (+5)',
+    'A third favoured skill at 5: Armorer is 4 (+1)',
+    '5 more reputation with the faction (you have 15 of 20)'
+  ]);
+  assert.deepEqual([gaps.attributes[0].label, gaps.skills.primary.label, ...gaps.skills.favoured.map(f => f.label)], ['Strength', 'Long Blade', 'Block', 'Armorer']);
+  assert.equal(gaps.skills.primary.name, 'long_blade', 'the id stays for code that matches on it');
+  // A faction with fewer than three skills: the missing ones read as None, not undefined.
+  const thin = solvePromotionGaps({ ...guild, skills: ['axe'] }, 0, { attributes: { strength: 30, endurance: 30 }, skills: { axe: 30 } }, 1);
+  assert.ok(thin.deficits.every(d => !/undefined|_/.test(d)), thin.deficits.join(' | '));
+  assert.match(thin.deficits.join(' | '), /A second favoured skill at 5: None is 0/);
+});
