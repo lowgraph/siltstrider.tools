@@ -12,7 +12,7 @@ import {
   PROGRESSION_MODES,
   ARCHETYPES,
   normalizeCharacterState,
-  detectArchetype,
+  explainArchetype,
   simulateProgression,
   applyLevelStep
 } from "../../lib/level-math.mjs";
@@ -39,9 +39,10 @@ export default function LevelSimulatorRoot() {
     }
   }, [build, sheet, catalogs, fromSave, activeSave]);
 
-  // Detected archetype for the character
+  // Detected archetype for the character, with why ("major skills Long Blade, …")
   const detectedArchetype = useMemo(() => {
-    return detectArchetype(initialSheet || build);
+    const { archetype, reason } = explainArchetype(initialSheet || build);
+    return { ...archetype, reason };
   }, [initialSheet, build]);
 
   // UI state

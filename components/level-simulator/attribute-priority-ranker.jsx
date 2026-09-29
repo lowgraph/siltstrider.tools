@@ -33,6 +33,9 @@ export default function AttributePriorityRanker({
           </span>
         </div>
       </div>
+      {detectedArchetype?.reason && (
+        <p className="archetype-reason text-[11px] text-fg-11 mt-0">Detected from {detectedArchetype.reason}.</p>
+      )}
 
       {/* Preset Archetype Selectors */}
       <div className="archetype-selector-row">
