@@ -1,5 +1,21 @@
 # Changelog
 
+## Privacy, sign-in and launch readiness — 2026-09-29
+
+- **No cookies unless you sign in:** Clerk loads only for a browser that is signed in or when you click Sign in, so a visit without signing in sets no cookies. The Privacy Policy gains "Cookies, local files and browser storage", covering Clerk's sign-in cookies, browser storage, and Cloudflare Web Analytics, which counts page visits without cookies or storage.
+- **Sign-in keeps your character:** Google and Discord sign-in reloads the page, which reset an unsaved character to the default. The builder now keeps it for that round trip only.
+- **Compatibility notice:** the save importers and About say OpenMW only; vanilla, Tamriel Rebuilt and TR + ARCE are tested; other mods are untested; `.ess` saves are not supported.
+- **Bug reports:** Report a bug in the footer and on About opens an email template that attaches no character data. Server errors show a reference ID, and the matching log holds no payloads or tokens.
+- **Accurate privacy claims:** About's FAQ and the Vault's search description no longer promise that nothing leaves the browser.
+- **Hosting:** only API requests run the Worker; pages and game data are served directly, so busy days cost far fewer Worker requests. `www` redirects through a Cloudflare rule.
+- Ko-fi donations and case-insensitive support codes are recognized. Sharper favicons.
+
+## Gear Advisor ranks for your build — 2026-09-28
+
+- Clothing rows carry a shortlist of candidates, and the advisor ranks them for the character using the Level Simulator's archetype: spellcasters are shown Mentor's Ring in vanilla and Tamriel Rebuilt.
+- Two ring slots: a second, different ring for the other hand, equipped on the right.
+- Weapons and armor follow major skills before minor ones.
+
 ## Current-only application and saves — 2026-09-28
 
 - Removed the standalone HTML application, archived runtimes, bridges, extraction harness and prototype test API. Native tests cover the current tools.

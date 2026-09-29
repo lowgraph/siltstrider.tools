@@ -14,8 +14,23 @@ export default function ChangelogView() {
 
       <div className="space-y-6 text-sm text-fg-2">
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-29">September 29, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>No cookies unless you sign in: sign-in now loads only when you use it. The Privacy Policy explains cookies, browser storage, and the cookie-free page-view analytics.</li>
+            <li>Signing in with Google or Discord no longer resets an unsaved character in the Character Builder.</li>
+            <li>The save importers and About page say what is tested: OpenMW with vanilla Morrowind, Tamriel Rebuilt, and TR + ARCE. Other mods are untested, and Morrowind.exe .ess saves are not supported.</li>
+            <li>Report a bug from the footer or the About page. The email template asks for the steps, profile, and browser, and attaches no character data. Server errors show a reference to include.</li>
+            <li>About and search descriptions are clearer about privacy: opening a save reads it in your browser, and saving to Cloud Vault sends it to our service.</li>
+            <li>Supporter payments recognize Ko-fi donations and support codes in any capitalization. Sharper browser tab icons.</li>
+          </ul>
+        </section>
+
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-28">September 28, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Early-game clothing and jewelry are ranked for your character: spellcasters are shown Mentor&apos;s Ring, and fighters rings that suit their skills.</li>
+            <li>Two ring slots: the Gear Advisor suggests a second, different ring for the other hand, and Equip puts it there.</li>
+            <li>Weapons and armor follow your major skills first: an Assassin leads with Short Blade, not a minor Long Blade.</li>
             <li>Removed the old standalone application and compatibility bridges. The tools now use the native application throughout.</li>
             <li>Share links now use page paths and query parameters. Old hash links no longer restore characters or challenge runs; create a new link with the Share buttons.</li>
             <li>Updated the site-save format. Older cloud saves and browser-kept binary saves must be recreated; reimport the original .omwsave file for an imported character. Current OpenMW file import remains available.</li>
