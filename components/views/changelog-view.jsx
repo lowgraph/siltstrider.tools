@@ -41,9 +41,9 @@ export default function ChangelogView() {
             <li>Effect lists show base costs as the game does: Light is base 0.2, not 0.20000000298023224.</li>
             <li>Challenge Runs has one row of difficulty presets, in the settings beside what they change, instead of two identical rows.</li>
             <li>The Faction Journal names ranks and counts them from 1, shows skills by name, says plainly what a promotion still needs, and explains the objects a faction owns.</li>
-            <li>Clearer text contrast: muted and secondary text (faction ranks and requirements, equipped loadout stats, premade build details, challenge restrictions, and travel labels) now passes WCAG AA contrast against every surface in both the modern Ashfall and classic Morrowind themes.</li>
-            <li>Touch-friendly Level Simulator buttons: the attribute priority reorder buttons now measure 24&times;24px, satisfying WCAG 2.2 target size guidelines.</li>
-            <li>Accessible heading structure in Level Simulator and Cloud Vault: section headings now follow a strict logical hierarchy without skipped levels.</li>
+            <li>The dimmer small print on faction ranks, loadout stats, premade builds, challenge restrictions and travel labels is brighter and easier to read, in both themes.</li>
+            <li>The Level Simulator&apos;s buttons for reordering attribute priorities are bigger and easier to tap.</li>
+            <li>The Level Simulator and Cloud Vault headings nest in order, so screen reader users can move between sections easily.</li>
           </ul>
         </section>
 

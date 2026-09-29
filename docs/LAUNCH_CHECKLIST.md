@@ -89,10 +89,10 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 
 ### 3. Before launch if time allows (can slip without breaking anything)
 
-- [x] **C** Contrast (started 2026-09-29 20:51 UTC, C; done `241f58f` on branch `launch/contrast-fg13-fg15`) retune `fg-13`–`fg-15` against every panel they sit on (Faction
+- [x] **C** Contrast (started 2026-09-29 20:51 UTC, C; done `241f58f`, merged `b0e5f39`; the Faction Journal's tinted cards fixed in `e34f135`; not deployed) retune `fg-13`–`fg-15` against every panel they sit on (Faction
       Journal, Equipped Loadouts, premade catalog, Challenge, Travel labels), both themes.
-- [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb` on branch `launch/level-buttons-24px`).
-- [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9` on branch `launch/headings-level-vault`).
+- [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb`, merged `ae152d0`, not deployed).
+- [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9`, merged `384118d`, not deployed).
 - [ ] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above).
 - [ ] **O** Usability test with three to five people, using the audit's script; **C** fix
       what three or more hit, and any High finding they confirm.
