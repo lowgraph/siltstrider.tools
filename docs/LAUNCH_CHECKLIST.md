@@ -107,7 +107,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 #### 4.2 Onboarding, mobile, and character continuity
 - [ ] **C** **HOME-1 / MOB-2** Equal first steps on Home & mobile: provide two equal primary actions ("Start a character / Browse 41 premades" and "Load my save"); lead with character creation on touch devices.
 - [ ] **C** **BLD-3** Premade builds first for newcomers: open the Character Builder on the Premade Builds Catalog on a first visit, or surface three recommended starter archetypes above the custom form.
-- [ ] **C** **BLD-4** Local character save button (started 2026-09-29 21:53 UTC, C): add an explicit "Save this character" action for browser storage in the builder without requiring an account, keeping Cloud Vault sync as an optional upgrade.
+- [x] **C** **BLD-4** Local character save button (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`): add an explicit "Save this character" action for browser storage in the builder without requiring an account, keeping Cloud Vault sync as an optional upgrade.
 - [ ] **C** **SITE-4** Interactive active character bar: make the global character bar across tools clickable to link back to the Character Builder with a clear edit prompt.
 - [ ] **C** **MOB-1 & MOB-4** Mobile header & builder layout compaction: streamline the phone header (single tagline, search behind an icon) and compact builder tab controls so inputs appear above the fold on mobile.
 
