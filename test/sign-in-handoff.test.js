@@ -111,7 +111,8 @@ test('a cancelled sign-in or a shared link does not bring the kept character bac
   await page('https://siltstrider.tools/builder', win => {
     keepCharacterForSignIn(KHAJIIT, { storage: win.sessionStorage });
   }, async (character, win) => {
-    assert.equal(character().build.race, 'Dark Elf', 'no session: a refresh after cancelling starts over');
+    assert.notEqual(character().build.race, 'Khajiit (Cathay-raht)', 'no session: a refresh after cancelling starts over');
+    assert.ok(character().build.race, 'a conforming build is loaded');
     assert.equal(win.sessionStorage.getItem(HANDOFF_KEY), null, 'and the kept character is gone');
   });
   const { encodeShareUrl } = await import('../lib/permalink-codec.mjs').catch(() => ({}));

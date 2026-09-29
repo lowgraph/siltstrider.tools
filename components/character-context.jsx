@@ -1,5 +1,6 @@
 "use client";
-import {distinctFavored} from "../lib/favored-attributes.mjs";
+import { distinctFavored } from "../lib/favored-attributes.mjs";
+import { CANONICAL_RACES, canonicalRaceFor, getRandomPremadeBuild, premadeToBuild, sameCharacter } from "../lib/premade-data.mjs";
 import { validateSave } from "../lib/omwsave-import.mjs";
 import {saveMemberships} from "../lib/faction-memberships.mjs";
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from "react";
@@ -40,7 +41,7 @@ export const DEFAULT_BUILD = {
 
 const CharacterContext = createContext(null);
 
-export function CharacterProvider({ children }) {
+export function CharacterProvider({ children, initialBuild = null }) {
   let shell = null;
   try {
     shell = useShell();
@@ -50,9 +51,25 @@ export function CharacterProvider({ children }) {
   if (!shell) {
     shell = { world: "vanilla", arce: false, profile: "vanilla" };
   }
-  const [build, setBuildState] = useState(() => distinctFavored(DEFAULT_BUILD));
+  // The server and the browser's first render must agree, or React throws the
+  // prerendered page away: both start from the fixed default, and the random premade
+  // is picked just after, below.
+  const [build, setBuildState] = useState(() => distinctFavored(initialBuild || DEFAULT_BUILD));
   const setBuild = useCallback((next) => setBuildState(previous => distinctFavored(typeof next === 'function' ? next(previous) : next, previous)), []);
   const [catalogs, setCatalogs] = useState(null);
+
+  // A fresh visit starts from a random premade. This is the first effect, so a shared
+  // link, a character kept through sign-in or a loaded save, all set later, still win.
+  const randomPick = useRef(null);
+  useEffect(() => {
+    if (initialBuild) return;
+    const pick = getRandomPremadeBuild({ world: shell.world || "vanilla", arce: Boolean(shell.arce) });
+    if (!pick) return;
+    randomPick.current = pick;
+    setBuild(pick);
+    // Mount only: later world changes are handled by the effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const service = useMemo(() => createCharacterCatalogService(getGameDataLoader()), []);
 
@@ -88,6 +105,18 @@ export function CharacterProvider({ children }) {
       const nextWorld = shell.world || "vanilla";
       const nextArce = !!shell.arce;
       if (prev.world === nextWorld && prev.arce === nextArce) return prev;
+      if (!nextArce && !CANONICAL_RACES.includes(prev.race)) {
+        // Leaving ARCE with an ARCE-only race: an untouched random premade is swapped for
+        // another; a character the player made keeps everything but the race.
+        if (sameCharacter(prev, randomPick.current)) {
+          const pick = getRandomPremadeBuild({ world: nextWorld, arce: false });
+          if (pick) {
+            randomPick.current = pick;
+            return pick;
+          }
+        }
+        return { ...prev, world: nextWorld, arce: nextArce, race: canonicalRaceFor(prev.race) };
+      }
       return { ...prev, world: nextWorld, arce: nextArce };
     });
   }, [shell.world, shell.arce]);
@@ -129,28 +158,23 @@ export function CharacterProvider({ children }) {
 
   const selectPremade = useCallback(
     (premade) => {
-      const favs = (premade.fav || "").split(",").map((s) => s.trim());
-      const majs = (premade.maj || "").split(",").map((s) => s.trim());
-      const mins = (premade.min || "").split(",").map((s) => s.trim());
-
-      setBuild({
-        version: 1,
+      const next = premadeToBuild(premade, {
         world: shell.world || "vanilla",
-        arce: !!shell.arce,
-        name: premade.name,
-        race: premade.race,
-        gender: premade.gender || "Male",
-        className: "Custom",
-        sign: premade.sign,
-        spec: premade.spec,
-        fav1: favs[0] || "Strength",
-        fav2: favs[1] || "Endurance",
-        maj: majs,
-        min: mins
+        arce: Boolean(shell.arce)
       });
+      if (next) setBuild(next);
     },
-    [shell.world, shell.arce]
+    [shell.world, shell.arce, setBuild]
   );
+
+  const rollRandomBuild = useCallback(() => {
+    const next = getRandomPremadeBuild({
+      world: shell.world || "vanilla",
+      arce: Boolean(shell.arce)
+    });
+    if (next) setBuild(next);
+    return next;
+  }, [shell.world, shell.arce, setBuild]);
 
   // A loaded .omwsave: the build it resolves to, plus what the other tools read from
   // it -- the Level Simulator's starting sheet, the worn loadout, journal progress --
@@ -274,12 +298,13 @@ export function CharacterProvider({ children }) {
       swapSkill,
       selectClassPreset,
       selectPremade,
+      rollRandomBuild,
       activeSave,
       loadSave,
       clearSave
     }),
     [build, sheet, catalogs, updateField, swapSkill, selectClassPreset, selectPremade,
-     activeSave, loadSave, clearSave]
+     rollRandomBuild, activeSave, loadSave, clearSave]
   );
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;
@@ -298,6 +323,7 @@ export function useActiveCharacter() {
       swapSkill: () => {},
       selectClassPreset: () => {},
       selectPremade: () => {},
+      rollRandomBuild: () => null,
       activeSave: null,
       loadSave: async () => null,
       clearSave: () => {}
