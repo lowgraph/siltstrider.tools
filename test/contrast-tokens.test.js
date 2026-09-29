@@ -109,3 +109,55 @@ test("adversarial edge case: relative luminance across fg ramp decreases monoton
     }
   }
 });
+
+// The Faction Journal's selected and eligible states sit on tinted surfaces the lists above
+// leave out: the selected faction card (surface-18), the selected rank (surface-19), a held rank
+// (surface-13) and met requirements (success-surface-2). fg-14 falls to 4.2-4.5:1 there, so the
+// text on them uses fg-12. Measured in both themes with headless Chrome on 29 September.
+function tintedTokens(css) {
+  const tokens = {};
+  for (const m of css.matchAll(/--color-((?:success-)?(?:fg|surface)-\d+)\s*:\s*(#[0-9a-fA-F]{6})/g)) if (!tokens[m[1]]) tokens[m[1]] = m[2];
+  return tokens;
+}
+const TINTED = ["surface-13", "surface-18", "surface-19", "success-surface-2"];
+
+test("fg-12 passes AA on the Faction Journal's tinted surfaces in both themes", () => {
+  for (const [themeName, css] of [["Morrowind", GLOBALS_CSS], ["Ashfall", ASHFALL_CSS]]) {
+    const tokens = tintedTokens(css);
+    for (const surfaceName of TINTED) {
+      assert.ok(tokens[surfaceName], `${themeName} defines ${surfaceName}`);
+      const cr = contrastRatio(tokens["fg-12"], tokens[surfaceName]);
+      assert.ok(cr >= 4.5, `${themeName} fg-12 vs ${surfaceName}: ${cr.toFixed(2)}:1`);
+    }
+  }
+});
+
+test("fg-14 does not reach AA on those surfaces, which is why the Journal avoids it there", () => {
+  // If a later retune lifts fg-14 past 4.5:1 on every tinted surface, this can go.
+  const worst = [["Morrowind", GLOBALS_CSS], ["Ashfall", ASHFALL_CSS]].map(([, css]) => {
+    const tokens = tintedTokens(css);
+    return Math.min(...TINTED.map((s) => contrastRatio(tokens["fg-14"], tokens[s])));
+  });
+  assert.ok(worst.some((cr) => cr < 4.5), `worst fg-14 ratios ${worst.map((c) => c.toFixed(2)).join(", ")}`);
+});
+
+test("the Faction Journal's text on selected and eligible cards uses fg-12, not fg-13 to fg-15", () => {
+  const roster = fs.readFileSync(path.join(ROOT, "components/journal-factions/faction-roster.jsx"), "utf8");
+  const detail = fs.readFileSync(path.join(ROOT, "components/journal-factions/faction-detail-view.jsx"), "utf8");
+  const classOf = (src, marker) => {
+    const at = src.indexOf(marker);
+    assert.ok(at > 0, `found ${marker}`);
+    return src.slice(src.lastIndexOf("className=", at), at);
+  };
+  for (const [src, marker] of [
+    [roster, "owns {faction.ownedPlacements"],
+    [roster, "{faction.favouredAttributes.map("],
+    [detail, "Rank {r.index + 1}"],
+    [detail, "Rep: {r.reputation}"],
+    [detail, "Target Rank Qualification"],
+  ]) {
+    const cls = classOf(src, marker);
+    assert.match(cls, /text-fg-12/, `${marker}: ${cls}`);
+    assert.doesNotMatch(cls, /text-fg-1[345]\b/, marker);
+  }
+});

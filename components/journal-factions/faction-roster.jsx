@@ -169,7 +169,7 @@ export default function FactionRoster({
                     {faction.name || faction.key}
                   </span>
                   {faction.ownedPlacements > 0 && (
-                    <span className="text-[10px] text-fg-14 font-mono shrink-0" title="Goods, containers and beds that belong to the faction">
+                    <span className="text-[10px] text-fg-12 font-mono shrink-0" title="Goods, containers and beds that belong to the faction">
                       owns {faction.ownedPlacements.toLocaleString()} objects
                     </span>
                   )}
@@ -212,7 +212,7 @@ export default function FactionRoster({
 
                 {/* Favoured Attributes Snippet */}
                 {faction.favouredAttributes?.length > 0 && (
-                  <div className="text-[10px] text-fg-14 font-serif truncate mt-0.5">
+                  <div className="text-[10px] text-fg-12 font-serif truncate mt-0.5">
                     {faction.favouredAttributes.map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(" · ")}
                   </div>
                 )}

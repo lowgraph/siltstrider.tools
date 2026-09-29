@@ -201,7 +201,7 @@ export default function FactionDetailView({
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-[10px] font-mono text-fg-14">Rank {r.index + 1}</span>
+                    <span className="text-[10px] font-mono text-fg-12">Rank {r.index + 1}</span>
                     {isHeld && (
                       <span className="text-[9px] uppercase font-bold text-accent bg-surface-3 px-1 py-0.2 border border-accent/50">
                         Current
@@ -216,7 +216,7 @@ export default function FactionDetailView({
                   }`}>
                     {r.name}
                   </div>
-                  <div className="text-[10px] text-fg-14 mt-1 font-mono">
+                  <div className="text-[10px] text-fg-12 mt-1 font-mono">
                     Rep: {r.reputation}
                   </div>
                 </button>
@@ -234,7 +234,7 @@ export default function FactionDetailView({
               {/* Verdict Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-4 border-b border-line-9">
                 <div>
-                  <span className="text-xs uppercase font-serif tracking-wider text-fg-14">Target Rank Qualification</span>
+                  <span className="text-xs uppercase font-serif tracking-wider text-fg-12">Target Rank Qualification</span>
                   <h4 className="text-lg font-serif font-bold text-accent">
                     {solver.targetRank.name}, rank {solver.targetRank.index + 1} of {faction.ranks.length}
                   </h4>
