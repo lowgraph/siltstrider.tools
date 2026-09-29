@@ -216,6 +216,8 @@ commands; the commands are in section 6.
    loading relies on it to show a signed-in visitor as signed in without clicking Sign
    in again), and that the character comes back. Then delete the 10:54 save, which
    holds the default Dark Elf, and save the Khajiit again.
+   **Done (owner, 29 September):** the owner deleted the old save, saved the character
+   again, and reports it works across browsers. Owner-reported, not agent-verified.
 7. **Licence: done.** The site is `AGPL-3.0-or-later` and the pipeline
    `GPL-3.0-or-later` (29 September): `LICENSE` in each repository, a Licence section in
    each README excluding the Pelagiad font (SIL OFL 1.1), game and mod data (including

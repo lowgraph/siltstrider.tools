@@ -70,7 +70,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       the link effect compares against the shell while the page hydrates (still vanilla).
       Hydration tests: a vanilla link over a TR + ARCE store, a TR link over vanilla, an ARCE
       link, a link without a world.
-- [ ] **O** Real sign-in test on production (LAUNCH_VERIFICATION §5 item 6), and delete the
+- [x] **O** (done, owner, reported 2026-09-29 20:33 UTC: the old save deleted and the character saved again; works across browsers) Real sign-in test on production (LAUNCH_VERIFICATION §5 item 6), and delete the
       10:54 save and save the Khajiit again, if not done already.
 
 ### 2. Before launch: clarity
