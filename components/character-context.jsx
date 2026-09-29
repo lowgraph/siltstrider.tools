@@ -5,7 +5,7 @@ import { validateSave } from "../lib/omwsave-import.mjs";
 import {saveMemberships} from "../lib/faction-memberships.mjs";
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { computeSheet, swapSkill as mathSwapSkill } from "../lib/character-math.mjs";
-import { useShell } from "./shell-context";
+import { readVisitorProfile, useShell } from "./shell-context";
 import { getGameDataLoader } from "./use-game-data";
 import { createCharacterCatalogService } from "../lib/character-catalogs.mjs";
 import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
@@ -63,7 +63,10 @@ export function CharacterProvider({ children, initialBuild = null }) {
   const randomPick = useRef(null);
   useEffect(() => {
     if (initialBuild) return;
-    const pick = getRandomPremadeBuild({ world: shell.world || "vanilla", arce: Boolean(shell.arce) });
+    // While the page hydrates the shell still shows the server's world, so the draw reads
+    // the visitor's own: with TR + ARCE the ARCE builds are in the pool.
+    const { world, arce } = shell.ready === false ? readVisitorProfile() : shell;
+    const pick = getRandomPremadeBuild({ world: world || "vanilla", arce: Boolean(arce) });
     if (!pick) return;
     randomPick.current = pick;
     setBuild(pick);
@@ -99,8 +102,10 @@ export function CharacterProvider({ children, initialBuild = null }) {
     return () => { current = false; };
   }, [shell.profile, service]);
 
-  // Keep build in sync with world/arce profile changes
+  // Keep build in sync with world/arce profile changes -- once the shell knows the
+  // visitor's world: the prerender's vanilla would undo a start drawn for TR + ARCE.
   useEffect(() => {
+    if (shell.ready === false) return;
     setBuild((prev) => {
       const nextWorld = shell.world || "vanilla";
       const nextArce = !!shell.arce;
@@ -119,7 +124,7 @@ export function CharacterProvider({ children, initialBuild = null }) {
       }
       return { ...prev, world: nextWorld, arce: nextArce };
     });
-  }, [shell.world, shell.arce]);
+  }, [shell.ready, shell.world, shell.arce]);
 
   // Compute live character sheet
   const sheet = useMemo(() => {

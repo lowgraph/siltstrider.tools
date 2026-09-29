@@ -61,6 +61,66 @@ test('a fresh visit starts from a random premade once the page is up', async () 
   }));
 });
 
+// As on the site: the prerendered page is hydrated, so the first effects run while the
+// shell still shows the server's world (vanilla), before the visitor's own is read.
+async function hydrated(url, storage, check) {
+  const { hydrateRoot } = require('react-dom/client');
+  let character, shell;
+  function Probe() { character = useActiveCharacter(); shell = useShell(); return React.createElement('p', null, character.build.race); }
+  const tree = () => React.createElement(ShellProvider, null, React.createElement(CharacterProvider, null, React.createElement(Probe)));
+  delete global.window; delete global.document; // the prerender has no browser
+  const html = renderToString(tree());
+  const dom = new JSDOM(`<div id="root">${html}</div>`, { url });
+  for (const [key, value] of Object.entries(storage)) dom.window.localStorage.setItem(key, value);
+  Object.assign(global, { window: dom.window, document: dom.window.document, Event: dom.window.Event, IS_REACT_ACT_ENVIRONMENT: true });
+  const errors = [];
+  let root;
+  try {
+    await React.act(async () => { root = hydrateRoot(document.getElementById('root'), tree(), { onRecoverableError: e => errors.push(e) }); });
+    assert.deepEqual(errors.map(String), [], 'it hydrates without a mismatch');
+    await check(() => character, () => shell);
+  } finally {
+    await React.act(async () => root.unmount());
+    dom.window.close();
+  }
+}
+
+test('TR + ARCE chosen on an earlier visit: the random start draws from the ARCE builds too', async () => {
+  const { getPremadeBuildPool, CANONICAL_RACES } = await premades();
+  const pool = getPremadeBuildPool({ arce: true });
+  await withRandom(0.999, () => hydrated('https://siltstrider.tools/builder', { 'mw-world': 'tr', 'mw-arce': '1' }, async (character, shell) => {
+    assert.equal(shell().arce, true);
+    const { build } = character();
+    assert.equal(build.name, pool[pool.length - 1].name, 'the last of the ARCE pool');
+    assert.ok(!CANONICAL_RACES.includes(build.race), `an ARCE race (${build.race})`);
+    assert.equal(build.world, 'tr');
+    assert.equal(build.arce, true);
+  }));
+});
+
+test('TR + ARCE from the address: the random start draws from the ARCE builds too', async () => {
+  const { CANONICAL_RACES } = await premades();
+  await withRandom(0.999, () => hydrated('https://siltstrider.tools/builder?world=tr&arce=1', {}, async character => {
+    assert.ok(!CANONICAL_RACES.includes(character().build.race), `an ARCE race (${character().build.race})`);
+    assert.equal(character().build.arce, true);
+  }));
+});
+
+test('TR without ARCE, or a first visit: the random start keeps to the base-game races', async () => {
+  const { getPremadeBuildPool, CANONICAL_RACES } = await premades();
+  const pool = getPremadeBuildPool({ arce: false });
+  await withRandom(0.999, () => hydrated('https://siltstrider.tools/builder', { 'mw-world': 'tr', 'mw-arce': '0' }, async character => {
+    assert.equal(character().build.name, pool[pool.length - 1].name);
+    assert.ok(CANONICAL_RACES.includes(character().build.race));
+    assert.equal(character().build.world, 'tr');
+    assert.equal(character().build.arce, false);
+  }));
+  await withRandom(0, () => hydrated('https://siltstrider.tools/', {}, async character => {
+    assert.equal(character().build.name, pool[0].name);
+    assert.equal(character().build.world, 'vanilla');
+  }));
+});
+
 test('a shared build link still wins over the random start', async () => {
   const { encodeShareUrl } = await import('../lib/permalink-codec.mjs');
   const linked = { race: 'Nord', sign: 'The Warrior', gender: 'Female', className: 'Custom', name: 'Linked Nord' };

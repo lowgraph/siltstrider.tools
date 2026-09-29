@@ -87,6 +87,13 @@ function readCurrentState(initialView) {
   });
 }
 
+// The world the visitor has chosen, read from the address and this browser. While the
+// prerendered page hydrates, the shell still shows the server's (vanilla) and ready is false.
+export function readVisitorProfile() {
+  const { world, arce, profile } = readCurrentState('home');
+  return { world, arce, profile };
+}
+
 const ShellContext = createContext(null);
 
 export function ShellProvider({ children, initialView = 'home' }) {

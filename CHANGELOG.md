@@ -21,6 +21,7 @@
 - **Travel's place search lists each town once:** a town that spans several map cells, such as Pelagiad or Balmora, appears once, routed to its most central cell, and the place buttons no longer show the browser's grey.
 - **Plainer claims:** pages and search descriptions no longer say the formulas are "verified" or the potions "exact"; they say the maths follows OpenMW 0.51's source. The Faction Journal describes what it shows, how each faction regards the others, instead of "inter-faction standing", and no longer puts a fixed number on how that moves an NPC's disposition (it grows with your rank).
 - **A new starting character each visit:** instead of the same Dark Elf every time, a fresh visit starts from one of the premade builds, picked at random for the world you play. A shared link, a character kept through sign-in or a loaded save still comes first. Leaving TR + ARCE keeps a character you made and gives it the nearest base-game race (a Khajiit form becomes Khajiit); an untouched premade is swapped for another.
+- **ARCE characters in the random start:** with TR + ARCE on, the random starting character now comes from the whole premade catalogue, the ARCE race builds included. It used to draw only base-game races, because it was picked before the page had read your world.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 
