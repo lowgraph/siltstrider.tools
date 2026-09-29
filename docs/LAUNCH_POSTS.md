@@ -14,8 +14,9 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 2. **Sign-in test on production.** Build a character, click Sign in in the Vault, sign
    in with Google or Discord, save, and reload: you should come back signed in with the
    same character.
-3. **Each community's rules.** Read the self-promotion rules and flair of every
-   subreddit and Discord server first; some want tool posts in a weekly thread.
+3. **Each community's rules.** The three subreddits were checked on 29 September (see
+   [Community rules](#community-rules)). Discord servers are still to check; some want
+   tool posts in a dedicated channel.
 4. **Screenshots.** Builder with the Gear Advisor, the Travel map, the Level Simulator,
    a loaded save. The social card (`/og-image.png`, 1200×630) is live.
 5. **Timing** (Antigravity's proposal, the owner's call): Reddit and Discord on
@@ -41,6 +42,27 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 | Travel: fewest legs, cheapest fare or fastest trip, across striders, boats, river striders, pack guars, sky lamps, carriages, guild guides, Propylons and Intervention, with walking legs | True (changelog 27 September; vehicle types checked 28 September). |
 | Gear Advisor: early gear a level 1 character can reach, where and from whom, with theft and locked doors flagged; rings and amulets ranked for the build; a late-game kit | True. |
 | Challenge runs with seeds and share links | True. |
+
+## Community rules
+
+Checked against the rules the owner copied from each subreddit on 29 September 2026.
+Reddit blocks automated reads, so the flair lists were not seen: pick the flair in the
+post form.
+
+| Community | Rule that applies | What the copy does |
+| --- | --- | --- |
+| r/Morrowind | 4, use flairs | Pick the closest flair when posting; a post without one can be removed. |
+| r/Morrowind | 2, no piracy, no large modpacks | Links only to siltstrider.tools and its GitHub repositories. Never link mod downloads other than the mods' official pages, and never describe TR + ARCE as a pack: the site ships no mod files. |
+| r/Morrowind | 6, no merchandise | Ko-fi is a tip, not merchandise, but it stays out of the post; mention it only if someone asks. |
+| r/OpenMW | 6, no blatant advertising of any kind | The main risk. Ask the moderators first (below; rule 9 says their decision stands). The post leads with what OpenMW players can check, says it is open source with links, and has no Ko-fi, no "please share", no call to upvote. Answer comments. |
+| r/OpenMW | 4, do not impersonate anyone | Says it is a fan project, not by the OpenMW team: the pipeline repository is named `openmw-decompiler`, which could read as official. |
+| r/OpenMW | 8, know the latest release | OpenMW 0.51.0 (19 June 2026) is the latest release, so "OpenMW 0.51" is current. If a newer version is out when you post, reword or check the formulas first. |
+| r/OpenMW | 3, no NSFW, including your nick | Nothing to change. |
+| r/TamrielRebuilt | none | Still credits the TR team and says the tool is unofficial. |
+
+Message to the r/OpenMW moderators, a day or two before posting:
+
+> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. Would a post introducing it be OK under rule 6, or is there a better place for it? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
 
 ## r/Morrowind
 
@@ -72,7 +94,7 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 > - **Engine rules**: level-ups, alchemy, spell cost and cast chance, and enchanting follow OpenMW 0.51's source. Merchant stock, for example, follows how OpenMW's trade window finds a merchant's containers.
 > - **Tested with** vanilla, Tamriel Rebuilt Poison Song (26.08) and TR + ARCE. Other mods are untested, and Morrowind.exe `.ess` saves aren't supported.
 >
-> Free, no ads, no cookies unless you sign in. Engine edge cases and bug reports are very welcome.
+> It's free and open source, with no ads: the site is AGPL-3.0 (https://github.com/lowgraph/siltstrider.tools) and the data pipeline GPL-3.0, like OpenMW (https://github.com/lowgraph/openmw-decompiler). It's a fan project, not affiliated with the OpenMW team. Engine edge cases and bug reports are very welcome.
 
 ## r/TamrielRebuilt
 
@@ -86,7 +108,7 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 > - **Character Builder** with TR's races and, with ARCE, all races and classes; early gear from TR's merchants and dungeons.
 > - **Faction Journal** with rank requirements for TR's factions.
 >
-> Free, no ads, works on mobile. May your journey across the mainland be swift!
+> Free, no ads, works on mobile. It's an unofficial fan tool: all the credit for the mainland goes to the Tamriel Rebuilt and Project Tamriel teams. May your journey across the mainland be swift!
 
 ## Discord (short)
 
