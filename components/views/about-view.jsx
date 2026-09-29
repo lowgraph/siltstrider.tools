@@ -44,7 +44,7 @@ export default function AboutView() {
           <div>
             <h3 className="text-base font-serif text-accent mb-2">System Accuracy &amp; Game Mechanics</h3>
             <p className="text-xs text-fg-7 leading-relaxed">
-              Calculations across Silt Strider reflect verified engine source code transcribed directly from OpenMW 0.51.0 (<span className="font-mono text-accent">apps/openmw/mwmechanics/</span>). Game math is evaluated using exact engine algorithms rather than approximations:
+              Calculations across Silt Strider follow engine source code transcribed from OpenMW 0.51.0 (<span className="font-mono text-accent">apps/openmw/mwmechanics/</span>). Game math uses the engine's own algorithms rather than wiki rules of thumb:
             </p>
             <ul className="list-disc list-inside text-xs text-fg-7 space-y-1.5 mt-2.5 leading-relaxed">
               <li>

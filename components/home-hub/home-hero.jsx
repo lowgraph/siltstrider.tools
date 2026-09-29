@@ -103,7 +103,7 @@ export default function HomeHero({
         </button>
         <h1 className="home-title" id="home-title">Plan the perfect <span>Morrowind</span> run.</h1>
         <div className="home-lead">
-          A free, data-driven companion for The Elder Scrolls III. Build a character, simulate every level-up for ×5 multipliers, brew exact potions and plan your travel across Vvardenfell and Tamriel Rebuilt, with every number read straight from the game files.
+          A free, data-driven companion for The Elder Scrolls III. Build a character, simulate every level-up for ×5 multipliers, brew potions and plan your travel across Vvardenfell and Tamriel Rebuilt, with every number read straight from the game files.
         </div>
         <HomeSaveDrop
           activeSave={save?.activeSave}

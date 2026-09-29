@@ -5,18 +5,18 @@ export const dynamic = 'force-static';
 
 export const metadata = {
   title: 'Morrowind Faction Journal & Guild Rank Tracker',
-  description: 'Morrowind guild and Great House progression planner. Track favored skills, attribute rank thresholds, faction reputation, and inter-faction conflicts.',
+  description: 'Morrowind guild and Great House progression planner. Track favored skills, attribute rank thresholds, faction reputation, and how each faction regards the others.',
   alternates: { canonical: 'https://siltstrider.tools/factions' },
   openGraph: {
     title: 'Morrowind Faction Journal & Guild Rank Tracker | Silt Strider Tools',
-    description: 'Morrowind guild and Great House progression planner. Track favored skills, attribute rank thresholds, faction reputation, and inter-faction conflicts.',
+    description: 'Morrowind guild and Great House progression planner. Track favored skills, attribute rank thresholds, faction reputation, and how each faction regards the others.',
     url: 'https://siltstrider.tools/factions',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Silt Strider Tools — Morrowind Faction Journal' }]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Morrowind Faction Journal & Guild Rank Tracker | Silt Strider Tools',
-    description: 'Morrowind guild and Great House progression planner. Track favored skills, attribute rank thresholds, faction reputation, and inter-faction conflicts.',
+    description: 'Morrowind guild and Great House progression planner. Track favored skills, attribute rank thresholds, faction reputation, and how each faction regards the others.',
     images: ['/og-image.png']
   }
 };

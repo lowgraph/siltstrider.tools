@@ -18,7 +18,7 @@ const descriptions = {
   alchemy: 'Apparatus, ingredients, and brew numbers.',
   travel: 'Cheapest, fastest or fewest legs between towns.',
   leveler: 'Progression simulator, 5x multiplier training, and health projection.',
-  factions: 'Track memberships, rank requirements, promotion eligibility, and inter-faction standing.',
+  factions: 'Track memberships, rank requirements, promotion eligibility, and how factions regard each other.',
   vault: 'Cloud character storage, OpenMW save ingestion, and build synchronization.'
 };
 

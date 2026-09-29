@@ -376,10 +376,10 @@ export default function FactionDetailView({
         </div>
       )}
 
-      {/* Diplomatic Standing (Reactions Matrix) */}
+      {/* Inter-faction relations (the faction reactions matrix) */}
       <section className="mb-8">
         <h3 className="text-base font-serif font-bold text-accent mb-2">
-          Diplomatic Standing &amp; Inter-Faction Relations
+          Inter-Faction Relations
         </h3>
         <p className="text-xs text-fg-14 font-serif mb-4 leading-relaxed">
           NPCs calculate their base disposition towards you using their faction&apos;s attitude towards your factions, amplified by your rank.
@@ -479,7 +479,7 @@ export default function FactionDetailView({
           </div>
           <div>
             <span className="text-fg-2 font-bold block mb-0.5">• Great House Exclusivity:</span>
-            Joining one Great House (<strong>Hlaalu</strong>, <strong>Redoran</strong>, or <strong>Telvanni</strong>) permanently locks advancement in the other two under standard game rules. Inter-faction reactions modify NPC disposition by up to ±3.
+            Joining one Great House (<strong>Hlaalu</strong>, <strong>Redoran</strong>, or <strong>Telvanni</strong>) permanently locks advancement in the other two under standard game rules. A faction's reaction to your own factions shifts its members' disposition toward you, more as your rank rises.
           </div>
         </div>
       </section>

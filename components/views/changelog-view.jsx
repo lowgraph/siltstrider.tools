@@ -31,6 +31,7 @@ export default function ChangelogView() {
             <li>Travel marks the options a loaded save set with &ldquo;from your save&rdquo;, and says when an Intervention is only a scroll (one use).</li>
             <li>The Gear Advisor no longer suggests stealing unless you tick &ldquo;Steal early gear&rdquo;.</li>
             <li>Travel&apos;s place search lists a town that spans several map cells once, and its buttons match the page instead of the browser&apos;s grey.</li>
+            <li>Plainer wording: the site says its maths follows OpenMW&apos;s source instead of calling it &ldquo;verified&rdquo; or &ldquo;exact&rdquo;, and the Faction Journal describes faction relations as what they are.</li>
           </ul>
         </section>
 

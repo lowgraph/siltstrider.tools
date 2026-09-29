@@ -118,7 +118,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <OpenSavePanel vault={vault} />
       </div>
 
-      {/* Zero-Tracking Client Save Parsing & Quota Invariants */}
+      {/* Client-side save parsing & cloud quota notes */}
       <div className="bg-surface-7 p-3 sm:p-4 border border-line-9 text-xs text-fg-7 font-serif mb-6 space-y-1">
         <h4 className="text-xs font-serif uppercase tracking-wider text-accent font-bold">
           Save Inspection &amp; Vault Invariants:

@@ -35,7 +35,7 @@ export default function AlchemyPage() {
     <section className="sr-only" aria-label="Morrowind Alchemy Mechanics &amp; Brewing Guide">
       <h2>Morrowind Alchemy Mechanics &amp; Formula Guide</h2>
       <p>
-        The Morrowind Alchemy Calculator provides exact potion crafting calculations derived directly from the OpenMW 0.51.0 game engine mechanics (mwmechanics). Combine up to four ingredients from Morrowind, Tribunal, Bloodmoon, Tamriel Rebuilt 26.08 (Poison Song), and ARCE to calculate potion effects, magnitude, duration, gold value, and brewing success probability.
+        The Morrowind Alchemy Calculator works out potions with the brewing rules from the OpenMW 0.51.0 engine source (mwmechanics). Combine up to four ingredients from Morrowind, Tribunal, Bloodmoon, Tamriel Rebuilt 26.08 (Poison Song), and ARCE to calculate potion effects, magnitude, duration, gold value, and brewing success probability.
       </p>
       <h3>Apparatus Roles &amp; Modifiers</h3>
       <p>

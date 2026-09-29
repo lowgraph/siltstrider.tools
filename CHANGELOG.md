@@ -19,6 +19,7 @@
 - **Travel shows what your save decided:** with a loaded save, the Mages Guild, Conjurer rank, Intervention and carried-item options it set say "from your save" until you change them, and an Intervention you only have as a scroll says so: "a scroll, one use".
 - **No theft unless you ask:** the Gear Advisor's "Steal early gear" option now starts off, like its other options, so its first suggestions are gear you can buy, find or be given.
 - **Travel's place search lists each town once:** a town that spans several map cells, such as Pelagiad or Balmora, appears once, routed to its most central cell, and the place buttons no longer show the browser's grey.
+- **Plainer claims:** pages and search descriptions no longer say the formulas are "verified" or the potions "exact"; they say the maths follows OpenMW 0.51's source. The Faction Journal describes what it shows, how each faction regards the others, instead of "inter-faction standing", and no longer puts a fixed number on how that moves an NPC's disposition (it grows with your rank).
 
 ## Gear Advisor ranks for your build — 2026-09-28
 
