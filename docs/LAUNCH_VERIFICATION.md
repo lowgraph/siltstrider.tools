@@ -38,7 +38,7 @@ current schema and codec. `972dee9c` is an unknown commit: do not roll back to i
 
 | Suite | Where | Command | Result at hand-off |
 | --- | --- | --- | --- |
-| Site | `A:\Claude\morrowind-tools` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **562 pass, 0 fail, 0 todo, 0 skipped**, 84 files |
+| Site | `A:\Claude\morrowind-tools` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **576 pass, 0 fail, 0 todo, 0 skipped**, 87 files |
 | Pipeline | `C:\Users\tiago\OneDrive\Documents\ChatGPT\OpenMW Decompiler` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; python -B -m unittest discover -s . -p "test_*.py"` | **670 pass** (pre-existing ResourceWarnings from unclosed sqlite in older tests) |
 | Release build | site | `npm run build:cloudflare` | passes; 22 static routes |
 | Worker dry run | site | `node node_modules/wrangler/bin/wrangler.js deploy --dry-run --keep-vars` | passes |
@@ -134,6 +134,34 @@ commands; the commands are in section 6.
    a password manager, and the local copies were moved to the Recycle Bin.
    Wrangler's export prints a pre-signed download URL valid for one hour; treat it as
    secret and do not repeat it.
+3. **No cookies unless you sign in** (`3fcd1f6`). Clerk used to load on every page and
+   set `__client_uat` for every visitor. It now loads on page load only when
+   `hasClerkSession()` finds Clerk's `__client_uat` above 0, otherwise from Sign in;
+   `AccountProvider` and the Vault attach through `silt-auth-ready`. Verified on the
+   live site: a fresh visit sets no cookies and never contacts Clerk. The Privacy Policy
+   gained "Cookies, local files and browser storage" (Clerk's cookies only once you sign
+   in, browser storage, Cloudflare Web Analytics without cookies or storage) and its own
+   date. Earlier visitors keep Clerk's old `__client_uat=0` cookies until they expire.
+4. **Only the API runs the Worker** (`74a9c9f`, live as `8c8fe551`). `run_worker_first`
+   was `true`, so every request invoked the Worker (about 18 for a first visit to
+   `/builder`), which could exhaust the Workers allowance on a busy launch day. It is
+   now `["/api/*"]`. The owner created the zone Redirect Rule "www to root" (wildcard
+   `https://www.siltstrider.tools/*` → `https://siltstrider.tools/${1}`, 301, query
+   preserved) before the release; verified live for pages, queries and `/api/*`. The
+   analytics beacon still loads. Error references now cover API failures only.
+5. **Sign-in keeps the builder's character** (`4fc21f3`, `29cadd8`). The owner's 10:54
+   cloud save (an ARCE Khajiit when saved) decoded as the builder's default Dark Elf:
+   Google and Discord sign-in reloads the page, and an unsaved character reset while
+   the world survived in the address. Reproduced on the live site. Sign-in buttons now
+   dispatch `silt-before-sign-in`; `CharacterProvider` keeps the character in session
+   storage and restores it once on a signed-in return within 15 minutes;
+   `AccountProvider` drops it when an email sign-in completes on the page. Verified on
+   the local server with a simulated signed-in return.
+6. **Docs and wording** (`cc36f9d` and this commit). Public changelog for 28–29
+   September; `COORDINATION.md` entry in both repositories; launch post copy with every
+   claim checked in [LAUNCH_POSTS.md](LAUNCH_POSTS.md) (TR 26.08.23 is the "Poison
+   Song" release, per the owner); About's search description and feature list no
+   longer say "open-source", since neither repository has a licence.
 
 ## 5. Open issues and risks
 
@@ -164,9 +192,15 @@ commands; the commands are in section 6.
 5. **Owner-reported, not agent-verified:** Discord in Clerk is set up and tested;
    production sign-in, a cloud-save round trip and Ko-fi were tested (owner,
    29 September).
-6. Minor: About's feature list still says "Open-source and privacy-first architectural
-   transparency" (`lib/seo-breadcrumbs.mjs`, `about`). Confirm the repository is public
-   before relying on "open-source".
+6. **Real sign-in test, owner.** Build a character, click Sign in in the Vault, sign in
+   with Google or Discord, save, reload. It proves two things only a real account can:
+   that Clerk's return sets `__client_uat` above 0 before the page loads (on-demand
+   loading relies on it to show a signed-in visitor as signed in without clicking Sign
+   in again), and that the character comes back. Then delete the 10:54 save, which
+   holds the default Dark Elf, and save the Khajiit again.
+7. **Licence decision, owner.** Both repositories are public with no licence. Until one
+   is added, say "the code is public on GitHub", never "open source".
+   ([LAUNCH_POSTS.md](LAUNCH_POSTS.md) lists the other claims not to make.)
 
 ## 6. Read-only verification commands
 
