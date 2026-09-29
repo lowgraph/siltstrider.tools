@@ -1,4 +1,5 @@
 const {test} = require('node:test');
+require('./helpers/pending-game-data.cjs');
 const assert = require('node:assert/strict');
 const {JSDOM} = require('jsdom');
 const React = require('react');

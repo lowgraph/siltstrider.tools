@@ -2,7 +2,7 @@ import AppShell from '../../components/app-shell';
 
 export const dynamic = 'force-static';
 export const metadata = {
-  title: 'Your account | Silt Strider Tools',
+  title: 'Your account',
   robots: { index: false, follow: false },
 };
 

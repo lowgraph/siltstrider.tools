@@ -199,7 +199,7 @@ test('Dark Brotherhood armor says the assassin comes to you, not where it lies',
 });
 
 test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns with all views',async()=>{
- const dom=new JSDOM('<div id="root"></div><div class="account-bar"></div>',{url:'http://localhost/'});
+ const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
  global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
  const navigated=[];
  const shell={
@@ -218,11 +218,11 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   assert.equal(hamburger.textContent,'☰');
   assert.equal(drawer.classList.contains('open'),false);
 
-  // Click hamburger opens drawer and sets drawer-open class on account-bar
+  // Click hamburger opens the drawer inside the banner landmark.
   await act(async()=>hamburger.click());
   assert.equal(hamburger.textContent,'✕');
   assert.equal(drawer.classList.contains('open'),true);
-  assert.equal(document.querySelector('.account-bar').classList.contains('drawer-open'),true);
+  assert.equal(document.querySelector('header.topbar').classList.contains('drawer-open'),true);
 
   // Mobile drawer contains all sections; the everyday tools lead, the occasional ones follow
   assert.match(drawer.textContent,/^ToolsChallenge RunsBuild OptimizerLevel SimulatorAlchemyTravelFaction Journal/);
@@ -240,14 +240,14 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   assert.equal(hamburger.textContent,'☰');
   assert.equal(drawer.classList.contains('open'),false);
 
-  // Re-open drawer: clicking inside account-bar must NOT close the drawer
+  // Re-open drawer: clicking inside the header must not close it.
   await act(async()=>hamburger.click());
   assert.equal(drawer.classList.contains('open'),true);
-  const accountBar=document.querySelector('.account-bar');
-  await act(async()=>accountBar.dispatchEvent(new window.MouseEvent('click',{bubbles:true})));
-  assert.equal(drawer.classList.contains('open'),true,'clicking inside account-bar preserves open drawer');
+  const actions=document.querySelector('.header-actions');
+  await act(async()=>actions.dispatchEvent(new window.MouseEvent('click',{bubbles:true})));
+  assert.equal(drawer.classList.contains('open'),true,'clicking inside the header preserves the open drawer');
 
-  // Clicking outside both drawer and accountBar closes the drawer
+  // Clicking outside the header closes the drawer.
   await act(async()=>document.body.dispatchEvent(new window.MouseEvent('click',{bubbles:true})));
   assert.equal(drawer.classList.contains('open'),false,'clicking outside closes the drawer');
 
@@ -275,7 +275,7 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   await act(async()=>document.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true})));
   assert.equal(document.querySelector('.nav-dropdown-menu'),null);
   assert.equal(document.activeElement,calcDropdownBtn,'Escape restores focus to dropdown button');
- }finally{await act(async()=>root.unmount());dom.window.close();assert.equal(document.querySelector?.('.account-bar')?.classList.contains('drawer-open')||false,false,'unmount removes drawer-open');}
+ }finally{await act(async()=>root.unmount());dom.window.close();}
 });
 
 test('race magic shows power magnitude, range, duration and daily limit',()=>{

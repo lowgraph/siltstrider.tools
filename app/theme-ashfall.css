@@ -29,7 +29,7 @@
   --color-fg-10: #a09a90;
   --color-fg-11: #968f86;
   --color-fg-12: #8e887f;
-  --color-fg-13: #8a847b;
+  --color-fg-13: #8a847c;
   --color-fg-14: #827c73;
   --color-fg-15: #756f67;
   --color-fg-16: #6b655d;
@@ -194,6 +194,12 @@
 :root[data-theme="ashfall"] a { color: var(--color-accent); }
 :root[data-theme="ashfall"] a:hover { color: var(--color-accent-1); }
 :root[data-theme="ashfall"] :focus-visible { outline: none; box-shadow: var(--af-ring); }
+
+@media (forced-colors: active) {
+  :root[data-theme="ashfall"] :focus-visible {
+    outline: 2px solid Highlight !important;
+  }
+}
 
 /* Scrollbars: a thin thumb, no track. */
 :root[data-theme="ashfall"],

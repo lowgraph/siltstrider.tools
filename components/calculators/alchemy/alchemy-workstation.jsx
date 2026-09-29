@@ -371,6 +371,7 @@ export default function AlchemyWorkstation() {
                   <div className="flex gap-2">
                     {/* Inline sizes: the shared #panel-alchemy rule makes every input and select 100% wide. */}
                     <select
+                      aria-label={`Crucible ${slotIndex + 1} ingredient`}
                       className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
                       style={{ flex: "1 1 0", minWidth: 0 }}
                       value={current?.id || ""}
@@ -392,6 +393,7 @@ export default function AlchemyWorkstation() {
                       className="w-32 bg-surface-1 border border-line-9 px-2 py-1 text-xs text-fg-2 placeholder-fg-15 font-serif"
                       style={{ width: "8rem", flex: "none" }}
                       placeholder="Search..."
+                      aria-label={`Filter ingredients for crucible ${slotIndex + 1}`}
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />

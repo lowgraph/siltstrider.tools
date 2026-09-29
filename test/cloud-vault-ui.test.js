@@ -1,4 +1,4 @@
-const { test } = require("node:test");
+const { test, beforeEach, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const Module = require("node:module");
@@ -6,6 +6,17 @@ const { JSDOM } = require("jsdom");
 const React = require("react");
 const { createRoot } = require("react-dom/client");
 const { act } = React;
+
+const originalFetch = global.fetch;
+beforeEach(() => {
+  global.fetch = async (input) => {
+    const url = new URL(input instanceof Request ? input.url : input, 'http://localhost/');
+    if (url.pathname === '/api/saves') return Response.json({ saves: [], total: 0 });
+    if (url.pathname === '/api/entitlements') return Response.json({ tier: 'free', maxSaves: 5, currentSaves: 0, remainingSaves: 5 });
+    throw new Error('Unexpected vault UI request: ' + url.pathname);
+  };
+});
+afterEach(() => { global.fetch = originalFetch; });
 
 function component(file, exportName = "default") {
   const result = require("esbuild").buildSync({
@@ -141,7 +152,8 @@ test("CloudVaultCard renders complete dossier details and action controls", asyn
     await act(async () => { confirmBtn.click(); });
     assert.deepEqual(deletedArgs, { id: "save-uuid-1", rev: 3 });
   } finally {
-    root.unmount();
+    await act(async () => root.unmount());
+    dom.window.close();
   }
 });
 
@@ -216,7 +228,8 @@ test("CloudVaultModal renders closed/open, displays quota badge, and respects ti
     await act(async () => { closeBtn.click(); });
     assert.equal(closed, true);
   } finally {
-    root.unmount();
+    await act(async () => root.unmount());
+    dom.window.close();
   }
 });
 
@@ -248,7 +261,8 @@ test("CloudVaultModal displays signed-out notice and CTA when not authenticated"
     assert.ok(document.body.textContent.includes("Sign In"));
     assert.ok(document.body.textContent.includes("Register Free"));
   } finally {
-    root.unmount();
+    await act(async () => root.unmount());
+    dom.window.close();
   }
 });
 
@@ -299,7 +313,8 @@ test("CloudVaultModal local storage tab lists local characters and provides sync
     assert.ok(document.body.textContent.includes("Argonian · Scout · The Steed"));
     assert.ok(document.body.textContent.includes("Local Storage"));
   } finally {
-    root.unmount();
+    await act(async () => root.unmount());
+    dom.window.close();
   }
 });
 
@@ -336,7 +351,8 @@ test("Global event listeners open and close the Cloud Vault modal reactively", a
 
     assert.equal(document.getElementById("cloud-vault-title"), null);
   } finally {
-    root.unmount();
+    await act(async () => root.unmount());
+    dom.window.close();
   }
 });
 
@@ -370,7 +386,8 @@ test("Adversarial Test 1: Quota boundary enforcement (5 free, 25 paid) displays 
     assert.ok(document.getElementById("cloud-vault-title"));
     assert.ok(document.body.textContent.includes("Save Character to Cloud"));
   } finally {
-    root.unmount();
+    await act(async () => root.unmount());
+    dom.window.close();
   }
 });
 
@@ -452,7 +469,8 @@ test("CloudVaultCard supports Duplicate and Share Link actions", async () => {
     await act(async () => { shareBtn.click(); });
     assert.equal(sharedSave.id, "save-uuid-1");
   } finally {
-    root.unmount();
+    await act(async () => root.unmount());
+    dom.window.close();
   }
 });
 

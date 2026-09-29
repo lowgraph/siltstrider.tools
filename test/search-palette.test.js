@@ -1,4 +1,5 @@
 const { test } = require("node:test");
+require('./helpers/pending-game-data.cjs');
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const Module = require("node:module");
@@ -186,8 +187,6 @@ test("Ctrl+K and / open search from the header; / in a field is left alone", asy
   const shell = { ready: true, world: "vanilla", arce: false, profile: "vanilla", view: "home", navigate: () => {}, setProfile: () => {} };
   const root = createRoot(document.getElementById("root"));
   await act(async () => root.render(React.createElement(SiteHeader, { shell })));
-  const warn = console.warn;
-  console.warn = () => {}; // the header's palette uses the real loader, which has no server here
   const press = (target, init) => act(async () => target.dispatchEvent(new dom.window.KeyboardEvent("keydown", { bubbles: true, ...init })));
   try {
     const trigger = document.querySelector(".search-trigger");
@@ -211,6 +210,5 @@ test("Ctrl+K and / open search from the header; / in a field is left alone", asy
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
-    console.warn = warn;
   }
 });

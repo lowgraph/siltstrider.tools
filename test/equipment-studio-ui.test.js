@@ -38,6 +38,7 @@ function setupDom() {
   global.document = dom.window.document;
   global.navigator = dom.window.navigator;
   global.CustomEvent = dom.window.CustomEvent;
+  global.IS_REACT_ACT_ENVIRONMENT = true;
   return dom;
 }
 

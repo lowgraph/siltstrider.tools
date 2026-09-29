@@ -5,6 +5,30 @@
 **Production:** `https://siltstrider.tools`  
 **Status:** Findings verified across local checkout (`main` branch) and production deployment.
 
+### Requested remediation — 29 September 2026
+
+The scoped handoff below is implemented: semantic header,
+removal of the header's legacy account-bar queries, skip navigation, account title/H1,
+the listed form-control names, linked effect-field labels (including Range), Ashfall
+label contrast and forced-color focus, and finite Endurance health gains. Effect-field
+IDs remain unique across retained calculators and after removing rows. The skip target
+is focusable and also exists on Privacy and Terms; its focused colors work in both themes.
+
+Verification: `npm test` passes 587 tests with no failures, skips, TODOs, or emitted
+warning/error diagnostics. Test fixtures now isolate pending catalog requests from
+external servers, mock vault responses, clean up React roots in `act`, and assert
+expected storage warnings. `npm run build:cloudflare` succeeds. Checks of the generated
+HTML pass for all 15 application pages, including the account title/H1 and skip targets.
+The requested `#8a847c` text on `#131210` measures 5.06:1; the forced-colors outline is
+present. Dynamic label tests cover both calculators, added/removed rows, and Constant mode.
+
+Codex's browser tool blocked the local preview (`ERR_BLOCKED_BY_CLIENT`). The owner
+subsequently confirmed that Gemini completed the keyboard and visual checks and
+authorized this release. The automated results above are Codex's verification; browser
+acceptance is the owner-reported Gemini verification. The findings below are the
+original audit; remediation here covers the requested handoff scope, not every
+additional observation in the audit.
+
 ---
 
 ## 1. Executive Summary

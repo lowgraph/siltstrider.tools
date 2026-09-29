@@ -709,6 +709,7 @@ export default function TravelWorkstation() {
             <input
               type="text"
               placeholder="Search origin location..."
+              aria-label="Search departure location"
               value={originSearch}
               onChange={(e) => setOriginSearch(e.target.value)}
               className="w-full p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2 focus:border-accent outline-none"
@@ -767,6 +768,7 @@ export default function TravelWorkstation() {
             <input
               type="text"
               placeholder="Search destination location..."
+              aria-label="Search destination location"
               value={destSearch}
               onChange={(e) => setDestSearch(e.target.value)}
               className="w-full p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2 focus:border-accent outline-none"

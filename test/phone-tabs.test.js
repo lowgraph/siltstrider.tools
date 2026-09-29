@@ -24,7 +24,7 @@ function component(file, exportName = "default") {
 }
 
 async function renderHeader(shellOverrides = {}) {
-  const dom = new JSDOM('<div id="root"></div><div class="account-bar"></div>', { url: "http://localhost/" });
+  const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
   global.window = dom.window;
   global.document = dom.window.document;
   global.IS_REACT_ACT_ENVIRONMENT = true;
@@ -57,10 +57,13 @@ test("tabs navigate, and the menu tab opens and closes the drawer", async () => 
     assert.deepEqual(navigated, ["alchemy"]);
 
     const drawer = document.getElementById("react-menu-drawer");
+    const header = document.querySelector("header.topbar");
+    assert.ok(header, "the navigation has a banner landmark");
     const menu = tabs[4];
     assert.equal(menu.getAttribute("aria-expanded"), "false");
     await act(async () => menu.click());
     assert.equal(drawer.classList.contains("open"), true, "the menu tab opens the drawer");
+    assert.equal(header.classList.contains("drawer-open"), true);
     assert.equal(menu.getAttribute("aria-expanded"), "true");
     assert.equal(menu.textContent, "Close");
     assert.equal(document.querySelector(".hamburger").getAttribute("aria-expanded"), "true", "the header button reflects the same state");
@@ -68,6 +71,16 @@ test("tabs navigate, and the menu tab opens and closes the drawer", async () => 
     await act(async () => menu.dispatchEvent(new window.MouseEvent("click", { bubbles: true })));
     assert.equal(drawer.classList.contains("open"), false, "the document click listener does not reopen or trap it");
     assert.equal(menu.textContent, "Menu");
+    assert.equal(header.classList.contains("drawer-open"), false);
+
+    await act(async () => menu.click());
+    await act(async () => document.body.dispatchEvent(new window.MouseEvent("click", { bubbles: true })));
+    assert.equal(drawer.classList.contains("open"), false, "outside clicks close the drawer without a legacy account bar");
+
+    await act(async () => menu.click());
+    await act(async () => document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    assert.equal(drawer.classList.contains("open"), false);
+    assert.equal(document.activeElement, document.querySelector(".hamburger"), "Escape returns focus to the header menu button");
   } finally { await cleanup(); }
 });
 

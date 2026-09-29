@@ -17,7 +17,7 @@ export default function AccountPage(){
  async function submit(event){event.preventDefault();setBusy(true);setMessage('');try{await account.save(validateProfile({username,iconId}));setMessage('Profile saved.');}catch(e){setMessage(e.message);}finally{setBusy(false);}}
  // Google and Discord reload the page on the way back; the builder keeps its character for it.
  async function auth(action){try{if(action==='openSignIn')window.dispatchEvent(new Event(SIGN_IN_EVENT));const clerk=await ensureClerk();await clerk[action]();}catch(e){setMessage(e.message);}}
- return <section className="account-page"><h2>Your account</h2><p>Choose how you appear on Silt Strider.</p>
+ return <section className="account-page"><h1>Your account</h1><p>Choose how you appear on Silt Strider.</p>
  <p>{account.profile?.premium ? 'Premium supporter · 25 cloud-save slots · thank you for supporting Silt Strider.' : 'Free account · 5 cloud-save slots'}</p>
  <button onClick={()=>shell.navigate('vault')}>Open Cloud Vault →</button>
  {account.loading?<p>Loading account…</p>:!account.user?<button onClick={()=>auth('openSignIn')}>Sign in</button>:<form onSubmit={submit}>

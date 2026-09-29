@@ -98,19 +98,6 @@ export default function SiteHeader({ shell: propShell } = {}) {
   }, [shell.view]);
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.querySelector('.account-bar')?.classList.toggle('drawer-open', open);
-      document.querySelector('header')?.classList.toggle('drawer-open', open);
-    }
-    return () => {
-      if (typeof document !== 'undefined') {
-        document.querySelector('.account-bar')?.classList.remove('drawer-open');
-        document.querySelector('header')?.classList.remove('drawer-open');
-      }
-    };
-  }, [open]);
-
-  useEffect(() => {
     const key = e => {
       if (e.key === 'Escape') {
         if (calcOpen) {
@@ -126,14 +113,13 @@ export default function SiteHeader({ shell: propShell } = {}) {
       }
     };
     const outside = e => {
-      const accountBar = typeof document !== 'undefined' ? document.querySelector('.account-bar') : null;
       if (calcOpen && !calcDropdownRef.current?.contains(e.target)) {
         setCalcOpen(false);
       }
       if (moreOpen && !moreDropdownRef.current?.contains(e.target)) {
         setMoreOpen(false);
       }
-      if (open && !root.current?.contains(e.target) && !accountBar?.contains(e.target)) {
+      if (open && !root.current?.contains(e.target)) {
         setOpen(false);
       }
     };
@@ -263,7 +249,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
   const isMoreActive = MORE_VIEWS.includes(shell.view);
 
   return (
-    <div className="topbar" ref={root}>
+    <header className={'topbar' + (open ? ' drawer-open' : '')} ref={root}>
       <div className="brand">
         <div className="brand-title"><a href="/" className="brand-home" onClick={e => navigate(e, 'home')}>Silt Strider</a></div>
         <p className="kicker">siltstrider.tools — Morrowind build planner &amp; challenge run generator<span className="page-sub">{descriptions[shell.view]}</span></p>
@@ -518,6 +504,6 @@ export default function SiteHeader({ shell: propShell } = {}) {
           <span>{open ? 'Close' : 'Menu'}</span>
         </button>
       </nav>
-    </div>
+    </header>
   );
 }

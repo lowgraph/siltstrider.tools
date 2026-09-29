@@ -1,6 +1,6 @@
 export default function LegalPage({ title, updated = 'September 26, 2026', children }) {
   return (
-    <main className="legal-page">
+    <main id="main-content" tabIndex={-1} className="legal-page">
       <nav aria-label="Legal page navigation">
         <a href="/">← Silt Strider</a>
         <a href="/privacy">Privacy Policy</a>

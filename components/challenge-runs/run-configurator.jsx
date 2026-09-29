@@ -192,6 +192,7 @@ export default function RunConfigurator({
             <select
               className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
               value={character?.race || ""}
+              aria-label="Pin race"
               onChange={(e) => onUpdateCharacterSlot("race", e.target.value)}
               disabled={!locks.race && !character?.race}
             >
@@ -218,6 +219,7 @@ export default function RunConfigurator({
             <select
               className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
               value={character?.cls || ""}
+              aria-label="Pin class"
               onChange={(e) => onUpdateCharacterSlot("cls", e.target.value)}
               disabled={!locks.cls && !character?.cls}
             >
@@ -245,6 +247,7 @@ export default function RunConfigurator({
             <select
               className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
               value={character?.sign || ""}
+              aria-label="Pin birthsign"
               onChange={(e) => onUpdateCharacterSlot("sign", e.target.value)}
               disabled={!locks.sign && !character?.sign}
             >

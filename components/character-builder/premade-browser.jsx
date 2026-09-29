@@ -100,6 +100,7 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
         <input
           type="text"
           placeholder="Filter by name, race, sign, or skill..."
+          aria-label="Filter premade classes"
           className="flex-1 h-10 bg-surface-2 text-fg-2 border-4 border-transparent px-3.5 py-2 text-sm focus:outline-none transition-colors"
           style={{
             borderImage: "var(--mw-bevel) 4 repeat"

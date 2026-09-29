@@ -55,7 +55,8 @@ test("anything that does not read back cleanly is removed, not trusted", async (
   }
 });
 
-test("nothing kept, or storage unavailable, is simply nothing to restore", async () => {
+test("nothing kept, or storage unavailable, is simply nothing to restore", async (t) => {
+  const warnings = t.mock.method(console, 'warn', () => {});
   const { rememberSave, recallSave, forgetSave } = await lib();
   assert.equal(await recallSave(memoryStorage()), null);
   assert.equal(await recallSave(null), null);
@@ -64,6 +65,10 @@ test("nothing kept, or storage unavailable, is simply nothing to restore", async
   assert.equal(await rememberSave(SAVE, memoryStorage({ broken: true })), false);
   assert.equal(await rememberSave(null, memoryStorage()), false);
   assert.doesNotThrow(() => forgetSave(memoryStorage({ broken: true })));
+  assert.deepEqual(warnings.mock.calls.map(call => call.arguments), [
+    ['The save could not be kept in this browser:', 'QuotaExceededError'],
+    ['The save could not be kept in this browser:', 'blocked'],
+  ]);
 });
 
 test("forgetting removes the kept save", async () => {

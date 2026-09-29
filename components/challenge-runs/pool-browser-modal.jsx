@@ -62,6 +62,7 @@ export default function PoolBrowserModal({
             type="text"
             className="w-full bg-surface-1 border border-line-7 p-2 text-sm text-fg-2 placeholder-fg-15 font-serif"
             placeholder="Search objectives, places, tags, or restrictions…"
+            aria-label="Search challenge pool objectives and rules"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus

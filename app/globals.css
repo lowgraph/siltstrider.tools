@@ -507,7 +507,7 @@ a:hover { color: #f0d48a; }
 .skip {
   position: absolute; left: -999px; top: 8px;
 }
-.skip:focus { left: 8px; z-index: 40; background: var(--parchment); color: #111; padding: 8px 12px; }
+.skip:focus { left: 8px; z-index: 40; background: var(--color-surface-1); color: var(--color-fg-1); padding: 8px 12px; }
 @media (max-width: 520px) {
   .btn { min-width: 0; }
   #btn-gear, .save-row .btn { width: 100%; }

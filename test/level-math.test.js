@@ -68,6 +68,27 @@ test("attribute multipliers and required skill increases strictly follow Morrowi
   assert.equal(getSkillIncreasesForMultiplier(1), 0);
 });
 
+test("health gain rejects infinite Endurance from numbers and imported strings", async () => {
+  const { calculateHealthGain } = await import("../lib/level-math.mjs");
+  for (const value of [Infinity, -Infinity, "Infinity", "-Infinity", "1e309"]) {
+    assert.equal(calculateHealthGain(value), 0, String(value));
+  }
+});
+
+test("health gain stays finite for missing and malformed Endurance", async () => {
+  const { calculateHealthGain } = await import("../lib/level-math.mjs");
+  for (const value of [undefined, null, NaN, "not a number", "", -25]) {
+    assert.equal(calculateHealthGain(value), 0, String(value));
+  }
+});
+
+test("health gain preserves numeric strings, fractional thresholds and uncapped finite values", async () => {
+  const { calculateHealthGain } = await import("../lib/level-math.mjs");
+  for (const [value, expected] of [[" 85 ", 8], [89.9, 8], [90, 9], [125, 12]]) {
+    assert.equal(calculateHealthGain(value), expected);
+  }
+});
+
 test("health gain is non-retroactive and calculated using the post-level-up Endurance", async () => {
   const { calculateHealthGain } = await import("../lib/level-math.mjs");
 

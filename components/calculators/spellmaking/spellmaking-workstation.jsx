@@ -1,6 +1,6 @@
 "use client";
 import {effectNumber, allowedRanges, effectDraft, selectedEffect} from "../../../lib/effect-editor.mjs";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useId } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -15,6 +15,7 @@ import {
 } from "../../../lib/spell-math.mjs";
 
 export default function SpellmakingWorkstation() {
+  const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
   const { world } = useShell();
@@ -336,6 +337,7 @@ export default function SpellmakingWorkstation() {
 
             <div className="space-y-2.5">
               {effectsList.map((draft, idx) => {
+                const fieldId = `${effectFieldsId}-${idx}`;
                 const row = effectDraft(draft, selectedEffect(availableEffects,draft.effectKey), gameData.data?.catalogs, false);
                 const eff = selectedEffect(availableEffects,row.effectKey);
                 const showRange = true;
@@ -384,9 +386,10 @@ export default function SpellmakingWorkstation() {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                       {eff && showRange && (
                         <div>
-                          <label className="text-[10px] text-fg-13 block mb-0.5">Range</label>
+                          <label htmlFor={`${fieldId}-range`} className="text-[10px] text-fg-13 block mb-0.5">Range</label>
                           <select
                             className="w-full mw-select p-1 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
+                            id={`${fieldId}-range`}
                             value={row.range}
                             onChange={(e) => handleEffectChange(idx, "range", e.target.value)}
                           >
@@ -396,24 +399,26 @@ export default function SpellmakingWorkstation() {
                       )}
 
                       {Boolean(eff?.mag) && <><div>
-                        <label className="text-[10px] text-fg-13 block mb-0.5">Min Mag</label>
+                        <label htmlFor={`${fieldId}-min`} className="text-[10px] text-fg-13 block mb-0.5">Min Mag</label>
                         <input
                           type="number"
                           min="1"
                           max="500"
                           className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
+                          id={`${fieldId}-min`}
                           value={row.min}
                           onChange={(e) => handleEffectChange(idx, "min", effectNumber(e.target.value))}
                         />
                       </div>
 
                       <div>
-                        <label className="text-[10px] text-fg-13 block mb-0.5">Max Mag</label>
+                        <label htmlFor={`${fieldId}-max`} className="text-[10px] text-fg-13 block mb-0.5">Max Mag</label>
                         <input
                           type="number"
                           min="1"
                           max="500"
                           className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
+                          id={`${fieldId}-max`}
                           value={row.max}
                           onChange={(e) => handleEffectChange(idx, "max", effectNumber(e.target.value))}
                         />
@@ -422,12 +427,13 @@ export default function SpellmakingWorkstation() {
                       </>}
                       {Boolean(showDuration) && (
                         <div>
-                          <label className="text-[10px] text-fg-13 block mb-0.5">Duration</label>
+                          <label htmlFor={`${fieldId}-dur`} className="text-[10px] text-fg-13 block mb-0.5">Duration</label>
                           <input
                             type="number"
                             min="1"
                             max="500"
                             className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
+                            id={`${fieldId}-dur`}
                             value={row.dur}
                             onChange={(e) => handleEffectChange(idx, "dur", effectNumber(e.target.value))}
                           />
@@ -436,12 +442,13 @@ export default function SpellmakingWorkstation() {
 
                       {eff && showArea && (
                         <div>
-                          <label className="text-[10px] text-fg-13 block mb-0.5">Area</label>
+                          <label htmlFor={`${fieldId}-area`} className="text-[10px] text-fg-13 block mb-0.5">Area</label>
                           <input
                             type="number"
                             min="0"
                             max="500"
                             className="w-full bg-surface-1 border border-line-9 p-1 text-xs font-mono text-fg-2"
+                            id={`${fieldId}-area`}
                             value={row.area}
                             onChange={(e) => handleEffectChange(idx, "area", effectNumber(e.target.value, 0))}
                           />
@@ -521,6 +528,7 @@ export default function SpellmakingWorkstation() {
                 type="text"
                 className="bg-surface-1 border border-line-9 px-2 py-0.5 text-xs text-fg-2 placeholder-fg-15 font-serif w-36"
                 placeholder="Search spellmakers..."
+                aria-label="Search spell vendor or teacher"
                 value={vendorSearch}
                 onChange={(e) => setVendorSearch(e.target.value)}
               />

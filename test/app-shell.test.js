@@ -1,4 +1,5 @@
 const { test } = require("node:test");
+require('./helpers/pending-game-data.cjs');
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const Module = require("node:module");
