@@ -80,7 +80,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       screen (most of TRV-4's pain until the full restructure).
 - [x] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; done `d8b68f4`, live as `719660ae`; also effect base costs shown as the game does, `d3448b9`) No results before input: dashes and a prompt.
 - [x] **C** **CHL-1** (started 2026-09-29 20:29 UTC, C; done `2fdcb3d` on branch `launch/chl-1-presets`, not merged or deployed) One row of difficulty presets.
-- [ ] **C** **FAC-1** Rank names, skill labels, plain words for placements and spots.
+- [ ] **C** **FAC-1** (started 2026-09-29 20:34 UTC, C; branch `launch/chl-1-presets`) Rank names, skill labels, plain words for placements and spots.
 - [ ] **C** **MOB-3** No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
 
 ### 3. Before launch if time allows (can slip without breaking anything)
