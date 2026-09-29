@@ -45,7 +45,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 ### 1. Before launch: wrong answers and trust
 
 - [x] **C** Push the usability audit and this checklist. (started 2026-09-29 17:35 UTC, C; done with this commit)
-- [ ] **C** **LVL-1** (started 2026-09-29 17:35 UTC, C) `detectArchetype`: Mercantile and Speechcraft as minors must not make a
+- [x] **C** **LVL-1** (started 2026-09-29 17:35 UTC, C; done `ff3a894`, not yet deployed) `detectArchetype`: Mercantile and Speechcraft as minors must not make a
       warrior a Diplomat; score minors below majors and compare instead of returning early;
       show why an archetype was chosen; test the default build (home page and simulator).
 - [ ] **C** **TRV-1 (as decided)** With a loaded save that is not a Mages Guild member, a
