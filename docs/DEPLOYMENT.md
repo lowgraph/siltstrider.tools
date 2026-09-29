@@ -12,6 +12,21 @@ Before releasing, capture the recovery record and follow the
 exports, and schema-compatible rollback. Final browser checks should target a frozen
 equipment optimizer revision; Discord sign-in is a separate production check.
 
+## Routing and the www redirect
+
+`wrangler.jsonc` sends only `/api/*` through the Worker (`"run_worker_first": ["/api/*"]`).
+Pages, scripts, images and game data are served straight from the asset store and do not
+invoke the Worker, so they do not count against the Workers request allowance; before
+29 September every request did, about 18 for a first visit to `/builder`.
+
+Because asset requests bypass the Worker, it no longer redirects `www` for pages. A
+Cloudflare **redirect rule** on the `siltstrider.tools` zone does, and must exist before a
+release with this routing: Rules → Redirect Rules → Create rule, *Hostname equals*
+`www.siltstrider.tools`, dynamic target `concat("https://siltstrider.tools", http.request.uri.path)`,
+status 301, preserve query string. Redirect rules run before the Worker. The Worker's own
+`www` redirect stays as the fallback for `/api/*`. Without the rule, `www` pages still load
+but sign-in and the API, which accept only `https://siltstrider.tools`, fail there.
+
 ## Release procedure (PowerShell)
 
 Start from a clean `main` checkout synchronized with `origin/main`. Inspect the staged
@@ -38,7 +53,9 @@ The production build accepts `SILT_PRODUCTION_CLERK_PUBLISHABLE_KEY` when authen
 is configured. Do not substitute a development key into production.
 
 After deployment, check the home response, static assets, the bundle pointer, and
-Workers deployment history. Record the commit, bundle ID, and Worker version ID in
+Workers deployment history. Check that `https://www.siltstrider.tools/builder` answers
+301 to `https://siltstrider.tools/builder` and that `/api/account` answers 401 without a
+session. Record the commit, bundle ID, and Worker version ID in
 the release handoff. Browser/account behavior needs its own verification.
 
 Do not enable branch-triggered builds until the build environment has a deliberate

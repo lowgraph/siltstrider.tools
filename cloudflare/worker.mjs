@@ -29,6 +29,10 @@ export {
   handleGetEntitlements
 };
 
+// wrangler.jsonc routes only /api/* through this Worker ("run_worker_first"); pages, scripts
+// and game data are served straight from the asset store and never invoke it, so they do
+// not count against the Worker request allowance. www → apex for those is a Cloudflare
+// redirect rule (docs/DEPLOYMENT.md); the redirect below still covers /api/* on www.
 const worker = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);

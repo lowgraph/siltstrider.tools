@@ -67,6 +67,11 @@ Do not filter only by invocation status `error`: handled HTTP 500 responses can
 have a successful invocation outcome. Review platform error metrics too, including
 runtime limits that can terminate execution before the handler logs anything.
 
+Only `/api/*` runs the Worker (see [DEPLOYMENT.md](DEPLOYMENT.md#routing-and-the-www-redirect)),
+so `request_failed` events and user-visible references cover API failures. Pages and
+game data are served by Cloudflare's asset store without the Worker; problems there show
+in the zone's analytics and error metrics, not in these logs.
+
 This is server monitoring. Browser-only problems arrive through bug reports and
 the final browser tests; no automatic browser telemetry collector is installed.
 For each report, record the affected release, profile, steps, and severity. Treat

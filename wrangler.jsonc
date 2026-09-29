@@ -21,7 +21,7 @@
     { "pattern": "siltstrider.tools", "custom_domain": true },
     { "pattern": "www.siltstrider.tools", "custom_domain": true }
   ],
-  "assets": { "directory": "./.next-export", "html_handling": "auto-trailing-slash", "not_found_handling": "404-page", "binding": "ASSETS", "run_worker_first": true },
+  "assets": { "directory": "./.next-export", "html_handling": "auto-trailing-slash", "not_found_handling": "404-page", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
   "d1_databases": [
     {
       "binding": "DB",
