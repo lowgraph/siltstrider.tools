@@ -13,6 +13,9 @@ import {
   adaptTravelGraph,
   addInterventionEdges,
   interventionsFromSave,
+  interventionSources,
+  saveMarks,
+  interventionMarkText,
   guildFromSave,
   guildGuideNotice,
   INTERVENTION_KINDS,
@@ -47,6 +50,12 @@ const POPULAR_HUBS = [
   { name: "Old Ebonheart", desc: "Imperial Mainland", trOnly: true }
 ];
 
+/** Beside an option a loaded save set, while it still holds the save's value. */
+function FromSave({ children = "from your save" }) {
+  // A real space, so the label reads "Mages Guild member from your save", not run together.
+  return <>{" "}<span className="save-mark text-[10px] text-fg-9 whitespace-nowrap">{children}</span></>;
+}
+
 export default function TravelWorkstation() {
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
@@ -76,18 +85,23 @@ export default function TravelWorkstation() {
   // The save's own standing with the Mages Guild decides which guides will serve.
   const saveGuild = useMemo(() => (activeSave?.save ? guildFromSave(activeSave.save) : null), [activeSave]);
   const guildNotice = guildGuideNotice(saveGuild, mageGuild);
+  // A loaded save says which intervention the character can cast (the spell or a scroll)
+  // and what it carries; options still holding those values are labelled "from your save".
+  const saveSpells = useMemo(() => (activeSave?.save ? interventionsFromSave(activeSave.save) : null), [activeSave]);
+  const saveSources = useMemo(() => (activeSave?.save ? interventionSources(activeSave.save) : null), [activeSave]);
+  const savedItems = useMemo(() => (activeSave?.save ? heldFromSave(activeSave.save) : null), [activeSave]);
+  const marks = saveMarks(activeSave?.save ? { guild: saveGuild, spells: saveSpells } : null, { mageGuild, conjurer, spells });
 
-  // A loaded save says which intervention the character can cast: the spell or a scroll.
   useEffect(() => {
     if (activeSave?.save) {
-      setSpells(interventionsFromSave(activeSave.save));
-      setHeld(heldFromSave(activeSave.save));
+      setSpells(saveSpells);
+      setHeld(savedItems);
       if (saveGuild) {
         setMageGuild(saveGuild.mageGuild);
         setConjurer(saveGuild.conjurer);
       }
     }
-  }, [activeSave, saveGuild]);
+  }, [activeSave, saveGuild, saveSpells, savedItems]);
 
   useEffect(() => {
     if (!activeSave?.save) { setFromSave(null); return; }
@@ -522,8 +536,8 @@ export default function TravelWorkstation() {
 
       {/* Quick Hub Jump Presets */}
       <div className="flex flex-wrap gap-4 p-3 text-sm">
-        <label><input type="checkbox" checked={mageGuild} onChange={event=>setMageGuild(event.target.checked)}/> Mages Guild member</label>
-        {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>setConjurer(event.target.checked)}/> Conjurer rank or higher</label>}
+        <label><input type="checkbox" checked={mageGuild} onChange={event=>setMageGuild(event.target.checked)}/> Mages Guild member{marks.mageGuild && <FromSave />}</label>
+        {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>setConjurer(event.target.checked)}/> Conjurer rank or higher{marks.conjurer && <FromSave />}</label>}
         {priced && (
           <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Route objective">
             <span className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider">Plan for:</span>
@@ -552,6 +566,7 @@ export default function TravelWorkstation() {
               onChange={(event) => setSpells((prev) => ({ ...prev, [kind]: event.target.checked }))}
             />{" "}
             {label}
+            {marks[kind] && <FromSave>{interventionMarkText(saveSources?.[kind], spells[kind])}</FromSave>}
           </label>
         ))}
         {teleports && (
@@ -633,6 +648,9 @@ export default function TravelWorkstation() {
         <details className="p-3 bg-surface-5 border border-line-11">
           <summary className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider cursor-pointer">
             Items you carry ({carriedOptions.filter((item) => held.has(item.id)).length} of {carriedOptions.length})
+            {savedItems && carriedOptions.some((item) => held.has(item.id) && savedItems.has(item.id)) && (
+              <FromSave>{carriedOptions.filter((item) => held.has(item.id) && savedItems.has(item.id)).length} from your save</FromSave>
+            )}
           </summary>
           <p className="text-[11px] text-fg-13 mt-2 mb-2">
             Propylon indices and teleporting amulets open routes. A loaded save ticks the ones in its pack.
@@ -650,6 +668,7 @@ export default function TravelWorkstation() {
                   })}
                 />
                 {item.name}
+                {held.has(item.id) && savedItems?.has(item.id) && <FromSave />}
               </label>
             ))}
           </div>

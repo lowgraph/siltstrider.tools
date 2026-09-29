@@ -28,6 +28,7 @@ export default function ChangelogView() {
             <li>Silt Strider is open source: the site under AGPL-3.0 and the data pipeline under GPL-3.0. Game and mod data belong to their owners.</li>
             <li>The Level Simulator no longer treats a fighter with Mercantile and Speechcraft as minor skills as a Diplomat, and says which skills it read the archetype from.</li>
             <li>Travel: Guild Guide legs say they are for Mages Guild members only, and a loaded save that is not in the guild gets a note explaining why its routes leave them out.</li>
+            <li>Travel marks the options a loaded save set with &ldquo;from your save&rdquo;, and says when an Intervention is only a scroll (one use).</li>
           </ul>
         </section>
 
