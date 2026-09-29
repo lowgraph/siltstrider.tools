@@ -1,6 +1,6 @@
 "use client";
 import {createContext,useContext,useEffect,useRef,useState} from 'react';
-import {ensureClerk} from '../lib/clerk-browser.mjs';
+import {ensureClerk,ensureClerkIfSignedIn} from '../lib/clerk-browser.mjs';
 const Context=createContext(null);
 export const useAccount=()=>useContext(Context);
 export function AccountProvider({children}) {
@@ -20,14 +20,23 @@ export function AccountProvider({children}) {
  }
  useEffect(()=>{
   let disposed=false,unsubscribe;
-  ensureClerk().then(clerk=>{if(disposed)return;unsubscribe=clerk.addListener(state=>{
-   const id=state.session&&state.user?.id||null;
-   if(owner.current===id){setLoading(false);return;}
-   owner.current=id;const generation=++epoch.current;setUser(id?state.user:null);setProfile(null);setError('');
-   if(!id){setLoading(false);return;}
-   setLoading(true);request('GET').then(p=>{if(!disposed&&generation===epoch.current)setProfile(p);}).catch(e=>{if(!disposed&&generation===epoch.current)setError(e.message);}).finally(()=>{if(!disposed&&generation===epoch.current)setLoading(false);});
-  });}).catch(e=>{if(!disposed){setError(e.message);setLoading(false);}});
-  return()=>{disposed=true;epoch.current++;owner.current=null;unsubscribe?.();};
+  // Clerk loads here only for a browser that is signed in (clerk-browser.mjs). For anyone
+  // else it loads when they choose to sign in, and its silt-auth-ready event attaches us.
+  function attach(){
+   const clerk=window.Clerk;
+   if(disposed||unsubscribe||!clerk?.addListener)return;
+   unsubscribe=clerk.addListener(state=>{
+    const id=state.session&&state.user?.id||null;
+    if(owner.current===id){setLoading(false);return;}
+    owner.current=id;const generation=++epoch.current;setUser(id?state.user:null);setProfile(null);setError('');
+    if(!id){setLoading(false);return;}
+    setLoading(true);request('GET').then(p=>{if(!disposed&&generation===epoch.current)setProfile(p);}).catch(e=>{if(!disposed&&generation===epoch.current)setError(e.message);}).finally(()=>{if(!disposed&&generation===epoch.current)setLoading(false);});
+   });
+  }
+  window.addEventListener('silt-auth-ready',attach);
+  if(window.Clerk?.loaded)attach();
+  else ensureClerkIfSignedIn().then(clerk=>{if(disposed)return;if(clerk)attach();else setLoading(false);}).catch(e=>{if(!disposed){setError(e.message);setLoading(false);}});
+  return()=>{disposed=true;window.removeEventListener('silt-auth-ready',attach);epoch.current++;owner.current=null;unsubscribe?.();};
  },[]);
  async function save(data){const result=await request('PUT',data);setProfile(previous=>({...previous,...result}));return result;}
  return <Context.Provider value={{profile,user,error,loading,save, refresh: async()=>{const result=await request('GET');setProfile(result);return result;}, premiumCode:()=>request('POST',null,false,'/api/premium/code')}}>{children}</Context.Provider>;

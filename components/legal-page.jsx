@@ -1,4 +1,4 @@
-export default function LegalPage({ title, children }) {
+export default function LegalPage({ title, updated = 'September 26, 2026', children }) {
   return (
     <main className="legal-page">
       <nav aria-label="Legal page navigation">
@@ -7,7 +7,7 @@ export default function LegalPage({ title, children }) {
         <a href="/terms">Terms of Service</a>
       </nav>
       <h1>{title}</h1>
-      <p className="legal-date">Last updated: September 26, 2026</p>
+      <p className="legal-date">Last updated: {updated}</p>
       {children}
       <footer>Unofficial fan project. Not affiliated with Bethesda or the mod teams.</footer>
     </main>

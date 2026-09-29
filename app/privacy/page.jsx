@@ -25,7 +25,7 @@ export default function PrivacyPage() {
   const breadcrumb = getBreadcrumbJsonLd('privacy');
   return <>
     {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
-    <LegalPage title="Privacy Policy">
+    <LegalPage title="Privacy Policy" updated="September 29, 2026">
     <p>This policy explains how Silt Strider at siltstrider.tools handles information when you use its Morrowind planning tools, accounts, and Cloud Vault. For privacy questions or requests, contact the site operator at <a href="mailto:tmarcalferreira@gmail.com">tmarcalferreira@gmail.com</a>.</p>
 
     <section><h2>Information we process</h2>
@@ -38,9 +38,12 @@ export default function PrivacyPage() {
       </ul>
     </section>
 
-    <section><h2>Local files and browser storage</h2>
+    <section><h2>Cookies, local files and browser storage</h2>
       <p>Opening a game save parses it in your browser. Opening it alone does not upload it to Cloud Vault. Choosing to save or upload it to the cloud sends its parsed character data to our service. You can use the planning tools without a cloud account.</p>
-      <p>Browser storage keeps local saves and preferences, including your selected theme. Clerk uses cookies and related browser storage to support sign-in and sessions. Clearing site data removes locally stored information and may sign you out; it does not delete cloud records.</p>
+      <p><strong>Cookies.</strong> Silt Strider uses no advertising or tracking cookies. Clerk sets cookies and related browser storage to sign you in and keep your session; they are loaded only when you choose to sign in, or when the browser is already signed in. Visiting the tools without signing in sets no cookies.</p>
+      <p><strong>Browser storage.</strong> Your browser keeps local saves and preferences, such as your selected game world, theme, and current challenge run, so the tools remember them. They stay on your device.</p>
+      <p><strong>Analytics.</strong> Cloudflare Web Analytics counts page visits through a small script. It sends page-view information, such as the page address, referring site, and browser type, to Cloudflare; it sets no cookies and stores nothing in your browser.</p>
+      <p>Clearing site data removes locally stored information and may sign you out; it does not delete cloud records.</p>
     </section>
 
     <section><h2>How we use information</h2>
@@ -48,7 +51,7 @@ export default function PrivacyPage() {
     </section>
 
     <section><h2>Service providers and sharing</h2>
-      <p>Clerk provides authentication, Cloudflare hosts the site and cloud database, and Ko-fi handles optional support payments. Information needed for those functions is processed by those providers under their own terms and privacy policies. Their infrastructure may process information outside your country.</p>
+      <p>Clerk provides authentication, Cloudflare hosts the site and cloud database and provides its page-view analytics, and Ko-fi handles optional support payments. Information needed for those functions is processed by those providers under their own terms and privacy policies. Their infrastructure may process information outside your country.</p>
       <p>We may disclose information when required by law or when necessary to address fraud, abuse, or security incidents. If you send someone an exported save or a share link containing character information, that recipient can access the information you share. Treat those links and files accordingly.</p>
     </section>
 

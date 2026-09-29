@@ -5,7 +5,7 @@ import { parseOmwSave } from "../../lib/omwsave-parser.mjs";
 import { readSaveFile } from "../../lib/omwsave-import.mjs";
 import { duplicateCloudSave, generateBuildShareUrl } from "../../lib/character-vault.mjs";
 
-import { ensureClerk } from "../../lib/clerk-browser.mjs";
+import { ensureClerk, ensureClerkIfSignedIn } from "../../lib/clerk-browser.mjs";
 
 const LOCAL_SAVES_KEY = "siltstrider-saved-characters";
 
@@ -119,7 +119,8 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
     window.addEventListener("silt-auth-ready", attachClerk);
     attachClerk();
     let disposed = false;
-    ensureClerk().catch(error => { if (!disposed) setErrorMessage(error.message); });
+    // Only a signed-in browser loads Clerk now; others load it from the sign-in buttons.
+    ensureClerkIfSignedIn().catch(error => { if (!disposed) setErrorMessage(error.message); });
 
     // Also listen for modal trigger custom event
     const handleOpenVault = () => setIsOpen(true);
