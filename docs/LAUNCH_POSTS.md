@@ -41,7 +41,7 @@ it. Answers change what you post: record them here.
 - [x] **r/OpenMW moderators: Sent (29 September 2026).** Modmail sent asking about Rule 6 permission.
 - [x] **OpenMW Discord: Sent (29 September 2026).** Direct message sent to PR coordinator (`testman`).
 - [x] **Tamriel Rebuilt Discord: Skipped.** Dropped by owner to avoid server overlap and unwanted spam. TR players are reached directly via r/TamrielRebuilt.
-- [x] **Morrowind Discord ("Morrowserver"): Sent (29 September 2026).** Posted in `#offtopic` (per Admin guidelines directing server questions there) asking whether tools belong in `#modding` or `#morrowind`. Pick a House Role in `#house-roles` for launch day permissions.
+- [x] **Morrowind Discord ("Morrowserver"): Confirmed (29 September 2026).** Asked in `#offtopic`; confirmed that **#modding** is the designated channel. Pick a House Role in `#house-roles` for launch day permissions.
 - [ ] Nothing to send beforehand for r/Morrowind, r/TamrielRebuilt or the Morrowind
       Modding Community.
 
@@ -49,9 +49,8 @@ it. Answers change what you post: record them here.
 
 - [ ] r/OpenMW: no answer means post anyway; a refusal or another place means follow
       it.
-- [ ] Discord servers: post only where the answer was yes, in the channel they named.
-      No answer means skip that server: the Tamriel Rebuilt server deletes
-      unauthorised links with a timeout, and a wrong channel risks a warning.
+- [ ] Discord servers: post only where the answer was yes, in the channel they named (Morrowind Discord: **#modding**).
+      No answer means skip that server.
 - [ ] Morrowind Modding Community: find the channel for tools or projects.
 
 **Launch day (Tuesday 6 October, 13:30 UTC, or your time)**
@@ -59,7 +58,8 @@ it. Answers change what you post: record them here.
 - [ ] r/Morrowind, flair **Showcase**: [r/Morrowind](#rmorrowind).
 - [ ] r/OpenMW, unless refused: [r/OpenMW](#ropenmw).
 - [ ] r/TamrielRebuilt: [r/TamrielRebuilt](#rtamrielrebuilt).
-- [ ] Morrowind Modding Community, and each Discord server that said yes, once each:
+- [ ] Morrowind Discord ("Morrowserver"): post once in **#modding** using [Discord (short)](#discord-short).
+- [ ] Morrowind Modding Community, and OpenMW Discord (if approved), once each:
       [Discord (short)](#discord-short).
 - [ ] Stay a few hours to answer comments: [Replies](#replies-to-common-questions).
 
