@@ -4,11 +4,12 @@ import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
 import { buildGearGroups, gearRanking, DEFAULT_GEAR_TOGGLES } from '../../lib/gear-rows.mjs';
+import { buildTraits } from '../../lib/build-traits.mjs';
 import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
 import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
 export default function GearAdvisor(props){
-  const [enabled,setEnabled]=useState(false);
+  const [enabled,setEnabled]=useState(true);
   const result=useGameData('gear',{enabled});
   const bisResult=useGameData('bestInSlot',{enabled});
   return <GearAdvisorView {...props} result={result} bisResult={bisResult} onLoad={()=>setEnabled(true)}/>;
@@ -29,24 +30,36 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const [weaponSetup, setWeaponSetup] = useState('one-handed');
   const displayedRanking = ranking && { ...ranking, weaponSetup, twoHand: weaponSetup === 'two-handed', shield: weaponSetup === 'one-handed' ? 'recommended' : 'none' };
 
+  const traits = buildTraits(build);
   const resolveRanking = () => gearRanking(build, { attrs });
 
   const buildKey = JSON.stringify(build);
-  // A result is valid only for the character used to compute it.
-  useEffect(() => {
-    setRanking(null);
-    setRankError(null);
-    setHasRun(false);
-  }, [buildKey]);
+  const attrsKey = JSON.stringify(attrs);
 
-  const handleOptimize = () => {
-    onLoad();
+  // Automatically compute gear recommendations when build or attributes change
+  useEffect(() => {
+    onLoad?.();
     setOptimizing(true);
-    setHasRun(true);
     try {
       const prof = resolveRanking();
       setRanking(prof);
       setRankError(null);
+      setHasRun(true);
+    } catch(error) {
+      setRankError(error.message);
+    } finally {
+      setOptimizing(false);
+    }
+  }, [buildKey, attrsKey]);
+
+  const handleOptimize = () => {
+    onLoad?.();
+    setOptimizing(true);
+    try {
+      const prof = resolveRanking();
+      setRanking(prof);
+      setRankError(null);
+      setHasRun(true);
     } catch(error) {
       setRankError(error.message);
     } finally {
@@ -65,7 +78,8 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
 
   return (
     <div
-      className="gear-advisor mt-6 px-8 sm:px-10 py-6 space-y-5 text-sm w-full"
+      id="gear-advisor"
+      className="gear-advisor mt-6 px-8 sm:px-10 py-6 space-y-5 text-sm w-full scroll-mt-6"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
@@ -79,7 +93,8 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
             <span>Gear Recommendations &amp; Progression Advisor</span>
           </h3>
           <p className="text-sm text-fg-8 mt-1">
-            Optimized armor, weapons, and artifact acquisition tailored to your major weapon and armor skills.
+            Optimized armor, weapons, and artifact acquisition tailored to your major weapon and armor skills
+            {traits?.archetypeName ? ` (${traits.archetypeName} archetype)` : ""}.
           </p>
         </div>
 
