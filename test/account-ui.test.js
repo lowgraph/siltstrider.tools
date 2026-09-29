@@ -28,3 +28,26 @@ test('a signed-out visitor loads no Clerk until they sign in, then the account a
   assert.equal(requests,1,'a second ready event does not attach twice');
  }finally{await act(async()=>root.unmount());global.fetch=previous;dom.window.close();}
 });
+test('an email sign-in on the page drops the kept character; a signed-in return leaves it to the builder',async()=>{
+ const key='silt-sign-in-character';
+ const output=require('esbuild').buildSync({stdin:{contents:"export {AccountProvider,useAccount} from './components/account-context.jsx';",resolveDir:process.cwd(),loader:'jsx'},jsx:'automatic',bundle:true,write:false,platform:'node',format:'cjs',external:['react']});const m=new Module(__filename,module);m.paths=module.paths;m._compile(output.outputFiles[0].text,__filename);const {AccountProvider}=m.exports;
+ const previous=global.fetch;global.fetch=async()=>Response.json({username:'Tester',iconId:0});
+ async function run(first){
+  const dom=new JSDOM('<div id="root"></div>',{url:'https://siltstrider.tools/vault'});global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+  window.sessionStorage.setItem(key,'{"at":0,"build":{"race":"Khajiit","sign":"The Thief"}}');
+  let listener;window.Clerk={loaded:true,session:{getToken:async()=>'token'},addListener:fn=>{listener=fn;fn(first);return()=>{};}};
+  const root=createRoot(document.getElementById('root'));
+  await act(async()=>root.render(React.createElement(AccountProvider,null,null)));
+  return {dom,root,signIn:()=>act(async()=>listener({user:{id:'one'},session:{}}))};
+ }
+ try{
+  const onPage=await run({user:null,session:null});
+  assert.ok(onPage.dom.window.sessionStorage.getItem(key),'still kept while signed out');
+  await onPage.signIn();
+  assert.equal(onPage.dom.window.sessionStorage.getItem(key),null,'dropped once signed in on the page');
+  await act(async()=>onPage.root.unmount());onPage.dom.window.close();
+  const returned=await run({user:{id:'one'},session:{}});
+  assert.ok(returned.dom.window.sessionStorage.getItem(key),'the return does not throw it away');
+  await act(async()=>returned.root.unmount());returned.dom.window.close();
+ }finally{global.fetch=previous;}
+});

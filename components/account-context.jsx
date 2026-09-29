@@ -1,6 +1,7 @@
 "use client";
 import {createContext,useContext,useEffect,useRef,useState} from 'react';
 import {ensureClerk,ensureClerkIfSignedIn} from '../lib/clerk-browser.mjs';
+import {forgetCharacterForSignIn} from '../lib/sign-in-handoff.mjs';
 const Context=createContext(null);
 export const useAccount=()=>useContext(Context);
 export function AccountProvider({children}) {
@@ -25,8 +26,14 @@ export function AccountProvider({children}) {
   function attach(){
    const clerk=window.Clerk;
    if(disposed||unsubscribe||!clerk?.addListener)return;
+   // Signed out, then signed in, without leaving the page: an email sign-in inside
+   // Clerk's window. The character kept for a Google or Discord round trip is not
+   // needed, so it goes (sign-in-handoff.mjs). Arriving already signed in is that
+   // round trip's return, where the builder has taken it back already.
+   let seenSignedOut=false;
    unsubscribe=clerk.addListener(state=>{
     const id=state.session&&state.user?.id||null;
+    if(!id)seenSignedOut=true;else if(seenSignedOut)forgetCharacterForSignIn();
     if(owner.current===id){setLoading(false);return;}
     owner.current=id;const generation=++epoch.current;setUser(id?state.user:null);setProfile(null);setError('');
     if(!id){setLoading(false);return;}

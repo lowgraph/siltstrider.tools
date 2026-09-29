@@ -123,3 +123,13 @@ test('a cancelled sign-in or a shared link does not bring the kept character bac
     assert.equal(character().build.race, 'Nord', 'a shared link opened with the page wins');
   });
 });
+
+test('forgetting drops the kept character and never throws', async () => {
+  const { keepCharacterForSignIn, forgetCharacterForSignIn, HANDOFF_KEY } = await handoff;
+  const storage = memoryStorage();
+  keepCharacterForSignIn(KHAJIIT, { storage });
+  forgetCharacterForSignIn({ storage });
+  assert.equal(storage.items.has(HANDOFF_KEY), false);
+  forgetCharacterForSignIn({ storage: null });
+  forgetCharacterForSignIn({ storage: { removeItem() { throw new Error('blocked'); } } });
+});
