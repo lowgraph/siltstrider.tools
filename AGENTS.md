@@ -5,12 +5,24 @@ for canonical repository paths and restructuring notes. Read [docs/DATA_LOADER.m
 for the data consumption contract, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for system architecture,
 and [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md) for the frontend transformation roadmap.
 
-1. **Codex (Site Agent):** Owns this web application repository (`lowgraph/siltstrider.tools`). Implements
+## Release sprint ownership — 29 September 2026
+
+The owner authorizes any agent to implement release-sprint work in either repository.
+The roles below describe specialties, not exclusive editing or commit permissions.
+Follow the site's [launch checklist](docs/LAUNCH_CHECKLIST.md) in priority order,
+including its task-claim timestamps, completion records, freeze and cut line. `C`
+means the agent doing the work, not Claude exclusively; `O` remains owner work.
+Inspect existing changes before editing and preserve other sessions' work.
+This supersedes older agent ownership restrictions in the roadmap and handoffs.
+Repository architecture, verification, real-data rebuild restrictions, and separate
+push/deploy authorization still apply.
+
+1. **Codex (Site Agent):** Specializes in this web application repository (`lowgraph/siltstrider.tools`). Implements
    Next.js 16 App Router, React 19 components, Tailwind styling, Clerk auth, and Cloudflare
    D1 migrations. Executes the UI transformation specified in [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md).
-2. **Claude (Data Agent):** Owns the sibling data pipeline repository (`lowgraph/openmw-decompiler`)
-   and publishes content-addressed bundles under `public/game-data/`. Do not edit that repository
-   or open raw SQLite databases here.
+2. **Claude (Data Agent):** Specializes in the sibling data pipeline repository (`lowgraph/openmw-decompiler`)
+   and publishes content-addressed bundles under `public/game-data/`. Extraction and raw
+   SQLite access belong in the pipeline; the site consumes published bundles.
 3. **Antigravity (UI Transformation Lead):** Directs the UI/UX architecture,
    component design, and CRPG authenticity across the project.
 
@@ -24,8 +36,8 @@ and [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md) for the frontend transformation
 - **No Real-Data Rebuilds Without Instruction:** The user runs full game-data extraction commands locally in VS Code. Build code and provide commands; do not rebuild real-data catalogues unless explicitly asked. Verify changes with synthetic fixtures instead.
 - **Provenance:** Preserve separate vanilla, tr, and tr_arce profiles and source provenance.
 
-### 2. Cross-Repo Boundary Enforcement
-- **Strict Boundary:** The Pipeline agent must NEVER directly modify files inside this web application repository.
+### 2. Repository Architecture & Shared Ownership
+- **Shared Sprint Ownership:** Any agent may edit either repository for launch-checklist work; keep site implementation in the site and extraction logic in the pipeline.
 - **Contract Sync:** Changes to game parsing outputs or schemas pass exclusively via exported JSON bundles to `public/game-data/` and synchronized updates to `COORDINATION.md` and `UI_TRANSFORMATION.md`.
 - **No Stale Extraction Hooks:** The legacy prebuild extraction hook (`npm run extract:legacy`) was retired in Phase 13. Never attempt to run it. The standalone `index.html` and archived bridges were removed; tests target the native application.
 

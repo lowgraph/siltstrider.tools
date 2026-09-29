@@ -349,14 +349,6 @@ export default function EnchantingWorkstation() {
             </div>
           </div>
 
-          {/* Constant Effect Rule Note */}
-          <div className="p-2.5 bg-surface-2 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
-            <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Soul Capacity &amp; Constant Effect:</span>
-            <p className="leading-relaxed">
-              Constant Effect requires a minimum soul capacity of <strong className="text-accent">400</strong> (Grand Soul Gem or Azura&apos;s Star trapping a Golden Saint or Ascended Sleeper).
-            </p>
-          </div>
-
           {/* Effects Stack */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
@@ -558,19 +550,17 @@ export default function EnchantingWorkstation() {
               ))}
             </div>
 
-            {/* Self-Enchant Formula Cue */}
-            <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
-              <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Enchanting Formula:</span>
-              <p className="leading-relaxed">
-                Points: <span className="font-mono text-accent">((Min + Max) × Duration + Area) × BaseCost × 0.025</span> (Target range adds 1.5×; Constant Effect uses fixed Duration = 100).
-              </p>
-              <p className="leading-relaxed">
-                Self-Enchant: <span className="font-mono text-accent">(0.75×Enchant + 0.25×Int + 0.1×Luck − 2.5×Points) × Fatigue</span>.
-              </p>
-              <p className="leading-relaxed text-fg-13">
-                Total points cannot exceed item capacity. Barter enchanter price scales with Merchant mercantile, disposition, and your character&apos;s barter attributes.
-              </p>
-            </div>
+            <details className="calculation-notes">
+              <summary>How this is calculated</summary>
+              <div>
+                <p>Stronger, longer-lasting and wider effects use more enchantment points. The total must fit within the item&apos;s capacity. Target range costs 1.5 times as much as Self or Touch.</p>
+                <p>Constant Effect needs a soul worth at least 400 points, such as a Golden Saint or Ascended Sleeper held in a Grand Soul Gem or Azura&apos;s Star.</p>
+                <p>Points: <span className="font-mono">((Min + Max) × Duration + Area) × BaseCost × 0.025</span>. Min and Max are effect strength, Duration is seconds, Area is feet, and BaseCost is the effect&apos;s base cost. Constant Effect uses 100 for Duration.</p>
+                <p>Your Enchant skill, Intelligence, Luck and fatigue affect the chance of making the item yourself. More points make it harder. This estimate assumes full fatigue.</p>
+                <p>Success chance: <span className="font-mono">(0.75×Enchant + 0.25×Int + 0.1×Luck − 2.5×Points) × Fatigue</span>. Int means Intelligence; Fatigue is the multiplier for how rested you are.</p>
+                <p>A hired enchanter&apos;s price depends on their Mercantile and disposition toward you, as well as your Mercantile, Personality and Luck.</p>
+              </div>
+            </details>
           </div>
 
           {/* Enchanters Ranked Barter Table */}

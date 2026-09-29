@@ -118,20 +118,13 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
         <OpenSavePanel vault={vault} />
       </div>
 
-      {/* Client-side save parsing & cloud quota notes */}
-      <div className="bg-surface-7 p-3 sm:p-4 border border-line-9 text-xs text-fg-7 font-serif mb-6 space-y-1">
-        <h4 className="text-xs font-serif uppercase tracking-wider text-accent font-bold">
-          Save Inspection &amp; Vault Invariants:
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] leading-relaxed">
-          <div>
-            <strong className="text-fg-2">• Zero-Server Binary Parsing:</strong> OpenMW <span className="font-mono text-accent">.omwsave</span> files are parsed entirely in your browser memory via ArrayBuffer. No save data is ever uploaded during inspection.
-          </div>
-          <div>
-            <strong className="text-fg-2">• Cloud Sync Quotas:</strong> Free tier accounts provide 5 cloud slots; Supporter tier accounts provide 25 cloud slots. Quotas are protected by atomic SQLite triggers in Cloudflare D1.
-          </div>
+      <details className="calculation-notes mb-6">
+        <summary>How this is calculated</summary>
+        <div>
+          <p>Opening an OpenMW .omwsave reads it in your browser. Your character data is only uploaded when you choose to save it to your account.</p>
+          <p>Free accounts can keep 5 cloud saves; supporters can keep 25. Builds, imported characters and challenge runs share those slots. Cloud saves are available on other devices when you sign in to the same account.</p>
         </div>
-      </div>
+      </details>
 
       {/* Sign-In CTA (if signed out) */}
       {!vault.signedIn ? (

@@ -401,16 +401,15 @@ export default function Configurator({
         </div>
       </div>
 
-      {/* Character Math Invariants Cue */}
-      <div className="p-3 bg-surface-2 border border-line-11 text-xs text-fg-11 font-serif space-y-1">
-        <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Character Math Invariants:</span>
-        <p className="leading-relaxed">
-          Base Health = <span className="font-mono text-accent">⌊(Strength + Endurance) / 2⌋</span> (excludes birthsign fortify). Base Magicka = <span className="font-mono text-accent">Intelligence × (1 + Race &amp; Sign Multiplier)</span>. Fatigue = <span className="font-mono text-accent">Strength + Willpower + Agility + Endurance</span>.
-        </p>
-        <p className="leading-relaxed text-[11px] text-fg-13">
-          Specialization adds +5 to matching skills; Major skills start at base +25, Minor skills at base +10.
-        </p>
-      </div>
+      <details className="calculation-notes">
+        <summary>How this is calculated</summary>
+        <div>
+          <p>Your race, birthsign and class determine your starting attributes, skills and abilities.</p>
+          <p>Starting Health is half the sum of your Strength and Endurance, rounded down, before birthsign attribute bonuses. Magicka starts from Intelligence, with any race and birthsign multipliers. Fatigue is Strength + Willpower + Agility + Endurance.</p>
+          <p>Major skills add 25 to the base skill value; Minor skills add 10. Your specialization adds another 5 to its matching skills.</p>
+          <p>Base Health = <span className="font-mono">⌊(Strength + Endurance) / 2⌋</span>. Base Magicka = <span className="font-mono">Intelligence × (1 + Race &amp; Sign Multiplier)</span>. Fatigue = <span className="font-mono">Strength + Willpower + Agility + Endurance</span>. The brackets ⌊ ⌋ mean round down.</p>
+        </div>
+      </details>
     </div>
   );
 }

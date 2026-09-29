@@ -303,14 +303,6 @@ export default function AlchemyWorkstation() {
             </div>
           </div>
 
-          {/* Apparatus Mechanics Note */}
-          <div className="p-2.5 bg-surface-2 border border-line-11 text-[11px] text-fg-11 space-y-1 font-serif">
-            <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Apparatus Modifiers:</span>
-            <p className="leading-relaxed">
-              <strong className="text-fg-2">Mortar &amp; Pestle</strong> determines base potion strength and duration. <strong className="text-fg-2">Retort</strong> boosts positive magnitudes, <strong className="text-fg-2">Alembic</strong> diminishes negative side-effects, and <strong className="text-fg-2">Calcinator</strong> increases overall potency.
-            </p>
-          </div>
-
           {/* Filter Option */}
           <div className="flex items-center gap-2 pt-1">
             <input
@@ -486,13 +478,14 @@ export default function AlchemyWorkstation() {
               )}
             </div>
 
-            {/* Engine Formula Cue */}
-            <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
-              <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Engine Brewing Formula:</span>
-              <p className="leading-relaxed">
-                Brew chance: <span className="font-mono text-accent">⌊Alchemy + 0.1×Int + 0.1×Luck⌋%</span> (independent of fatigue in OpenMW mechanics). Magnitude and duration scale with Mortar quality and character Alchemy skill.
-              </p>
-            </div>
+            <details className="calculation-notes">
+              <summary>How this is calculated</summary>
+              <div>
+                <p>Your Alchemy skill, Intelligence and Luck determine the chance of brewing a potion. Fatigue does not change that chance in OpenMW.</p>
+                <p>Brew chance: <span className="font-mono">Alchemy + 0.1×Intelligence + 0.1×Luck</span>, shown as a percentage rounded to the nearest whole number, between 0% and 100%.</p>
+                <p>The Mortar &amp; Pestle and your Alchemy skill determine potion strength and duration. A Retort improves beneficial effects, an Alembic reduces harmful effects, and a Calcinator increases potency. Effects with no strength or duration, such as cures, do not gain those properties.</p>
+              </div>
+            </details>
           </div>
         </div>
       </div>

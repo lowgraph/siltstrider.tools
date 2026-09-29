@@ -1,5 +1,20 @@
 # Coordination
 
+## Release sprint ownership — 2026-09-29
+
+The owner authorizes any agent to implement release-sprint work in either repository.
+Agent roles are specialties, not exclusive editing or commit permissions. The site's
+`docs/LAUNCH_CHECKLIST.md` sets priorities, task-claim timestamps, completion records,
+the freeze and the cut line. `C` means whichever agent does the work; `O` remains
+owner work. Inspect existing changes and preserve other sessions' work. This policy
+supersedes older agent ownership restrictions in the roadmap and handoffs.
+
+The architecture boundary stays: extraction belongs in the pipeline and the site
+consumes published JSON bundles. Verification, explicit authorization for real-data
+rebuilds, and separate push/deploy authorization still apply. No dataset schema or
+runtime changes. Next agent: read the launch checklist and claim the next available
+item; first verification command is `npm test` in the site repository.
+
 ## UX pass for launch — 2026-09-29
 
 No game-data schema changes. Items from `docs/LAUNCH_CHECKLIST.md` (finding IDs from `docs/UX_USABILITY_AUDIT.md`), one commit each. Invariants other agents must keep:
@@ -73,16 +88,15 @@ The user authorized removal of pre-release compatibility. Site sharing uses cano
 Three agents work on Silt Strider in parallel. This file is identical in both
 repositories. If you change it, change both copies in the same session.
 
-## Who owns what
+## Agent specialties (shared ownership during the release sprint)
 
 | | Antigravity (UI Lead) | Codex (Site Agent) | Claude (Data Agent) |
 | --- | --- | --- | --- |
 | Repository / Focus | Architecture, Design & Specs (`UI_TRANSFORMATION.md`) | Web Application (`lowgraph/siltstrider.tools`) | Data Pipeline (`lowgraph/openmw-decompiler`) |
-| Owns | UI/UX specifications, design tokens, component hierarchy, CRPG aesthetic standards | Next.js 16 App Router, React 19, Tailwind CSS, UI implementation, Clerk, `cloudflare/`, D1 routes & migrations | Extraction, catalogs, policy, gear rows, rules library, engine dumps, app bundle publication |
+| Specializes in | UI/UX specifications, design tokens, component hierarchy, CRPG aesthetic standards | Next.js 16 App Router, React 19, Tailwind CSS, UI implementation, Clerk, `cloudflare/`, D1 routes & migrations | Extraction, catalogs, policy, gear rows, rules library, engine dumps, app bundle publication |
 | Reads | User feedback, in-game references (`Char Creation.png`), legacy runtime | `UI_TRANSFORMATION.md`, `public/game-data/`, legacy workbench | Plugin files, OpenMW engine dumps, local staging workspace |
-| Never | Writes production backend database code | Opens raw SQLite databases or runs extractors | Writes frontend JSX, CSS, or Cloudflare route handlers |
 
-**Respect workspace boundaries.** While agents can inspect files across folders for context, each agent only commits changes within its designated scope. Antigravity authors cross-cutting UI blueprints; Codex implements them in `siltstrider.tools`; Claude implements data features in `openmw-decompiler`.
+**Coordinate shared work.** Any agent may implement and commit launch-checklist work in either repository. Claim the item before starting, preserve concurrent changes, and keep application and extraction code in their respective repositories.
 
 ## The contract is the bundle
 
@@ -139,8 +153,8 @@ Keep that property in anything new.
   `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; python -B -m unittest discover -s . -p "test_*.py"`
 * **Scratch & Secret Isolation:** Never stage scratch files (e.g., `<scratchDir>/capture-*.js`), `Char Creation.png`, or `Hey.html`. Always clean up temporary CDP runner scripts after visual evaluation.
 
-### 2. Cross-Repo Boundary Enforcement
-* **Strict Boundary:** The Pipeline agent (`OpenMW Decompiler`) must NEVER directly modify files inside `A:\Claude\morrowind-tools`.
+### 2. Repository Architecture & Shared Ownership
+* **Shared Sprint Ownership:** Any agent may edit either repository for launch-checklist work; keep site implementation in the site and extraction logic in the pipeline.
 * **Contract Sync:** Changes to game parsing outputs or schemas pass exclusively via exported JSON bundles to `public/game-data/` and synchronized updates to `COORDINATION.md` and `UI_TRANSFORMATION.md`.
 * **Legacy HTML Extraction (Retired):** The former prebuild hook (`extract:legacy`) was retired in Phase 13; the application is fully native React. `index.html` is retained strictly as a regression fixture for `test/site.test.js` and `archive/legacy/scripts/dev-server.cjs`.
 
