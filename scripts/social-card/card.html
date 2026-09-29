@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Silt Strider social card</title>
+<!-- Rendered to public/og-image.png by scripts/generate-social-card.mjs; values in {{ }} come from facts.mjs. -->
+<style>
+  @font-face { font-family: "Pelagiad"; src: url("{{{pelagiad}}}") format("truetype"); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: radial-gradient(ellipse at 30% 25%, #2a2016 0%, #181510 45%, #0c0906 100%);
+    color: #f3e6c8; font-family: "Segoe UI", system-ui, sans-serif; padding: 16px;
+  }
+  .frame {
+    height: 100%; border: 6px solid transparent; border-image: url("{{{border}}}") 6 repeat;
+    box-shadow: inset 0 0 40px 8px rgba(0, 0, 0, 0.75);
+    display: flex; gap: 44px; padding: 40px 46px 36px 50px;
+  }
+  .left { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .kicker { font-size: 14px; letter-spacing: 0.16em; color: #b8a078; font-weight: 600; text-transform: uppercase; }
+  .kicker i { color: #d4b06a; font-style: normal; padding: 0 8px; font-size: 11px; vertical-align: 2px; }
+  h1 {
+    font-family: "Pelagiad", Georgia, serif; font-weight: 400; font-size: 92px; line-height: 1;
+    color: #d4b06a; margin-top: 18px; text-shadow: 0 0 24px rgba(212, 176, 106, 0.28), 0 3px 0 #000;
+  }
+  .tagline { font-family: "Pelagiad", Georgia, serif; font-size: 27px; color: #f3e6c8; margin-top: 12px; }
+  .tagline em { font-style: normal; color: #d4b06a; }
+  .lede { font-size: 19px; line-height: 1.45; color: #e4d2a8; margin-top: 16px; max-width: 610px; }
+  .tools { display: grid; grid-template-columns: 1fr 1fr; gap: 11px 14px; margin-top: 22px; }
+  .tool {
+    display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px;
+    border: 4px solid transparent; border-image: url("{{{bevel}}}") 4 repeat;
+    background: #16120b; font-size: 17px; font-weight: 600; color: #f3e6c8;
+  }
+  .tool svg { width: 20px; height: 20px; flex: none; stroke: #d4b06a; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .foot { display: flex; align-items: center; gap: 16px; margin-top: auto; font-size: 16px; color: #b8a078; }
+  .url {
+    border: 4px solid transparent; border-image: url("{{{bevel}}}") 4 repeat; background: #2a2215;
+    color: #f3e6c8; font-weight: 700; padding: 6px 12px; font-size: 17px;
+  }
+  .foot .dot { color: #d4b06a; }
+
+  .sheet {
+    width: 424px; align-self: center; border: 6px solid transparent; border-image: url("{{{border}}}") 6 repeat;
+    background: rgba(12, 9, 6, 0.72); padding: 22px 24px 20px;
+  }
+  .sheet-head { display: flex; justify-content: space-between; align-items: center; }
+  .label { font-size: 13px; letter-spacing: 0.14em; color: #b8a078; font-weight: 600; text-transform: uppercase; }
+  .badge {
+    font-family: "Pelagiad", Georgia, serif; font-size: 14px; color: #d4b06a; padding: 3px 8px 2px;
+    border: 1px solid #785d37; background: #251a0e;
+  }
+  .groove { height: 2px; border-top: 2px solid transparent; border-image: url("{{{groove}}}") 2 repeat; margin: 14px 0 16px; }
+  .who { display: flex; gap: 16px; align-items: center; }
+  .initial {
+    width: 54px; height: 54px; flex: none; display: grid; place-items: center;
+    border: 4px solid transparent; border-image: url("{{{bevel}}}") 4 repeat; background: #1a140d;
+    font-family: "Pelagiad", Georgia, serif; font-size: 30px; color: #d4b06a;
+  }
+  .name { font-family: "Pelagiad", Georgia, serif; font-size: 27px; color: #f3e6c8; line-height: 1.1; }
+  .line { font-size: 15px; color: #b8a078; margin-top: 3px; white-space: nowrap; }
+  .bars { display: grid; gap: 9px; margin-top: 18px; }
+  .bar { display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 10px; }
+  .bar span { font-family: "Pelagiad", Georgia, serif; font-size: 17px; color: #d4b06a; }
+  .bar div {
+    height: 24px; display: grid; place-items: center; font-size: 15px; font-weight: 700; color: #fff;
+    text-shadow: 0 1px 2px #000; border: 1px solid #785d37;
+  }
+  .health { background: linear-gradient(180deg, #a03017 0%, #9e2f17 20%, #671f0f 50%, #45130a 75%, #2f0e07 100%); }
+  .magicka { background: linear-gradient(180deg, #2a387f 0%, #29367d 20%, #1b2352 50%, #121636 75%, #0c1025 100%); }
+  .fatigue { background: linear-gradient(180deg, #007a2f 0%, #00772f 20%, #004d1f 50%, #003014 75%, #00240e 100%); }
+  .next { margin-top: 18px; padding: 13px 14px 12px; border: 1px solid #4e3c23; background: #14100a; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .chip { font-size: 14px; padding: 4px 8px; background: #2a2215; border: 1px solid #4e3c23; color: #f3e6c8; }
+  .chip b { color: #d4b06a; }
+  .gain { font-size: 14px; color: #b8a078; margin-top: 10px; }
+  .gain b { color: #e0765a; }
+  .source { font-size: 13px; color: #b8a078; margin-top: 14px; }
+  .source i { color: #d4b06a; font-style: normal; padding-right: 6px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="left">
+    <div class="kicker">The Elder Scrolls III: Morrowind<i>◆</i>Tamriel Rebuilt<i>◆</i>ARCE</div>
+    <h1>Silt Strider</h1>
+    <div class="tagline">Morrowind tools built from <em>the game's own data</em></div>
+    <p class="lede">Free companion tools for OpenMW: plan a character and its gear, level with ×5 multipliers, brew, enchant and make spells, route travel across Vvardenfell and the mainland, and drop in your own save.</p>
+    <div class="tools">
+      <div class="tool"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>Build Optimizer</div>
+      <div class="tool"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Level Simulator (×5)</div>
+      <div class="tool"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Travel Optimizer</div>
+      <div class="tool"><svg viewBox="0 0 24 24"><path d="M9 3h6"/><path d="M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/></svg>Alchemy</div>
+      <div class="tool"><svg viewBox="0 0 24 24"><path d="M4 20L15 9"/><path d="M17 3v4M15 5h4M20 9v2M19 10h2M11 3v2M10 4h2"/></svg>Enchanting &amp; Spellmaking</div>
+      <div class="tool"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 14l2 2 4-4"/></svg>OpenMW save import</div>
+    </div>
+    <div class="foot">
+      <span class="url">siltstrider.tools</span>
+      <span>Free &amp; open source</span><span class="dot">◆</span><span>No ads</span>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head"><span class="label">Sample character</span><span class="badge">{{world}}</span></div>
+    <div class="groove"></div>
+    <div class="who">
+      <div class="initial">{{initial}}</div>
+      <div><div class="name">{{name}}</div><div class="line">Level {{level}} · {{gender}} {{race}}</div><div class="line">{{className}} · {{sign}}</div></div>
+    </div>
+    <div class="bars">
+      <div class="bar"><span>Health</span><div class="health">{{health}} / {{health}}</div></div>
+      <div class="bar"><span>Magicka</span><div class="magicka">{{magicka}} / {{magicka}}</div></div>
+      <div class="bar"><span>Fatigue</span><div class="fatigue">{{fatigue}} / {{fatigue}}</div></div>
+    </div>
+    <div class="next">
+      <div class="label">Level Simulator · level {{nextLevel}}</div>
+      <div class="chips">{{{bonusChips}}}</div>
+      <div class="gain">Health <b>{{healthFrom}} → {{healthTo}}</b></div>
+    </div>
+    <div class="source"><i>◆</i>Rules follow OpenMW 0.51's source</div>
+  </div>
+</div>
+</body>
+</html>

@@ -17,20 +17,82 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 3. **Each community's rules.** Three subreddits and four Discord servers were checked
    on 29 September (see [Community rules](#community-rules)). Three of the servers need
    a moderator's answer or a role before you post.
-4. **Redo the social card.** `/og-image.png` (1200×630) is what Reddit and Discord
-   show with every link, and it is wrong: it says "Formulas verified against OpenMW
-   0.51 engine source code" and "Exact Alchemy" (claims removed below), and its
-   sample Dark Elf Spellsword with The Lady shows 70 Magicka and 55 Health. The
-   catalogs give that character 40 Intelligence and no magicka bonus, so 40 Magicka,
-   and no reading of the health formula gives 55. Its tool names (Build Optimizer,
-   Travel Optimizer, OpenMW Save Viewer) are not the site's. No source for the image is
-   in the repository, so it has to be rebuilt.
+4. **Social card: redone** (29 September). `/og-image.png` (1200×630) is what Reddit
+   and Discord show with every link. The old one said "Formulas verified against
+   OpenMW 0.51 engine source code" and "Exact Alchemy" (claims removed below), and
+   its sample Dark Elf Spellsword with The Lady showed 70 Magicka and 55 Health. The
+   new one is rendered by `npm run social-card` from `scripts/social-card/card.html`,
+   with the sample's numbers computed by the builder's and Level Simulator's own code
+   from the staged bundle (45 Health, 40 Magicka, 195 Fatigue; level 2: Endurance,
+   Strength and Intelligence ×5, Health 45 → 53). Rerun it after restaging new data.
+   It goes live with the next deploy.
 5. **Screenshots.** Builder with the Gear Advisor, the Travel map, the Level Simulator,
    a loaded save.
 6. **Timing** (Antigravity's proposal, the owner's call): Reddit and Discord on
    Tuesday 6 October 2026 at 13:30 UTC; Show HN on Wednesday 7 October at 14:00 UTC;
    creator outreach from Thursday 8 October. Stagger posts rather than cross-posting
    the same text on one day.
+
+## Messages to send
+
+In order. The launch posts' exact text is in the sections below; each line links to
+it. Answers change what you post: record them here.
+
+**Now, a week before launch (by Wednesday 30 September)**
+
+- [ ] **r/OpenMW moderators.** Modmail: "Message the mods" on r/OpenMW, or
+      https://www.reddit.com/message/compose?to=/r/OpenMW.
+      Subject: `Is a post about a free OpenMW tool OK?`
+
+> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. I'd like to post it next week: would a post introducing it be OK under rule 6, or is there a better place for it? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
+
+- [ ] **OpenMW Discord.** A private message to one staff member (rule 9 asks for
+      staff questions in private).
+
+> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. I've asked the r/OpenMW moderators too. Would it be OK to share it on this server next week, and in which channel? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
+
+- [ ] **Tamriel Rebuilt Discord.** A private message to one moderator, never several
+      (mass DMs count as spam there).
+
+> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool that reads Tamriel Rebuilt's Poison Song plugins for a travel router, a character builder and a faction journal. I know the server is development-focused and links need authorisation: would it be OK to share it, and in which channel? If not, no problem. I also wanted the team to know it exists, and I'd welcome corrections if it shows anything from TR wrong.
+
+- [ ] **Morrowind Discord.** First pick a House Role in #house-roles (needed for links
+      and images). Then post this in #suggestions, which invites questions; it has no
+      link, so it needs no role. Change the second sentence if it does not describe
+      how you made the site.
+
+> Hi, I'd like to share a free, open-source Morrowind toolbox I made (builder, level planner, travel routes, built from the game's data) in #original-content. Before I do: much of it, the code and the look, was made with AI coding assistants, though the game data is read from the game's own files. Is that OK for #original-content, or is there a better channel for it?
+
+- [ ] Nothing to send beforehand for r/Morrowind, r/TamrielRebuilt or the Morrowind
+      Modding Community.
+
+**By Monday 5 October: decide from the answers**
+
+- [ ] r/OpenMW: no answer means post anyway; a refusal or another place means follow
+      it.
+- [ ] Discord servers: post only where the answer was yes, in the channel they named.
+      No answer means skip that server: the Tamriel Rebuilt server deletes
+      unauthorised links with a timeout, and a wrong channel risks a warning.
+- [ ] Morrowind Modding Community: find the channel for tools or projects.
+
+**Launch day (Tuesday 6 October, 13:30 UTC, or your time)**
+
+- [ ] r/Morrowind, flair **Showcase**: [r/Morrowind](#rmorrowind).
+- [ ] r/OpenMW, unless refused: [r/OpenMW](#ropenmw).
+- [ ] r/TamrielRebuilt: [r/TamrielRebuilt](#rtamrielrebuilt).
+- [ ] Morrowind Modding Community, and each Discord server that said yes, once each:
+      [Discord (short)](#discord-short).
+- [ ] Stay a few hours to answer comments: [Replies](#replies-to-common-questions).
+
+**Wednesday 7 October**
+
+- [ ] Show HN: [Show HN](#show-hn).
+- [ ] X: [X thread](#x-thread).
+
+**From Thursday 8 October**
+
+- [ ] Creators, one by one, through each one's business contact:
+      [Creator outreach](#creator-outreach). Fill in the name and the video yourself.
 
 ## What you can say
 
@@ -67,25 +129,12 @@ September 2026.
 | r/OpenMW | 3, no NSFW, including your nick | Nothing to change. |
 | r/TamrielRebuilt | none | Still credits the TR team and says the tool is unofficial. |
 | OpenMW Discord | The same rules as r/OpenMW, including 6 (no blatant advertising) and 9 (staff decisions stand; raise concerns privately with that staff member) | Ask one staff member first, privately, with the r/OpenMW message; post only where they say. |
-| Tamriel Rebuilt Discord | 2, no advertisements; a development-focused server; posts with unauthorised links are deleted with a short timeout, and mass DMs count as spam | Do not post the link unless a moderator authorises it. Ask one moderator (message below). r/TamrielRebuilt reaches TR players either way. |
+| Tamriel Rebuilt Discord | 2, no advertisements; a development-focused server; posts with unauthorised links are deleted with a short timeout, and mass DMs count as spam | Do not post the link unless a moderator authorises it. Ask one moderator first. r/TamrielRebuilt reaches TR players either way. |
 | Morrowind Modding Community | No spam, stay on topic; moderators have wide discretion | The safest server: nothing bans sharing a tool. Post once, in the channel whose topic fits tools or projects. |
-| Morrowind Discord ("Morrowserver") | Links and images need a House Role; self-made work is encouraged in #original-content; no AI content in media channels, including #original-content, "claiming to be art or original works"; no unsolicited DMs, including self-promotion | Get a House Role in #house-roles first. Ask about AI before posting (below): much of the code was written with AI coding agents, and the public repository says so (`AGENTS.md`). Never DM members about the site. |
+| Morrowind Discord ("Morrowserver") | Links and images need a House Role; self-made work is encouraged in #original-content; no AI content in media channels, including #original-content, "claiming to be art or original works"; no unsolicited DMs, including self-promotion | Get a House Role in #house-roles first. Ask about AI before posting: much of the code and the look (the border textures, the social card) was made by AI coding agents, and the public repository says so (`AGENTS.md`). Never DM members about the site. |
 
-Message to one Tamriel Rebuilt moderator (one, not several):
-
-> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool that reads Tamriel Rebuilt's Poison Song plugins for a travel router, a character builder and a faction journal. I know the server is development-focused and links need authorisation: would it be OK to share it, and in which channel? If not, no problem. I also wanted the team to know it exists, and I'd welcome corrections if it shows anything from TR wrong.
-
-Question for the Morrowind Discord, in #suggestions (which invites questions) or to one moderator. Adjust the second sentence to say how you actually used AI:
-
-> Hi, I'd like to share a free, open-source Morrowind toolbox I made (builder, level planner, travel routes, built from the game's data) in #original-content. Before I do: much of its code was written with AI coding assistants, though the game data is read from the game's files and it contains no AI art. Is that OK for #original-content, or is there a better channel for it?
-
-
-Message to the r/OpenMW moderators, about a week before posting so they have time to
-answer. If there is no answer by the day before, post anyway: no answer is not a
-refusal, and the message shows you asked. If they refuse or point elsewhere, follow
-that.
-
-> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. I'd like to post it next week: would a post introducing it be OK under rule 6, or is there a better place for it? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
+The messages to the moderators, and when to send them, are under
+[Messages to send](#messages-to-send).
 
 ## r/Morrowind
 
@@ -189,7 +238,7 @@ Choose creators whose recent videos are about Morrowind or OpenMW; check each ch
 - **Are you uploading my save?** No. Opening a save reads it in your browser. It's only sent to our service if you sign in and choose to save it to the Cloud Vault.
 - **Does it work with my mods?** It's tested with vanilla, Tamriel Rebuilt and TR + ARCE. Other mods may add things it doesn't know; the Builder lists anything from your save it couldn't match.
 - **Is it free?** Yes. An optional one-time tip on Ko-fi raises your Cloud Vault from 5 to 25 slots.
-- **Was it made with AI?** Expect this: the posts link the repositories, and `AGENTS.md` says AI agents work on the code. Answer plainly, in your own words; for example: "Yes, much of the code was written with AI coding assistants. The game data isn't generated: a pipeline reads it from the plugin files, and the rules follow OpenMW's source."
+- **Was it made with AI?** Expect this: the posts link the repositories, and `AGENTS.md` says AI agents work on the code. Answer plainly, in your own words; for example: "Yes, much of the code and the look were made with AI coding assistants. The game data isn't generated: a pipeline reads it from the plugin files, and the rules follow OpenMW's source."
 
 ## Claims removed from the original plan
 

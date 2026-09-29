@@ -12,7 +12,8 @@
     "start": "next start --hostname 127.0.0.1 --port 8765",
     "build:cloudflare": "node scripts/build-cloudflare.cjs",
     "deploy:cloudflare": "npm run build:cloudflare && wrangler deploy",
-    "data:stage": "node scripts/stage-game-data.mjs"
+    "data:stage": "node scripts/stage-game-data.mjs",
+    "social-card": "node scripts/generate-social-card.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
