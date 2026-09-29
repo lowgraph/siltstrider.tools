@@ -30,3 +30,37 @@ test('catalog service deduplicates downloads and preserves active data on failur
  fail=true;await assert.rejects(service.prepare('tr'),/offline/);assert.equal(service.active.profile,'vanilla');
  fail=false;await service.prepare('tr');assert.equal(service.active.profile,'vanilla');service.activate('tr');assert.equal(service.active.profile,'tr');
 });
+const PROTO_NAMES=['constructor','__proto__','toString','hasOwnProperty','valueOf'];
+function fullFixture(){const f=fixture();f.catalogs.Skills=['block','armorer','medium_armor','heavy_armor','blunt_weapon','long_blade','axe','spear','athletics','enchant','destruction','alteration','illusion','conjuration','mysticism','restoration','alchemy','unarmored','security','sneak','acrobatics','light_armor','short_blade','marksman','mercantile','speechcraft','hand_to_hand'].map((skill,id)=>({id,skill,specialization:id<9?'combat':id<18?'magic':'stealth'}));
+ f.catalogs.Attributes=['strength','intelligence','willpower','agility','speed','endurance','personality','luck'].map(id=>({id,name:id[0].toUpperCase()+id.slice(1)}));
+ f.catalogs.Races[0].attributes=Object.fromEntries(f.catalogs.Attributes.map(a=>[a.id,{male:40,female:40}]));return f;}
+test('a name that is a JavaScript built-in finds nothing in any character table',async()=>{
+ const {adaptCharacterCatalogs}=await mod;const a=adaptCharacterCatalogs(fullFixture(),spells);
+ for(const table of ['races','classes','signs','raceSpells','signSpells','raceMagic','specSkills'])for(const name of PROTO_NAMES)
+  assert.equal(a[table][name],undefined,`${table}[${name}]`);
+ assert.deepEqual(Object.keys(a.races),['Khajiit'],'real names still list');assert.deepEqual(Object.keys(a.specSkills),['Combat','Magic','Stealth']);
+ assert.equal(JSON.parse(JSON.stringify(a.races)).Khajiit.M.Strength,40,'the tables still serialise');
+});
+test('a shared build naming a built-in computes no sheet and no spells instead of throwing',async()=>{
+ const {adaptCharacterCatalogs}=await mod;const {computeSheet,startingSpells}=await import('../lib/character-math.mjs');
+ const a=adaptCharacterCatalogs(fullFixture(),spells);
+ const base={race:'Khajiit',sign:'The Lady',gender:'Male',className:'Warrior',spec:'Combat',fav1:'Strength',fav2:'Endurance',maj:['Block','Armorer','Medium Armor','Heavy Armor','Blunt Weapon'],min:['Long Blade','Axe','Spear','Athletics','Enchant']};
+ assert.ok(computeSheet(base,a),'the untouched build still computes');
+ for(const name of PROTO_NAMES)for(const field of ['race','sign']){
+  const b={...base,[field]:name};
+  assert.equal(computeSheet(b,a),null,`${field}=${name}`);
+  const spellsFor=startingSpells(b,computeSheet(b,a),a);assert.deepEqual([...spellsFor.race,...spellsFor.sign],[],`spells for ${field}=${name}`);
+ }
+});
+test('the crafted share link that crashed the builder now decodes to a build the maths can refuse',async()=>{
+ const {adaptCharacterCatalogs}=await mod;const {decodeShareUrl}=await import('../lib/permalink-codec.mjs');const {sanitizeBuild}=await import('../lib/character-vault.mjs');
+ const {computeSheet,startingSpells}=await import('../lib/character-math.mjs');const a=adaptCharacterCatalogs(fullFixture(),spells);
+ for(const build of [{race:'constructor',sign:'The Lady',gender:'Male'},{race:'Khajiit',sign:'__proto__',className:'toString',gender:'Female'}]){
+  const link='/builder?world=tr&arce=0&build='+Buffer.from(JSON.stringify(build)).toString('base64url');
+  const decoded=sanitizeBuild(decodeShareUrl(link).build);assert.ok(decoded,'the link still decodes');
+  // The builder fills in what the link leaves out, as a default Warrior would.
+  const clean={spec:'Combat',fav1:'Strength',fav2:'Endurance',maj:['Block','Armorer','Medium Armor','Heavy Armor','Blunt Weapon'],min:['Long Blade','Axe','Spear','Athletics','Enchant'],...decoded};
+  assert.doesNotThrow(()=>{const sheet=computeSheet(clean,a);startingSpells(clean,sheet,a);});
+  assert.equal(computeSheet(clean,a),null);
+ }
+});
