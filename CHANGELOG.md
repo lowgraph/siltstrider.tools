@@ -32,6 +32,7 @@
 - **Clearer text contrast:** muted and secondary text (faction ranks and requirements, equipped loadout stats, premade build details, challenge restrictions, and travel labels) now passes WCAG AA contrast against every surface in both the modern Ashfall and classic Morrowind themes.
 - **Touch-friendly Level Simulator buttons:** the attribute priority reorder buttons now measure 24×24px, satisfying WCAG 2.2 target size guidelines.
 - **Accessible heading structure in Level Simulator and Cloud Vault:** reorganized section headings so screen readers and assistive tools hear a strict logical outline (h2 tool title, h3 sections, h4 sub-items) with no skipped levels.
+- **Automatic Gear Advisor:** gear recommendations now compute automatically as you modify character skills, attributes, and class archetypes, without requiring a scroll down and manual click on "Optimize Gear". A quick-jump link at the top of the builder ("Early gear for this build ↓") anchors directly to recommended loadouts.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 
