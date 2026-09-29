@@ -157,3 +157,27 @@ See the [release procedure](docs/DEPLOYMENT.md) for the manual Cloudflare workfl
 Silt Strider is an unofficial fan project, unaffiliated with Bethesda or the mod teams.
 Game and mod ownership remains with their respective creators. See the site's About
 page and bundled font notices for credits.
+
+## Licence
+
+Copyright (C) 2026 lowgraph.
+
+The Silt Strider source code is free software: you can redistribute it and/or modify it
+under the terms of the **GNU Affero General Public License** as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any later
+version (`AGPL-3.0-or-later`). See [LICENSE](LICENSE). In short: you may use, change and
+run it, and if you run a modified version as a public website, you must offer its source
+code to its users under the same licence.
+
+Not covered by that licence:
+
+- **The Pelagiad font** (`public/fonts/Pelagiad.ttf`), by Isak Larborn, under the SIL Open
+  Font License 1.1; its notice is in `app/globals.css`.
+- **Game and mod data.** The Elder Scrolls III: Morrowind, Tribunal and Bloodmoon belong
+  to Bethesda Softworks and ZeniMax Media; Tamriel Rebuilt, Project Tamriel and ARCE
+  belong to their teams. The data bundles the site loads are generated from those files
+  by the [pipeline](https://github.com/lowgraph/openmw-decompiler) and are not part of
+  this repository. Silt Strider is an unofficial fan project, not affiliated with any of
+  them.
+- **The Silt Strider name, logo and social card image**, which are not licensed for
+  reuse: a fork must use its own name.

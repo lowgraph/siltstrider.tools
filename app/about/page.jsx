@@ -5,18 +5,18 @@ export const dynamic = 'force-static';
 
 export const metadata = {
   title: 'About Silt Strider & Game Engine Mechanics',
-  description: 'About Silt Strider, a free, data-driven toolbox for The Elder Scrolls III: Morrowind. Formula derivation, engine accuracy, and privacy details.',
+  description: 'About Silt Strider, a free, open-source, data-driven toolbox for The Elder Scrolls III: Morrowind. Formula derivation, engine accuracy, and privacy details.',
   alternates: { canonical: 'https://siltstrider.tools/about' },
   openGraph: {
     title: 'About Silt Strider & Game Engine Mechanics | Silt Strider Tools',
-    description: 'About Silt Strider, a free, data-driven toolbox for The Elder Scrolls III: Morrowind. Formula derivation, engine accuracy, and privacy details.',
+    description: 'About Silt Strider, a free, open-source, data-driven toolbox for The Elder Scrolls III: Morrowind. Formula derivation, engine accuracy, and privacy details.',
     url: 'https://siltstrider.tools/about',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Silt Strider Tools — About' }]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About Silt Strider & Game Engine Mechanics | Silt Strider Tools',
-    description: 'About Silt Strider, a free, data-driven toolbox for The Elder Scrolls III: Morrowind. Formula derivation, engine accuracy, and privacy details.',
+    description: 'About Silt Strider, a free, open-source, data-driven toolbox for The Elder Scrolls III: Morrowind. Formula derivation, engine accuracy, and privacy details.',
     images: ['/og-image.png']
   }
 };

@@ -2,6 +2,7 @@
   "name": "siltstrider-tools",
   "version": "1.0.0",
   "private": true,
+  "license": "AGPL-3.0-or-later",
   "description": "Morrowind Build Planner & Challenge Run Generator",
   "type": "commonjs",
   "scripts": {

@@ -166,7 +166,8 @@ commands; the commands are in section 6.
    September; `COORDINATION.md` entry in both repositories; launch post copy with every
    claim checked in [LAUNCH_POSTS.md](LAUNCH_POSTS.md) (TR 26.08.23 is the "Poison
    Song" release, per the owner); About's search description and feature list no
-   longer say "open-source", since neither repository has a licence.
+   said "open-source" while neither repository had a licence; with the licences below
+   they say so again, naming AGPL-3.0.
 
 ## 5. Open issues and risks
 
@@ -203,8 +204,12 @@ commands; the commands are in section 6.
    loading relies on it to show a signed-in visitor as signed in without clicking Sign
    in again), and that the character comes back. Then delete the 10:54 save, which
    holds the default Dark Elf, and save the Khajiit again.
-7. **Licence decision, owner.** Both repositories are public with no licence. Until one
-   is added, say "the code is public on GitHub", never "open source".
+7. **Licence: done.** The site is `AGPL-3.0-or-later` and the pipeline
+   `GPL-3.0-or-later` (29 September): `LICENSE` in each repository, a Licence section in
+   each README excluding the Pelagiad font (SIL OFL 1.1), game and mod data (including
+   the pipeline's `items/examples/` excerpts) and the name and logo, and
+   `"license"` in the site's `package.json`. Runtime dependencies are MIT (site: Next.js,
+   React, Clerk; pipeline: jsonschema), all compatible.
    ([LAUNCH_POSTS.md](LAUNCH_POSTS.md) lists the other claims not to make.)
 
 ## 6. Read-only verification commands

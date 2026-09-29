@@ -7,10 +7,10 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 
 ## Before posting
 
-1. **Licence.** Both repositories are public but carry no licence, which legally means
-   all rights reserved. Either add one (it can cover the code only; the extracted game
-   and mod data are not yours to license), or keep the wording below: "the code is
-   public on GitHub", never "open source".
+1. **Licence: done.** The site is `AGPL-3.0-or-later` and the pipeline
+   `GPL-3.0-or-later` (29 September), so "open source" is accurate for the code. It
+   covers the code only: never imply the game or mod data, the Pelagiad font, or the
+   Silt Strider name and logo are open source.
 2. **Sign-in test on production.** Build a character, click Sign in in the Vault, sign
    in with Google or Discord, save, and reload: you should come back signed in with the
    same character.
@@ -28,6 +28,7 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 | Claim | Status on 29 September |
 | --- | --- |
 | Free, no ads, no account needed for the tools | True. Accounts are only for Cloud Vault. |
+| Open source: the site under AGPL-3.0, the data pipeline under GPL-3.0 | True since 29 September. The code only; game and mod data belong to their owners. |
 | No cookies unless you sign in | True since `74a9c9f`: Clerk loads only for a signed-in browser or on Sign in. |
 | Page visits counted by Cloudflare Web Analytics, without cookies | True; it is disclosed in the Privacy Policy. It **is** a script, so never say "zero tracking scripts". |
 | An OpenMW save is read in your browser, not uploaded | True. Saving it to Cloud Vault is optional and sends the parsed character to the service. |
@@ -55,7 +56,7 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 > - **Alchemy, Enchanting and Spellmaking** calculators, a **Faction Journal**, and a **Challenge Run** generator with shareable seeds.
 > - **Drop in an OpenMW save** (`.omwsave`) and your character, gear, level and quests fill every tool. The file is read in your browser; nothing is uploaded unless you choose to save it to the optional Cloud Vault.
 >
-> It covers vanilla (with Tribunal and Bloodmoon), Tamriel Rebuilt's Poison Song release (26.08) with Project Tamriel's Skyrim and Cyrodiil, and ARCE. It's free with no ads, and sets no cookies unless you sign in.
+> It covers vanilla (with Tribunal and Bloodmoon), Tamriel Rebuilt's Poison Song release (26.08) with Project Tamriel's Skyrim and Cyrodiil, and ARCE. It's free and open source, with no ads, and sets no cookies unless you sign in.
 >
 > Feedback and bug reports are very welcome; there's a Report a bug link at the bottom of every page.
 
@@ -108,7 +109,7 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 > 3. **Save parsing in the browser.** OpenMW `.omwsave` files are decoded client-side; nothing is uploaded unless the user signs in and saves to the optional Cloud Vault (Cloudflare D1).
 > 4. **Hosting.** A static Next.js export served from Cloudflare's asset store; a Worker handles only the API.
 >
-> It's free with no ads, and sets no cookies unless you sign in; page visits are counted with Cloudflare's cookie-free analytics. The code is public at https://github.com/lowgraph/siltstrider.tools.
+> It's free with no ads, and sets no cookies unless you sign in; page visits are counted with Cloudflare's cookie-free analytics. It's open source: the site is AGPL-3.0 (https://github.com/lowgraph/siltstrider.tools) and the data pipeline GPL-3.0 (https://github.com/lowgraph/openmw-decompiler).
 >
 > I'd love feedback on the tools, the data pipeline, and anything the save parser gets wrong.
 
@@ -117,7 +118,7 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 1. Introducing Silt Strider (https://siltstrider.tools): free tools for Morrowind, OpenMW and Tamriel Rebuilt, built from the game's own data. *(Attach the social card or four screenshots.)*
 2. Character Builder with a Gear Advisor · Level Simulator for ×5 multipliers · Travel planner across Vvardenfell and the mainland · Alchemy, Enchanting and Spellmaking · Challenge runs with shareable seeds.
 3. Drop in an OpenMW save and every tool uses your character. It's read in your browser, not uploaded.
-4. Vanilla, Tamriel Rebuilt Poison Song (with Project Tamriel's Skyrim and Cyrodiil) and ARCE. Free, no ads, no cookies unless you sign in.
+4. Vanilla, Tamriel Rebuilt Poison Song (with Project Tamriel's Skyrim and Cyrodiil) and ARCE. Free and open source (AGPL-3.0), no ads, no cookies unless you sign in.
 
 ## Creator outreach
 
@@ -147,7 +148,7 @@ Choose creators whose recent videos are about Morrowind or OpenMW; check each ch
 Do not reintroduce these without re-checking:
 
 - "Zero-tracking", "zero tracking scripts", "cookie-free", "no server logging": Clerk sets cookies once you sign in, Cloudflare Web Analytics runs a script, and the API keeps error logs.
-- "Open source": there is no licence yet (see Before posting).
+- "Open source" for anything but the code: the game and mod data, the Pelagiad font, and the name and logo are not under the AGPL or GPL.
 - "ARCE (Aran Rebuilt / Content Ecosystem)": ARCE is "All Races and Classes Enabled".
 - ".ess support is on our roadmap": not decided.
 - "Absolute engine parity", "every formula verified", "inter-faction standing", "100% client-side" for the whole site: unverified or broader than the truth.
