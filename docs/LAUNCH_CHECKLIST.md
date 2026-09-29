@@ -54,7 +54,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       membership. Keep today's defaults without a save.
 - [x] **C** **TRV-6 (label)** (started 2026-09-29 18:01 UTC, C; done `d1c0961`, live as `8da9cada`) Mark the options a loaded save set: "from your save".
 - [x] **C** **BLD-1** (started 2026-09-29 18:07 UTC, C; done `dd01435`, live as `8da9cada`) "Steal early gear" off by default.
-- [ ] **C** **TRV-3** (started 2026-09-29 18:15 UTC, C) The Places buttons lose the browser grey; merge or disambiguate
+- [x] **C** **TRV-3** (started 2026-09-29 18:15 UTC, C; done `2af1e95`) The Places buttons lose the browser grey; merge or disambiguate
       same-named exterior cells ("Pelagiad" twice).
 - [ ] **C** **HOME-2 / SITE-4 (label)** "Example character — make it yours" until the player
       changes or loads one, on the home card and every "Active character" bar.
