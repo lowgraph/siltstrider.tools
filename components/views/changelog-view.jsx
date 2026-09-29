@@ -42,6 +42,8 @@ export default function ChangelogView() {
             <li>Challenge Runs has one row of difficulty presets, in the settings beside what they change, instead of two identical rows.</li>
             <li>The Faction Journal names ranks and counts them from 1, shows skills by name, says plainly what a promotion still needs, and explains the objects a faction owns.</li>
             <li>Faction quests are listed by name with a plain status (completed, in progress or available), without internal keys or stage numbers.</li>
+            <li>No Ctrl K search hint on phones and tablets.</li>
+            <li>The world switch explains TR + ARCE: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes.</li>
           </ul>
         </section>
 

@@ -30,6 +30,8 @@
 - **One row of difficulty presets:** Challenge Runs showed Standard, Hardcore, Cursed and Custom twice, in the seed bar and again in the settings. They are now only in the settings, beside the counts and difficulty bands a preset sets, and screen readers hear which one is on.
 - **The Faction Journal in plain words:** ranks go by name and count from 1 ("Eligible for Journeyman", "Swordsman, rank 4 of 10" instead of "Rank 0"), skills by name (Long Blade, not long_blade), and what a promotion still needs reads as "Raise Strength by 5, to 30". "Landlord: 186 placements" and "186 spots" now say the faction owns 186 objects in the world, and its explanation says members of high enough rank can take them without stealing.
 - **Faction quests by name:** the Faction Journal's quest list shows each quest's name and whether it is completed, in progress or available, without internal keys or journal stage numbers ("fg_alofsfarm · Finishes: 100,110", "Active (Stage 30)"). Journal notes that have no quest name, such as the Mages Guild's reminder to pay dues, are left out, as the game's own quest list does.
+- **Phones and tablets:** the Ctrl K / ⌘K search hint no longer shows where there is no keyboard to press it, on the home page or in the header; a touchscreen laptop keeps it.
+- **TR + ARCE explained:** the world switch says what TR + ARCE is: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes. It shows in the phone menu, in the button's tooltip, and to screen readers.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 
