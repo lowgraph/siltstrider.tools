@@ -1,5 +1,5 @@
 "use client";
-import {effectNumber, allowedRanges, effectDraft, selectedEffect} from "../../../lib/effect-editor.mjs";
+import {effectNumber, allowedRanges, effectDraft, selectedEffect, baseCostLabel} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback, useId } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
@@ -399,7 +399,7 @@ export default function EnchantingWorkstation() {
                         <option value="">Choose an effect</option>
                         {availableEffects.map((item, eIdx) => (
                           <option key={item.key} value={item.key}>
-                            {item.n} (base {item.b})
+                            {item.n} (base {baseCostLabel(item.b)})
                           </option>
                         ))}
                       </select>

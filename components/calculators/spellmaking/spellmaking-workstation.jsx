@@ -1,5 +1,5 @@
 "use client";
-import {effectNumber, allowedRanges, effectDraft, selectedEffect} from "../../../lib/effect-editor.mjs";
+import {effectNumber, allowedRanges, effectDraft, selectedEffect, baseCostLabel} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback, useId } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
@@ -363,7 +363,7 @@ export default function SpellmakingWorkstation() {
                           const originalIdx = availableEffects.indexOf(item);
                           return (
                             <option key={item.key} value={item.key}>
-                              {item.n} ({item.school}, base {item.b})
+                              {item.n} ({item.school}, base {baseCostLabel(item.b)})
                             </option>
                           );
                         })}
