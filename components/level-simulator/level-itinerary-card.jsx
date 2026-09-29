@@ -45,9 +45,9 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
 
       {/* 3 Attribute Level-Up Bonuses */}
       <div className="attribute-bonuses-block space-y-1.5">
-        <h5 className="text-[11px] uppercase tracking-wider text-accent font-serif font-bold">
+        <h4 className="text-[11px] uppercase tracking-wider text-accent font-serif font-bold">
           Attribute Level-Up Picks ({attributeBonuses.length}/3)
-        </h5>
+        </h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {attributeBonuses.map((b) => {
             const isMaxed = b.endValue >= 100;
@@ -82,9 +82,9 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
       {/* Major / Minor Skills Trigger (Stats & Skills Mode) */}
       {!isStatsOnly && (
         <div className="major-minor-block space-y-1">
-          <h5 className="text-[11px] uppercase tracking-wider text-accent font-serif font-bold flex items-center justify-between">
+          <h4 className="text-[11px] uppercase tracking-wider text-accent font-serif font-bold flex items-center justify-between">
             <span>Major / Minor Skill Allocation (10 Points to Level Up)</span>
-          </h5>
+          </h4>
           <div className="flex flex-wrap gap-1.5">
             {mmEntries.map(([skill, pts]) => (
               <span
@@ -106,9 +106,9 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
       {!isStatsOnly && (
         <div className="misc-training-block space-y-1.5 p-3 bg-surface-3 border border-line-9">
           <div className="flex items-center justify-between gap-2 border-b border-line-11 pb-1.5">
-            <h5 className="text-xs uppercase tracking-wider text-accent font-serif font-bold flex items-center gap-1.5">
+            <h4 className="text-xs uppercase tracking-wider text-accent font-serif font-bold flex items-center gap-1.5">
               <span>Miscellaneous Skills to Train (for 5x Multipliers)</span>
-            </h5>
+            </h4>
           </div>
 
           {miscTraining.length > 0 ? (

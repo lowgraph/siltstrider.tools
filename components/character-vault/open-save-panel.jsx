@@ -21,9 +21,9 @@ export default function OpenSavePanel({ vault }) {
   return (
     <div className="open-save-panel bg-surface-2 border border-line-11 p-4 space-y-3">
       <div>
-        <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
+        <h3 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1">
           Open a Save in Silt Strider
-        </h4>
+        </h3>
         <p className="text-[11px] text-fg-14 font-serif mt-1">
           Loads an OpenMW .omwsave into the Character Builder, Level Simulator, Equipped Loadouts
           and Journal. It stays in this browser; nothing is uploaded and no account is needed.

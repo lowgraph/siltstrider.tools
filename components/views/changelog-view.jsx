@@ -43,6 +43,7 @@ export default function ChangelogView() {
             <li>The Faction Journal names ranks and counts them from 1, shows skills by name, says plainly what a promotion still needs, and explains the objects a faction owns.</li>
             <li>Clearer text contrast: muted and secondary text (faction ranks and requirements, equipped loadout stats, premade build details, challenge restrictions, and travel labels) now passes WCAG AA contrast against every surface in both the modern Ashfall and classic Morrowind themes.</li>
             <li>Touch-friendly Level Simulator buttons: the attribute priority reorder buttons now measure 24&times;24px, satisfying WCAG 2.2 target size guidelines.</li>
+            <li>Accessible heading structure in Level Simulator and Cloud Vault: section headings now follow a strict logical hierarchy without skipped levels.</li>
           </ul>
         </section>
 

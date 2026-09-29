@@ -92,28 +92,48 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** Contrast (started 2026-09-29 20:51 UTC, C; done `241f58f` on branch `launch/contrast-fg13-fg15`) retune `fg-13`–`fg-15` against every panel they sit on (Faction
       Journal, Equipped Loadouts, premade catalog, Challenge, Travel labels), both themes.
 - [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb` on branch `launch/level-buttons-24px`).
-- [ ] **C** Heading levels on the Level Simulator and Vault.
+- [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9` on branch `launch/headings-level-vault`).
 - [ ] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above).
 - [ ] **O** Usability test with three to five people, using the audit's script; **C** fix
       what three or more hit, and any High finding they confirm.
 - [ ] **C** Browser regression across all tools in Vanilla, TR and TR + ARCE at desktop and
       phone widths (LAUNCH_OPERATIONS final acceptance, steps 2–3).
 
+### 4. Priority 4: After launch (organized by priority)
+
+#### 4.1 Core routing and builder workflow
+- [ ] **C** **TRV-2** One place search: replace the dual stop list and "Places" cell list with a single unified combobox per route end; rank towns and transit stops first, then named exteriors, then interiors grouped under their town ("Balmora › Council Club").
+- [ ] **C** **TRV-4 & TRV-5** Task-first Travel with folded options: place Origin, Destination, and "Plan for" at the top with route results immediately below; fold character and transit options into a one-line summary disclosure; move transit rules to a closed footer disclosure.
+- [ ] **C** **BLD-2** Automatic Gear Advisor: compute gear recommendations automatically when character build attributes/skills change, and add a quick-jump link from the top of the builder ("Early gear for this build ↓").
+- [ ] **C** **TRV-6** Remembered choices & single-use scrolls: persist player modifications to save-derived options across visits for that save; treat Intervention scrolls as single-use consumables rather than permanent routing access; consider cast chance before assuming known spells are usable.
+- [ ] **C** **CALC-2** Editable calculator skill inputs: allow typing custom skill, attribute, and Luck numbers directly in Alchemy, Enchanting, and Spellmaking ("Using Dark Elf Custom: Alchemy 5 — change") without requiring a built character first.
+
+#### 4.2 Onboarding, mobile, and character continuity
+- [ ] **C** **HOME-1 / MOB-2** Equal first steps on Home & mobile: provide two equal primary actions ("Start a character / Browse 41 premades" and "Load my save"); lead with character creation on touch devices.
+- [ ] **C** **BLD-3** Premade builds first for newcomers: open the Character Builder on the Premade Builds Catalog on a first visit, or surface three recommended starter archetypes above the custom form.
+- [ ] **C** **BLD-4** Local character save button: add an explicit "Save this character" action for browser storage in the builder without requiring an account, keeping Cloud Vault sync as an optional upgrade.
+- [ ] **C** **SITE-4** Interactive active character bar: make the global character bar across tools clickable to link back to the Character Builder with a clear edit prompt.
+- [ ] **C** **MOB-1 & MOB-4** Mobile header & builder layout compaction: streamline the phone header (single tagline, search behind an icon) and compact builder tab controls so inputs appear above the fold on mobile.
+
+#### 4.3 Controls cleanup and interaction polish
+- [ ] **C** **CALC-3** Single combobox per Alchemy slot: merge the separate dropdown and text filter into a single searchable combobox per ingredient slot.
+- [ ] **C** **CHL-2** Consolidated Challenge locks: replace redundant locking mechanisms across the sheet, pinned slots, and restrictions with a single contextual lock per rolled item.
+- [ ] **C** **ENC-1** Early-game Enchanting defaults: default to early-game accessible items (Common Ring, Petty/Lesser Soul Gem) instead of end-game Exquisite jewelry and Grand Soul Gems.
+- [ ] **C** **SITE-3** Centrality-based navigation order: reorder top navigation to reflect usage frequency (Character Builder, Level Simulator, Travel Planner, Alchemy, then secondary tools).
+- [ ] **C** **LVL-2 & LVL-3** Level Simulator polish: move niche "Drink Bitter Cup" toggle into an Advanced collapsible group; adopt standard 3-letter attribute abbreviations (END, PER, STR) to prevent label clipping.
+- [ ] **C** **TRV-7** Transparent Cheapest routing trade-offs: display the trade-off on "Cheapest" route results (e.g. "saves 5 gold, 1h 13m slower than Fewest legs").
+- [ ] **C** **HOME-3** Player-centric outcome metrics: replace developer-centric metrics ("27 skills modeled") with tangible player outcomes ("Routes to any named place", "×5 level-ups planned").
+- [ ] **C** Keyboard menu navigation: ensure dropdown menus in the header automatically focus their first item when opened via keyboard.
+- [ ] **C** Cloud Vault save hash verification: verify OpenMW save file hash on load to confirm save integrity and detect external file modifications.
+
+#### 4.4 Post-launch features
+- [ ] **C** **CALC-4** Reverse Alchemy Recipe Calculator: reverse effect search allowing players to select desired magical effects (e.g., Restore Health, Levitate) to discover ingredient pairings and vendor availability.
+
 ### Cut line
 
-At the freeze, whatever is left of section 3 moves after launch; note it in
+At the freeze, whatever is left of section 3 moves into section 4; note it in
 LAUNCH_VERIFICATION. Sections 1 and 2 are the launch bar: if one of them is not done, decide
 explicitly whether to launch with it (and say so here).
-
-### 4. After launch
-
-TRV-2 one place search; TRV-4 and TRV-5 task-first Travel with folded options; TRV-6
-remembered choices and scrolls as one use; TRV-7 cheapest trade-off; BLD-2 automatic Gear
-Advisor; BLD-3 premades first; BLD-4 a real Save button; CALC-2 editable skills; CALC-3 one
-combobox per slot; HOME-1 two first steps; HOME-3 outcome numbers; SITE-3 nav order; SITE-4
-character bar as a control; MOB-1 and MOB-4 lighter phone header and tabs; ENC-1 early-game
-enchanting defaults; CHL-2 locks; LVL-2 and LVL-3; header menus focusing their first item; the
-Cloud Vault checking a save's hash on load; CALC-4 reverse alchemy (a feature).
 
 ## Done
 

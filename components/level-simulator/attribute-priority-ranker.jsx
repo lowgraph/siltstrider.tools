@@ -23,9 +23,9 @@ export default function AttributePriorityRanker({
   return (
     <div className="attribute-priority-ranker space-y-3 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-12 pb-2">
-        <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
+        <h3 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
           Attribute Leveling Priority
-        </h4>
+        </h3>
         <div className="flex items-center gap-1.5 text-xs">
           <span className="text-fg-11">Detected Archetype:</span>
           <span className="font-serif font-bold text-fg-2 bg-surface-6 px-2 py-0.5 border border-line-9">
