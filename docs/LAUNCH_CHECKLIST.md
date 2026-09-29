@@ -3,7 +3,12 @@
 Everything between now and launch, **in priority order, not by date**: work from the top in
 any burst of time and stop wherever it ends; each item stands alone. Only the items under
 **Fixed dates** are tied to the calendar. **O** = owner, **C** = Claude (or the agent doing
-the work). Tick items as they land and add the commit or Worker version beside them.
+the work).
+
+**Marking progress.** When you start a task, add the date and time you started it, in UTC,
+and who: `(started 2026-09-29 17:35 UTC, C)`. Commit that mark before the work, so another
+session can see the task is taken and resume it if the burst ends mid-task. When it lands,
+tick it and add the commit or Worker version: `[x] … (started …, C; done 93b7edf)`.
 
 - Usability findings (IDs such as TRV-1): [UX_USABILITY_AUDIT.md](UX_USABILITY_AUDIT.md)
 - Posts, messages and claims: [LAUNCH_POSTS.md](LAUNCH_POSTS.md)
@@ -39,8 +44,8 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 
 ### 1. Before launch: wrong answers and trust
 
-- [ ] **C** Push the usability audit and this checklist.
-- [ ] **C** **LVL-1** `detectArchetype`: Mercantile and Speechcraft as minors must not make a
+- [x] **C** Push the usability audit and this checklist. (started 2026-09-29 17:35 UTC, C; done with this commit)
+- [ ] **C** **LVL-1** (started 2026-09-29 17:35 UTC, C) `detectArchetype`: Mercantile and Speechcraft as minors must not make a
       warrior a Diplomat; score minors below majors and compare instead of returning early;
       show why an archetype was chosen; test the default build (home page and simulator).
 - [ ] **C** **TRV-1 (as decided)** With a loaded save that is not a Mages Guild member, a
