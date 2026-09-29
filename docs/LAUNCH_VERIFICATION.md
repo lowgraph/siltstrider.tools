@@ -148,6 +148,8 @@ commands; the commands are in section 6.
    the time of writing; check first with the same `WHERE` in a `SELECT count(*)`).
    The 29 September backup and D1 Time Travel both hold them. The fourth save, a
    character build with envelope version 2, decodes and stays.
+   **Done:** the owner ran the delete on 29 September; a count afterwards shows one
+   cloud save left, the version 2 character build, and none with envelope version 1.
 2. **Ko-fi**: owner reports the production path fully tested after `85801eb`
    (29 September). Not independently verified by an agent.
 3. **Untagged deploys.** `972dee9c` (09:15 UTC) and `eb9adb1c` (09:31 UTC) on
