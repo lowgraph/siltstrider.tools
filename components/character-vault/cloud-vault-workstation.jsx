@@ -76,7 +76,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line-11 mb-6">
         <div>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-accent tracking-wide">
-            Cloud Character Vault
+            Cloud Vault
           </h2>
           <p className="text-xs text-fg-14 font-serif mt-1">
             Cloud character storage, OpenMW save ingestion (.omwsave), revision history, and cross-device sync.

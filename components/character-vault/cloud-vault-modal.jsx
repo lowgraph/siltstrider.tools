@@ -94,7 +94,7 @@ export default function CloudVaultModal({
         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-line-11 bg-surface-3">
           <div>
             <h3 id="cloud-vault-title" className="text-xl font-serif font-bold text-accent tracking-wide">
-              Cloud Character Vault
+              Cloud Vault
             </h3>
             <p className="text-xs text-fg-14 font-serif mt-0.5">
               Secure character persistence, OpenMW save sync, and multi-device build storage.

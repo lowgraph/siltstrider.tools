@@ -43,7 +43,7 @@ for (const id of ['c-race', 'maj0', 'btn-to-optimizer']) test(`challenge handoff
   const root = createRoot(document.getElementById('root'));
   try {
     await act(async () => root.render(React.createElement(AppShell)));
-    const send = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Send to Build Optimizer'));
+    const send = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Send to Character Builder'));
     assert.ok(send);
     await act(async () => send.click());
     assert.equal(stale.value, 'untouched');

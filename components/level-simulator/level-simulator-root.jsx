@@ -133,7 +133,7 @@ export default function LevelSimulatorRoot() {
     const dossier = {
       app: "Silt Strider",
       version: "1.0.0",
-      tool: "Character Level Simulator",
+      tool: "Level Simulator",
       exportDate: new Date().toISOString(),
       world: shell.world,
       character: {
@@ -226,7 +226,7 @@ export default function LevelSimulatorRoot() {
       <div className="top-toolbar bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
-            Character Level Simulator &amp; Progression Optimizer
+            Level Simulator
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
             Simulate leveling to theoretical cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.

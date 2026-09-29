@@ -467,7 +467,7 @@ export default function TravelWorkstation() {
       <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
-            Morrowind Travel &amp; Transport Route Planner
+            Travel Planner
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
             Plan the fewest legs, the cheapest fare for your character, or the fastest trip across silt striders, pack guar caravans, sky lamps, boats, river striders, and Guild Guides in Vvardenfell and mainland Tamriel.

@@ -188,7 +188,7 @@ function AppShellMain({ initialView = 'home' }) {
       {/* CRPG Authentic Footer */}
       <SiteFooter />
 
-      {/* Global Cloud Character Vault Modal */}
+      {/* Global Cloud Vault modal */}
       <CloudVaultModal activeSave={activeSave} activeBuild={build} onApplyBuild={setBuild} onApplySave={loadSave} />
     </div>
   );

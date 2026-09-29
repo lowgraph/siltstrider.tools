@@ -156,7 +156,7 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
         )}
       </div>
 
-      {/* Quick Launch: Cloud Character Vault & Equipped Loadout & Level Optimizer */}
+      {/* Quick Launch: Cloud Vault, Equipped Loadout and Level Simulator */}
       <div className="pt-2 border-t border-line-11 space-y-2">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <button
@@ -168,9 +168,9 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
                 window.dispatchEvent(new CustomEvent("silt-open-vault"));
               }
             }}
-            title="Open Cloud Character Vault"
+            title="Open Cloud Vault"
           >
-            <span>Cloud Character Vault</span>
+            <span>Cloud Vault</span>
           </button>
           <button
             type="button"
@@ -194,9 +194,9 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
             id="btn-sheet-leveler"
             className="w-full mw-btn py-3 px-3 font-serif text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-1.5 shadow-sm text-fg-2 hover:text-accent"
             onClick={() => shell.navigate?.("leveler")}
-            title="Open Level Progression Optimizer with this build"
+            title="Open the Level Simulator with this build"
           >
-            <span>Level Optimizer →</span>
+            <span>Level Simulator →</span>
           </button>
         </div>
       </div>

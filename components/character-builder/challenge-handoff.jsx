@@ -4,7 +4,7 @@ import { useChallengeRun } from "../challenge-run-context";
 const same = (a = [], b = []) => a.length === b.length && a.every((value, i) => value === b[i]);
 
 /**
- * Shown in the Build Optimizer while it holds a character sent from a challenge run:
+ * Shown in the Character Builder while it holds a character sent from a challenge run:
  * sends the build, with any changes made here, back into that run. The objectives and
  * restrictions stay as they were.
  */

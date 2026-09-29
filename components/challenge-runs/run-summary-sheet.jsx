@@ -87,9 +87,9 @@ export default function RunSummarySheet({
           className="w-full mw-btn py-3 px-4 font-serif text-sm font-bold tracking-wide uppercase text-fg-2 shadow-md flex items-center justify-center gap-2 border border-accent"
           onClick={onSendToOptimizer}
           id="react-btn-to-optimizer"
-          title="Transfer this rolled character into the Build Optimizer"
+          title="Transfer this rolled character into the Character Builder"
         >
-          <span>Send to Build Optimizer</span>
+          <span>Send to Character Builder</span>
         </button>
 
         <div className="grid grid-cols-2 gap-3">

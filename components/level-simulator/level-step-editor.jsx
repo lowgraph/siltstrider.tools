@@ -79,7 +79,7 @@ export default function LevelStepEditor({
       {/* 1-Click Optimization Presets */}
       <div className="optimizer-presets-section space-y-2.5 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
         <h4 className="text-xs uppercase tracking-widest text-accent font-serif font-bold border-b border-line-12 pb-1.5 mb-2">
-          Progression Optimizer Presets
+          Leveling Presets
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button

@@ -173,7 +173,7 @@ export default function AlchemyWorkstation() {
       <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
-            Morrowind Alchemy Potion Recipe Calculator
+            Alchemy
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
             Combine up to four ingredients with apparatus quality modifiers to calculate potion potency, duration, and brewing success.

@@ -34,6 +34,7 @@ export default function ChangelogView() {
             <li>Plainer wording: the site says its maths follows OpenMW&apos;s source instead of calling it &ldquo;verified&rdquo; or &ldquo;exact&rdquo;, and the Faction Journal describes faction relations as what they are.</li>
             <li>A fresh visit starts from a random premade build instead of the same Dark Elf; a shared link, your signed-in character or a loaded save still comes first.</li>
             <li>With TR + ARCE on, the random starting character can now be one of the ARCE race builds too.</li>
+            <li>One name per tool everywhere on screen: Character Builder (formerly Build Optimizer), Level Simulator, Travel Planner (formerly Travel Optimizer), Alchemy, Enchanting, Spellmaking, Faction Journal, Challenge Runs and Cloud Vault.</li>
           </ul>
         </section>
 

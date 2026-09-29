@@ -267,7 +267,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-surface-6 border-b-2 border-line-4">
         <div className="flex items-center gap-3">
           <h2 className="text-xl md:text-2xl font-serif font-bold text-accent tracking-wide">
-            Morrowind Faction Journal &amp; Guild Progression
+            Faction Journal
           </h2>
           {/* Live Bundle Status Badge */}
           {isLive ? (

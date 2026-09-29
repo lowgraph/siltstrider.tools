@@ -208,7 +208,7 @@ test("CloudVaultModal renders closed/open, displays quota badge, and respects ti
 
     const modalTitle = document.getElementById("cloud-vault-title");
     assert.ok(modalTitle);
-    assert.equal(modalTitle.textContent.trim(), "Cloud Character Vault");
+    assert.equal(modalTitle.textContent.trim(), "Cloud Vault");
 
     // Check account info and quota badge
     assert.ok(document.body.textContent.includes("Nerevarine"));
@@ -342,7 +342,7 @@ test("Global event listeners open and close the Cloud Vault modal reactively", a
 
     const title = document.getElementById("cloud-vault-title");
     assert.ok(title);
-    assert.equal(title.textContent.trim(), "Cloud Character Vault");
+    assert.equal(title.textContent.trim(), "Cloud Vault");
 
     // Dispatch silt-close-vault
     await act(async () => {
@@ -568,7 +568,7 @@ test("CloudVaultWorkstation renders master workstation container and handles vie
   // Verify Master Window Header and titles
   const h2 = container.querySelector("h2");
   assert.ok(h2, "Master window must contain h2 title");
-  assert.equal(h2.textContent.trim(), "Cloud Character Vault");
+  assert.equal(h2.textContent.trim(), "Cloud Vault");
 
   // Verify quick launch buttons
   const navBtns = [...container.querySelectorAll("button")].map((b) => b.textContent.trim());

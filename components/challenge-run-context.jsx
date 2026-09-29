@@ -6,7 +6,7 @@ import { decodeShareUrl } from "../lib/permalink-codec.mjs";
 
 /**
  * The challenge run lives above the views, like the character build, so leaving the
- * Challenge Runs page (to open the rolled character in the Build Optimizer, say) and
+ * Challenge Runs page (to open the rolled character in the Character Builder, say) and
  * coming back finds the same run. The run and its locks are also kept in this browser,
  * so a reload does not lose them, and a shared link (/challenge?run=...) opens its run.
  *

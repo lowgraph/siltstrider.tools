@@ -13,8 +13,8 @@ export default function NotFound() {
       <h1>Page not found</h1>
       <p>There is nothing at this address. The link may be mistyped, or the page may have moved.</p>
       <p>
-        Go to the <a href="/">home page</a>, or straight to a tool: the <a href="/builder">Build Optimizer</a>,
-        the <a href="/leveler">Level Simulator</a>, the <a href="/travel">Travel Optimizer</a> or <a href="/alchemy">Alchemy</a>.
+        Go to the <a href="/">home page</a>, or straight to a tool: the <a href="/builder">Character Builder</a>,
+        the <a href="/leveler">Level Simulator</a>, the <a href="/travel">Travel Planner</a> or <a href="/alchemy">Alchemy</a>.
       </p>
       <footer>Unofficial fan project. Not affiliated with Bethesda or the mod teams.</footer>
     </main>

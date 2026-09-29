@@ -66,12 +66,12 @@ test("AboutView contains dedicated System Accuracy & Game Mechanics section", ()
 
 test("Primary workstations provide semantic h2 heading hierarchy", () => {
   const workstations = [
-    { file: "components/character-builder/character-builder-root.jsx", title: /Morrowind Character Builder &amp; Class Planner/ },
-    { file: "components/level-simulator/level-simulator-root.jsx", title: /Character Level Simulator &amp; Progression Optimizer/ },
-    { file: "components/calculators/alchemy/alchemy-workstation.jsx", title: /Morrowind Alchemy Potion Recipe Calculator/ },
-    { file: "components/calculators/spellmaking/spellmaking-workstation.jsx", title: /Morrowind Spellmaking &amp; Casting Calculator/ },
-    { file: "components/calculators/enchanting/enchanting-workstation.jsx", title: /Morrowind Enchanting &amp; Soul Gem Calculator/ },
-    { file: "components/calculators/travel/travel-workstation.jsx", title: /Morrowind Travel &amp; Transport Route Planner/ }
+    { file: "components/character-builder/character-builder-root.jsx", title: /Character Builder/ },
+    { file: "components/level-simulator/level-simulator-root.jsx", title: /Level Simulator/ },
+    { file: "components/calculators/alchemy/alchemy-workstation.jsx", title: /Alchemy/ },
+    { file: "components/calculators/spellmaking/spellmaking-workstation.jsx", title: /Spellmaking/ },
+    { file: "components/calculators/enchanting/enchanting-workstation.jsx", title: /Enchanting/ },
+    { file: "components/calculators/travel/travel-workstation.jsx", title: /Travel Planner/ }
   ];
 
   for (const ws of workstations) {
@@ -163,7 +163,7 @@ test("Character Builder Root and Configurator have header hierarchy and math inv
     "utf8"
   );
 
-  assert.match(builderRootSrc, /<h2[^>]*>\s*Morrowind Character Builder &amp; Class Planner\s*<\/h2>/, "must have h2 title in builder root");
+  assert.match(builderRootSrc, /<h2[^>]*>\s*Character Builder\s*<\/h2>/, "must have h2 title in builder root");
 
   const configSrc = fs.readFileSync(
     path.join(ROOT, "components", "character-builder", "configurator.jsx"),
@@ -249,7 +249,7 @@ test("Adversarial QA 3: All newly modified components avoid undefined, null, and
 
 test("Faction Journal has semantic h2 heading and advancement invariants microcopy", () => {
   const rootSrc = fs.readFileSync(path.join(ROOT, "components", "journal-factions", "journal-factions-root.jsx"), "utf8");
-  assert.match(rootSrc, /<h2[^>]*>\s*Morrowind Faction Journal &amp; Guild Progression\s*<\/h2>/, "must have h2 title in factions root");
+  assert.match(rootSrc, /<h2[^>]*>\s*Faction Journal\s*<\/h2>/, "must have h2 title in factions root");
   assert.doesNotMatch(rootSrc, /<h1[^>]*>\s*Faction Journal\s*<\/h1>/, "must not use h1 in factions root");
 
   const detailSrc = fs.readFileSync(path.join(ROOT, "components", "journal-factions", "faction-detail-view.jsx"), "utf8");
@@ -260,14 +260,14 @@ test("Faction Journal has semantic h2 heading and advancement invariants microco
 
 test("Challenge Runs has semantic h2 heading and deterministic seed engine microcopy", () => {
   const challengeSrc = fs.readFileSync(path.join(ROOT, "components", "challenge-runs", "challenge-runs-root.jsx"), "utf8");
-  assert.match(challengeSrc, /<h2[^>]*>\s*Morrowind Challenge Run Generator &amp; Permalinks\s*<\/h2>/, "must have h2 title in challenge root");
+  assert.match(challengeSrc, /<h2[^>]*>\s*Challenge Runs\s*<\/h2>/, "must have h2 title in challenge root");
   assert.match(challengeSrc, /Challenge Engine Invariants:/, "must contain challenge engine invariants header");
   assert.match(challengeSrc, /deterministic 32-bit pseudorandom seed engine/, "must describe PRNG seed engine");
 });
 
 test("Cloud Vault has semantic h2 heading and zero-tracking inspection microcopy", () => {
   const vaultSrc = fs.readFileSync(path.join(ROOT, "components", "character-vault", "cloud-vault-workstation.jsx"), "utf8");
-  assert.match(vaultSrc, /<h2[^>]*>\s*Cloud Character Vault\s*<\/h2>/, "must have h2 title in vault workstation");
+  assert.match(vaultSrc, /<h2[^>]*>\s*Cloud Vault\s*<\/h2>/, "must have h2 title in vault workstation");
   assert.match(vaultSrc, /Save Inspection &amp; Vault Invariants:/, "must contain save inspection invariants header");
   assert.match(vaultSrc, /Zero-Server Binary Parsing:/, "must explain zero-server binary parsing");
   assert.match(vaultSrc, /Cloud Sync Quotas:/, "must describe free and supporter cloud quotas");

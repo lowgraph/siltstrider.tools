@@ -11,7 +11,7 @@ export default function AboutView() {
     <div className="about-view-root w-full max-w-4xl mx-auto p-4 md:p-6 space-y-6" id="about-content">
       <div className="border-b border-accent pb-4">
         <h2 className="text-2xl md:text-3xl font-serif text-accent tracking-wide">About Silt Strider Tools</h2>
-        <p className="text-sm text-fg-11 mt-1 font-serif">Morrowind Build Planner &amp; Challenge Run Generator</p>
+        <p className="text-sm text-fg-11 mt-1 font-serif">Character planners and calculators for Morrowind</p>
       </div>
 
       <div className="space-y-4 text-sm leading-relaxed text-fg-2">

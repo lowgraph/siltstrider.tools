@@ -16,7 +16,7 @@ export default function LocalCharactersPanel() {
               window.dispatchEvent(new CustomEvent("silt-open-vault"));
             }
           }}
-          title="Open Cloud Character Vault"
+          title="Open Cloud Vault"
         >
           Cloud Vault
         </button>

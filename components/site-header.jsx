@@ -26,10 +26,10 @@ const descriptions = {
 // Cloud Vault is the account button beside search.
 const PRIMARY_VIEWS = [
   { view: 'challenge', label: 'Challenge Runs', id: 'react-nav-challenge' },
-  { view: 'builder', label: 'Build Optimizer', id: 'react-nav-build' },
+  { view: 'builder', label: 'Character Builder', id: 'react-nav-build' },
   { view: 'leveler', label: 'Level Simulator', id: 'react-nav-leveler' },
   { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
-  { view: 'travel', label: 'Travel', id: 'react-nav-travel' },
+  { view: 'travel', label: 'Travel Planner', id: 'react-nav-travel' },
   { view: 'factions', label: 'Faction Journal', id: 'react-nav-factions' }
 ];
 const CALC_MENU = [
@@ -435,7 +435,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
           </div>
 
           <div className="drawer-group">
-            <span className="drawer-label">Character Vault</span>
+            <span className="drawer-label">Cloud Vault</span>
             <button
               type="button"
               id="react-drawer-vault"

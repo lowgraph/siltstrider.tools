@@ -16,7 +16,7 @@ export default function ChallengeRunsRoot() {
   const { catalogs, setBuild, clearSave } = useActiveCharacter();
 
   // The run, its locks and the roll settings live in ChallengeRunProvider, above the
-  // views, so they survive a trip to the Build Optimizer and back.
+  // views, so they survive a trip to the Character Builder and back.
   const { run, setRun, locks, setLocks, settings, updateSettings, usingPreferred, restorePreferred } = useChallengeRun();
   const { preset, restrictionCount, objectiveCount, allowedBands } = settings;
   const setPreset = useCallback((id) => updateSettings({ preset: id }), [updateSettings]);
@@ -169,7 +169,7 @@ export default function ChallengeRunsRoot() {
     [locks, catalogs, shell.world, allowedBands, restrictionCount, objectiveCount, setRun]
   );
 
-  // Send to Build Optimizer Bridge
+  // Send to the Character Builder
   const handleSendToOptimizer = useCallback(() => {
     if (typeof window === "undefined") return;
 
@@ -270,7 +270,7 @@ export default function ChallengeRunsRoot() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-line-11">
         <div>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-accent tracking-wide">
-            Morrowind Challenge Run Generator &amp; Permalinks
+            Challenge Runs
           </h2>
           <p className="text-xs text-fg-14 font-serif mt-1">
             Deterministic seed generator, difficulty presets, and roleplay restrictions for Vvardenfell and Tamriel Rebuilt.
@@ -388,7 +388,7 @@ export default function ChallengeRunsRoot() {
           Challenge Engine Invariants:
         </h4>
         <p className="text-[11px] leading-relaxed">
-          Runs are generated via a <strong>deterministic 32-bit pseudorandom seed engine</strong>. Entering the same seed and difficulty preset always yields identical restrictions, classes, and objectives. Seamlessly hand off rolls to the <strong className="text-fg-2">Build Optimizer</strong> (<span className="font-mono text-accent">/builder</span>) or share permalink hashes across devices.
+          Runs are generated via a <strong>deterministic 32-bit pseudorandom seed engine</strong>. Entering the same seed and difficulty preset always yields identical restrictions, classes, and objectives. Seamlessly hand off rolls to the <strong className="text-fg-2">Character Builder</strong> (<span className="font-mono text-accent">/builder</span>) or share permalink hashes across devices.
         </p>
       </div>
 

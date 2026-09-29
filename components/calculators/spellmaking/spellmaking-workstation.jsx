@@ -227,7 +227,7 @@ export default function SpellmakingWorkstation() {
       <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
-            Morrowind Spellmaking &amp; Casting Calculator
+            Spellmaking
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
             Compute Magicka costs, casting chance percentages, and spellmaker barter pricing across all magic schools.

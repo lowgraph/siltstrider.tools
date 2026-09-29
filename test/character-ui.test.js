@@ -225,7 +225,7 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   assert.equal(document.querySelector('header.topbar').classList.contains('drawer-open'),true);
 
   // Mobile drawer contains all sections; the everyday tools lead, the occasional ones follow
-  assert.match(drawer.textContent,/^ToolsChallenge RunsBuild OptimizerLevel SimulatorAlchemyTravelFaction Journal/);
+  assert.match(drawer.textContent,/^ToolsChallenge RunsCharacter BuilderLevel SimulatorAlchemyTravel PlannerFaction Journal/);
   assert.match(drawer.textContent,/More CalculatorsEnchantingSpellmaking/);
   assert.match(drawer.textContent,/Extras & SiteHomeAbout Silt Strider/);
   assert.match(drawer.textContent,/Game World Profile/);
