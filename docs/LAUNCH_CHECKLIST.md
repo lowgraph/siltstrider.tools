@@ -60,10 +60,10 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       changes or loads one, on the home card and every "Active character" bar.
 - [x] **C** **Claims** (started 2026-09-29 18:31 UTC, C; done `80240d5`, live as `3daf4aa0`) Drop "inter-faction standing" (FAC-2), and "verified engine formulas"
       and "exact potion" on the home Alchemy card (LAUNCH_POSTS, Claims removed).
-- [x] **C** **SITE-1** (started 2026-09-29 19:21 UTC, C; done `6e45e9a`, merged to main, not deployed; page titles, the hidden h1 and structured data keep the long SEO names) Apply the decided names in nav, headings, buttons, cards and the
+- [x] **C** **SITE-1** (started 2026-09-29 19:21 UTC, C; done `6e45e9a`, live as `719660ae`; page titles, the hidden h1 and structured data keep the long SEO names) Apply the decided names in nav, headings, buttons, cards and the
       footer; long SEO titles stay as page titles only. The social card's tiles say "Build
       Optimizer" and "Travel Optimizer", so it is regenerated at the freeze.
-- [x] **C** **LINK-1** (found 29 September; started 2026-09-29 19:41 UTC, C; done `e93dbef`, merged to main, not deployed; challenge run links fixed too: one without a world no longer resets yours to vanilla) A shared build link opens in the visitor's stored
+- [x] **C** **LINK-1** (found 29 September; started 2026-09-29 19:41 UTC, C; done `e93dbef`, live as `719660ae`; challenge run links fixed too: one without a world no longer resets yours to vanilla) A shared build link opens in the visitor's stored
       world, not the link's: a vanilla link opened by someone who chose TR or TR + ARCE shows
       the character in that world. The link's world must win. First-time visitors at launch
       have nothing stored, so it mostly reaches returning TR players sharing builds. Cause:
@@ -75,10 +75,10 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 
 ### 2. Before launch: clarity
 
-- [x] **C** **SITE-2 / VLT-1** (started 2026-09-29 19:08 UTC, Codex; done by Codex `8afcef1`, committed and merged to main by Claude `3bd72e2`, not deployed; Travel's route on a phone starts 2.7 screens down instead of 3.8) Every "invariants" or "rules" box becomes a closed "How this is
+- [x] **C** **SITE-2 / VLT-1** (started 2026-09-29 19:08 UTC, Codex; done by Codex `8afcef1`, committed and merged to main by Claude `3bd72e2`, live as `719660ae`; Travel's route on a phone starts 2.7 screens down instead of 3.8) Every "invariants" or "rules" box becomes a closed "How this is
       calculated" disclosure in plain words. On phones this lifts Travel's route about a
       screen (most of TRV-4's pain until the full restructure).
-- [x] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; done `d8b68f4`, merged to main, not deployed; also effect base costs shown as the game does, `d3448b9`) No results before input: dashes and a prompt.
+- [x] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; done `d8b68f4`, live as `719660ae`; also effect base costs shown as the game does, `d3448b9`) No results before input: dashes and a prompt.
 - [ ] **C** **CHL-1** One row of difficulty presets.
 - [ ] **C** **FAC-1** Rank names, skill labels, plain words for placements and spots.
 - [ ] **C** **MOB-3** No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
