@@ -75,7 +75,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 
 ### 2. Before launch: clarity
 
-- [ ] **C** **SITE-2 / VLT-1** (started 2026-09-29 19:08 UTC, Codex; branch `launch/site-2-vlt-1-disclosures`) Every "invariants" or "rules" box becomes a closed "How this is
+- [x] **C** **SITE-2 / VLT-1** (started 2026-09-29 19:08 UTC, Codex; done by Codex `8afcef1`, committed and merged to main by Claude `3bd72e2`, not deployed; Travel's route on a phone starts 2.7 screens down instead of 3.8) Every "invariants" or "rules" box becomes a closed "How this is
       calculated" disclosure in plain words. On phones this lifts Travel's route about a
       screen (most of TRV-4's pain until the full restructure).
 - [x] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; done `d8b68f4`, merged to main, not deployed; also effect base costs shown as the game does, `d3448b9`) No results before input: dashes and a prompt.
