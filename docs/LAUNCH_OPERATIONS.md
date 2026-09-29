@@ -2,7 +2,8 @@
 
 Prepared 28 September 2026. These preparations do not replace the final browser
 verification after the equipment optimizer changes and data staging are finished.
-Use [DEPLOYMENT.md](DEPLOYMENT.md) for the release itself.
+Use [DEPLOYMENT.md](DEPLOYMENT.md) for the release itself. The 29 September
+verification, its findings and open issues are in [LAUNCH_VERIFICATION.md](LAUNCH_VERIFICATION.md).
 
 ## Production identity
 
