@@ -79,8 +79,12 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       calculated" disclosure in plain words. On phones this lifts Travel's route about a
       screen (most of TRV-4's pain until the full restructure).
 - [x] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; done `d8b68f4`, live as `719660ae`; also effect base costs shown as the game does, `d3448b9`) No results before input: dashes and a prompt.
-- [x] **C** **CHL-1** (started 2026-09-29 20:29 UTC, C; done `2fdcb3d` on branch `launch/chl-1-presets`, not merged or deployed) One row of difficulty presets.
-- [x] **C** **FAC-1** (started 2026-09-29 20:34 UTC, C; done `39ccad1` on branch `launch/chl-1-presets`, not merged or deployed) Rank names, skill labels, plain words for placements and spots.
+- [x] **C** **CHL-1** (started 2026-09-29 20:29 UTC, C; done `2fdcb3d`, live as `1fa07549`) One row of difficulty presets.
+- [x] **C** **FAC-1** (started 2026-09-29 20:34 UTC, C; done `39ccad1`, live as `1fa07549`) Rank names, skill labels, plain words for placements and spots.
+- [ ] **C** **FAC-3** (found 29 September in FAC-1's live check) The Faction Journal's quest list
+      shows each quest's internal key and journal stages under its name ("fg_alofsfarm ·
+      Finishes: 100,110"). Show the name only, or say in words when the quest ends; test with
+      a faction that has quests (FAC-1's page test used none).
 - [ ] **C** **MOB-3** No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
 
 ### 3. Before launch if time allows (can slip without breaking anything)
