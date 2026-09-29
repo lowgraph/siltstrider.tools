@@ -143,3 +143,24 @@ test("Adversarial QA: getToolJsonLd and getToolFaqJsonLd handle malformed and bo
   assert.equal(mod.getToolFaqJsonLd(999), null);
   assert.equal(mod.getToolFaqJsonLd({}), null);
 });
+
+test("structured data never promises that nothing leaves the browser", async () => {
+  // Search engines show FAQ answers and feature lists verbatim. Opening a save is local,
+  // but Cloud Vault stores parsed character data and sign-in goes through Clerk, so an
+  // absolute promise would contradict the About page and the Privacy Policy.
+  const mod = await import(pathToFileURL(path.join(ROOT, "lib", "seo-breadcrumbs.mjs")).href);
+  const everything = JSON.stringify([
+    mod.ABOUT_FAQ_JSON_LD,
+    ...Object.keys(mod.TOOL_SCHEMAS).map(view => mod.getToolJsonLd(view)),
+    ...Object.keys(mod.TOOL_FAQS).map(view => mod.getToolFaqJsonLd(view)),
+  ]);
+  for (const promise of [/zero[- ]tracking/i, /zero server transmission/i, /ever transmitted/i,
+    /no (save )?data or personal information/i, /never (sent|transmitted)/i]) {
+    assert.doesNotMatch(everything, promise);
+  }
+  const safety = mod.ABOUT_FAQ_JSON_LD.mainEntity.find(q => /\.omwsave/.test(q.name));
+  assert.ok(safety, "the About FAQ still answers whether opening a save is safe");
+  assert.match(safety.acceptedAnswer.text, /in your browser/);
+  assert.match(safety.acceptedAnswer.text, /Cloud Vault .* sends the parsed character data/);
+  assert.match(mod.getToolJsonLd("vault").description, /Optional cloud/);
+});
