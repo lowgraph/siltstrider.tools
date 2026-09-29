@@ -32,6 +32,7 @@ import {
   doorChain,
   isPlace,
   placeFromSave,
+  matchPlaces,
   roomsThrough,
   PLACE_PREFIX,
   CELL
@@ -349,18 +350,12 @@ export default function TravelWorkstation() {
     );
   }, [availableStops, destSearch]);
 
-  // Any named place matching a search: tombs, caves, houses, shops. Needs Access to route.
-  const placeMatches = useCallback((query) => {
-    const q = query.trim().toLowerCase();
-    if (!access || q.length < 2) return [];
-    const stops = new Set(availableStops.map((stop) => stop.toLowerCase()));
-    const found = [];
-    for (const record of places.values()) {
-      if (!record.name || stops.has(record.name.toLowerCase()) || !record.name.toLowerCase().includes(q)) continue;
-      found.push(record);
-    }
-    return found.sort((a, b) => a.name.localeCompare(b.name)).slice(0, 30);
-  }, [access, places, availableStops]);
+  // Any named place matching a search: tombs, caves, houses, shops, a town listed once.
+  // Needs Access to route.
+  const placeMatches = useCallback(
+    (query) => (access ? matchPlaces(places, query, { stops: availableStops }) : []),
+    [access, places, availableStops]
+  );
   const originPlaces = useMemo(() => placeMatches(originSearch), [placeMatches, originSearch]);
   const destPlaces = useMemo(() => placeMatches(destSearch), [placeMatches, destSearch]);
   const sealed = useCallback((record) => record.interior && !placePoints(record.key, access).length, [access]);
@@ -765,7 +760,7 @@ export default function TravelWorkstation() {
                       <button
                         type="button"
                         onClick={() => { handleOriginChange(PLACE_PREFIX + record.key); setOriginSearch(""); }}
-                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 hover:bg-surface-9"
+                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 bg-transparent border-0 hover:bg-surface-9"
                       >
                         {record.name}{" "}
                         <span className="text-[10px] text-fg-13">
@@ -824,7 +819,7 @@ export default function TravelWorkstation() {
                       <button
                         type="button"
                         onClick={() => { handleDestinationChange(PLACE_PREFIX + record.key); setDestSearch(""); }}
-                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 hover:bg-surface-9"
+                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 bg-transparent border-0 hover:bg-surface-9"
                       >
                         {record.name}{" "}
                         <span className="text-[10px] text-fg-13">

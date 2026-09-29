@@ -30,6 +30,7 @@ export default function ChangelogView() {
             <li>Travel: Guild Guide legs say they are for Mages Guild members only, and a loaded save that is not in the guild gets a note explaining why its routes leave them out.</li>
             <li>Travel marks the options a loaded save set with &ldquo;from your save&rdquo;, and says when an Intervention is only a scroll (one use).</li>
             <li>The Gear Advisor no longer suggests stealing unless you tick &ldquo;Steal early gear&rdquo;.</li>
+            <li>Travel&apos;s place search lists a town that spans several map cells once, and its buttons match the page instead of the browser&apos;s grey.</li>
           </ul>
         </section>
 
