@@ -56,7 +56,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** **BLD-1** (started 2026-09-29 18:07 UTC, C; done `dd01435`, live as `8da9cada`) "Steal early gear" off by default.
 - [x] **C** **TRV-3** (started 2026-09-29 18:15 UTC, C; done `2af1e95`) The Places buttons lose the browser grey; merge or disambiguate
       same-named exterior cells ("Pelagiad" twice).
-- [ ] **C** **HOME-2 / SITE-4 (label)** "Example character — make it yours" until the player
+- [ ] **C** **HOME-2 / SITE-4 (label)** (started 2026-09-29 18:30 UTC, C) "Example character — make it yours" until the player
       changes or loads one, on the home card and every "Active character" bar.
 - [ ] **C** **Claims** Drop "inter-faction standing" (FAC-2), and "verified engine formulas"
       and "exact potion" on the home Alchemy card (LAUNCH_POSTS, Claims removed).
