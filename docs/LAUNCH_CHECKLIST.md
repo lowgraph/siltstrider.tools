@@ -60,9 +60,16 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       changes or loads one, on the home card and every "Active character" bar.
 - [x] **C** **Claims** (started 2026-09-29 18:31 UTC, C; done `80240d5`, live as `3daf4aa0`) Drop "inter-faction standing" (FAC-2), and "verified engine formulas"
       and "exact potion" on the home Alchemy card (LAUNCH_POSTS, Claims removed).
-- [ ] **C** **SITE-1** Apply the decided names in nav, headings, buttons, cards and the
+- [ ] **C** **SITE-1** (started 2026-09-29 19:21 UTC, C; branch `launch/site-1-names`) Apply the decided names in nav, headings, buttons, cards and the
       footer; long SEO titles stay as page titles only. The social card's tiles say "Build
       Optimizer" and "Travel Optimizer", so it is regenerated at the freeze.
+- [ ] **C** **LINK-1** (found 29 September) A shared build link opens in the visitor's stored
+      world, not the link's: a vanilla link opened by someone who chose TR or TR + ARCE shows
+      the character in that world. The link's world must win. First-time visitors at launch
+      have nothing stored, so it mostly reaches returning TR players sharing builds. Cause:
+      the link effect compares against the shell while the page hydrates (still vanilla).
+      Hydration tests: a vanilla link over a TR + ARCE store, a TR link over vanilla, an ARCE
+      link, a link without a world.
 - [ ] **O** Real sign-in test on production (LAUNCH_VERIFICATION §5 item 6), and delete the
       10:54 save and save the Khajiit again, if not done already.
 
