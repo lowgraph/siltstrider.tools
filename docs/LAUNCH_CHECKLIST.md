@@ -68,7 +68,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 
 ### 2. Before launch: clarity
 
-- [ ] **C** **SITE-2 / VLT-1** Every "invariants" or "rules" box becomes a closed "How this is
+- [ ] **C** **SITE-2 / VLT-1** (started 2026-09-29 19:08 UTC, Codex; branch `launch/site-2-vlt-1-disclosures`) Every "invariants" or "rules" box becomes a closed "How this is
       calculated" disclosure in plain words. On phones this lifts Travel's route about a
       screen (most of TRV-4's pain until the full restructure).
 - [ ] **C** **CALC-1** No results before input: dashes and a prompt.
