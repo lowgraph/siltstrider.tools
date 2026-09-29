@@ -536,6 +536,42 @@ test("Go-to buttons navigate: Back to Character Builder, and the vault's shortcu
   }
 });
 
+test("Challenge Runs has one row of difficulty presets, beside the settings, and it says which is on (CHL-1)", async () => {
+  const dom = setupDom("/challenge");
+  const root = createRoot(dom.window.document.getElementById("root"));
+  const doc = dom.window.document;
+  const NAMES = ["Standard", "Hardcore", "Cursed", "Custom"];
+  const presets = () => [...doc.querySelectorAll("main button")].filter((b) => NAMES.includes(b.textContent.trim()));
+  const pressed = () => presets().filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => b.textContent.trim());
+  const pick = async (id, value) => {
+    const select = doc.getElementById(id);
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(dom.window.HTMLSelectElement.prototype, "value").set.call(select, value);
+      select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+    });
+  };
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    assert.deepEqual(presets().map((b) => b.textContent.trim()), NAMES, "each preset once");
+    const group = presets()[0].closest('[role="group"]');
+    assert.equal(doc.getElementById(group.getAttribute("aria-labelledby")).textContent.trim(), "Difficulty Preset");
+    assert.ok(group.closest(".run-configurator"), "the row sits with the counts and bands a preset sets");
+    assert.deepEqual([...doc.querySelectorAll(".seed-bar-panel button")].map((b) => b.textContent.trim()), ["Load", "Share"], "the seed bar keeps to the seed");
+
+    assert.deepEqual(pressed(), ["Standard"], "one preset is on, and it says so");
+    await act(async () => presets()[1].click());
+    assert.deepEqual(pressed(), ["Hardcore"]);
+    assert.equal(doc.getElementById("cfg-rest-count").value, "4", "Hardcore's restrictions apply");
+    assert.equal(doc.getElementById("cfg-obj-count").value, "3", "and its objectives");
+
+    await pick("cfg-rest-count", "1");
+    assert.deepEqual(pressed(), ["Custom"], "a count picked by hand makes the run Custom");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Challenge Runs: the seed box shows the run's seed, and loading it under other settings rolls the same run", async () => {
   const dom = setupDom("/challenge");
   const root = createRoot(dom.window.document.getElementById("root"));

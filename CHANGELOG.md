@@ -27,6 +27,7 @@
 - **Shared links open in their own world:** a vanilla build or challenge link opened by someone who uses TR or TR + ARCE now switches to vanilla, as the link says, instead of showing the character in your world. A link that names no world keeps yours (a challenge link used to reset it to vanilla).
 - **No answers before a question:** Spellmaking, Enchanting and Alchemy show a dash and say what to add until there is something to calculate. They used to show a 100% cast chance, a Destruction school and 1 g prices for a spell with no effect, a self-enchant chance for no enchantment, and a brew chance and 0 g with no ingredients.
 - Effect lists in Spellmaking and Enchanting show base costs as the game does (Light: base 0.2, not 0.20000000298023224).
+- **One row of difficulty presets:** Challenge Runs showed Standard, Hardcore, Cursed and Custom twice, in the seed bar and again in the settings. They are now only in the settings, beside the counts and difficulty bands a preset sets, and screen readers hear which one is on.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

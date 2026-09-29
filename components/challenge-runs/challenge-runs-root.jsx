@@ -284,8 +284,6 @@ export default function ChallengeRunsRoot() {
         seedExact={run.seedExact !== false}
         seedError={seedError}
         onApplySeed={handleLoadSeed}
-        activePreset={preset}
-        onSelectPreset={handleSelectPreset}
         onCopyLink={handleCopyPermalink}
         copiedLink={copiedPermalink}
         shareLink={shareLink}

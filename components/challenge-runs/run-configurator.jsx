@@ -58,11 +58,11 @@ export default function RunConfigurator({
         )}
       </p>
 
-      {/* Difficulty Presets Strip */}
-      <div className="border-t border-line-11 pt-4">
-        <label className="text-xs uppercase tracking-widest font-serif font-bold text-accent block mb-2">
+      {/* Difficulty Presets Strip: the page's only one, beside the settings a preset sets */}
+      <div className="border-t border-line-11 pt-4" role="group" aria-labelledby="cfg-preset-label">
+        <span id="cfg-preset-label" className="text-xs uppercase tracking-widest font-serif font-bold text-accent block mb-2">
           Difficulty Preset
-        </label>
+        </span>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {Object.values(DIFFICULTY_PRESETS).map((p) => {
             const isActive = preset === p.id;
@@ -74,6 +74,7 @@ export default function RunConfigurator({
                   isActive ? "active ring-1 ring-accent text-accent" : "text-fg-7"
                 }`}
                 onClick={() => onSelectPreset(p.id)}
+                aria-pressed={isActive}
                 title={p.description}
               >
                 {p.name}
