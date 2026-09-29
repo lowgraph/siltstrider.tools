@@ -81,18 +81,18 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; done `d8b68f4`, live as `719660ae`; also effect base costs shown as the game does, `d3448b9`) No results before input: dashes and a prompt.
 - [x] **C** **CHL-1** (started 2026-09-29 20:29 UTC, C; done `2fdcb3d`, live as `1fa07549`) One row of difficulty presets.
 - [x] **C** **FAC-1** (started 2026-09-29 20:34 UTC, C; done `39ccad1`, live as `1fa07549`) Rank names, skill labels, plain words for placements and spots.
-- [x] **C** **FAC-3** (found 29 September in FAC-1's live check; started 2026-09-29 23:08 UTC, C; done `ec456a9`, merged `769db3b`, not deployed) The Faction Journal's quest list
+- [x] **C** **FAC-3** (found 29 September in FAC-1's live check; started 2026-09-29 23:08 UTC, C; done `ec456a9`, merged `769db3b`, live as `4951b9b5`) The Faction Journal's quest list
       shows each quest's internal key and journal stages under its name ("fg_alofsfarm ·
       Finishes: 100,110"). Show the name only, or say in words when the quest ends; test with
       a faction that has quests (FAC-1's page test used none).
-- [x] **C** **MOB-3** (started 2026-09-29 23:08 UTC, C; done with SITE-5 `86a0ce1`, merged `769db3b`, not deployed) No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
+- [x] **C** **MOB-3** (started 2026-09-29 23:08 UTC, C; done with SITE-5 `86a0ce1`, merged `769db3b`, live as `4951b9b5`) No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
 
 ### 3. Before launch if time allows (can slip without breaking anything)
 
-- [x] **C** Contrast (started 2026-09-29 20:51 UTC, C; done `241f58f`, merged `b0e5f39`; the Faction Journal's tinted cards fixed in `e34f135`; not deployed) retune `fg-13`–`fg-15` against every panel they sit on (Faction
+- [x] **C** Contrast (started 2026-09-29 20:51 UTC, C; done `241f58f`, merged `b0e5f39`; the Faction Journal's tinted cards fixed in `e34f135`; live as `4951b9b5`) retune `fg-13`–`fg-15` against every panel they sit on (Faction
       Journal, Equipped Loadouts, premade catalog, Challenge, Travel labels), both themes.
-- [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb`, merged `ae152d0`, not deployed).
-- [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9`, merged `384118d`, not deployed).
+- [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb`, merged `ae152d0`, live as `4951b9b5`).
+- [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9`, merged `384118d`, live as `4951b9b5`).
 - [ ] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above).
 - [ ] **O** Usability test with three to five people, using the audit's script; **C** fix
       what three or more hit, and any High finding they confirm.
