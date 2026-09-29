@@ -528,13 +528,13 @@ export default function SpellmakingWorkstation() {
                 type="text"
                 className="bg-surface-1 border border-line-9 px-2 py-0.5 text-xs text-fg-2 placeholder-fg-15 font-serif w-36"
                 placeholder="Search spellmakers..."
-                aria-label="Search spell vendor or teacher"
+                aria-label="Search spellmakers"
                 value={vendorSearch}
                 onChange={(e) => setVendorSearch(e.target.value)}
               />
             </div>
 
-            <div className="max-h-48 overflow-y-auto mw-scrollbar space-y-1.5 pr-1 border border-line-11 p-1 bg-surface-2">
+            <div tabIndex={0} role="region" aria-label="Ranked spellmakers" className="max-h-48 overflow-y-auto mw-scrollbar space-y-1.5 pr-1 border border-line-11 p-1 bg-surface-2">
               {filteredSpellmakers.slice(0, 15).map((sm) => (
                 <div
                   key={sm.id}

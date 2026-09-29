@@ -63,7 +63,11 @@ test('effect labels stay attached to unique controls across retained editors and
     for (const scope of editors) {
       await select(scope.querySelector('select[aria-label="Effect 1"]'), 'fire');
       await select(labels(scope).find(label => label.textContent === 'Range').control, 'target');
-      assert.ok(scope.querySelector('input[aria-label="Search spell vendor or teacher"]'));
+      const vendors = scope.classList.contains('enchanting-workstation') ? 'enchanters' : 'spellmakers';
+      assert.ok(scope.querySelector(`input[aria-label="Search ${vendors}"]`), `the ${vendors} search is named for what it searches`);
+      const list = scope.querySelector(`[role="region"][aria-label="Ranked ${vendors}"]`);
+      assert.ok(list, `the ${vendors} list is a named region`);
+      assert.equal(list.tabIndex, 0, 'a scrolling list a keyboard can reach');
     }
     checkLabels(10);
     const scope = editors[0];

@@ -322,7 +322,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
               disabled={!shell.ready}
               aria-haspopup="true"
               aria-expanded={calcOpen}
-              aria-controls="react-calc-dropdown-menu"
+              aria-controls={calcOpen ? "react-calc-dropdown-menu" : undefined}
               aria-label="Calculators menu"
               onClick={() => { setCalcOpen(!calcOpen); setMoreOpen(false); }}
               onKeyDown={e => handleDropdownBtnKeyDown(e, 'calc')}
@@ -363,7 +363,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
               disabled={!shell.ready}
               aria-haspopup="true"
               aria-expanded={moreOpen}
-              aria-controls="react-more-dropdown-menu"
+              aria-controls={moreOpen ? "react-more-dropdown-menu" : undefined}
               aria-label="More pages menu"
               onClick={() => { setMoreOpen(!moreOpen); setCalcOpen(false); }}
               onKeyDown={e => handleDropdownBtnKeyDown(e, 'more')}

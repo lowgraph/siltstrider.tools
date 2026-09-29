@@ -215,15 +215,17 @@ export default function LevelStepEditor({
         <div className="manual-edit-disclosure pt-1">
           <button
             type="button"
-            className="text-xs font-serif font-bold text-accent hover:underline flex items-center gap-1"
+            className="bg-transparent border-0 p-0 text-xs font-serif font-bold text-accent hover:underline flex items-center gap-1"
+            aria-expanded={isManualEditOpen}
+            aria-controls={isManualEditOpen ? "manual-step-form" : undefined}
             onClick={() => setIsManualEditOpen(!isManualEditOpen)}
           >
-            <span>{isManualEditOpen ? "▾" : "▸"}</span>
+            <span aria-hidden="true">{isManualEditOpen ? "▾" : "▸"}</span>
             <span>Manual Step Override &amp; Attribute Allocator</span>
           </button>
 
           {isManualEditOpen && (
-            <div className="manual-step-form mt-2 p-3 bg-surface-2 border border-line-11 space-y-3">
+            <div id="manual-step-form" className="manual-step-form mt-2 p-3 bg-surface-2 border border-line-11 space-y-3">
               <p className="text-[11px] text-fg-11 m-0">
                 Manually configure the 3 attribute picks for this level. Multipliers are validated against governing skill increases.
               </p>

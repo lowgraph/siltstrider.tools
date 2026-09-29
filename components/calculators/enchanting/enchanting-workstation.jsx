@@ -318,10 +318,10 @@ export default function EnchantingWorkstation() {
             </div>
 
             <div>
-              <label className="text-xs uppercase font-serif font-bold text-fg-7 block mb-1">
+              <label id="enchant-type-label" className="text-xs uppercase font-serif font-bold text-fg-7 block mb-1">
                 Enchantment Type
               </label>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-3 gap-1" role="group" aria-labelledby="enchant-type-label">
                 {[
                   { id: "used", label: "When Used" },
                   { id: "strike", label: "On Strike" },
@@ -331,6 +331,7 @@ export default function EnchantingWorkstation() {
                     key={t.id}
                     type="button"
                     disabled={t.disabled}
+                    aria-pressed={enchantType === t.id}
                     className={`py-1.5 px-1 text-[11px] font-serif font-bold border transition-colors ${
                       enchantType === t.id
                         ? "bg-surface-18 border-accent text-accent"
@@ -582,13 +583,13 @@ export default function EnchantingWorkstation() {
                 type="text"
                 className="bg-surface-1 border border-line-9 px-2 py-0.5 text-xs text-fg-2 placeholder-fg-15 font-serif w-36"
                 placeholder="Search enchanters..."
-                aria-label="Search spell vendor or teacher"
+                aria-label="Search enchanters"
                 value={vendorSearch}
                 onChange={(e) => setVendorSearch(e.target.value)}
               />
             </div>
 
-            <div className="max-h-48 overflow-y-auto mw-scrollbar space-y-1.5 pr-1 border border-line-11 p-1 bg-surface-2">
+            <div tabIndex={0} role="region" aria-label="Ranked enchanters" className="max-h-48 overflow-y-auto mw-scrollbar space-y-1.5 pr-1 border border-line-11 p-1 bg-surface-2">
               {filteredEnchanters.slice(0, 15).map((enc) => (
                 <div
                   key={enc.id}

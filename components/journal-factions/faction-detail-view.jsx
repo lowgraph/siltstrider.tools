@@ -434,7 +434,7 @@ export default function FactionDetailView({
             No specific journal quests found registered under this faction prefix.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+          <div tabIndex={0} role="region" aria-label="Associated faction quests" className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
             {quests.map(q => {
               const status = q.progress?.status || 'unstarted';
               return (
