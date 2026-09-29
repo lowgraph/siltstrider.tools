@@ -433,14 +433,14 @@ export default function FactionDetailView({
       {/* Linked Faction Quests */}
       <section>
         <h3 className="text-base font-serif font-bold text-accent mb-2 flex items-center justify-between">
-          <span>Associated Faction Quests ({quests.length})</span>
+          <span>Faction Quests ({quests.length})</span>
         </h3>
         {quests.length === 0 ? (
           <div className="p-4 text-xs font-serif text-fg-14 bg-surface-6 border border-line-9 italic">
-            No specific journal quests found registered under this faction prefix.
+            No quests found for this faction.
           </div>
         ) : (
-          <div tabIndex={0} role="region" aria-label="Associated faction quests" className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+          <div tabIndex={0} role="region" aria-label="Faction quests" className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
             {quests.map(q => {
               const status = q.progress?.status || 'unstarted';
               return (
@@ -449,11 +449,8 @@ export default function FactionDetailView({
                   className="p-2.5 bg-surface-8 border border-line-9 flex items-center justify-between gap-2"
                 >
                   <div className="truncate">
-                    <span className="font-serif text-xs font-medium text-fg-2 block truncate">
+                    <span className="font-serif text-xs font-medium text-fg-2 block truncate" title={q.name}>
                       {q.name}
-                    </span>
-                    <span className="text-[10px] text-fg-14 font-mono">
-                      {q.key} {q.finishesAt?.length > 0 ? `· Finishes: ${q.finishesAt.join(',')}` : ''}
                     </span>
                   </div>
 
@@ -464,7 +461,7 @@ export default function FactionDetailView({
                       ? "bg-surface-19 text-accent border-warning-line"
                       : "bg-surface-3 text-fg-14 border-line-11"
                   }`}>
-                    {status === 'finished' ? "Completed" : status === 'active' ? `Active (Stage ${q.progress.stage})` : "Available"}
+                    {status === 'finished' ? "Completed" : status === 'active' ? "In progress" : "Available"}
                   </span>
                 </div>
               );

@@ -44,6 +44,9 @@ export default function ChangelogView() {
             <li>The dimmer small print on faction ranks, loadout stats, premade builds, challenge restrictions and travel labels is brighter and easier to read, in both themes.</li>
             <li>The Level Simulator&apos;s buttons for reordering attribute priorities are bigger and easier to tap.</li>
             <li>The Level Simulator and Cloud Vault headings nest in order, so screen reader users can move between sections easily.</li>
+            <li>Faction quests are listed by name with a plain status (completed, in progress or available), without internal keys or stage numbers.</li>
+            <li>No Ctrl K search hint on phones and tablets.</li>
+            <li>The world switch explains TR + ARCE: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes.</li>
           </ul>
         </section>
 

@@ -322,3 +322,22 @@ test('promotion shortfalls read in plain words, with skill names, not ids (FAC-1
   assert.ok(thin.deficits.every(d => !/undefined|_/.test(d)), thin.deficits.join(' | '));
   assert.match(thin.deficits.join(' | '), /A second favoured skill at 5: None is 0/);
 });
+
+test('the faction quest list keeps to named quests, as the game\'s own list does (FAC-3)', async () => {
+  const { getFactionQuests } = await import('../lib/faction-math.mjs');
+  const catalog = { records: [
+    { key: 'mg_flowers', name: 'Four Types of Flowers', trackable: true, stages: [10, 100], finishesAt: [100] },
+    { key: 'mg_advancement', name: null, trackable: false, stages: [10, 20], finishesAt: [] },
+    { key: 'mg_blank', name: '   ', trackable: false, stages: [10], finishesAt: [] },
+    { key: 'mg_number', name: 42, trackable: false, stages: [10], finishesAt: [] },
+    { key: 'mg_padded', name: '  Ceramic Bowl  ', trackable: true, stages: [10, 100], finishesAt: [100] }
+  ] };
+  const quests = getFactionQuests('mages guild', catalog, [
+    { id: 'mg_advancement', stage: 20 },
+    { id: 'mg_padded', stage: 10 }
+  ]);
+  assert.deepEqual(quests.map(q => q.name), ['Four Types of Flowers', 'Ceramic Bowl'], 'a journal note without a name is not a quest, even one the save has reached');
+  assert.ok(quests.every(q => q.name !== q.key), 'no quest falls back to its internal key');
+  assert.deepEqual(quests.map(q => q.progress?.status ?? 'unstarted'), ['unstarted', 'active']);
+  assert.deepEqual(getFactionQuests('mages guild', { records: [{ key: 'mg_x' }] }), [], 'a record with no name field at all');
+});

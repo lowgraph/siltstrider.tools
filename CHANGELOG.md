@@ -32,6 +32,9 @@
 - **Easier-to-read small print:** the dimmer text on faction ranks and requirements, equipped loadout stats, premade builds, challenge restrictions and travel labels is brighter, so it reads clearly against every panel it sits on, in both the Modern UI and Morrowind UI themes. The Challenge Runs presets you have not picked are no longer faded.
 - **Bigger Level Simulator buttons:** the buttons that move an attribute up or down your priority list are larger, so they are easier to tap.
 - **A tidier outline for screen readers:** the Level Simulator's and Cloud Vault's headings now nest in order, so someone using a screen reader can jump from section to section without gaps.
+- **Faction quests by name:** the Faction Journal's quest list shows each quest's name and whether it is completed, in progress or available, without internal keys or journal stage numbers ("fg_alofsfarm · Finishes: 100,110", "Active (Stage 30)"). Journal notes that have no quest name, such as the Mages Guild's reminder to pay dues, are left out, as the game's own quest list does.
+- **Phones and tablets:** the Ctrl K / ⌘K search hint no longer shows where there is no keyboard to press it, on the home page or in the header; a touchscreen laptop keeps it.
+- **TR + ARCE explained:** the world switch says what TR + ARCE is: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes. It shows in the phone menu, in the button's tooltip, and to screen readers.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

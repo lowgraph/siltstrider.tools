@@ -558,6 +558,7 @@ a:hover { color: #f0d48a; }
 .drawer-label { display: none; }
 .drawer-sections-mobile { display: none; }
 .drawer-only { display: none; }
+.world-help { margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--color-fg-9); }
 .desktop-only { display: inline-flex; }
 .nav-dropdown-btn { display: inline-flex; align-items: center; gap: 5px; }
 .nav-dropdown-menu[hidden] { display: none !important; }
@@ -2518,9 +2519,6 @@ body.view-travel .hero {
   ::view-transition-old(root),
   ::view-transition-new(root) { animation: none; }
 }
-@media (max-width: 899px) {
-  .search-trigger kbd { display: none; }
-}
 
 .search-overlay {
   position: fixed;
@@ -2896,6 +2894,13 @@ body.view-travel .hero {
   padding: 2px 5px;
   border: 1px solid var(--color-line-7);
   color: var(--color-fg-9);
+}
+/* The Ctrl K / ⌘K hints are for keyboards (MOB-3): hidden on narrow screens and wherever
+   the main pointer is a finger, such as phones and tablets. A touchscreen laptop keeps
+   them, as its main pointer is still the mouse. */
+@media (max-width: 899px), (hover: none) and (pointer: coarse) {
+  .search-trigger kbd,
+  .home-hub-root .home-news kbd { display: none; }
 }
 #panel-home .home-hub-root .home-title,
 .home-hub-root .home-title {

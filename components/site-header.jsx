@@ -44,7 +44,7 @@ const CALC_VIEWS = CALC_MENU.map(item => item.view);
 const WORLD_CHOICES = [
   { profile: 'vanilla', label: 'Vanilla', id: 'react-world-vanilla', title: 'Morrowind, Tribunal and Bloodmoon' },
   { profile: 'tr', label: 'Tamriel Rebuilt', id: 'react-world-tr', title: 'Tamriel Rebuilt' },
-  { profile: 'tr_arce', label: 'TR + ARCE', id: 'react-world-arce', title: 'Tamriel Rebuilt with ARCE: extra races and classes' }
+  { profile: 'tr_arce', label: 'TR + ARCE', id: 'react-world-arce', title: 'Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes', help: 'world-arce-help' }
 ];
 const MORE_VIEWS = MORE_MENU.map(item => item.view);
 
@@ -456,7 +456,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
             {/* The three worlds side by side: TR + ARCE is a world of its own, not a
                 toggle that appears only after picking Tamriel Rebuilt. */}
             <div className="seg" role="group" aria-label="World">
-              {WORLD_CHOICES.map(({ profile, label, id, title }) => {
+              {WORLD_CHOICES.map(({ profile, label, id, title, help }) => {
                 const on = (shell.profile || 'vanilla') === profile;
                 return (
                   <button
@@ -465,6 +465,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
                     id={id}
                     className={'seg-btn' + (on ? ' on' : '')}
                     title={title}
+                    aria-describedby={help}
                     disabled={!shell.ready}
                     aria-pressed={on}
                     onClick={() => { if (!on) shell.setProfile(profile); }}
@@ -474,6 +475,8 @@ export default function SiteHeader({ shell: propShell } = {}) {
                 );
               })}
             </div>
+            {/* Read with the TR + ARCE button, and shown in the phone menu (SITE-5). */}
+            <p id="world-arce-help" className="world-help drawer-only">TR + ARCE is Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes.</p>
           </div>
         </div>
       </div>

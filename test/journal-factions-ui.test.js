@@ -291,6 +291,36 @@ test("FactionDetailView names ranks, counts them from 1 and shows skills by name
   }
 });
 
+test("FactionDetailView lists quests by name and plain status, without keys or stage numbers (FAC-3)", async () => {
+  const dom = setupDom();
+  const container = dom.window.document.getElementById("root");
+  const root = createRoot(container);
+  const character = { attributes: { Strength: 30, Endurance: 30 }, skills: {} };
+  const render = (quests) => act(async () => root.render(React.createElement(FactionDetailView, {
+    faction: mockFightersGuild, character, membership: null, joinedFactionKeys: [], quests, onUpdateMembership: () => {}
+  })));
+  try {
+    await render([
+      { key: "fg_rathunt", name: "The Rat Problem", finishesAt: [100], progress: { stage: 100, finished: true, status: "finished" } },
+      { key: "fg_alofsfarm", name: "Alof's Farm", finishesAt: [100, 110], progress: { stage: 30, finished: false, status: "active" } },
+      { key: "fg_egg", name: "Egg Poachers", finishesAt: [100], progress: null }
+    ]);
+    const list = container.querySelector('[role="region"][aria-label="Faction quests"]');
+    assert.ok(list, "the list is a named region");
+    const rows = [...list.children].map((row) => row.textContent);
+    assert.deepEqual(rows, ["The Rat ProblemCompleted", "Alof's FarmIn progress", "Egg PoachersAvailable"]);
+    assert.doesNotMatch(container.textContent, /fg_|Finishes|Stage \d/, "no keys or stage numbers");
+    assert.match(container.textContent, /Faction Quests \(3\)/);
+
+    await render([]);
+    assert.match(container.textContent, /No quests found for this faction\./);
+    assert.doesNotMatch(container.textContent, /prefix|registered/);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("FactionDetailView displays mutual exclusivity warning for rival Great Houses", async () => {
   const dom = setupDom();
   const container = dom.window.document.getElementById("root");
