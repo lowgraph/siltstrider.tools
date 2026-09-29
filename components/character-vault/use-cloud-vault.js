@@ -6,6 +6,7 @@ import { readSaveFile } from "../../lib/omwsave-import.mjs";
 import { duplicateCloudSave, generateBuildShareUrl } from "../../lib/character-vault.mjs";
 
 import { ensureClerk, ensureClerkIfSignedIn } from "../../lib/clerk-browser.mjs";
+import { SIGN_IN_EVENT } from "../../lib/sign-in-handoff.mjs";
 
 const LOCAL_SAVES_KEY = "siltstrider-saved-characters";
 
@@ -578,6 +579,8 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
   const openAuth = useCallback(async (method) => {
     setErrorMessage(null);
     try {
+      // Google and Discord reload the page on the way back; keep the character for it.
+      window.dispatchEvent(new Event(SIGN_IN_EVENT));
       const clerk = await ensureClerk();
       clerk[method]({ forceRedirectUrl: window.location.href });
     } catch (error) { setErrorMessage(error.message); }

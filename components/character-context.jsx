@@ -11,6 +11,8 @@ import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
 import { decodeShareUrl } from "../lib/permalink-codec.mjs";
 import { sanitizeBuild } from "../lib/character-vault.mjs";
 import { rememberSave, recallSave, forgetSave } from "../lib/active-save-store.mjs";
+import { hasClerkSession } from "../lib/clerk-browser.mjs";
+import { SIGN_IN_EVENT, keepCharacterForSignIn, takeCharacterAfterSignIn } from "../lib/sign-in-handoff.mjs";
 import {
   buildFromSave,
   loadoutFromSave,
@@ -240,6 +242,26 @@ export function CharacterProvider({ children }) {
     window.addEventListener("popstate", openLink);
     return () => window.removeEventListener("popstate", openLink);
   }, [shell, service]);
+
+  // Signing in with Google or Discord leaves the page and comes back (sign-in-handoff.mjs).
+  // The sign-in buttons announce it; a plain character is kept for that round trip and
+  // put back on the return. A loaded save needs nothing: it already survives a reload,
+  // and it is what the Vault saves. A shared build link opened with the page still wins.
+  const activeSaveRef = useRef(activeSave);
+  activeSaveRef.current = activeSave;
+  // The address as the page opened: a shared link is cleaned from the address bar by
+  // the time effects run, so it is read during the first render.
+  const openedAt = useRef(typeof window === "undefined" ? "" : window.location.href || "");
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+    const kept = takeCharacterAfterSignIn({ signedIn: hasClerkSession(window.document) });
+    if (kept && !sanitizeBuild(decodeShareUrl(openedAt.current).build)) {
+      setBuild((prev) => ({ ...kept, world: prev.world, arce: prev.arce }));
+    }
+    const keep = () => { if (!activeSaveRef.current) keepCharacterForSignIn(buildRef.current); };
+    window.addEventListener(SIGN_IN_EVENT, keep);
+    return () => window.removeEventListener(SIGN_IN_EVENT, keep);
+  }, [setBuild]);
 
   const value = useMemo(
     () => ({
