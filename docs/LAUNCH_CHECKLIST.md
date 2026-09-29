@@ -52,8 +52,8 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** **TRV-1 (as decided)** (started 2026-09-29 17:47 UTC, C; done `62b8219`, live as `6be6a2d4`) With a loaded save that is not a Mages Guild member, a
       warning by the route options: Guild Guides work from Mages Guild halls and need
       membership. Keep today's defaults without a save.
-- [ ] **C** **TRV-6 (label)** (started 2026-09-29 18:01 UTC, C) Mark the options a loaded save set: "from your save".
-- [ ] **C** **BLD-1** "Steal early gear" off by default.
+- [x] **C** **TRV-6 (label)** (started 2026-09-29 18:01 UTC, C; done `d1c0961`) Mark the options a loaded save set: "from your save".
+- [ ] **C** **BLD-1** (started 2026-09-29 18:07 UTC, C) "Steal early gear" off by default.
 - [ ] **C** **TRV-3** The Places buttons lose the browser grey; merge or disambiguate
       same-named exterior cells ("Pelagiad" twice).
 - [ ] **C** **HOME-2 / SITE-4 (label)** "Example character — make it yours" until the player
