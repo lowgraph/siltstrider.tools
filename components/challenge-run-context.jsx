@@ -90,10 +90,15 @@ function dropRunFromAddress() {
   try {
     const raw = window.location.href || (window.location.pathname + window.location.search);
     const { view, world, arce } = decodeShareUrl(raw);
-    try {
-      window.localStorage.setItem('mw-world', world);
-      window.localStorage.setItem('mw-arce', arce ? '1' : '0');
-    } catch {}
+    // The link's world wins over the one kept in this browser; a link that names none
+    // (it would decode as vanilla) leaves the kept one alone.
+    const query = new URL(raw, window.location.origin).searchParams;
+    if (query.has('world') || query.has('arce')) {
+      try {
+        window.localStorage.setItem('mw-world', world);
+        window.localStorage.setItem('mw-arce', arce ? '1' : '0');
+      } catch {}
+    }
     const cleanPath = view === "home" ? "/" : "/" + view;
     window.history.replaceState({ ...(window.history.state || {}), view }, "", cleanPath);
     window.dispatchEvent(new Event("silt-shell-change"));

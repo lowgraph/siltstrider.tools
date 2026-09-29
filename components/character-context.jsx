@@ -5,7 +5,7 @@ import { validateSave } from "../lib/omwsave-import.mjs";
 import {saveMemberships} from "../lib/faction-memberships.mjs";
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { computeSheet, swapSkill as mathSwapSkill } from "../lib/character-math.mjs";
-import { readVisitorProfile, useShell } from "./shell-context";
+import { readStoredProfile, readVisitorProfile, useShell } from "./shell-context";
 import { getGameDataLoader } from "./use-game-data";
 import { createCharacterCatalogService } from "../lib/character-catalogs.mjs";
 import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
@@ -256,8 +256,13 @@ export function CharacterProvider({ children, initialBuild = null }) {
       if (!linked) return;
       setActiveSave(null);
       forgetSave();
-      setBuild((prev) => ({ ...DEFAULT_BUILD, world: decoded.world || prev.world, arce: decoded.arce ?? prev.arce, ...linked }));
-      if (decoded.profile && typeof shell?.setProfile === "function" && shell.profile !== decoded.profile) {
+      // The link's world wins over the one this browser kept; a link that names none keeps it.
+      // Compared with what is kept, not with the shell: while the page hydrates the shell
+      // still shows the prerender's vanilla, so a vanilla link never switched a TR visitor.
+      const query = new URL(raw, window.location.origin).searchParams;
+      const namesWorld = query.has("world") || query.has("arce");
+      setBuild((prev) => ({ ...DEFAULT_BUILD, world: namesWorld ? decoded.world : prev.world, arce: namesWorld ? decoded.arce : prev.arce, ...linked }));
+      if (namesWorld && typeof shell?.setProfile === "function" && readStoredProfile().profile !== decoded.profile) {
         shell.setProfile(decoded.profile);
       }
       try {

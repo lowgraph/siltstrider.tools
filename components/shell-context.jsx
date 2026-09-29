@@ -94,6 +94,12 @@ export function readVisitorProfile() {
   return { world, arce, profile };
 }
 
+// The world this browser kept (the address is ignored): what the shell falls back to once
+// a shared link's address is cleaned.
+export function readStoredProfile() {
+  return getStoredProfile();
+}
+
 const ShellContext = createContext(null);
 
 export function ShellProvider({ children, initialView = 'home' }) {

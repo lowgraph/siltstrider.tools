@@ -131,6 +131,55 @@ test('a shared build link still wins over the random start', async () => {
   }));
 });
 
+// LINK-1: a shared link's world wins over the one this browser kept, and a link that
+// names no world leaves the kept one alone.
+async function linkTo(build, world, arce) {
+  const { encodeShareUrl } = await import('../lib/permalink-codec.mjs');
+  const url = new URL('https://siltstrider.tools' + encodeShareUrl({ view: 'builder', world: world || 'vanilla', arce: Boolean(arce), build }));
+  if (!world) { url.searchParams.delete('world'); url.searchParams.delete('arce'); }
+  return url.href;
+}
+const kept = () => ({ world: window.localStorage.getItem('mw-world'), arce: window.localStorage.getItem('mw-arce') });
+const NORD = { race: 'Nord', sign: 'The Warrior', gender: 'Female', className: 'Custom', name: 'Linked Nord' };
+const SUTHAY = { race: 'Khajiit (Suthay)', sign: 'The Thief', gender: 'Male', className: 'Custom', name: 'Linked Suthay' };
+
+test('a vanilla link opens in vanilla for someone who chose TR + ARCE', async () => {
+  const url = await linkTo(NORD, 'vanilla', false);
+  await hydrated(url, { 'mw-world': 'tr', 'mw-arce': '1' }, async (character, shell) => {
+    const { build } = character();
+    assert.equal(build.name, 'Linked Nord');
+    assert.deepEqual([build.world, build.arce], ['vanilla', false], 'the character is in the link\'s world');
+    assert.deepEqual([shell().world, shell().arce], ['vanilla', false], 'and so is the site');
+    assert.deepEqual(kept(), { world: 'vanilla', arce: '0' }, 'the link\'s world is kept, as a switch would be');
+    assert.equal(window.location.search, '', 'the address bar is clean');
+  });
+});
+
+test('a TR link opens in TR, and an ARCE link keeps its ARCE race, over a vanilla store', async () => {
+  await hydrated(await linkTo(NORD, 'tr', false), { 'mw-world': 'vanilla', 'mw-arce': '0' }, async (character, shell) => {
+    assert.deepEqual([character().build.world, character().build.arce], ['tr', false]);
+    assert.deepEqual([shell().world, shell().arce], ['tr', false]);
+  });
+  await hydrated(await linkTo(SUTHAY, 'tr', true), {}, async (character, shell) => {
+    const { build } = character();
+    assert.equal(build.race, 'Khajiit (Suthay)', 'the ARCE race survives');
+    assert.deepEqual([build.world, build.arce], ['tr', true]);
+    assert.equal(shell().arce, true);
+  });
+});
+
+test('a link that names no world opens the character in the world this browser kept', async () => {
+  const url = await linkTo(NORD, null);
+  assert.doesNotMatch(url, /world=|arce=/);
+  await hydrated(url, { 'mw-world': 'tr', 'mw-arce': '1' }, async (character, shell) => {
+    const { build } = character();
+    assert.equal(build.name, 'Linked Nord');
+    assert.deepEqual([build.world, build.arce], ['tr', true]);
+    assert.deepEqual([shell().world, shell().arce], ['tr', true]);
+    assert.deepEqual(kept(), { world: 'tr', arce: '1' }, 'nothing kept is changed');
+  });
+});
+
 test('leaving ARCE swaps an untouched random premade, but keeps a character the player made', async () => {
   const { CANONICAL_RACES, ARCE_BUILDS } = await premades();
   const arceOnly = ARCE_BUILDS.find(b => !CANONICAL_RACES.includes(b.race));
