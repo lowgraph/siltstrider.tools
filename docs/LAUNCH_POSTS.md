@@ -51,10 +51,7 @@ it. Answers change what you post: record them here.
 
 > Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. I've asked the r/OpenMW moderators too. Would it be OK to share it on this server next week, and in which channel? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
 
-- [ ] **Tamriel Rebuilt Discord.** A private message to one moderator, never several
-      (mass DMs count as spam there).
-
-> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool that reads Tamriel Rebuilt's Poison Song plugins for a travel router, a character builder and a faction journal. I know the server is development-focused and links need authorisation: would it be OK to share it, and in which channel? If not, no problem. I also wanted the team to know it exists, and I'd welcome corrections if it shows anything from TR wrong.
+- [x] **Tamriel Rebuilt Discord: Skipped.** Dropped by owner to avoid server overlap and unwanted spam. TR players are reached directly via r/TamrielRebuilt.
 
 - [ ] **Morrowind Discord.** First pick a House Role in #house-roles (needed for links
       and images). Then post this in #suggestions, which invites questions; it has no
