@@ -17,6 +17,7 @@
 - **The Level Simulator reads fighters correctly:** a fighter who takes Mercantile and Speechcraft as minor skills, like the default character, was treated as a Diplomat and told to raise Personality at its first level-up. It is now a Warrior (Endurance, Strength and Agility first), and the simulator says why it chose an archetype: "Detected from major skills Long Blade, Heavy Armor and Block."
 - **Travel and the Mages Guild:** Guild Guide legs now say they are for Mages Guild members only. With a loaded save whose character is not a member, routes leave Guild Guides out and a note says why: the game's Mages Guild refuses its services to anyone outside the guild.
 - **Travel shows what your save decided:** with a loaded save, the Mages Guild, Conjurer rank, Intervention and carried-item options it set say "from your save" until you change them, and an Intervention you only have as a scroll says so: "a scroll, one use".
+- **No theft unless you ask:** the Gear Advisor's "Steal early gear" option now starts off, like its other options, so its first suggestions are gear you can buy, find or be given.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

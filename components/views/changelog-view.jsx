@@ -29,6 +29,7 @@ export default function ChangelogView() {
             <li>The Level Simulator no longer treats a fighter with Mercantile and Speechcraft as minor skills as a Diplomat, and says which skills it read the archetype from.</li>
             <li>Travel: Guild Guide legs say they are for Mages Guild members only, and a loaded save that is not in the guild gets a note explaining why its routes leave them out.</li>
             <li>Travel marks the options a loaded save set with &ldquo;from your save&rdquo;, and says when an Intervention is only a scroll (one use).</li>
+            <li>The Gear Advisor no longer suggests stealing unless you tick &ldquo;Steal early gear&rdquo;.</li>
           </ul>
         </section>
 

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
-import { buildGearGroups, gearRanking } from '../../lib/gear-rows.mjs';
+import { buildGearGroups, gearRanking, DEFAULT_GEAR_TOGGLES } from '../../lib/gear-rows.mjs';
 import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
 import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
@@ -17,10 +17,12 @@ export default function GearAdvisor(props){
 export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResult, onLoad, onEquip }) {
   const [ranking,setRanking]=useState(null);
   const [rankError,setRankError]=useState(null);
-  const [nearStart, setNearStart] = useState(false);
-  const [stealEarly, setStealEarly] = useState(true);
-  const [endgameEarly, setEndgameEarly] = useState(false);
-  const [darkBrotherhood, setDarkBrotherhood] = useState(false);
+  // Every option starts off, as the gear rows' own defaults: a default reads as advice,
+  // and many players keep a lawful character, so theft is theirs to switch on.
+  const [nearStart, setNearStart] = useState(DEFAULT_GEAR_TOGGLES.nearStart);
+  const [stealEarly, setStealEarly] = useState(DEFAULT_GEAR_TOGGLES.theft);
+  const [endgameEarly, setEndgameEarly] = useState(DEFAULT_GEAR_TOGGLES.endgame);
+  const [darkBrotherhood, setDarkBrotherhood] = useState(DEFAULT_GEAR_TOGGLES.darkBrotherhood);
   const gearToggles = {theft:stealEarly,endgame:endgameEarly,nearStart,darkBrotherhood};
   const [optimizing, setOptimizing] = useState(false);
   const [hasRun, setHasRun] = useState(false);
