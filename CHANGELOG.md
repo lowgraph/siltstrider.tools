@@ -14,6 +14,7 @@
 - **Sturdier share links:** a link naming a JavaScript built-in (such as "constructor") as its race or sign no longer crashes the builder.
 - **Security headers:** other sites cannot frame the pages, and responses send nosniff, a referrer policy and HSTS.
 - **Open source:** the site is AGPL-3.0 and the data pipeline GPL-3.0; game and mod data stay with their owners.
+- **The Level Simulator reads fighters correctly:** a fighter who takes Mercantile and Speechcraft as minor skills, like the default character, was treated as a Diplomat and told to raise Personality at its first level-up. It is now a Warrior (Endurance, Strength and Agility first), and the simulator says why it chose an archetype: "Detected from major skills Long Blade, Heavy Armor and Block."
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

@@ -26,6 +26,7 @@ export default function ChangelogView() {
             <li>An unknown address shows a proper page with links back, and a malformed share link no longer crashes the Character Builder.</li>
             <li>Security headers stop other sites from framing the pages.</li>
             <li>Silt Strider is open source: the site under AGPL-3.0 and the data pipeline under GPL-3.0. Game and mod data belong to their owners.</li>
+            <li>The Level Simulator no longer treats a fighter with Mercantile and Speechcraft as minor skills as a Diplomat, and says which skills it read the archetype from.</li>
           </ul>
         </section>
 

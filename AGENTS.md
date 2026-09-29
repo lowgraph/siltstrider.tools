@@ -47,6 +47,10 @@ and [UI_TRANSFORMATION.md](UI_TRANSFORMATION.md) for the frontend transformation
   - Exported dataset schema changes.
   - Invariants assumed by the downstream Next.js runtime.
   - Exactly which script/command the next agent must run first.
+- **Changelog first.** Before committing, pushing or deploying a major change (anything a
+  visitor would notice: a feature, a fixed wrong answer, a changed default, a removed claim),
+  add it to both changelogs under the day's date: `CHANGELOG.md` and the public page
+  `components/views/changelog-view.jsx`, in plain words for players.
 
 # Technology Stack
 

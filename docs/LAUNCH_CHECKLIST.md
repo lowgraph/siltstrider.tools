@@ -39,7 +39,8 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 ## Priority list
 
 Each item ends the same way: tests (at least three edge cases for a logic change),
-`npm test`, a local commit. Deploy whenever the owner says, per DEPLOYMENT.md, then
+`npm test`, a changelog entry if visitors will notice it (CHANGELOG.md and the public page,
+before the commit; AGENTS.md "Changelog first"), a local commit. Deploy whenever the owner says, per DEPLOYMENT.md, then
 post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separate asks.
 
 ### 1. Before launch: wrong answers and trust
