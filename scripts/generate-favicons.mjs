@@ -90,6 +90,23 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'icon-192.png'), png192);
   fs.writeFileSync(path.join(publicDir, 'icon-512.png'), png512);
   console.log('Created apple-touch-icon.png and PWA icons');
+
+  // 6. Direct PNG Favicons
+  fs.writeFileSync(path.join(publicDir, 'favicon.png'), png32);
+  fs.writeFileSync(path.join(publicDir, 'favicon-32x32.png'), png32);
+  fs.writeFileSync(path.join(publicDir, 'favicon-16x16.png'), png16);
+  fs.writeFileSync(path.join(publicDir, 'favicon-48x48.png'), png48);
+  fs.writeFileSync(path.join(appDir, 'icon.png'), png32);
+  console.log('Created direct PNG favicons (favicon.png, 32x32, 16x16, 48x48, app/icon.png)');
+
+  // 7. Also write to brain artifact directory for direct user access
+  const artifactDir = path.resolve('C:/Users/tiago/.gemini/antigravity/brain/5d2ff1f3-4c49-43c3-957c-82d88b389531');
+  if (fs.existsSync(artifactDir)) {
+    fs.writeFileSync(path.join(artifactDir, 'silt_strider_favicon.png'), png512);
+    fs.writeFileSync(path.join(artifactDir, 'silt_strider_favicon_192x192.png'), png192);
+    fs.writeFileSync(path.join(artifactDir, 'silt_strider_favicon_32x32.png'), png32);
+    console.log('Exported high-res PNG favicons to artifact directory');
+  }
 }
 
 main().catch(err => {
