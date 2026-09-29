@@ -382,15 +382,13 @@ export default function ChallengeRunsRoot() {
         </div>
       )}
 
-      {/* Challenge Engine Mechanics & Permalinks Cue */}
-      <div className="bg-surface-7 p-3 sm:p-4 border border-line-9 text-xs text-fg-7 font-serif space-y-1">
-        <h4 className="text-xs font-serif uppercase tracking-wider text-accent font-bold">
-          Challenge Engine Invariants:
-        </h4>
-        <p className="text-[11px] leading-relaxed">
-          Runs are generated via a <strong>deterministic 32-bit pseudorandom seed engine</strong>. Entering the same seed and difficulty preset always yields identical restrictions, classes, and objectives. Seamlessly hand off rolls to the <strong className="text-fg-2">Character Builder</strong> (<span className="font-mono text-accent">/builder</span>) or share permalink hashes across devices.
-        </p>
-      </div>
+      <details className="calculation-notes">
+        <summary>How this is calculated</summary>
+        <div>
+          <p>A seed is the code used to roll a run. The same seed and settings produce the same character, restrictions and objectives. Changing the settings or keeping parts of a previous run locked can change the result.</p>
+          <p>Use the share link to send the current run to another device or a friend. You can also send its character to the Character Builder.</p>
+        </div>
+      </details>
 
       {/* Searchable Pool Explorer Modal */}
       <PoolBrowserModal

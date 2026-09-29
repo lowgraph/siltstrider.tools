@@ -833,22 +833,22 @@ export default function TravelWorkstation() {
             )}
           </div>
 
-          {/* Network Notes */}
-          <div className="p-3 bg-surface-2 border border-line-11 text-xs text-fg-13 space-y-1 font-serif">
-            <div className="font-bold text-fg-7 uppercase tracking-wider text-[10px]">Transit Engine Rules:</div>
-            <ul className="list-disc list-inside space-y-1 text-[11px] text-fg-11 leading-relaxed">
-              <li>Routes come from a shortest-path search over fewest legs, least gold or fewest in-game hours, each breaking ties with the other two.</li>
-              <li>Fares follow OpenMW&apos;s travel window: distance ÷ fTravelMult (4000), at least 1 gold, times one plus your followers, then haggled with your Mercantile, Personality and Luck. Guild Guides charge a flat 10 gold and take no time; other journeys take distance ÷ fTravelTimeMult (16000) hours.</li>
-              <li>Each provider&apos;s disposition is estimated from their base value, a shared race and your Personality. Faction standing, a bounty or a disease moves it further, so a fare can differ by a few gold.</li>
-              <li>Network covers Silt Striders, Pack Guar caravans, Sky Lamps, carriages, Boats, Guild Guides, Gondoliers, and Mainland River Striders.</li>
-              <li>Guild Guide teleports require active Mages Guild membership (Conjurer rank for restricted mainland conduits).</li>
-              <li>Divine and Almsivi Intervention land where OpenMW&apos;s marker search puts you: the markers on the smallest square ring of cells around you, not the nearest in a straight line, and indoors the first door out. Tick the spells your character can cast; a loaded save ticks them for you.</li>
-              <li>Walking joins any place to the network at your run speed (Speed and Athletics). It follows the ground: round slopes steeper than the 46° OpenMW lets you climb, through the Ghostgate rather than the Ghostfence, and swimming only near land, at your swim speed. What you carry slows you (a loaded save weighs its pack), constant Water Walking walks any water, and constant Levitate flies straight over everything wherever that is quicker. Only the terrain is read, so a boulder or a building can still be in the way. Indoors, the route names the doors on the way in and out.</li>
-              <li>Some rooms have no door outside at all: Mournhold, Sotha Sil, Bamz-Amschend. The route reaches them through their doors from the room a teleport arrives in, and names the rooms passed; time spent indoors is not counted. The place list says how each is reached, and which need a quest teleport.</li>
-              <li>Propylons, dialogue transports (Mournhold) and teleporting items come from the game&apos;s own scripts: a Propylon needs its index, and the Master Index sends every Propylon to Caldera. Tick the items you carry. Quest teleports, taken once in a quest, are left out unless you include them.</li>
-              <li>Mark and Recall are not included.</li>
-            </ul>
-          </div>
+          <details className="calculation-notes">
+            <summary>How this is calculated</summary>
+            <div>
+              <ul>
+                <li>Your choice of fewest legs, least gold or fastest route sets the first priority. If routes tie, the other two measures decide.</li>
+                <li>Fares are estimates based on distance, followers and your Mercantile, Personality and Luck. The provider&apos;s disposition is estimated from their usual value, your Personality and whether you share a race. Factions, bounties and diseases can change the price in-game.</li>
+                <li>Before haggling, the fare is distance ÷ 4,000, at least 1 gold, multiplied by 1 + the number of followers. Guild Guides use a base fare of 10 gold and take no time; other transport takes distance ÷ 16,000 in-game hours. Distance uses the game&apos;s units.</li>
+                <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
+                <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. A loaded save selects known spells or carried scrolls; scrolls are one use, but the planner does not spend them.</li>
+                <li>Walking uses your Speed, Athletics and carried weight. Routes avoid slopes steeper than 46°, pass through the Ghostgate and swim only near land. Constant Water Walking allows walking across water; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
+                <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
+                <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>
+                <li>Mark and Recall are not included.</li>
+              </ul>
+            </div>
+          </details>
         </div>
 
         {/* Right Pane: Turn-by-Turn Route Itinerary Dossier */}

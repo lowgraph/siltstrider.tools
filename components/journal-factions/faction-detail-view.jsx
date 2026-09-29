@@ -467,22 +467,14 @@ export default function FactionDetailView({
         )}
       </section>
 
-      {/* Faction Advancement Invariants & Engine Rules */}
-      <section className="bg-surface-7 p-3 sm:p-4 border border-line-9 space-y-2">
-        <h4 className="text-xs font-serif uppercase tracking-wider text-accent font-bold">
-          Faction Advancement Invariants:
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-fg-7 leading-relaxed font-serif">
-          <div>
-            <span className="text-fg-2 font-bold block mb-0.5">• Rank Thresholds:</span>
-            Advancement requires satisfying <strong>two Favored Attributes</strong>, at least <strong>one Primary Skill</strong>, and <strong>two Secondary Favored Skills</strong> at or above the rank threshold, plus sufficient Faction Reputation.
-          </div>
-          <div>
-            <span className="text-fg-2 font-bold block mb-0.5">• Great House Exclusivity:</span>
-            Joining one Great House (<strong>Hlaalu</strong>, <strong>Redoran</strong>, or <strong>Telvanni</strong>) permanently locks advancement in the other two under standard game rules. A faction's reaction to your own factions shifts its members' disposition toward you, more as your rank rises.
-          </div>
+      <details className="calculation-notes">
+        <summary>How this is calculated</summary>
+        <div>
+          <p>For a promotion, your character needs the required values in the faction&apos;s two favored attributes, one favored skill at the higher threshold, and two other favored skills at the lower threshold. You also need enough reputation with that faction.</p>
+          <p>The journal compares these requirements with your character to show what is missing. Meeting the numbers does not complete any quests or other conditions required in the game.</p>
+          <p>You normally join only one Great House: Hlaalu, Redoran or Telvanni. A faction&apos;s opinion of your factions affects how its members treat you, with a larger effect at higher ranks.</p>
         </div>
-      </section>
+      </details>
     </article>
   );
 }

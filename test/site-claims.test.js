@@ -49,7 +49,7 @@ test('structured data describes the source of the maths without claiming to have
 test('the Faction Journal no longer puts a fixed number on how reactions move disposition', () => {
   const view = fs.readFileSync(path.join(ROOT, 'components', 'journal-factions', 'faction-detail-view.jsx'), 'utf8');
   assert.doesNotMatch(view, /disposition by up to ±?\d/, 'the effect scales with rank, so no single range');
-  assert.match(view, /more as your rank rises/);
+  assert.match(view, /larger effect at higher ranks/);
   assert.match(view, />\s*Inter-Faction Relations\s*</, 'the section keeps its accurate heading');
   assert.doesNotMatch(view, /Diplomatic Standing/);
 });

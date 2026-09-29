@@ -2,6 +2,7 @@
 
 ## Privacy, sign-in and launch readiness — 2026-09-29
 
+- **Explanations when you need them:** each tool's calculation and rules notes now sit in a closed "How this is calculated" disclosure, with plainer wording and the formulas inside. Travel's route is easier to reach on a phone. The Cloud Vault explains when character data is uploaded and how many saves each account can keep.
 - **No cookies unless you sign in:** Clerk loads only for a browser that is signed in or when you click Sign in, so a visit without signing in sets no cookies. The Privacy Policy gains "Cookies, local files and browser storage", covering Clerk's sign-in cookies, browser storage, and Cloudflare Web Analytics, which counts page visits without cookies or storage.
 - **Sign-in keeps your character:** Google and Discord sign-in reloads the page, which reset an unsaved character to the default. The builder now keeps it for that round trip only.
 - **Compatibility notice:** the save importers and About say OpenMW only; vanilla, Tamriel Rebuilt and TR + ARCE are tested; other mods are untested; `.ess` saves are not supported.

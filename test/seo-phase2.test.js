@@ -7,6 +7,14 @@ const path = require("node:path");
 
 const ROOT = path.join(__dirname, "..");
 
+function assertCalculationDisclosure(source) {
+  const disclosures = [...source.matchAll(/<details\b([^>]*\bcalculation-notes\b[^>]*)>([\s\S]*?)<\/details>/g)];
+  assert.equal(disclosures.length, 1, "one calculation disclosure per tool");
+  assert.doesNotMatch(disclosures[0][1], /\bopen\b/, "explanations start closed");
+  assert.match(disclosures[0][2], /^\s*<summary>How this is calculated<\/summary>/, "native summary names the disclosure");
+  return disclosures[0][2];
+}
+
 test("AboutView contains dedicated System Accuracy & Game Mechanics section", () => {
   const aboutSrc = fs.readFileSync(path.join(ROOT, "components", "views", "about-view.jsx"), "utf8");
 
@@ -80,22 +88,24 @@ test("Primary workstations provide semantic h2 heading hierarchy", () => {
   }
 });
 
-test("Alchemy Workstation has contextual apparatus modifiers and verified engine formula cues", () => {
+test("Alchemy keeps apparatus and formula explanations in one closed disclosure", () => {
   const alchemySrc = fs.readFileSync(
     path.join(ROOT, "components", "calculators", "alchemy", "alchemy-workstation.jsx"),
     "utf8"
   );
 
   // Apparatus modifiers note
-  assert.match(alchemySrc, /Apparatus Modifiers:/, "must contain apparatus modifiers note");
+  const explanation = assertCalculationDisclosure(alchemySrc);
   assert.match(alchemySrc, /Mortar &amp; Pestle/, "must explain Mortar & Pestle in apparatus note");
   assert.match(alchemySrc, /Retort/, "must explain Retort in apparatus note");
   assert.match(alchemySrc, /Alembic/, "must explain Alembic in apparatus note");
   assert.match(alchemySrc, /Calcinator/, "must explain Calcinator in apparatus note");
 
   // Engine brewing formula cue
-  assert.match(alchemySrc, /Engine Brewing Formula:/, "must contain engine brewing formula cue");
-  assert.match(alchemySrc, /⌊Alchemy \+ 0\.1×Int \+ 0\.1×Luck⌋%/, "must state exact brew chance formula");
+  assert.match(explanation, /Mortar &amp; Pestle/, "apparatus explanation is inside the disclosure");
+  assert.match(explanation, /Brew chance:/, "formula is inside the disclosure");
+  assert.match(explanation, /Alchemy \+ 0\.1×Intelligence \+ 0\.1×Luck/, "must keep the brew chance formula");
+  assert.match(explanation, /rounded to the nearest whole number/, "must match the displayed chance rounding");
   // Negative check: must not state that fatigue modifies brewing chance (fatigue does not apply in OpenMW alchemy)
   assert.doesNotMatch(alchemySrc, /at standard fatigue/, "must not make false fatigue claims in alchemy brewing");
 });
@@ -107,12 +117,12 @@ test("Spellmaking Workstation has casting mechanics and cost formula cues", () =
   );
 
   // Casting mechanics and magicka cost cue
-  assert.match(spellSrc, /Casting Mechanics &amp; Costs:/, "must contain casting mechanics header");
+  assertCalculationDisclosure(spellSrc);
   assert.match(spellSrc, /Magicka Cost:/, "must include Magicka Cost formula header");
   assert.match(spellSrc, /⌊∑ \(\(Min \+ Max\) × Duration \+ Area\) × BaseCost × 0\.05⌋/, "must show exact magicka cost formula");
   assert.match(spellSrc, /\(2×Skill \+ Willpower\/5 \+ Luck\/10 − MagickaCost\) × Fatigue/, "must show cast chance formula");
-  assert.match(spellSrc, /Primary school is determined by the highest-cost effect/, "must explain primary school rule");
-  assert.match(spellSrc, /Target spells add a 1\.5× cost modifier/, "must explain target range multiplier");
+  assert.match(spellSrc, /most expensive effect determines which magic school/, "must explain primary school rule");
+  assert.match(spellSrc, /Target range costs 1\.5 times/, "must explain target range multiplier");
 });
 
 test("Enchanting Workstation has constant effect soul rule, point formula, and self-enchant cues", () => {
@@ -122,42 +132,43 @@ test("Enchanting Workstation has constant effect soul rule, point formula, and s
   );
 
   // Constant effect rule
-  assert.match(enchantSrc, /Soul Capacity &amp; Constant Effect:/, "must contain constant effect rule header");
-  assert.match(enchantSrc, /minimum soul capacity of <strong[^>]*>400<\/strong>/, "must specify 400 soul minimum");
+  const explanation = assertCalculationDisclosure(enchantSrc);
+  assert.match(explanation, /Constant Effect needs a soul worth at least 400 points/, "must specify 400 soul minimum inside the disclosure");
   assert.match(enchantSrc, /Golden Saint or Ascended Sleeper/, "must cite Golden Saint or Ascended Sleeper");
 
   // Enchantment points and Self-enchant formula cues
-  assert.match(enchantSrc, /Enchanting Formula:/, "must contain enchanting formula header");
   assert.match(enchantSrc, /Points: <span[^>]*>\(\(Min \+ Max\) × Duration \+ Area\) × BaseCost × 0\.025<\/span>/, "must show enchantment points formula");
   assert.match(enchantSrc, /\(0\.75×Enchant \+ 0\.25×Int \+ 0\.1×Luck − 2\.5×Points\) × Fatigue/, "must show self-enchant formula");
 });
 
-test("Travel Workstation has transit engine rules and routing microcopy", () => {
+test("Travel keeps routing explanations in a closed disclosure", () => {
   const travelSrc = fs.readFileSync(
     path.join(ROOT, "components", "calculators", "travel", "travel-workstation.jsx"),
     "utf8"
   );
 
-  assert.match(travelSrc, /Transit Engine Rules:/, "must contain transit engine rules header");
-  assert.match(travelSrc, /shortest-path search over fewest legs, least gold or fewest in-game hours/, "must explain the routing objectives");
-  assert.match(travelSrc, /fTravelMult/, "must show the fare formula");
+  const explanation = assertCalculationDisclosure(travelSrc);
+  assert.match(explanation, /fewest legs, least gold or fastest route/, "must explain the routing objectives");
+  assert.match(explanation, /distance ÷ 4,000/, "must show the fare formula");
+  assert.match(explanation, /Time spent indoors is not counted/, "must keep limits on route time");
+  assert.match(explanation, /Mark and Recall are not included/, "must keep unsupported travel methods clear");
   assert.match(travelSrc, /Mages Guild membership/, "must explain Mages Guild requirement");
 });
 
-test("Level Simulator Root has Morrowind leveling invariants microcopy", () => {
+test("Level Simulator keeps leveling explanations in a closed disclosure", () => {
   const levelerSrc = fs.readFileSync(
     path.join(ROOT, "components", "level-simulator", "level-simulator-root.jsx"),
     "utf8"
   );
 
-  assert.match(levelerSrc, /Morrowind Leveling Invariants:/, "must contain leveling invariants header");
+  assertCalculationDisclosure(levelerSrc);
   assert.match(levelerSrc, /10 Major or Minor skill increases/, "must mention 10 skill increases requirement");
   assert.match(levelerSrc, /1–4 = 2×/, "must explain multiplier tier 2x");
   assert.match(levelerSrc, /10\+ = 5×/, "must explain multiplier tier 5x");
   assert.match(levelerSrc, /⌊Endurance \/ 10⌋/, "must show non-retroactive health gain formula");
 });
 
-test("Character Builder Root and Configurator have header hierarchy and math invariants", () => {
+test("Character Builder keeps header hierarchy and a closed calculation disclosure", () => {
   const builderRootSrc = fs.readFileSync(
     path.join(ROOT, "components", "character-builder", "character-builder-root.jsx"),
     "utf8"
@@ -170,7 +181,7 @@ test("Character Builder Root and Configurator have header hierarchy and math inv
     "utf8"
   );
 
-  assert.match(configSrc, /Character Math Invariants:/, "must contain math invariants header");
+  assertCalculationDisclosure(configSrc);
   assert.match(configSrc, /Base Health = <span[^>]*>⌊\(Strength \+ Endurance\) \/ 2⌋<\/span>/, "must show base health formula");
   assert.match(configSrc, /Base Magicka = <span[^>]*>Intelligence × \(1 \+ Race &amp; Sign Multiplier\)<\/span>/, "must show base magicka formula with race and sign");
   assert.match(configSrc, /Fatigue = <span[^>]*>Strength \+ Willpower \+ Agility \+ Endurance<\/span>/, "must show fatigue formula");
@@ -247,30 +258,33 @@ test("Adversarial QA 3: All newly modified components avoid undefined, null, and
   }
 });
 
-test("Faction Journal has semantic h2 heading and advancement invariants microcopy", () => {
+test("Faction Journal has semantic h2 heading and a closed promotion disclosure", () => {
   const rootSrc = fs.readFileSync(path.join(ROOT, "components", "journal-factions", "journal-factions-root.jsx"), "utf8");
   assert.match(rootSrc, /<h2[^>]*>\s*Faction Journal\s*<\/h2>/, "must have h2 title in factions root");
   assert.doesNotMatch(rootSrc, /<h1[^>]*>\s*Faction Journal\s*<\/h1>/, "must not use h1 in factions root");
 
   const detailSrc = fs.readFileSync(path.join(ROOT, "components", "journal-factions", "faction-detail-view.jsx"), "utf8");
-  assert.match(detailSrc, /Faction Advancement Invariants:/, "must contain faction advancement invariants header");
-  assert.match(detailSrc, /two Favored Attributes/, "must explain two favored attributes requirement");
-  assert.match(detailSrc, /Great House Exclusivity:/, "must explain Great House exclusivity rule");
+  assertCalculationDisclosure(detailSrc);
+  assert.match(detailSrc, /two favored attributes/, "must explain two favored attributes requirement");
+  assert.match(detailSrc, /normally join only one Great House/, "must explain Great House exclusivity rule");
 });
 
-test("Challenge Runs has semantic h2 heading and deterministic seed engine microcopy", () => {
+test("Challenge Runs has semantic h2 heading and a closed explanation of seeds", () => {
   const challengeSrc = fs.readFileSync(path.join(ROOT, "components", "challenge-runs", "challenge-runs-root.jsx"), "utf8");
   assert.match(challengeSrc, /<h2[^>]*>\s*Challenge Runs\s*<\/h2>/, "must have h2 title in challenge root");
-  assert.match(challengeSrc, /Challenge Engine Invariants:/, "must contain challenge engine invariants header");
-  assert.match(challengeSrc, /deterministic 32-bit pseudorandom seed engine/, "must describe PRNG seed engine");
+  const explanation = assertCalculationDisclosure(challengeSrc);
+  assert.match(explanation, /same seed and settings produce the same/, "must explain repeatable seeds");
+  assert.match(explanation, /locked can change the result/, "must explain why locked runs can differ");
 });
 
-test("Cloud Vault has semantic h2 heading and zero-tracking inspection microcopy", () => {
+test("Cloud Vault explains local inspection, deliberate uploads and quotas in a closed disclosure", () => {
   const vaultSrc = fs.readFileSync(path.join(ROOT, "components", "character-vault", "cloud-vault-workstation.jsx"), "utf8");
   assert.match(vaultSrc, /<h2[^>]*>\s*Cloud Vault\s*<\/h2>/, "must have h2 title in vault workstation");
-  assert.match(vaultSrc, /Save Inspection &amp; Vault Invariants:/, "must contain save inspection invariants header");
-  assert.match(vaultSrc, /Zero-Server Binary Parsing:/, "must explain zero-server binary parsing");
-  assert.match(vaultSrc, /Cloud Sync Quotas:/, "must describe free and supporter cloud quotas");
+  const explanation = assertCalculationDisclosure(vaultSrc);
+  assert.match(explanation, /reads it in your browser/, "inspection stays local");
+  assert.match(explanation, /only uploaded when you choose to save it to your account/, "must explain when data leaves the browser");
+  assert.match(explanation, /Free accounts can keep 5 cloud saves; supporters can keep 25/, "must describe free and supporter cloud quotas");
+  assert.doesNotMatch(explanation, /ArrayBuffer|SQLite|Cloudflare|Invariants/, "no implementation jargon in player guidance");
 });
 
 test("Changelog has enriched h2 heading", () => {

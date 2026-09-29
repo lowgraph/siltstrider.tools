@@ -512,19 +512,15 @@ export default function SpellmakingWorkstation() {
               ))}
             </div>
 
-            {/* Casting Mechanics Cue */}
-            <div className="p-2.5 bg-surface-3 border border-line-11 text-[11px] text-fg-11 font-serif space-y-1">
-              <span className="font-bold text-fg-7 uppercase tracking-wider text-[10px] block">Casting Mechanics &amp; Costs:</span>
-              <p className="leading-relaxed">
-                Magicka Cost: <span className="font-mono text-accent">⌊∑ ((Min + Max) × Duration + Area) × BaseCost × 0.05⌋</span> (Target spells add a 1.5× cost modifier).
-              </p>
-              <p className="leading-relaxed">
-                Cast chance: <span className="font-mono text-accent">(2×Skill + Willpower/5 + Luck/10 − MagickaCost) × Fatigue</span>.
-              </p>
-              <p className="leading-relaxed text-fg-13">
-                Primary school is determined by the highest-cost effect in the stack. Fatigue term is 1.25× at full fatigue, dropping to 0.75× when exhausted.
-              </p>
-            </div>
+            <details className="calculation-notes">
+              <summary>How this is calculated</summary>
+              <div>
+                <p>Each effect adds to the spell&apos;s Magicka cost. Stronger effects, longer durations and wider areas cost more. Target range costs 1.5 times as much as Self or Touch.</p>
+                <p>Magicka Cost: <span className="font-mono">⌊∑ ((Min + Max) × Duration + Area) × BaseCost × 0.05⌋</span>. Min and Max are effect strength, Duration is seconds, Area is feet, and BaseCost is the effect&apos;s base cost. ∑ means add the effects together; ⌊ ⌋ means round down.</p>
+                <p>The most expensive effect determines which magic school the calculator uses. Your skill in that school, Willpower, Luck and fatigue determine the chance of casting the spell.</p>
+                <p>Cast chance: <span className="font-mono">(2×Skill + Willpower/5 + Luck/10 − MagickaCost) × Fatigue</span>. The fatigue multiplier ranges from 1.25 when fully rested to 0.75 when exhausted. This estimate assumes full fatigue.</p>
+              </div>
+            </details>
           </div>
 
           {/* Spellmakers Ranked Barter Table */}
