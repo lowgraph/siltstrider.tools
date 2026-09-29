@@ -88,6 +88,7 @@ commands; the commands are in section 6.
   its log, only unit tests (`header-layout`, `theme`, `stylesheets`, …).
 - **"Payment webhooks … passed verification"**: no Ko-fi webhook was exercised, and the
   Ko-fi fix in `85801eb` (Donation event type, case-insensitive codes) was not covered.
+  The owner has since tested the Ko-fi path on production (section 5).
 - **Rollback targets**: `329f6c2e` is compatible but predates the launch preparation and
   the Ko-fi fix; `972dee9c` is an untagged deploy of unknown commit.
 - **It queried private production tables** (account profiles, all cloud saves, the
@@ -106,7 +107,8 @@ commands; the commands are in section 6.
   **Fixed** in `5bd4e04` and deployed (section 4).
 - **Discord sign-in** was not mentioned; it was an open launch item (owner has since
   set it up and tested it, section 5).
-- **Three of four production cloud saves are unreadable by the live site** (section 5).
+- **Three of four production cloud saves are unreadable by the live site** (section 5;
+  the owner has decided to delete them).
 
 ## 4. Actions taken on 29 September
 
@@ -135,24 +137,31 @@ commands; the commands are in section 6.
 
 ## 5. Open issues and risks
 
-1. **Old-format cloud saves.** 3 of the 4 production cloud saves (OpenMW imports from
-   25–27 September) are SLT1 **format version 1**; `lib/cloud-save-codec.mjs` now
-   requires version 2 (`Unsupported SLT1 format version: 1`). They cannot be opened on
-   the live site. This follows the current-only site contract ("Old version 1 cloud
-   payloads need reimport from the original OpenMW save"). The owners must re-import
-   them from the original `.omwsave`; the backup preserves the originals. The fourth
-   save (a character build, v2) decodes. Whether affected users see a clear message
-   in the vault when a v1 save fails to open has **not** been checked.
-2. **Ko-fi production path untested** by any agent after `85801eb`. A real or test
-   webhook delivery and code redemption should be checked on production.
-3. **Untagged deploys.** `972dee9c` and `eb9adb1c` were deployed without `--tag` and
-   `--message`. Always use the DEPLOYMENT.md command so history names the commit.
+1. **Old-format cloud saves, to be deleted.** 3 of the 4 production cloud saves (OpenMW
+   imports from 25–27 September) carry SLT1 envelope **version 1**;
+   `lib/cloud-save-codec.mjs` now requires version 2 (`Unsupported SLT1 format version:
+   1`), so the live site cannot open them. The owner decided on 29 September that they
+   are to be deleted, and runs the delete (agents do not hard-delete stored data). The
+   table's `format_version` column is the OpenMW save format (37 for these), **not** the
+   envelope version; match the envelope byte instead:
+   `DELETE FROM cloud_saves WHERE hex(substr(packed_payload, 5, 1)) = '01'` (3 rows at
+   the time of writing; check first with the same `WHERE` in a `SELECT count(*)`).
+   The 29 September backup and D1 Time Travel both hold them. The fourth save, a
+   character build with envelope version 2, decodes and stays.
+2. **Ko-fi**: owner reports the production path fully tested after `85801eb`
+   (29 September). Not independently verified by an agent.
+3. **Untagged deploys.** `972dee9c` (09:15 UTC) and `eb9adb1c` (09:31 UTC) on
+   29 September were published without `--tag` and `--message`, so deployment history
+   does not name their commits (most likely `ad1fc0b` and `85801eb`). They are not
+   faults in the site, only gaps in the record; `9efa1a55` has since been deployed on
+   top, tagged. Always use the DEPLOYMENT.md command so history names the commit.
 4. **No browser-level regression run** by an agent across all tools, three profiles and
    both widths since the launch changes (LAUNCH_OPERATIONS "Final acceptance pass",
    step 2–3). Spot checks done: Gear Advisor (vanilla and TR Mage, Assassin), home,
    About and Vault notices, Report a bug links.
 5. **Owner-reported, not agent-verified:** Discord in Clerk is set up and tested;
-   production sign-in and a cloud-save round trip were tested (owner, 29 September).
+   production sign-in, a cloud-save round trip and Ko-fi were tested (owner,
+   29 September).
 6. Minor: About's feature list still says "Open-source and privacy-first architectural
    transparency" (`lib/seo-breadcrumbs.mjs`, `about`). Confirm the repository is public
    before relying on "open-source".
