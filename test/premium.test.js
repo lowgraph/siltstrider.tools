@@ -2,9 +2,20 @@ const {test}=require('node:test');const assert=require('node:assert/strict');
 const code='SS-'+'a'.repeat(32);
 const valid={verification_token:'secret',type:'Tip',is_subscription_payment:false,currency:'USD',amount:'3.00',message:code,kofi_transaction_id:'payment-one'};
 
-test('Tip accepts a one-dollar payment',async()=>{
+test('Tip and Donation accept a one-dollar payment',async()=>{
   const {paymentDetails}=await import('../cloudflare/routes/premium.mjs');
-  for(const type of ['Tip']) assert.deepEqual(paymentDetails({...valid,type,amount:'1.00'}),{code,amount:'1.00',currency:'USD',transactionId:'payment-one'});
+  for(const type of ['Tip','Donation']) assert.deepEqual(paymentDetails({...valid,type,amount:'1.00'}),{code,amount:'1.00',currency:'USD',transactionId:'payment-one'});
+});
+
+test('support code matching is case-insensitive and normalizes to lowercase',async()=>{
+  const {paymentDetails}=await import('../cloudflare/routes/premium.mjs');
+  const upperCode='SS-'+'A'.repeat(32);
+  assert.deepEqual(paymentDetails({...valid,message:'Here is my code '+upperCode,type:'Donation'}),{code,amount:'3.00',currency:'USD',transactionId:'payment-one'});
+});
+
+test('numeric amount in payload is accepted and formatted',async()=>{
+  const {paymentDetails}=await import('../cloudflare/routes/premium.mjs');
+  assert.deepEqual(paymentDetails({...valid,amount:5.00,type:'Donation'}),{code,amount:'5.00',currency:'USD',transactionId:'payment-one'});
 });
 
 test('other Ko-fi event types and recurring tips do not qualify',async()=>{
