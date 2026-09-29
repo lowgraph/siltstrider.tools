@@ -45,13 +45,12 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 
 ## Community rules
 
-Checked against the rules the owner copied from each subreddit on 29 September 2026.
-Reddit blocks automated reads, so the flair lists were not seen: pick the flair in the
-post form.
+Checked against the rules and flairs the owner copied from each subreddit on 29
+September 2026.
 
 | Community | Rule that applies | What the copy does |
 | --- | --- | --- |
-| r/Morrowind | 4, use flairs | Pick the closest flair when posting; a post without one can be removed. |
+| r/Morrowind | 4, use flairs | **Showcase**: it is for something you made. Not Mod Release (the site is not a mod) or openmw (too narrow for a post about every tool). The other flairs, for reference: Announcement, Discussion, New Player - Advice/Help, Build, Question, Screenshot, Video, Artwork, meme, literature, music, Technical - General, Technical - Mod, Other, Solved. |
 | r/Morrowind | 2, no piracy, no large modpacks | Links only to siltstrider.tools and its GitHub repositories. Never link mod downloads other than the mods' official pages, and never describe TR + ARCE as a pack: the site ships no mod files. |
 | r/Morrowind | 6, no merchandise | Ko-fi is a tip, not merchandise, but it stays out of the post; mention it only if someone asks. |
 | r/OpenMW | 6, no blatant advertising of any kind | The main risk. Ask the moderators first (below; rule 9 says their decision stands). The post leads with what OpenMW players can check, says it is open source with links, and has no Ko-fi, no "please share", no call to upvote. Answer comments. |
@@ -60,9 +59,12 @@ post form.
 | r/OpenMW | 3, no NSFW, including your nick | Nothing to change. |
 | r/TamrielRebuilt | none | Still credits the TR team and says the tool is unofficial. |
 
-Message to the r/OpenMW moderators, a day or two before posting:
+Message to the r/OpenMW moderators, about a week before posting so they have time to
+answer. If there is no answer by the day before, post anyway: no answer is not a
+refusal, and the message shows you asked. If they refuse or point elsewhere, follow
+that.
 
-> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. Would a post introducing it be OK under rule 6, or is there a better place for it? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
+> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool for OpenMW players: it reads `.omwsave` files in the browser and follows OpenMW 0.51's source for level-ups, alchemy, spells and enchanting. The code is on GitHub under AGPL-3.0 and GPL-3.0. I'd like to post it next week: would a post introducing it be OK under rule 6, or is there a better place for it? There are no ads; the only money involved is an optional Ko-fi tip for extra cloud save slots, which I'd leave out of the post.
 
 ## r/Morrowind
 
