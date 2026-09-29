@@ -195,6 +195,14 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
     }
   }, [signedIn, isOpen, refreshLocalSaves, refreshCloudSaves]);
 
+  // Synchronize local saves when updated from Character Builder
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleLocalSavesChange = () => refreshLocalSaves();
+    window.addEventListener("silt-local-saves-changed", handleLocalSavesChange);
+    return () => window.removeEventListener("silt-local-saves-changed", handleLocalSavesChange);
+  }, [refreshLocalSaves]);
+
   // Save current active build to cloud
   const saveActiveBuild = useCallback(
     async (saveName) => {
