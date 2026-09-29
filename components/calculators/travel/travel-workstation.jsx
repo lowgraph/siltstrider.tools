@@ -14,6 +14,7 @@ import {
   addInterventionEdges,
   interventionsFromSave,
   guildFromSave,
+  guildGuideNotice,
   INTERVENTION_KINDS,
   ROUTE_OBJECTIVES
 } from "../../../lib/travel-graph.mjs";
@@ -72,19 +73,21 @@ export default function TravelWorkstation() {
   const [fromSave, setFromSave] = useState(null);
   const carryingData = useGameData('carrying', { enabled: Boolean(activeSave?.save) });
 
+  // The save's own standing with the Mages Guild decides which guides will serve.
+  const saveGuild = useMemo(() => (activeSave?.save ? guildFromSave(activeSave.save) : null), [activeSave]);
+  const guildNotice = guildGuideNotice(saveGuild, mageGuild);
+
   // A loaded save says which intervention the character can cast: the spell or a scroll.
   useEffect(() => {
     if (activeSave?.save) {
       setSpells(interventionsFromSave(activeSave.save));
       setHeld(heldFromSave(activeSave.save));
-      // The save's own standing with the Mages Guild decides which guides will serve.
-      const guild = guildFromSave(activeSave.save);
-      if (guild) {
-        setMageGuild(guild.mageGuild);
-        setConjurer(guild.conjurer);
+      if (saveGuild) {
+        setMageGuild(saveGuild.mageGuild);
+        setConjurer(saveGuild.conjurer);
       }
     }
-  }, [activeSave]);
+  }, [activeSave, saveGuild]);
 
   useEffect(() => {
     if (!activeSave?.save) { setFromSave(null); return; }
@@ -607,6 +610,9 @@ export default function TravelWorkstation() {
             />
           </label>
         )}
+        {guildNotice && (
+          <p role="note" className="guild-guide-notice basis-full text-[11px] text-warning-2">{guildNotice}</p>
+        )}
         {access && walking && movement.overloaded && (
           <p role="alert" className="basis-full text-[11px] text-warning-2">
             Carrying more than you can ({Math.round(movement.load)} of {Math.round(movement.capacity)}): you cannot move, so no route walks.
@@ -937,6 +943,9 @@ export default function TravelWorkstation() {
                           <div className="text-[11px] text-warning-2">
                             From some rooms here the spell may land elsewhere; the engine&apos;s door order decides.
                           </div>
+                        )}
+                        {step.kind === "Guild Guide" && (
+                          <div className="guild-guide-members text-[11px] text-fg-9">Mages Guild members only.</div>
                         )}
                         {(Number.isFinite(step.gold) || Number.isFinite(step.hours)) && (
                           <div className="text-[11px] font-mono text-fg-9">
