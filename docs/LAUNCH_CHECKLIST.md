@@ -58,7 +58,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       same-named exterior cells ("Pelagiad" twice).
 - [ ] **C** **HOME-2 / SITE-4 (label)** (started 2026-09-29 18:30 UTC, C; skipped by the owner 18:31 UTC, no changes made) "Example character — make it yours" until the player
       changes or loads one, on the home card and every "Active character" bar.
-- [ ] **C** **Claims** (started 2026-09-29 18:31 UTC, C) Drop "inter-faction standing" (FAC-2), and "verified engine formulas"
+- [x] **C** **Claims** (started 2026-09-29 18:31 UTC, C; done `80240d5`) Drop "inter-faction standing" (FAC-2), and "verified engine formulas"
       and "exact potion" on the home Alchemy card (LAUNCH_POSTS, Claims removed).
 - [ ] **C** **SITE-1** Apply the decided names in nav, headings, buttons, cards and the
       footer; long SEO titles stay as page titles only. The social card's tiles say "Build
