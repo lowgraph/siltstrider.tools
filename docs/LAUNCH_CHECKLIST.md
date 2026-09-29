@@ -49,7 +49,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** **LVL-1** (started 2026-09-29 17:35 UTC, C; done `ff3a894`, not yet deployed) `detectArchetype`: Mercantile and Speechcraft as minors must not make a
       warrior a Diplomat; score minors below majors and compare instead of returning early;
       show why an archetype was chosen; test the default build (home page and simulator).
-- [ ] **C** **TRV-1 (as decided)** With a loaded save that is not a Mages Guild member, a
+- [ ] **C** **TRV-1 (as decided)** (started 2026-09-29 17:47 UTC, C) With a loaded save that is not a Mages Guild member, a
       warning by the route options: Guild Guides work from Mages Guild halls and need
       membership. Keep today's defaults without a save.
 - [ ] **C** **TRV-6 (label)** Mark the options a loaded save set: "from your save".
