@@ -14,12 +14,20 @@ not reintroduced. Update this file when a feature or a privacy fact changes.
 2. **Sign-in test on production.** Build a character, click Sign in in the Vault, sign
    in with Google or Discord, save, and reload: you should come back signed in with the
    same character.
-3. **Each community's rules.** The three subreddits were checked on 29 September (see
-   [Community rules](#community-rules)). Discord servers are still to check; some want
-   tool posts in a dedicated channel.
-4. **Screenshots.** Builder with the Gear Advisor, the Travel map, the Level Simulator,
-   a loaded save. The social card (`/og-image.png`, 1200×630) is live.
-5. **Timing** (Antigravity's proposal, the owner's call): Reddit and Discord on
+3. **Each community's rules.** Three subreddits and four Discord servers were checked
+   on 29 September (see [Community rules](#community-rules)). Three of the servers need
+   a moderator's answer or a role before you post.
+4. **Redo the social card.** `/og-image.png` (1200×630) is what Reddit and Discord
+   show with every link, and it is wrong: it says "Formulas verified against OpenMW
+   0.51 engine source code" and "Exact Alchemy" (claims removed below), and its
+   sample Dark Elf Spellsword with The Lady shows 70 Magicka and 55 Health. The
+   catalogs give that character 40 Intelligence and no magicka bonus, so 40 Magicka,
+   and no reading of the health formula gives 55. Its tool names (Build Optimizer,
+   Travel Optimizer, OpenMW Save Viewer) are not the site's. No source for the image is
+   in the repository, so it has to be rebuilt.
+5. **Screenshots.** Builder with the Gear Advisor, the Travel map, the Level Simulator,
+   a loaded save.
+6. **Timing** (Antigravity's proposal, the owner's call): Reddit and Discord on
    Tuesday 6 October 2026 at 13:30 UTC; Show HN on Wednesday 7 October at 14:00 UTC;
    creator outreach from Thursday 8 October. Stagger posts rather than cross-posting
    the same text on one day.
@@ -58,6 +66,19 @@ September 2026.
 | r/OpenMW | 8, know the latest release | OpenMW 0.51.0 (19 June 2026) is the latest release, so "OpenMW 0.51" is current. If a newer version is out when you post, reword or check the formulas first. |
 | r/OpenMW | 3, no NSFW, including your nick | Nothing to change. |
 | r/TamrielRebuilt | none | Still credits the TR team and says the tool is unofficial. |
+| OpenMW Discord | The same rules as r/OpenMW, including 6 (no blatant advertising) and 9 (staff decisions stand; raise concerns privately with that staff member) | Ask one staff member first, privately, with the r/OpenMW message; post only where they say. |
+| Tamriel Rebuilt Discord | 2, no advertisements; a development-focused server; posts with unauthorised links are deleted with a short timeout, and mass DMs count as spam | Do not post the link unless a moderator authorises it. Ask one moderator (message below). r/TamrielRebuilt reaches TR players either way. |
+| Morrowind Modding Community | No spam, stay on topic; moderators have wide discretion | The safest server: nothing bans sharing a tool. Post once, in the channel whose topic fits tools or projects. |
+| Morrowind Discord ("Morrowserver") | Links and images need a House Role; self-made work is encouraged in #original-content; no AI content in media channels, including #original-content, "claiming to be art or original works"; no unsolicited DMs, including self-promotion | Get a House Role in #house-roles first. Ask about AI before posting (below): much of the code was written with AI coding agents, and the public repository says so (`AGENTS.md`). Never DM members about the site. |
+
+Message to one Tamriel Rebuilt moderator (one, not several):
+
+> Hi, I made Silt Strider (https://siltstrider.tools), a free, open-source fan tool that reads Tamriel Rebuilt's Poison Song plugins for a travel router, a character builder and a faction journal. I know the server is development-focused and links need authorisation: would it be OK to share it, and in which channel? If not, no problem. I also wanted the team to know it exists, and I'd welcome corrections if it shows anything from TR wrong.
+
+Question for the Morrowind Discord, in #suggestions (which invites questions) or to one moderator. Adjust the second sentence to say how you actually used AI:
+
+> Hi, I'd like to share a free, open-source Morrowind toolbox I made (builder, level planner, travel routes, built from the game's data) in #original-content. Before I do: much of its code was written with AI coding assistants, though the game data is read from the game's files and it contains no AI art. Is that OK for #original-content, or is there a better channel for it?
+
 
 Message to the r/OpenMW moderators, about a week before posting so they have time to
 answer. If there is no answer by the day before, post anyway: no answer is not a
@@ -114,9 +135,11 @@ that.
 
 ## Discord (short)
 
-> **Silt Strider**: free Morrowind tools for OpenMW, vanilla and Tamriel Rebuilt Poison Song: https://siltstrider.tools
+Post only where the table under Community rules allows it, once per server.
+
+> **Silt Strider**: free, open-source Morrowind tools for OpenMW, covering vanilla, Tamriel Rebuilt Poison Song and ARCE: https://siltstrider.tools
 > • Character Builder and Gear Advisor • Level Simulator (×5 multipliers) • Travel planner (Vvardenfell and the mainland) • Alchemy, Enchanting, Spellmaking • Drop in an `.omwsave` and every tool uses your character; the save stays in your browser.
-> No ads, no cookies unless you sign in.
+> No ads, no cookies unless you sign in. A fan project, not affiliated with OpenMW or Tamriel Rebuilt.
 
 ## Show HN
 
@@ -146,7 +169,7 @@ that.
 
 ## Creator outreach
 
-Choose creators whose recent videos are about Morrowind or OpenMW; check each channel before writing, and write only if the compliment in the first line is true.
+Choose creators whose recent videos are about Morrowind or OpenMW; check each channel before writing, and write only if the compliment in the first line is true. Use a creator's stated business contact, never a Discord DM: the Morrowind Discord bans unsolicited DMs, self-promotion included.
 
 > Subject: A free tool for your next Morrowind run: siltstrider.tools
 >
@@ -166,6 +189,7 @@ Choose creators whose recent videos are about Morrowind or OpenMW; check each ch
 - **Are you uploading my save?** No. Opening a save reads it in your browser. It's only sent to our service if you sign in and choose to save it to the Cloud Vault.
 - **Does it work with my mods?** It's tested with vanilla, Tamriel Rebuilt and TR + ARCE. Other mods may add things it doesn't know; the Builder lists anything from your save it couldn't match.
 - **Is it free?** Yes. An optional one-time tip on Ko-fi raises your Cloud Vault from 5 to 25 slots.
+- **Was it made with AI?** Expect this: the posts link the repositories, and `AGENTS.md` says AI agents work on the code. Answer plainly, in your own words; for example: "Yes, much of the code was written with AI coding assistants. The game data isn't generated: a pipeline reads it from the plugin files, and the rules follow OpenMW's source."
 
 ## Claims removed from the original plan
 
@@ -175,6 +199,6 @@ Do not reintroduce these without re-checking:
 - "Open source" for anything but the code: the game and mod data, the Pelagiad font, and the name and logo are not under the AGPL or GPL.
 - "ARCE (Aran Rebuilt / Content Ecosystem)": ARCE is "All Races and Classes Enabled".
 - ".ess support is on our roadmap": not decided.
-- "Absolute engine parity", "every formula verified", "inter-faction standing", "100% client-side" for the whole site: unverified or broader than the truth.
+- "Absolute engine parity", "every formula verified" or "formulas verified against OpenMW's source", "exact alchemy", "inter-faction standing", "100% client-side" for the whole site: unverified or broader than the truth. Say the rules *follow* OpenMW 0.51's source.
 - The alchemy-and-fatigue FAQ answer: not checked against the source.
 - Subreddit member counts, "10x more goodwill", "40% weekend drop", and a specific creator list: unsourced.
