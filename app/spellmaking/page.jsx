@@ -32,7 +32,6 @@ export default function SpellmakingPage() {
     {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
     {toolJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} />}
     {toolFaqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolFaqJsonLd) }} />}
-    <h1 className="sr-only">Morrowind Spellmaking &amp; Casting Chance Calculator</h1>
     <AppShell initialView="spellmaking" />
   </>;
 }

@@ -9,6 +9,11 @@
 - **Accurate privacy claims:** About's FAQ and the Vault's search description no longer promise that nothing leaves the browser.
 - **Hosting:** only API requests run the Worker; pages and game data are served directly, so busy days cost far fewer Worker requests. `www` redirects through a Cloudflare rule.
 - Ko-fi donations and case-insensitive support codes are recognized. Sharper favicons.
+- **Keyboard and screen readers:** every control shows where focus is, in both themes and in Windows high contrast. The challenge pool browser, the equipment picker and the Cloud Vault behave as dialogs: focus moves in, Tab stays inside, Escape closes them and focus returns. Scrolling lists can be scrolled from the keyboard, each tool's heading sits in the main content where Skip to main content lands, and toggles and disclosures report their state. Form controls are labelled and the account page has a proper heading.
+- **A proper 404 page:** an unknown address shows a page with links back instead of a bare error.
+- **Sturdier share links:** a link naming a JavaScript built-in (such as "constructor") as its race or sign no longer crashes the builder.
+- **Security headers:** other sites cannot frame the pages, and responses send nosniff, a referrer policy and HSTS.
+- **Open source:** the site is AGPL-3.0 and the data pipeline GPL-3.0; game and mod data stay with their owners.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

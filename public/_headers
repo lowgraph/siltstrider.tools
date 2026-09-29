@@ -1,0 +1,11 @@
+# Security headers for every page and asset the Worker's asset store serves.
+# /api/* runs the Worker first and sets its own headers there.
+# No script-src policy: Clerk and Cloudflare Web Analytics would need one tested
+# end to end first. HSTS covers this host only, not subdomains.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000

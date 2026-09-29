@@ -32,7 +32,6 @@ export default function AlchemyPage() {
     {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
     {toolJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} />}
     {toolFaqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolFaqJsonLd) }} />}
-    <h1 className="sr-only">Morrowind Alchemy Calculator &amp; Potion Brewing Recipe Tool</h1>
     <section className="sr-only" aria-label="Morrowind Alchemy Mechanics &amp; Brewing Guide">
       <h2>Morrowind Alchemy Mechanics &amp; Formula Guide</h2>
       <p>

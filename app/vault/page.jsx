@@ -32,7 +32,6 @@ export default function VaultPage() {
     {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
     {toolJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} />}
     {toolFaqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolFaqJsonLd) }} />}
-    <h1 className="sr-only">OpenMW Save File Inspector &amp; Cloud Character Vault</h1>
     <AppShell initialView="vault" />
   </>;
 }

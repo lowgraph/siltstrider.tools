@@ -31,7 +31,6 @@ export default function AboutPage() {
     {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
     {toolJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} />}
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ABOUT_FAQ_JSON_LD) }} />
-    <h1 className="sr-only">About Silt Strider &amp; Game Engine Mechanics</h1>
     <AppShell initialView="about" />
   </>;
 }

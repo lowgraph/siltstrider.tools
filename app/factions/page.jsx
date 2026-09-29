@@ -32,7 +32,6 @@ export default function FactionsPage() {
     {breadcrumb && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />}
     {toolJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} />}
     {toolFaqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolFaqJsonLd) }} />}
-    <h1 className="sr-only">Morrowind Faction Journal &amp; Guild Rank Tracker</h1>
     <AppShell initialView="factions" />
   </>;
 }

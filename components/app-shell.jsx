@@ -8,6 +8,7 @@ import { ShellProvider, useShell } from './shell-context';
 import { ThemeProvider } from './theme-provider';
 import { CharacterProvider, useActiveCharacter } from './character-context';
 import { ChallengeRunProvider } from './challenge-run-context';
+import { VIEW_HEADINGS } from '../lib/view-headings.mjs';
 import CloudVaultModal from './character-vault/cloud-vault-modal';
 
 // All 12 Native Modern React Views
@@ -77,6 +78,7 @@ function AppShellMain({ initialView = 'home' }) {
 
       {/* Main View Router - Declarative Mounting Without Portals */}
       <main id="main-content" tabIndex={-1} className="site-main flex-1 w-full max-w-(--page-width) mx-auto px-2 sm:px-4 py-3 sm:py-4">
+        {VIEW_HEADINGS[activeView] && <h1 className="sr-only">{VIEW_HEADINGS[activeView]}</h1>}
         {activeView === 'account' && <AccountPage />}
         <section
           id="panel-home"

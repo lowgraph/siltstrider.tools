@@ -22,6 +22,10 @@ export default function ChangelogView() {
             <li>Report a bug from the footer or the About page. The email template asks for the steps, profile, and browser, and attaches no character data. Server errors show a reference to include.</li>
             <li>About and search descriptions are clearer about privacy: opening a save reads it in your browser, and saving to Cloud Vault sends it to our service.</li>
             <li>Supporter payments recognize Ko-fi donations and support codes in any capitalization. Sharper browser tab icons.</li>
+            <li>Keyboard and screen reader fixes: focus is visible on every control in both themes and in Windows high contrast; the pool browser, equipment picker and Cloud Vault behave as dialogs that Escape closes; scrolling lists work from the keyboard; each tool&apos;s heading sits where Skip to main content lands.</li>
+            <li>An unknown address shows a proper page with links back, and a malformed share link no longer crashes the Character Builder.</li>
+            <li>Security headers stop other sites from framing the pages.</li>
+            <li>Silt Strider is open source: the site under AGPL-3.0 and the data pipeline under GPL-3.0. Game and mod data belong to their owners.</li>
           </ul>
         </section>
 

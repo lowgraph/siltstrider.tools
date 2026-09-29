@@ -65,7 +65,8 @@ test("seo-breadcrumbs.mjs exports valid TOOL_FAQS and getToolFaqJsonLd for key c
   }
 });
 
-test("All 11 tool routes provide semantic sr-only h1, twitter cards, and deep json-ld", () => {
+test("All 11 tool routes provide semantic sr-only h1, twitter cards, and deep json-ld", async () => {
+  const { VIEW_HEADINGS } = await import("../lib/view-headings.mjs");
   const toolPages = [
     { dir: "builder", view: "builder", h1Keyword: "Character Builder" },
     { dir: "leveler", view: "leveler", h1Keyword: "Level Simulator" },
@@ -85,12 +86,10 @@ test("All 11 tool routes provide semantic sr-only h1, twitter cards, and deep js
     assert.ok(fs.existsSync(filePath), `Page file must exist: ${filePath}`);
     const content = fs.readFileSync(filePath, "utf8");
 
-    // 1. Must render sr-only h1
-    assert.match(
-      content,
-      new RegExp(`<h1 className="sr-only"[^>]*>.*${page.h1Keyword}.*<\\/h1>`),
-      `${page.dir}/page.jsx must render an <h1 className="sr-only"> containing '${page.h1Keyword}'`
-    );
+    // 1. Its sr-only h1 comes from the shell, inside <main>, for this view (lib/view-headings.mjs)
+    assert.match(content, new RegExp(`initialView="${page.view}"`), `${page.dir}/page.jsx must open its own view`);
+    assert.doesNotMatch(content, /<h1\b/, `${page.dir}/page.jsx must not render an h1 outside <main>`);
+    assert.match(VIEW_HEADINGS[page.view] || "", new RegExp(page.h1Keyword), `the ${page.view} heading must contain '${page.h1Keyword}'`);
 
     // 2. Must define twitter card metadata
     assert.match(content, /twitter:\s*\{/, `${page.dir}/page.jsx must define twitter metadata`);
