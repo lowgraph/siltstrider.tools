@@ -11,15 +11,16 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `bec9295` (site `main`, pushed) |
-| Live Worker version | `af7c20e4-b16a-49e3-9d34-4c76b2b52631`, deployed 2026-09-29 15:31 UTC, tagged `bec9295` |
+| Live commit | `b5a0813` (site `main`, pushed) |
+| Live Worker version | `65f849c7-5889-47c0-92ad-0b6e1c2767f7`, deployed 2026-09-29 16:49 UTC, tagged `b5a0813` |
+| Security headers | `public/_headers`: nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'`, referrer policy, permissions policy, host-only HSTS; verified live after the 16:49 release (they took a minute or two to appear) |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `3da0320236da77ec085d105d`, snapshot `1613a1123ed9…` |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0006 applied; `wrangler d1 migrations list siltstrider-db --remote` reports none pending |
 | D1 Time Travel bookmark | `0000003e-00000002-000050f5-376b3c432b1be8aa90f68a30d28ab5d1`, captured 10:57 UTC with the backup |
-| Pipeline repo | `master` at `88d96bc`, pushed |
+| Pipeline repo | `master` at `18fe778`, pushed |
 
 Deployment history since the last tagged release before this batch:
 
@@ -33,9 +34,10 @@ Deployment history since the last tagged release before this batch:
 | `64cf5d59-4efa-4406-8828-c844e55c13cd` | 09-29 12:45 | `6a744c0` | tagged; sign-in keeps the character, changelog, no "open-source" claim |
 | `343fa189-95ee-47fc-9ea6-0128ea2cbc1d` | 09-29 13:01 | `6ada7bd` | tagged; AGPL-3.0 licence, About says open source again |
 | `e0103bde-7264-4574-9a4c-2873a77b08bf` | 09-29 14:03 | `dc5b777` | tagged; bundle-derived social card, launch post checklist and subreddit rules |
-| `af7c20e4-b16a-49e3-9d34-4c76b2b52631` | 09-29 15:31 | `bec9295` | tagged; accessibility fixes (landmarks, skip link, control labels, contrast), audit doc, confirmed #modding channel; current |
+| `af7c20e4-b16a-49e3-9d34-4c76b2b52631` | 09-29 15:31 | `bec9295` | tagged; accessibility fixes (landmarks, skip link, control labels, contrast), audit doc, confirmed #modding channel |
+| `65f849c7-5889-47c0-92ad-0b6e1c2767f7` | 09-29 16:49 | `b5a0813` | tagged; second audit's fixes: crafted share links no longer crash the builder, visible focus in the modern theme and high contrast, modal dialogs, tool headings inside `<main>`, 404 page, security headers; current |
 
-Rollback from `af7c20e4`: `e0103bde` retains the bundle-derived social card and valid schema. From `e0103bde`: `343fa189` differs only in the social card graphic and launch docs.
+Rollback from `65f849c7`: `af7c20e4` drops only this batch (see COORDINATION, "Accessibility and crash fixes from the second audit"). From `af7c20e4`: `e0103bde` retains the bundle-derived social card and valid schema. From `e0103bde`: `343fa189` differs only in the social card graphic and launch docs. From `343fa189`: `64cf5d59` differs only in the About wording (it drops the
 "open-source" claim, which stays true either way). From `64cf5d59`: `8c8fe551` drops only the sign-in fix and wording; `9efa1a55`
 also restores Worker-for-every-request routing and Clerk on every page (it still works,
 since the redirect rule only duplicates the Worker's own `www` redirect). `eb9adb1c`
@@ -48,7 +50,7 @@ current schema and codec. `972dee9c` is an unknown commit: do not roll back to i
 
 | Suite | Where | Command | Result at hand-off |
 | --- | --- | --- | --- |
-| Site | `A:\Claude\morrowind-tools` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **576 pass, 0 fail, 0 todo, 0 skipped**, 87 files |
+| Site | `A:\Claude\morrowind-tools` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **604 pass, 0 fail, 0 todo, 0 skipped** at `b5a0813` |
 | Pipeline | `C:\Users\tiago\OneDrive\Documents\ChatGPT\OpenMW Decompiler` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; python -B -m unittest discover -s . -p "test_*.py"` | **670 pass** (pre-existing ResourceWarnings from unclosed sqlite in older tests) |
 | Release build | site | `npm run build:cloudflare` | passes; 22 static routes |
 | Worker dry run | site | `node node_modules/wrangler/bin/wrangler.js deploy --dry-run --keep-vars` | passes |
