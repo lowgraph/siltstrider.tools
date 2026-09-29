@@ -78,7 +78,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [ ] **C** **SITE-2 / VLT-1** Every "invariants" or "rules" box becomes a closed "How this is
       calculated" disclosure in plain words. On phones this lifts Travel's route about a
       screen (most of TRV-4's pain until the full restructure).
-- [ ] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; branch `launch/site-1-names`) No results before input: dashes and a prompt.
+- [x] **C** **CALC-1** (started 2026-09-29 19:55 UTC, C; done `d8b68f4` on branch `launch/site-1-names`, not merged or deployed; also effect base costs shown as the game does, `d3448b9`) No results before input: dashes and a prompt.
 - [ ] **C** **CHL-1** One row of difficulty presets.
 - [ ] **C** **FAC-1** Rank names, skill labels, plain words for placements and spots.
 - [ ] **C** **MOB-3** No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
