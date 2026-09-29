@@ -14,6 +14,9 @@ import {
   getActiveSpellmakers
 } from "../../../lib/spell-math.mjs";
 
+// Where a number goes before there is anything to calculate: a dash, read out in words.
+const NO_RESULT = <><span aria-hidden="true">—</span><span className="sr-only">not calculated yet</span></>;
+
 export default function SpellmakingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
@@ -187,6 +190,7 @@ export default function SpellmakingWorkstation() {
   const baseGoldCost = useMemo(() => {
     return calcSpellmakerBaseGold(magickaCost);
   }, [magickaCost]);
+  const hasEffect = calculatedEffects.length > 0;
 
   const spellmakersList = useMemo(() => {
     let list = null;
@@ -470,16 +474,21 @@ export default function SpellmakingWorkstation() {
 
           {/* Output Summary Card */}
           <div className="p-3.5 bg-surface-5 border border-line-9 space-y-3">
+            {!hasEffect && (
+              <p className="calc-empty-prompt text-xs text-fg-9 font-serif italic m-0">
+                Choose an effect to see its Magicka cost, your chance to cast it and what spellmakers charge.
+              </p>
+            )}
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-2.5 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Magicka Cost</span>
-                <span className="text-xl font-bold font-mono text-accent">{magickaCost} pts</span>
+                <span className={`text-xl font-bold font-mono ${hasEffect ? "text-accent" : "text-fg-11"}`}>{hasEffect ? `${magickaCost} pts` : NO_RESULT}</span>
               </div>
 
               <div className="p-2.5 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Cast Reliability</span>
-                <span className={`text-xl font-bold font-mono ${castChance >= 75 ? "text-accent" : castChance >= 40 ? "text-fg-4" : "text-danger-3"}`}>
-                  {castChance}%
+                <span className={`text-xl font-bold font-mono ${!hasEffect ? "text-fg-11" : castChance >= 75 ? "text-accent" : castChance >= 40 ? "text-fg-4" : "text-danger-3"}`}>
+                  {hasEffect ? `${castChance}%` : NO_RESULT}
                 </span>
               </div>
             </div>
@@ -487,7 +496,7 @@ export default function SpellmakingWorkstation() {
             <div className="p-2.5 bg-surface-3 border border-line-11 flex justify-between items-center text-xs">
               <span className="text-fg-13 font-serif">Governing School:</span>
               <span className="font-serif font-bold text-fg-2">
-                {primarySchool} ({governingSkillValue} skill)
+                {hasEffect ? `${primarySchool} (${governingSkillValue} skill)` : NO_RESULT}
               </span>
             </div>
 
@@ -550,7 +559,7 @@ export default function SpellmakingWorkstation() {
                     <span className="text-[10px] text-fg-13 font-mono">Merc: {sm.merc} · Pers: {sm.pers}</span>
                   </div>
                   <span className="font-mono font-bold text-accent shrink-0">
-                    {sm.barterPrice.toLocaleString()} g
+                    {hasEffect ? `${sm.barterPrice.toLocaleString()} g` : NO_RESULT}
                   </span>
                 </div>
               ))}

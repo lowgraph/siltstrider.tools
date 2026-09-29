@@ -12,6 +12,9 @@ import {
   calculatePotion
 } from "../../../lib/alchemy-math.mjs";
 
+// Where a number goes before there is anything to calculate: a dash, read out in words.
+const NO_RESULT = <><span aria-hidden="true">—</span><span className="sr-only">not calculated yet</span></>;
+
 export default function AlchemyWorkstation() {
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
@@ -448,12 +451,12 @@ export default function AlchemyWorkstation() {
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-2.5 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Brew Success Chance</span>
-                <span className="text-xl font-bold font-mono text-accent">{potion.brewChance}%</span>
+                <span className={`text-xl font-bold font-mono ${potion.isValid ? "text-accent" : "text-fg-11"}`}>{potion.isValid ? `${potion.brewChance}%` : NO_RESULT}</span>
               </div>
 
               <div className="p-2.5 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Estimated Gold Value</span>
-                <span className="text-xl font-bold font-mono text-accent">{potion.goldValue} g</span>
+                <span className={`text-xl font-bold font-mono ${potion.isValid ? "text-accent" : "text-fg-11"}`}>{potion.isValid ? `${potion.goldValue} g` : NO_RESULT}</span>
               </div>
             </div>
 

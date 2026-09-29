@@ -15,6 +15,9 @@ import {
   getActiveEnchanters
 } from "../../../lib/enchant-math.mjs";
 
+// Where a number goes before there is anything to calculate: a dash, read out in words.
+const NO_RESULT = <><span aria-hidden="true">—</span><span className="sr-only">not calculated yet</span></>;
+
 export default function EnchantingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
@@ -198,6 +201,7 @@ export default function EnchantingWorkstation() {
   }, [enchantersList, vendorSearch]);
 
   const isOverCapacity = totalPoints > capacity;
+  const hasEffect = calculatedEffects.length > 0;
   const isCeEligible = soul >= 400;
 
   return (
@@ -534,15 +538,20 @@ export default function EnchantingWorkstation() {
 
           {/* Dossier Card */}
           <div className="p-3.5 bg-surface-5 border border-line-9 space-y-2.5">
+            {!hasEffect && (
+              <p className="calc-empty-prompt text-xs text-fg-9 font-serif italic m-0">
+                Choose an effect to see your chance to enchant it yourself and what enchanters charge.
+              </p>
+            )}
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-2 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Self-Enchant Chance</span>
-                <span className="text-base font-bold font-mono text-accent">{selfChance}%</span>
+                <span className={`text-base font-bold font-mono ${hasEffect ? "text-accent" : "text-fg-11"}`}>{hasEffect ? `${selfChance}%` : NO_RESULT}</span>
               </div>
 
               <div className="p-2 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Base Gold Value</span>
-                <span className="text-base font-bold font-mono text-accent">{baseGoldCost.toLocaleString()} g</span>
+                <span className={`text-base font-bold font-mono ${hasEffect ? "text-accent" : "text-fg-11"}`}>{hasEffect ? `${baseGoldCost.toLocaleString()} g` : NO_RESULT}</span>
               </div>
             </div>
 
@@ -605,7 +614,7 @@ export default function EnchantingWorkstation() {
                     <span className="text-[10px] text-fg-13 font-mono">Merc: {enc.merc} · Pers: {enc.pers}</span>
                   </div>
                   <span className="font-mono font-bold text-accent shrink-0">
-                    {enc.barterPrice.toLocaleString()} g
+                    {hasEffect ? `${enc.barterPrice.toLocaleString()} g` : NO_RESULT}
                   </span>
                 </div>
               ))}

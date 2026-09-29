@@ -36,6 +36,7 @@ export default function ChangelogView() {
             <li>With TR + ARCE on, the random starting character can now be one of the ARCE race builds too.</li>
             <li>One name per tool everywhere on screen: Character Builder (formerly Build Optimizer), Level Simulator, Travel Planner (formerly Travel Optimizer), Alchemy, Enchanting, Spellmaking, Faction Journal, Challenge Runs and Cloud Vault.</li>
             <li>Shared build and challenge links open in the world they were made for, even if you last used another; a link that names no world keeps yours.</li>
+            <li>Spellmaking, Enchanting and Alchemy show a dash and a prompt until you add an effect or ingredients, instead of numbers that looked like answers.</li>
           </ul>
         </section>
 

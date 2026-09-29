@@ -24,6 +24,7 @@
 - **ARCE characters in the random start:** with TR + ARCE on, the random starting character now comes from the whole premade catalogue, the ARCE race builds included. It used to draw only base-game races, because it was picked before the page had read your world.
 - **One name per tool:** the nav, the tools' headings, buttons, home cards and search say Character Builder, Level Simulator, Travel Planner, Alchemy, Enchanting, Spellmaking, Faction Journal, Challenge Runs and Cloud Vault. The Build Optimizer is now the Character Builder, and the Travel Optimizer the Travel Planner; searching for the old names still finds them. Page titles keep their longer descriptions.
 - **Shared links open in their own world:** a vanilla build or challenge link opened by someone who uses TR or TR + ARCE now switches to vanilla, as the link says, instead of showing the character in your world. A link that names no world keeps yours (a challenge link used to reset it to vanilla).
+- **No answers before a question:** Spellmaking, Enchanting and Alchemy show a dash and say what to add until there is something to calculate. They used to show a 100% cast chance, a Destruction school and 1 g prices for a spell with no effect, a self-enchant chance for no enchantment, and a brew chance and 0 g with no ingredients.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 
