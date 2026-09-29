@@ -29,6 +29,7 @@
 - Effect lists in Spellmaking and Enchanting show base costs as the game does (Light: base 0.2, not 0.20000000298023224).
 - **One row of difficulty presets:** Challenge Runs showed Standard, Hardcore, Cursed and Custom twice, in the seed bar and again in the settings. They are now only in the settings, beside the counts and difficulty bands a preset sets, and screen readers hear which one is on.
 - **The Faction Journal in plain words:** ranks go by name and count from 1 ("Eligible for Journeyman", "Swordsman, rank 4 of 10" instead of "Rank 0"), skills by name (Long Blade, not long_blade), and what a promotion still needs reads as "Raise Strength by 5, to 30". "Landlord: 186 placements" and "186 spots" now say the faction owns 186 objects in the world, and its explanation says members of high enough rank can take them without stealing.
+- **Faction quests by name:** the Faction Journal's quest list shows each quest's name and whether it is completed, in progress or available, without internal keys or journal stage numbers ("fg_alofsfarm · Finishes: 100,110", "Active (Stage 30)"). Journal notes that have no quest name, such as the Mages Guild's reminder to pay dues, are left out, as the game's own quest list does.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

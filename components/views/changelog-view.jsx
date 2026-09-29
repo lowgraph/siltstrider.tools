@@ -41,6 +41,7 @@ export default function ChangelogView() {
             <li>Effect lists show base costs as the game does: Light is base 0.2, not 0.20000000298023224.</li>
             <li>Challenge Runs has one row of difficulty presets, in the settings beside what they change, instead of two identical rows.</li>
             <li>The Faction Journal names ranks and counts them from 1, shows skills by name, says plainly what a promotion still needs, and explains the objects a faction owns.</li>
+            <li>Faction quests are listed by name with a plain status (completed, in progress or available), without internal keys or stage numbers.</li>
           </ul>
         </section>
 
