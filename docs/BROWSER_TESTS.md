@@ -30,7 +30,11 @@ priority reordering in all profiles, widths and themes.
 Travel checks cover keyboard search/cancellation/selection, swap, objectives,
 share restoration, result reading order, forced-colors focus, real-time trade-offs,
 network loading/failure/retry, synthetic save import, persisted option edits,
-three-profile isolation and resetting to save defaults. Synthetic JSON fixtures,
+three-profile isolation and resetting to save defaults.
+Each save edit is checked before navigation, followed by a check that all four
+choices reached local storage. A failure there distinguishes an unapplied or
+unstored edit from the later save/profile restoration assertion.
+Synthetic JSON fixtures,
 failure HTML, screenshots, axe findings and `report.json` remain in the cache.
 The report records the starting Git commit, bundle pointer, timestamps and failures.
 Uncaught browser exceptions and unexpected local server errors fail the run.

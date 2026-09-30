@@ -302,7 +302,18 @@ async function savedTravel() {
     const control = async label => evaluate(`(()=>{const el=[...document.querySelectorAll('#travel-options label')].find(el=>el.textContent.includes(${JSON.stringify(label)}))?.querySelector('input');if(!el)throw Error('Missing save option '+${JSON.stringify(label)});el.dataset.saveOption=${JSON.stringify(label)};return '[data-save-option='+JSON.stringify(${JSON.stringify(label)})+']'})()`);
     const guild = await control('Mages Guild member'), divine = await control('Divine Intervention'), almsivi = await control('Almsivi Intervention'), carried = await control('Carrying');
     await until(`document.querySelector(${JSON.stringify(guild)}).checked && document.querySelector(${JSON.stringify(almsivi)}).checked && !document.querySelector(${JSON.stringify(divine)}).checked`);
-    await click(guild); await click(divine); await click(almsivi); await type(carried,'12.5');
+    await click(guild);
+    assert.equal(await evaluate(`document.querySelector(${JSON.stringify(guild)}).checked`), false, 'Guild edit applied before navigation');
+    await click(divine);
+    assert.equal(await evaluate(`document.querySelector(${JSON.stringify(divine)}).checked`), true, 'Divine edit applied before navigation');
+    await click(almsivi);
+    assert.equal(await evaluate(`document.querySelector(${JSON.stringify(almsivi)}).checked`), false, 'Almsivi edit applied before navigation');
+    await type(carried,'12.5');
+    assert.equal(await evaluate(`document.querySelector(${JSON.stringify(carried)}).value`), '12.5', 'Carrying edit applied before navigation');
+    const storedChoices = await evaluate(`JSON.parse(localStorage.getItem('silt-travel-options-v1'))`);
+    assert.ok(Object.entries(storedChoices?.saves || {}).some(([key, entry]) => key.startsWith('vanilla:') &&
+      entry.values?.mageGuild === false && entry.values?.divine === true &&
+      entry.values?.almsivi === false && entry.values?.carried === 12.5), 'Edited vanilla choices stored before navigation');
     for (const profile of ['vanilla','tr','tr_arce','vanilla']) {
       await navigate('leveler',profile); await navigate('travel',profile); await click('#travel-options > summary');
       const g = await control('Mages Guild member'), d = await control('Divine Intervention'), a = await control('Almsivi Intervention'), c = await control('Carrying');
@@ -317,7 +328,7 @@ async function savedTravel() {
     assert.equal(await evaluate(`document.querySelector(${JSON.stringify(await control('Divine Intervention'))}).checked`),false);
     await screenshot(`travel-save-${width}`);
     await navigate('vault'); await button('Clear save');
-    return { imported: true, restoredOverrides: true, profilesIsolated: true, reset: true };
+    return { imported: true, editsApplied: true, editsStored: true, restoredOverrides: true, profilesIsolated: true, reset: true };
   });
 }
 

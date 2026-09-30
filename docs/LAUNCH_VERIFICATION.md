@@ -420,3 +420,45 @@ Evidence: `A:/Cache/trv-release-tests.log`, `trv-release-build.log`,
 request traces and failure HTML. These production checks stayed signed out and
 used synthetic saves locally; real sign-in, Cloud Vault ownership/writes, payments,
 other browser engines and manual screen-reader acceptance were not repeated.
+
+## 10. Travel mobile failure investigation — 30 September 2026
+
+The owner authorized investigation, then explicitly authorized putting the same
+Travel version back on live because the site has no users yet. At **21:30 UTC**,
+`3ef09493-cb5a-42e2-96fd-ca54c168d3e2` (`2c113b8`) returned to 100% of traffic.
+Rollback version `24bd4ac1-e287-4c14-88d8-80bee20b42f9` remains available.
+No new application code, bundle, migration, binding or configuration was deployed.
+Before that, explicit diagnostic version overrides selected Travel at 0% while
+ordinary traffic remained on the restored release; that split is now removed.
+
+- The original failing assertion checks restoration after navigation, without
+  first verifying that the checkbox edits took effect. Failure HTML shows save
+  defaults; the failed disposable browser's stored options contain no overrides.
+  This does not establish whether clicks missed, edits were cleared, or an
+  application race occurred. The root cause remains **unconfirmed**.
+- Focused 1366/375 px reproductions passed **2/2 each** on the local static export,
+  local Worker and a local mirror of the HTTPS origin. Passive input tracing on
+  the export, a throttled export and the remote diagnostic version also passed
+  **2/2 each**. The original uninstrumented remote diagnostic flow passed **2/2**.
+  Three further original-timing mobile repetitions on live passed **3/3**.
+- The full original browser suite on live passed **125/125**, including the final
+  mobile save case: **216 accessibility audits with zero violations**, no runtime
+  exceptions or unexpected server errors, and **411 settled font checks**. It
+  covered both themes, 1366/375 px and all three profiles, including Builder,
+  calculator, Faction Journal, Level Simulator and Travel interactions. Only
+  failure-state capture was added, after a failed assertion; click timing and
+  the assertions in this run were the original ones.
+- Traced successful runs hit the intended controls and write the expected
+  `false/true/false/12.5` choices under the vanilla save key. Adding diagnostics
+  can change timing; successful traces do not explain the earlier failures.
+- The checked-in browser test now verifies every edited control and the stored
+  choices **before** navigation, so a future failure identifies whether editing,
+  storage or restoration failed. The added checks passed **2/2 locally** and
+  **2/2 on live**. Click behavior and application persistence code are unchanged.
+- `npm test`: **787 passed**, zero failures/skips/todos. Pipeline handoff
+  verification: **670 passed**. The existing production build is reused; no
+  rebuild was necessary for test-runner and documentation changes.
+
+Evidence: `A:/Cache/trv-mobile-investigation`, including `original-live-full`, `original-live-repeat`,
+`verified-edits-local`, `verified-edits-live`, the earlier focused reports and
+the routing records. These checks stayed signed out and used synthetic saves.
