@@ -93,8 +93,8 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       Journal, Equipped Loadouts, premade catalog, Challenge, Travel labels), both themes.
 - [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb`, merged `ae152d0`, live as `4951b9b5`).
 - [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9`, merged `384118d`, live as `4951b9b5`).
-- [ ] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above).
-- [ ] **C** Browser regression across all tools in Vanilla, TR and TR + ARCE at desktop and
+- [ ] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above) (started 2026-09-30 00:49 UTC, C; on `main`).
+- [ ] **C** Browser regression (started 2026-09-30 00:49 UTC, C; on `main`) across all tools in Vanilla, TR and TR + ARCE at desktop and
       phone widths (LAUNCH_OPERATIONS final acceptance, steps 2–3).
 
 ### Cut line
@@ -119,7 +119,7 @@ usability audit's. BLD-2, CALC-2 and BLD-4 were built early and are merged.
       Intervention scrolls as one use.
 - [x] **C** **CALC-2** Your own skill, attribute and Luck numbers in Alchemy, Enchanting and
       Spellmaking (started 2026-09-29 21:36 UTC, C; done `822c4dc`, merged `6178e87` with
-      review fixes `625c2b1`, `2b969fe`: 0 to 1000; live as `8f10cef2`. Typed numbers now stay across a world switch until Reset, owner 30 September).
+      review fixes `625c2b1`, `2b969fe`: 0 to 1000; live as `8f10cef2`. Typed numbers now stay across a world switch until Reset, owner 30 September, `cd01737`, live as `415d9c89`).
 - [ ] **C** **TRV-7** Say what "Cheapest" costs in time ("saves 5 gold, 1 h 13 min slower").
 
 **First steps, phones and saving**
