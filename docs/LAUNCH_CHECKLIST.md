@@ -15,6 +15,8 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 - Release, backup and rollback: [DEPLOYMENT.md](DEPLOYMENT.md), [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md)
 - Production state and history: [LAUNCH_VERIFICATION.md](LAUNCH_VERIFICATION.md)
 
+**ACC-1 (started 2026-09-30 19:29:17 UTC, Codex; preparing on feature/account-settings-preparation)**
+
 ## Fixed dates
 
 | Date | What |
