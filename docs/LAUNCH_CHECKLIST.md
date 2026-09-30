@@ -106,7 +106,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [ ] **C** **TRV-4 & TRV-5** Task-first Travel with folded options: place Origin, Destination, and "Plan for" at the top with route results immediately below; fold character and transit options into a one-line summary disclosure; move transit rules to a closed footer disclosure.
 - [x] **C** **BLD-2** Automatic Gear Advisor (started 2026-09-29 21:30 UTC, C; done `5e36716`): compute gear recommendations automatically when character build attributes/skills change, and add a quick-jump link from the top of the builder ("Early gear for this build ↓").
 - [ ] **C** **TRV-6** Remembered choices & single-use scrolls: persist player modifications to save-derived options across visits for that save; treat Intervention scrolls as single-use consumables rather than permanent routing access; consider cast chance before assuming known spells are usable.
-- [ ] **C** **CALC-2** Editable calculator skill inputs: allow typing custom skill, attribute, and Luck numbers directly in Alchemy, Enchanting, and Spellmaking ("Using Dark Elf Custom: Alchemy 5 — change") without requiring a built character first.
+- [x] **C** **CALC-2** Editable calculator skill inputs (started 2026-09-29 21:36 UTC, C; done `822c4dc`): allow typing custom skill, attribute, and Luck numbers directly in Alchemy, Enchanting, and Spellmaking ("Using Dark Elf Custom: Alchemy 5 — change") without requiring a built character first.
 
 #### 4.2 Onboarding, mobile, and character continuity
 - [ ] **C** **HOME-1 / MOB-2** Equal first steps on Home & mobile: provide two equal primary actions ("Start a character / Browse 41 premades" and "Load my save"); lead with character creation on touch devices.

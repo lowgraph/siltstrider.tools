@@ -1,6 +1,7 @@
 "use client";
 import {effectNumber, allowedRanges, effectDraft, selectedEffect, baseCostLabel} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback, useId } from "react";
+import { statNumber } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -21,7 +22,7 @@ export default function SpellmakingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world } = useShell();
+  const { world, profile } = useShell();
 
   // Character Magic Skills & Stats
   const baseAlt = sheet?.skills?.["Alteration"]?.v ?? 50;
@@ -46,6 +47,7 @@ export default function SpellmakingWorkstation() {
   const [mercantile, setMercantile] = useState(baseMerc);
   const [personality, setPersonality] = useState(basePers);
   const [disposition, setDisposition] = useState(50);
+  const [showCustomInputs, setShowCustomInputs] = useState(false);
 
   const [activeSchoolTab, setActiveSchoolTab] = useState("All");
   const [spellName, setSpellName] = useState("Custom Spell");
@@ -61,7 +63,8 @@ export default function SpellmakingWorkstation() {
     setLuck(baseLuck);
     setMercantile(baseMerc);
     setPersonality(basePers);
-  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers]);
+    // A world switch goes back to the character sheet, as Alchemy (remounted per world) does.
+  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers, profile]);
 
   // Effect Stack
   const [effectsList, setEffectsList] = useState([
@@ -183,6 +186,19 @@ export default function SpellmakingWorkstation() {
     }
   }, [primarySchool, alt, con, des, ill, mys, res]);
 
+  const handleGoverningSkillChange = useCallback((val) => {
+    const num = statNumber(val);
+    switch (primarySchool) {
+      case "Alteration": setAlt(num); break;
+      case "Conjuration": setCon(num); break;
+      case "Destruction": setDes(num); break;
+      case "Illusion": setIll(num); break;
+      case "Mysticism": setMys(num); break;
+      case "Restoration": setRes(num); break;
+      default: setDes(num); break;
+    }
+  }, [primarySchool]);
+
   const castChance = useMemo(() => {
     return calcSpellCastChance(magickaCost, governingSkillValue, willpower, luck, 1.0);
   }, [magickaCost, governingSkillValue, willpower, luck]);
@@ -240,42 +256,108 @@ export default function SpellmakingWorkstation() {
       </div>
 
       {/* Top Banner: Character Skills & Stats & Live Game-Data Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-5 border border-line-11">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-          <span className="font-serif font-bold text-accent uppercase tracking-wider whitespace-nowrap">
-            Active Character:
-          </span>
-          <span className="font-bold text-fg-2 whitespace-nowrap">
-            {build.race || "Adventurer"} {build.className || "Custom"}
-          </span>
-          <span className="text-fg-13 hidden sm:inline">·</span>
-          <span className="text-fg-9 whitespace-nowrap">
-            WIL: <strong className="text-accent">{willpower}</strong> | LUK: <strong className="text-accent">{luck}</strong>
-          </span>
+      <div className="p-3 bg-surface-5 border border-line-11 space-y-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+            <span className="font-serif font-bold text-accent whitespace-nowrap">
+              Using {build.race || "Adventurer"} {build.className || "Custom"}:
+            </span>
+            <span className="text-fg-9 whitespace-nowrap">
+              {primarySchool} <strong className="text-accent">{governingSkillValue}</strong> (WIL: <strong className="text-accent">{willpower}</strong> | LUK: <strong className="text-accent">{luck}</strong>)
+            </span>
+            <button
+              type="button"
+              id="spell-toggle-custom-stats"
+              className="text-xs text-accent underline hover:text-accent-hover font-serif cursor-pointer ml-1 bg-transparent border-0 p-0"
+              onClick={() => setShowCustomInputs((v) => !v)}
+              aria-expanded={showCustomInputs}
+            >
+              {showCustomInputs ? "— hide inputs" : "— change"}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            {gameData.status === 'ready' ? (
+              <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
+                <span>Live: {availableEffects.length} Spells · {spellmakersList.length} Vendors ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+              </span>
+            ) : gameData.status === 'loading' ? (
+              <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block animate-pulse"/>
+                <span>Loading bundle...</span>
+              </span>
+            ) : null}
+
+            <button
+              type="button"
+              className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
+              onClick={handleIngestCharacterStats}
+              title="Reset magic skills to active character sheet"
+            >
+              Reset to character sheet
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-          {gameData.status === 'ready' ? (
-            <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
-              <span>Live: {availableEffects.length} Spells · {spellmakersList.length} Vendors ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+        {/* Editable Custom Stats Controls */}
+        {showCustomInputs && (
+          <div className="pt-2 border-t border-line-11 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
+            <span className="font-serif font-bold text-fg-7 uppercase text-[11px]">
+              Custom numbers:
             </span>
-          ) : gameData.status === 'loading' ? (
-            <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block animate-pulse"/>
-              <span>Loading bundle...</span>
-            </span>
-          ) : null}
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="spell-skill-input" className="text-fg-9 font-serif font-bold">
+                {primarySchool}:
+              </label>
+              <input
+                id="spell-skill-input"
+                type="number"
+                min="0"
+                max="1000"
+                className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
+                value={governingSkillValue}
+                onChange={(e) => handleGoverningSkillChange(e.target.value)}
+              />
+            </div>
 
-          <button
-            type="button"
-            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
-            onClick={handleIngestCharacterStats}
-            title="Reset magic skills to active character sheet"
-          >
-            Ingest Character Stats
-          </button>
-        </div>
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="spell-wil-input" className="text-fg-9 font-serif font-bold">
+                WIL:
+              </label>
+              <input
+                id="spell-wil-input"
+                type="number"
+                min="0"
+                max="1000"
+                className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
+                value={willpower}
+                onChange={(e) => setWillpower(statNumber(e.target.value))}
+              />
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="spell-luck-input" className="text-fg-9 font-serif font-bold">
+                LUK:
+              </label>
+              <input
+                id="spell-luck-input"
+                type="number"
+                min="0"
+                max="1000"
+                className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
+                value={luck}
+                onChange={(e) => setLuck(statNumber(e.target.value))}
+              />
+            </div>
+
+            {(governingSkillValue !== (sheet?.skills?.[primarySchool]?.v ?? 50) || willpower !== baseWil || luck !== baseLuck) && (
+              <span className="text-[11px] text-accent italic">
+                (Custom numbers applied)
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Main 2-Pane Workstation Layout */}
