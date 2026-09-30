@@ -306,23 +306,25 @@ export default function CloudVaultModal({
                 </div>
               ) : (
                 vault.localSaves.map((rec, idx) => {
-                  const char = rec.character || rec;
+                  const char = (rec.character && typeof rec.character === "object") ? rec.character : rec;
+                  // Stored data can be anything: show text only.
+                  const text = (value) => (typeof value === "string" && value.trim() ? value : "");
                   return (
                     <div
-                      key={rec.id || idx}
+                      key={typeof rec.id === "string" ? rec.id : idx}
                       className="p-3 bg-surface-2 border border-line-11 flex flex-wrap items-center justify-between gap-3"
                     >
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-serif text-sm font-bold text-fg-2">
-                            {rec.name || char.name || "Local Character"}
+                            {text(rec.name) || text(char.name) || "Local Character"}
                           </h4>
                           <span className="text-[10px] font-serif uppercase px-1.5 py-0.5 bg-surface-7 border border-line-9 text-fg-11">
                             Local Storage
                           </span>
                         </div>
                         <p className="text-xs text-fg-14 font-serif mt-0.5">
-                          {char.race || "Dark Elf"} · {char.className || "Custom"} · {char.sign || "The Lady"}
+                          {text(char.race) || "Dark Elf"} · {text(char.className) || "Custom"} · {text(char.sign) || "The Lady"}
                         </p>
                       </div>
 

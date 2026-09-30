@@ -205,7 +205,7 @@ export default function CharacterBuilderRoot() {
                 onSwapSkill={handleSwapSkill}
                 onSelectClassPreset={handleSelectClassPreset}
               />
-              <LocalCharactersPanel />
+              <LocalCharactersPanel build={build} />
               {/* Copy Build Link Button below Local Characters */}
               <div className="mt-4">
                 <button

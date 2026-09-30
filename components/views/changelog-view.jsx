@@ -49,6 +49,7 @@ export default function ChangelogView() {
             <li>The world switch explains TR + ARCE: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes.</li>
             <li>The Gear Advisor recommends gear as soon as you change your character, and &ldquo;Early gear for this build &darr;&rdquo; at the top of the Character Builder jumps down to it.</li>
             <li>Alchemy, Enchanting and Spellmaking let you type your own skill and attribute numbers, and &ldquo;Reset to character sheet&rdquo; puts your character&apos;s numbers back.</li>
+            <li>&ldquo;Save this character&rdquo; in the Character Builder keeps a character in this browser, no account needed; the list below it loads or deletes them.</li>
           </ul>
         </section>
 

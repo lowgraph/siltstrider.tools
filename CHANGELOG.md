@@ -37,6 +37,7 @@
 - **TR + ARCE explained:** the world switch says what TR + ARCE is: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes. It shows in the phone menu, in the button's tooltip, and to screen readers.
 - **The Gear Advisor works on its own:** it recommends gear as soon as you change your character, without pressing Optimize Gear, and says what kind of character it read (a warrior, say). "Early gear for this build ↓" at the top of the Character Builder jumps down to it. Its item lists load as you scroll near it, so the Builder opens as quickly as before.
 - **Your own numbers in the calculators:** Alchemy, Enchanting and Spellmaking say whose skill and attributes they use ("Using Breton Custom: Alchemy 25") and let you type other numbers, from 0 to 1000, without building a character first. "Reset to character sheet" (it used to say "Ingest Character Stats") puts your character's numbers back, and so does switching world.
+- **Save a character without an account:** "Save this character" in the Character Builder keeps it in this browser, and the list below loads or deletes it. The Cloud Vault's Local Browser Saves tab shows the same characters, ready to sync to your account. If the browser does not let the site keep data (some private windows), the button says so.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 
