@@ -132,7 +132,7 @@ for now (owner, 30 September); other agents skip them.
 **Controls and polish**
 - [ ] **C** **CALC-3** One searchable box per Alchemy slot.
 - [ ] **C** **CHL-2** One lock per rolled item in Challenge Runs.
-- [ ] **C** **ENC-1** Enchanting starts with early-game items and soul gems.
+- [ ] **C** **ENC-1** (started 2026-09-30 17:16 UTC, C; on `launch/home-1-mob-2-first-steps`) Enchanting starts with early-game items and soul gems.
 - [x] **C** **SITE-3** (started 2026-09-30 16:55 UTC, C; done `910abc5` on `launch/home-1-mob-2-first-steps`, not merged: the nav row and Home lead with Build, Level, Travel, Alchemy; the phone tab bar keeps Alchemy until Travel's phone layout is redone) Nav order by use: Character Builder, Level Simulator, Travel Planner,
       Alchemy, then the rest.
 - [ ] **C** **LVL-2 / LVL-3** The Bitter Cup under advanced options; untruncated attribute
