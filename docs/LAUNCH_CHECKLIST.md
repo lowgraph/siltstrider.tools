@@ -135,7 +135,7 @@ for now (owner, 30 September); other agents skip them.
 - [x] **C** **ENC-1** (started 2026-09-30 17:16 UTC, C; done `eaa1c83` on `launch/home-1-mob-2-first-steps`, not merged: an Expensive Ring and a Lesser Soul Gem, as a Common Ring holds a single point; a new effect starts at 5 for 5 s so it fits; the ring, amulet, shirt and robe grades added) Enchanting starts with early-game items and soul gems.
 - [x] **C** **SITE-3** (started 2026-09-30 16:55 UTC, C; done `910abc5` on `launch/home-1-mob-2-first-steps`, not merged: the nav row and Home lead with Build, Level, Travel, Alchemy; the phone tab bar keeps Alchemy until Travel's phone layout is redone) Nav order by use: Character Builder, Level Simulator, Travel Planner,
       Alchemy, then the rest.
-- [ ] **C** **LVL-2 / LVL-3** (started 2026-09-30 20:35 UTC, C; on `launch/home-1-mob-2-first-steps`) The Bitter Cup under advanced options; untruncated attribute
+- [x] **C** **LVL-2 / LVL-3** (started 2026-09-30 20:35 UTC, C; done `2a86cff` on `launch/home-1-mob-2-first-steps`, not merged: the Bitter Cup under a closed Advanced options that opens while it is on; END, PER, STR in the priority list, full names for screen readers) The Bitter Cup under advanced options; untruncated attribute
       labels in the priority list.
 - [ ] **C** **TRV-8** One status line in Travel, not a second "Live:" pill (added from the
       audit; confirmed by the owner 30 September).
