@@ -105,18 +105,18 @@ audit's. BLD-2, CALC-2 and BLD-4 were built early and are live. The TRV items ar
 for now (owner, 30 September); other agents skip them.
 
 **Travel and the Builder**
-- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; done `866bd3a`, merged with this commit) One place search per route end: towns and stops first, then named places.
-- [x] **C** **TRV-4 / TRV-5** (started 2026-09-30 15:29 UTC, Codex; done `597214d`, merged with this commit) Task-first Travel: from, to and "plan for" at the top, the route
+- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; done `866bd3a`, merged `e3ab542`) One place search per route end: towns and stops first, then named places.
+- [x] **C** **TRV-4 / TRV-5** (started 2026-09-30 15:29 UTC, Codex; done `597214d`, merged `e3ab542`) Task-first Travel: from, to and "plan for" at the top, the route
       under them, the other options folded.
 - [x] **C** **BLD-2** The Gear Advisor ranks by itself, with "Early gear for this build ↓" to
       reach it (started 2026-09-29 21:30 UTC, C; done `5e36716`, merged `ef3cdea` with review
       fixes `5f11bea`: catalogs load near the screen, the name does not re-rank; live as `8f10cef2`).
-- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; done `7a85863`, merged with this commit) Keep the player's changes to a save's options across visits; Intervention
+- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; done `7a85863`, merged `e3ab542`) Keep the player's changes to a save's options across visits; Intervention
       scrolls have finite uses and known spells respect cast chance and current Magicka.
 - [x] **C** **CALC-2** Your own skill, attribute and Luck numbers in Alchemy, Enchanting and
       Spellmaking (started 2026-09-29 21:36 UTC, C; done `822c4dc`, merged `6178e87` with
       review fixes `625c2b1`, `2b969fe`: 0 to 1000; live as `8f10cef2`. Typed numbers now stay across a world switch until Reset, owner 30 September, `cd01737`, live as `415d9c89`).
-- [x] **C** **TRV-7** (started 2026-09-30 16:35 UTC, Codex; done `1604656`, merged with this commit) Say what Cheapest saves in gold and adds in movement compared with Fewest legs;
+- [x] **C** **TRV-7** (started 2026-09-30 16:35 UTC, Codex; done `1604656`, merged `e3ab542`) Say what Cheapest saves in gold and adds in movement compared with Fewest legs;
       show Real Time Approximation beside in-game time.
 
 **First steps, phones and saving**
@@ -138,7 +138,7 @@ for now (owner, 30 September); other agents skip them.
       Alchemy, then the rest.
 - [ ] **C** **LVL-2 / LVL-3** The Bitter Cup under advanced options; untruncated attribute
       labels in the priority list.
-- [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged with this commit) One network/loading/error/Retry line in Travel, including TR + ARCE.
+- [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged `e3ab542`) One network/loading/error/Retry line in Travel, including TR + ARCE.
 - [ ] **C** Header menus focus their first item when opened from the keyboard.
 - [ ] **C** The Cloud Vault checks a save's hash on load.
 

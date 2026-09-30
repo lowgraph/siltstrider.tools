@@ -2,7 +2,8 @@
 
 ## Travel task-first — 30 September
 
-TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8 are merged to main. No bundle schema,
+TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8 are merged to main (`e3ab542`).
+No bundle schema,
 loader, extraction or save-format changes. Invariants other agents must keep:
 
 - One picker per endpoint joins towns, stops and places; typing does not reroute.

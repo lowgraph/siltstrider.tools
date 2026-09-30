@@ -314,6 +314,7 @@ node node_modules/wrangler/bin/wrangler.js d1 execute siltstrider-db --remote --
 
 ## 8. Travel integration verification — 30 September 2026
 
+Merge commit: `e3ab542ceba3a1e573dd98ef25df8c34cb225690`.
 Merge inputs: main `0bc1a7f`, Travel `5170293`. Verified in the actual main
 worktree `A:/Claude/mt-travel-merge`, with repository build config unchanged.
 No extraction, schema change, deployment or production write.
