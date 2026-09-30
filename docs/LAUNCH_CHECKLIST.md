@@ -93,7 +93,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       Journal, Equipped Loadouts, premade catalog, Challenge, Travel labels), both themes.
 - [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb`, merged `ae152d0`, live as `4951b9b5`).
 - [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9`, merged `384118d`, live as `4951b9b5`).
-- [x] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above) (started 2026-09-30 00:49 UTC, C; done `03c3361`, not deployed: axe WCAG 2.2 AA + best practice on 19 pages and states, both themes, desktop and 375 px, found 5 issues (fg-16/17 text, faded ranks and stop labels, a Level Simulator preset, unnamed objective checkboxes), fixed, 0 on re-run; keyboard on 15 pages in both themes, the four dialogs and forced colors passed; LAUNCH_VERIFICATION §5 item 4).
+- [x] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above) (started 2026-09-30 00:49 UTC, C; done `03c3361`, live as `4c464aa3`; one more found live, a beast race's faded Boots slot, fixed with a faded ticked objective in `1e84b1a`, live as `24bd4ac1`, 0 violations on production: axe WCAG 2.2 AA + best practice on 19 pages and states, both themes, desktop and 375 px, found 5 issues (fg-16/17 text, faded ranks and stop labels, a Level Simulator preset, unnamed objective checkboxes), fixed, 0 on re-run; keyboard on 15 pages in both themes, the four dialogs and forced colors passed; LAUNCH_VERIFICATION §5 item 4).
 - [x] **C** Browser regression (started 2026-09-30 00:49 UTC, C; done on the dev build of `03c3361`: 9 tools x 3 worlds x 2 widths and 13 flows passed; LAUNCH_VERIFICATION §5 item 4) across all tools in Vanilla, TR and TR + ARCE at desktop and
       phone widths (LAUNCH_OPERATIONS final acceptance, steps 2–3).
 
@@ -121,7 +121,7 @@ for now (owner, 30 September); other agents skip them.
 **First steps, phones and saving**
 - [ ] **C** **HOME-1 / MOB-2** Two equal first steps on Home, a character or a save; the
       character first on phones.
-- [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61` on `launch/bld-3-premades-first`, not merged: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
+- [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61`, merged `4d998be`, live as `4c464aa3`: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
