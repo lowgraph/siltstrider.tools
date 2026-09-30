@@ -238,7 +238,7 @@ export default function AlchemyWorkstation() {
               Custom numbers:
             </span>
             <div className="flex items-center gap-1.5">
-              <label htmlFor="alc-skill-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="alc-skill-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 Alchemy:
               </label>
               <input
@@ -253,7 +253,7 @@ export default function AlchemyWorkstation() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="alc-int-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="alc-int-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 INT:
               </label>
               <input
@@ -268,7 +268,7 @@ export default function AlchemyWorkstation() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="alc-luck-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="alc-luck-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 LUK:
               </label>
               <input

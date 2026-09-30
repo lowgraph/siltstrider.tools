@@ -273,7 +273,7 @@ export default function EnchantingWorkstation() {
               Custom numbers:
             </span>
             <div className="flex items-center gap-1.5">
-              <label htmlFor="ench-skill-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="ench-skill-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 Enchant:
               </label>
               <input
@@ -288,7 +288,7 @@ export default function EnchantingWorkstation() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="ench-int-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="ench-int-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 INT:
               </label>
               <input
@@ -303,7 +303,7 @@ export default function EnchantingWorkstation() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="ench-luck-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="ench-luck-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 LUK:
               </label>
               <input

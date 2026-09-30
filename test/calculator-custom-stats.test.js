@@ -125,3 +125,12 @@ for (const [tool, prefix, skillId, skillBase] of TOOLS.filter(([t]) => t !== 'al
 test('Alchemy is rebuilt per world, which is why it starts from the sheet after a switch', () => {
   assert.match(fs.readFileSync('components/app-shell.jsx', 'utf8'), /<AlchemyWorkstation key=\{shell\.profile\} \/>/);
 });
+
+test('the typed-number labels stay on one line on a phone (they broke mid-word at 375 px)', () => {
+  for (const [tool, prefix] of [['alchemy', 'alc'], ['enchanting', 'ench'], ['spellmaking', 'spell']]) {
+    const src = fs.readFileSync(`components/calculators/${tool}/${tool}-workstation.jsx`, 'utf8');
+    const labels = [...src.matchAll(new RegExp(`<label htmlFor="${prefix}-(?:skill|int|luck|wil)-input" className="([^"]+)"`, 'g'))];
+    assert.equal(labels.length, 3, tool);
+    for (const [, cls] of labels) assert.match(cls, /\bwhitespace-nowrap\b/, `${tool}: ${cls}`);
+  }
+});

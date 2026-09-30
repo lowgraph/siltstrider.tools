@@ -307,7 +307,7 @@ export default function SpellmakingWorkstation() {
               Custom numbers:
             </span>
             <div className="flex items-center gap-1.5">
-              <label htmlFor="spell-skill-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="spell-skill-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 {primarySchool}:
               </label>
               <input
@@ -322,7 +322,7 @@ export default function SpellmakingWorkstation() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="spell-wil-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="spell-wil-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 WIL:
               </label>
               <input
@@ -337,7 +337,7 @@ export default function SpellmakingWorkstation() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="spell-luck-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="spell-luck-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 LUK:
               </label>
               <input
