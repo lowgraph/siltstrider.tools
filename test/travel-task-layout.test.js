@@ -53,7 +53,7 @@ async function mount({ data = fixture(), status = 'ready', activeSave = null, st
   }
   const deps = {
     '../../character-context': { useActiveCharacter: () => ({ build: { race: 'Breton', className: 'Custom' }, sheet: null, activeSave: state.activeSave }) },
-    '../../shell-context': { useShell: () => ({ world: state.world }) },
+    '../../shell-context': { useShell: () => ({ world: state.world, profile: state.profile || state.world }) },
     '../../use-game-data': { useGameData: tool => tool === 'carrying'
       ? state.carrying
       : { status: state.status, data: state.data, retry: () => retries++ } },
@@ -381,5 +381,60 @@ test('TRV-7 baseline comparison leaves selected single-use scroll routes intact'
     assert.match(document.querySelector('.travel-real-time').textContent, /1 transport\/spell transition/);
     assert.match(route().textContent, /Uses 1 scroll; 0 remaining/);
     assert.equal(activeSave.save.stuff.inventory[0].count, 1);
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-8 names each network once and keeps empty ready catalogs distinct from loading', async () => {
+  const t = await mount();
+  try {
+    const status = () => document.getElementById('travel-network-status');
+    const oneStatus = () => assert.equal(document.querySelectorAll('#travel-network-status').length, 1);
+    oneStatus();
+    assert.match(status().textContent, /Network: Vvardenfell \(Vanilla\) · 2 stops/);
+    assert.doesNotMatch(document.querySelector('.travel-workstation').textContent, /Live:/);
+    t.state.world = 'tr'; t.state.profile = 'tr';
+    await t.render(); oneStatus();
+    assert.match(status().textContent, /Network: Tamriel Rebuilt · 2 stops/);
+    t.state.profile = 'tr_arce';
+    await t.render(); oneStatus();
+    assert.match(status().textContent, /Network: Tamriel Rebuilt \+ ARCE · 2 stops/);
+    t.state.data = { catalogs: { Travel: [] }, metadata: {} };
+    await t.render(); oneStatus();
+    assert.match(status().textContent, /0 stops/);
+    assert.equal(status().getAttribute('role'), 'status');
+    assert.equal(button('Retry'), undefined);
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-8 does not announce a stop count while loading, even with stale data', async () => {
+  const t = await mount({ status: 'loading' });
+  try {
+    for (const data of [fixture(), null]) {
+      t.state.data = data; await t.render();
+      const status = document.getElementById('travel-network-status');
+      assert.equal(document.querySelectorAll('#travel-network-status').length, 1);
+      assert.equal(status.getAttribute('role'), 'status');
+      assert.match(status.textContent, /Loading travel network/);
+      assert.doesNotMatch(status.textContent, /\d+ stops/);
+      assert.equal(button('Retry'), undefined);
+    }
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-8 keeps Retry in its single failure alert and replaces it when recovered', async () => {
+  const t = await mount({ status: 'error', data: null });
+  try {
+    const status = () => document.getElementById('travel-network-status');
+    assert.equal(document.querySelectorAll('#travel-network-status').length, 1);
+    assert.equal(status().getAttribute('role'), 'alert');
+    assert.ok(status().contains(button('Retry')));
+    await click(button('Retry'));
+    assert.equal(t.retries(), 1);
+    t.state.status = 'ready'; t.state.data = fixture();
+    await t.render();
+    assert.equal(document.querySelectorAll('#travel-network-status').length, 1);
+    assert.match(status().textContent, /2 stops/);
+    assert.equal(status().getAttribute('role'), 'status');
+    assert.equal(button('Retry'), undefined);
   } finally { await t.cleanup(); }
 });

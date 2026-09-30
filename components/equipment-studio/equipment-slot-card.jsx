@@ -171,7 +171,7 @@ export const EquipmentSlotCard = memo(function EquipmentSlotCard({
       }}
       className={`group relative flex items-center justify-between p-2.5 transition-all text-left cursor-pointer select-none mw-groove-panel ${
         isRestricted
-          ? "opacity-50 cursor-not-allowed bg-danger-surface-1 border-danger-line-3"
+          ? "cursor-not-allowed bg-danger-surface-1 border-danger-line-3"
           : isEquipped
           ? "bg-surface-7 border-line-7 hover:border-accent hover:bg-surface-9"
           : "bg-surface-2 border-line-12 hover:border-line-9 hover:bg-surface-3"
@@ -219,11 +219,11 @@ export const EquipmentSlotCard = memo(function EquipmentSlotCard({
                 {item.name || item.id}
               </span>
             ) : isRestricted ? (
-              <span className="font-serif text-xs italic text-danger-8">
+              <span className="font-serif text-xs italic text-danger-3">
                 {restrictionReason || "Beast Restricted"}
               </span>
             ) : (
-              <span className="font-serif text-xs italic text-fg-17">
+              <span className="font-serif text-xs italic text-fg-14">
                 Empty
               </span>
             )}

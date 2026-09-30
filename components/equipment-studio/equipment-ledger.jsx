@@ -127,7 +127,7 @@ export const EquipmentLedger = memo(function EquipmentLedger({
           <div className="space-y-2">
             <div className="text-[10px] uppercase font-serif font-bold text-fg-14 tracking-wider px-1 pb-1 border-b border-line-12 flex items-center justify-between">
               <span>Armor &amp; Defensive Gear</span>
-              <span className="font-mono text-fg-16">9 Slots</span>
+              <span className="font-mono text-fg-14">9 Slots</span>
             </div>
 
             <div className="space-y-1.5">
@@ -169,7 +169,7 @@ export const EquipmentLedger = memo(function EquipmentLedger({
           <div className="space-y-2">
             <div className="text-[10px] uppercase font-serif font-bold text-fg-14 tracking-wider px-1 pb-1 border-b border-line-12 flex items-center justify-between">
               <span>Weapons, Attire &amp; Jewelry</span>
-              <span className="font-mono text-fg-16">10 Slots</span>
+              <span className="font-mono text-fg-14">10 Slots</span>
             </div>
 
             <div className="space-y-1.5">

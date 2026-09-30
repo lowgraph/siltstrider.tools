@@ -16,6 +16,8 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Travel has one plain network status with the network name and stop count. Loading and an error with Retry appear in the same place; TR + ARCE is named explicitly.</li>
+            <li>Gear Advisor runner-up buttons, Level Simulator preset descriptions, faction ranks and empty equipment slots have clearer small print in both themes.</li>
             <li>Travel shows &ldquo;Real Time Approximation&rdquo; beside in-game time, with movement minutes and transport or spell transitions listed separately. Cheapest compares its fare and movement with Fewest legs using your current options. Combat, menus, loading and time indoors are excluded.</li>
             <li>Travel remembers edits to a loaded save&apos;s guild, Intervention, items and movement options in this browser for that save and world profile. &ldquo;Use save defaults&rdquo; clears them. Scrolls start unticked and have a limited number of uses per journey; known spells show estimated cast chance and need enough Magicka. Replanning does not spend anything in your save.</li>
             <li>Travel puts Origin, Destination and &ldquo;Plan for&rdquo; above the route answer. Character and route options start folded with a summary of your choices; quick starting places open on demand, and &ldquo;How routes are worked out&rdquo; is at the bottom. Guild and carrying warnings stay beside the route.</li>

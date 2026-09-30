@@ -205,10 +205,10 @@ commands; the commands are in section 6.
    does not name their commits (most likely `ad1fc0b` and `85801eb`). They are not
    faults in the site, only gaps in the record; `9efa1a55` has since been deployed on
    top, tagged. Always use the DEPLOYMENT.md command so history names the commit.
-4. **No browser-level regression run** by an agent across all tools, three profiles and
-   both widths since the launch changes (LAUNCH_OPERATIONS "Final acceptance pass",
-   step 2–3). Spot checks done: Gear Advisor (vanilla and TR Mage, Assassin), home,
-   About and Vault notices, Report a bug links.
+4. **Local branch browser regression completed** on 30 September by Codex across
+   all tools, three profiles and both widths; see §8. This verifies the Travel
+   branch's working tree on the local dev server. Production acceptance and the
+   production build remain separate.
 5. **Owner-reported, not agent-verified:** Discord in Clerk is set up and tested;
    production sign-in, a cloud-save round trip and Ko-fi were tested (owner,
    29 September).
@@ -273,3 +273,34 @@ node node_modules/wrangler/bin/wrangler.js d1 execute siltstrider-db --remote --
 - The user runs multi-minute jobs (gear rows, rebuilds) themselves; hand them the
   command.
 - Keep `COORDINATION.md` identical in both repositories.
+
+## 8. Local Travel branch verification — 30 September 2026
+
+Working tree above `fcd3a3b` on `launch/trv-2-unified-place-search`, with TRV-8
+implemented but left uncommitted for the owner's commit step. Published bundle
+`3da0320236da77ec085d105d`, snapshot `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f`.
+No game-data rebuild, schema change or production write.
+
+- `npm test`: **757 passed, 0 failures**, including three TRV-8 workstation tests.
+- Full local Chrome/CDP suite: **107 cases passed, 0 failures**. Sixteen page/tool
+  views × three profiles × two widths (1366/390), each in Modern and Morrowind UI:
+  **192 axe WCAG 2/2.1 AA theme audits, 0 reported violations**, no horizontal
+  overflow, one main page heading, no uncaught exceptions or local server errors.
+- Interactions: calculator empty/custom inputs and ingredients/effects; invalid
+  and repeatable challenge seeds; Markdown exports; build/challenge/Travel share
+  restoration; challenge-to-builder navigation; equipment dialog focus/Escape;
+  Travel search keyboard/cancellation/selection, swaps/objectives/reading order,
+  real-time comparison, forced-colors focus, network failure/retry; synthetic JSON
+  save import, reload/visit persistence, three-profile isolation and save reset.
+- Fixed contrast findings from the initial sweep: Gear Advisor runner-up buttons,
+  Level Simulator preset descriptions, faction rank cards, equipment slot counts,
+  beast restriction notices and empty stats/slots. The final complete run is clean.
+- Evidence: `A:/Cache/travel-branch-browser-release-ready/report.json`, screenshots
+  and axe JSON beside it; unit log `A:/Cache/trv8-npm-test.log`. Reproduce using
+  [BROWSER_TESTS.md](BROWSER_TESTS.md).
+
+This was a local signed-out dev-server check. Production build, real save corpus,
+other browser engines, manual screen-reader review, and owner-run sign-in, Cloud
+Vault and payment checks were not repeated. The broader keyboard/high-contrast
+audit remains open; this run covers Travel focus and the equipment dialog.
+No commit, push or deploy of these implementation changes in this step.

@@ -197,7 +197,7 @@ export default function FactionDetailView({
                       ? "bg-surface-13 border-accent/70"
                       : isEligible
                       ? "bg-success-surface-2 border-success-line-4"
-                      : "bg-surface-8 border-line-9 opacity-85"
+                      : "bg-surface-8 border-line-9"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">

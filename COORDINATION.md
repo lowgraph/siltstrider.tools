@@ -1,5 +1,38 @@
 # Coordination
 
+## TRV-8: one network status and branch browser regression — 2026-09-30
+
+Implemented and tested in the working tree of `launch/trv-2-unified-place-search`,
+above `fcd3a3b`; ready for commit per owner request. Travel uses one plain network
+line for its name, stop count, loading, or error with Retry. TR + ARCE is explicit;
+loading never reports a misleading zero count. No duplicate Live badge. Three new
+workstation tests cover profiles/empty catalogs, loading with stale/missing data,
+and error/retry/recovery. No exported schemas, loader or extraction changes.
+
+The requested full Chrome regression found contrast problems in Gear Advisor
+runner-up buttons, Level Simulator presets, faction rank cards, and equipment
+slot counts, restrictions and empty stats. Corrected browser-grey backgrounds,
+faded text and dim labels; routing and calculator formulas remain unchanged.
+Both player changelogs record the visible changes.
+
+`npm test`: **757 passed, 0 failed**. `scripts/test-browser.cjs`: **107 passed,
+0 failed**, including 96 page/profile/width cases with **192 theme audits and
+0 axe WCAG violations**, plus keyboard, sharing, seeds, exports, cross-tool
+navigation, equipment dialog and synthetic save-persistence checks. No uncaught
+browser exceptions or unexpected local server errors. Profiles: Vanilla, TR,
+TR + ARCE; widths: 1366/390; themes: Modern/Morrowind. TRV-2/4/5/6/7 browser
+coverage is included. Bundle: `3da0320236da77ec085d105d`.
+Report/screenshots: `A:/Cache/travel-branch-browser-release-ready/`; unit log:
+`A:/Cache/trv8-npm-test.log`. Initial contrast failures and test-runner selector
+issues were resolved before this final clean run.
+
+First future command, from the site repository: `npm test` before any commit.
+For the browser command and scope, see `docs/BROWSER_TESTS.md`. No new dependency
+was installed; the runner uses installed Chrome and an existing axe-core script.
+Build, production authentication/cloud/payment checks and other browser engines
+were not run. Changes remain uncommitted; no push/deploy. Stop here until the
+owner authorizes another checklist item.
+
 ## TRV-7: real-time approximation and Cheapest trade-offs — 2026-09-30
 
 Implemented on `launch/trv-2-unified-place-search`. Outdoor walking, swimming,

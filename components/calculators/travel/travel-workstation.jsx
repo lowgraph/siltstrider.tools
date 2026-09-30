@@ -525,11 +525,13 @@ export default function TravelWorkstation() {
       </div>
 
       <section aria-label="Plan a journey" className="space-y-3">
-        <p className="m-0 text-xs text-fg-9">
-          Network: {isTr ? "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"} · {availableStops.length} stops
+        <p id="travel-network-status" role={gameData.status === "error" ? "alert" : "status"} className="m-0 text-xs text-fg-9">
+          Network: {isTr ? profile === "tr_arce" ? "Tamriel Rebuilt + ARCE" : "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"} · {gameData.status === "ready"
+            ? `${availableStops.length} ${availableStops.length === 1 ? "stop" : "stops"}`
+            : gameData.status === "error"
+            ? <>Travel network unavailable. <button type="button" className="mw-btn" onClick={gameData.retry}>Retry</button></>
+            : "Loading travel network..."}
         </p>
-        {gameData.status === 'loading' && <p role="status">Loading travel network...</p>}
-        {gameData.status === 'error' && <p role="alert">Travel network unavailable. <button type="button" className="mw-btn" onClick={gameData.retry}>Retry</button></p>}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <TravelLocationPicker
             id="travel-origin"

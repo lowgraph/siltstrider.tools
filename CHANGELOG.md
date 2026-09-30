@@ -2,6 +2,8 @@
 
 ## Travel place search — 2026-09-30
 
+- **One Travel network status:** the network name and stop count share one plain line. Loading and an error with Retry use that same line, and TR + ARCE is named explicitly.
+- **Clearer small print:** Gear Advisor runner-up buttons, Level Simulator preset descriptions, faction ranks and empty equipment slots are easier to read in both themes.
 - **See the real-time trade-off:** route results now show “Real Time Approximation” beside the time passing in-game. Walking, swimming and Levitate use your estimated movement speed; transport and spell transitions are counted separately. Cheapest explains how much gold it saves and how much movement it adds compared with Fewest legs using the same options. Combat, menus, loading and time indoors are excluded.
 - **Travel remembers your choices:** changes to a loaded save’s guild, Intervention, carried items and movement options stay in this browser for that save and world profile. “Use save defaults” clears those edits. Intervention scrolls start unticked and each journey can use only the number carried. Known spells show estimated cast chance and need enough current Magicka; uncertain or low-chance spells start unticked. Replanning does not spend the save’s items or Magicka.
 - **Your journey comes first:** Origin, Destination and “Plan for” now sit above the route answer on every screen size. Character and route options start folded with a summary of your choices; guild, spells, items and carrying have their own group, while walking and quest teleports are under Route style. Quick starting places open on demand, and “How routes are worked out” is at the bottom. Guild and carrying warnings stay beside the route.
