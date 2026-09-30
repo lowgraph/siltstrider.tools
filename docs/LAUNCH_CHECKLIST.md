@@ -38,10 +38,11 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 
 ## Priority list
 
-**Implementation pass (owner, 30 September):** write each requested fix, its tests and
-handoff/changelog text, but do not run tests, builds or browser verification in this pass.
-Record verification as pending. After each item, stop and ask the owner before starting
-the next. This overrides the execution of checks in the routine below for this pass.
+**Current workflow (owner, 30 September):** write each requested fix, its tests and
+handoff/changelog text, and run tests before every commit. This supersedes the earlier
+instruction to leave tests unrun. Codex specializes in Travel; after each item, stop
+and ask the owner before starting the next. Build/browser verification status must be
+recorded separately from automated tests.
 The owner subsequently authorized TRV-2's tests: `npm test` passed on 30 September
 with 718 tests and 0 failures. Browser verification remains pending.
 TRV-4 & TRV-5's tests were also authorized: `npm test` passed on 30 September
@@ -114,7 +115,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; implemented `866bd3a` on `launch/trv-2-unified-place-search`; 18 new tests; owner authorized `npm test` on 30 September: 718 passed, 0 failures; browser verification pending; not merged or deployed) One place search: replace the dual stop list and "Places" cell list with a single unified combobox per route end; rank towns and transit stops first, then named exteriors, then interiors grouped under their town ("Balmora › Council Club").
 - [x] **C** **TRV-4 & TRV-5** (started 2026-09-30 15:29 UTC, Codex; implemented `597214d` on `launch/trv-2-unified-place-search`; six new integration tests; owner authorized `npm test` on 30 September: 724 passed, 0 failures; build/browser verification pending; not merged or deployed) Task-first Travel with folded options: place Origin, Destination, and "Plan for" at the top with route results immediately below; fold character and transit options into a one-line summary disclosure; move transit rules to a closed footer disclosure.
 - [x] **C** **BLD-2** Automatic Gear Advisor (started 2026-09-29 21:30 UTC, C; done `5e36716`): compute gear recommendations automatically when character build attributes/skills change, and add a quick-jump link from the top of the builder ("Early gear for this build ↓").
-- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; implemented `7a85863`, branch `launch/trv-2-unified-place-search`; verification pending) Remembered choices & single-use scrolls: persist player modifications to save-derived options across visits for that save; treat Intervention scrolls as single-use consumables rather than permanent routing access; consider cast chance before assuming known spells are usable. Save/profile-scoped browser overrides, reset to save defaults, finite scroll counts, estimated cast chance and shared current Magicka budget implemented. 16 new tests written but **not run**, per owner workflow; tests, build and browser verification pending. Not merged or deployed.
+- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; implemented `7a85863`, branch `launch/trv-2-unified-place-search`; owner authorized tests: `npm test` passed on 30 September, 740 tests, 0 failures) Remembered choices & single-use scrolls: persist player modifications to save-derived options across visits for that save; treat Intervention scrolls as single-use consumables rather than permanent routing access; consider cast chance before assuming known spells are usable. Save/profile-scoped browser overrides, reset to save defaults, finite scroll counts, estimated cast chance and shared current Magicka budget implemented. All 16 new tests passed. Build and browser verification pending. Not merged or deployed.
 - [x] **C** **CALC-2** Editable calculator skill inputs (started 2026-09-29 21:36 UTC, C; done `822c4dc`): allow typing custom skill, attribute, and Luck numbers directly in Alchemy, Enchanting, and Spellmaking ("Using Dark Elf Custom: Alchemy 5 — change") without requiring a built character first.
 
 #### 4.2 Onboarding, mobile, and character continuity
@@ -130,7 +131,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [ ] **C** **ENC-1** Early-game Enchanting defaults: default to early-game accessible items (Common Ring, Petty/Lesser Soul Gem) instead of end-game Exquisite jewelry and Grand Soul Gems.
 - [ ] **C** **SITE-3** Centrality-based navigation order: reorder top navigation to reflect usage frequency (Character Builder, Level Simulator, Travel Planner, Alchemy, then secondary tools).
 - [ ] **C** **LVL-2 & LVL-3** Level Simulator polish: move niche "Drink Bitter Cup" toggle into an Advanced collapsible group; adopt standard 3-letter attribute abbreviations (END, PER, STR) to prevent label clipping.
-- [ ] **C** **TRV-7** Transparent Cheapest routing trade-offs: display the trade-off on "Cheapest" route results (e.g. "saves 5 gold, 1h 13m slower than Fewest legs").
+- [ ] **C** **TRV-7** (started 2026-09-30 16:35 UTC, Codex; branch `launch/trv-2-unified-place-search`) Transparent Cheapest routing trade-offs: display the trade-off on "Cheapest" route results (e.g. "saves 5 gold, 1h 13m slower than Fewest legs").
 - [ ] **C** **HOME-3** Player-centric outcome metrics: replace developer-centric metrics ("27 skills modeled") with tangible player outcomes ("Routes to any named place", "×5 level-ups planned").
 - [ ] **C** Keyboard menu navigation: ensure dropdown menus in the header automatically focus their first item when opened via keyboard.
 - [ ] **C** Cloud Vault save hash verification: verify OpenMW save file hash on load to confirm save integrity and detect external file modifications.

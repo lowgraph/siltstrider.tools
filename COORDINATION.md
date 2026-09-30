@@ -31,8 +31,11 @@ are assumed; no new loader catalog or rebuild is required.
 
 16 new tests written: four persistence/validation cases, eight consumable/casting
 and route cases, and four workstation cases added to `travel-task-layout.test.js`.
-Tests, build and browser verification **not run** in this implementation pass, per
-owner workflow. First future check: `npm test` in the site repository, then verify
+Initially left unrun per owner workflow; the owner subsequently authorized tests:
+**`npm test` passed on 30 September: 740 tests, 0 failures**, including all 16 new
+TRV-6 tests. No fixes needed. The owner now requires tests before every commit and
+directs Codex to specialize in Travel, starting with TRV-7. Build and browser
+verification remain pending. First future check: verify
 reload/save/profile switching, reset, scroll routes and cast notices on desktop
 and phone widths. No push/deploy. Ask before the next checklist item.
 
