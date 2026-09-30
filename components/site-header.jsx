@@ -255,17 +255,6 @@ export default function SiteHeader({ shell: propShell } = {}) {
         <div className="brand-title"><a href="/" className="brand-home" onClick={e => navigate(e, 'home')}>Silt Strider</a></div>
         <p className="kicker">siltstrider.tools — Morrowind build planner &amp; challenge run generator<span className="page-sub">{descriptions[shell.view]}</span></p>
       </div>
-      <button
-        ref={menu}
-        type="button"
-        className="hamburger"
-        aria-label={open ? 'Close menu' : 'Open menu'}
-        aria-expanded={open}
-        aria-controls="react-menu-drawer"
-        onClick={() => setOpen(!open)}
-      >
-        {open ? '✕' : '☰'}
-      </button>
       <div className="header-actions">
       <ThemeToggle />
       <button
@@ -295,6 +284,19 @@ export default function SiteHeader({ shell: propShell } = {}) {
         <ProfileIcon premium={account?.profile?.premium === true} id={account?.profile?.iconId ?? 0} size={26} />
       </button>
       </div>
+      {/* Phones only (MOB-1): the last of the one-row header's buttons, right before the
+          menu it opens, so the keyboard meets them in the order they are seen. */}
+      <button
+        ref={menu}
+        type="button"
+        className="hamburger"
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
+        aria-controls="react-menu-drawer"
+        onClick={() => setOpen(!open)}
+      >
+        {open ? '✕' : '☰'}
+      </button>
       <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} profile={shell.profile} navigate={view => shell.navigate(view)} />
       <div className={'header-tools menu-drawer' + (open ? ' open' : '')} id="react-menu-drawer">
         <div className="nav-primary">

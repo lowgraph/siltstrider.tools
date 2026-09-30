@@ -19,6 +19,7 @@ export default function ChangelogView() {
             <li>The first time you open the Character Builder, it starts on the premade builds, so you can pick one and change it instead of composing a class from nothing. &ldquo;Build my own instead&rdquo; goes straight to the Custom Class Builder, and later visits open as before.</li>
             <li>Home offers two equal ways to start: &ldquo;Start a character&rdquo; beside &ldquo;Load your save&rdquo;, instead of a small &ldquo;No save yet?&rdquo; link. On a phone, starting a character comes first.</li>
             <li>Wherever a tool names your character, the name links to the Character Builder to change it, and it matches the name on Home. The Level Simulator names it too, and the Faction Journal&apos;s character line now shows on wider screens.</li>
+            <li>On a phone, the header is a single row with a search button, and the Character Builder has one row of sections (Configure, Sheet, Loadouts, Premades) instead of two rows of tabs, so its form starts in the first screen.</li>
             <li>The menu bar puts the most used tools first: Character Builder, Level Simulator, Travel Planner, Alchemy, then Faction Journal and Challenge Runs.</li>
             <li>For a Khajiit or Argonian, the Boots slot in Equipped Loadouts and its &ldquo;Beast races cannot wear boots&rdquo; are readable instead of faded, and so is a ticked Challenge Runs objective.</li>
           </ul>

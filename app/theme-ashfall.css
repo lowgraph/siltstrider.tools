@@ -268,7 +268,14 @@
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='10' rx='8.5' ry='5'/%3E%3Cpath d='M9.5 12.5 5.5 20 3.5 29M13.5 14.6 11.5 22 10.5 29M18.5 14.6 20.5 22 21.5 29M22.5 12.5 26.5 20 28.5 29' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='10' rx='8.5' ry='5'/%3E%3Cpath d='M9.5 12.5 5.5 20 3.5 29M13.5 14.6 11.5 22 10.5 29M18.5 14.6 20.5 22 21.5 29M22.5 12.5 26.5 20 28.5 29' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-@media (max-width: 899px) { :root[data-theme="ashfall"] .topbar { padding-inline: 8px; } }
+@media (max-width: 899px) {
+  :root[data-theme="ashfall"] .topbar { padding-inline: 8px; }
+  /* In the phone menu, the two tools the rule above tones down for the desktop nav row read
+     like the others. */
+  :root[data-theme="ashfall"] body .menu-drawer :is(#react-nav-challenge, #react-nav-build):not([aria-current="page"]) { color: var(--color-fg-2); }
+  /* MOB-1: the one-row phone header leaves the name the room its icons do not take. */
+  :root[data-theme="ashfall"] .topbar .brand .brand-title { font-size: 1.6rem; }
+}
 :root[data-theme="ashfall"] .kicker { font-size: 13px; color: var(--color-fg-12); line-height: 1.45; }
 :root[data-theme="ashfall"] .kicker .page-sub { color: var(--color-fg-8); }
 
