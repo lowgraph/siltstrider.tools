@@ -35,6 +35,10 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
   Guides work from Mages Guild halls and need membership.
 - **Usability audit:** its assessment is accepted, including theft off by default in the
   Gear Advisor (BLD-1).
+- **Account settings (30 September):** the `account_settings` table is created before
+  launch, while no real users hold data, so launch week carries no migration. The settings
+  API and page may follow (section 4). Design: [ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md) on
+  `feature/account-settings-preparation`.
 
 ## Priority list
 
@@ -86,6 +90,21 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       Finishes: 100,110"). Show the name only, or say in words when the quest ends; test with
       a faction that has quests (FAC-1's page test used none).
 - [x] **C** **MOB-3** (started 2026-09-29 23:08 UTC, C; done with SITE-5 `86a0ce1`, merged `769db3b`, live as `4951b9b5`) No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
+- [ ] **C** **ACC-1** The account settings table as migration `0007_account_settings.sql`
+      (owner decision, 30 September). After Travel is merged: merge `main` into
+      `feature/account-settings-preparation` so only its own commits remain; promote
+      `cloudflare/proposals/account_settings.sql` to `cloudflare/migrations/0007_account_settings.sql`
+      unchanged in shape (the table only; no API or UI in this item); run the schema test
+      on `node:sqlite` instead of Python, and without `A:\Cache` hard-coded; update STATE and
+      ACCOUNT_PROFILES; `npm test`; apply locally with `wrangler d1 migrations apply
+      siltstrider-db --local` and check the saves tables are untouched; merge to `main`. No
+      changelog entry: visitors see nothing.
+- [ ] **O** **ACC-1 (production)** After ACC-1 is on `main` and before the freeze: record a
+      fresh D1 Time Travel bookmark, then apply with `wrangler d1 migrations apply
+      siltstrider-db --remote` as its own step, separate from any site release; check
+      `migrations list --remote` reports none pending; record the bookmark and result in
+      LAUNCH_VERIFICATION. Older Workers ignore the new table, so every rollback target
+      stays valid.
 
 ### 3. Before launch if time allows (can slip without breaking anything)
 
@@ -141,6 +160,13 @@ for now (owner, 30 September); other agents skip them.
       audit; confirmed by the owner 30 September).
 - [ ] **C** Header menus focus their first item when opened from the keyboard.
 - [ ] **C** The Cloud Vault checks a save's hash on load.
+- [ ] **C** **ACC-2** Account settings for players, after ACC-1: the revision-checked
+      `/api/settings` (GET and PUT, owner from the Clerk session, 409 on a stale revision), a
+      settings provider, and a settings page for world, theme, Travel, Gear Advisor and
+      Challenge defaults with reset all and reset one tool (ACCOUNT_SETTINGS.md). Modpack and
+      mod version stay unavailable until the pipeline publishes a release registry; the Gear
+      Advisor's quest-reward and difficult-encounter settings stay hidden until the gear rows
+      carry them.
 
 **Features**
 - [ ] **C** **CALC-4** Reverse alchemy: pick the effects, get the ingredients.

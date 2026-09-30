@@ -15,6 +15,35 @@ rebuilds, and separate push/deploy authorization still apply. No dataset schema 
 runtime changes. Next agent: read the launch checklist and claim the next available
 item; first verification command is `npm test` in the site repository.
 
+## Account settings table before launch — 2026-09-30
+
+No game-data schema changes yet. The owner decided the `account_settings` D1 table is
+created before launch, while there are no real users (checklist ACC-1; the API and page are
+ACC-2 in section 4). Design, contract and draft SQL: `docs/ACCOUNT_SETTINGS.md`,
+`lib/account-settings.mjs` and `cloudflare/proposals/account_settings.sql` on
+`feature/account-settings-preparation`, which was started from the Travel branch and must
+take `main` before it merges. Invariants other agents must keep:
+
+- **Its own table.** One row per Clerk account: the ID, a JSON document of at most 16 KiB
+  with an integer `version`, a `revision`, timestamps. No username needed, no save-vault
+  slot used, no change to `cloud_saves` or `account_profiles`. Never edit 0007 once applied;
+  a later change is a new migration.
+- **Applied apart from releases.** Remote apply is an owner step with a fresh Time Travel
+  bookmark, never inside a Worker deploy. Workers before 0007 ignore the table, so rollback
+  targets stay valid.
+- **The format is the contract.** The JSON shape lives in `lib/account-settings.mjs`
+  (`ACCOUNT_SETTINGS_VERSION` 1); once ACC-2 writes real rows, a change is a version bump
+  with a reader for the old one. Shared links and edits in the open tool win over account
+  defaults; stored `false` is a real choice; theft stays off unless the player turns it on.
+- **Tests run anywhere.** The schema test uses `node:sqlite`, not Python or a Windows path.
+
+Asking the pipeline, not yet a contract change: modpack and mod-version settings need a
+published release registry (stable modpack IDs, immutable release IDs mapped to bundles),
+and the Gear Advisor's quest-reward and difficult-encounter settings need gear-row fields
+that tell those picks apart. Until then those settings stay unavailable.
+
+First verification command: `npm test` in the site repository.
+
 ## UX pass for launch — 2026-09-29
 
 No game-data schema changes. Items from `docs/LAUNCH_CHECKLIST.md` (finding IDs from `docs/UX_USABILITY_AUDIT.md`), one commit each. Invariants other agents must keep:
