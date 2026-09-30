@@ -14,6 +14,13 @@ export default function ChangelogView() {
 
       <div className="space-y-6 text-sm text-fg-2">
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>The first time you open the Character Builder, it starts on the premade builds, so you can pick one and change it instead of composing a class from nothing. &ldquo;Build my own instead&rdquo; goes straight to the Custom Class Builder, and later visits open as before.</li>
+          </ul>
+        </section>
+
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-29">September 29, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Each tool&apos;s rules and formulas are now in a closed &ldquo;How this is calculated&rdquo; disclosure, written in plainer words. Travel&apos;s route is easier to reach on a phone, and the Cloud Vault explains uploads and save limits without technical jargon.</li>

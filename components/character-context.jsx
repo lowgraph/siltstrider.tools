@@ -126,6 +126,9 @@ export function CharacterProvider({ children, initialBuild = null }) {
     });
   }, [shell.ready, shell.world, shell.arce]);
 
+  // Still the random start: nothing chosen, linked, loaded or edited yet (BLD-3).
+  const isStarter = sameCharacter(build, randomPick.current);
+
   // Compute live character sheet
   const sheet = useMemo(() => {
     if (!catalogs) return null;
@@ -309,12 +312,13 @@ export function CharacterProvider({ children, initialBuild = null }) {
       selectClassPreset,
       selectPremade,
       rollRandomBuild,
+      isStarter,
       activeSave,
       loadSave,
       clearSave
     }),
     [build, sheet, catalogs, updateField, swapSkill, selectClassPreset, selectPremade,
-     rollRandomBuild, activeSave, loadSave, clearSave]
+     rollRandomBuild, isStarter, activeSave, loadSave, clearSave]
   );
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;
@@ -334,6 +338,7 @@ export function useActiveCharacter() {
       selectClassPreset: () => {},
       selectPremade: () => {},
       rollRandomBuild: () => null,
+      isStarter: false,
       activeSave: null,
       loadSave: async () => null,
       clearSave: () => {}

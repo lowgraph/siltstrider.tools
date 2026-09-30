@@ -771,6 +771,8 @@ test("Copy Build Link copies a link that opens the same character, in its world"
     clipboard({ writeText: async (text) => { copied = text; } });
     await act(async () => root.render(React.createElement(AppShell)));
     await settle();
+    // A first visit opens on the premade catalog (BLD-3).
+    await act(async () => button("Custom Class Builder").click());
     await act(async () => button("Female").click());
     await act(async () => button("Copy Build Link").click());
     await settle();
