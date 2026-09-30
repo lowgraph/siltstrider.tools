@@ -169,31 +169,36 @@ export default function SiteHeader({ shell: propShell } = {}) {
     };
   }, [shell.ready]);
 
+  // A menu opened from the keyboard puts focus on its first item (its last for ArrowUp), as
+  // a menu button does; opened with the mouse, focus stays where the pointer left it. A
+  // keyboard or screen reader activation is a click with detail 0; a mouse click counts its
+  // clicks. The focus waits for the menu to render.
+  const pendingFocus = useRef(null);
+  const focusItem = (type, which) => {
+    const items = (type === 'calc' ? calcMenuRef : moreMenuRef).current?.querySelectorAll('[role="menuitem"]');
+    if (!items?.length) return false;
+    (which === 'last' ? items[items.length - 1] : items[0]).focus();
+    return true;
+  };
+  useEffect(() => {
+    const want = pendingFocus.current;
+    if (want && focusItem(want.type, want.which)) pendingFocus.current = null;
+  });
+  const toggleMenu = (type, event) => {
+    const opening = type === 'calc' ? !calcOpen : !moreOpen;
+    pendingFocus.current = opening && event?.detail === 0 ? { type, which: 'first' } : null;
+    setCalcOpen(type === 'calc' ? opening : false);
+    setMoreOpen(type === 'more' ? opening : false);
+  };
+
   const handleDropdownBtnKeyDown = (e, type) => {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (type === 'calc') {
-        setCalcOpen(true);
-        setMoreOpen(false);
-        setTimeout(() => {
-          const items = calcMenuRef.current?.querySelectorAll('[role="menuitem"]');
-          if (items?.length) {
-            const target = e.key === 'ArrowDown' ? items[0] : items[items.length - 1];
-            target.focus();
-          }
-        }, 0);
-      } else if (type === 'more') {
-        setMoreOpen(true);
-        setCalcOpen(false);
-        setTimeout(() => {
-          const items = moreMenuRef.current?.querySelectorAll('[role="menuitem"]');
-          if (items?.length) {
-            const target = e.key === 'ArrowDown' ? items[0] : items[items.length - 1];
-            target.focus();
-          }
-        }, 0);
-      }
-    }
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault();
+    const which = e.key === 'ArrowDown' ? 'first' : 'last';
+    if ((type === 'calc' ? calcOpen : moreOpen) && focusItem(type, which)) return;
+    pendingFocus.current = { type, which };
+    setCalcOpen(type === 'calc');
+    setMoreOpen(type === 'more');
   };
 
   const handleMenuKeyDown = (e, menuRef, btnRef, closeMenu) => {
@@ -327,7 +332,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
               aria-expanded={calcOpen}
               aria-controls={calcOpen ? "react-calc-dropdown-menu" : undefined}
               aria-label="Calculators menu"
-              onClick={() => { setCalcOpen(!calcOpen); setMoreOpen(false); }}
+              onClick={e => toggleMenu('calc', e)}
               onKeyDown={e => handleDropdownBtnKeyDown(e, 'calc')}
             >
               Calculators <span className="dropdown-caret" aria-hidden="true">{calcOpen ? '▴' : '▾'}</span>
@@ -368,7 +373,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
               aria-expanded={moreOpen}
               aria-controls={moreOpen ? "react-more-dropdown-menu" : undefined}
               aria-label="More pages menu"
-              onClick={() => { setMoreOpen(!moreOpen); setCalcOpen(false); }}
+              onClick={e => toggleMenu('more', e)}
               onKeyDown={e => handleDropdownBtnKeyDown(e, 'more')}
             >
               More <span className="dropdown-caret" aria-hidden="true">{moreOpen ? '▴' : '▾'}</span>
