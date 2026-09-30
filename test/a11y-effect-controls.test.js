@@ -78,7 +78,11 @@ test('effect labels stay attached to unique controls across retained editors and
     checkLabels(15);
     await React.act(async () => [...scope.querySelectorAll('button')].find(button => button.textContent.trim() === 'Remove').click());
     checkLabels(10);
-    await React.act(async () => [...scope.querySelectorAll('button')].find(button => button.textContent.trim() === 'Constant').click());
+    // ENC-1: the page starts with a Lesser Soul Gem, too small for Constant Effect.
+    const constant = () => [...scope.querySelectorAll('button')].find(button => button.textContent.trim() === 'Constant');
+    assert.equal(constant().disabled, true, 'Constant Effect waits for a 400 soul');
+    await select(scope.querySelector('#enchant-soul-select'), '400');
+    await React.act(async () => constant().click());
     checkLabels(7);
   } finally {
     await React.act(async () => root.unmount());
