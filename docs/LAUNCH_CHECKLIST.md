@@ -119,7 +119,7 @@ for now (owner, 30 September); other agents skip them.
 - [ ] **C** **TRV-7** Say what "Cheapest" costs in time ("saves 5 gold, 1 h 13 min slower").
 
 **First steps, phones and saving**
-- [ ] **C** **HOME-1 / MOB-2** (started 2026-09-30 16:17 UTC, C; on `launch/home-1-mob-2-first-steps`) Two equal first steps on Home, a character or a save; the
+- [x] **C** **HOME-1 / MOB-2** (started 2026-09-30 16:17 UTC, C; done `ef59aae` on `launch/home-1-mob-2-first-steps`, not merged: "Start a character" and "Load your save" as equal cards, the character first when they stack; the start button on a phone at 758 px, the save's used to lead at 893) Two equal first steps on Home, a character or a save; the
       character first on phones.
 - [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61`, merged `4d998be`, live as `4c464aa3`: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
