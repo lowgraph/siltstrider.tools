@@ -1,5 +1,5 @@
--- DRAFT: outside migrations_dir deliberately. Not applied by Wrangler.
--- Promote to the next unused numbered migration after the settings design review.
+-- Migration 0007 (ACC-1): Account settings table before launch.
+-- Additive table only; the authenticated API and settings page follow in ACC-2.
 -- One row per verified Clerk account; no username prerequisite or identity mirror.
 -- The reviewed JSON contract includes theme, version notices, scoped Travel/Gear/
 -- Challenge defaults and reset actions. See docs/ACCOUNT_SETTINGS.md for fields.

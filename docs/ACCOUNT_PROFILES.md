@@ -26,6 +26,7 @@ npx wrangler deploy --keep-vars
 
 Migration 0003 creates `account_profiles`; it does not modify cloud saves.
 
-Account world/tool preferences will use a separate table so they do not require
-a chosen username. See [account settings preparation](ACCOUNT_SETTINGS.md) for
-the draft contract, toggle precedence and future modpack/version support.
+Migration `0007_account_settings.sql` (ACC-1) creates a separate settings table
+without requiring a chosen username or changing profiles/saves. See
+[account settings](ACCOUNT_SETTINGS.md) for the contract and local verification.
+The settings API and page are ACC-2 and are not built.

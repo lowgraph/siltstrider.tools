@@ -1,16 +1,6 @@
 # UI Transformation Blueprint: Silt Strider
 
-**Account settings preparation, 30 September 2026:** See
-[docs/ACCOUNT_SETTINGS.md](docs/ACCOUNT_SETTINGS.md). World, global/save toggle
-policy and future modpack/release IDs have a tested contract and draft D1 table
-on `feature/account-settings-preparation`. No migration or UI is active yet.
-Future modpack/release controls require published data and a release registry;
-global planning assumptions must keep save-provenance/membership notices visible.
-
-**Approved additions, 30 September 2026:** The preparation now includes theme,
-Travel objective, pinned-version notices, Gear/Challenge defaults, dataset scopes
-and reset-all/reset-tool helpers. 776 tests pass. The owner authorized the feature
-branch push; API/UI integration and remote migration/deployment remain pending.
+Account settings: [ACCOUNT_SETTINGS.md](docs/ACCOUNT_SETTINGS.md) covers migration 0007 (ACC-1) and the future API/page (ACC-2).
 
 - **Design specialty:** Antigravity (UI Transformation Lead)
 - **Site specialty:** Codex (Site Implementation Agent)

@@ -1,7 +1,9 @@
 # Account settings migration preparation
 
-Status: prepared on `feature/account-settings-preparation`; SQL is a proposal,
-not an applied or numbered migration. No production settings API or UI is wired.
+ACC-1 creates the table in `cloudflare/migrations/0007_account_settings.sql`
+before launch. It has been applied and checked on a fresh local D1 database;
+production apply is the owner's separate step. The API, provider and settings
+page are ACC-2 and are not built.
 
 ## Requested settings
 
@@ -119,12 +121,14 @@ Use a separate `account_settings` table, independent of the username-required
 document, with a contract version in JSON, revision counter, and timestamps.
 Clerk remains the identity authority. No settings row consumes a save-vault slot.
 
-Draft SQL: `cloudflare/proposals/account_settings.sql`. Wrangler currently reads
-only `cloudflare/migrations`, so routine migration commands cannot apply it.
-After review, promote to the next unused migration number and update the schema
-reference and account/state documentation. Never edit an already applied migration.
+Migration: `cloudflare/migrations/0007_account_settings.sql` (ACC-1). It keeps the
+reviewed table shape and is additive: existing saves, profiles, entitlements,
+indexes, triggers and views stay unchanged. Never edit 0007 once applied; later
+changes need a new migration. Remote apply belongs to the owner, with a fresh
+D1 Time Travel bookmark, separately from any Worker deploy. Older Workers ignore
+the new table and remain valid rollback targets.
 
-Planned `/api/settings` behavior (not implemented):
+Planned `/api/settings` behavior (ACC-2, not implemented):
 
 - GET: authenticate, return `{ settings, revision }`; absent row returns defaults
   and revision 0. GET does not create rows or infer defaults from another account.
@@ -207,18 +211,49 @@ No game-data schema changes or extraction are part of this preparation.
 
 ## Validation and rollout
 
-Run `npm test` first in this checkout. The preparation adds contract/precedence
-tests and in-memory SQLite tests applying existing migrations plus the proposal.
-Tests check malformed JSON, missing/null versions, UTF-8 byte limits, account
-isolation, concurrent writes, preserved saves and fresh accounts without usernames.
+Run `npm test` first in this checkout. `test/account-settings-schema.test.js` uses
+`node:sqlite`'s `DatabaseSync`, without Python, subprocesses or Windows cache paths.
+It applies migrations 0001–0006 in order, then 0007, and checks `json_valid` and
+`json_type`, malformed JSON, missing/null/non-integer versions, UTF-8 byte limits,
+owner isolation, revision conflicts, unchanged saves/profiles/entitlements and
+fresh accounts without usernames.
 
-Next implementation: promote the reviewed SQL, wire the authenticated
-API/provider/account UI, then connect World, theme and the tool defaults/reset
+The branch previously had no `engines` declaration, although its documented
+minimum was Node 22.11.0. `package.json` now declares `>=22.11.0`; `npm test` uses
+`node --experimental-sqlite --test test/*.test.js` so SQLite loads on Node 22.11
+and 22.12, where it still needs the flag. This preserves the current runtime
+minimum rather than raising it. Node 22.11 emits `ExperimentalWarning: SQLite is
+an experimental feature and might change at any time`; it is not suppressed.
+
+ACC-1 local verification uses a fresh persistence directory (do not reuse an
+existing developer database):
+
+```powershell
+npx wrangler d1 migrations apply siltstrider-db --local --persist-to <fresh-local-directory>
+npx wrangler d1 migrations list siltstrider-db --local --persist-to <fresh-local-directory>
+```
+
+All seven migrations applied successfully; list reported `No migrations to
+apply!`. Local `account_settings` exists; the 28 historical schema objects match
+the 0001–0006 baseline (ignoring Wrangler's removal of SQL comments/whitespace).
+The seven existing application tables remain empty in the fresh database.
+Separate seeded in-memory tests verify that existing records survive 0007.
+
+Branch verification: `npm test` passed 778 tests with no failures or skips and
+the reported SQLite experimental warning. `npm run build:cloudflare` passed,
+generating 24 static pages. An initial build rejected the worktree's dependency
+junction; copying the existing installation into this checkout resolved it
+without changing application or build configuration.
+
+ACC-2 implementation: wire the authenticated API/provider/account UI, then
+connect World, theme and the tool defaults/reset
 actions. Version notifications need a release registry. Keep future
 dataset selectors unavailable until registry/loader support exists. Add UI,
 authentication and persistence verification and both player changelogs when the
-feature becomes visible. Apply/test locally before a separately authorized remote
-migration and deployment; no remote migration or deployment was done here.
+feature becomes visible. The settings branch must merge origin/main (without
+rebasing) after the owner confirms Travel has merged and main is ready; then
+repeat local migration, tests and build, checking that only settings work differs
+from main. No remote migration or deployment was done here.
 
 References: [D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 and [D1 JSON storage](https://developers.cloudflare.com/d1/sql-api/query-json/).

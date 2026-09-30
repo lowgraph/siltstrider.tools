@@ -92,11 +92,12 @@ To store comprehensive character saves within Cloudflare D1's row size constrain
 4. `0004_premium_support.sql`: Supporter entitlements and verification mappings.
 5. `0005_premium_currencies.sql`: One-time tips in any currency.
 6. `0006_remove_empty_prototype.sql`: Retires the prototype table only if empty; refuses to discard rows.
+7. `0007_account_settings.sql` (ACC-1): Separate account-settings JSON document, revision and timestamps; no username or save-vault slot required.
 
-Account world/tool preferences are currently browser-local. Preparation for a
-separate versioned `account_settings` table is documented in
-[ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md). Its SQL remains outside the applied
-migrations directory; the account API and workstations do not use it yet.
+Account world/tool preferences are currently browser-local. The separate
+versioned `account_settings` table is migration 0007; see
+[ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md). The settings API, provider and page
+are ACC-2 and are not built; the account API and workstations do not use it yet.
 The approved contract also covers theme, pinned-version update notices,
 Travel/Gear/Challenge defaults, dataset-specific overrides and preference resets.
 

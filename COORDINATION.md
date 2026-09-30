@@ -1,49 +1,15 @@
 # Coordination
 
-## Approved account settings additions — 2026-09-30
+## ACC-1 preparation result — 2026-09-30
 
-The owner accepted the recommended settings and authorized pushing
-`feature/account-settings-preparation` to GitHub. Added theme, pinned-version
-update notices, Travel objective, Gear/Challenge defaults, global or dataset
-scope and pure reset-all/reset-tool actions. Sparse dataset overrides inherit
-global choices, retain explicit false, and apply pack/world defaults before an
-exact release. At most 24 entries fit under the existing 16 KiB document limit.
-Challenge preset counts/bands remain coherent; customized dials resolve as Custom.
-Resetting one tool clears it in all scopes without changing other preferences.
-
-`npm test`: **776 passed, 0 failed, 0 skipped**, including 19 account-settings
-contract/SQLite tests. The approved JSON document fits the original table design;
-no new SQL columns or exported game-data/SLT1 contracts. SQL remains a proposal,
-with API/provider/UI and runtime wiring pending. Quest-reward and difficult-
-encounter preferences need new acquisition-filter support before UI exposure;
-release notices/modpack/version selectors need a published registry/loader.
-No migration, extraction or deployment. No pipeline checkout is available here.
-First next command: `npm test` in this checkout. Next implementation: promote
-the reviewed SQL, then wire the authenticated API/provider/UI and tool consumers.
-
-## Account settings preparation — 2026-09-30
-
-Prepared on `feature/account-settings-preparation` in an isolated worktree based
-on the committed Travel branch (`dce0622`). Preserved other checkouts' pending work.
-`cloudflare/proposals/account_settings.sql` is outside Wrangler's migrations_dir:
-no numbered migration, remote SQL, deployment or runtime/UI wiring yet.
-The draft table stores one bounded versioned JSON document per Clerk owner with
-a revision counter; it does not require an account username or consume save slots.
-`lib/account-settings.mjs` prepares World, global/save toggle policy, future
-modpack/release IDs and a pure Travel precedence resolver. Explicit link/session
-edits win; global booleans replace save choices only when enabled. Imported saves,
-inventory, carrying weight and movement magnitudes remain untouched.
-See `docs/ACCOUNT_SETTINGS.md` for recommended additional settings and the future
-release-registry/loader boundary. No exported game-data, SLT1 or extraction changes.
-No pipeline checkout is available here for copying coordination files.
-
-Verification: **768 tests passed, 0 failed, 0 skipped**, including 11 new tests
-covering validation, precedence, preserved saves, fresh accounts, malformed SQL
-records, UTF-8 byte limits, owner isolation and revision conflicts. Used the
-existing installed dependencies and published data, with no rebuild. No UI changed.
-First next command: `npm test` in this checkout. Next implementation step: settle
-the settings, promote the SQL to the next unused migration, then wire the settings
-API/provider/UI and World/Travel; future datasets need their own published registry.
+Promoted the reviewed table unchanged to `0007_account_settings.sql`. Local apply
+of 0001–0007 succeeded; none pending. Existing saves, profiles and entitlement
+schema/records are preserved. Details: `docs/ACCOUNT_SETTINGS.md`. Schema tests use
+`node:sqlite`; Node >=22.11 is retained with `--experimental-sqlite`, whose warning
+is reported without suppression. Verification: 778 tests passed, none failed or
+skipped; Cloudflare build generated 24 static pages. No API/provider/UI (ACC-2), remote apply or
+deployment. Merge origin/main only after the owner confirms Travel is merged;
+then repeat local apply, tests and build. First next command: `npm test`.
 
 ## TRV-8: one network status and branch browser regression — 2026-09-30
 
