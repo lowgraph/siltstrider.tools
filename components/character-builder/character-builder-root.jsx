@@ -91,6 +91,24 @@ export default function CharacterBuilderRoot() {
             Craft custom classes, calculate initial vitals and skill ratings from race and birthsign, and discover optimal starting gear.
           </p>
         </div>
+        {activeTab === "builder" && (
+          <a
+            href="#gear-advisor"
+            id="jump-to-gear-advisor"
+            className="mw-btn py-2 px-3.5 text-xs sm:text-sm font-serif font-bold text-accent flex items-center gap-1.5 shadow-sm no-underline hover:text-accent-hover transition-colors"
+            title="Jump to Gear Recommendations &amp; Progression Advisor"
+            onClick={(e) => {
+              const el = document.getElementById("gear-advisor");
+              if (el) {
+                e.preventDefault();
+                el.scrollIntoView?.({ behavior: "smooth" });
+                window.history.replaceState?.(null, "", "#gear-advisor");
+              }
+            }}
+          >
+            <span>Early gear for this build ↓</span>
+          </a>
+        )}
       </div>
 
       {/* Top Mode Selectors: 3-Way CRPG Studio Bar */}

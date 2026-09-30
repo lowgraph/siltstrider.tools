@@ -37,6 +37,7 @@ No game-data schema changes. Items from `docs/LAUNCH_CHECKLIST.md` (finding IDs 
 - **FAC-3: faction quests by name.** `getFactionQuests` keeps named quests only, as the game's quest list does; a topic without a name is a journal note (the Mages Guild's dues reminder), and no quest shows its key or stage numbers. Status reads Completed, In progress or Available. `test/faction-math.test.js`, `test/journal-factions-ui.test.js`.
 - **MOB-3: the Ctrl K hints are for keyboards.** One rule in `app/globals.css` hides both (header and home) under `(max-width: 899px), (hover: none) and (pointer: coarse)`; a touchscreen laptop keeps them. `test/header-hints.test.js`.
 - **SITE-5: ARCE is All Races and Classes Enabled** (the mod's own name, not "Aran Rebuilt"). The TR + ARCE button's tooltip and description (`#world-arce-help`, shown in the phone menu) say so; `test/header-hints.test.js` fails on any other expansion.
+- **BLD-2: Automatic Gear Advisor.** Gear recommendations compute automatically upon character build attributes or skills updating without requiring manual clicks on "Optimize Gear". Uses the existing character archetype detection from the level planner (`detectArchetype` via `buildTraits` in `lib/build-traits.mjs`). Added quick-jump anchor link ("Early gear for this build ↓") at the top of the Character Builder leading to `#gear-advisor`. Tested in `test/automatic-gear-advisor.test.js`.
 
 First verification command: `npm test` in the site repository.
 

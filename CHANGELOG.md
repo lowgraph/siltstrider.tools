@@ -35,6 +35,7 @@
 - **Faction quests by name:** the Faction Journal's quest list shows each quest's name and whether it is completed, in progress or available, without internal keys or journal stage numbers ("fg_alofsfarm · Finishes: 100,110", "Active (Stage 30)"). Journal notes that have no quest name, such as the Mages Guild's reminder to pay dues, are left out, as the game's own quest list does.
 - **Phones and tablets:** the Ctrl K / ⌘K search hint no longer shows where there is no keyboard to press it, on the home page or in the header; a touchscreen laptop keeps it.
 - **TR + ARCE explained:** the world switch says what TR + ARCE is: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes. It shows in the phone menu, in the button's tooltip, and to screen readers.
+- **The Gear Advisor works on its own:** it recommends gear as soon as you change your character, without pressing Optimize Gear, and says what kind of character it read (a warrior, say). "Early gear for this build ↓" at the top of the Character Builder jumps down to it. Its item lists load as you scroll near it, so the Builder opens as quickly as before.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

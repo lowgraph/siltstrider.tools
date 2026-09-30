@@ -1,12 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
 import { buildGearGroups, gearRanking, DEFAULT_GEAR_TOGGLES } from '../../lib/gear-rows.mjs';
+import { buildTraits } from '../../lib/build-traits.mjs';
 import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
 import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
+// The gear catalogs (GearRows, BestInSlot, Armor, Clothing, Weapons) are about 180 KB
+// compressed in vanilla and 530 KB in TR: they load when the advisor comes near the screen,
+// not on every Builder visit. The ranking itself is computed as soon as the build changes.
 export default function GearAdvisor(props){
   const [enabled,setEnabled]=useState(false);
   const result=useGameData('gear',{enabled});
@@ -29,24 +33,37 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const [weaponSetup, setWeaponSetup] = useState('one-handed');
   const displayedRanking = ranking && { ...ranking, weaponSetup, twoHand: weaponSetup === 'two-handed', shield: weaponSetup === 'one-handed' ? 'recommended' : 'none' };
 
+  const traits = buildTraits(build);
   const resolveRanking = () => gearRanking(build, { attrs });
 
-  const buildKey = JSON.stringify(build);
-  // A result is valid only for the character used to compute it.
-  useEffect(() => {
-    setRanking(null);
-    setRankError(null);
-    setHasRun(false);
-  }, [buildKey]);
+  // The name does not change the ranking, so typing it does not re-rank.
+  const { name: _name, ...rankedBuild } = build || {};
+  const buildKey = JSON.stringify(rankedBuild);
+  const attrsKey = JSON.stringify(attrs);
 
-  const handleOptimize = () => {
-    onLoad();
+  // Automatically compute gear recommendations when build or attributes change
+  useEffect(() => {
     setOptimizing(true);
-    setHasRun(true);
     try {
       const prof = resolveRanking();
       setRanking(prof);
       setRankError(null);
+      setHasRun(true);
+    } catch(error) {
+      setRankError(error.message);
+    } finally {
+      setOptimizing(false);
+    }
+  }, [buildKey, attrsKey]);
+
+  const handleOptimize = () => {
+    onLoad?.();
+    setOptimizing(true);
+    try {
+      const prof = resolveRanking();
+      setRanking(prof);
+      setRankError(null);
+      setHasRun(true);
     } catch(error) {
       setRankError(error.message);
     } finally {
@@ -63,9 +80,27 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
     } catch (error) { setRankError(error.message); }
   };
 
+  // Load the catalogs once the advisor is within about a screen of view (scrolling, the
+  // "Early gear for this build" link, or a #gear-advisor address). Without an observer,
+  // load at once.
+  const rootRef = useRef(null);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") { onLoad?.(); return undefined; }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) { onLoad?.(); observer.disconnect(); }
+    }, { rootMargin: "800px 0px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+    // Once, on mount: onLoad only switches loading on.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div
-      className="gear-advisor mt-6 px-8 sm:px-10 py-6 space-y-5 text-sm w-full"
+      ref={rootRef}
+      id="gear-advisor"
+      className="gear-advisor mt-6 px-8 sm:px-10 py-6 space-y-5 text-sm w-full scroll-mt-6"
       style={{
         border: "6px solid transparent",
         borderImage: "var(--mw-border) 6 repeat",
@@ -79,7 +114,8 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
             <span>Gear Recommendations &amp; Progression Advisor</span>
           </h3>
           <p className="text-sm text-fg-8 mt-1">
-            Optimized armor, weapons, and artifact acquisition tailored to your major weapon and armor skills.
+            Optimized armor, weapons, and artifact acquisition tailored to your major weapon and armor skills
+            {traits?.archetypeName ? ` (${traits.archetypeName} archetype)` : ""}.
           </p>
         </div>
 

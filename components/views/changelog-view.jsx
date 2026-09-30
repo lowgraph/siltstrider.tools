@@ -47,6 +47,7 @@ export default function ChangelogView() {
             <li>Faction quests are listed by name with a plain status (completed, in progress or available), without internal keys or stage numbers.</li>
             <li>No Ctrl K search hint on phones and tablets.</li>
             <li>The world switch explains TR + ARCE: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes.</li>
+            <li>The Gear Advisor recommends gear as soon as you change your character, and &ldquo;Early gear for this build &darr;&rdquo; at the top of the Character Builder jumps down to it.</li>
           </ul>
         </section>
 
