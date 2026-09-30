@@ -101,7 +101,8 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 
 Moved here from after launch by the owner on 30 September, since there is time before the
 freeze. Like section 3, it can slip. Priority order within each group; IDs are the usability
-audit's. BLD-2, CALC-2 and BLD-4 were built early and are live.
+audit's. BLD-2, CALC-2 and BLD-4 were built early and are live. The TRV items are Codex's
+for now (owner, 30 September); other agents skip them.
 
 **Travel and the Builder**
 - [ ] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; in progress on `launch/trv-2-unified-place-search`) One place search per route end: towns and stops first, then named places.
@@ -120,7 +121,7 @@ audit's. BLD-2, CALC-2 and BLD-4 were built early and are live.
 **First steps, phones and saving**
 - [ ] **C** **HOME-1 / MOB-2** Two equal first steps on Home, a character or a save; the
       character first on phones.
-- [ ] **C** **BLD-3** Premade builds first for newcomers.
+- [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61` on `launch/bld-3-premades-first`, not merged: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
