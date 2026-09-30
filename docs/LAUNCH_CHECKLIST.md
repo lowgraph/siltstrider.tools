@@ -130,7 +130,7 @@ for now (owner, 30 September); other agents skip them.
 - [x] **C** **HOME-3** (started 2026-09-30 17:09 UTC, C; done `30862de` on `launch/home-1-mob-2-first-steps`, not merged: ×5 level-ups, any town, early gear, 3 worlds, instead of skill, restriction and stop counts) Outcomes on Home instead of counts ("27 skills modeled").
 
 **Controls and polish**
-- [ ] **C** **CALC-3** One searchable box per Alchemy slot.
+- [ ] **C** **CALC-3** (started 2026-09-30 17:21 UTC, C; on `launch/home-1-mob-2-first-steps`) One searchable box per Alchemy slot.
 - [ ] **C** **CHL-2** One lock per rolled item in Challenge Runs.
 - [x] **C** **ENC-1** (started 2026-09-30 17:16 UTC, C; done `eaa1c83` on `launch/home-1-mob-2-first-steps`, not merged: an Expensive Ring and a Lesser Soul Gem, as a Common Ring holds a single point; a new effect starts at 5 for 5 s so it fits; the ring, amulet, shirt and robe grades added) Enchanting starts with early-game items and soul gems.
 - [x] **C** **SITE-3** (started 2026-09-30 16:55 UTC, C; done `910abc5` on `launch/home-1-mob-2-first-steps`, not merged: the nav row and Home lead with Build, Level, Travel, Alchemy; the phone tab bar keeps Alchemy until Travel's phone layout is redone) Nav order by use: Character Builder, Level Simulator, Travel Planner,
