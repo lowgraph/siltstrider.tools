@@ -182,11 +182,11 @@ test("the home page shows the character, real counts and every tool", async () =
 
     const facts = [...container.querySelectorAll(".home-fact")].map(f => f.textContent);
     assert.deepEqual(facts, [
-      "27skills modeled for every character",
-      "103hand-picked challenge restrictions",
-      "4travel stops in Vanilla",
-      "3world profiles: Vanilla, TR and TR + ARCE"
-    ], "the stop count comes from the loaded travel network");
+      "×5attribute bonuses, planned level by level",
+      "Any townreached by silt strider, boat, Guild Guide or on foot, at your fare",
+      "Early gearfor your build, and where to buy or find it",
+      "3 worldsVanilla, Tamriel Rebuilt and TR + ARCE, each from its own game data"
+    ], "what the site does for the character (HOME-3), not counts");
 
     const tools = [...container.querySelectorAll("a.home-tool")];
     assert.deepEqual(tools.map(a => a.getAttribute("href")), ["/builder", "/leveler", "/travel", "/alchemy", "/enchanting", "/spellmaking", "/factions", "/challenge", "/vault"]);
@@ -198,6 +198,30 @@ test("the home page shows the character, real counts and every tool", async () =
     assert.match(container.querySelector(".home-tool--leveler").textContent, /\+\d+ Health by level 30 for Dark Elf Nightblade/);
     assert.match(container.querySelector(".home-tool--builder").textContent, /41 premade builds/);
   } finally { await cleanup(); }
+});
+
+test("HOME-3: the strip says what the site does, the same in any world, before the data loads and with a save", async () => {
+  const { HOME_OUTCOMES, WORLD_PROFILES } = await import("../lib/home-data.mjs");
+  const strip = container => [...container.querySelectorAll(".home-fact")].map(f => f.textContent);
+  const expected = HOME_OUTCOMES.map(f => f.value + f.label);
+  // No count of internals, and no number that could come out as NaN, 0 or undefined.
+  for (const fact of HOME_OUTCOMES) {
+    assert.doesNotMatch(fact.label, /skills modeled|restrictions|travel stops|world profiles/);
+    assert.doesNotMatch(fact.value, /NaN|undefined|^0/);
+  }
+  assert.equal(HOME_OUTCOMES.at(-1).value, `${WORLD_PROFILES.length} worlds`, "the one number left is the worlds you can plan in");
+  const cases = [
+    { shell: { profile: "tr_arce", world: "tr", arce: true } },
+    { shell: { ready: false }, character: { build: BUILD, sheet: null, catalogs: null } },
+    { character: { build: BUILD, sheet: SHEET, catalogs: null, activeSave: { token: 1, profile: "tr", sheet: { ...SHEET, level: 9 }, save: { identity: { name: "Kimble", level: 9 } }, unresolved: [], unworn: [] } } }
+  ];
+  for (const options of cases) {
+    const { container, cleanup } = await renderHome(options);
+    try {
+      assert.deepEqual(strip(container), expected);
+      assert.equal(container.querySelector(".home-facts").getAttribute("aria-label"), "What Silt Strider does for your character");
+    } finally { await cleanup(); }
+  }
 });
 
 test("buttons and links navigate, switch worlds and open search", async () => {

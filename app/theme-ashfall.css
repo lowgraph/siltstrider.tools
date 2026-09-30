@@ -594,7 +594,7 @@
   border-image: none;
 }
 :root[data-theme="ashfall"] .home-hub-root .home-fact + .home-fact { border-left-color: var(--color-line-11); }
-:root[data-theme="ashfall"] .home-hub-root .home-fact-value { font-family: var(--font-mono); font-weight: 500; font-size: 34px; color: var(--color-fg-2); }
+:root[data-theme="ashfall"] .home-hub-root .home-fact-value { font-family: var(--font-mono); font-weight: 500; font-size: min(34px, 14cqi); color: var(--color-fg-2); }
 :root[data-theme="ashfall"] .home-hub-root .home-tool {
   border: 1px solid var(--color-line-9);
   border-radius: var(--af-radius-card);

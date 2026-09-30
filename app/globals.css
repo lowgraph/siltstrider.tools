@@ -3029,9 +3029,10 @@ body.view-travel .hero {
   border-bottom: 2px solid transparent;
   border-image: var(--mw-groove) 2 repeat;
 }
-.home-hub-root .home-fact { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; }
+.home-hub-root .home-fact { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; container-type: inline-size; }
 .home-hub-root .home-fact + .home-fact { border-left: 1px solid var(--color-line-10); }
-.home-hub-root .home-fact-value { font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--color-accent); }
+/* HOME-3: the values are words ("Early gear"), so they shrink with a narrow tile rather than wrap. */
+.home-hub-root .home-fact-value { font-family: var(--font-display); font-size: min(40px, 17cqi); line-height: 1; white-space: nowrap; color: var(--color-accent); }
 .home-hub-root .home-fact-label { font-size: 14px; color: var(--color-fg-8); }
 
 /* Sections */
@@ -3266,7 +3267,7 @@ body.view-travel .hero {
   .home-hub-root .home-fact { padding: 14px 12px; }
   .home-hub-root .home-fact:nth-child(3) { border-left: 0; }
   .home-hub-root .home-fact:nth-child(n + 3) { border-top: 1px solid var(--color-line-10); }
-  .home-hub-root .home-fact-value { font-size: 32px; }
+  .home-hub-root .home-fact-value { font-size: min(32px, 17cqi); }
   .home-hub-root .home-tools { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .home-hub-root .home-tools > .home-tool { grid-column: auto; padding: 14px; }
   .home-hub-root .home-tool--builder .home-preview { display: none; }
