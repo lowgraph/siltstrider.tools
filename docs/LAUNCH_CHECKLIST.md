@@ -125,7 +125,7 @@ for now (owner, 30 September); other agents skip them.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
-- [ ] **C** **SITE-4** The character bar as a control that opens the Builder.
+- [ ] **C** **SITE-4** (started 2026-09-30 16:29 UTC, C; on `launch/home-1-mob-2-first-steps`) The character bar as a control that opens the Builder.
 - [ ] **C** **MOB-1 / MOB-4** A lighter phone header; one level of Builder tabs.
 - [ ] **C** **HOME-3** Outcomes on Home instead of counts ("27 skills modeled").
 
