@@ -1,6 +1,6 @@
 # Changelog
 
-## Travel place search — 2026-09-30
+## Easier journeys and first steps — 2026-09-30
 
 - **One Travel network status:** the network name and stop count share one plain line. Loading and an error with Retry use that same line, and TR + ARCE is named explicitly.
 - **Clearer small print:** Gear Advisor runner-up buttons, Level Simulator preset descriptions, faction ranks and empty equipment slots are easier to read in both themes.
@@ -8,6 +8,9 @@
 - **Travel remembers your choices:** changes to a loaded save’s guild, Intervention, carried items and movement options stay in this browser for that save and world profile. “Use save defaults” clears those edits. Intervention scrolls start unticked and each journey can use only the number carried. Known spells show estimated cast chance and need enough current Magicka; uncertain or low-chance spells start unticked. Replanning does not spend the save’s items or Magicka.
 - **Your journey comes first:** Origin, Destination and “Plan for” now sit above the route answer on every screen size. Character and route options start folded with a summary of your choices; guild, spells, items and carrying have their own group, while walking and quest teleports are under Route style. Quick starting places open on demand, and “How routes are worked out” is at the bottom. Guild and carrying warnings stay beside the route.
 - **One search for each end of a journey:** towns, transit stops and named places now share one list. Towns and stops appear first, followed by outdoor locations and rooms such as "Balmora › Council Club". Pelagiad appears once even though it has no transit stop. Each result says how it is reached, and typing a search leaves the route unchanged until you choose a result.
+
+- **Premade builds first for newcomers:** the first time you open the Character Builder, it starts on the Premade Builds Catalog, since picking a build and changing it is easier than composing a class from nothing. "Build my own instead" goes straight to the Custom Class Builder. After that first visit, or with a shared link, a loaded save or a saved character, the Builder opens as before.
+- **Two more bits of small print you can read:** for a Khajiit or Argonian, the Equipped Loadouts' Boots slot and its "Beast races cannot wear boots" were faded almost to the background; and a ticked Challenge Runs objective was faded as well as struck through. Both are readable now, in both themes.
 
 ## Privacy, sign-in and launch readiness — 2026-09-29
 
@@ -45,7 +48,9 @@
 - **Phones and tablets:** the Ctrl K / ⌘K search hint no longer shows where there is no keyboard to press it, on the home page or in the header; a touchscreen laptop keeps it.
 - **TR + ARCE explained:** the world switch says what TR + ARCE is: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes. It shows in the phone menu, in the button's tooltip, and to screen readers.
 - **The Gear Advisor works on its own:** it recommends gear as soon as you change your character, without pressing Optimize Gear, and says what kind of character it read (a warrior, say). "Early gear for this build ↓" at the top of the Character Builder jumps down to it. Its item lists load as you scroll near it, so the Builder opens as quickly as before.
-- **Your own numbers in the calculators:** Alchemy, Enchanting and Spellmaking say whose skill and attributes they use ("Using Breton Custom: Alchemy 25") and let you type other numbers, from 0 to 1000, without building a character first. "Reset to character sheet" (it used to say "Ingest Character Stats") puts your character's numbers back, and so does switching world.
+- **Your own numbers in the calculators:** Alchemy, Enchanting and Spellmaking say whose skill and attributes they use ("Using Breton Custom: Alchemy 25") and let you type other numbers, from 0 to 1000, without building a character first. Numbers you type stay, even when you switch world, until "Reset to character sheet" (it used to say "Ingest Character Stats") puts your character's back.
+- **Save a character without an account:** "Save this character" in the Character Builder keeps it in this browser, and the list below loads or deletes it. The Cloud Vault's Local Browser Saves tab shows the same characters, ready to sync to your account. If the browser does not let the site keep data (some private windows), the button says so.
+- **More small print you can read:** the Equipped Loadouts' slot counts and empty slots, the Faction Journal's ranks you have not reached, Travel's stop labels and the Level Simulator's preset descriptions were too faint against their panels and are brighter, in both themes. Screen readers now name each Challenge Runs objective's checkbox.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

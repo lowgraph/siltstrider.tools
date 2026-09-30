@@ -239,21 +239,21 @@ the 0001–0006 baseline (ignoring Wrangler's removal of SQL comments/whitespace
 The seven existing application tables remain empty in the fresh database.
 Separate seeded in-memory tests verify that existing records survive 0007.
 
-Branch verification: `npm test` passed 778 tests with no failures or skips and
-the reported SQLite experimental warning. `npm run build:cloudflare` passed,
-generating 24 static pages. An initial build rejected the worktree's dependency
-junction; copying the existing installation into this checkout resolved it
-without changing application or build configuration.
+Verification after incorporating origin/main `2c113b8`: `npm test` passed 808
+tests with no failures or skips and the reported SQLite experimental warning.
+`npm run build:cloudflare` passed, generating 24 static pages. Fresh local
+migrations and the historical schema comparison also passed after the merge.
 
 ACC-2 implementation: wire the authenticated API/provider/account UI, then
 connect World, theme and the tool defaults/reset
 actions. Version notifications need a release registry. Keep future
 dataset selectors unavailable until registry/loader support exists. Add UI,
 authentication and persistence verification and both player changelogs when the
-feature becomes visible. The settings branch must merge origin/main (without
-rebasing) after the owner confirms Travel has merged and main is ready; then
-repeat local migration, tests and build, checking that only settings work differs
-from main. No remote migration or deployment was done here.
+feature becomes visible. The owner confirmed main is ready; origin/main `2c113b8`
+has been merged into the settings branch without rebasing. Only settings work
+differs from main; local migration, tests and build passed after the merge.
+The owner decides whether to merge the feature branch to main and applies the
+production migration separately. No remote migration or deployment was done here.
 
 References: [D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 and [D1 JSON storage](https://developers.cloudflare.com/d1/sql-api/query-json/).

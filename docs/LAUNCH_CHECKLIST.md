@@ -15,17 +15,15 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 - Release, backup and rollback: [DEPLOYMENT.md](DEPLOYMENT.md), [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md)
 - Production state and history: [LAUNCH_VERIFICATION.md](LAUNCH_VERIFICATION.md)
 
-**ACC-1 (started 2026-09-30 19:29:17 UTC, Codex; preparing on feature/account-settings-preparation)**
-
 ## Fixed dates
 
 | Date | What |
 | --- | --- |
 | **By Monday 5 October** | Anything from the priority list not done by now moves after launch (see the cut line). |
-| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1, 3, 5 (**C**) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**). |
+| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**). |
 | **Tuesday 6 October, 13:30 UTC: launch** | Post r/Morrowind (flair Showcase), r/OpenMW (unless refused), r/TamrielRebuilt, Morrowserver `#modding`, Morrowind Modding Community, OpenMW Discord if approved; stay a few hours for comments, ready for "was it made with AI?" (**O**). Watch Worker logs and error references, API requests, D1 and Clerk sign-ins; fix only breakage, deploy only on the owner's go-ahead (**C**). |
 | **Wednesday 7 October** | Show HN and the X thread (**O**). |
-| **From Thursday 8 October** | Creator outreach, one at a time, through business contacts (**O**). Feedback from the threads goes into the after-launch list (**C**). |
+| **From Thursday 8 October** | Creator outreach, one at a time, through business contacts (**O**). Feedback from the threads, and whatever the freeze left of sections 3 and 4, goes into a new after-launch list (**C**). |
 
 ## Decisions (29 September, owner)
 
@@ -37,18 +35,12 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
   Guides work from Mages Guild halls and need membership.
 - **Usability audit:** its assessment is accepted, including theft off by default in the
   Gear Advisor (BLD-1).
+- **Account settings (30 September):** the `account_settings` table is created before
+  launch, while no real users hold data, so launch week carries no migration. The settings
+  API and page may follow (section 4). Design: [ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md) on
+  `feature/account-settings-preparation`.
 
 ## Priority list
-
-**Current workflow (owner, 30 September):** write each requested fix, its tests and
-handoff/changelog text, and run tests before every commit. This supersedes the earlier
-instruction to leave tests unrun. Codex specializes in Travel; after each item, stop
-and ask the owner before starting the next. Build/browser verification status must be
-recorded separately from automated tests.
-The owner subsequently authorized TRV-2's tests: `npm test` passed on 30 September
-with 718 tests and 0 failures. Browser verification remains pending.
-TRV-4 & TRV-5's tests were also authorized: `npm test` passed on 30 September
-with 724 tests and 0 failures. Build and browser verification remain pending.
 
 Each item ends the same way: tests (at least three edge cases for a logic change),
 `npm test`, a changelog entry if visitors will notice it (CHANGELOG.md and the public page,
@@ -98,6 +90,21 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       Finishes: 100,110"). Show the name only, or say in words when the quest ends; test with
       a faction that has quests (FAC-1's page test used none).
 - [x] **C** **MOB-3** (started 2026-09-29 23:08 UTC, C; done with SITE-5 `86a0ce1`, merged `769db3b`, live as `4951b9b5`) No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
+- [ ] **C** **ACC-1** (started 2026-09-30 19:29 UTC, Codex; prepared `09bd5fa`, main incorporated on `feature/account-settings-preparation`; awaiting owner merge) The account settings table as migration `0007_account_settings.sql`
+      (owner decision, 30 September). After Travel is merged: merge `main` into
+      `feature/account-settings-preparation` so only its own commits remain; promote
+      `cloudflare/proposals/account_settings.sql` to `cloudflare/migrations/0007_account_settings.sql`
+      unchanged in shape (the table only; no API or UI in this item); run the schema test
+      on `node:sqlite` instead of Python, and without `A:\Cache` hard-coded; update STATE and
+      ACCOUNT_PROFILES; `npm test`; apply locally with `wrangler d1 migrations apply
+      siltstrider-db --local` and check the saves tables are untouched; merge to `main`. No
+      changelog entry: visitors see nothing.
+- [ ] **O** **ACC-1 (production)** After ACC-1 is on `main` and before the freeze: record a
+      fresh D1 Time Travel bookmark, then apply with `wrangler d1 migrations apply
+      siltstrider-db --remote` as its own step, separate from any site release; check
+      `migrations list --remote` reports none pending; record the bookmark and result in
+      LAUNCH_VERIFICATION. Older Workers ignore the new table, so every rollback target
+      stays valid.
 
 ### 3. Before launch if time allows (can slip without breaking anything)
 
@@ -105,48 +112,71 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       Journal, Equipped Loadouts, premade catalog, Challenge, Travel labels), both themes.
 - [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb`, merged `ae152d0`, live as `4951b9b5`).
 - [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9`, merged `384118d`, live as `4951b9b5`).
-- [ ] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above).
-- [ ] **O** Usability test with three to five people, using the audit's script; **C** fix
-      what three or more hit, and any High finding they confirm.
-- [x] **C** Browser regression across all tools in Vanilla, TR and TR + ARCE at desktop and
-      phone widths (30 September, Codex, local branch `launch/trv-2-unified-place-search`: 107 Chrome cases passed, 192 theme/axe audits with no violations; inputs, links, seeds, exports, navigation and synthetic save persistence checked; see LAUNCH_VERIFICATION §8. Production build and owner acceptance remain separate).
+- [x] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above) (started 2026-09-30 00:49 UTC, C; done `03c3361`, live as `4c464aa3`; one more found live, a beast race's faded Boots slot, fixed with a faded ticked objective in `1e84b1a`, live as `24bd4ac1`, 0 violations on production: axe WCAG 2.2 AA + best practice on 19 pages and states, both themes, desktop and 375 px, found 5 issues (fg-16/17 text, faded ranks and stop labels, a Level Simulator preset, unnamed objective checkboxes), fixed, 0 on re-run; keyboard on 15 pages in both themes, the four dialogs and forced colors passed; LAUNCH_VERIFICATION §5 item 4).
+- [x] **C** Browser regression (started 2026-09-30 00:49 UTC, C; done on the dev build of `03c3361`: 9 tools x 3 worlds x 2 widths and 13 flows passed; LAUNCH_VERIFICATION §5 item 4) across all tools in Vanilla, TR and TR + ARCE at desktop and
+      phone widths (LAUNCH_OPERATIONS final acceptance, steps 2–3).
 
-### 4. Priority 4: After launch (organized by priority)
+### 4. Before launch if time allows: larger improvements
 
-#### 4.1 Core routing and builder workflow
-- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; implemented `866bd3a` on `launch/trv-2-unified-place-search`; 18 new tests; owner authorized `npm test` on 30 September: 718 passed, 0 failures; local Chrome verification completed, see LAUNCH_VERIFICATION §8; not merged or deployed) One place search: replace the dual stop list and "Places" cell list with a single unified combobox per route end; rank towns and transit stops first, then named exteriors, then interiors grouped under their town ("Balmora › Council Club").
-- [x] **C** **TRV-4 & TRV-5** (started 2026-09-30 15:29 UTC, Codex; implemented `597214d` on `launch/trv-2-unified-place-search`; six new integration tests; owner authorized `npm test` on 30 September: 724 passed, 0 failures; local Chrome verification completed, see LAUNCH_VERIFICATION §8; build not run; not merged or deployed) Task-first Travel with folded options: place Origin, Destination, and "Plan for" at the top with route results immediately below; fold character and transit options into a one-line summary disclosure; move transit rules to a closed footer disclosure.
-- [x] **C** **BLD-2** Automatic Gear Advisor (started 2026-09-29 21:30 UTC, C; done `5e36716`): compute gear recommendations automatically when character build attributes/skills change, and add a quick-jump link from the top of the builder ("Early gear for this build ↓").
-- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; implemented `7a85863`, branch `launch/trv-2-unified-place-search`; owner authorized tests: `npm test` passed on 30 September, 740 tests, 0 failures) Remembered choices & single-use scrolls: persist player modifications to save-derived options across visits for that save; treat Intervention scrolls as single-use consumables rather than permanent routing access; consider cast chance before assuming known spells are usable. Save/profile-scoped browser overrides, reset to save defaults, finite scroll counts, estimated cast chance and shared current Magicka budget implemented. All 16 new tests passed. Local Chrome verification completed, see LAUNCH_VERIFICATION §8; build not run. Not merged or deployed.
-- [x] **C** **CALC-2** Editable calculator skill inputs (started 2026-09-29 21:36 UTC, C; done `822c4dc`): allow typing custom skill, attribute, and Luck numbers directly in Alchemy, Enchanting, and Spellmaking ("Using Dark Elf Custom: Alchemy 5 — change") without requiring a built character first.
+Moved here from after launch by the owner on 30 September, since there is time before the
+freeze. Like section 3, it can slip. Priority order within each group; IDs are the usability
+audit's. BLD-2, CALC-2 and BLD-4 were built early and are live. The TRV items are Codex's
+for now (owner, 30 September); other agents skip them.
 
-#### 4.2 Onboarding, mobile, and character continuity
-- [ ] **C** **HOME-1 / MOB-2** Equal first steps on Home & mobile: provide two equal primary actions ("Start a character / Browse 41 premades" and "Load my save"); lead with character creation on touch devices.
-- [ ] **C** **BLD-3** Premade builds first for newcomers: open the Character Builder on the Premade Builds Catalog on a first visit, or surface three recommended starter archetypes above the custom form.
-- [ ] **C** **BLD-4** Local character save button: add an explicit "Save this character" action for browser storage in the builder without requiring an account, keeping Cloud Vault sync as an optional upgrade.
-- [ ] **C** **SITE-4** Interactive active character bar: make the global character bar across tools clickable to link back to the Character Builder with a clear edit prompt.
-- [ ] **C** **MOB-1 & MOB-4** Mobile header & builder layout compaction: streamline the phone header (single tagline, search behind an icon) and compact builder tab controls so inputs appear above the fold on mobile.
+**Travel and the Builder**
+- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; done `866bd3a`, merged `e3ab542`) One place search per route end: towns and stops first, then named places.
+- [x] **C** **TRV-4 / TRV-5** (started 2026-09-30 15:29 UTC, Codex; done `597214d`, merged `e3ab542`) Task-first Travel: from, to and "plan for" at the top, the route
+      under them, the other options folded.
+- [x] **C** **BLD-2** The Gear Advisor ranks by itself, with "Early gear for this build ↓" to
+      reach it (started 2026-09-29 21:30 UTC, C; done `5e36716`, merged `ef3cdea` with review
+      fixes `5f11bea`: catalogs load near the screen, the name does not re-rank; live as `8f10cef2`).
+- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; done `7a85863`, merged `e3ab542`) Keep the player's changes to a save's options across visits; Intervention
+      scrolls have finite uses and known spells respect cast chance and current Magicka.
+- [x] **C** **CALC-2** Your own skill, attribute and Luck numbers in Alchemy, Enchanting and
+      Spellmaking (started 2026-09-29 21:36 UTC, C; done `822c4dc`, merged `6178e87` with
+      review fixes `625c2b1`, `2b969fe`: 0 to 1000; live as `8f10cef2`. Typed numbers now stay across a world switch until Reset, owner 30 September, `cd01737`, live as `415d9c89`).
+- [x] **C** **TRV-7** (started 2026-09-30 16:35 UTC, Codex; done `1604656`, merged `e3ab542`) Say what Cheapest saves in gold and adds in movement compared with Fewest legs;
+      show Real Time Approximation beside in-game time.
 
-#### 4.3 Controls cleanup and interaction polish
-- [ ] **C** **CALC-3** Single combobox per Alchemy slot: merge the separate dropdown and text filter into a single searchable combobox per ingredient slot.
-- [ ] **C** **CHL-2** Consolidated Challenge locks: replace redundant locking mechanisms across the sheet, pinned slots, and restrictions with a single contextual lock per rolled item.
-- [ ] **C** **ENC-1** Early-game Enchanting defaults: default to early-game accessible items (Common Ring, Petty/Lesser Soul Gem) instead of end-game Exquisite jewelry and Grand Soul Gems.
-- [ ] **C** **SITE-3** Centrality-based navigation order: reorder top navigation to reflect usage frequency (Character Builder, Level Simulator, Travel Planner, Alchemy, then secondary tools).
-- [ ] **C** **LVL-2 & LVL-3** Level Simulator polish: move niche "Drink Bitter Cup" toggle into an Advanced collapsible group; adopt standard 3-letter attribute abbreviations (END, PER, STR) to prevent label clipping.
-- [x] **C** **TRV-7** (started 2026-09-30 16:35 UTC, Codex; done `1604656`, branch `launch/trv-2-unified-place-search`) Transparent Cheapest routing trade-offs: compare gold, real movement time, transitions and legs with Fewest legs using identical options and consumable budgets. Per owner's follow-up, show “Real Time Approximation” beside in-game time, counting outdoor run/swim/Levitate seconds and transport/spell transitions separately; exclude combat, menus, loading and time indoors. `npm test` passed: 754 tests, 0 failures, including 14 new cases. Chrome CDP checks at 1366/390 pixels passed with no horizontal overflow or runtime exceptions. Build not run; not merged or deployed.
-- [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; implemented and verified in working tree, ready for commit on `launch/trv-2-unified-place-search`) One plain Travel network status retains the network name and stop count and consolidates loading/error/retry. TR + ARCE is named; no duplicate “Live” badge or zero count while loading. Three new regression tests; `npm test`: 757 passed. Full Chrome branch suite: 107 cases passed; 192 theme audits, no axe violations, runtime exceptions or server errors. Contrast findings in Builder, Leveler, Factions and Equipment fixed. See LAUNCH_VERIFICATION §8. Not committed, merged or deployed.
-- [ ] **C** **HOME-3** Player-centric outcome metrics: replace developer-centric metrics ("27 skills modeled") with tangible player outcomes ("Routes to any named place", "×5 level-ups planned").
-- [ ] **C** Keyboard menu navigation: ensure dropdown menus in the header automatically focus their first item when opened via keyboard.
-- [ ] **C** Cloud Vault save hash verification: verify OpenMW save file hash on load to confirm save integrity and detect external file modifications.
+**First steps, phones and saving**
+- [ ] **C** **HOME-1 / MOB-2** Two equal first steps on Home, a character or a save; the
+      character first on phones.
+- [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61`, merged `4d998be`, live as `4c464aa3`: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
+- [x] **C** **BLD-4** "Save this character" without an account, with load and delete
+      (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
+      `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
+- [ ] **C** **SITE-4** The character bar as a control that opens the Builder.
+- [ ] **C** **MOB-1 / MOB-4** A lighter phone header; one level of Builder tabs.
+- [ ] **C** **HOME-3** Outcomes on Home instead of counts ("27 skills modeled").
 
-#### 4.4 Post-launch features
-- [ ] **C** **CALC-4** Reverse Alchemy Recipe Calculator: reverse effect search allowing players to select desired magical effects (e.g., Restore Health, Levitate) to discover ingredient pairings and vendor availability.
+**Controls and polish**
+- [ ] **C** **CALC-3** One searchable box per Alchemy slot.
+- [ ] **C** **CHL-2** One lock per rolled item in Challenge Runs.
+- [ ] **C** **ENC-1** Enchanting starts with early-game items and soul gems.
+- [ ] **C** **SITE-3** Nav order by use: Character Builder, Level Simulator, Travel Planner,
+      Alchemy, then the rest.
+- [ ] **C** **LVL-2 / LVL-3** The Bitter Cup under advanced options; untruncated attribute
+      labels in the priority list.
+- [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged `e3ab542`) One network/loading/error/Retry line in Travel, including TR + ARCE.
+- [ ] **C** Header menus focus their first item when opened from the keyboard.
+- [ ] **C** The Cloud Vault checks a save's hash on load.
+- [ ] **C** **ACC-2** Account settings for players, after ACC-1: the revision-checked
+      `/api/settings` (GET and PUT, owner from the Clerk session, 409 on a stale revision), a
+      settings provider, and a settings page for world, theme, Travel, Gear Advisor and
+      Challenge defaults with reset all and reset one tool (ACCOUNT_SETTINGS.md). Modpack and
+      mod version stay unavailable until the pipeline publishes a release registry; the Gear
+      Advisor's quest-reward and difficult-encounter settings stay hidden until the gear rows
+      carry them.
+
+**Features**
+- [ ] **C** **CALC-4** Reverse alchemy: pick the effects, get the ingredients.
 
 ### Cut line
 
-At the freeze, whatever is left of section 3 moves into section 4; note it in
-LAUNCH_VERIFICATION. Sections 1 and 2 are the launch bar: if one of them is not done, decide
-explicitly whether to launch with it (and say so here).
+At the freeze, whatever is left of sections 3 and 4 moves after launch; note it in
+LAUNCH_VERIFICATION. An item is merged only when it is finished; a half-done one waits on its
+branch. Sections 1 and 2 are the launch bar: if one of them is not done, decide explicitly
+whether to launch with it (and say so here).
 
 ## Done
 

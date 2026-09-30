@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Configurator from "./configurator";
 import CharacterSheet from "./character-sheet";
 import PremadeBrowser from "./premade-browser";
@@ -9,6 +9,7 @@ import SaveImportNotice from "../character-vault/save-import-notice";
 import ChallengeHandoff from "./challenge-handoff";
 import { useShell } from "../shell-context";
 import { generateBuildShareUrl } from "../../lib/character-vault.mjs";
+import { isNewcomer, markBuilderVisited } from "../../lib/builder-first-visit.mjs";
 import { useActiveCharacter } from "../character-context";
 
 export default function CharacterBuilderRoot() {
@@ -21,21 +22,49 @@ export default function CharacterBuilderRoot() {
     swapSkill,
     selectClassPreset,
     selectPremade,
+    isStarter,
     activeSave
   } = useActiveCharacter();
-  const [activeTab, setActiveTab] = useState("builder"); // "builder" | "equipment" | "premade"
+  // BLD-3: a newcomer's first Builder opens on the premade catalog while the character is
+  // still the random start. While the page hydrates it must match the prerender, so the
+  // effects below decide then; opened from another page, it decides here.
+  const [newcomer, setNewcomer] = useState(() => (shell.ready === false ? null : isNewcomer()));
+  const [activeTab, setActiveTab] = useState(() => (newcomer && isStarter ? "premade" : "builder")); // "builder" | "equipment" | "premade"
   const [mobileTab, setMobileTab] = useState("config"); // "config" | "sheet" (screens < 1024px)
   const [copied, setCopied] = useState(false);
   const [shareLink, setShareLink] = useState(null);
+  // Once the visitor picks a tab or a build, the Builder stops choosing for them.
+  const chose = useRef(false);
+  const chooseTab = useCallback((tab) => {
+    chose.current = true;
+    setActiveTab(tab);
+  }, []);
+
+  const visited = useRef(false);
+  useEffect(() => {
+    if (visited.current) return;
+    visited.current = true;
+    if (newcomer === null) setNewcomer(isNewcomer());
+    markBuilderVisited();
+    // Once per mount: the answer is kept in state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // A shared link, a loaded save or a character kept through sign-in replaces the random
+  // start after the page is up: the Builder then shows that character, not the catalog.
+  useEffect(() => {
+    if (!newcomer || chose.current) return;
+    setActiveTab(isStarter ? "premade" : "builder");
+  }, [newcomer, isStarter]);
 
   // Pure state updater: premade build selection
   const handleSelectPremade = useCallback(
     (premade) => {
       selectPremade(premade);
-      setActiveTab("builder");
+      chooseTab("builder");
       setMobileTab("sheet");
     },
-    [selectPremade]
+    [selectPremade, chooseTab]
   );
 
   // Copy a link that opens this character, in this world. Where the clipboard is blocked,
@@ -63,7 +92,7 @@ export default function CharacterBuilderRoot() {
   // Listen for silt-open-equipment events from quick launch buttons
   useEffect(() => {
     const handleOpenEquipment = () => {
-      setActiveTab("equipment");
+      chooseTab("equipment");
     };
     window.addEventListener("silt-open-equipment", handleOpenEquipment);
     window.addEventListener("silt-open-paperdoll", handleOpenEquipment);
@@ -71,7 +100,7 @@ export default function CharacterBuilderRoot() {
       window.removeEventListener("silt-open-equipment", handleOpenEquipment);
       window.removeEventListener("silt-open-paperdoll", handleOpenEquipment);
     };
-  }, []);
+  }, [chooseTab]);
 
   return (
     <div className="character-builder-root w-full mx-auto space-y-6">
@@ -120,7 +149,7 @@ export default function CharacterBuilderRoot() {
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "builder" ? "active ring-1 ring-accent" : ""
             }`}
-            onClick={() => setActiveTab("builder")}
+            onClick={() => chooseTab("builder")}
           >
             Custom Class Builder
           </button>
@@ -132,7 +161,7 @@ export default function CharacterBuilderRoot() {
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "equipment" ? "active ring-1 ring-accent" : ""
             }`}
-            onClick={() => setActiveTab("equipment")}
+            onClick={() => chooseTab("equipment")}
           >
             Equipped Loadouts
           </button>
@@ -144,7 +173,7 @@ export default function CharacterBuilderRoot() {
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "premade" ? "active ring-1 ring-accent" : ""
             }`}
-            onClick={() => setActiveTab("premade")}
+            onClick={() => chooseTab("premade")}
           >
             Premade Builds Catalog
           </button>
@@ -180,6 +209,7 @@ export default function CharacterBuilderRoot() {
         <PremadeBrowser
           onSelectBuild={handleSelectPremade}
           activeProfile={shell.profile}
+          onBuildOwn={newcomer ? () => chooseTab("builder") : null}
         />
       ) : activeTab === "equipment" ? (
         <EquipmentStudioRoot
@@ -205,7 +235,7 @@ export default function CharacterBuilderRoot() {
                 onSwapSkill={handleSwapSkill}
                 onSelectClassPreset={handleSelectClassPreset}
               />
-              <LocalCharactersPanel />
+              <LocalCharactersPanel build={build} />
               {/* Copy Build Link Button below Local Characters */}
               <div className="mt-4">
                 <button
@@ -236,14 +266,14 @@ export default function CharacterBuilderRoot() {
                 build={build}
                 sheet={sheet}
                 catalogs={catalogs}
-                onOpenEquipment={() => setActiveTab("equipment")}
+                onOpenEquipment={() => chooseTab("equipment")}
               />
             </div>
           </div>
 
           {/* Decoupled Gear Advisor */}
           <GearAdvisor
-            onEquip={(loadouts) => { updateField("loadouts", loadouts); setActiveTab("equipment"); }}
+            onEquip={(loadouts) => { updateField("loadouts", loadouts); chooseTab("equipment"); }}
             attrs={Object.fromEntries(Object.entries(sheet?.attrs || {}).map(([key, value]) => [key, value.v]))}
             beast={Boolean(catalogs?.races?.[build.race]?.beast)}
             build={{ ...build, world: shell.world, arce: shell.arce }}

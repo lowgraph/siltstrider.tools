@@ -11,8 +11,8 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `2e6d2be` (site `main`, pushed) |
-| Live Worker version | `4951b9b5-3efc-4524-ad87-35d20c404de2`, deployed 2026-09-29 23:45 UTC, tagged `2e6d2be` |
+| Live commit | `1e84b1a` (site `main`, pushed) |
+| Live Worker version | `24bd4ac1-e287-4c14-88d8-80bee20b42f9`, deployed 2026-09-30 16:04 UTC, tagged `1e84b1a` |
 | Security headers | `public/_headers`: nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'`, referrer policy, permissions policy, host-only HSTS; verified live after the 16:49 release (they took a minute or two to appear) |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
@@ -20,7 +20,7 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0006 applied; `wrangler d1 migrations list siltstrider-db --remote` reports none pending |
 | D1 Time Travel bookmark | `0000003e-00000002-000050f5-376b3c432b1be8aa90f68a30d28ab5d1`, captured 10:57 UTC with the backup |
-| Pipeline repo | `master` at `18fe778`, pushed |
+| Pipeline repo | `master` at `26f0bd5`, pushed |
 
 Deployment history since the last tagged release before this batch:
 
@@ -42,9 +42,13 @@ Deployment history since the last tagged release before this batch:
 | `e5a3b044-b4fb-43e3-bea4-55678886edc9` | 09-29 19:13 | `d7a09fd` | tagged; HOME-2 follow-up: with TR + ARCE the random start draws ARCE builds too (it was drawn before the page read the visitor's world) |
 | `719660ae-09bd-48c5-8ad5-b2326494337e` | 09-29 20:22 | `b1457cb` | tagged; SITE-1 (one name per tool on screen), LINK-1 (shared links keep their world), CALC-1 (no results before input; effect base costs as the game shows them), SITE-2 / VLT-1 ("How this is calculated" disclosures, Codex's work) |
 | `1fa07549-0a45-45d0-8d2c-10bb4af88a71` | 09-29 20:42 | `997886b` | tagged; CHL-1 (one row of difficulty presets), FAC-1 (rank names, skill names and plain words in the Faction Journal) |
-| `4951b9b5-3efc-4524-ad87-35d20c404de2` | 09-29 23:45 | `2e6d2be` | tagged; Gemini's contrast retune (with the Faction Journal follow-up), 24px Level Simulator buttons and heading levels; FAC-3 (faction quests by name), MOB-3 (no Ctrl K hint on touch), SITE-5 (TR + ARCE explained); deployed from the `mt-site-1` worktree on a clean `main`; current |
+| `4951b9b5-3efc-4524-ad87-35d20c404de2` | 09-29 23:45 | `2e6d2be` | tagged; Gemini's contrast retune (with the Faction Journal follow-up), 24px Level Simulator buttons and heading levels; FAC-3 (faction quests by name), MOB-3 (no Ctrl K hint on touch), SITE-5 (TR + ARCE explained); deployed from the `mt-site-1` worktree on a clean `main` |
+| `8f10cef2-f828-4ac4-b634-6664ddbf6604` | 09-30 00:31 | `8410c63` | tagged; Gemini's BLD-2 (Gear Advisor ranks by itself; catalogs load near the screen), CALC-2 (your own numbers in the calculators) and BLD-4 (save a character without an account), each with review fixes; deployed from the `mt-site-1` worktree on a clean `main` |
+| `415d9c89-3242-4777-9f5f-d955d4e6b79c` | 09-30 00:47 | `cd01737` | tagged; typed calculator numbers stay across a world switch until Reset (owner, 30 September) |
+| `4c464aa3-db84-44be-a1a7-d8572e75d27c` | 09-30 15:46 | `4d998be` | tagged; the acceptance re-run's fixes (`03c3361`: fg-14 for text on the equipment panels, no fading on faction ranks or Travel stop labels, Level Simulator preset descriptions, named objective checkboxes) and BLD-3 (premade builds first for newcomers); deployed from the `mt-site-1` worktree on a clean `main` |
+| `24bd4ac1-e287-4c14-88d8-80bee20b42f9` | 09-30 16:04 | `1e84b1a` | tagged; no fading on a beast race's Boots slot (axe found it live on `4c464aa3` when the random start drew a Khajiit) or on a ticked Challenge objective; current |
 
-Rollback from `4951b9b5`: `1fa07549` drops only the contrast, 24px buttons, heading levels, FAC-3, MOB-3 and SITE-5. From `1fa07549`: `719660ae` drops only CHL-1 and FAC-1. From `719660ae`: `e5a3b044` drops only SITE-1, LINK-1, CALC-1 and SITE-2 / VLT-1. From `e5a3b044`: `3daf4aa0` drops only the ARCE random-start fix. From `3daf4aa0`: `8da9cada` drops only TRV-3, Claims and HOME-2. From `8da9cada`: `6be6a2d4` drops only TRV-6 and BLD-1. From `6be6a2d4`: `65f849c7` drops only LVL-1 and TRV-1 (COORDINATION, "UX pass for launch"). From `65f849c7`: `af7c20e4` drops only its batch (see COORDINATION, "Accessibility and crash fixes from the second audit"). From `af7c20e4`: `e0103bde` retains the bundle-derived social card and valid schema. From `e0103bde`: `343fa189` differs only in the social card graphic and launch docs. From `343fa189`: `64cf5d59` differs only in the About wording (it drops the
+Rollback from `24bd4ac1`: `4c464aa3` drops only the Boots-slot and ticked-objective contrast fixes. From `4c464aa3`: `415d9c89` drops only the acceptance re-run's fixes and BLD-3. From `415d9c89`: `8f10cef2` drops only the kept calculator numbers. From `8f10cef2`: `4951b9b5` drops only BLD-2, CALC-2 and BLD-4. From `4951b9b5`: `1fa07549` drops only the contrast, 24px buttons, heading levels, FAC-3, MOB-3 and SITE-5. From `1fa07549`: `719660ae` drops only CHL-1 and FAC-1. From `719660ae`: `e5a3b044` drops only SITE-1, LINK-1, CALC-1 and SITE-2 / VLT-1. From `e5a3b044`: `3daf4aa0` drops only the ARCE random-start fix. From `3daf4aa0`: `8da9cada` drops only TRV-3, Claims and HOME-2. From `8da9cada`: `6be6a2d4` drops only TRV-6 and BLD-1. From `6be6a2d4`: `65f849c7` drops only LVL-1 and TRV-1 (COORDINATION, "UX pass for launch"). From `65f849c7`: `af7c20e4` drops only its batch (see COORDINATION, "Accessibility and crash fixes from the second audit"). From `af7c20e4`: `e0103bde` retains the bundle-derived social card and valid schema. From `e0103bde`: `343fa189` differs only in the social card graphic and launch docs. From `343fa189`: `64cf5d59` differs only in the About wording (it drops the
 "open-source" claim, which stays true either way). From `64cf5d59`: `8c8fe551` drops only the sign-in fix and wording; `9efa1a55`
 also restores Worker-for-every-request routing and Clerk on every page (it still works,
 since the redirect rule only duplicates the Worker's own `www` redirect). `eb9adb1c`
@@ -57,7 +61,7 @@ current schema and codec. `972dee9c` is an unknown commit: do not roll back to i
 
 | Suite | Where | Command | Result at hand-off |
 | --- | --- | --- | --- |
-| Site | `A:\Claude\morrowind-tools` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **677 pass, 0 fail, 0 todo, 0 skipped** at `2e6d2be` |
+| Site | `A:\Claude\morrowind-tools` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **730 pass, 0 fail, 0 todo, 0 skipped** at `1e84b1a` |
 | Pipeline | `C:\Users\tiago\OneDrive\Documents\ChatGPT\OpenMW Decompiler` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; python -B -m unittest discover -s . -p "test_*.py"` | **670 pass** (pre-existing ResourceWarnings from unclosed sqlite in older tests) |
 | Release build | site | `npm run build:cloudflare` | passes; 22 static routes |
 | Worker dry run | site | `node node_modules/wrangler/bin/wrangler.js deploy --dry-run --keep-vars` | passes |
@@ -205,10 +209,44 @@ commands; the commands are in section 6.
    does not name their commits (most likely `ad1fc0b` and `85801eb`). They are not
    faults in the site, only gaps in the record; `9efa1a55` has since been deployed on
    top, tagged. Always use the DEPLOYMENT.md command so history names the commit.
-4. **Local branch browser regression completed** on 30 September by Codex across
-   all tools, three profiles and both widths; see §8. This verifies the Travel
-   branch's working tree on the local dev server. Production acceptance and the
-   production build remain separate.
+4. **No browser-level regression run** by an agent across all tools, three profiles and
+   both widths since the launch changes (LAUNCH_OPERATIONS "Final acceptance pass",
+   step 2–3). Spot checks done: Gear Advisor (vanilla and TR Mage, Assassin), home,
+   About and Vault notices, Report a bug links.
+   **Done (30 September, agent, headless Chrome):**
+   - Regression, step 2, on the dev build of `03c3361`: builder (races, sheet, premade
+     catalog, loading a premade), equipment (slots and picker), Level Simulator,
+     Challenge Runs (a roll and its seed), Alchemy, Enchanting and Spellmaking (a dash
+     before input, a result after), Travel (a route) and the Faction Journal, each in
+     Vanilla, TR and TR + ARCE at 1366 and 375 px: all passed, with the right world shown,
+     no sideways scrolling, no console or hydration errors.
+   - Regression, step 3: cross-tool navigation keeps the character; a world switch
+     mid-tool (Alchemy 126 to 921 ingredients, Travel 22 to 91 stops; TR + ARCE brings the
+     ARCE races); build and challenge share links open the same character and run in a
+     fresh browser; a seed repeats its run; the challenge summary and the Level Simulator
+     JSON export; the challenge run, a saved character and the world survive a reload; one
+     real .omwsave imports and is restored after a reload (nothing from it recorded).
+   - Audit re-run (acceptance for contrast, 24 px targets, heading levels): axe WCAG 2.2
+     AA + best practice on 19 pages and states, both themes, 1366 and 375 px, against
+     production `415d9c89`, found 5 issues, fixed in `03c3361` (fg-16/17 text now fg-14;
+     no fading on unmet faction ranks or Travel stop labels; fg-9 for Level Simulator preset
+     descriptions; objective checkboxes named); 0 violations on re-run (76 runs). Keyboard:
+     15 pages in both themes (skip link first, visible focus, no trap), the search palette,
+     Cloud Vault, challenge pool and equipment picker dialogs (focus inside, Tab wraps,
+     Escape closes, focus returns), and forced colors: passed before the fixes.
+   - On production after the fixes went live (`4c464aa3`, 15:46 UTC): axe on the same 19
+     pages and states found one more, on Equipped Loadouts, only because this time the
+     random start drew a beast race: the Boots slot was faded to half (2.2:1) and its
+     reason in danger-8 (1.9:1). A ticked Challenge objective, a state the audit never
+     reached, was faded too (4.05 to 4.37:1). Both fixed in `1e84b1a`, live as `24bd4ac1`
+     (16:04 UTC): 0 violations in 76 runs, and 0 on a Khajiit's Equipped Loadouts and a
+     ticked objective in both themes. Keyboard: 15 pages in both themes, the four dialogs
+     and forced colors pass (the audit's Enter key now carries its text; without it the
+     Cloud Vault and challenge pool dialogs only looked broken). BLD-3 live: a fresh
+     browser's first Builder opens on the catalog with its welcome, the next on the
+     Custom Class Builder; no console errors on Home, the Builder, Changelog or Challenge
+     Runs; `www` answers 301 and `/api/account` 401.
+   Not covered here: step 4 (real accounts) is the owner's, and step 5 is for the freeze.
 5. **Owner-reported, not agent-verified:** Discord in Clerk is set up and tested;
    production sign-in, a cloud-save round trip and Ko-fi were tested (owner,
    29 September).
@@ -274,33 +312,47 @@ node node_modules/wrangler/bin/wrangler.js d1 execute siltstrider-db --remote --
   command.
 - Keep `COORDINATION.md` identical in both repositories.
 
-## 8. Local Travel branch verification — 30 September 2026
+## 8. Travel integration verification — 30 September 2026
 
-Working tree above `fcd3a3b` on `launch/trv-2-unified-place-search`, with TRV-8
-implemented but left uncommitted for the owner's commit step. Published bundle
-`3da0320236da77ec085d105d`, snapshot `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f`.
-No game-data rebuild, schema change or production write.
+Merge commit: `e3ab542ceba3a1e573dd98ef25df8c34cb225690`.
+Merge inputs: main `0bc1a7f`, Travel `5170293`. Verified in the actual main
+worktree `A:/Claude/mt-travel-merge`, with repository build config unchanged.
+No extraction, schema change, deployment or production write.
 
-- `npm test`: **757 passed, 0 failures**, including three TRV-8 workstation tests.
-- Full local Chrome/CDP suite: **107 cases passed, 0 failures**. Sixteen page/tool
-  views × three profiles × two widths (1366/390), each in Modern and Morrowind UI:
-  **192 axe WCAG 2/2.1 AA theme audits, 0 reported violations**, no horizontal
-  overflow, one main page heading, no uncaught exceptions or local server errors.
-- Interactions: calculator empty/custom inputs and ingredients/effects; invalid
-  and repeatable challenge seeds; Markdown exports; build/challenge/Travel share
-  restoration; challenge-to-builder navigation; equipment dialog focus/Escape;
-  Travel search keyboard/cancellation/selection, swaps/objectives/reading order,
-  real-time comparison, forced-colors focus, network failure/retry; synthetic JSON
-  save import, reload/visit persistence, three-profile isolation and save reset.
-- Fixed contrast findings from the initial sweep: Gear Advisor runner-up buttons,
-  Level Simulator preset descriptions, faction rank cards, equipment slot counts,
-  beast restriction notices and empty stats/slots. The final complete run is clean.
-- Evidence: `A:/Cache/travel-branch-browser-release-ready/report.json`, screenshots
-  and axe JSON beside it; unit log `A:/Cache/trv8-npm-test.log`. Reproduce using
-  [BROWSER_TESTS.md](BROWSER_TESTS.md).
+- `npm test`: **787 passed, 0 failures** on the actual merged checkout.
+- `npm run build:cloudflare`: **passed**, with the repository's
+  `next.config.mjs` unchanged and physical local dependencies. No preview root
+  adjustment or alternate compiler.
+- Full local Chrome/CDP suite: **125 cases passed, 0 failures**. Sixteen pages/tool
+  views × Vanilla, TR and TR + ARCE × 1366/375 px × Modern/Morrowind UI, plus
+  interaction cases: **216 WCAG 2/2.1 AA theme audits, 0 reported violations**,
+  no horizontal overflow, uncaught exceptions or unexpected server errors.
+- Flows: Travel keyboard search, cancellation, swaps, objectives, sharing,
+  real-time comparison, forced colors and network failure/retry; imported
+  synthetic saves, local choices, profile isolation and reset; all calculators'
+  custom/empty states and inputs; challenge seeds/exports/sharing; Builder
+  sharing and equipment dialog focus/Escape; Faction Journal search/rank/empty
+  states; Level Simulator modes, target level and priority ordering. Builder,
+  calculators, Faction Journal and Level Simulator interactions ran in both
+  themes, at both widths, in all three profiles.
+- Browser-runner investigation: changing the departing document's theme just
+  before navigation left Pelagiad loading. Interaction cases now store the theme
+  for the arriving document's existing initialization. Navigation waits for that
+  document's load event; bounded font-state checks retain font-error/loading
+  failures and identify unfinished faces. All **411 font checks** completed,
+  including loaded Pelagiad. Failure stacks, pending requests and optional
+  lifecycle traces are retained. This changes local test setup only.
+- Main's unfaded restriction/rank cards, danger-7/fg-14 equipment text and fg-9
+  Level Simulator descriptions are retained, including the automatically merged
+  contrast-sensitive files. Both sets of 30 September player changelogs share
+  one day's list. The checklist retains the owner's section 4 and priorities.
+- Evidence: `A:/Cache/trv-final-npm-test.log`, `A:/Cache/trv-final-build.log`,
+  `A:/Cache/trv-merged-final-browser/report.json`; screenshots, axe JSON and
+  request trace beside the browser report. Earlier failed runs remain in the
+  cache for diagnosis. Reproduce with [BROWSER_TESTS.md](BROWSER_TESTS.md).
 
-This was a local signed-out dev-server check. Production build, real save corpus,
-other browser engines, manual screen-reader review, and owner-run sign-in, Cloud
-Vault and payment checks were not repeated. The broader keyboard/high-contrast
-audit remains open; this run covers Travel focus and the equipment dialog.
-No commit, push or deploy of these implementation changes in this step.
+These are local signed-out checks. Production sign-in, Cloud Vault, payments,
+real-save corpus, other browser engines and manual screen-reader review were
+not repeated. Deployment remains a separate owner ask: ship Travel as its own
+release, retaining the previous production version so rollback removes Travel
+without rolling back the earlier launch improvements.

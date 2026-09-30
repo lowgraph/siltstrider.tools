@@ -16,6 +16,8 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>The first time you open the Character Builder, it starts on the premade builds, so you can pick one and change it instead of composing a class from nothing. &ldquo;Build my own instead&rdquo; goes straight to the Custom Class Builder, and later visits open as before.</li>
+            <li>For a Khajiit or Argonian, the Boots slot in Equipped Loadouts and its &ldquo;Beast races cannot wear boots&rdquo; are readable instead of faded, and so is a ticked Challenge Runs objective.</li>
             <li>Travel has one plain network status with the network name and stop count. Loading and an error with Retry appear in the same place; TR + ARCE is named explicitly.</li>
             <li>Gear Advisor runner-up buttons, Level Simulator preset descriptions, faction ranks and empty equipment slots have clearer small print in both themes.</li>
             <li>Travel shows &ldquo;Real Time Approximation&rdquo; beside in-game time, with movement minutes and transport or spell transitions listed separately. Cheapest compares its fare and movement with Fewest legs using your current options. Combat, menus, loading and time indoors are excluded.</li>
@@ -59,7 +61,9 @@ export default function ChangelogView() {
             <li>No Ctrl K search hint on phones and tablets.</li>
             <li>The world switch explains TR + ARCE: Tamriel Rebuilt with ARCE (All Races and Classes Enabled), a mod that adds many playable races and classes.</li>
             <li>The Gear Advisor recommends gear as soon as you change your character, and &ldquo;Early gear for this build &darr;&rdquo; at the top of the Character Builder jumps down to it.</li>
-            <li>Alchemy, Enchanting and Spellmaking let you type your own skill and attribute numbers, and &ldquo;Reset to character sheet&rdquo; puts your character&apos;s numbers back.</li>
+            <li>Alchemy, Enchanting and Spellmaking let you type your own skill and attribute numbers; they stay when you switch world, until &ldquo;Reset to character sheet&rdquo; puts your character&apos;s back.</li>
+            <li>&ldquo;Save this character&rdquo; in the Character Builder keeps a character in this browser, no account needed; the list below it loads or deletes them.</li>
+            <li>Faint small print in Equipped Loadouts, the Faction Journal, Travel and the Level Simulator is brighter, and Challenge Runs objective checkboxes are named for screen readers.</li>
           </ul>
         </section>
 

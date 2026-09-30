@@ -1,169 +1,66 @@
 # Coordination
 
-## ACC-1 preparation result — 2026-09-30
+## Account settings table before launch — 2026-09-30
 
-Promoted the reviewed table unchanged to `0007_account_settings.sql`. Local apply
-of 0001–0007 succeeded; none pending. Existing saves, profiles and entitlement
-schema/records are preserved. Details: `docs/ACCOUNT_SETTINGS.md`. Schema tests use
-`node:sqlite`; Node >=22.11 is retained with `--experimental-sqlite`, whose warning
-is reported without suppression. Verification: 778 tests passed, none failed or
-skipped; Cloudflare build generated 24 static pages. No API/provider/UI (ACC-2), remote apply or
-deployment. Merge origin/main only after the owner confirms Travel is merged;
-then repeat local apply, tests and build. First next command: `npm test`.
+No game-data schema changes yet. The owner decided the `account_settings` D1 table is
+created before launch, while there are no real users (checklist ACC-1; the API and page are
+ACC-2 in section 4). Design, contract and migration: `docs/ACCOUNT_SETTINGS.md`,
+`lib/account-settings.mjs` and `cloudflare/migrations/0007_account_settings.sql` on
+`feature/account-settings-preparation`. The branch has incorporated origin/main
+after Travel merged; only settings work differs from main. Invariants other agents must keep:
 
-## TRV-8: one network status and branch browser regression — 2026-09-30
+- **Its own table.** One row per Clerk account: the ID, a JSON document of at most 16 KiB
+  with an integer `version`, a `revision`, timestamps. No username needed, no save-vault
+  slot used, no change to `cloud_saves` or `account_profiles`. Never edit 0007 once applied;
+  a later change is a new migration.
+- **Applied apart from releases.** Remote apply is an owner step with a fresh Time Travel
+  bookmark, never inside a Worker deploy. Workers before 0007 ignore the table, so rollback
+  targets stay valid.
+- **The format is the contract.** The JSON shape lives in `lib/account-settings.mjs`
+  (`ACCOUNT_SETTINGS_VERSION` 1); once ACC-2 writes real rows, a change is a version bump
+  with a reader for the old one. Shared links and edits in the open tool win over account
+  defaults; stored `false` is a real choice; theft stays off unless the player turns it on.
+- **Tests run anywhere.** The schema test uses `node:sqlite`, not Python or a Windows path.
 
-Implemented and tested in the working tree of `launch/trv-2-unified-place-search`,
-above `fcd3a3b`; ready for commit per owner request. Travel uses one plain network
-line for its name, stop count, loading, or error with Retry. TR + ARCE is explicit;
-loading never reports a misleading zero count. No duplicate Live badge. Three new
-workstation tests cover profiles/empty catalogs, loading with stale/missing data,
-and error/retry/recovery. No exported schemas, loader or extraction changes.
+Asking the pipeline, not yet a contract change: modpack and mod-version settings need a
+published release registry (stable modpack IDs, immutable release IDs mapped to bundles),
+and the Gear Advisor's quest-reward and difficult-encounter settings need gear-row fields
+that tell those picks apart. Until then those settings stay unavailable.
 
-The requested full Chrome regression found contrast problems in Gear Advisor
-runner-up buttons, Level Simulator presets, faction rank cards, and equipment
-slot counts, restrictions and empty stats. Corrected browser-grey backgrounds,
-faded text and dim labels; routing and calculator formulas remain unchanged.
-Both player changelogs record the visible changes.
+First verification command: `npm test` in the site repository.
 
-`npm test`: **757 passed, 0 failed**. `scripts/test-browser.cjs`: **107 passed,
-0 failed**, including 96 page/profile/width cases with **192 theme audits and
-0 axe WCAG violations**, plus keyboard, sharing, seeds, exports, cross-tool
-navigation, equipment dialog and synthetic save-persistence checks. No uncaught
-browser exceptions or unexpected local server errors. Profiles: Vanilla, TR,
-TR + ARCE; widths: 1366/390; themes: Modern/Morrowind. TRV-2/4/5/6/7 browser
-coverage is included. Bundle: `3da0320236da77ec085d105d`.
-Report/screenshots: `A:/Cache/travel-branch-browser-release-ready/`; unit log:
-`A:/Cache/trv8-npm-test.log`. Initial contrast failures and test-runner selector
-issues were resolved before this final clean run.
+ACC-1 verification: the table retains its reviewed shape; schema tests use
+`node:sqlite` with `--experimental-sqlite` to retain Node >=22.11. The SQLite
+experimental warning remains visible. After the main merge, local migrations
+0001–0007 passed with no pending migrations and 28 historical schema objects
+unchanged; 808 tests passed and the Cloudflare build generated 24 static pages.
+Details in `docs/ACCOUNT_SETTINGS.md`.
+No API/provider/UI, remote database apply or deployment. Owner decides the merge
+to main and applies production separately.
 
-First future command, from the site repository: `npm test` before any commit.
-For the browser command and scope, see `docs/BROWSER_TESTS.md`. No new dependency
-was installed; the runner uses installed Chrome and an existing axe-core script.
-Build, production authentication/cloud/payment checks and other browser engines
-were not run. Changes remain uncommitted; no push/deploy. Stop here until the
-owner authorizes another checklist item.
+## Travel task-first — 30 September
 
-## TRV-7: real-time approximation and Cheapest trade-offs — 2026-09-30
+TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8 are merged to main (`e3ab542`).
+No bundle schema,
+loader, extraction or save-format changes. Invariants other agents must keep:
 
-Implemented on `launch/trv-2-unified-place-search`. Outdoor walking, swimming,
-Water Walking and Levitate edges now carry `movementSeconds`, calculated from
-their distances and the character's movement speeds before timescale is applied.
-`planRoute` preserves those seconds on movement steps. This is internal planner
-state only; no exported bundle schema, loader, extraction or save format changes.
-Clock jumps from boats, Guild Guides and spells never enter real movement totals.
+- One picker per endpoint joins towns, stops and places; typing does not reroute.
+  Keep canonical stop names and place IDs for routing and shared links.
+- Journey inputs and results precede closed options, quick places and rules.
+  Keep guild/overload warnings beside the answer and one loading/error/Retry line.
+- Browser edits are keyed by save snapshot and profile. Reset only that pair;
+  denied storage keeps session edits. Replanning never spends the imported save.
+- Scroll uses and known current Magicka constrain the whole route. Cast chances
+  use published spells; unknown data must not imply a reliable cast.
+- Real Time Approximation counts outdoor movement seconds separately from
+  transport/spell transitions; omit combat, menus, loading and indoor time.
+  Cheapest compares Fewest legs with identical options and consumable budgets.
+- Keep main's unfaded restricted equipment/rank cards, danger-7 warnings, fg-14
+  labels and fg-9 preset descriptions; do not reintroduce fg-16/fg-17 small print.
 
-`lib/travel-real-time.mjs` totals known movement seconds and separately counts
-transport/spell transitions and uncounted indoor movement. Missing/malformed
-movement durations report unavailable instead of showing a partial estimate.
-Results label game-clock time “in-game”, show “Real Time Approximation”, and state
-that combat, menus, loading and time indoors are excluded. Fastest retains its
-existing in-game-time objective.
-
-Cheapest alone computes a Fewest legs baseline with identical graph, prices,
-followers, options and consumable budgets. `lib/travel-tradeoff.mjs` reports gold
-savings, movement seconds added/avoided, transition and leg differences. Unknown
-fares never yield a claimed saving. The baseline neither spends scrolls nor changes
-the selected route. Zero-leg and invalid routes show no comparison.
-
-`npm test` passed: **754 tests, 0 failures**, including 14 new cases across real-time,
-trade-off and workstation tests plus extended flight/Water Walking assertions.
-Chrome CDP visual checks on the local dev server at 1366 and 390 pixels passed:
-visible comparison, no horizontal overflow, no runtime exceptions, and comparison
-clears when changing objective. Screenshots/report: `A:/Cache/trv-7-visual/`.
-First future check: `npm test`; then verify mixed routes with imported saves at
-desktop/phone widths. Tests are required before every commit per owner instruction.
-Build not run. No push/deploy. Ask before starting the next Travel checklist item.
-
-## TRV-6: remembered choices and finite Intervention — 2026-09-30
-
-Implemented on `launch/trv-2-unified-place-search`. No exported schema or extraction
-changes. `lib/travel-options.mjs` keys browser overrides by profile plus SHA-256 of
-the uncompressed SLT1 snapshot, rather than the load token that changes on reload.
-Only edits to save-derived options are stored; validated entries are bounded to
-20 snapshots. Save defaults and later catalog loads are overlaid by edits. Reset
-clears this snapshot/profile only; denied storage retains this session's edits.
-Clearing the save restores manual planner defaults. Existing save provenance marks
-remain beside controls; the options disclosure explains local retention and reset.
-
-`lib/travel-intervention-access.mjs` reads published Spells from the existing
-carrying feature, saved stats/fatigue/current Magicka, and positive integer scroll
-stacks. Scrolls start off; selected scroll edges spend one use. Known spell defaults
-require at least 75% estimated cast chance and enough current Magicka. The threshold
-is a planner policy; lower/unknown chances can be selected explicitly, zero chance
-or insufficient Magicka cannot. Missing catalogs never fabricate a reliable chance.
-Routes state the chance and remaining scroll uses; the footer describes full-fatigue
-fallback, unmodeled temporary effects, assumed successful casts and no recovery.
-
-`planRoute` accepts optional resource budgets and keeps distinct states for paths
-that conserve different resources. Annotating the final graph covers stop, named
-place and teleport-connected Intervention edges. Both spell kinds share current
-Magicka when published cost and current Magicka are known; scroll counts are separate
-by kind. Unknown-data spell choices cannot have their Magicka budget verified.
-No replanning mutates inventory/vitals.
-Published Spells `cost`, `alwaysSucceeds`, `type`, and canonical Intervention IDs
-are assumed; no new loader catalog or rebuild is required.
-
-16 new tests written: four persistence/validation cases, eight consumable/casting
-and route cases, and four workstation cases added to `travel-task-layout.test.js`.
-Initially left unrun per owner workflow; the owner subsequently authorized tests:
-**`npm test` passed on 30 September: 740 tests, 0 failures**, including all 16 new
-TRV-6 tests. No fixes needed. The owner now requires tests before every commit and
-directs Codex to specialize in Travel, starting with TRV-7. Build and browser
-verification remain pending. First future check: verify
-reload/save/profile switching, reset, scroll routes and cast notices on desktop
-and phone widths. No push/deploy. Ask before the next checklist item.
-
-## TRV-4 & TRV-5: journey before options — 2026-09-30
-
-Implemented on `launch/trv-2-unified-place-search`, retaining TRV-2's pickers.
-Travel's DOM order is now Origin/Destination, Plan for and swap/share actions,
-the route answer, a closed character/options disclosure, closed quick starting
-places, the map, then a closed “How routes are worked out” disclosure. The same
-order applies on desktop and phones; origin and destination share two columns
-when space permits. Guild membership and overload warnings remain in the answer,
-outside disclosures. Loading/error/retry stay with the route inputs.
-
-The options summary reflects the active character, guild/rank, selected spells,
-items, followers, walking/carrying/effects and quest teleports. Its controls are
-grouped into Your character and Route style; closing it does not clear choices.
-The map destination callback no longer references removed search state. No bundle
-schema, route-ID, fare formula or routing policy changes.
-
-Six integration tests written in `test/travel-task-layout.test.js` cover reading
-order, grouping and closed defaults, settings/fare updates, swapping/map selection,
-visible save/overload notices, loading/retry, and older/empty bundles. The existing
-SEO disclosure assertion uses Travel's new title and retains its formula checks.
-Initially left unrun per owner workflow; the owner subsequently authorized tests
-on 30 September. **`npm test` passed: 724 tests, 0 failures**, including all six new
-TRV-4 & TRV-5 integration tests. No fixes needed. Build and browser verification
-remain pending. First future check: desktop and phone widths with options
-closed/open, map selection and a loaded save. No push or deployment. Ask the owner
-before starting the next checklist item.
-
-## TRV-2: one place search — 2026-09-30
-
-Implemented on `launch/trv-2-unified-place-search`, from site `main`. No dataset
-schema or route-ID changes. `lib/travel-search.mjs` joins transit stops and named
-Places into one candidate list, ranks towns/stops before other exteriors and
-interiors, and retains central-cell deduplication per name and region. Canonical
-stop names and `place:<cellKey>` IDs still drive routing and shared links. Interiors
-read as `Balmora › Council Club`; badges retain sealed-room access notes.
-
-`TravelLocationPicker` replaces both native stop selectors and separate Places
-lists. Typing filters without rerouting; arrows and Enter or a click commit a
-location. Escape, Tab and blur discard the draft. External selections and new
-profile/options cancel stale drafts. A result count covers all kinds, including
-matches beyond the first 40 displayed; there is no misleading "0 stops" counter.
-
-Tests written in `test/travel-search.test.js` and
-`test/travel-location-picker.test.js`; the old picker source assertion in
-`test/travel-place-search.test.js` follows the new integration. Initially left unrun
-per owner; the owner subsequently authorized tests on 30 September. **`npm test`
-passed: 718 tests, 0 failures**, including all 18 new TRV-2 tests. No fixes needed.
-Browser verification remains pending. No build, push or deployment in this pass.
-When browser verification is authorized, check the pickers with keyboard/touch and
-profile changes at desktop and phone widths. Ask permission before the next item.
+First command in the site repository: `npm test`, before every commit. Browser
+command/scope: `docs/BROWSER_TESTS.md`; results: `docs/LAUNCH_VERIFICATION.md` §8.
+Deployment needs a separate owner request and its own Travel release/rollback.
 
 ## Release sprint ownership — 2026-09-29
 
@@ -186,7 +83,7 @@ No game-data schema changes. Items from `docs/LAUNCH_CHECKLIST.md` (finding IDs 
 
 - **LVL-1: archetype detection.** Mercantile and Speechcraft count in full toward Diplomat / Merchant only as majors (4 each, 1.5 as minors, +3 for favoured Personality, +5 with both as majors; 8 or more is a Diplomat), so the default character, a fighter with both as minors, is a Warrior and is no longer told to raise Personality first. `explainArchetype(build)` returns the archetype with a reason ("the Warrior class", "major skills Long Blade, Heavy Armor and Block", the most telling skills first) that the Level Simulator shows; `detectArchetype` still returns the archetype alone, and the Gear Advisor's `buildTraits` follows it. `test/archetype-reason.test.js`.
 - **TRV-1: Guild Guides and membership.** Every Guild Guide belongs to the Mages Guild (one TR guide to `T_Cyr_MagesGuild`), and the guild's Service Refusal lines refuse anyone outside it ("same faction" = 0); guides sit at rank 1 to 3, so the "higher rank" refusal never stops a member. Without a save the Travel page keeps Mages Guild on and Conjurer off (owner decision); with one, `guildFromSave` sets both, and `guildGuideNotice` (`lib/travel-graph.mjs`) explains when the character is not a member. Guild Guide legs say "Mages Guild members only". `test/travel-guild-notice.test.js`.
-- **TRV-6: "from your save".** `saveMarks` marks the Mages Guild, Conjurer and Intervention boxes while they hold the save's value (unticked ones too), and ticked carried items the save holds; `interventionSources` tells a known spell from a carried scroll, and `interventionMarkText` adds "a scroll, one use". Choices are still reset from the save on each visit; remembering them and spending scrolls are after launch. `test/travel-save-marks.test.js`.
+- **TRV-6: "from your save".** `saveMarks` marks the Mages Guild, Conjurer and Intervention boxes while they hold the save's value (unticked ones too), and ticked carried items the save holds; `interventionSources` tells a known spell from a carried scroll, and `interventionMarkText` adds "a scroll, one use". Choices are still reset from the save on each visit; remembering them and spending scrolls are TRV-6 in the launch checklist, section 4. `test/travel-save-marks.test.js`.
 - **BLD-1: theft is opt-in.** The Gear Advisor's options take their defaults from `DEFAULT_GEAR_TOGGLES` (`lib/gear-rows.mjs`), all off; do not give the component its own defaults. The Mentor's Ring benchmark already holds with theft on and off. `test/gear-defaults.test.js`.
 - **TRV-3: one entry per town.** `matchPlaces` (`lib/travel-walk.mjs`) is the Travel pickers' place search: same-named exterior cells in one region (a town spans several; 19 in vanilla) are listed once as the most central cell, ties to the first key; rooms never merge; stops stay out. Place buttons carry `bg-transparent border-0`, as every button needs one or the browser paints its grey. `test/travel-place-search.test.js`.
 - **Claims.** No page, card, search description or structured data may call the maths "verified" or "exact", or promise "inter-faction standing"; say it follows OpenMW 0.51's source, and describe the Faction Journal's reactions as how factions regard each other. `test/site-claims.test.js` scans app, components and the SEO data (past changelog entries excepted); LAUNCH_POSTS lists the removed claims.
@@ -202,8 +99,11 @@ No game-data schema changes. Items from `docs/LAUNCH_CHECKLIST.md` (finding IDs 
 - **FAC-3: faction quests by name.** `getFactionQuests` keeps named quests only, as the game's quest list does; a topic without a name is a journal note (the Mages Guild's dues reminder), and no quest shows its key or stage numbers. Status reads Completed, In progress or Available. `test/faction-math.test.js`, `test/journal-factions-ui.test.js`.
 - **MOB-3: the Ctrl K hints are for keyboards.** One rule in `app/globals.css` hides both (header and home) under `(max-width: 899px), (hover: none) and (pointer: coarse)`; a touchscreen laptop keeps them. `test/header-hints.test.js`.
 - **SITE-5: ARCE is All Races and Classes Enabled** (the mod's own name, not "Aran Rebuilt"). The TR + ARCE button's tooltip and description (`#world-arce-help`, shown in the phone menu) say so; `test/header-hints.test.js` fails on any other expansion.
-- **BLD-2: Automatic Gear Advisor.** Gear recommendations compute automatically upon character build attributes or skills updating without requiring manual clicks on "Optimize Gear". Uses the existing character archetype detection from the level planner (`detectArchetype` via `buildTraits` in `lib/build-traits.mjs`). Added quick-jump anchor link ("Early gear for this build ↓") at the top of the Character Builder leading to `#gear-advisor`. Tested in `test/automatic-gear-advisor.test.js`.
-- **CALC-2: Custom skill and attribute inputs in calculators.** In Alchemy, Enchanting, and Spellmaking, character stats are displayed in a natural summary ("Using {character}: {Skill} {value} (INT/WIL: {stat} | LUK: {luck}) — change"). Clicking "change" opens custom numeric inputs allowing users to test any skill, governing attribute, and Luck values directly without having to build a character first. "Ingest Character Stats" button renamed to "Reset to character sheet", which resets custom overrides back to the active character build. Tested in `test/editable-calculator-skills.test.js`.
+- **BLD-2: the Gear Advisor ranks by itself.** The ranking (`gearRanking`, needing no catalogs) runs whenever the build or attributes change; its key leaves out the name, so typing it does not re-rank. The `gear` and `bestInSlot` catalogs load only when `#gear-advisor` is within about a screen (IntersectionObserver), on a gear button, or at once without an observer: on every Builder visit they would add about 180 KB compressed in vanilla and 530 KB in TR (docs/DATA_LOADER.md). Defaults stay `DEFAULT_GEAR_TOGGLES`. `test/automatic-gear-advisor.test.js`, `test/gear-advisor-loading.test.js`.
+- **CALC-2: your own numbers in the calculators.** Alchemy, Enchanting and Spellmaking show "Using {character}: {skill} … — change" and editable skill, attribute and Luck fields; every field goes through `statNumber` (`lib/calculator-stats.mjs`: whole, 0 to 1000). Typed numbers are kept per tool by `typedStats` (same module) until "Reset to character sheet": a world switch keeps them (Alchemy, remounted per profile, reads them back), and the sheet sets only the fields not typed (owner, 30 September). CALC-1's `NO_RESULT` and one closed disclosure per tool still hold. `test/editable-calculator-skills.test.js`, `test/calculator-custom-stats.test.js`.
+- **BLD-4: "Save this character" without an account.** `local-characters-panel.jsx` saves to `LOCAL_SAVES_KEY` and lists with load and delete; the Cloud Vault's local tab reads the same list through `loadLocalCharacters` (records only) and follows `silt-local-saves-changed`. Storage is read through `browserStorage()`, which is null where a browser blocks site data; names and fields show as text only. Loading checks the character with `sanitizeBuild`, keeps the visitor's world and the saved loadouts, and clears a loaded .omwsave. Keys stay distinct from the sign-in handoff and the active save. `test/local-character-save.test.js`, `test/local-save-review.test.js`.
+- **Acceptance re-run (30 September): text contrast rules.** fg-16 and fg-17 are not for text (2.6 to 3.1:1 on the equipment panels); use fg-14 or lighter there. Do not fade text that is read (`opacity-*` on it or on its card): it measured below 4.5:1 on faction ranks and Travel stop labels. Every checkbox has a name (the Challenge objectives use their text). `test/acceptance-a11y.test.js`; the axe, keyboard and regression method is in docs/LAUNCH_VERIFICATION.md §5 item 4.
+- **BLD-3: premade builds first for newcomers.** `character-builder-root.jsx` opens on the Premade Builds Catalog while `isNewcomer()` (`lib/builder-first-visit.mjs`: no `siltstrider-builder-visited`, no kept save, no saved characters; blocked storage is not a newcomer) and the context's `isStarter` (the character is still the untouched random start) both hold. It decides in the first render when opened from another page, and in effects when the page hydrates; a shared link, save or sign-in character that replaces the start switches it to the Custom Class Builder, and any tab or build the visitor picks stops the switching. The flag is written on the first mount. Change tabs through `chooseTab`, not `setActiveTab`. `test/builder-first-visit.test.js`.
 
 First verification command: `npm test` in the site repository.
 

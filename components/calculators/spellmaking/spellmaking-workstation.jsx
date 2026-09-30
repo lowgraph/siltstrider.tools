@@ -1,7 +1,7 @@
 "use client";
 import {effectNumber, allowedRanges, effectDraft, selectedEffect, baseCostLabel} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback, useId } from "react";
-import { statNumber } from "../../../lib/calculator-stats.mjs";
+import { statNumber, typedStats, typeStat, forgetTypedStats } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -22,7 +22,7 @@ export default function SpellmakingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world, profile } = useShell();
+  const { world } = useShell();
 
   // Character Magic Skills & Stats
   const baseAlt = sheet?.skills?.["Alteration"]?.v ?? 50;
@@ -36,35 +36,37 @@ export default function SpellmakingWorkstation() {
   const baseMerc = sheet?.skills?.["Mercantile"]?.v ?? 40;
   const basePers = sheet?.attrs?.["Personality"]?.v ?? 40;
 
-  const [alt, setAlt] = useState(baseAlt);
-  const [con, setCon] = useState(baseCon);
-  const [des, setDes] = useState(baseDes);
-  const [ill, setIll] = useState(baseIll);
-  const [mys, setMys] = useState(baseMys);
-  const [res, setRes] = useState(baseRes);
-  const [willpower, setWillpower] = useState(baseWil);
-  const [luck, setLuck] = useState(baseLuck);
+  const [alt, setAlt] = useState(() => typedStats("spellmaking").alt ?? baseAlt);
+  const [con, setCon] = useState(() => typedStats("spellmaking").con ?? baseCon);
+  const [des, setDes] = useState(() => typedStats("spellmaking").des ?? baseDes);
+  const [ill, setIll] = useState(() => typedStats("spellmaking").ill ?? baseIll);
+  const [mys, setMys] = useState(() => typedStats("spellmaking").mys ?? baseMys);
+  const [res, setRes] = useState(() => typedStats("spellmaking").res ?? baseRes);
+  const [willpower, setWillpower] = useState(() => typedStats("spellmaking").willpower ?? baseWil);
+  const [luck, setLuck] = useState(() => typedStats("spellmaking").luck ?? baseLuck);
   const [mercantile, setMercantile] = useState(baseMerc);
   const [personality, setPersonality] = useState(basePers);
   const [disposition, setDisposition] = useState(50);
-  const [showCustomInputs, setShowCustomInputs] = useState(false);
+  const [showCustomInputs, setShowCustomInputs] = useState(() => Object.keys(typedStats("spellmaking")).length > 0);
 
   const [activeSchoolTab, setActiveSchoolTab] = useState("All");
   const [spellName, setSpellName] = useState("Custom Spell");
 
+  // The sheet sets every number the player has not typed; typed ones stay, across a world
+  // switch too, until "Reset to character sheet".
   useEffect(() => {
-    setAlt(baseAlt);
-    setCon(baseCon);
-    setDes(baseDes);
-    setIll(baseIll);
-    setMys(baseMys);
-    setRes(baseRes);
-    setWillpower(baseWil);
-    setLuck(baseLuck);
+    const kept = typedStats("spellmaking");
+    setAlt(kept.alt ?? baseAlt);
+    setCon(kept.con ?? baseCon);
+    setDes(kept.des ?? baseDes);
+    setIll(kept.ill ?? baseIll);
+    setMys(kept.mys ?? baseMys);
+    setRes(kept.res ?? baseRes);
+    setWillpower(kept.willpower ?? baseWil);
+    setLuck(kept.luck ?? baseLuck);
     setMercantile(baseMerc);
     setPersonality(basePers);
-    // A world switch goes back to the character sheet, as Alchemy (remounted per world) does.
-  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers, profile]);
+  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers]);
 
   // Effect Stack
   const [effectsList, setEffectsList] = useState([
@@ -107,6 +109,7 @@ export default function SpellmakingWorkstation() {
   }, [availableEffects, activeSchoolTab]);
 
   const handleIngestCharacterStats = useCallback(() => {
+    forgetTypedStats("spellmaking");
     setAlt(baseAlt);
     setCon(baseCon);
     setDes(baseDes);
@@ -188,14 +191,15 @@ export default function SpellmakingWorkstation() {
 
   const handleGoverningSkillChange = useCallback((val) => {
     const num = statNumber(val);
+    const keep = (field) => typeStat("spellmaking", field, num);
     switch (primarySchool) {
-      case "Alteration": setAlt(num); break;
-      case "Conjuration": setCon(num); break;
-      case "Destruction": setDes(num); break;
-      case "Illusion": setIll(num); break;
-      case "Mysticism": setMys(num); break;
-      case "Restoration": setRes(num); break;
-      default: setDes(num); break;
+      case "Alteration": setAlt(keep("alt")); break;
+      case "Conjuration": setCon(keep("con")); break;
+      case "Destruction": setDes(keep("des")); break;
+      case "Illusion": setIll(keep("ill")); break;
+      case "Mysticism": setMys(keep("mys")); break;
+      case "Restoration": setRes(keep("res")); break;
+      default: setDes(keep("des")); break;
     }
   }, [primarySchool]);
 
@@ -307,7 +311,7 @@ export default function SpellmakingWorkstation() {
               Custom numbers:
             </span>
             <div className="flex items-center gap-1.5">
-              <label htmlFor="spell-skill-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="spell-skill-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 {primarySchool}:
               </label>
               <input
@@ -322,7 +326,7 @@ export default function SpellmakingWorkstation() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="spell-wil-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="spell-wil-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 WIL:
               </label>
               <input
@@ -332,12 +336,12 @@ export default function SpellmakingWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={willpower}
-                onChange={(e) => setWillpower(statNumber(e.target.value))}
+                onChange={(e) => setWillpower(typeStat("spellmaking", "willpower", statNumber(e.target.value)))}
               />
             </div>
 
             <div className="flex items-center gap-1.5">
-              <label htmlFor="spell-luck-input" className="text-fg-9 font-serif font-bold">
+              <label htmlFor="spell-luck-input" className="text-fg-9 font-serif font-bold whitespace-nowrap shrink-0">
                 LUK:
               </label>
               <input
@@ -347,7 +351,7 @@ export default function SpellmakingWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={luck}
-                onChange={(e) => setLuck(statNumber(e.target.value))}
+                onChange={(e) => setLuck(typeStat("spellmaking", "luck", statNumber(e.target.value)))}
               />
             </div>
 

@@ -10,6 +10,7 @@ const base = option('--url', 'http://127.0.0.1:8765');
 if (!['localhost', '127.0.0.1'].includes(new URL(base).hostname)) throw Error('Browser tests require a local server.');
 const suite = option('--suite', 'all');
 const filter = option('--filter', '');
+const failFast = args.includes('--fail-fast');
 if (!['all', 'matrix', 'travel', 'tools'].includes(suite)) throw Error('Use --suite all, matrix, travel or tools.');
 const output = path.resolve(option('--out', `A:/Cache/travel-branch-browser-${Date.now()}`));
 const chromePath = option('--chrome', 'C:/Program Files/Google/Chrome/Application/chrome.exe');
@@ -24,9 +25,15 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const repo = path.join(__dirname, '..');
 const gitHead = spawnSync('git', ['rev-parse','HEAD'], {cwd:repo,encoding:'utf8',windowsHide:true}).stdout?.trim();
 const bundle = JSON.parse(fs.readFileSync(path.join(repo,'public/game-data/current.json'),'utf8'));
-const report = { base, suite, gitHead, bundle, started: new Date().toISOString(), cases: [], runtimeErrors: [], serverErrors: [] };
+const report = { base, suite, gitHead, bundle, started: new Date().toISOString(), cases: [], runtimeErrors: [], serverErrors: [], fontStates: [] };
 let socket, send, evaluate, current = 'setup', deliberateFailure = false, fetchMode = null;
-const heldRequests = [], requests = new Set();
+const heldRequests = [], requests = new Map();
+const networkTrace = [];
+const loadedDocuments = new Set();
+let activeLoaderId = null;
+function recordNetwork(method, params) {
+  if (args.includes('--trace-network')) networkTrace.push({ method, ...params });
+}
 
 async function check(name, run) {
   if (!name.includes(filter)) return;
@@ -38,6 +45,7 @@ async function check(name, run) {
     const html = await evaluate('document.documentElement.outerHTML').catch(() => '');
     fs.writeFileSync(path.join(output, `${filename}-failure.html`), html);
     report.cases.push({ name, passed: false, error: error.stack }); console.log(`FAIL ${name}: ${error.message}`);
+    if (failFast) throw error;
   }
 }
 async function until(expression, timeout = 30000) {
@@ -47,15 +55,40 @@ async function until(expression, timeout = 30000) {
 }
 async function idle() {
   const deadline = Date.now() + 30000;
-  while (Date.now() < deadline) { if (!requests.size) { await pause(250); if (!requests.size) return; } await pause(100); }
-  throw Error('Local page requests did not settle.');
+  const pending = () => [...requests.entries()].filter(([, request]) => !request.loaderId || request.loaderId === activeLoaderId);
+  while (Date.now() < deadline) { if (!pending().length) { await pause(250); if (!pending().length) return; } await pause(100); }
+  throw Error(`Local page requests did not settle: ${JSON.stringify(pending())}`);
+}
+async function openDocument(url) {
+  const navigation = await send('Page.navigate', { url });
+  if (navigation.errorText) throw Error(`Navigation failed: ${navigation.errorText}`);
+  if (navigation.loaderId) {
+    activeLoaderId = navigation.loaderId;
+    const deadline = Date.now() + 30000;
+    while (!loadedDocuments.has(navigation.loaderId) && Date.now() < deadline) await pause(100);
+    assert.ok(loadedDocuments.has(navigation.loaderId), 'New document finished loading');
+  }
+  await until('document.readyState === "complete" && document.querySelector("main h1")');
+}
+async function waitForFonts() {
+  const deadline = Date.now() + 30000;
+  let state;
+  do {
+    // Flush layout, then sample FontFaceSet in the current document so a stuck
+    // load reports its font faces instead of only a Runtime.evaluate timeout.
+    state = await evaluate(`(()=>{document.querySelector('main').getBoundingClientRect();return {url:location.href,theme:document.documentElement.dataset.theme,status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status}))}})()`);
+    const errors = state.faces.filter(face => face.status === 'error');
+    assert.equal(errors.length, 0, `Font load errors: ${JSON.stringify(errors)}`);
+    if (state.status === 'loaded') { report.fontStates.push(state); return; }
+    await pause(100);
+  } while (Date.now() < deadline);
+  throw Error(`Fonts did not finish loading: ${JSON.stringify(state)}`);
 }
 async function navigate(route, profile = 'vanilla', extra = '') {
   const query = profile === 'vanilla' ? 'world=vanilla&arce=0' : `world=tr&arce=${profile === 'tr_arce' ? 1 : 0}`;
-  await send('Page.navigate', { url: `${base}/${route === 'home' ? '' : route}?${query}${extra}` });
-  await until('document.readyState === "complete" && document.querySelector("main h1")');
+  await openDocument(`${base}/${route === 'home' ? '' : route}?${query}${extra}`);
   await idle();
-  await evaluate('document.fonts.ready.then(() => true)');
+  await waitForFonts();
 }
 async function viewport(width) { await send('Emulation.setDeviceMetricsOverride', { width, height: width < 600 ? 844 : 900, deviceScaleFactor: 1, mobile: false }); }
 async function screenshot(name) {
@@ -106,10 +139,11 @@ async function select(selector, label) {
 
 async function matrix() {
   const routes = ['home', 'builder', 'equipment', 'challenge', 'leveler', 'factions', 'alchemy', 'enchanting', 'spellmaking', 'travel', 'vault', 'account', 'about', 'changelog', 'privacy', 'terms'];
-  for (const profile of ['vanilla', 'tr', 'tr_arce']) for (const width of [1366, 390]) for (const route of routes) {
+  for (const profile of ['vanilla', 'tr', 'tr_arce']) for (const width of [1366, 375]) for (const route of routes) {
     await check(`${route}/${profile}/${width}`, async () => {
       await viewport(width); await navigate(route === 'equipment' ? 'builder' : route, profile);
       if (route === 'equipment') {
+        await click('#btn-tab-builder');
         await select('#builder-race', 'Khajiit');
         await click('#btn-tab-equipment'); await idle(); await until('document.querySelector(".equipment-studio-root")');
       }
@@ -118,6 +152,7 @@ async function matrix() {
       const themes = [];
       for (const theme of ['ashfall', 'morrowind']) {
         await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`); await pause(100);
+        await waitForFonts();
         assert.equal(await evaluate('document.documentElement.scrollWidth > innerWidth + 1'), false, `Overflow in ${theme}`);
         const notices = await audit(`${route}-${profile}-${width}-${theme}`);
         themes.push({ theme, notices });
@@ -136,11 +171,15 @@ async function matrix() {
 
 async function toolsRegression() {
   await send('Browser.grantPermissions', { origin: base, permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'] });
-  for (const profile of ['vanilla', 'tr', 'tr_arce']) for (const width of [1366, 390]) {
-    await check(`Tool inputs/sharing/navigation/${profile}/${width}`, async () => {
+  for (const profile of ['vanilla', 'tr', 'tr_arce']) for (const width of [1366, 375]) for (const theme of ['ashfall', 'morrowind']) {
+    await check(`Tool inputs/sharing/navigation/${profile}/${width}/${theme}`, async () => {
       await viewport(width);
+      // The next document applies its stored theme before paint. Do not start a
+      // font load in the departing document and cancel it with navigation.
+      await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
       for (const [route, prefix] of [['alchemy','alc'], ['enchanting','ench'], ['spellmaking','spell']]) {
         await navigate(route, profile);
+        assert.equal(await evaluate('document.documentElement.dataset.theme'), theme, 'Requested tool theme');
         await click(`#${prefix}-toggle-custom-stats`);
         await type(`#${prefix}-skill-input`, '60');
         assert.equal(await evaluate(`document.getElementById('${prefix}-skill-input').value`), '60');
@@ -172,7 +211,7 @@ async function toolsRegression() {
       await click('[title="Copy shareable challenge link"]'); await pause(100);
       const shared = await evaluate('navigator.clipboard.readText()');
       assert.equal(new URL(shared).pathname, '/challenge');
-      await send('Page.navigate', {url:shared}); await until('document.querySelector(".run-summary-sheet")'); await idle();
+      await openDocument(shared); await until('document.querySelector(".run-summary-sheet")'); await idle(); await waitForFonts();
       if (width < 600) await button('Run Summary Sheet');
       await button('Copy Summary'); await pause(100);
       assert.equal(await evaluate('navigator.clipboard.readText()'), summary, 'Share restores identical run');
@@ -186,7 +225,7 @@ async function toolsRegression() {
       const character = await evaluate(characterFields);
       await button('Copy Build Link'); await pause(100);
       const buildLink = await evaluate('navigator.clipboard.readText()');
-      await send('Page.navigate', {url:buildLink}); await until('document.getElementById("builder-className")?.value === "Custom"'); await idle();
+      await openDocument(buildLink); await until('document.getElementById("builder-className")?.value === "Custom"'); await idle(); await waitForFonts();
       assert.deepEqual(await evaluate(characterFields), character, 'Share restores character fields');
       await click('#btn-tab-equipment'); await idle();
       await click('.equipment-ledger [role=button]');
@@ -196,8 +235,48 @@ async function toolsRegression() {
       assert.ok(await evaluate('document.querySelector("[role=dialog]").contains(document.activeElement)'), 'Dialog traps focus');
       await key('Escape', 'Escape', 27);
       assert.equal(await evaluate('Boolean(document.querySelector("[role=dialog]"))'), false);
-      await screenshot(`tools-interactions-${profile}-${width}`);
+      await screenshot(`tools-interactions-${profile}-${width}-${theme}`);
       return { seed, exportedCharacters: true, equipmentDialog: true };
+    });
+  }
+}
+
+async function factionAndLevelRegression() {
+  for (const profile of ['vanilla','tr','tr_arce']) for (const width of [1366,375]) for (const theme of ['ashfall','morrowind']) {
+    await check(`Faction and Level interactions/${profile}/${width}/${theme}`, async () => {
+      await viewport(width);
+      await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await navigate('factions', profile);
+      await type('#faction-search-input', 'Mages Guild');
+      await until('document.querySelector(".faction-roster-item")');
+      assert.ok(await evaluate('[...document.querySelectorAll(".faction-roster-item")].every(b=>/mages guild/i.test(b.textContent))'), 'Faction search filters the roster');
+      await evaluate(`(()=>{const el=[...document.querySelectorAll('.faction-roster-item')].find(b=>[...b.querySelectorAll('span')].some(s=>s.textContent.trim()==='Mages Guild'));if(!el)throw Error('Missing Mages Guild');el.dataset.browserFaction='target'})()`);
+      await click('[data-browser-faction=target]');
+      await until('document.querySelectorAll(".rank-stepper-btn").length === 10');
+      await click('.rank-stepper-btn:last-child');
+      assert.ok(await evaluate('document.querySelector(".rank-stepper-btn:last-child").classList.contains("bg-surface-19")'), 'Chosen faction rank');
+      assertAccessible(await audit(`faction-rank-${profile}-${width}-${theme}`));
+      await screenshot(`faction-rank-${profile}-${width}-${theme}`);
+      await type('#faction-search-input', 'no-such-faction-xyz');
+      assert.equal(await evaluate('document.querySelectorAll(".faction-roster-item").length'), 0, 'Empty faction search');
+      await click('[aria-label="Clear search"]');
+      assert.ok(await evaluate('document.querySelectorAll(".faction-roster-item").length > 1'), 'Faction search resets');
+      await navigate('leveler', profile);
+      if (width < 600) await button('Leveling Optimizer & Stepper');
+      await button('Stats & Skills');
+      assert.equal(await evaluate('[...document.querySelectorAll(".level-mode-toggle-wrap button")].find(b=>b.textContent.trim()==="Stats & Skills").getAttribute("aria-pressed")'), 'true');
+      await button('Stats Only');
+      const before = await evaluate('document.getElementById("target-level-slider").value');
+      await click('#target-level-slider'); await key('Home','Home',36); await key('ArrowRight','ArrowRight',39);
+      assert.equal(await evaluate('document.getElementById("target-level-slider").value'), '2', 'Target level updates');
+      await evaluate(`document.querySelector('button[aria-label^="Move "][aria-label$=" down"]:not(:disabled)').dataset.browserMove='target'`);
+      const moved = await evaluate('document.querySelector("[data-browser-move=target]").getAttribute("aria-label")');
+      await click('[data-browser-move=target]');
+      assert.ok(await evaluate(`(()=>{const label=${JSON.stringify(moved)}.replace(/ down$/,' up');return !document.querySelector('button[aria-label="'+label+'"]').disabled})()`), 'Attribute priority moves');
+      assert.equal(await evaluate('document.querySelector("main").textContent.includes("NaN")'), false, 'Finite level results');
+      assertAccessible(await audit(`level-controls-${profile}-${width}-${theme}`));
+      await screenshot(`level-controls-${profile}-${width}-${theme}`);
+      return { factions: true, levelModes: true, targetBefore: before, moved };
     });
   }
 }
@@ -212,7 +291,7 @@ async function savedTravel() {
     progress:{quests:[],otherJournalIds:[],factions:[{id:'Mages Guild',rank:0,reputation:0,expelled:false}]},
     stuff:{inventory:[{id:'sc_divineintervention',count:1,soul:null,equipped:false,slot:null}],spells:['almsivi intervention']},warnings:[]};
   const fixture = path.join(output, 'synthetic-save.json'); fs.writeFileSync(fixture, JSON.stringify(save));
-  for (const width of [1366,390]) await check(`Travel imported save/persistence/profiles/${width}`, async () => {
+  for (const width of [1366,375]) await check(`Travel imported save/persistence/profiles/${width}`, async () => {
     await viewport(width); await navigate('vault');
     const {root} = await send('DOM.getDocument');
     const {nodeId} = await send('DOM.querySelector', {nodeId:root.nodeId,selector:'input[aria-label="Open an OpenMW save"]'});
@@ -243,7 +322,7 @@ async function savedTravel() {
 }
 
 async function travel() {
-  for (const width of [1366, 390]) {
+  for (const width of [1366, 375]) {
     await check(`Travel keyboard/search/layout/${width}`, async () => {
       await viewport(width); await navigate('travel', 'vanilla', '&from=Seyda%20Neen&to=Vivec');
       await evaluate('document.documentElement.dataset.theme="ashfall"');
@@ -270,7 +349,7 @@ async function travel() {
       await until(`[...document.querySelectorAll('button')].some(b=>b.textContent.trim()==='Link copied')`);
       const shared = await evaluate('navigator.clipboard.readText()');
       assert.equal(new URL(shared).searchParams.get('plan'), 'gold');
-      await send('Page.navigate', { url: shared }); await idle();
+      await openDocument(shared); await idle(); await waitForFonts();
       await until('document.querySelector(".travel-tradeoff")');
       await button('Fastest');
       assert.equal(await evaluate('Boolean(document.querySelector(".travel-tradeoff"))'), false);
@@ -288,7 +367,7 @@ async function travel() {
   await check('Travel network loading/failure/retry', async () => {
     deliberateFailure = true; fetchMode = 'hold';
     await send('Fetch.enable', { patterns: [{ urlPattern: '*game-data/current.json*' }] });
-    await send('Page.navigate', { url: `${base}/travel?world=vanilla` });
+    await openDocument(`${base}/travel?world=vanilla`);
     await until('document.getElementById("travel-network-status")?.textContent.includes("Loading travel network")');
     assert.equal(await evaluate('document.querySelectorAll("#travel-network-status").length'), 1);
     assert.equal(await evaluate('/0 stops/.test(document.getElementById("travel-network-status").textContent)'), false);
@@ -312,15 +391,26 @@ async function travel() {
   await new Promise((resolve, reject) => { socket.addEventListener('open', resolve); socket.addEventListener('error', reject); });
   let id = 0; const pending = new Map();
   send = (method, params = {}) => new Promise((resolve, reject) => {
-    const n = ++id, timer = setTimeout(() => { pending.delete(n); reject(Error(`CDP timeout: ${method}`)); }, 45000);
+    const n = ++id, timer = setTimeout(() => { pending.delete(n); reject(Error(`CDP timeout: ${method}${params.expression ? ` (${params.expression.slice(0,300)})` : ''}`)); }, 45000);
     pending.set(n, { resolve, reject, timer }); socket.send(JSON.stringify({ id: n, method, params }));
   });
   socket.addEventListener('message', async event => {
     const msg = JSON.parse(event.data);
     if (msg.id) { const p = pending.get(msg.id); if (p) { pending.delete(msg.id); clearTimeout(p.timer); msg.error ? p.reject(Error(msg.error.message)) : p.resolve(msg.result); } }
+    if (msg.method === 'Page.lifecycleEvent' && msg.params.name === 'load') {
+      loadedDocuments.add(msg.params.loaderId);
+      recordNetwork(msg.method, {loaderId:msg.params.loaderId,frameId:msg.params.frameId,name:msg.params.name});
+    }
+    if (msg.method === 'Page.frameNavigated' && !msg.params.frame.parentId) activeLoaderId = msg.params.frame.loaderId;
     if (msg.method === 'Runtime.exceptionThrown') report.runtimeErrors.push({ case: current, message: msg.params.exceptionDetails.exception?.description || msg.params.exceptionDetails.text });
-    if (msg.method === 'Network.requestWillBeSent' && msg.params.request.url.startsWith(base) && msg.params.type !== 'WebSocket') requests.add(msg.params.requestId);
-    if (['Network.loadingFinished', 'Network.loadingFailed'].includes(msg.method)) requests.delete(msg.params.requestId);
+    if (msg.method === 'Network.requestWillBeSent' && msg.params.request.url.startsWith(base) && msg.params.type !== 'WebSocket') {
+      requests.set(msg.params.requestId, {url:msg.params.request.url,type:msg.params.type,loaderId:msg.params.loaderId,frameId:msg.params.frameId});
+      recordNetwork(msg.method, {requestId:msg.params.requestId,...requests.get(msg.params.requestId)});
+    }
+    if (['Network.loadingFinished', 'Network.loadingFailed'].includes(msg.method)) {
+      recordNetwork(msg.method, {requestId:msg.params.requestId,errorText:msg.params.errorText});
+      requests.delete(msg.params.requestId);
+    }
     if (msg.method === 'Network.responseReceived' && !deliberateFailure && msg.params.response.url.startsWith(base) && msg.params.response.status >= 500) report.serverErrors.push({ case: current, url: new URL(msg.params.response.url).pathname, status: msg.params.response.status });
     if (msg.method === 'Fetch.requestPaused') {
       if (fetchMode === 'hold') heldRequests.push(msg.params.requestId);
@@ -329,14 +419,18 @@ async function travel() {
   });
   evaluate = async expression => { const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (result.exceptionDetails) throw Error(result.exceptionDetails.exception?.description || result.exceptionDetails.text); return result.result.value; };
   await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable');
+  await send('Page.setLifecycleEventsEnabled', {enabled:true});
+  // Focused interaction runs also need a same-origin document before using storage.
+  await navigate('home');
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) await travel();
-  if (['all','tools'].includes(suite)) { await toolsRegression(); await savedTravel(); }
+  if (['all','tools'].includes(suite)) { await toolsRegression(); await factionAndLevelRegression(); await savedTravel(); }
   await send('Browser.close').catch(() => {});
-})().catch(error => { report.cases.push({ name: current, passed: false, error: error.stack }); }).finally(() => {
+})().catch(error => { if (!report.cases.some(item => item.name === current && !item.passed)) report.cases.push({ name: current, passed: false, error: error.stack }); }).finally(() => {
   socket?.close(); chrome.kill(); report.finished = new Date().toISOString();
   report.failed = report.cases.filter(item => !item.passed).length + report.runtimeErrors.length + report.serverErrors.length + (report.cases.length ? 0 : 1);
   fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify(report, null, 2));
+  if (args.includes('--trace-network')) fs.writeFileSync(path.join(output, 'network-trace.json'), JSON.stringify(networkTrace, null, 2));
   console.log(JSON.stringify({ cases: report.cases.length, failed: report.failed, output }));
   process.exitCode = report.failed ? 1 : 0;
 });

@@ -55,15 +55,25 @@ async function workstation(tool) {
 async function mount(Component, check) {
   const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/' });
   Object.assign(global, { window: dom.window, document: dom.window.document, IS_REACT_ACT_ENVIRONMENT: true });
-  const root = require('react-dom/client').createRoot(document.getElementById('root'));
+  const { forgetTypedStats } = await import('../lib/calculator-stats.mjs');
+  for (const tool of ['alchemy', 'enchanting', 'spellmaking']) forgetTypedStats(tool);
+  const { createRoot } = require('react-dom/client');
+  let root = createRoot(document.getElementById('root'));
   const render = () => React.act(async () => root.render(React.createElement(Component)));
+  // As the app does to Alchemy on a world switch (key={shell.profile}): a new instance.
+  const remount = async () => {
+    await React.act(async () => root.unmount());
+    root = createRoot(document.getElementById('root'));
+    await render();
+  };
   try {
     await render();
-    await check(render);
+    await check(render, remount);
   } finally {
     await React.act(async () => root.unmount());
     dom.window.close();
     shell.profile = 'vanilla'; shell.world = 'vanilla';
+    SHEET.attrs.Luck.v = 40;
   }
 }
 
@@ -105,23 +115,66 @@ for (const [tool, prefix, skillId, skillBase, attrId, attrBase] of TOOLS) {
   });
 }
 
-for (const [tool, prefix, skillId, skillBase] of TOOLS.filter(([t]) => t !== 'alchemy')) {
-  test(`${tool}: a world switch goes back to the character sheet, as Alchemy does`, async () => {
+// The owner's call (30 September): a world switch keeps the numbers a player typed; the sheet
+// fills in the rest, and only "Reset to character sheet" lets typed numbers go.
+for (const [tool, prefix, skillId, skillBase] of TOOLS) {
+  test(`${tool}: typed numbers survive a world switch; the sheet sets only the rest; Reset lets them go`, async () => {
     const Tool = await workstation(tool);
-    await mount(Tool, async (render) => {
+    await mount(Tool, async (render, remount) => {
+      const switchWorld = async () => {
+        shell.profile = shell.profile === 'tr' ? 'vanilla' : 'tr'; shell.world = shell.profile;
+        if (tool === 'alchemy') await remount(); else await render();
+      };
       await click(document.getElementById(`${prefix}-toggle-custom-stats`));
       await type(skillId, '88');
-      assert.equal(value(skillId), '88');
+      await switchWorld();
+      assert.ok(document.getElementById(skillId), 'the inputs are still open');
+      assert.equal(value(skillId), '88', 'the typed number stays');
+      assert.equal(customNote(), true);
+
+      SHEET.attrs.Luck.v = 55;
       await render();
-      assert.equal(value(skillId), '88', 'an ordinary re-render keeps the typed number');
-      shell.profile = 'tr'; shell.world = 'tr';
-      await render();
-      assert.equal(value(skillId), skillBase, 'the new world starts from the character sheet');
+      assert.equal(value(`${prefix}-luck-input`), '55', 'an untyped number follows the sheet');
+      assert.equal(value(skillId), '88', 'a typed one does not');
+
+      await click(button('Reset to character sheet'));
+      assert.equal(value(skillId), skillBase);
+      await switchWorld();
+      if (tool === 'alchemy') await click(document.getElementById(`${prefix}-toggle-custom-stats`));
+      assert.equal(value(skillId), skillBase, 'after Reset the sheet is back, world switch or not');
       assert.equal(customNote(), false);
     });
   });
 }
 
-test('Alchemy is rebuilt per world, which is why it starts from the sheet after a switch', () => {
+test('Alchemy is rebuilt per world, which is why typed numbers are kept outside the tool', () => {
   assert.match(fs.readFileSync('components/app-shell.jsx', 'utf8'), /<AlchemyWorkstation key=\{shell\.profile\} \/>/);
+});
+
+test('the typed-number labels stay on one line on a phone (they broke mid-word at 375 px)', () => {
+  for (const [tool, prefix] of [['alchemy', 'alc'], ['enchanting', 'ench'], ['spellmaking', 'spell']]) {
+    const src = fs.readFileSync(`components/calculators/${tool}/${tool}-workstation.jsx`, 'utf8');
+    const labels = [...src.matchAll(new RegExp(`<label htmlFor="${prefix}-(?:skill|int|luck|wil)-input" className="([^"]+)"`, 'g'))];
+    assert.equal(labels.length, 3, tool);
+    for (const [, cls] of labels) assert.match(cls, /\bwhitespace-nowrap\b/, `${tool}: ${cls}`);
+  }
+});
+
+test('typed numbers belong to one page: a server render has none, and a new page starts empty', async () => {
+  const { typedStats, typeStat, forgetTypedStats } = await import('../lib/calculator-stats.mjs');
+  const saved = global.window;
+  try {
+    delete global.window;
+    assert.deepEqual(typedStats('alchemy'), {}, 'no window, no store');
+    assert.equal(typeStat('alchemy', 'skill', 42), 42, 'typing still returns the number');
+    assert.deepEqual(typedStats('alchemy'), {}, 'and keeps nothing on a server');
+    global.window = new JSDOM('').window;
+    typeStat('alchemy', 'skill', 42);
+    assert.deepEqual(typedStats('alchemy'), { skill: 42 });
+    global.window = new JSDOM('').window;
+    assert.deepEqual(typedStats('alchemy'), {}, 'another page starts empty');
+    forgetTypedStats('alchemy');
+  } finally {
+    if (saved === undefined) delete global.window; else global.window = saved;
+  }
 });

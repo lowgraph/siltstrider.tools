@@ -2,7 +2,9 @@
 import { useState, useMemo } from "react";
 import { BUILDS, RACE_BUILDS, ARCE_BUILDS } from "../../lib/premade-data.mjs";
 
-export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla" }) {
+// `onBuildOwn`: given on a newcomer's first visit (BLD-3), which opens here, to say why and
+// offer the Custom Class Builder instead.
+export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla", onBuildOwn = null }) {
   const [groupBy, setGroupBy] = useState("cat"); // "cat" (Playstyle) or "race"
   const [filter, setFilter] = useState("");
   const [openCategories, setOpenCategories] = useState(() => new Set()); // Collapsed by default
@@ -94,6 +96,22 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
           </button>
         </div>
       </div>
+
+      {onBuildOwn && (
+        <div className="premade-welcome flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-2 border border-line-11 px-3.5 py-3">
+          <p className="text-sm text-fg-4 m-0">
+            <strong className="text-fg-2">New here?</strong> Pick a playstyle, then a build to start
+            from. You can change anything once it is loaded.
+          </p>
+          <button
+            type="button"
+            className="mw-btn px-3 py-1.5 text-xs font-serif font-bold shrink-0"
+            onClick={onBuildOwn}
+          >
+            Build my own instead
+          </button>
+        </div>
+      )}
 
       {/* Search Input & Expand/Collapse Controls */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

@@ -3,12 +3,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { createCloudSaveClient, SAVE_TYPES, QuotaExceededError, RevisionConflictError } from "../../lib/cloud-save-service.mjs";
 import { parseOmwSave } from "../../lib/omwsave-parser.mjs";
 import { readSaveFile } from "../../lib/omwsave-import.mjs";
-import { duplicateCloudSave, generateBuildShareUrl } from "../../lib/character-vault.mjs";
+import { duplicateCloudSave, generateBuildShareUrl, loadLocalCharacters } from "../../lib/character-vault.mjs";
 
 import { ensureClerk, ensureClerkIfSignedIn } from "../../lib/clerk-browser.mjs";
 import { SIGN_IN_EVENT } from "../../lib/sign-in-handoff.mjs";
-
-const LOCAL_SAVES_KEY = "siltstrider-saved-characters";
 
 const PROFILE_LABELS = { vanilla: "Morrowind", tr: "Tamriel Rebuilt", tr_arce: "Tamriel Rebuilt + ARCE" };
 
@@ -140,20 +138,12 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
   }, []);
 
   // Load local saves from localStorage
+  // The same list the Character Builder's saved characters show (loadLocalCharacters keeps
+  // only records), read through a storage that may be blocked.
   const refreshLocalSaves = useCallback(() => {
     if (typeof window === "undefined") return;
     try {
-      const raw = window.localStorage.getItem(LOCAL_SAVES_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          setLocalSaves(parsed);
-        } else if (parsed && Array.isArray(parsed.records)) {
-          setLocalSaves(parsed.records);
-        }
-      } else {
-        setLocalSaves([]);
-      }
+      setLocalSaves(loadLocalCharacters(window.localStorage));
     } catch {
       setLocalSaves([]);
     }
@@ -194,6 +184,14 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
       refreshCloudSaves();
     }
   }, [signedIn, isOpen, refreshLocalSaves, refreshCloudSaves]);
+
+  // Synchronize local saves when updated from Character Builder
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleLocalSavesChange = () => refreshLocalSaves();
+    window.addEventListener("silt-local-saves-changed", handleLocalSavesChange);
+    return () => window.removeEventListener("silt-local-saves-changed", handleLocalSavesChange);
+  }, [refreshLocalSaves]);
 
   // Save current active build to cloud
   const saveActiveBuild = useCallback(
