@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Travel puts Origin, Destination and &ldquo;Plan for&rdquo; above the route answer. Character and route options start folded with a summary of your choices; quick starting places open on demand, and &ldquo;How routes are worked out&rdquo; is at the bottom. Guild and carrying warnings stay beside the route.</li>
             <li>Travel has one search for each end of a journey. Towns and transit stops come first, then outdoor places and rooms such as &ldquo;Balmora › Council Club&rdquo;. Pelagiad appears once, and typing a search keeps your route until you choose a result.</li>
           </ul>
         </section>

@@ -1,5 +1,31 @@
 # Coordination
 
+## TRV-4 & TRV-5: journey before options — 2026-09-30
+
+Implemented on `launch/trv-2-unified-place-search`, retaining TRV-2's pickers.
+Travel's DOM order is now Origin/Destination, Plan for and swap/share actions,
+the route answer, a closed character/options disclosure, closed quick starting
+places, the map, then a closed “How routes are worked out” disclosure. The same
+order applies on desktop and phones; origin and destination share two columns
+when space permits. Guild membership and overload warnings remain in the answer,
+outside disclosures. Loading/error/retry stay with the route inputs.
+
+The options summary reflects the active character, guild/rank, selected spells,
+items, followers, walking/carrying/effects and quest teleports. Its controls are
+grouped into Your character and Route style; closing it does not clear choices.
+The map destination callback no longer references removed search state. No bundle
+schema, route-ID, fare formula or routing policy changes.
+
+Six integration tests written in `test/travel-task-layout.test.js` cover reading
+order, grouping and closed defaults, settings/fare updates, swapping/map selection,
+visible save/overload notices, loading/retry, and older/empty bundles. The existing
+SEO disclosure assertion uses Travel's new title and retains its formula checks.
+Tests, build and browser verification **not run** in this implementation pass, per
+owner workflow (the previous execution authorization was for TRV-2). First future
+check: `npm test` in the site; then check desktop and phone widths with options
+closed/open, map selection and a loaded save. No push or deployment. Ask the owner
+before starting the next checklist item.
+
 ## TRV-2: one place search — 2026-09-30
 
 Implemented on `launch/trv-2-unified-place-search`, from site `main`. No dataset
