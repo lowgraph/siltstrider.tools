@@ -140,7 +140,7 @@ for now (owner, 30 September); other agents skip them.
 - [ ] **C** **TRV-8** One status line in Travel, not a second "Live:" pill (added from the
       audit; confirmed by the owner 30 September).
 - [ ] **C** Header menus focus their first item when opened from the keyboard.
-- [ ] **C** (started 2026-09-30 20:34 UTC, C; on `launch/home-1-mob-2-first-steps`) The Cloud Vault checks a save's hash on load.
+- [x] **C** (started 2026-09-30 20:34 UTC, C; done `f688888` on `launch/home-1-mob-2-first-steps`, not merged: the API compares the stored bytes with `payload_hash` before unpacking; a mismatch is a 422 with a plain message and a reference, and nothing of the save) The Cloud Vault checks a save's hash on load.
 
 **Features**
 - [ ] **C** **CALC-4** Reverse alchemy: pick the effects, get the ingredients.
