@@ -7,7 +7,7 @@ for(const tool of ['alchemy','enchanting','spellmaking']) test(tool+' uses loade
  global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
  let character={build:{},sheet:null};
  const fakeData={status:'ready',data:{profile:'vanilla',catalogs:{Attributes:[],Skills:[],MagicEffects:[],EffectRules:[],Ingredients:[],Apparatus:[],GameSettings:[]}}};
- const deps={'../../character-context':{useActiveCharacter:()=>character},'../../shell-context':{useShell:()=>({profile:'vanilla',world:'vanilla'})},'../../use-game-data':{useGameData:()=>fakeData},'../../use-search-intent':{useSearchIntent:()=>null}};
+ const deps={'../../character-context':{useActiveCharacter:()=>character},'../../shell-context':{useShell:()=>({profile:'vanilla',world:'vanilla'})},'../../active-character-link': require('./helpers/active-character-link.cjs'),'../../use-game-data':{useGameData:()=>fakeData},'../../use-search-intent':{useSearchIntent:()=>null}};
  if(tool==='alchemy') deps['../../../lib/alchemy-catalogs.mjs']={adaptAlchemy:()=>({ingredients:[],apparatus:{mortar:[],alembic:[],retort:[],calcinator:[]},settings:{}})};
  const file=path.resolve('components/calculators/'+tool+'/'+tool+'-workstation.jsx');
  const code=require('esbuild').transformSync(fs.readFileSync(file,'utf8'),{loader:'jsx',format:'cjs',jsx:'automatic'}).code;

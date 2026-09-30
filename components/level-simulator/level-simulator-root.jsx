@@ -8,6 +8,7 @@ import ProgressionSheet from "./progression-sheet";
 import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 import SaveImportNotice from "../character-vault/save-import-notice";
+import ActiveCharacterLink from "../active-character-link";
 import {
   PROGRESSION_MODES,
   ARCHETYPES,
@@ -230,6 +231,9 @@ export default function LevelSimulatorRoot() {
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
             Simulate leveling to theoretical cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.
+          </p>
+          <p className="text-xs text-fg-9 mt-1.5 m-0 font-serif">
+            Planning for <ActiveCharacterLink build={build} />
           </p>
         </div>
 

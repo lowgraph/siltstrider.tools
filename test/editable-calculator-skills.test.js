@@ -54,6 +54,7 @@ async function loadWorkstation(tool, character = { build: { race: 'Dark Elf', cl
   const deps = {
     '../../character-context': { useActiveCharacter: () => character },
     '../../shell-context': { useShell: () => ({ profile: 'vanilla', world: 'vanilla' }) },
+    '../../active-character-link': require('./helpers/active-character-link.cjs'),
     '../../use-game-data': { useGameData: () => fakeData },
     '../../use-search-intent': { useSearchIntent: () => null }
   };
@@ -101,7 +102,7 @@ function typeInput(element, value) {
   element.dispatchEvent(new global.window.Event('change', { bubbles: true }));
 }
 
-test('CALC-2: Alchemy workstation displays "Using Dark Elf Custom: Alchemy 5 — change" and allows typing custom skill', async () => {
+test('CALC-2: Alchemy workstation displays "Using Dark Elf Custom · change: Alchemy 5 — type your own" and allows typing custom skill', async () => {
   const dom = setupDom();
   const root = require('react-dom/client').createRoot(document.getElementById('root'));
   const Alchemy = await loadWorkstation('alchemy');
@@ -110,8 +111,8 @@ test('CALC-2: Alchemy workstation displays "Using Dark Elf Custom: Alchemy 5 —
     await React.act(async () => root.render(React.createElement(Alchemy)));
 
     // Verify initial banner text
-    assert.match(document.body.textContent, /Using Dark Elf Custom:\s*Alchemy 5/);
-    assert.match(document.body.textContent, /— change/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Alchemy 5/);
+    assert.match(document.body.textContent, /— type your own/);
 
     // Toggle custom inputs
     const toggleBtn = document.getElementById('alc-toggle-custom-stats');
@@ -129,7 +130,7 @@ test('CALC-2: Alchemy workstation displays "Using Dark Elf Custom: Alchemy 5 —
     });
 
     // Verify updated banner reflection
-    assert.match(document.body.textContent, /Using Dark Elf Custom:\s*Alchemy 45/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Alchemy 45/);
     assert.match(document.body.textContent, /Custom numbers applied/);
 
     // Click "Reset to character sheet"
@@ -138,7 +139,7 @@ test('CALC-2: Alchemy workstation displays "Using Dark Elf Custom: Alchemy 5 —
     await React.act(async () => resetBtn.click());
 
     assert.equal(skillInput.value, '5');
-    assert.match(document.body.textContent, /Using Dark Elf Custom:\s*Alchemy 5/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Alchemy 5/);
   } finally {
     await React.act(async () => root.unmount());
     dom.window.close();
@@ -153,7 +154,7 @@ test('CALC-2: Enchanting workstation allows typing custom skill and attribute di
   try {
     await React.act(async () => root.render(React.createElement(Enchanting)));
 
-    assert.match(document.body.textContent, /Using Dark Elf Custom:\s*Enchant 10/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Enchant 10/);
     const toggleBtn = document.getElementById('ench-toggle-custom-stats');
     assert.ok(toggleBtn);
     await React.act(async () => toggleBtn.click());
@@ -169,7 +170,7 @@ test('CALC-2: Enchanting workstation allows typing custom skill and attribute di
       typeInput(intInput, '80');
     });
 
-    assert.match(document.body.textContent, /Using Dark Elf Custom:\s*Enchant 75/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Enchant 75/);
     assert.match(document.body.textContent, /INT: 80/);
   } finally {
     await React.act(async () => root.unmount());
@@ -185,7 +186,7 @@ test('CALC-2: Spellmaking workstation allows typing custom magic school skill di
   try {
     await React.act(async () => root.render(React.createElement(Spellmaking)));
 
-    assert.match(document.body.textContent, /Using Dark Elf Custom:\s*Destruction 15/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Destruction 15/);
     const toggleBtn = document.getElementById('spell-toggle-custom-stats');
     assert.ok(toggleBtn);
     await React.act(async () => toggleBtn.click());
@@ -199,7 +200,7 @@ test('CALC-2: Spellmaking workstation allows typing custom magic school skill di
       typeInput(skillInput, '80');
     });
 
-    assert.match(document.body.textContent, /Using Dark Elf Custom:\s*Destruction 80/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Destruction 80/);
   } finally {
     await React.act(async () => root.unmount());
     dom.window.close();
@@ -215,8 +216,8 @@ test('Adversarial QA 1: Calculator skill inputs function safely without prebuilt
   try {
     await React.act(async () => root.render(React.createElement(Alchemy)));
 
-    // Falls back to Adventurer Custom and default stats 50/40/40
-    assert.match(document.body.textContent, /Using Adventurer Custom:\s*Alchemy 50/);
+    // Falls back to Dark Elf Custom (the name Home shows) and default stats 50/40/40
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Alchemy 50/);
 
     const toggleBtn = document.getElementById('alc-toggle-custom-stats');
     await React.act(async () => toggleBtn.click());
@@ -226,7 +227,7 @@ test('Adversarial QA 1: Calculator skill inputs function safely without prebuilt
       typeInput(skillInput, '35');
     });
 
-    assert.match(document.body.textContent, /Using Adventurer Custom:\s*Alchemy 35/);
+    assert.match(document.body.textContent, /Using Dark Elf Custom · change in the Character Builder:\s*Alchemy 35/);
   } finally {
     await React.act(async () => root.unmount());
     dom.window.close();

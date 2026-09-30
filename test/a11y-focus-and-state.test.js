@@ -116,6 +116,7 @@ test('the enchantment type buttons announce which one is chosen, and only one is
   const Enchanting = await load('components/calculators/enchanting/enchanting-workstation.jsx', {
     '../../character-context': { useActiveCharacter: () => ({ build: {}, sheet: {} }) },
     '../../shell-context': { useShell: () => ({ profile: 'vanilla', world: 'vanilla' }) },
+    '../../active-character-link': require('./helpers/active-character-link.cjs'),
     '../../use-game-data': { useGameData: () => data }
   });
   const root = mount();

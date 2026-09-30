@@ -14,6 +14,7 @@ async function workstation(tool, data) {
   const deps = {
     '../../character-context': { useActiveCharacter: () => ({ build: {}, sheet: {} }) },
     '../../shell-context': { useShell: () => ({ profile: 'vanilla', world: 'vanilla' }) },
+    '../../active-character-link': require('./helpers/active-character-link.cjs'),
     '../../use-game-data': { useGameData: () => ({ status: 'ready', data }) },
     '../../use-search-intent': { useSearchIntent: () => null },
   };

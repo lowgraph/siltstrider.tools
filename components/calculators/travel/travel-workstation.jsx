@@ -41,6 +41,7 @@ import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-t
 import { readRouteLink, writeRouteLink } from "../../../lib/travel-link.mjs";
 import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../../lib/travel-movement.mjs";
 import TransitMap from "./transit-map";
+import ActiveCharacterLink from "../../active-character-link";
 
 const POPULAR_HUBS = [
   { name: "Seyda Neen", desc: "Arrival Port", vanillaOnly: false },
@@ -481,17 +482,15 @@ export default function TravelWorkstation() {
           <span className="font-serif font-bold text-accent uppercase tracking-wider whitespace-nowrap">
             Active Character:
           </span>
-          <span className="font-bold text-fg-2 whitespace-nowrap">
-            {build.race || "Adventurer"} {build.className || "Custom"}
-          </span>
-          <span className="text-fg-13 hidden sm:inline">·</span>
+          <ActiveCharacterLink build={build} />
+          <span className="text-fg-13 max-sm:hidden">·</span>
           <span className="text-fg-9 whitespace-nowrap">
             Network:{" "}
             <strong className="text-accent">
               {isTr ? "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"}
             </strong>
           </span>
-          <span className="text-fg-13 hidden sm:inline">·</span>
+          <span className="text-fg-13 max-sm:hidden">·</span>
           <span className="text-fg-9 whitespace-nowrap">
             Stops: <strong className="text-accent">{availableStops.length}</strong>
           </span>

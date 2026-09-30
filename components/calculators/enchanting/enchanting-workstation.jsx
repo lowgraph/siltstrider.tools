@@ -5,6 +5,7 @@ import { statNumber, typedStats, typeStat, forgetTypedStats } from "../../../lib
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
+import ActiveCharacterLink from "../../active-character-link";
 import {
   SOUL_GEMS,
   ENCHANT_BASE_ITEMS,
@@ -228,8 +229,8 @@ export default function EnchantingWorkstation() {
       <div className="p-3 bg-surface-5 border border-line-11 space-y-2.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-            <span className="font-serif font-bold text-accent whitespace-nowrap">
-              Using {build.race || "Adventurer"} {build.className || "Custom"}:
+            <span className="font-serif font-bold text-accent">
+              Using <ActiveCharacterLink build={build} />:
             </span>
             <span className="text-fg-9 whitespace-nowrap">
               Enchant <strong className="text-accent">{skill}</strong> (INT: <strong className="text-accent">{intelligence}</strong> | LUK: <strong className="text-accent">{luck}</strong>)
@@ -241,7 +242,7 @@ export default function EnchantingWorkstation() {
               onClick={() => setShowCustomInputs((v) => !v)}
               aria-expanded={showCustomInputs}
             >
-              {showCustomInputs ? "— hide inputs" : "— change"}
+              {showCustomInputs ? "— hide inputs" : "— type your own"}
             </button>
           </div>
 
