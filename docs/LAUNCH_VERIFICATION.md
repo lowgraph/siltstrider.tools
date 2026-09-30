@@ -211,6 +211,28 @@ commands; the commands are in section 6.
    both widths since the launch changes (LAUNCH_OPERATIONS "Final acceptance pass",
    step 2–3). Spot checks done: Gear Advisor (vanilla and TR Mage, Assassin), home,
    About and Vault notices, Report a bug links.
+   **Done (30 September, agent, headless Chrome):**
+   - Regression, step 2, on the dev build of `03c3361`: builder (races, sheet, premade
+     catalog, loading a premade), equipment (slots and picker), Level Simulator,
+     Challenge Runs (a roll and its seed), Alchemy, Enchanting and Spellmaking (a dash
+     before input, a result after), Travel (a route) and the Faction Journal, each in
+     Vanilla, TR and TR + ARCE at 1366 and 375 px: all passed, with the right world shown,
+     no sideways scrolling, no console or hydration errors.
+   - Regression, step 3: cross-tool navigation keeps the character; a world switch
+     mid-tool (Alchemy 126 to 921 ingredients, Travel 22 to 91 stops; TR + ARCE brings the
+     ARCE races); build and challenge share links open the same character and run in a
+     fresh browser; a seed repeats its run; the challenge summary and the Level Simulator
+     JSON export; the challenge run, a saved character and the world survive a reload; one
+     real .omwsave imports and is restored after a reload (nothing from it recorded).
+   - Audit re-run (acceptance for contrast, 24 px targets, heading levels): axe WCAG 2.2
+     AA + best practice on 19 pages and states, both themes, 1366 and 375 px, against
+     production `415d9c89`, found 5 issues, fixed in `03c3361` (fg-16/17 text now fg-14;
+     no fading on unmet faction ranks or Travel stop labels; fg-9 for Level Simulator preset
+     descriptions; objective checkboxes named); 0 violations on re-run (76 runs). Keyboard:
+     15 pages in both themes (skip link first, visible focus, no trap), the search palette,
+     Cloud Vault, challenge pool and equipment picker dialogs (focus inside, Tab wraps,
+     Escape closes, focus returns), and forced colors: passed before the fixes.
+   Not covered here: step 4 (real accounts) is the owner's, and step 5 is for the freeze.
 5. **Owner-reported, not agent-verified:** Discord in Clerk is set up and tested;
    production sign-in, a cloud-save round trip and Ko-fi were tested (owner,
    29 September).
