@@ -23,17 +23,20 @@ const descriptions = {
 };
 
 // The everyday tools sit in the nav row, most used first (SITE-3: Build, Level, Travel,
-// Alchemy, then the rest); the others wait in the two menus, and the Cloud Vault is the
-// account button beside search.
+// calculators, then the rest). Calculators have direct links on wide screens and
+// share a menu on compact screens; the account button sits beside search.
 const PRIMARY_VIEWS = [
   { view: 'builder', label: 'Character Builder', id: 'react-nav-build' },
   { view: 'leveler', label: 'Level Simulator', id: 'react-nav-leveler' },
   { view: 'travel', label: 'Travel Planner', id: 'react-nav-travel' },
-  { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
+  { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy', calculator: true },
+  { view: 'enchanting', label: 'Enchanting', id: 'react-nav-enchanting', calculator: true },
+  { view: 'spellmaking', label: 'Spellmaking', id: 'react-nav-spellmaking', calculator: true },
   { view: 'factions', label: 'Faction Journal', id: 'react-nav-factions' },
   { view: 'challenge', label: 'Challenge Runs', id: 'react-nav-challenge' }
 ];
 const CALC_MENU = [
+  { view: 'alchemy', label: 'Alchemy' },
   { view: 'enchanting', label: 'Enchanting' },
   { view: 'spellmaking', label: 'Spellmaking' }
 ];
@@ -306,12 +309,12 @@ export default function SiteHeader({ shell: propShell } = {}) {
       <div className={'header-tools menu-drawer' + (open ? ' open' : '')} id="react-menu-drawer">
         <div className="nav-primary">
           <span className="drawer-label drawer-only">Tools</span>
-          {PRIMARY_VIEWS.map(({ view, label, id }) => (
+          {PRIMARY_VIEWS.map(({ view, label, id, calculator }) => (
             <button
               key={view}
               type="button"
               id={id}
-              className={'btn' + (shell.view === view ? ' on' : '')}
+              className={'btn' + (calculator ? ' nav-calculator-direct' : '') + (shell.view === view ? ' on' : '')}
               disabled={!shell.ready}
               aria-current={shell.view === view ? 'page' : undefined}
               onClick={e => navigate(e, view)}
@@ -321,7 +324,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
           ))}
 
           {/* Desktop Dropdowns */}
-          <div className="nav-dropdown-wrap desktop-only" ref={calcDropdownRef}>
+          <div className="nav-dropdown-wrap desktop-only nav-calculator-menu" ref={calcDropdownRef}>
             <button
               ref={calcBtnRef}
               type="button"
@@ -407,7 +410,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
         {/* Mobile Drawer Sections (< 900px) */}
         <div className="drawer-sections-mobile drawer-only">
           <div className="drawer-group">
-            <span className="drawer-label">More Calculators</span>
+            <span className="drawer-label">Calculators</span>
             <div className="drawer-grid grid-2">
               {CALC_MENU.map(({ view, label }) => (
                 <button

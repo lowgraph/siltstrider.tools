@@ -11,7 +11,7 @@ if (!['localhost', '127.0.0.1'].includes(new URL(base).hostname)) throw Error('B
 const suite = option('--suite', 'all');
 const filter = option('--filter', '');
 const failFast = args.includes('--fail-fast');
-if (!['all', 'matrix', 'travel', 'tools', 'settings'].includes(suite)) throw Error('Use --suite all, matrix, travel, tools or settings.');
+if (!['all', 'matrix', 'travel', 'tools', 'settings', 'polish'].includes(suite)) throw Error('Use --suite all, matrix, travel, tools, settings or polish.');
 const output = path.resolve(option('--out', `A:/Cache/travel-branch-browser-${Date.now()}`));
 const chromePath = option('--chrome', 'C:/Program Files/Google/Chrome/Application/chrome.exe');
 const axePath = option('--axe-path', process.env.BROWSER_AXE_PATH);
@@ -460,6 +460,8 @@ async function travel() {
     await until('document.getElementById("travel-network-status")?.textContent.includes("Loading travel network")');
     assert.equal(await evaluate('document.querySelectorAll("#travel-network-status").length'), 1);
     assert.equal(await evaluate('/0 stops/.test(document.getElementById("travel-network-status").textContent)'), false);
+    assert.equal(await evaluate('/No Route|not in the active network/.test(document.getElementById("travel-results").textContent)'), false);
+    assert.equal(await evaluate('document.querySelector("#travel-results .text-danger-7")'), null);
     fetchMode = 'fail';
     for (const requestId of heldRequests.splice(0)) await send('Fetch.failRequest', { requestId, errorReason: 'Failed' });
     await until('document.getElementById("travel-network-status")?.getAttribute("role")==="alert"');
@@ -469,6 +471,61 @@ async function travel() {
     deliberateFailure = false;
     return { recovered: true };
   });
+}
+
+async function polishRegression() {
+  for (const theme of ['ashfall','morrowind']) {
+    for (const width of [375,900,1024,1366,1440,1920]) await check(`Polish navigation/${theme}/${width}`, async () => {
+      await viewport(width); await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`); await navigate('home');
+      if(width < 900) await button('Menu');
+      const layout=await evaluate(`(()=>{const visible=el=>el&&el.getBoundingClientRect().width>0&&el.getBoundingClientRect().height>0;
+        const rect=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
+        return {direct:[...document.querySelectorAll('.nav-calculator-direct')].filter(visible).map(el=>el.textContent.trim()),
+          menu:visible(document.getElementById('react-btn-dropdown-calc')),nav:rect(document.querySelector('.nav-primary')),
+          world:rect(document.querySelector('.world-bar')),header:rect(document.querySelector('.header-tools')),
+          overflow:document.documentElement.scrollWidth>innerWidth+1}})()`);
+      assert.equal(layout.overflow,false,'Navigation must fit the viewport');
+      assert.deepEqual(layout.direct,width>=1440?['Alchemy','Enchanting','Spellmaking']:[]);
+      if(width>=1440) assert.ok(Math.abs(layout.nav.y-layout.world.y)<=8,'Direct calculator links and world switch fit the same row');
+      if(width>=900&&width<1440) {
+        assert.equal(layout.menu,true); await click('#react-btn-dropdown-calc');
+        assert.deepEqual(await evaluate(`[...document.querySelectorAll('#react-calc-dropdown-menu button')].map(el=>el.textContent.trim())`),['Alchemy','Enchanting','Spellmaking']);
+      }
+      await screenshot(`polish-nav-${theme}-${width}`); return layout;
+    });
+    for (const width of [375,1366]) {
+      await check(`Polish Travel/${theme}/${width}`,async()=>{
+        await viewport(width); await navigate('travel');
+        assert.equal(await evaluate('document.getElementById("travel-origin").value'),'Seyda Neen');
+        assert.equal(await evaluate('document.getElementById("travel-destination").value'),'Balmora');
+        await button('Least real time');
+        assert.equal(await evaluate('new URLSearchParams(location.search).get("plan")'),'real');
+        assert.match(await evaluate('document.getElementById("travel-results").textContent'),/Real Time Approximation/);
+        await audit(`polish-travel-${theme}-${width}`); await screenshot(`polish-travel-${theme}-${width}`);
+        return {defaultJourney:true,realObjective:true};
+      });
+      await check(`Polish Alchemy/${theme}/${width}`,async()=>{
+        await viewport(width); await navigate('alchemy');
+        const tools=await evaluate(`[...document.querySelectorAll('.alchemy-workstation select')].filter(el=>[...el.options].some(o=>o.value.startsWith('apparatus_'))).map(el=>[...el.options].filter(o=>o.value!=='none').map(o=>({name:o.textContent,quality:Number(o.textContent.match(/([\\d.]+)x/)?.[1])})))`);
+        assert.equal(tools.length,4);
+        for(const group of tools) {
+          assert.ok(group.every(tool=>!/secretmaster/i.test(tool.name)));
+          assert.ok(group.every((tool,index)=>index===0||tool.quality<=group[index-1].quality),'Apparatus quality descends');
+        }
+        await audit(`polish-alchemy-${theme}-${width}`); await screenshot(`polish-alchemy-${theme}-${width}`); return {sorted:true,obtainable:true};
+      });
+      await check(`Polish Enchanting/${theme}/${width}`,async()=>{
+        await viewport(width); await navigate('enchanting'); await type('#enchant-soul-size','300');
+        assert.equal(await evaluate('document.getElementById("enchant-soul-select").value'),'300');
+        assert.equal(await evaluate(`[...document.querySelectorAll('button')].find(b=>b.textContent==='Constant').disabled`),true);
+        await type('#enchant-soul-size','400');
+        assert.equal(await evaluate(`[...document.querySelectorAll('button')].find(b=>b.textContent==='Constant').disabled`),false);
+        await button('Constant'); await type('#enchant-soul-size','399');
+        assert.equal(await evaluate(`[...document.querySelectorAll('button')].find(b=>b.textContent==='When Used').getAttribute('aria-pressed')`),'true');
+        await audit(`polish-enchanting-${theme}-${width}`); await screenshot(`polish-enchanting-${theme}-${width}`); return {customSoul:true,constantBoundary:true};
+      });
+    }
+  }
 }
 
 (async () => {
@@ -515,6 +572,7 @@ async function travel() {
   if (['all','travel'].includes(suite)) await travel();
   if (['all','tools'].includes(suite)) { await toolsRegression(); await factionAndLevelRegression(); await savedTravel(); }
   if (['all','settings'].includes(suite)) await settingsRegression();
+  if (['all','polish'].includes(suite)) await polishRegression();
   await send('Browser.close').catch(() => {});
 })().catch(error => { if (!report.cases.some(item => item.name === current && !item.passed)) report.cases.push({ name: current, passed: false, error: error.stack }); }).finally(() => {
   socket?.close(); chrome.kill(); report.finished = new Date().toISOString();

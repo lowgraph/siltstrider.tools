@@ -3346,3 +3346,11 @@ body.view-travel .hero {
 .settings-choice { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 16rem); align-items: center; gap: .5rem 1rem; }
 .settings-choice select { width: 100%; min-width: 0; }
 @media (max-width: 640px) { .settings-choice { grid-template-columns: minmax(0, 1fr); } }
+
+/* The header renders directly; compact screens group all three calculators. */
+.topbar .nav-primary .nav-calculator-direct { display: none !important; align-items: center; }
+@media (min-width: 1440px) {
+  .topbar .nav-primary { gap: 6px; }
+  .topbar .nav-primary .nav-calculator-direct { display: inline-flex !important; }
+  .topbar .nav-calculator-menu.desktop-only { display: none !important; }
+}
