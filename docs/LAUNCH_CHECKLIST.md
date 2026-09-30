@@ -127,7 +127,7 @@ for now (owner, 30 September); other agents skip them.
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
 - [x] **C** **SITE-4** (started 2026-09-30 16:29 UTC, C; done `dbbee2d` on `launch/home-1-mob-2-first-steps`, not merged: wherever a tool names the character, the name links to the Builder, as Home names it; the Level Simulator names it too; the Faction Journal's line, hidden at every width by a legacy `.hidden` rule, shows from 640 px) The character bar as a control that opens the Builder.
 - [x] **C** **MOB-1 / MOB-4** (started 2026-09-30 16:58 UTC, C; done `c91f585` on `launch/home-1-mob-2-first-steps`, not merged: a one-row 44 px phone header, pages start at 68 px instead of 257; one row of four Builder sections, the first field at 526-575 px instead of 915) A lighter phone header; one level of Builder tabs.
-- [ ] **C** **HOME-3** (started 2026-09-30 17:09 UTC, C; on `launch/home-1-mob-2-first-steps`) Outcomes on Home instead of counts ("27 skills modeled").
+- [x] **C** **HOME-3** (started 2026-09-30 17:09 UTC, C; done `30862de` on `launch/home-1-mob-2-first-steps`, not merged: ×5 level-ups, any town, early gear, 3 worlds, instead of skill, restriction and stop counts) Outcomes on Home instead of counts ("27 skills modeled").
 
 **Controls and polish**
 - [ ] **C** **CALC-3** One searchable box per Alchemy slot.
