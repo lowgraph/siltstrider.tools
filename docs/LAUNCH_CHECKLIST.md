@@ -94,8 +94,6 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** Target size: the Level Simulator's attribute buttons to 24px (started 2026-09-29 21:08 UTC, C; done `da81aeb`, merged `ae152d0`, live as `4951b9b5`).
 - [x] **C** Heading levels on the Level Simulator and Vault (started 2026-09-29 21:11 UTC, C; done `9758aa9`, merged `384118d`, live as `4951b9b5`).
 - [ ] **C** Re-run the axe, keyboard and high-contrast audit (acceptance for the three above).
-- [ ] **O** Usability test with three to five people, using the audit's script; **C** fix
-      what three or more hit, and any High finding they confirm.
 - [ ] **C** Browser regression across all tools in Vanilla, TR and TR + ARCE at desktop and
       phone widths (LAUNCH_OPERATIONS final acceptance, steps 2–3).
 
