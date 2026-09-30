@@ -1,6 +1,8 @@
 -- DRAFT: outside migrations_dir deliberately. Not applied by Wrangler.
 -- Promote to the next unused numbered migration after the settings design review.
 -- One row per verified Clerk account; no username prerequisite or identity mirror.
+-- The reviewed JSON contract includes theme, version notices, scoped Travel/Gear/
+-- Challenge defaults and reset actions. See docs/ACCOUNT_SETTINGS.md for fields.
 CREATE TABLE account_settings (
   clerk_user_id TEXT PRIMARY KEY NOT NULL CHECK(length(trim(clerk_user_id)) > 0),
   settings_json TEXT NOT NULL CHECK(

@@ -11,6 +11,12 @@ not an applied or numbered migration. No production settings API or UI is wired.
 | Overwrite save-specific toggles with global toggles | `overrideSaveToggles`: boolean, initially false | When enabled, explicitly stored global booleans replace imported-save toggles and remembered per-save booleans. Unset globals inherit the save; false is a real choice. |
 | Modpack | `modpackId`: stable ID or null | Future published modpack replaces the three-way world selector and resolves to its own data. `world` remains a legacy fallback field for the transition. |
 | Mod Version | `modVersionId`: immutable release ID or null | Future published release selects an exact TR or modpack dataset. Never silently substitute a newer release. |
+| Theme | `theme`: `ashfall` or `morrowind` | Existing Modern/Morrowind theme IDs; defaults to Modern. |
+| Version update policy | `versionUpdates: { policy: "pinned", notify: true }` | Notify about supported new datasets; explicit upgrades only. Notifications can be disabled. |
+| Default scope | `defaultScope`: `global` or `dataset` | Shared defaults alone, or shared defaults with matching dataset-specific overrides. |
+| Travel objective | `toolDefaults.travel.objective`: `hops`, `time`, `gold` | Fewest legs, Fastest or Cheapest. Explicit links and current edits win. |
+| Gear preferences | `toolDefaults.gear`: sparse boolean map | Theft, endgame gear early, near-start gear, Dark Brotherhood armor, quest rewards and difficult encounters. |
+| Challenge defaults | `toolDefaults.challenge`: sparse settings | Preset, difficulty bands, restriction count and objective count; shared seeds retain their choices. |
 
 Example prepared document:
 
@@ -21,9 +27,18 @@ Example prepared document:
   "modpackId": null,
   "modVersionId": null,
   "overrideSaveToggles": true,
+  "theme": "morrowind",
+  "versionUpdates": { "policy": "pinned", "notify": true },
+  "defaultScope": "dataset",
   "toolDefaults": {
-    "travel": { "mageGuild": true, "walking": true }
-  }
+    "travel": { "mageGuild": true, "walking": true, "objective": "gold" },
+    "gear": { "theft": false, "questRewards": true },
+    "challenge": { "preset": "standard", "restrictionCount": "3", "objectiveCount": "2" }
+  },
+  "datasetOverrides": [
+    { "world": "tr", "modpackId": null, "modVersionId": null,
+      "toolDefaults": { "travel": { "objective": "time" } } }
+  ]
 }
 ```
 
@@ -34,10 +49,11 @@ activate IDs present in the published registry. Until then Modpack and Mod Versi
 are unavailable controls, not working selectors. For a built-in TR release,
 `world: "tr"` or `"tr_arce"` can carry a `modVersionId` without a modpack ID.
 
-## Other settings recommended before migration
+## Approved additions — 30 September 2026
 
-These are proposals, not additional fields implemented without the owner's choice.
-The JSON table can accommodate them later without a new D1 column.
+The owner accepted the additions below. They are implemented in the prepared
+settings contract, validation, resolution and reset helpers. API/UI integration
+is still pending. The proposed JSON table needs no additional columns.
 
 1. **Theme**: Modern or Morrowind, remembered across devices. Keep motion/text-size
    preferences device/system-aware unless the user explicitly overrides them.
@@ -45,10 +61,10 @@ The JSON table can accommodate them later without a new D1 column.
    quest-teleport defaults. Endpoints and follower counts usually belong to a
    particular journey, not an account default.
 3. **Version update policy**: pinned by default, notify when a newer supported
-   dataset appears, explicit upgrade only. Optional follow-latest could be added
-   later, but must resolve to one immutable release for the whole page session.
+   dataset appears, explicit upgrade only. Automatic follow-latest is not a
+   supported policy in this contract.
 4. **Default scope**: common tool defaults across all datasets, with optional
-   modpack/release-specific overrides later. A TR faction or modded item should
+   modpack/release-specific override entries. A TR faction or modded item should
    not become a fabricated vanilla option.
 5. **Gear acquisition preferences**: remember theft, quest rewards and difficult
    encounters; preserve today's opt-in defaults until the user changes them.
@@ -59,6 +75,42 @@ Reset all settings and reset one tool are essential account actions. Include
 export/import of preferences later if portability becomes useful. These are
 actions, not switches. A data/save mismatch warning should be default behavior,
 not something users must discover and enable.
+
+### Defaults, dataset scope and resets
+
+`resolveAccountToolDefaults` resolves sparse stored preferences against today's
+manual tool defaults. Travel starts with Fewest legs; existing gear policy
+toggles remain false; Challenge starts with Standard, 3 restrictions, 2 objectives
+and Easy/Medium bands enabled. Gear keys are `theft`, `endgame`, `nearStart`,
+`darkBrotherhood`, `questRewards` and `difficultEncounters`. The last two prepare
+the agreed future acquisition filters; current published gear rows do not have
+separate quest-reward/encounter policy switches, so their consumer/filter support
+must be added before exposing those controls. Do not equate them to endgame gear.
+
+Challenge counts are the existing UI's strings `"random"`, `"1"` through `"5"`.
+Bands are `Easy`, `Medium`, `Hard`, `Grind`; preset IDs are `standard`, `hardcore`,
+`cursed`, `custom`. A named preset supplies its normal counts/bands; explicit
+custom dials override them and the resolver marks the result Custom when it
+differs from that preset. A shared seed or run wins over account defaults.
+
+`datasetOverrides` holds at most 24 entries under the total 16 KiB document cap.
+Each entry identifies a world, optional modpack and optional immutable release,
+with sparse `toolDefaults`. Null release in an override entry means defaults
+for that world/modpack across releases; an exact release overrides those broad
+defaults regardless of array order. Worlds and modpack IDs must match exactly.
+Duplicate selection entries are rejected. False remains an explicit preference.
+When `defaultScope` is `global`, override entries are retained but ignored.
+Theme and version-update policy remain global. Dataset resolution uses the actual
+open world/pack/release, so a shared link can select a different scope from the
+stored preferred world. A future published pack should have a canonical legacy
+world mapping until the three-way selector is retired.
+
+`resetAccountSettings` restores all default preferences and clears the selected
+pack/version, global overrides and dataset overrides. `resetAccountToolSettings`
+clears that tool's preferences in all scopes while preserving theme, world,
+version policy and other tools; empty scope entries are removed. Neither mutates
+the caller's document. Persist resets through the same revision-checked API as
+ordinary edits, without deleting cloud saves or a generated Challenge run.
 
 ## Storage and API plan
 
@@ -100,8 +152,9 @@ the workstation. Lowest to highest priority:
 
 1. Tool defaults.
 2. Imported-save defaults and remembered per-save edits.
-3. Explicit global defaults, for save-derived booleans only when the overwrite
-   switch is enabled. Route choices such as walking do not require that switch.
+3. Explicit global/matching dataset defaults, for save-derived booleans only when the overwrite
+   switch is enabled. Route choices such as walking and objective do not require
+   that switch.
 4. Explicit shared-route choices.
 5. Current user edits in the open tool.
 
@@ -159,8 +212,9 @@ tests and in-memory SQLite tests applying existing migrations plus the proposal.
 Tests check malformed JSON, missing/null versions, UTF-8 byte limits, account
 isolation, concurrent writes, preserved saves and fresh accounts without usernames.
 
-Next implementation: settle the proposed settings, promote the SQL, wire the
-authenticated API/provider/account UI, then connect World and Travel. Keep future
+Next implementation: promote the reviewed SQL, wire the authenticated
+API/provider/account UI, then connect World, theme and the tool defaults/reset
+actions. Version notifications need a release registry. Keep future
 dataset selectors unavailable until registry/loader support exists. Add UI,
 authentication and persistence verification and both player changelogs when the
 feature becomes visible. Apply/test locally before a separately authorized remote

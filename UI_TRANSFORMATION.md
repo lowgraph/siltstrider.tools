@@ -7,6 +7,11 @@ on `feature/account-settings-preparation`. No migration or UI is active yet.
 Future modpack/release controls require published data and a release registry;
 global planning assumptions must keep save-provenance/membership notices visible.
 
+**Approved additions, 30 September 2026:** The preparation now includes theme,
+Travel objective, pinned-version notices, Gear/Challenge defaults, dataset scopes
+and reset-all/reset-tool helpers. 776 tests pass. The owner authorized the feature
+branch push; API/UI integration and remote migration/deployment remain pending.
+
 - **Design specialty:** Antigravity (UI Transformation Lead)
 - **Site specialty:** Codex (Site Implementation Agent)
 - **Data specialty:** Claude (Database / Pipeline Agent)

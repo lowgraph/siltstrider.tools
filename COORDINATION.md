@@ -1,5 +1,26 @@
 # Coordination
 
+## Approved account settings additions — 2026-09-30
+
+The owner accepted the recommended settings and authorized pushing
+`feature/account-settings-preparation` to GitHub. Added theme, pinned-version
+update notices, Travel objective, Gear/Challenge defaults, global or dataset
+scope and pure reset-all/reset-tool actions. Sparse dataset overrides inherit
+global choices, retain explicit false, and apply pack/world defaults before an
+exact release. At most 24 entries fit under the existing 16 KiB document limit.
+Challenge preset counts/bands remain coherent; customized dials resolve as Custom.
+Resetting one tool clears it in all scopes without changing other preferences.
+
+`npm test`: **776 passed, 0 failed, 0 skipped**, including 19 account-settings
+contract/SQLite tests. The approved JSON document fits the original table design;
+no new SQL columns or exported game-data/SLT1 contracts. SQL remains a proposal,
+with API/provider/UI and runtime wiring pending. Quest-reward and difficult-
+encounter preferences need new acquisition-filter support before UI exposure;
+release notices/modpack/version selectors need a published registry/loader.
+No migration, extraction or deployment. No pipeline checkout is available here.
+First next command: `npm test` in this checkout. Next implementation: promote
+the reviewed SQL, then wire the authenticated API/provider/UI and tool consumers.
+
 ## Account settings preparation — 2026-09-30
 
 Prepared on `feature/account-settings-preparation` in an isolated worktree based

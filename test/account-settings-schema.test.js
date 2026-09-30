@@ -85,3 +85,18 @@ assert con.execute(sql, ('new-owner', '{"version":1,"world":"tr"}', '2026', '202
 assert con.execute('SELECT settings_json FROM account_settings WHERE clerk_user_id=?', ('new-owner',)).fetchone()[0] == '{"version":1}'
 `);
 });
+
+test('the JSON proposal stores approved preferences and dataset overrides without extra columns', () => {
+  sqlite(`
+document = {'version': 1, 'world': 'tr', 'theme': 'morrowind',
+    'versionUpdates': {'policy': 'pinned', 'notify': False}, 'defaultScope': 'dataset',
+    'toolDefaults': {'travel': {'objective': 'gold'}, 'gear': {'theft': False, 'questRewards': True},
+        'challenge': {'preset': 'custom', 'restrictionCount': 'random', 'objectiveCount': '2', 'allowedBands': {'Hard': True}}},
+    'datasetOverrides': [{'world': 'tr', 'modpackId': 'pack-a', 'modVersionId': 'release-1',
+        'toolDefaults': {'travel': {'mageGuild': True}}}]}
+insert('approved-owner', json.dumps(document))
+stored = con.execute('SELECT settings_json FROM account_settings WHERE clerk_user_id=?', ('approved-owner',)).fetchone()[0]
+assert json.loads(stored) == document
+assert con.execute("SELECT json_extract(settings_json, '$.theme') FROM account_settings WHERE clerk_user_id=?", ('approved-owner',)).fetchone()[0] == 'morrowind'
+`);
+});

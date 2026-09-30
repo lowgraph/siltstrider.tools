@@ -97,6 +97,8 @@ Account world/tool preferences are currently browser-local. Preparation for a
 separate versioned `account_settings` table is documented in
 [ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md). Its SQL remains outside the applied
 migrations directory; the account API and workstations do not use it yet.
+The approved contract also covers theme, pinned-version update notices,
+Travel/Gear/Challenge defaults, dataset-specific overrides and preference resets.
 
 ### B. Entitlements & Ko-fi Integration
 - **Free Tier**: 5 cloud save slots.

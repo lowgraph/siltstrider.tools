@@ -113,3 +113,126 @@ test('explicit links and current edits beat global defaults without masking late
   assert.equal(later.carried, 51);
   assert.equal(later.mageGuild, false);
 });
+
+test('approved settings use existing theme IDs, opt-in gear policies and standard Challenge defaults', async () => {
+  const { defaultAccountSettings, validateAccountSettings, resolveAccountToolDefaults } = await load();
+  const { DEFAULT_THEME, THEMES } = await import('../lib/theme.mjs');
+  const defaults = defaultAccountSettings();
+  assert.equal(defaults.theme, DEFAULT_THEME);
+  assert.deepEqual(defaults.versionUpdates, { policy: 'pinned', notify: true });
+  assert.equal(defaults.defaultScope, 'global');
+  for (const theme of Object.keys(THEMES)) assert.equal(validateAccountSettings({ version: 1, theme }).theme, theme);
+  const tools = resolveAccountToolDefaults(defaults);
+  assert.equal(tools.travel.objective, 'hops');
+  assert.ok(Object.values(tools.gear).every(value => value === false));
+  assert.deepEqual(tools.challenge, { preset: 'standard', restrictionCount: '3', objectiveCount: '2',
+    allowedBands: { Easy: true, Medium: true, Hard: false, Grind: false } });
+  tools.challenge.allowedBands.Easy = false;
+  assert.equal(resolveAccountToolDefaults(defaults).challenge.allowedBands.Easy, true);
+});
+
+test('approved settings reject unsupported themes, auto-upgrades, malformed scopes and invalid tool values', async () => {
+  const { validateAccountSettings } = await load();
+  for (const patch of [{ theme: 'modern' }, { theme: null }, { versionUpdates: null },
+    { versionUpdates: { policy: 'latest' } }, { versionUpdates: { notify: 'true' } },
+    { defaultScope: 'character' }, { datasetOverrides: {} }, { datasetOverrides: [null] },
+    { datasetOverrides: [{ toolDefaults: {} }] },
+    { toolDefaults: { travel: { objective: 'fastest' } } },
+    { toolDefaults: { gear: { theft: 'false' } } }, { toolDefaults: { gear: { imaginary: true } } },
+    { toolDefaults: { challenge: { preset: 'unknown' } } },
+    { toolDefaults: { challenge: { objectiveCount: '0' } } },
+    { toolDefaults: { challenge: { restrictionCount: 3 } } },
+    { toolDefaults: { challenge: { objectiveCount: '6' } } },
+    { toolDefaults: { challenge: { allowedBands: { Hard: 1 } } } },
+    { toolDefaults: { challenge: { allowedBands: { unknown: true } } } }]) {
+    assert.throws(() => validateAccountSettings({ version: 1, ...patch }));
+  }
+});
+
+test('Challenge presets supply coherent counts/bands, custom dials stay explicit and random counts round-trip', async () => {
+  const { resolveAccountToolDefaults, validateAccountSettings } = await load();
+  const settings = { version: 1, toolDefaults: { challenge: { preset: 'hardcore' } } };
+  assert.deepEqual(resolveAccountToolDefaults(settings).challenge, {
+    preset: 'hardcore', restrictionCount: '4', objectiveCount: '3',
+    allowedBands: { Easy: false, Medium: true, Hard: true, Grind: false }
+  });
+  assert.equal(resolveAccountToolDefaults({ ...settings, toolDefaults: { challenge: { preset: 'hardcore', objectiveCount: '1' } } }).challenge.preset, 'custom');
+  const custom = { version: 1, toolDefaults: { challenge: { restrictionCount: 'random',
+    objectiveCount: 'random', allowedBands: { Grind: true } } } };
+  assert.equal(validateAccountSettings(custom).toolDefaults.challenge.restrictionCount, 'random');
+  assert.equal(resolveAccountToolDefaults(custom).challenge.allowedBands.Grind, true);
+  assert.equal(resolveAccountToolDefaults(custom).challenge.preset, 'custom');
+});
+
+test('dataset overrides inherit globals, honor explicit false and apply exact releases after pack-wide defaults', async () => {
+  const { resolveAccountToolDefaults, resolveAccountTravelOptions } = await load();
+  const settings = { version: 1, world: 'tr', modpackId: 'pack-a', modVersionId: 'release-2',
+    defaultScope: 'dataset', toolDefaults: { travel: { objective: 'hops', mageGuild: true },
+      gear: { theft: true }, challenge: { allowedBands: { Hard: true } } },
+    datasetOverrides: [
+      { world: 'tr', modpackId: 'pack-a', modVersionId: 'release-2',
+        toolDefaults: { travel: { objective: 'time', mageGuild: false }, challenge: { allowedBands: { Grind: true } } } },
+      { world: 'tr', modpackId: 'pack-a', toolDefaults: { travel: { objective: 'gold' }, gear: { theft: false } } },
+      { world: 'tr', modpackId: 'pack-b', toolDefaults: { travel: { walking: false } } }
+    ] };
+  const tools = resolveAccountToolDefaults(settings);
+  assert.equal(tools.travel.objective, 'time');
+  assert.equal(tools.travel.mageGuild, false);
+  assert.equal(tools.travel.walking, true);
+  assert.equal(tools.gear.theft, false);
+  assert.equal(tools.challenge.allowedBands.Hard, true);
+  assert.equal(tools.challenge.allowedBands.Grind, true);
+  assert.equal(tools.challenge.allowedBands.Easy, true);
+  assert.equal(resolveAccountToolDefaults(settings, { world: 'tr', modpackId: 'pack-a', modVersionId: 'release-1' }).travel.objective, 'gold');
+  assert.equal(resolveAccountToolDefaults(settings, { world: 'vanilla' }).travel.objective, 'hops');
+  assert.equal(resolveAccountToolDefaults({ ...settings, defaultScope: 'global' }).gear.theft, true);
+  assert.equal(resolveAccountTravelOptions({ settings }).objective, 'time');
+  assert.equal(resolveAccountTravelOptions({ settings, linkOverrides: { objective: 'gold' }, sessionOverrides: { objective: 'hops' } }).objective, 'hops');
+  const fromSave = resolveAccountTravelOptions({ settings, saveDefaults: { mageGuild: true } });
+  assert.equal(fromSave.mageGuild, true, 'save toggle wins unless overwrite is enabled');
+  assert.equal(fromSave.objective, 'time', 'route objective remains an account default');
+});
+
+test('duplicate, prototype and excessive dataset entries cannot bypass scope validation', async () => {
+  const { validateAccountSettings, resolveAccountToolDefaults } = await load();
+  const entry = { world: 'tr', modpackId: 'pack-a', toolDefaults: { gear: { theft: false } } };
+  assert.throws(() => validateAccountSettings({ version: 1, datasetOverrides: [entry, { ...entry, modVersionId: null }] }));
+  assert.throws(() => validateAccountSettings({ version: 1, datasetOverrides: Array.from({ length: 25 }, (_, i) => ({ ...entry, modpackId: `pack-${i}` })) }));
+  assert.throws(() => validateAccountSettings({ version: 1, datasetOverrides: [{ ...entry, toolDefaults: JSON.parse('{"__proto__":{}}') }] }));
+  assert.throws(() => validateAccountSettings({ version: 1, datasetOverrides: [{ ...entry, modVersionId: 'latest' }] }));
+  assert.throws(() => resolveAccountToolDefaults({ version: 1 }, { world: null }));
+});
+
+test('reset one tool clears its global and dataset defaults while preserving other settings and inputs', async () => {
+  const { resetAccountSettings, resetAccountToolSettings, defaultAccountSettings } = await load();
+  const settings = { version: 1, world: 'tr', theme: 'morrowind', defaultScope: 'dataset',
+    versionUpdates: { notify: false }, toolDefaults: { travel: { objective: 'gold' }, gear: { theft: true } },
+    datasetOverrides: [
+      { world: 'tr', toolDefaults: { travel: { mageGuild: false }, gear: { theft: false } } },
+      { world: 'vanilla', toolDefaults: { travel: { walking: false } } }
+    ] };
+  const before = JSON.stringify(settings);
+  const reset = resetAccountToolSettings(settings, 'travel');
+  assert.deepEqual(reset.toolDefaults.travel, {});
+  assert.deepEqual(reset.datasetOverrides[0].toolDefaults.travel, {});
+  assert.equal(reset.datasetOverrides.length, 1);
+  assert.equal(reset.toolDefaults.gear.theft, true);
+  assert.equal(reset.datasetOverrides[0].toolDefaults.gear.theft, false);
+  assert.equal(reset.theme, 'morrowind');
+  assert.equal(reset.world, 'tr');
+  assert.equal(reset.versionUpdates.notify, false);
+  assert.equal(JSON.stringify(settings), before);
+  assert.throws(() => resetAccountToolSettings(settings, 'unknown'));
+  assert.deepEqual(resetAccountSettings(), defaultAccountSettings());
+});
+
+test('Travel objective precedence is independent of the overwrite-save switch', async () => {
+  const { resolveAccountTravelOptions } = await load();
+  const settings = { version: 1, toolDefaults: { travel: { objective: 'gold' } } };
+  for (const overrideSaveToggles of [true, false]) {
+    const input = { settings: { ...settings, overrideSaveToggles }, saveDefaults: { mageGuild: false } };
+    assert.equal(resolveAccountTravelOptions(input).objective, 'gold');
+    assert.equal(resolveAccountTravelOptions({ ...input, linkOverrides: { objective: 'time' } }).objective, 'time');
+    assert.equal(resolveAccountTravelOptions({ ...input, linkOverrides: { objective: 'time' }, sessionOverrides: { objective: 'hops' } }).objective, 'hops');
+  }
+});
