@@ -6,6 +6,7 @@ import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
 import { useSearchIntent } from "../../use-search-intent";
 import { clearSearchIntent } from "../../../lib/search-intent.mjs";
+import IngredientCombobox from "./ingredient-combobox";
 import ActiveCharacterLink from "../../active-character-link";
 import { adaptAlchemy } from "../../../lib/alchemy-catalogs.mjs";
 import {
@@ -56,21 +57,11 @@ export default function AlchemyWorkstation() {
   const [matchFirst, setMatchFirst] = useState(false);
   const [customPotionName, setCustomPotionName] = useState("");
 
-  // Search queries per slot
-  const [search1, setSearch1] = useState("");
-  const [search2, setSearch2] = useState("");
-  const [search3, setSearch3] = useState("");
-  const [search4, setSearch4] = useState("");
-
   const handleClearAllIngredients = () => {
     setSlot1(null);
     setSlot2(null);
     setSlot3(null);
     setSlot4(null);
-    setSearch1("");
-    setSearch2("");
-    setSearch3("");
-    setSearch4("");
     setCustomPotionName("");
   };
 
@@ -95,11 +86,10 @@ export default function AlchemyWorkstation() {
     }
     clearSearchIntent(intent);
     const hit = allIngredients.find(x => x.id === intent.value);
-    const slots = [[slot1, setSlot1, setSearch1], [slot2, setSlot2, setSearch2], [slot3, setSlot3, setSearch3], [slot4, setSlot4, setSearch4]];
+    const slots = [[slot1, setSlot1], [slot2, setSlot2], [slot3, setSlot3], [slot4, setSlot4]];
     if (!hit || slots.some(([current]) => current?.id === hit.id)) return;
-    const [, setSlot, setSearch] = slots.find(([current]) => !current) || slots[3];
+    const [, setSlot] = slots.find(([current]) => !current) || slots[3];
     setSlot(hit);
-    setSearch("");
   }, [intent, bundleAlchemy, allIngredients, gameData.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleIngestCharacterStats = useCallback(() => {
@@ -142,9 +132,8 @@ export default function AlchemyWorkstation() {
     });
   }, [selectedIngredients, skill, intelligence, luck, mortar, alembic, calcinator, retort, bundleAlchemy]);
 
-  // Filter pool for a given slot
-  const getPoolForSlot = (slotIndex, query) => {
-    const q = query.trim().toLowerCase();
+  // The ingredients a slot may take; its box filters them by what is typed.
+  const getPoolForSlot = (slotIndex) => {
     const otherSelectedIds = new Set(
       selectedIngredients
         .filter((_, i) => i !== slotIndex)
@@ -154,7 +143,6 @@ export default function AlchemyWorkstation() {
 
     return allIngredients.filter((ing) => {
       if (otherSelectedIds.has(ing.id)) return false;
-      if (q && !ing.n.toLowerCase().includes(q)) return false;
 
       // If matchFirst is on and slot > 0, check if ing shares any effect with slot1
       if (matchFirst && slotIndex > 0 && slot1) {
@@ -167,10 +155,10 @@ export default function AlchemyWorkstation() {
   };
 
   const slotsData = [
-    { slotIndex: 0, current: slot1, setSlot: setSlot1, search: search1, setSearch: setSearch1 },
-    { slotIndex: 1, current: slot2, setSlot: setSlot2, search: search2, setSearch: setSearch2 },
-    { slotIndex: 2, current: slot3, setSlot: setSlot3, search: search3, setSearch: setSearch3 },
-    { slotIndex: 3, current: slot4, setSlot: setSlot4, search: search4, setSearch: setSearch4 }
+    { slotIndex: 0, current: slot1, setSlot: setSlot1 },
+    { slotIndex: 1, current: slot2, setSlot: setSlot2 },
+    { slotIndex: 2, current: slot3, setSlot: setSlot3 },
+    { slotIndex: 3, current: slot4, setSlot: setSlot4 }
   ];
 
   const dataError=gameData.error || adaptation.error;
@@ -411,8 +399,8 @@ export default function AlchemyWorkstation() {
               )}
             </div>
 
-            {slotsData.map(({ slotIndex, current, setSlot, search, setSearch }) => {
-              const pool = getPoolForSlot(slotIndex, search);
+            {slotsData.map(({ slotIndex, current, setSlot }) => {
+              const pool = getPoolForSlot(slotIndex);
 
               return (
                 <div key={slotIndex} className="p-3 bg-surface-5 border border-line-11 space-y-2">
@@ -425,10 +413,7 @@ export default function AlchemyWorkstation() {
                       <button
                         type="button"
                         className="mw-btn px-2 py-0.5 text-[11px] font-serif"
-                        onClick={() => {
-                          setSlot(null);
-                          setSearch("");
-                        }}
+                        onClick={() => setSlot(null)}
                         title={`Clear Slot ${slotIndex + 1}`}
                       >
                         Clear
@@ -436,36 +421,7 @@ export default function AlchemyWorkstation() {
                     )}
                   </div>
 
-                  <div className="flex gap-2">
-                    {/* Inline sizes: the shared #panel-alchemy rule makes every input and select 100% wide. */}
-                    <select
-                      aria-label={`Crucible ${slotIndex + 1} ingredient`}
-                      className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-                      style={{ flex: "1 1 0", minWidth: 0 }}
-                      value={current?.id || ""}
-                      onChange={(e) => {
-                        const hit = allIngredients.find((x) => x.id === e.target.value);
-                        setSlot(hit || null);
-                      }}
-                    >
-                      <option value="">(Select Ingredient)</option>
-                      {pool.map((ing) => (
-                        <option key={ing.id} value={ing.id}>
-                          {ing.n}
-                        </option>
-                      ))}
-                    </select>
-
-                    <input
-                      type="text"
-                      className="w-32 bg-surface-1 border border-line-9 px-2 py-1 text-xs text-fg-2 placeholder-fg-15 font-serif"
-                      style={{ width: "8rem", flex: "none" }}
-                      placeholder="Search..."
-                      aria-label={`Filter ingredients for crucible ${slotIndex + 1}`}
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                  </div>
+                  <IngredientCombobox slot={slotIndex} value={current} options={pool} onSelect={setSlot} />
 
                   {current && (
                     <div className="pt-1 flex flex-wrap gap-1">
