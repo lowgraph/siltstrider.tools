@@ -926,6 +926,33 @@ test("Bitter Cup is controlled in the level optimizer and survives navigation", 
  } finally {await act(async()=>root.unmount());dom.window.close();}
 });
 
+test("LVL-2: the Bitter Cup waits under Advanced options, after the simulator's own controls, and opens it while on", async () => {
+ const dom=setupDom("/leveler"), root=createRoot(dom.window.document.getElementById("root"));
+ const doc=dom.window.document;
+ const go=async(view)=>act(async()=>{dom.window.history.pushState(null, "", "/"+view);dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));});
+ const group=()=>doc.querySelector("#panel-leveler details.level-advanced");
+ try {
+  await act(async()=>root.render(React.createElement(AppShell)));
+  assert.ok(group(),"an Advanced options group");
+  assert.ok(group().contains(doc.getElementById("level-bittercup")),"the Bitter Cup is in it");
+  assert.equal(group().open,false,"closed while the Bitter Cup is off");
+  assert.match(group().querySelector("summary").textContent,/^Advanced options$/);
+  // Not the page's first control any more: the progression mode comes before it.
+  const controls=[...doc.querySelectorAll("#panel-leveler input, #panel-leveler select, #panel-leveler button, #panel-leveler summary")];
+  const statsOnly=controls.findIndex((el)=>el.textContent.trim()==="Stats Only");
+  assert.ok(statsOnly>=0,"the mode toggle is there");
+  assert.ok(controls.indexOf(group().querySelector("summary"))>statsOnly,"the group comes after the mode toggle");
+  await act(async()=>doc.getElementById("level-bittercup").click());
+  assert.equal(group().open,true);
+  assert.match(group().querySelector("summary").textContent,/Advanced options · Bitter Cup on/);
+  // Leaving and coming back with the Bitter Cup on: still open, so its effect is not hidden.
+  await go("builder"); await go("leveler");
+  assert.equal(group().open,true);
+  await act(async()=>doc.getElementById("level-bittercup").click());
+  assert.doesNotMatch(group().querySelector("summary").textContent,/Bitter Cup on/);
+ } finally {await act(async()=>root.unmount());dom.window.close();}
+});
+
 
 test("HTML5 History traversal: popstate Back and Forward navigates seamlessly between workstations", async () => {
   const dom = setupDom("/");

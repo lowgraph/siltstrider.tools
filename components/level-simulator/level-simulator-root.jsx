@@ -21,6 +21,9 @@ import {
 export default function LevelSimulatorRoot() {
   const shell = useShell();
   const { build, sheet, catalogs, activeSave, updateField } = useActiveCharacter();
+  // The Advanced options group is open whenever the Bitter Cup is on (a build can bring it).
+  const [advancedOpen, setAdvancedOpen] = useState(() => Boolean(build?.bitterCup));
+  useEffect(() => { if (build?.bitterCup) setAdvancedOpen(true); }, [build?.bitterCup]);
   // With a save loaded, plan from where that character actually is; the build's fresh
   // level-1 sheet stays one click away.
   const [startFrom, setStartFrom] = useState("save");
@@ -256,19 +259,27 @@ export default function LevelSimulatorRoot() {
         </div>
       </div>
 
-      {/* Dual Mode Progression Toggle */}
-      <div className="p-3 bg-surface-5 border border-line-9 text-sm space-y-2">
-        <label className="flex items-center gap-2 font-serif text-accent">
-          <input type="checkbox" id="level-bittercup" checked={!fromSave && Boolean(build.bitterCup)} disabled={fromSave}
-            onChange={event => { updateField('bitterCup', event.target.checked); setStepIndex(0); }} />
-          Drink Bitter Cup before leveling (+20 highest, −20 lowest)
-        </label>
-        <p className="text-xs text-fg-8">
-          {fromSave ? 'The save already includes any permanent attribute changes. Switch to the build to plan Bitter Cup.' : 'Applied to starting attributes, capped at 100. Ties use the game’s attribute order.'}
-        </p>
-        {!fromSave && sheet?.bitterCup && <p className="text-xs text-accent">+{sheet.bitterCup.bonus} {sheet.bitterCup.highest} / −{sheet.bitterCup.penalty} {sheet.bitterCup.lowest}</p>}
-      </div>
       <LevelModeToggle mode={mode} onModeChange={setMode} />
+
+      {/* LVL-2: the Bitter Cup, a niche artifact trick, waits under Advanced options instead of
+          leading the page; the group opens by itself while it is on, so its effect is never hidden. */}
+      <details className="level-advanced p-3 bg-surface-5 border border-line-9 text-sm" open={advancedOpen}
+        onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}>
+        <summary className="cursor-pointer font-serif font-bold text-fg-5">
+          Advanced options{!fromSave && build.bitterCup ? <span className="text-accent font-normal"> · Bitter Cup on</span> : null}
+        </summary>
+        <div className="space-y-2 pt-2">
+          <label className="flex items-center gap-2 font-serif text-accent">
+            <input type="checkbox" id="level-bittercup" checked={!fromSave && Boolean(build.bitterCup)} disabled={fromSave}
+              onChange={event => { updateField('bitterCup', event.target.checked); setStepIndex(0); }} />
+            Drink Bitter Cup before leveling (+20 highest, −20 lowest)
+          </label>
+          <p className="text-xs text-fg-8">
+            {fromSave ? 'The save already includes any permanent attribute changes. Switch to the build to plan Bitter Cup.' : 'Applied to starting attributes, capped at 100. Ties use the game’s attribute order.'}
+          </p>
+          {!fromSave && sheet?.bitterCup && <p className="text-xs text-accent">+{sheet.bitterCup.bonus} {sheet.bitterCup.highest} / −{sheet.bitterCup.penalty} {sheet.bitterCup.lowest}</p>}
+        </div>
+      </details>
 
       <details className="calculation-notes">
         <summary>How this is calculated</summary>
