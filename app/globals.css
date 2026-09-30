@@ -2915,10 +2915,6 @@ body.view-travel .hero {
 }
 .home-hub-root .home-title span { color: var(--color-accent); }
 .home-hub-root .home-lead { max-width: 36rem; font-size: 18px; line-height: 1.6; color: var(--color-fg-6); }
-.home-hub-root .home-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.home-hub-root .home-ctas-label { font-size: 15px; color: var(--color-fg-8); }
-.home-hub-root .home-ctas .home-link { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
-.home-hub-root .home-ctas .home-link svg { width: 16px; height: 16px; }
 .home-hub-root .home-link:disabled { opacity: 0.6; cursor: default; text-decoration: none; }
 .home-hub-root .home-cta { min-height: 48px; padding: 0 22px; font-size: 16px; font-weight: 700; }
 .home-hub-root .home-cta--primary { color: var(--color-fg-1); background: var(--color-surface-21); }
@@ -3144,7 +3140,32 @@ body.view-travel .hero {
 .home-hub-root .home-world-desc { font-size: 14px; line-height: 1.5; color: var(--color-fg-8); }
 .home-hub-root .home-world-content { color: var(--color-fg-4); }
 
-/* Save drop zone: the hero's primary action */
+/* First steps (HOME-1, MOB-2): start a character or load a save, as equals. Side by side
+   where the column has room; stacked, the character comes first, as on phones. */
+.home-hub-root .home-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 14px; width: 100%; max-width: 40rem; }
+.home-hub-root .home-start {
+  padding: 20px;
+  border: 2px solid var(--color-line-5);
+  background: color-mix(in srgb, var(--color-surface-3) 80%, transparent);
+}
+.home-hub-root .home-step-head { display: flex; align-items: center; gap: 12px; }
+.home-hub-root .home-step-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-line-5);
+  background: var(--color-surface-1);
+  color: var(--color-accent);
+}
+.home-hub-root .home-step-icon svg { width: 20px; height: 20px; }
+.home-hub-root .home-step-title { font-family: var(--font-display); font-size: 25px; line-height: 1.15; color: var(--color-fg-1); }
+.home-hub-root .home-step-note { font-size: 15px; line-height: 1.55; color: var(--color-fg-7); }
+.home-hub-root .home-step-row { margin-top: auto; padding-top: 4px; }
+.home-hub-root .home-step .home-cta { width: 100%; }
+
+/* Save drop zone: one of the two first steps */
 .home-hub-root .home-save {
   display: flex;
   align-items: flex-start;
@@ -3162,18 +3183,7 @@ body.view-travel .hero {
 }
 .home-hub-root .home-save[data-busy="true"] { opacity: 0.75; }
 .home-hub-root .home-save--loaded { flex-direction: column; gap: 12px; border-style: solid; border-color: var(--color-line-5); }
-.home-hub-root .home-save-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.home-hub-root .home-save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 4px; }
-.home-hub-root .home-save-icon {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--color-line-5);
-  background: var(--color-surface-1);
-  color: var(--color-accent);
-}
-.home-hub-root .home-save-icon svg { width: 22px; height: 22px; }
+.home-hub-root .home-step { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; max-width: none; }
 .home-hub-root .home-save-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
 .home-hub-root .home-save-title { font-family: var(--font-display); font-size: 25px; line-height: 1.15; color: var(--color-fg-1); }
 .home-hub-root .home-save-note { font-size: 15px; line-height: 1.55; color: var(--color-fg-7); }
@@ -3242,10 +3252,9 @@ body.view-travel .hero {
   .home-hub-root .home-tool--builder .home-preview { display: none; }
   .home-hub-root .home-tool-open { display: none; }
   .home-hub-root .home-tool--minor { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "icon title" "icon desc"; }
-  .home-hub-root .home-save { padding: 16px; gap: 12px; }
-  .home-hub-root .home-save-icon { display: none; }
-  .home-hub-root .home-save-title { font-size: 22px; }
-  .home-hub-root .home-save-row .home-cta { width: 100%; }
+  .home-hub-root :is(.home-save, .home-start) { padding: 16px; gap: 12px; }
+  .home-hub-root .home-step-icon { width: 34px; height: 34px; }
+  .home-hub-root :is(.home-save-title, .home-step-title) { font-size: 22px; }
   .home-hub-root .home-world { flex: 1 1 auto; padding: 0 10px; font-size: 14px; }
   .home-hub-root .home-colophon { grid-template-columns: 1fr 1fr; gap: 22px; }
 }

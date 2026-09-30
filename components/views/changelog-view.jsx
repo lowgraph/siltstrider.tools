@@ -17,6 +17,7 @@ export default function ChangelogView() {
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>The first time you open the Character Builder, it starts on the premade builds, so you can pick one and change it instead of composing a class from nothing. &ldquo;Build my own instead&rdquo; goes straight to the Custom Class Builder, and later visits open as before.</li>
+            <li>Home offers two equal ways to start: &ldquo;Start a character&rdquo; beside &ldquo;Load your save&rdquo;, instead of a small &ldquo;No save yet?&rdquo; link. On a phone, starting a character comes first.</li>
             <li>For a Khajiit or Argonian, the Boots slot in Equipped Loadouts and its &ldquo;Beast races cannot wear boots&rdquo; are readable instead of faded, and so is a ticked Challenge Runs objective.</li>
           </ul>
         </section>

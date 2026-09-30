@@ -546,8 +546,14 @@
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
 :root[data-theme="ashfall"] .home-hub-root .home-save--loaded { border-style: solid; border-color: var(--color-line-9); box-shadow: var(--af-float), var(--af-hairline); }
-:root[data-theme="ashfall"] .home-hub-root .home-save-icon { border: 0; border-radius: 12px; background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
-:root[data-theme="ashfall"] .home-hub-root .home-save-title { font-family: var(--font-sans); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+/* "Start a character" matches the save drop zone beside it, solid where that is dashed. */
+:root[data-theme="ashfall"] .home-hub-root .home-start {
+  border: 1.5px solid var(--color-line-5);
+  border-radius: var(--af-radius-card);
+  background: #131210;
+}
+:root[data-theme="ashfall"] .home-hub-root .home-step-icon { border: 0; border-radius: 12px; background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
+:root[data-theme="ashfall"] .home-hub-root :is(.home-save-title, .home-step-title) { font-family: var(--font-sans); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
 :root[data-theme="ashfall"] .home-hub-root .home-save-hint kbd { padding: 1px 6px; border: 1px solid var(--color-line-9); border-radius: 6px; }
 :root[data-theme="ashfall"] .home-hub-root .home-link { font-family: var(--font-sans); font-weight: 500; }
 :root[data-theme="ashfall"] .home-hub-root .home-meter { height: 8px; border: 0; border-image: none; border-radius: 999px; background: #23201d; overflow: hidden; }
