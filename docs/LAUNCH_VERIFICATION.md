@@ -276,8 +276,8 @@ node node_modules/wrangler/bin/wrangler.js d1 execute siltstrider-db --remote --
 
 ## 8. Local Travel branch verification — 30 September 2026
 
-Working tree above `fcd3a3b` on `launch/trv-2-unified-place-search`, with TRV-8
-implemented but left uncommitted for the owner's commit step. Published bundle
+Browser-tested working tree above `fcd3a3b` on `launch/trv-2-unified-place-search`,
+subsequently committed as `dce0622` on the owner's instruction. Published bundle
 `3da0320236da77ec085d105d`, snapshot `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f`.
 No game-data rebuild, schema change or production write.
 
@@ -299,8 +299,11 @@ No game-data rebuild, schema change or production write.
   and axe JSON beside it; unit log `A:/Cache/trv8-npm-test.log`. Reproduce using
   [BROWSER_TESTS.md](BROWSER_TESTS.md).
 
-This was a local signed-out dev-server check. Production build, real save corpus,
-other browser engines, manual screen-reader review, and owner-run sign-in, Cloud
+This was a local signed-out dev-server check. The normal production build passed
+during the requested commit/merge preparation (`A:/Cache/trv8-premerge-build.log`),
+and pre-commit tests again passed, 757/757 (`A:/Cache/trv8-precommit-tests.log`).
+Real save corpus, other browser engines, manual screen-reader review, and owner-run sign-in, Cloud
 Vault and payment checks were not repeated. The broader keyboard/high-contrast
 audit remains open; this run covers Travel focus and the equipment dialog.
-No commit, push or deploy of these implementation changes in this step.
+No merge, push or deploy. Prepared conflict resolutions and verification are in
+[TRAVEL_MERGE_PREPARATION.md](TRAVEL_MERGE_PREPARATION.md).

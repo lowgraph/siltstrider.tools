@@ -110,6 +110,7 @@ async function matrix() {
     await check(`${route}/${profile}/${width}`, async () => {
       await viewport(width); await navigate(route === 'equipment' ? 'builder' : route, profile);
       if (route === 'equipment') {
+        await click('#btn-tab-builder');
         await select('#builder-race', 'Khajiit');
         await click('#btn-tab-equipment'); await idle(); await until('document.querySelector(".equipment-studio-root")');
       }

@@ -2,8 +2,8 @@
 
 ## TRV-8: one network status and branch browser regression — 2026-09-30
 
-Implemented and tested in the working tree of `launch/trv-2-unified-place-search`,
-above `fcd3a3b`; ready for commit per owner request. Travel uses one plain network
+Committed as `dce0622` on `launch/trv-2-unified-place-search` after the owner
+authorized commit and merge preparation. Travel uses one plain network
 line for its name, stop count, loading, or error with Retry. TR + ARCE is explicit;
 loading never reports a misleading zero count. No duplicate Live badge. Three new
 workstation tests cover profiles/empty catalogs, loading with stale/missing data,
@@ -29,9 +29,18 @@ issues were resolved before this final clean run.
 First future command, from the site repository: `npm test` before any commit.
 For the browser command and scope, see `docs/BROWSER_TESTS.md`. No new dependency
 was installed; the runner uses installed Chrome and an existing axe-core script.
-Build, production authentication/cloud/payment checks and other browser engines
-were not run. Changes remain uncommitted; no push/deploy. Stop here until the
-owner authorizes another checklist item.
+The normal production build also passed during merge preparation. Production
+authentication/cloud/payment checks and other browser engines were not repeated.
+Main is `0bc1a7f`; six preview conflicts have prepared resolutions, retaining its
+launch priorities and contrast acceptance rules. Combined preview: 787 tests
+passed; normal Turbopack build passed with its linked-dependency root adjustment
+confined to the disposable cache checkout. See `docs/TRAVEL_MERGE_PREPARATION.md`.
+The combined preview's full Chrome suite also passed: 107 cases, 192 theme audits,
+zero WCAG violations, browser exceptions or unexpected server errors. Evidence:
+`A:/Cache/trv-merge-preparation/browser/`. Prepared source tree, resolution patch
+and exact source tips are recorded in that cache's `preparation.json`.
+No merge, rebase, push or deploy. Stop here until the owner authorizes the merge
+or another checklist item.
 
 ## TRV-7: real-time approximation and Cheapest trade-offs — 2026-09-30
 
