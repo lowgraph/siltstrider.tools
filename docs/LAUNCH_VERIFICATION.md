@@ -607,3 +607,42 @@ Merged-checkout evidence: `A:/Cache/small-polish-parent-unit.log`,
 `small-polish-parent-build.log`, `small-polish-parent-pipeline.log` and
 `small-polish-parent-browser`. The browser run uses this parent checkout's server at
 `http://127.0.0.1:8791`, separate from the original polish server.
+
+## 14. Account settings and tool polish merged to main — 30 September 2026
+
+The owner authorized the merge of PR #1. `origin/main` `11c1c96` and feature tip
+`6dc207e` still matched the preparation. In a new clean main worktree,
+`A:/Claude/mt-account-main-merge`, the no-fast-forward merge had no conflicts.
+Its tree `145767c07a98ea8d6f4e9c94c9539d7a6477cae7` matched the prepared feature
+tree exactly. Merge commit: `b45f686` (ACC-1, ACC-2 and the tool polish).
+
+- Actual merged checkout: **887 unit tests passed**, no failures/skips/todos.
+- Cloudflare build: **passed, 24 static pages**, repository config unchanged.
+  Worker `deploy --dry-run` passed without uploading or deploying.
+- Full local Chrome suite at port 8792: **153/153 passed**, across Vanilla, TR,
+  TR + ARCE, both themes and desktop/phone widths. Includes all tools, saved
+  Travel choices, synthetic settings identity/conflict cases and the 24 polish
+  cases. **232 axe audits, zero violations**; no runtime/server errors and
+  **439 settled font checks**. Phone Travel screenshots were inspected.
+- The preparation's fresh isolated local D1 check applied **0001–0007**, none
+  pending, with the historical application tables empty and the settings table
+  present. The reviewed migration, prior migrations and configuration remain
+  unchanged. Unit schema tests separately verify existing seeded records survive.
+- Final documentation handoff: **887 unit tests** and **670 pipeline tests**
+  passed before their commits. Shared COORDINATION and roadmap files are identical;
+  all earlier pipeline notes are preserved.
+- ACC-1 and ACC-2 are marked complete with their implementation and merge commits.
+  The production ACC-1 checkbox remains open. Existing production state and
+  release history are unchanged; this is a code merge, with no remote D1 apply,
+  deployment, extraction or published bundle change.
+
+Evidence under `A:/Cache`: `acc-main-merge-unit.log`, `acc-main-merge-build.log`,
+`acc-main-merge-worker.log`, `acc-main-handoff-unit.log`, `acc-main-handoff-pipeline.log`,
+and `acc-main-merge-browser` (report, screenshots,
+audit JSON and network traces). Local database preparation:
+`acc-polish-merge-local.log`, persistence `acc-polish-merge-local-6dc207e`.
+Browser report HEAD is the pre-commit main `11c1c96`; it tested the merged tree
+before committing. A following documentation commit records this result; it
+changes no application code. Real sign-in and cross-device account acceptance
+remain release checks. Capture a fresh D1 recovery bookmark and apply migration
+0007 separately before deploying the settings API.
