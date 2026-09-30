@@ -20,10 +20,10 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 | Date | What |
 | --- | --- |
 | **By Monday 5 October** | Anything from the priority list not done by now moves after launch (see the cut line). |
-| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1, 3, 5 (**C**) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**). |
+| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**). |
 | **Tuesday 6 October, 13:30 UTC: launch** | Post r/Morrowind (flair Showcase), r/OpenMW (unless refused), r/TamrielRebuilt, Morrowserver `#modding`, Morrowind Modding Community, OpenMW Discord if approved; stay a few hours for comments, ready for "was it made with AI?" (**O**). Watch Worker logs and error references, API requests, D1 and Clerk sign-ins; fix only breakage, deploy only on the owner's go-ahead (**C**). |
 | **Wednesday 7 October** | Show HN and the X thread (**O**). |
-| **From Thursday 8 October** | Creator outreach, one at a time, through business contacts (**O**). Feedback from the threads goes into the after-launch list (**C**). |
+| **From Thursday 8 October** | Creator outreach, one at a time, through business contacts (**O**). Feedback from the threads, and whatever the freeze left of sections 3 and 4, goes into a new after-launch list (**C**). |
 
 ## Decisions (29 September, owner)
 
@@ -97,19 +97,14 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 - [x] **C** Browser regression (started 2026-09-30 00:49 UTC, C; done on the dev build of `03c3361`: 9 tools x 3 worlds x 2 widths and 13 flows passed; LAUNCH_VERIFICATION §5 item 4) across all tools in Vanilla, TR and TR + ARCE at desktop and
       phone widths (LAUNCH_OPERATIONS final acceptance, steps 2–3).
 
-### Cut line
+### 4. Before launch if time allows: larger improvements
 
-At the freeze, whatever is left of section 3 moves after launch; note it in
-LAUNCH_VERIFICATION. Sections 1 and 2 are the launch bar: if one of them is not done, decide
-explicitly whether to launch with it (and say so here).
-
-### 4. After launch
-
-Priority order within each group; best done with feedback from the threads. IDs are the
-usability audit's. BLD-2, CALC-2 and BLD-4 were built early and are merged.
+Moved here from after launch by the owner on 30 September, since there is time before the
+freeze. Like section 3, it can slip. Priority order within each group; IDs are the usability
+audit's. BLD-2, CALC-2 and BLD-4 were built early and are live.
 
 **Travel and the Builder**
-- [ ] **C** **TRV-2** One place search per route end: towns and stops first, then named places.
+- [ ] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; in progress on `launch/trv-2-unified-place-search`) One place search per route end: towns and stops first, then named places.
 - [ ] **C** **TRV-4 / TRV-5** Task-first Travel: from, to and "plan for" at the top, the route
       under them, the other options folded.
 - [x] **C** **BLD-2** The Gear Advisor ranks by itself, with "Early gear for this build ↓" to
@@ -148,6 +143,13 @@ usability audit's. BLD-2, CALC-2 and BLD-4 were built early and are merged.
 
 **Features**
 - [ ] **C** **CALC-4** Reverse alchemy: pick the effects, get the ingredients.
+
+### Cut line
+
+At the freeze, whatever is left of sections 3 and 4 moves after launch; note it in
+LAUNCH_VERIFICATION. An item is merged only when it is finished; a half-done one waits on its
+branch. Sections 1 and 2 are the launch bar: if one of them is not done, decide explicitly
+whether to launch with it (and say so here).
 
 ## Done
 
