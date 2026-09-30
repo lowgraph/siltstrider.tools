@@ -17,11 +17,12 @@ matches beyond the first 40 displayed; there is no misleading "0 stops" counter.
 
 Tests written in `test/travel-search.test.js` and
 `test/travel-location-picker.test.js`; the old picker source assertion in
-`test/travel-place-search.test.js` follows the new integration. **Not run:** the
-owner requested code, tests and text only, with permission before each next item.
-No build, browser verification, push or deployment in this pass. When verification
-is authorized, first run `npm test` in the site repository, then check the pickers
-with keyboard/touch and profile changes at desktop and phone widths.
+`test/travel-place-search.test.js` follows the new integration. Initially left unrun
+per owner; the owner subsequently authorized tests on 30 September. **`npm test`
+passed: 718 tests, 0 failures**, including all 18 new TRV-2 tests. No fixes needed.
+Browser verification remains pending. No build, push or deployment in this pass.
+When browser verification is authorized, check the pickers with keyboard/touch and
+profile changes at desktop and phone widths. Ask permission before the next item.
 
 ## Release sprint ownership — 2026-09-29
 

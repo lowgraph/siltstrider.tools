@@ -42,6 +42,8 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 handoff/changelog text, but do not run tests, builds or browser verification in this pass.
 Record verification as pending. After each item, stop and ask the owner before starting
 the next. This overrides the execution of checks in the routine below for this pass.
+The owner subsequently authorized TRV-2's tests: `npm test` passed on 30 September
+with 718 tests and 0 failures. Browser verification remains pending.
 
 Each item ends the same way: tests (at least three edge cases for a logic change),
 `npm test`, a changelog entry if visitors will notice it (CHANGELOG.md and the public page,
@@ -107,7 +109,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 ### 4. Priority 4: After launch (organized by priority)
 
 #### 4.1 Core routing and builder workflow
-- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; implemented `866bd3a` on `launch/trv-2-unified-place-search`; 18 new tests written, not run per owner; verification pending; not merged or deployed) One place search: replace the dual stop list and "Places" cell list with a single unified combobox per route end; rank towns and transit stops first, then named exteriors, then interiors grouped under their town ("Balmora › Council Club").
+- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; implemented `866bd3a` on `launch/trv-2-unified-place-search`; 18 new tests; owner authorized `npm test` on 30 September: 718 passed, 0 failures; browser verification pending; not merged or deployed) One place search: replace the dual stop list and "Places" cell list with a single unified combobox per route end; rank towns and transit stops first, then named exteriors, then interiors grouped under their town ("Balmora › Council Club").
 - [ ] **C** **TRV-4 & TRV-5** Task-first Travel with folded options: place Origin, Destination, and "Plan for" at the top with route results immediately below; fold character and transit options into a one-line summary disclosure; move transit rules to a closed footer disclosure.
 - [x] **C** **BLD-2** Automatic Gear Advisor (started 2026-09-29 21:30 UTC, C; done `5e36716`): compute gear recommendations automatically when character build attributes/skills change, and add a quick-jump link from the top of the builder ("Early gear for this build ↓").
 - [ ] **C** **TRV-6** Remembered choices & single-use scrolls: persist player modifications to save-derived options across visits for that save; treat Intervention scrolls as single-use consumables rather than permanent routing access; consider cast chance before assuming known spells are usable.
