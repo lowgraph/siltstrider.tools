@@ -1,5 +1,29 @@
 # Coordination
 
+## Account settings preparation — 2026-09-30
+
+Prepared on `feature/account-settings-preparation` in an isolated worktree based
+on the committed Travel branch (`dce0622`). Preserved other checkouts' pending work.
+`cloudflare/proposals/account_settings.sql` is outside Wrangler's migrations_dir:
+no numbered migration, remote SQL, deployment or runtime/UI wiring yet.
+The draft table stores one bounded versioned JSON document per Clerk owner with
+a revision counter; it does not require an account username or consume save slots.
+`lib/account-settings.mjs` prepares World, global/save toggle policy, future
+modpack/release IDs and a pure Travel precedence resolver. Explicit link/session
+edits win; global booleans replace save choices only when enabled. Imported saves,
+inventory, carrying weight and movement magnitudes remain untouched.
+See `docs/ACCOUNT_SETTINGS.md` for recommended additional settings and the future
+release-registry/loader boundary. No exported game-data, SLT1 or extraction changes.
+No pipeline checkout is available here for copying coordination files.
+
+Verification: **768 tests passed, 0 failed, 0 skipped**, including 11 new tests
+covering validation, precedence, preserved saves, fresh accounts, malformed SQL
+records, UTF-8 byte limits, owner isolation and revision conflicts. Used the
+existing installed dependencies and published data, with no rebuild. No UI changed.
+First next command: `npm test` in this checkout. Next implementation step: settle
+the settings, promote the SQL to the next unused migration, then wire the settings
+API/provider/UI and World/Travel; future datasets need their own published registry.
+
 ## TRV-8: one network status and branch browser regression — 2026-09-30
 
 Implemented and tested in the working tree of `launch/trv-2-unified-place-search`,

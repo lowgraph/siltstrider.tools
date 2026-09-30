@@ -88,10 +88,15 @@ To store comprehensive character saves within Cloudflare D1's row size constrain
 ### A. Cloudflare D1 Schema (`cloudflare/migrations/`)
 1. `0001_saved_characters.sql`: Historical prototype schema; retained as applied migration history.
 2. `0002_cloud_save_vault.sql`: Comprehensive `cloud_saves` table, user tier quotas, triggers, and views (`v_cloud_save_headers`, `v_user_entitlements`).
-3. `0003_account_profiles.sql`: Account display settings, preferences, and default profile options.
+3. `0003_account_profiles.sql`: Username, icon and update timestamp only; no world/tool preferences.
 4. `0004_premium_support.sql`: Supporter entitlements and verification mappings.
 5. `0005_premium_currencies.sql`: One-time tips in any currency.
 6. `0006_remove_empty_prototype.sql`: Retires the prototype table only if empty; refuses to discard rows.
+
+Account world/tool preferences are currently browser-local. Preparation for a
+separate versioned `account_settings` table is documented in
+[ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md). Its SQL remains outside the applied
+migrations directory; the account API and workstations do not use it yet.
 
 ### B. Entitlements & Ko-fi Integration
 - **Free Tier**: 5 cloud save slots.
