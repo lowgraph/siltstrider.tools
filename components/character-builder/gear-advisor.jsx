@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
@@ -8,8 +8,11 @@ import { buildTraits } from '../../lib/build-traits.mjs';
 import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
 import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
 
+// The gear catalogs (GearRows, BestInSlot, Armor, Clothing, Weapons) are about 180 KB
+// compressed in vanilla and 530 KB in TR: they load when the advisor comes near the screen,
+// not on every Builder visit. The ranking itself is computed as soon as the build changes.
 export default function GearAdvisor(props){
-  const [enabled,setEnabled]=useState(true);
+  const [enabled,setEnabled]=useState(false);
   const result=useGameData('gear',{enabled});
   const bisResult=useGameData('bestInSlot',{enabled});
   return <GearAdvisorView {...props} result={result} bisResult={bisResult} onLoad={()=>setEnabled(true)}/>;
@@ -33,12 +36,13 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const traits = buildTraits(build);
   const resolveRanking = () => gearRanking(build, { attrs });
 
-  const buildKey = JSON.stringify(build);
+  // The name does not change the ranking, so typing it does not re-rank.
+  const { name: _name, ...rankedBuild } = build || {};
+  const buildKey = JSON.stringify(rankedBuild);
   const attrsKey = JSON.stringify(attrs);
 
   // Automatically compute gear recommendations when build or attributes change
   useEffect(() => {
-    onLoad?.();
     setOptimizing(true);
     try {
       const prof = resolveRanking();
@@ -76,8 +80,25 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
     } catch (error) { setRankError(error.message); }
   };
 
+  // Load the catalogs once the advisor is within about a screen of view (scrolling, the
+  // "Early gear for this build" link, or a #gear-advisor address). Without an observer,
+  // load at once.
+  const rootRef = useRef(null);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") { onLoad?.(); return undefined; }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) { onLoad?.(); observer.disconnect(); }
+    }, { rootMargin: "800px 0px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+    // Once, on mount: onLoad only switches loading on.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div
+      ref={rootRef}
       id="gear-advisor"
       className="gear-advisor mt-6 px-8 sm:px-10 py-6 space-y-5 text-sm w-full scroll-mt-6"
       style={{
