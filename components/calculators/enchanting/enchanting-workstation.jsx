@@ -1,7 +1,7 @@
 "use client";
 import {effectNumber, allowedRanges, effectDraft, selectedEffect, baseCostLabel} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback, useId } from "react";
-import { statNumber } from "../../../lib/calculator-stats.mjs";
+import { statNumber, typedStats, typeStat, forgetTypedStats } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -23,7 +23,7 @@ export default function EnchantingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world, profile } = useShell();
+  const { world } = useShell();
 
   // Character stats
   const baseSkill = sheet?.skills?.["Enchant"]?.v ?? 50;
@@ -32,22 +32,24 @@ export default function EnchantingWorkstation() {
   const baseMerc = sheet?.skills?.["Mercantile"]?.v ?? 40;
   const basePers = sheet?.attrs?.["Personality"]?.v ?? 40;
 
-  const [skill, setSkill] = useState(baseSkill);
-  const [intelligence, setIntelligence] = useState(baseInt);
-  const [luck, setLuck] = useState(baseLuck);
+  const [skill, setSkill] = useState(() => typedStats("enchanting").skill ?? baseSkill);
+  const [intelligence, setIntelligence] = useState(() => typedStats("enchanting").intelligence ?? baseInt);
+  const [luck, setLuck] = useState(() => typedStats("enchanting").luck ?? baseLuck);
   const [mercantile, setMercantile] = useState(baseMerc);
   const [personality, setPersonality] = useState(basePers);
   const [disposition, setDisposition] = useState(50);
-  const [showCustomInputs, setShowCustomInputs] = useState(false);
+  const [showCustomInputs, setShowCustomInputs] = useState(() => Object.keys(typedStats("enchanting")).length > 0);
 
+  // The sheet sets every number the player has not typed; typed ones stay, across a world
+  // switch too, until "Reset to character sheet".
   useEffect(() => {
-    setSkill(baseSkill);
-    setIntelligence(baseInt);
-    setLuck(baseLuck);
+    const kept = typedStats("enchanting");
+    setSkill(kept.skill ?? baseSkill);
+    setIntelligence(kept.intelligence ?? baseInt);
+    setLuck(kept.luck ?? baseLuck);
     setMercantile(baseMerc);
     setPersonality(basePers);
-    // A world switch goes back to the character sheet, as Alchemy (remounted per world) does.
-  }, [baseSkill, baseInt, baseLuck, baseMerc, basePers, profile]);
+  }, [baseSkill, baseInt, baseLuck, baseMerc, basePers]);
 
   // Configuration
   const [selectedBaseItem, setSelectedBaseItem] = useState("Exquisite Ring");
@@ -94,6 +96,7 @@ export default function EnchantingWorkstation() {
 
   // Update base stats if character changes and user hasn't edited
   const handleIngestCharacterStats = useCallback(() => {
+    forgetTypedStats("enchanting");
     setSkill(baseSkill);
     setIntelligence(baseInt);
     setLuck(baseLuck);
@@ -283,7 +286,7 @@ export default function EnchantingWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={skill}
-                onChange={(e) => setSkill(statNumber(e.target.value))}
+                onChange={(e) => setSkill(typeStat("enchanting", "skill", statNumber(e.target.value)))}
               />
             </div>
 
@@ -298,7 +301,7 @@ export default function EnchantingWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={intelligence}
-                onChange={(e) => setIntelligence(statNumber(e.target.value))}
+                onChange={(e) => setIntelligence(typeStat("enchanting", "intelligence", statNumber(e.target.value)))}
               />
             </div>
 
@@ -313,7 +316,7 @@ export default function EnchantingWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={luck}
-                onChange={(e) => setLuck(statNumber(e.target.value))}
+                onChange={(e) => setLuck(typeStat("enchanting", "luck", statNumber(e.target.value)))}
               />
             </div>
 

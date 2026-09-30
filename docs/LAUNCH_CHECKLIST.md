@@ -119,7 +119,7 @@ usability audit's. BLD-2, CALC-2 and BLD-4 were built early and are merged.
       Intervention scrolls as one use.
 - [x] **C** **CALC-2** Your own skill, attribute and Luck numbers in Alchemy, Enchanting and
       Spellmaking (started 2026-09-29 21:36 UTC, C; done `822c4dc`, merged `6178e87` with
-      review fixes `625c2b1`, `2b969fe`: 0 to 1000, a world switch resets them; live as `8f10cef2`).
+      review fixes `625c2b1`, `2b969fe`: 0 to 1000; live as `8f10cef2`. Typed numbers now stay across a world switch until Reset, owner 30 September).
 - [ ] **C** **TRV-7** Say what "Cheapest" costs in time ("saves 5 gold, 1 h 13 min slower").
 
 **First steps, phones and saving**
@@ -141,8 +141,8 @@ usability audit's. BLD-2, CALC-2 and BLD-4 were built early and are merged.
       Alchemy, then the rest.
 - [ ] **C** **LVL-2 / LVL-3** The Bitter Cup under advanced options; untruncated attribute
       labels in the priority list.
-- [ ] **C** **TRV-8** One status line in Travel, not a second "Live:" pill (added: in the
-      audit, missing from this list).
+- [ ] **C** **TRV-8** One status line in Travel, not a second "Live:" pill (added from the
+      audit; confirmed by the owner 30 September).
 - [ ] **C** Header menus focus their first item when opened from the keyboard.
 - [ ] **C** The Cloud Vault checks a save's hash on load.
 

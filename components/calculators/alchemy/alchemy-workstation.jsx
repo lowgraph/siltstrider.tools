@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { statNumber } from "../../../lib/calculator-stats.mjs";
+import { statNumber, typedStats, typeStat, forgetTypedStats } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -26,15 +26,18 @@ export default function AlchemyWorkstation() {
   const baseInt = sheet?.attrs?.["Intelligence"]?.v ?? 40;
   const baseLuck = sheet?.attrs?.["Luck"]?.v ?? 40;
 
-  const [skill, setSkill] = useState(baseSkill);
-  const [intelligence, setIntelligence] = useState(baseInt);
-  const [luck, setLuck] = useState(baseLuck);
-  const [showCustomInputs, setShowCustomInputs] = useState(false);
+  const [skill, setSkill] = useState(() => typedStats("alchemy").skill ?? baseSkill);
+  const [intelligence, setIntelligence] = useState(() => typedStats("alchemy").intelligence ?? baseInt);
+  const [luck, setLuck] = useState(() => typedStats("alchemy").luck ?? baseLuck);
+  const [showCustomInputs, setShowCustomInputs] = useState(() => Object.keys(typedStats("alchemy")).length > 0);
 
+  // The sheet sets every number the player has not typed; typed ones stay, across a world
+  // switch too, until "Reset to character sheet".
   useEffect(() => {
-    setSkill(baseSkill);
-    setIntelligence(baseInt);
-    setLuck(baseLuck);
+    const kept = typedStats("alchemy");
+    setSkill(kept.skill ?? baseSkill);
+    setIntelligence(kept.intelligence ?? baseInt);
+    setLuck(kept.luck ?? baseLuck);
   }, [baseSkill, baseInt, baseLuck]);
 
   // Apparatus selection
@@ -99,6 +102,7 @@ export default function AlchemyWorkstation() {
   }, [intent, bundleAlchemy, allIngredients, gameData.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleIngestCharacterStats = useCallback(() => {
+    forgetTypedStats("alchemy");
     setSkill(baseSkill);
     setIntelligence(baseInt);
     setLuck(baseLuck);
@@ -248,7 +252,7 @@ export default function AlchemyWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={skill}
-                onChange={(e) => setSkill(statNumber(e.target.value))}
+                onChange={(e) => setSkill(typeStat("alchemy", "skill", statNumber(e.target.value)))}
               />
             </div>
 
@@ -263,7 +267,7 @@ export default function AlchemyWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={intelligence}
-                onChange={(e) => setIntelligence(statNumber(e.target.value))}
+                onChange={(e) => setIntelligence(typeStat("alchemy", "intelligence", statNumber(e.target.value)))}
               />
             </div>
 
@@ -278,7 +282,7 @@ export default function AlchemyWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={luck}
-                onChange={(e) => setLuck(statNumber(e.target.value))}
+                onChange={(e) => setLuck(typeStat("alchemy", "luck", statNumber(e.target.value)))}
               />
             </div>
 
