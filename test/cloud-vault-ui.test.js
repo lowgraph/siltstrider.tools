@@ -233,6 +233,53 @@ test("CloudVaultModal renders closed/open, displays quota badge, and respects ti
   }
 });
 
+// The header's account line (name, tier, saves) was "hidden sm:block", and the legacy
+// `.hidden { display: none !important }` in globals.css beats sm:block, so no one ever saw it.
+test("CloudVaultModal's account line shows from 640 px for any tier, and not when signed out", async () => {
+  const fs = require("node:fs");
+  const css = fs.readFileSync(path.resolve("app/globals.css"), "utf8");
+  assert.match(css, /\.hidden \{ display: none !important; \}/, "the rule that hid it");
+  const CloudVaultModal = component("components/character-vault/cloud-vault-modal.jsx");
+  const open = async ({ user, entitlements }) => {
+    const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
+    Object.assign(global, { window: dom.window, document: dom.window.document, IS_REACT_ACT_ENVIRONMENT: true });
+    dom.window.Clerk = user ? { user, session: { getToken: async () => "mock-jwt-token" }, addListener: () => {} } : null;
+    dom.window.siltStriderAuth = user ? { getToken: async () => "mock-jwt-token" } : null;
+    global.fetch = async (input) => {
+      const url = new URL(input instanceof Request ? input.url : input, "http://localhost/");
+      if (url.pathname === "/api/saves") return Response.json({ saves: [], total: 0 });
+      if (url.pathname === "/api/entitlements") return Response.json(entitlements);
+      throw new Error("Unexpected vault UI request: " + url.pathname);
+    };
+    const root = createRoot(document.getElementById("root"));
+    await act(async () => root.render(React.createElement(CloudVaultModal, { activeBuild: mockBuild, isOpen: true, onClose() {}, onApplyBuild() {} })));
+    const line = document.querySelector(".cloud-vault-account");
+    const result = line && { classes: [...line.classList], text: [...line.children].map((part) => part.textContent.replace(/\s+/g, " ").trim()).join(" | ") };
+    await act(async () => root.unmount());
+    dom.window.close();
+    return result;
+  };
+
+  const free = await open({ user: { id: "user_1", fullName: "Nerevarine" }, entitlements: { tier: "free", maxSaves: 5, currentSaves: 2, remainingSaves: 3 } });
+  assert.ok(free, "signed in: the line is there");
+  assert.ok(free.classes.includes("max-sm:hidden"), "hidden only below 640 px");
+  assert.ok(!free.classes.includes("hidden"), "no bare .hidden, which would win at every width");
+  assert.equal(free.text, "Nerevarine | Free Tier · 2 / 5 Saves");
+
+  const supporter = await open({ user: { id: "user_2", fullName: "" }, entitlements: { tier: "supporter", maxSaves: 50, currentSaves: 50, remainingSaves: 0 } });
+  assert.equal(supporter.text, "Adventurer | Supporter Tier · 50 / 50 Saves", "no name (the vault's own fallback), a full paid quota");
+
+  assert.equal(await open({ user: null, entitlements: {} }), null, "signed out: no account line");
+
+  // Now that it shows, its colours must pass on the header (bg-surface-3) in both themes.
+  const lum = (hex) => { const c = [0, 2, 4].map((i) => parseInt(hex.slice(1 + i, 3 + i), 16) / 255).map((v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4))); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+  for (const file of ["app/globals.css", "app/theme-ashfall.css"]) {
+    const token = (name) => fs.readFileSync(path.resolve(file), "utf8").match(new RegExp(`--color-${name}\\s*:\\s*(#[0-9a-fA-F]{6})`))[1];
+    for (const fg of ["fg-5", "accent"]) assert.ok(ratio(token(fg), token("surface-3")) >= 4.5, `${file}: ${fg} on surface-3`);
+  }
+});
+
 test("CloudVaultModal displays signed-out notice and CTA when not authenticated", async () => {
   const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
   global.window = dom.window;

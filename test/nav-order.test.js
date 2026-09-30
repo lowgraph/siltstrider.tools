@@ -22,8 +22,19 @@ test('reordering lost no tool: the row, the Calculators menu and the account but
   const reachable = [...list('PRIMARY_VIEWS'), ...list('CALC_MENU')].map((t) => t.view);
   assert.deepEqual([...reachable].sort(), ['alchemy', 'builder', 'challenge', 'enchanting', 'factions', 'leveler', 'spellmaking', 'travel']);
   assert.match(header, /id="react-nav-vault"[\s\S]*?onClick=\{e => navigate\(e, 'account'\)\}/, 'the Cloud Vault is the account button');
-  // The phone tab bar keeps Alchemy: Travel's phone layout is still to be restructured (TRV-4).
-  assert.deepEqual(list('PHONE_TABS').map((t) => t.view), ['home', 'builder', 'leveler', 'alchemy']);
+});
+
+// The phone tab bar kept Alchemy until Travel's phone layout led with the journey (TRV-4/5);
+// with that on main, Travel takes the fourth tab (owner, 30 September).
+test('the phone tab bar is Home, Build, Level, Travel; Alchemy is one tap into the menu', () => {
+  const tabs = list('PHONE_TABS');
+  assert.deepEqual(tabs.map((t) => t.view), ['home', 'builder', 'leveler', 'travel']);
+  assert.deepEqual(tabs.map((t) => t.label), ['Home', 'Build', 'Level', 'Travel']);
+  const icons = header.match(/const TAB_ICON = \{([\s\S]*?)\n\};/)[1];
+  for (const { view } of tabs) assert.match(icons, new RegExp(`\\n  ${view}: <`), `${view} has an icon`);
+  assert.doesNotMatch(icons, /\n  alchemy: </, 'no icon left for a tab that is gone');
+  assert.ok(list('PRIMARY_VIEWS').some((t) => t.view === 'alchemy'), 'Alchemy stays in the phone menu (PRIMARY_VIEWS)');
+  assert.match(header, /'Open menu: calculators, vault and more'/, 'the menu no longer promises Travel');
 });
 
 test("Home's cards and footer columns follow the same order", async () => {

@@ -55,7 +55,7 @@ const TAB_ICON = {
   builder: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" /></>,
   challenge: <><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" /></>,
   leveler: <><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></>,
-  alchemy: <path d="M10 3h4 M10.5 3v5L5.5 17a2.5 2.5 0 0 0 2.2 4h8.6a2.5 2.5 0 0 0 2.2-4l-5-9V3 M7.5 14h9" />,
+  travel: <><circle cx="6" cy="18.5" r="2.5" /><circle cx="18" cy="5.5" r="2.5" /><path d="M6 16v-3a3 3 0 0 1 3-3h6a3 3 0 0 0 3-3V8" /></>,
   vault: <><circle cx="12" cy="8.5" r="3.5" /><path d="M5.5 19.5c.9-3.2 3.4-5 6.5-5s5.6 1.8 6.5 5" /><circle cx="12" cy="12" r="10" /></>,
   menu: <path d="M4 7h16M4 12h16M4 17h16" />,
   close: <path d="M6 6l12 12M18 6 6 18" />
@@ -64,7 +64,7 @@ const PHONE_TABS = [
   { view: 'home', label: 'Home' },
   { view: 'builder', label: 'Build' },
   { view: 'leveler', label: 'Level' },
-  { view: 'alchemy', label: 'Alchemy' }
+  { view: 'travel', label: 'Travel' }
 ];
 const TabIcon = ({ name }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -507,7 +507,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
           type="button"
           aria-expanded={open}
           aria-controls="react-menu-drawer"
-          aria-label={open ? 'Close menu' : 'Open menu: travel, calculators, vault and more'}
+          aria-label={open ? 'Close menu' : 'Open menu: calculators, vault and more'}
           data-section={!open && !onTabView ? 'true' : undefined}
           onClick={toggleMenuFromTabs}
         >

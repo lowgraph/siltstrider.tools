@@ -91,8 +91,7 @@ test('"hidden sm:…" never shows, so the character strips use max-sm:hidden', (
   assert.match(css, /\.hidden \{ display: none !important; \}/, 'the rule that wins');
   const files = (dir) => fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(path.posix.join(dir, e.name)) : /\.jsx?$/.test(e.name) ? [path.posix.join(dir, e.name)] : []));
   const offenders = files('components').filter((f) => /["'`\s]hidden (sm|md|lg|xl|2xl):/.test(fs.readFileSync(path.join(ROOT, f), 'utf8')));
-  assert.deepEqual(offenders, ['components/character-vault/cloud-vault-modal.jsx'],
-    'only the Cloud Vault header is left (signed in only; reported to the owner)');
+  assert.deepEqual(offenders, [], 'the Cloud Vault header was the last one');
   const journal = fs.readFileSync(path.join(ROOT, 'components/journal-factions/journal-factions-root.jsx'), 'utf8');
   assert.match(journal, /<div className="max-sm:hidden text-right">\s*<span[^>]*>Active Character:<\/span>\s*<ActiveCharacterLink build=\{build\} \/>/);
 });

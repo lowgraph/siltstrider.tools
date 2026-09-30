@@ -22,12 +22,13 @@ export default function ChangelogView() {
             <li>Opening the Calculators or More menu with Enter or Space puts you on its first item.</li>
             <li>In the Level Simulator, the Bitter Cup moves under &ldquo;Advanced options&rdquo; instead of leading the page, and the attribute priority list uses three-letter names (END, PER, STR) instead of cut-off ones.</li>
             <li>A Cloud Vault save is checked against the checksum taken when it was stored before it loads; one that no longer matches is not loaded, and the Vault says so.</li>
+            <li>Signed in, the Cloud Vault&apos;s header shows your name, tier and saves used on screens 640 pixels and wider; a leftover style had hidden it everywhere.</li>
             <li>Challenge Runs has one lock per rolled item, on the sheet beside it, instead of two places to lock the same thing; choosing a race, class or birthsign in the settings keeps it when you roll.</li>
             <li>Each Alchemy slot is one search box instead of a dropdown and a separate search field: type, then pick with the arrow keys and Enter or a click.</li>
             <li>Enchanting opens on an Expensive Ring and a Lesser Soul Gem instead of an Exquisite Ring and a Grand Soul Gem, a new effect starts small enough to fit it, and the item list adds the common to extravagant rings, amulets, shirts and robes.</li>
             <li>Home&apos;s strip of numbers (&ldquo;27 skills modeled&rdquo;, &ldquo;103 restrictions&rdquo;) now says what you get: ×5 level-ups planned, any town by strider, boat, Guild Guide or on foot, early gear and where to find it, and the 3 worlds.</li>
             <li>On a phone, the header is a single row with a search button, and the Character Builder has one row of sections (Configure, Sheet, Loadouts, Premades) instead of two rows of tabs, so its form starts in the first screen.</li>
-            <li>The menu bar puts the most used tools first: Character Builder, Level Simulator, Travel Planner, Alchemy, then Faction Journal and Challenge Runs.</li>
+            <li>The menu bar puts the most used tools first: Character Builder, Level Simulator, Travel Planner, Alchemy, then Faction Journal and Challenge Runs. On a phone, the bottom bar has Travel in place of Alchemy, which is in the menu.</li>
             <li>For a Khajiit or Argonian, the Boots slot in Equipped Loadouts and its &ldquo;Beast races cannot wear boots&rdquo; are readable instead of faded, and so is a ticked Challenge Runs objective.</li>
           </ul>
         </section>
