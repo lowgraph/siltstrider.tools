@@ -41,8 +41,8 @@ test('a ticked Intervention from a scroll warns that it is spent on first use', 
 
 test('the Travel page puts the marks beside the guild boxes, the spells and the carried items', () => {
   const page = fs.readFileSync(path.join(__dirname, '..', 'components', 'calculators', 'travel', 'travel-workstation.jsx'), 'utf8');
-  assert.match(page, /Mages Guild member\{marks\.mageGuild && <FromSave \/>\}/);
-  assert.match(page, /Conjurer rank or higher\{marks\.conjurer && <FromSave \/>\}/);
-  assert.match(page, /\{marks\[kind\] && <FromSave>\{interventionMarkText\(saveSources\?\.\[kind\], spells\[kind\]\)\}<\/FromSave>\}/);
+  assert.match(page, /Mages Guild member\{hasAccountSource\('mageGuild'\).*?: marks\.mageGuild && <FromSave \/>\}/);
+  assert.match(page, /Conjurer rank or higher\{hasAccountSource\('conjurer'\).*?: marks\.conjurer && <FromSave \/>\}/);
+  assert.match(page, /marks\[kind\] && <FromSave>\{interventionMarkText\(saveSources\?\.\[kind\], spells\[kind\]\)\}<\/FromSave>/);
   assert.match(page, /\{held\.has\(item\.id\) && savedItems\?\.has\(item\.id\) && <FromSave \/>\}/, 'only ticked items that came from the save');
 });

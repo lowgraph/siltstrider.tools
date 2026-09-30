@@ -1,5 +1,6 @@
 import { handlePremiumCode, handleKofiWebhook } from './routes/premium.mjs';
 import { handleAccount } from './routes/account.mjs';
+import { handleSettings } from './routes/settings.mjs';
 /**
  * Silt Strider Cloudflare Worker
  *
@@ -70,6 +71,7 @@ const worker = {
 
       if (pathname === '/api/premium/code') return handlePremiumCode(request, env, userId);
       if (pathname === '/api/account') return handleAccount(request, env, userId);
+      if (pathname === '/api/settings') return handleSettings(request, env, userId);
 
       // Collection route: /api/saves
       if (pathname === '/api/saves') {

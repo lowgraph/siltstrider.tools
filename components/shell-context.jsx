@@ -1,5 +1,6 @@
 "use client";
-import { createContext, useContext, useSyncExternalStore, useCallback, useMemo } from 'react';
+import { createContext, useContext, useSyncExternalStore, useCallback, useMemo, useRef, useState } from 'react';
+import { useAccountSettings } from './account-settings-context';
 import { decodeShareUrl, normalizeProfile, normalizeView, KNOWN_VIEWS } from '../lib/permalink-codec.mjs';
 
 const initial = Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: 'home' });
@@ -41,7 +42,7 @@ function getStoredProfile() {
   return normalizeProfile({ world: defaultWorld, arce: defaultArce });
 }
 
-function readCurrentState(initialView) {
+function readCurrentState(initialView, preferred = null) {
   if (typeof window === 'undefined') {
     return Object.freeze({ ready: false, world: 'vanilla', arce: false, profile: 'vanilla', view: initialView });
   }
@@ -51,7 +52,7 @@ function readCurrentState(initialView) {
   const historyView = window.history?.state?.view;
 
   // Stored preferences
-  const stored = getStoredProfile();
+  const stored = preferred || getStoredProfile();
 
   // Determine base view from history.state or pathname or initialView
   let baseView = initialView || 'home';
@@ -103,6 +104,16 @@ export function readStoredProfile() {
 const ShellContext = createContext(null);
 
 export function ShellProvider({ children, initialView = 'home' }) {
+  const preferences = useAccountSettings();
+  const [choice, setChoice] = useState(null);
+  // A build/run consumer may clean its link before the account response arrives.
+  const linked = useRef(undefined);
+  if (linked.current === undefined && typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    linked.current = params.has('world') || params.has('arce') ? readCurrentState(initialView) : null;
+  }
+  const preferred = choice && choice.owner === preferences?.owner ? normalizeProfile({ profile: choice.profile })
+    : linked.current || (preferences?.ready ? normalizeProfile({ profile: preferences.settings.world }) : null);
   // One object per initialView: useSyncExternalStore compares snapshots by identity, so
   // a fresh object on every call reads as a change and React warns of a render loop.
   const serverState = useMemo(
@@ -125,15 +136,15 @@ export function ShellProvider({ children, initialView = 'home' }) {
       storedArce = window.localStorage.getItem('mw-arce') || '0';
     } catch {}
 
-    const cacheKey = `${pathname}|${search}|${historyView}|${storedWorld}|${storedArce}|${initialView}`;
+    const cacheKey = `${pathname}|${search}|${historyView}|${storedWorld}|${storedArce}|${initialView}|${preferred?.profile || ''}`;
     if (cachedState && cacheKey === lastCacheKey) {
       return cachedState;
     }
 
     lastCacheKey = cacheKey;
-    cachedState = readCurrentState(initialView);
+    cachedState = readCurrentState(initialView, preferred);
     return cachedState;
-  }, [initialView, serverState]);
+  }, [initialView, serverState, preferred]);
 
   const getServerSnapshot = useCallback(() => serverState, [serverState]);
 
@@ -141,11 +152,11 @@ export function ShellProvider({ children, initialView = 'home' }) {
 
   const navigate = useCallback(view => {
     if (typeof window === 'undefined') return;
-    const current = readCurrentState(initialView);
-    try {
+    const current = readCurrentState(initialView, preferred);
+    try { if (!preferences?.owner) {
       window.localStorage.setItem('mw-world', current.world);
       window.localStorage.setItem('mw-arce', current.arce ? '1' : '0');
-    } catch {}
+    } } catch {}
     const targetPath = view === 'home' ? '/' : '/' + view;
     const currentPath = window.location.pathname || '/';
     const currentHash = window.location.hash || '';
@@ -154,15 +165,18 @@ export function ShellProvider({ children, initialView = 'home' }) {
       window.history.pushState({ view }, '', targetPath);
     }
     window.dispatchEvent(new Event('silt-shell-change'));
-  }, [initialView]);
+  }, [initialView, preferred, preferences?.owner]);
 
   const setProfile = useCallback(profile => {
     if (typeof window === 'undefined') return;
     const { world, arce } = normalizeProfile({ profile });
-    try {
+    linked.current = null;
+    setChoice({ owner: preferences?.owner, profile });
+    preferences?.update(settings => ({ ...settings, world: profile }));
+    try { if (!preferences?.owner) {
       window.localStorage.setItem('mw-world', world);
       window.localStorage.setItem('mw-arce', arce ? '1' : '0');
-    } catch {}
+    } } catch {}
 
     const cleanPath = state.view === 'home' ? '/' : '/' + state.view;
     const params = new URLSearchParams(window.location.search);
@@ -172,7 +186,7 @@ export function ShellProvider({ children, initialView = 'home' }) {
     params.set('arce', arce ? '1' : '0');
     window.history.replaceState({ ...window.history.state, view: state.view }, '', cleanPath + '?' + params);
     window.dispatchEvent(new Event('silt-shell-change'));
-  }, [state.view]);
+  }, [state.view, preferences]);
 
   return (
     <ShellContext.Provider value={{

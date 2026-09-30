@@ -3312,3 +3312,7 @@ body.view-travel .hero {
   white-space: nowrap;
   border-width: 0;
 }
+/* Account preferences remain readable on narrow screens in both themes. */
+.settings-choice { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 16rem); align-items: center; gap: .5rem 1rem; }
+.settings-choice select { width: 100%; min-width: 0; }
+@media (max-width: 640px) { .settings-choice { grid-template-columns: minmax(0, 1fr); } }

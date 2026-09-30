@@ -7,7 +7,7 @@ import ProfileIcon from './profile-icon';
 import ThemeToggle from './theme-toggle';
 
 const descriptions = {
-  account: 'Your username and profile icon.',
+  account: 'Your profile and saved settings.',
   home: 'Pick a planner for this playthrough.',
   challenge: 'Roll a character, a major goal, side tasks, and restrictions.',
   builder: 'Premade sheets and a custom class builder. Optimize gear when you are ready.',

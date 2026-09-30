@@ -35,8 +35,15 @@ experimental warning remains visible. After the main merge, local migrations
 0001–0007 passed with no pending migrations and 28 historical schema objects
 unchanged; 808 tests passed and the Cloudflare build generated 24 static pages.
 Details in `docs/ACCOUNT_SETTINGS.md`.
-No API/provider/UI, remote database apply or deployment. Owner decides the merge
-to main and applies production separately.
+ACC-2 now adds the owner-bound settings API/provider/account controls and connects
+World, theme, Travel, Gear Advisor and Challenge defaults/reset actions on the same
+unmerged branch. Guest preferences stay separate; adoption is explicit. Late loads,
+in-flight edits and account switches cannot overwrite newer choices or another
+account's preferences. Shared routes/seeds and current edits keep priority, and
+Travel's spell/scroll checks still apply. No release registry or gear-row changes:
+modpack/version controls remain unavailable and the two future gear filters hidden.
+Verification details: `docs/LAUNCH_VERIFICATION.md` §9. No remote apply or deployment.
+Owner decides the merge to main and applies production separately.
 
 ## Travel task-first — 30 September
 

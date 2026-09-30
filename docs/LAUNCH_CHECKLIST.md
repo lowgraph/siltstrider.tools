@@ -160,7 +160,7 @@ for now (owner, 30 September); other agents skip them.
 - [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged `e3ab542`) One network/loading/error/Retry line in Travel, including TR + ARCE.
 - [ ] **C** Header menus focus their first item when opened from the keyboard.
 - [ ] **C** The Cloud Vault checks a save's hash on load.
-- [ ] **C** **ACC-2** Account settings for players, after ACC-1: the revision-checked
+- [ ] **C** **ACC-2** (started 2026-09-30 20:42 UTC, Codex; implemented on `feature/account-settings-preparation`, awaiting owner merge; local verification in LAUNCH_VERIFICATION §9) Account settings for players, after ACC-1: the revision-checked
       `/api/settings` (GET and PUT, owner from the Clerk session, 409 on a stale revision), a
       settings provider, and a settings page for world, theme, Travel, Gear Advisor and
       Challenge defaults with reset all and reset one tool (ACCOUNT_SETTINGS.md). Modpack and

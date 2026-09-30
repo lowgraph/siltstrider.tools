@@ -11,7 +11,7 @@ if (!['localhost', '127.0.0.1'].includes(new URL(base).hostname)) throw Error('B
 const suite = option('--suite', 'all');
 const filter = option('--filter', '');
 const failFast = args.includes('--fail-fast');
-if (!['all', 'matrix', 'travel', 'tools'].includes(suite)) throw Error('Use --suite all, matrix, travel or tools.');
+if (!['all', 'matrix', 'travel', 'tools', 'settings'].includes(suite)) throw Error('Use --suite all, matrix, travel, tools or settings.');
 const output = path.resolve(option('--out', `A:/Cache/travel-branch-browser-${Date.now()}`));
 const chromePath = option('--chrome', 'C:/Program Files/Google/Chrome/Application/chrome.exe');
 const axePath = option('--axe-path', process.env.BROWSER_AXE_PATH);
@@ -167,6 +167,79 @@ async function matrix() {
       return { headings, themes };
     });
   }
+}
+
+async function settingsRegression() {
+  // Fake identity and API responses are confined to localhost browser fixtures.
+  // The real route's SQL, ownership and concurrency are tested separately on SQLite.
+  const { defaultAccountSettings } = await import('../lib/account-settings.mjs');
+  const script = await send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{
+    const original=window.fetch.bind(window), listeners=new Set();
+    const state=window.__settingsHarness={owner:'settings-one',calls:[],conflict:false};
+    const defaults=${JSON.stringify(defaultAccountSettings())};
+    const rows=()=>JSON.parse(sessionStorage.getItem('settings-fixture-rows')||'{}');
+    const clerk=window.Clerk={loaded:true,user:{id:state.owner},session:{getToken:async()=> 'fixture-token'},
+      addListener(fn){listeners.add(fn);fn({user:clerk.user,session:clerk.session});return()=>listeners.delete(fn)}};
+    state.switchOwner=id=>{state.owner=id;clerk.user=id?{id}:null;clerk.session=id?{getToken:async()=> 'fixture-token'}:null;for(const fn of listeners)fn({user:clerk.user,session:clerk.session})};
+    window.fetch=async(input,options={})=>{
+      const url=new URL(typeof input==='string'?input:input.url,location.href);
+      if(url.origin!==location.origin||!url.pathname.startsWith('/api/'))return original(input,options);
+      if(url.pathname==='/api/account')return Response.json({username:null,iconId:0,premium:false,maxSaves:5});
+      if(url.pathname==='/api/entitlements')return Response.json({tier:'free',maxSaves:5,currentSaves:0,remainingSaves:5});
+      if(url.pathname==='/api/saves')return Response.json({saves:[],total:0});
+      if(url.pathname!=='/api/settings')throw Error('Unexpected fixture API request');
+      const all=rows(),row=all[state.owner]||{settings:structuredClone(defaults),revision:0};
+      state.calls.push({owner:state.owner,method:options.method});
+      if(options.method==='GET')return Response.json(row);
+      const body=JSON.parse(options.body);
+      if(state.conflict||body.revision!==row.revision){state.conflict=false;return Response.json({error:'REVISION_CONFLICT',message:'Settings changed in another tab or device.'},{status:409})}
+      const next={settings:body.settings,revision:row.revision+1};all[state.owner]=next;sessionStorage.setItem('settings-fixture-rows',JSON.stringify(all));return Response.json(next);
+    };
+  })()` });
+  async function choose(label, value) {
+    const selector = await evaluate(`(()=>{const label=[...document.querySelectorAll('.account-settings-panel label')].find(el=>el.textContent.startsWith(${JSON.stringify(label)}));const el=label?.querySelector('select');if(!el)throw Error('Missing preference control');el.dataset.settingsTarget='yes';return '[data-settings-target="yes"]'})()`);
+    await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});el.value=${JSON.stringify(value)};el.dispatchEvent(new Event('change',{bubbles:true}));el.removeAttribute('data-settings-target')})()`);
+  }
+  async function settled() { await until(`document.querySelector('.account-settings-panel [role="status"]')?.textContent==='Preferences are saved to your account.'`); }
+  try {
+    for (const width of [1366, 375]) for (const theme of ['ashfall', 'morrowind']) {
+      await check(`Settings persistence/scopes/conflicts/${width}/${theme}`, async () => {
+        await viewport(width);
+        await evaluate(`sessionStorage.removeItem('settings-fixture-rows');localStorage.setItem('mw-world','vanilla');localStorage.setItem('mw-arce','0');localStorage.setItem('silt-theme','ashfall');localStorage.removeItem('silt-guest-settings-v1')`);
+        await openDocument(`${base}/account`); await idle();
+        await until(`document.querySelector('.account-settings-panel fieldset')?.disabled===false`);
+        assert.equal(await evaluate(`__settingsHarness.calls.filter(c=>c.method==='PUT').length`),0,'Loading does not write');
+        await button('Keep account defaults');
+        await choose('Theme',theme); await choose('Preferred world','tr');
+        await choose('Plan for','gold'); await choose('Assume Mages Guild membership','false');
+        await settled();
+        await openDocument(`${base}/account`); await idle(); await settled();
+        assert.equal(await evaluate('document.documentElement.dataset.theme'),theme);
+        assert.equal(await evaluate(`JSON.parse(sessionStorage.getItem('settings-fixture-rows'))['settings-one'].settings.world`),'tr');
+        await choose('Tool default scope','dataset'); await choose('Edit tool defaults for','tr_arce');
+        await choose('Assume Mages Guild membership','true'); await settled();
+        assert.equal(await evaluate(`JSON.parse(sessionStorage.getItem('settings-fixture-rows'))['settings-one'].settings.datasetOverrides[0].toolDefaults.travel.mageGuild`),true);
+        await evaluate(`document.querySelectorAll('.account-settings-panel details').forEach(el=>el.open=true)`);
+        await waitForFonts();
+        assert.equal(await evaluate('document.documentElement.scrollWidth > innerWidth + 1'),false);
+        assertAccessible(await audit(`settings-${width}-${theme}`));
+        await evaluate(`document.querySelector('.account-settings-panel').scrollIntoView({block:'start'})`); await screenshot(`settings-${width}-${theme}`);
+        await evaluate(`document.querySelector('.account-settings-panel details').scrollIntoView({block:'start'})`); await screenshot(`settings-travel-${width}-${theme}`);
+        await evaluate(`__settingsHarness.conflict=true`); await choose('Theme',theme==='ashfall'?'morrowind':'ashfall');
+        await until(`document.querySelector('.account-settings-panel [role="alert"]')?.textContent.includes('Settings changed')`);
+        assert.equal(await evaluate(`document.querySelector('.account-settings-panel fieldset').disabled`),true);
+        await button('Discard unsaved preferences and reload saved settings'); await settled();
+        assert.equal(await evaluate('document.documentElement.dataset.theme'),theme,'Conflict reload restores saved theme');
+        await evaluate(`__settingsHarness.switchOwner('settings-two')`);
+        await until(`document.querySelector('.account-settings-panel [role="status"]')?.textContent==='Using account defaults. Changes save automatically.'`);
+        assert.equal(await evaluate('document.documentElement.dataset.theme'),'ashfall','Another account has its own defaults');
+        await evaluate(`__settingsHarness.switchOwner(null)`);
+        await until(`document.querySelector('.account-settings-panel [role="status"]')?.textContent.includes('kept in this browser')`);
+        assert.equal(await evaluate('localStorage.getItem("silt-theme")'),'ashfall','Account edits did not overwrite guest theme');
+        return { identity:'local fixture',persisted:true,worldScopes:true,conflict:true,ownerIsolation:true };
+      });
+    }
+  } finally { await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: script.identifier }); }
 }
 
 async function toolsRegression() {
@@ -425,6 +498,7 @@ async function travel() {
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) await travel();
   if (['all','tools'].includes(suite)) { await toolsRegression(); await factionAndLevelRegression(); await savedTravel(); }
+  if (['all','settings'].includes(suite)) await settingsRegression();
   await send('Browser.close').catch(() => {});
 })().catch(error => { if (!report.cases.some(item => item.name === current && !item.passed)) report.cases.push({ name: current, passed: false, error: error.stack }); }).finally(() => {
   socket?.close(); chrome.kill(); report.finished = new Date().toISOString();

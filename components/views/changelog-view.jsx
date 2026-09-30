@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Your account can remember your world, theme, Travel, Gear Advisor and Challenge defaults across devices. Choose shared or world-specific defaults, optionally override save-derived Travel toggles, and reset one tool or all settings. Shared links keep their choices; guests keep their own browser preferences.</li>
             <li>The first time you open the Character Builder, it starts on the premade builds, so you can pick one and change it instead of composing a class from nothing. &ldquo;Build my own instead&rdquo; goes straight to the Custom Class Builder, and later visits open as before.</li>
             <li>For a Khajiit or Argonian, the Boots slot in Equipped Loadouts and its &ldquo;Beast races cannot wear boots&rdquo; are readable instead of faded, and so is a ticked Challenge Runs objective.</li>
             <li>Travel has one plain network status with the network name and stop count. Loading and an error with Retry appear in the same place; TR + ARCE is named explicitly.</li>

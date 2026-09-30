@@ -29,4 +29,6 @@ Migration 0003 creates `account_profiles`; it does not modify cloud saves.
 Migration `0007_account_settings.sql` (ACC-1) creates a separate settings table
 without requiring a chosen username or changing profiles/saves. See
 [account settings](ACCOUNT_SETTINGS.md) for the contract and local verification.
-The settings API and page are ACC-2 and are not built.
+ACC-2 adds a separate `/api/settings` endpoint and settings controls on the
+account page. A username is optional for preferences; profile and settings
+writes remain independent.

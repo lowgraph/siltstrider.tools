@@ -236,3 +236,15 @@ test('Travel objective precedence is independent of the overwrite-save switch', 
     assert.equal(resolveAccountTravelOptions({ ...input, linkOverrides: { objective: 'time' }, sessionOverrides: { objective: 'hops' } }).objective, 'hops');
   }
 });
+
+test('scoped preference edits keep explicit false, remove inherited fields and preserve other scopes', async () => {
+  const { updateAccountToolSettings, accountToolChoices, validateAccountSettings } = await load();
+  const original = validateAccountSettings({ version: 1, defaultScope: 'dataset', toolDefaults: { travel: { mageGuild: true } } });
+  const edited = updateAccountToolSettings(original, 'travel', { mageGuild: false, objective: 'gold' }, { world: 'tr' });
+  assert.equal(accountToolChoices(edited, { world: 'tr' }).travel.mageGuild, false);
+  assert.equal(accountToolChoices(edited, { world: 'vanilla' }).travel.mageGuild, true);
+  const inherited = updateAccountToolSettings(edited, 'travel', { mageGuild: undefined }, { world: 'tr' });
+  assert.equal(accountToolChoices(inherited, { world: 'tr' }).travel.mageGuild, true);
+  assert.equal(inherited.datasetOverrides[0].toolDefaults.travel.objective, 'gold');
+  assert.equal(original.datasetOverrides.length, 0);
+});

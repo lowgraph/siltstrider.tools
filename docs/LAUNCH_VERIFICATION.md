@@ -356,3 +356,50 @@ real-save corpus, other browser engines and manual screen-reader review were
 not repeated. Deployment remains a separate owner ask: ship Travel as its own
 release, retaining the previous production version so rollback removes Travel
 without rolling back the earlier launch improvements.
+
+## 9. Account settings verification — 30 September 2026
+
+ACC-1 and ACC-2 are prepared on `feature/account-settings-preparation`, based on
+the normal merge of origin/main `2c113b8` into the branch at `7a9f0bd`. The owner
+has not approved merging the settings branch or deploying it.
+
+- `npm test`: **836 passed, 0 failures, 0 skips**. Cases cover the schema, owner
+  isolation, UTF-8 limits, bad JSON/versions/revisions, concurrent creation,
+  stale writes, unknown/future data selections, network retry, delayed loads,
+  edits during writes, sign-out/account switches, guest adoption, coherent
+  world-specific presets, shared-route/seed precedence and resets.
+- The actual Worker verifies locally generated RSA session tokens through
+  Clerk's offline verifier against the in-memory migrated SQLite database.
+  Accounts with no username can persist preferences; another owner cannot read
+  them. Cross-origin writes are refused, and server failures retain reference
+  IDs without exposing SQL, settings or tokens. No real credentials are used.
+- Node 22.11.0 uses `--experimental-sqlite` and prints its **ExperimentalWarning**
+  in both SQLite test files. It is not suppressed. Existing Clerk development
+  telemetry notices in older test files remain; the new auth fixture adds none.
+- `npm run build:cloudflare`: **passed**, **24 static pages**. Wrangler Worker
+  compilation with `deploy --dry-run` also passed (no upload/deployment).
+- A fresh isolated local D1 directory received migrations **0001–0007**.
+  `migrations list --local` reported **No migrations to apply!**. The new table
+  exists, all **28 historical schema objects** match the 0001–0006 baseline,
+  and all seven existing application tables remain empty/unchanged. Seeded
+  schema tests separately verify that old save/profile/entitlement records survive.
+- Local Chrome/CDP: **33 cases passed, 0 failures**: four settings cases,
+  26 tool interactions and three Travel cases. Settings use synthetic identities
+  and local API fixtures; remaining cases are signed out. Both themes and
+  desktop/mobile widths are covered; tool inputs/sharing and saved Travel checks
+  also cover Vanilla, TR and TR + ARCE. **28 axe reports** had no critical/serious
+  WCAG 2/2.1 AA findings. No reported overflow, uncaught exceptions or unexpected
+  server errors. Settings screenshots were inspected in both themes and widths.
+- Evidence under `A:/Cache`: `acc2-final-test.log`, `acc2-final-build.log`,
+  `acc2-worker-dry-run.log`, `acc2-local-apply.log`; browser `report.json`, axe JSON
+  and screenshots in `acc2-settings-final-browser`, `acc2-tools-browser` and
+  `acc2-travel-browser`. Fresh D1 persistence: `acc2-final-local-20260930`.
+  Reproduce browser checks with [BROWSER_TESTS.md](BROWSER_TESTS.md), using the
+  dedicated local server at port 8790; occupied 8765/8766 servers were untouched.
+
+Real production sign-in, cross-device accounts and owner acceptance are still
+deployment checks. Modpack/version/update-notice controls stay unavailable
+until published release support exists; the two future gear filters stay hidden.
+Migration 0007 is unchanged from its reviewed ACC-1 shape. No extraction, remote
+database apply, main change or deployment occurred. The owner applies production
+0007 separately before deploying the settings API.

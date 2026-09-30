@@ -37,13 +37,13 @@ function fixture() {
   };
 }
 
-async function mount({ data = fixture(), status = 'ready', activeSave = null, storage = null, carryingData = null } = {}) {
-  const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/travel' });
+async function mount({ data = fixture(), status = 'ready', activeSave = null, storage = null, carryingData = null, preferences = null, search = '' } = {}) {
+  const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/travel' + search });
   Object.assign(global, { window: dom.window, document: dom.window.document, IS_REACT_ACT_ENVIRONMENT: true });
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator });
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage || dom.window.localStorage });
   let retries = 0;
-  const state = { data, status, world: 'vanilla', activeSave, carrying: carryingData || { status: 'ready', data: { catalogs: {} } } };
+  const state = { data, status, world: 'vanilla', activeSave, preferences, carrying: carryingData || { status: 'ready', data: { catalogs: {} } } };
   // Picker keyboard behavior has its own tests. These adapters exercise the real
   // workstation's state, route engine and map callback without rendering SVG.
   function Picker({ id, label, value, options, onChange, disabled }) {
@@ -54,6 +54,7 @@ async function mount({ data = fixture(), status = 'ready', activeSave = null, st
   const deps = {
     '../../character-context': { useActiveCharacter: () => ({ build: { race: 'Breton', className: 'Custom' }, sheet: null, activeSave: state.activeSave }) },
     '../../shell-context': { useShell: () => ({ world: state.world, profile: state.profile || state.world }) },
+    '../../account-settings-context': { useAccountSettings: () => state.preferences },
     '../../use-game-data': { useGameData: tool => tool === 'carrying'
       ? state.carrying
       : { status: state.status, data: state.data, retry: () => retries++ } },
@@ -229,6 +230,54 @@ function savedTraveller(name = 'Traveller', spells = ['divine intervention'], in
       progress: { factions: [{ id: 'Mages Guild', rank: 0 }] }, stuff: { spells, inventory } } };
 }
 const spellCatalog = { status: 'ready', data: { catalogs: { Spells: [{ key: 'divine intervention', type: 'spell', cost: 8 }] } } };
+
+test('account overrides retain per-save choices and turning the policy off restores them', async () => {
+  const { defaultAccountSettings } = await import('../lib/account-settings.mjs');
+  const { travelSaveKey, writeTravelOverrides } = await import('../lib/travel-options.mjs');
+  const activeSave = savedTraveller(), storage = memoryStorage();
+  const original = JSON.stringify(activeSave.save);
+  writeTravelOverrides(travelSaveKey(activeSave.save), { mageGuild: false, carried: 12 }, storage);
+  const settings = { ...defaultAccountSettings(), overrideSaveToggles: true, toolDefaults: { travel: { mageGuild: true } } };
+  const t = await mount({ activeSave, storage, preferences: { ready: true, owner: 'one', settings } });
+  try {
+    assert.equal(input('Mages Guild member').checked, true);
+    assert.match(input('Mages Guild member').closest('label').textContent, /account default/);
+    assert.equal(input('Carrying').value, '12');
+    t.state.preferences = { ...t.state.preferences, settings: { ...settings, overrideSaveToggles: false } };
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, false);
+    assert.equal(input('Carrying').value, '12');
+    assert.equal(JSON.stringify(activeSave.save), original);
+  } finally { await t.cleanup(); }
+});
+
+test('account Intervention choices do not invent an unavailable spell or scroll', async () => {
+  const { defaultAccountSettings } = await import('../lib/account-settings.mjs');
+  const activeSave = savedTraveller('No spells', [], []);
+  const settings = { ...defaultAccountSettings(), overrideSaveToggles: true, toolDefaults: { travel: { divine: true, almsivi: true } } };
+  const t = await mount({ activeSave, preferences: { ready: true, owner: 'one', settings } });
+  try {
+    assert.equal(input('Divine Intervention').checked, false);
+    assert.equal(input('Divine Intervention').disabled, true);
+    assert.equal(input('Almsivi Intervention').checked, false);
+    assert.equal(input('Almsivi Intervention').disabled, true);
+    assert.deepEqual(activeSave.save.stuff.inventory, []);
+  } finally { await t.cleanup(); }
+});
+
+test('current edits and all shared-route defaults survive late account settings', async () => {
+  const { defaultAccountSettings } = await import('../lib/account-settings.mjs');
+  const t = await mount({ preferences: { ready: false, owner: 'one', settings: defaultAccountSettings() }, search: '?from=Seyda%20Neen&to=Vivec' });
+  try {
+    await click(input('Mages Guild member'));
+    t.state.preferences = { ready: true, owner: 'one', settings: { ...defaultAccountSettings(), toolDefaults: { travel: { mageGuild: true, objective: 'gold', walking: false, questTeleports: true } } } };
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, false);
+    assert.equal(input('Walk between nearby places').checked, true);
+    assert.equal(input('Include quest teleports').checked, false);
+    assert.equal(button('Fewest legs').getAttribute('aria-pressed'), 'true');
+  } finally { await t.cleanup(); }
+});
 
 test('TRV-6 retains unchecked spells, removed items and carrying edits through reload and new load tokens', async () => {
   const storage = memoryStorage(), activeSave = savedTraveller('Traveller', ['divine intervention'], [{ id: 'test_index', count: 1 }]);

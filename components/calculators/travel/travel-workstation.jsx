@@ -4,6 +4,8 @@ import { cheapestTradeoff } from "../../../lib/travel-tradeoff.mjs";
 import { realTimeText } from "../../../lib/travel-real-time.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
+import { useAccountSettings } from '../../account-settings-context';
+import { accountToolChoices, defaultAccountSettings, resolveAccountTravelOptions } from '../../../lib/account-settings.mjs';
 import { useGameData } from "../../use-game-data";
 import { useSearchIntent } from "../../use-search-intent";
 import { clearSearchIntent } from "../../../lib/search-intent.mjs";
@@ -42,7 +44,7 @@ import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../..
 import TransitMap from "./transit-map";
 import TravelLocationPicker from "./travel-location-picker";
 import { buildTravelSearchOptions } from "../../../lib/travel-search.mjs";
-import { travelSaveKey, readTravelOverrides, writeTravelOverrides, applyTravelOverrides } from "../../../lib/travel-options.mjs";
+import { travelSaveKey, readTravelOverrides, writeTravelOverrides } from "../../../lib/travel-options.mjs";
 import { interventionAccess, withInterventionResources } from "../../../lib/travel-intervention-access.mjs";
 
 const POPULAR_HUBS = [
@@ -64,6 +66,8 @@ export default function TravelWorkstation() {
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
   const { world, profile = world } = useShell();
+  const preferences = useAccountSettings();
+  const accountDocument = preferences?.ready ? preferences.settings : null;
   const isTr = world === "tr";
   const gameData = useGameData('travel', { enabled: true });
   const [origin, setOrigin] = useState("Seyda Neen");
@@ -85,6 +89,18 @@ export default function TravelWorkstation() {
   const carryingData = useGameData('carrying', { enabled: Boolean(activeSave?.save) });
   const saveKey = useMemo(() => travelSaveKey(activeSave?.save, profile), [activeSave?.save, profile]);
   const optionEdits = useRef({ key: undefined, values: {} });
+  const sessionEdits = useRef({ key: undefined, values: {} });
+  const sessionKey = `${preferences?.owner || 'guest'}:${profile}:${saveKey || 'manual'}`;
+  const routeChoices = useRef(null);
+  if (routeChoices.current === null && typeof window !== 'undefined') {
+    const link = readRouteLink(window.location.search, ROUTE_OBJECTIVES);
+    const shared = Boolean(link.from || link.to);
+    routeChoices.current = {
+      ...(shared || link.plan ? { objective: link.plan || 'hops' } : {}),
+      ...(shared || link.walk !== null ? { walking: link.walk ?? true } : {}),
+      ...(shared || link.quest !== null ? { questTeleports: link.quest ?? false } : {})
+    };
+  }
   const [rememberedCount, setRememberedCount] = useState(0);
   const [storageKept, setStorageKept] = useState(true);
   const [optionsRevision, setOptionsRevision] = useState(0);
@@ -106,6 +122,12 @@ export default function TravelWorkstation() {
   ) : null), [activeSave?.save, spellAccess]);
   const savedItems = useMemo(() => (activeSave?.save ? heldFromSave(activeSave.save) : null), [activeSave]);
   const marks = saveMarks(activeSave?.save ? { guild: saveGuild, spells: saveSpells } : null, { mageGuild, conjurer, spells });
+  const globalChoices = accountDocument ? accountToolChoices(accountDocument, { world: profile }).travel : {};
+  const values = { mageGuild, conjurer, divine: spells.divine, almsivi: spells.almsivi, waterWalking };
+  const hasAccountSource = key => Object.hasOwn(globalChoices, key) && globalChoices[key] === values[key] &&
+    (!activeSave?.save || accountDocument?.overrideSaveToggles) &&
+    !(sessionEdits.current.key === sessionKey && Object.hasOwn(sessionEdits.current.values, key));
+  const preferenceLabel = preferences?.owner ? 'account default' : 'browser default';
 
   const saveLoad = useMemo(() => {
     if (!activeSave?.save || carryingData.status !== 'ready') return null;
@@ -119,7 +141,8 @@ export default function TravelWorkstation() {
   // Apply fresh data as defaults, then edits. Late catalog loads must not retick
   // an option, and a different save/profile must not inherit another save's edits.
   useEffect(() => {
-    if (!activeSave?.save && optionEdits.current.key === saveKey) return;
+    if (!activeSave?.save && !preferences && optionEdits.current.key === saveKey) return;
+    if (sessionEdits.current.key !== sessionKey) sessionEdits.current = { key: sessionKey, values: {} };
     if (optionEdits.current.key !== saveKey) {
       optionEdits.current = { key: saveKey, values: readTravelOverrides(saveKey) };
       setStorageKept(true);
@@ -130,17 +153,26 @@ export default function TravelWorkstation() {
       held: savedItems || new Set(), carried: saveLoad?.weight ?? 0,
       levitate: saveLoad?.levitate ?? 0, waterWalking: (saveLoad?.waterWalking ?? 0) > 0
     };
-    const restored = applyTravelOverrides(defaults, optionEdits.current.values);
+    const restored = resolveAccountTravelOptions({
+      settings: accountDocument || defaultAccountSettings(), selection: { world: profile },
+      defaults: { ...defaults, walking: true, questTeleports: false, objective: 'hops' },
+      saveDefaults: activeSave?.save ? defaults : null, saveOverrides: optionEdits.current.values,
+      linkOverrides: routeChoices.current || {}, sessionOverrides: sessionEdits.current.values
+    });
     setMageGuild(restored.mageGuild); setConjurer(restored.conjurer);
     setSpells({ divine: restored.divine && spellAccess.divine.available, almsivi: restored.almsivi && spellAccess.almsivi.available });
     setHeld(restored.held); setCarried(restored.carried);
     setLevitate(restored.levitate); setWaterWalking(restored.waterWalking);
+    setWalking(restored.walking); setQuestTeleports(restored.questTeleports); setObjective(restored.objective);
     setFromSave(saveLoad);
     setRememberedCount(Object.keys(optionEdits.current.values).length);
-  }, [saveKey, saveGuild, saveSpells, savedItems, saveLoad, activeSave?.save, optionsRevision, spellAccess]);
+  }, [saveKey, saveGuild, saveSpells, savedItems, saveLoad, activeSave?.save, optionsRevision, spellAccess, accountDocument, sessionKey]);
 
   const rememberChoice = (key, value) => {
+    const current = sessionEdits.current.key === sessionKey ? sessionEdits.current.values : {};
+    sessionEdits.current = { key: sessionKey, values: { ...current, [key]: key === 'held' ? { ...current.held, ...value } : value } };
     if (!activeSave?.save) return;
+    if (['walking', 'questTeleports', 'objective'].includes(key)) return;
     const previous = optionEdits.current.key === saveKey ? optionEdits.current.values : readTravelOverrides(saveKey);
     const values = { ...previous, [key]: key === "held" ? { ...previous.held, ...value } : value };
     optionEdits.current = { key: saveKey, values };
@@ -148,6 +180,7 @@ export default function TravelWorkstation() {
     setRememberedCount(Object.keys(values).length);
   };
   const resetSaveOptions = () => {
+    sessionEdits.current = { key: sessionKey, values: {} };
     optionEdits.current = { key: saveKey, values: {} };
     setStorageKept(writeTravelOverrides(saveKey, {}));
     setOptionsRevision(value => value + 1);
@@ -561,7 +594,7 @@ export default function TravelWorkstation() {
                 key={id}
                 type="button"
                 aria-pressed={objective === id}
-                onClick={() => setObjective(id)}
+                onClick={() => { setObjective(id); rememberChoice('objective', id); }}
                 className={`min-h-11 px-3 py-2 text-xs font-serif font-bold border transition-colors ${
                   objective === id
                     ? "border-accent bg-surface-17 text-accent"
@@ -790,13 +823,14 @@ export default function TravelWorkstation() {
             <div className="space-y-2 text-xs text-fg-9">
               <p className="m-0">{storageKept ? "Changes to save-derived options are remembered in this browser for this save and profile." : "Browser storage is unavailable. These changes last until the page reloads."}</p>
               <button type="button" className="mw-btn min-h-11 px-3 py-2" onClick={resetSaveOptions}>Use save defaults</button>
+              {accountDocument?.overrideSaveToggles && <p className="m-0">Your stored Travel defaults apply after save defaults. Turn off the override in Your account to restore the save&apos;s remembered choices.</p>}
             </div>
           )}
           <fieldset className="border-0 m-0 p-0 space-y-3">
             <legend className="text-sm font-serif font-bold text-accent mb-2">Your character</legend>
             <div className="flex flex-wrap gap-4 text-sm">
-              <label><input type="checkbox" checked={mageGuild} onChange={event=>{ setMageGuild(event.target.checked); rememberChoice("mageGuild", event.target.checked); }}/> Mages Guild member{marks.mageGuild && <FromSave />}</label>
-              {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>{ setConjurer(event.target.checked); rememberChoice("conjurer", event.target.checked); }}/> Conjurer rank or higher{marks.conjurer && <FromSave />}</label>}
+              <label><input type="checkbox" checked={mageGuild} onChange={event=>{ setMageGuild(event.target.checked); rememberChoice("mageGuild", event.target.checked); }}/> Mages Guild member{hasAccountSource('mageGuild') ? <FromSave>{preferenceLabel}</FromSave> : marks.mageGuild && <FromSave />}</label>
+              {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>{ setConjurer(event.target.checked); rememberChoice("conjurer", event.target.checked); }}/> Conjurer rank or higher{hasAccountSource('conjurer') ? <FromSave>{preferenceLabel}</FromSave> : marks.conjurer && <FromSave />}</label>}
               {intervention && Object.entries(INTERVENTION_KINDS).map(([kind, label]) => (
                 <label key={kind} className="whitespace-nowrap">
                   <input
@@ -806,7 +840,7 @@ export default function TravelWorkstation() {
                     onChange={(event) => { setSpells((prev) => ({ ...prev, [kind]: event.target.checked })); rememberChoice(kind, event.target.checked); }}
                   />{" "}
                   {label}
-                  {marks[kind] && <FromSave>{interventionMarkText(saveSources?.[kind], spells[kind])}</FromSave>}
+                  {hasAccountSource(kind) ? <FromSave>{preferenceLabel}</FromSave> : marks[kind] && <FromSave>{interventionMarkText(saveSources?.[kind], spells[kind])}</FromSave>}
                   {spellAccess[kind].note && <span className="block text-[11px] text-fg-9 whitespace-normal">{spellAccess[kind].note}</span>}
                 </label>
               ))}
@@ -839,7 +873,7 @@ export default function TravelWorkstation() {
                     />
                   </label>
                   <label className="whitespace-nowrap">
-                    <input type="checkbox" checked={waterWalking} onChange={(event) => { setWaterWalking(event.target.checked); rememberChoice("waterWalking", event.target.checked); }} /> Constant Water Walking
+                    <input type="checkbox" checked={waterWalking} onChange={(event) => { setWaterWalking(event.target.checked); rememberChoice("waterWalking", event.target.checked); }} /> Constant Water Walking{hasAccountSource('waterWalking') && <FromSave>{preferenceLabel}</FromSave>}
                   </label>
                 </>
               )}
@@ -907,12 +941,12 @@ export default function TravelWorkstation() {
             <div className="flex flex-wrap gap-4 text-sm">
               {teleports && (
                 <label className="whitespace-nowrap">
-                  <input type="checkbox" checked={questTeleports} onChange={(event) => setQuestTeleports(event.target.checked)} /> Include quest teleports
+                  <input type="checkbox" checked={questTeleports} onChange={(event) => { setQuestTeleports(event.target.checked); rememberChoice('questTeleports', event.target.checked); }} /> Include quest teleports
                 </label>
               )}
               {access && (
                 <label className="whitespace-nowrap">
-                  <input type="checkbox" checked={walking} onChange={(event) => setWalking(event.target.checked)} /> Walk between nearby places
+                  <input type="checkbox" checked={walking} onChange={(event) => { setWalking(event.target.checked); rememberChoice('walking', event.target.checked); }} /> Walk between nearby places
                 </label>
               )}
 

@@ -1,9 +1,10 @@
-# Account settings migration preparation
+# Account settings
 
 ACC-1 creates the table in `cloudflare/migrations/0007_account_settings.sql`
 before launch. It has been applied and checked on a fresh local D1 database;
-production apply is the owner's separate step. The API, provider and settings
-page are ACC-2 and are not built.
+production apply is the owner's separate step. ACC-2 adds `/api/settings`, the
+account settings provider, and controls in Your account on this feature branch.
+The branch remains unmerged and has not been deployed.
 
 ## Requested settings
 
@@ -53,9 +54,9 @@ are unavailable controls, not working selectors. For a built-in TR release,
 
 ## Approved additions — 30 September 2026
 
-The owner accepted the additions below. They are implemented in the prepared
-settings contract, validation, resolution and reset helpers. API/UI integration
-is still pending. The proposed JSON table needs no additional columns.
+The owner accepted the additions below. Their contract, validation, resolution,
+reset helpers and available tool integrations are implemented. Migration 0007
+needs no additional columns.
 
 1. **Theme**: Modern or Morrowind, remembered across devices. Keep motion/text-size
    preferences device/system-aware unless the user explicitly overrides them.
@@ -114,7 +115,7 @@ version policy and other tools; empty scope entries are removed. Neither mutates
 the caller's document. Persist resets through the same revision-checked API as
 ordinary edits, without deleting cloud saves or a generated Challenge run.
 
-## Storage and API plan
+## Storage and API
 
 Use a separate `account_settings` table, independent of the username-required
 `account_profiles` table. Keep the settings as a bounded (16 KiB UTF-8) JSON
@@ -128,7 +129,7 @@ changes need a new migration. Remote apply belongs to the owner, with a fresh
 D1 Time Travel bookmark, separately from any Worker deploy. Older Workers ignore
 the new table and remain valid rollback targets.
 
-Planned `/api/settings` behavior (ACC-2, not implemented):
+`/api/settings` behavior (ACC-2):
 
 - GET: authenticate, return `{ settings, revision }`; absent row returns defaults
   and revision 0. GET does not create rows or infer defaults from another account.
@@ -138,6 +139,10 @@ Planned `/api/settings` behavior (ACC-2, not implemented):
 - Reject unknown contract versions/fields explicitly, instead of dropping them
   when an older browser saves. Bound the request body before decoding; JSON
   storage support does not replace application validation.
+- Bound the request envelope to 17 KiB and the settings document to 16 KiB in
+  UTF-8 bytes. Stream the body with a running limit even without Content-Length.
+  Modpack/release selections and the two unsupported gear filters are rejected
+  until their consumer/data support exists.
 - Reset through the same revision-checked write path, preserving conflict safety.
 - Account switches/sign-out invalidate cached settings and pending writes. Cache
   entries must be namespaced by Clerk user ID; guests use their own local settings.
@@ -146,13 +151,24 @@ Planned `/api/settings` behavior (ACC-2, not implemented):
 - Debounce changes, report unsynced/error state, and do not repeatedly write on
   hydration. Late account responses must not overwrite a newer click or link.
 
-The existing `AccountProvider` already guards against stale responses by owner
-and generation; follow that pattern when wiring the settings provider.
+`AccountSettingsProvider` follows `AccountProvider`'s owner/generation guards.
+`AccountSettingsSession` serializes debounced writes, retains newer changes made
+while a request is in flight, and aborts/invalidates requests on account changes.
+No account document is cached in shared browser storage. Guests have a separate
+`silt-guest-settings-v1` document, with the old world/theme/Challenge preferences
+read as a fallback. An account with no settings offers explicit guest adoption.
+Account World and theme changes do not overwrite the guest's stored choices.
+
+The account page shows loading/saving/unsynced/error states. Network failures keep
+edits for Retry; revision conflicts freeze edits until the player explicitly
+discards unsaved preferences and reloads the server copy. Reset all and reset one
+tool use the same revision-checked writes. World-specific defaults are editable
+for all three current worlds; future dataset selectors are disabled.
 
 ## Toggle precedence and travel meaning
 
-Prepared pure resolver: `lib/account-settings.mjs`. It is not yet connected to
-the workstation. Lowest to highest priority:
+Shared resolver: `lib/account-settings.mjs`, used by Travel and the other tool
+consumers. Lowest to highest priority:
 
 1. Tool defaults.
 2. Imported-save defaults and remembered per-save edits.
@@ -239,17 +255,21 @@ the 0001–0006 baseline (ignoring Wrangler's removal of SQL comments/whitespace
 The seven existing application tables remain empty in the fresh database.
 Separate seeded in-memory tests verify that existing records survive 0007.
 
-Verification after incorporating origin/main `2c113b8`: `npm test` passed 808
-tests with no failures or skips and the reported SQLite experimental warning.
-`npm run build:cloudflare` passed, generating 24 static pages. Fresh local
-migrations and the historical schema comparison also passed after the merge.
+ACC-2 verification on the branch incorporating origin/main `2c113b8`: `npm test`
+passed 836 tests with no failures or skips and the reported SQLite experimental
+warning. `npm run build:cloudflare` passed, generating 24 static pages; the
+Worker also compiled with `wrangler deploy --dry-run`. Fresh local migrations
+and the 28-object historical schema comparison passed. Chrome ran 33 settings,
+tool and Travel cases at desktop/mobile widths in both themes, with 28 axe
+reports and no critical/serious findings, runtime errors or server errors.
+Evidence and limits: [LAUNCH_VERIFICATION.md](LAUNCH_VERIFICATION.md) §9.
 
-ACC-2 implementation: wire the authenticated API/provider/account UI, then
-connect World, theme and the tool defaults/reset
-actions. Version notifications need a release registry. Keep future
-dataset selectors unavailable until registry/loader support exists. Add UI,
-authentication and persistence verification and both player changelogs when the
-feature becomes visible. The owner confirmed main is ready; origin/main `2c113b8`
+ACC-2 implements the authenticated API/provider/account UI and connects World,
+theme and tool defaults/reset actions. Version notifications need a release
+registry; future dataset selectors remain unavailable until registry/loader
+support exists. Schema, API, client state and React/browser integration are
+verified locally; production sign-in remains an owner acceptance check.
+The owner confirmed main is ready; origin/main `2c113b8`
 has been merged into the settings branch without rebasing. Only settings work
 differs from main; local migration, tests and build passed after the merge.
 The owner decides whether to merge the feature branch to main and applies the

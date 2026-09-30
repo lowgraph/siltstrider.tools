@@ -3,6 +3,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { DIFFICULTY_PRESETS } from "../lib/challenge-math.mjs";
 import { createEmptyRun, sanitizeRun } from "../lib/challenge-engine.mjs";
 import { decodeShareUrl } from "../lib/permalink-codec.mjs";
+import { useAccountSettings } from './account-settings-context';
+import { useShell } from './shell-context';
+import { resolveAccountToolDefaults, updateAccountToolSettings } from '../lib/account-settings.mjs';
 
 /**
  * The challenge run lives above the views, like the character build, so leaving the
@@ -106,6 +109,11 @@ function dropRunFromAddress() {
 }
 
 function useChallengeRunState({ persist }) {
+  const preferences = useAccountSettings();
+  const { profile } = useShell();
+  const currentChoice = useRef(false);
+  const sharedChoice = useRef(false);
+  const choiceOwner = useRef(undefined);
   const [run, setRun] = useState(createEmptyRun);
   const [locks, setLocks] = useState(() => ({ ...EMPTY_LOCKS }));
   const [settings, setSettings] = useState(defaultSettings);
@@ -120,6 +128,8 @@ function useChallengeRunState({ persist }) {
       const raw = window.location.href || (window.location.pathname + window.location.search);
       const linked = runFromLink(raw);
       if (!linked) return false;
+      currentChoice.current = true;
+      sharedChoice.current = true;
       setRun(linked);
       setLocks({ ...EMPTY_LOCKS });
       dropRunFromAddress();
@@ -149,6 +159,8 @@ function useChallengeRunState({ persist }) {
 
   // The player's own choices become the preferred settings; a seed's do not.
   const updateSettings = useCallback((patch, { preferred: isPreferred = true } = {}) => {
+    currentChoice.current = true;
+    sharedChoice.current = !isPreferred;
     remember.current = isPreferred;
     setSettings((prev) => ({ ...prev, ...(typeof patch === "function" ? patch(prev) : patch) }));
   }, []);
@@ -157,14 +169,30 @@ function useChallengeRunState({ persist }) {
     if (!remember.current) return;
     remember.current = false;
     setPreferred(settings);
-    if (persist) {
+    if (persist && preferences) preferences.update(document => updateAccountToolSettings(document, 'challenge', settings, { world: profile }));
+    if (persist && !preferences?.owner) {
       try {
         storage()?.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
       } catch {}
     }
-  }, [persist, settings]);
+  }, [persist, settings, preferences?.owner, preferences?.update, profile]);
 
-  const restorePreferred = useCallback(() => setSettings(preferred), [preferred]);
+  useEffect(() => {
+    if (!persist || !preferences?.ready) return;
+    const key = `${preferences.owner || 'guest'}:${profile}`;
+    const previousOwner = choiceOwner.current;
+    if (previousOwner !== undefined && previousOwner !== key && !sharedChoice.current) currentChoice.current = false;
+    choiceOwner.current = key;
+    const defaults = resolveAccountToolDefaults(preferences.settings, { world: profile }).challenge;
+    setPreferred(defaults);
+    if (!currentChoice.current) setSettings(defaults);
+  }, [persist, preferences?.ready, preferences?.owner, preferences?.settings, profile]);
+
+  const restorePreferred = useCallback(() => {
+    sharedChoice.current = false;
+    currentChoice.current = false;
+    setSettings(preferred);
+  }, [preferred]);
   const usingPreferred = sameSettings(settings, preferred);
 
   return useMemo(
