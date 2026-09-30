@@ -1,5 +1,28 @@
 # Coordination
 
+## TRV-2: one place search — 2026-09-30
+
+Implemented on `launch/trv-2-unified-place-search`, from site `main`. No dataset
+schema or route-ID changes. `lib/travel-search.mjs` joins transit stops and named
+Places into one candidate list, ranks towns/stops before other exteriors and
+interiors, and retains central-cell deduplication per name and region. Canonical
+stop names and `place:<cellKey>` IDs still drive routing and shared links. Interiors
+read as `Balmora › Council Club`; badges retain sealed-room access notes.
+
+`TravelLocationPicker` replaces both native stop selectors and separate Places
+lists. Typing filters without rerouting; arrows and Enter or a click commit a
+location. Escape, Tab and blur discard the draft. External selections and new
+profile/options cancel stale drafts. A result count covers all kinds, including
+matches beyond the first 40 displayed; there is no misleading "0 stops" counter.
+
+Tests written in `test/travel-search.test.js` and
+`test/travel-location-picker.test.js`; the old picker source assertion in
+`test/travel-place-search.test.js` follows the new integration. **Not run:** the
+owner requested code, tests and text only, with permission before each next item.
+No build, browser verification, push or deployment in this pass. When verification
+is authorized, first run `npm test` in the site repository, then check the pickers
+with keyboard/touch and profile changes at desktop and phone widths.
+
 ## Release sprint ownership — 2026-09-29
 
 The owner authorizes any agent to implement release-sprint work in either repository.

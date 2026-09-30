@@ -38,6 +38,11 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 
 ## Priority list
 
+**Implementation pass (owner, 30 September):** write each requested fix, its tests and
+handoff/changelog text, but do not run tests, builds or browser verification in this pass.
+Record verification as pending. After each item, stop and ask the owner before starting
+the next. This overrides the execution of checks in the routine below for this pass.
+
 Each item ends the same way: tests (at least three edge cases for a logic change),
 `npm test`, a changelog entry if visitors will notice it (CHANGELOG.md and the public page,
 before the commit; AGENTS.md "Changelog first"), a local commit. Deploy whenever the owner says, per DEPLOYMENT.md, then

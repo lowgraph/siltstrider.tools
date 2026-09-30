@@ -32,7 +32,6 @@ import {
   doorChain,
   isPlace,
   placeFromSave,
-  matchPlaces,
   roomsThrough,
   PLACE_PREFIX,
   CELL
@@ -41,6 +40,8 @@ import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-t
 import { readRouteLink, writeRouteLink } from "../../../lib/travel-link.mjs";
 import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../../lib/travel-movement.mjs";
 import TransitMap from "./transit-map";
+import TravelLocationPicker from "./travel-location-picker";
+import { buildTravelSearchOptions } from "../../../lib/travel-search.mjs";
 
 const POPULAR_HUBS = [
   { name: "Seyda Neen", desc: "Arrival Port", vanillaOnly: false },
@@ -65,8 +66,6 @@ export default function TravelWorkstation() {
   const gameData = useGameData('travel', { enabled: true });
   const [origin, setOrigin] = useState("Seyda Neen");
   const [destination, setDestination] = useState("Vivec");
-  const [originSearch, setOriginSearch] = useState("");
-  const [destSearch, setDestSearch] = useState("");
   const [mageGuild,setMageGuild] = useState(true);
   const [conjurer,setConjurer] = useState(false);
   const [objective, setObjective] = useState("hops");
@@ -245,7 +244,6 @@ export default function TravelWorkstation() {
     if (!saveOrigin || startedFrom === activeSave?.token) return;
     setStartedFrom(activeSave?.token ?? null);
     setOrigin(saveOrigin);
-    setOriginSearch("");
   }, [saveOrigin, activeSave, startedFrom]);
 
   const labelOf = useCallback((id) => {
@@ -321,7 +319,6 @@ export default function TravelWorkstation() {
     if (!intent || intent.kind !== "destination") return;
     if (availableStops.includes(intent.value)) {
       clearSearchIntent(intent);
-      setDestSearch("");
       handleDestinationChange(intent.value);
     } else if (gameData.status === "ready" || gameData.status === "error") {
       clearSearchIntent(intent);
@@ -335,30 +332,6 @@ export default function TravelWorkstation() {
     handleDestinationChange(prevOrigin);
   };
 
-  // Filtered stops for search
-  const filteredOriginStops = useMemo(() => {
-    if (!originSearch.trim()) return availableStops;
-    return availableStops.filter((s) =>
-      s.toLowerCase().includes(originSearch.toLowerCase())
-    );
-  }, [availableStops, originSearch]);
-
-  const filteredDestStops = useMemo(() => {
-    if (!destSearch.trim()) return availableStops;
-    return availableStops.filter((s) =>
-      s.toLowerCase().includes(destSearch.toLowerCase())
-    );
-  }, [availableStops, destSearch]);
-
-  // Any named place matching a search: tombs, caves, houses, shops, a town listed once.
-  // Needs Access to route.
-  const placeMatches = useCallback(
-    (query) => (access ? matchPlaces(places, query, { stops: availableStops }) : []),
-    [access, places, availableStops]
-  );
-  const originPlaces = useMemo(() => placeMatches(originSearch), [placeMatches, originSearch]);
-  const destPlaces = useMemo(() => placeMatches(destSearch), [placeMatches, destSearch]);
-  const sealed = useCallback((record) => record.interior && !placePoints(record.key, access).length, [access]);
   // How a room with no door out is reached: through its doors to a teleport's end or a
   // stop, if any; quest teleports only count when asked for on the route, so say so.
   const teleportEnds = useMemo(() => {
@@ -380,6 +353,19 @@ export default function TravelWorkstation() {
     }
     return way === "everyday" ? "inside, by teleport" : way === "quest" ? "inside, by quest teleport" : "inside, no way in known";
   }, [access, teleportEnds, gameData.data]);
+
+  // One list for both route ends. Keep canonical IDs so shared links, save origins,
+  // swaps and the router keep using the same stops and cells as before.
+  const locationOptions = useMemo(() => buildTravelSearchOptions({
+    stops: availableStops,
+    places,
+    settlements: gameData.data?.metadata?.Places?.settlements || [],
+    graph: routingGraph,
+    includePlaces: Boolean(access)
+  }).map((option) => option.record?.interior && !placePoints(option.record.key, access).length
+    ? { ...option, badge: sealedWay(option.record.key) }
+    : option), [availableStops, places, gameData.data, routingGraph, access, sealedWay]);
+  const locationLabels = useMemo(() => new Map(locationOptions.map((option) => [option.id, option.label])), [locationOptions]);
 
   // Compute route: fewest legs, least gold for this character, or fewest in-game hours.
   const planGraph = useMemo(() => {
@@ -677,7 +663,7 @@ export default function TravelWorkstation() {
           {saveOrigin && (
             <button
               type="button"
-              onClick={() => { handleOriginChange(saveOrigin); setOriginSearch(""); }}
+              onClick={() => handleOriginChange(saveOrigin)}
               className={`px-2.5 py-1 text-xs font-serif font-bold border transition-colors ${
                 origin === saveOrigin
                   ? "border-accent bg-surface-17 text-accent"
@@ -715,123 +701,24 @@ export default function TravelWorkstation() {
             Transit Itinerary Setup
           </h3>
 
-          {/* Origin Stop */}
-          <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="travel-origin-select" className="text-xs uppercase font-serif font-bold text-fg-7">
-                Origin Location
-              </label>
-              <span className="text-[10px] font-mono text-fg-13">
-                {filteredOriginStops.length} stops found
-              </span>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search origin location..."
-              aria-label="Search departure location"
-              value={originSearch}
-              onChange={(e) => setOriginSearch(e.target.value)}
-              className="w-full p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2 focus:border-accent outline-none"
-            />
-
-            <select
-              id="travel-origin-select"
-              value={origin}
-              onChange={(e) => handleOriginChange(e.target.value)}
-              className="w-full mw-select mw-scrollbar p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-              size={filteredOriginStops.length > 8 ? 6 : Math.max(3, filteredOriginStops.length)}
-            >
-              {isPlace(origin) && (
-                <option value={origin}>{labelOf(origin)}</option>
-              )}
-              {filteredOriginStops.map((stop) => (
-                <option key={stop} value={stop}>
-                  {stop}
-                </option>
-              ))}
-            </select>
-            {originPlaces.length > 0 && (
-              <div className="space-y-1">
-                <div className="text-[10px] font-serif font-bold uppercase text-fg-13">Places</div>
-                <ul className="max-h-48 overflow-y-auto mw-scrollbar border border-line-11 divide-y divide-line-11 m-0 p-0 list-none">
-                  {originPlaces.map((record) => (
-                    <li key={record.key}>
-                      <button
-                        type="button"
-                        onClick={() => { handleOriginChange(PLACE_PREFIX + record.key); setOriginSearch(""); }}
-                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 bg-transparent border-0 hover:bg-surface-9"
-                      >
-                        {record.name}{" "}
-                        <span className="text-[10px] text-fg-13">
-                          {record.interior ? (sealed(record) ? sealedWay(record.key) : "inside") : formatRegionName(record.region || "") || "outdoors"}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Destination Stop */}
-          <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="travel-destination-select" className="text-xs uppercase font-serif font-bold text-fg-7">
-                Destination Location
-              </label>
-              <span className="text-[10px] font-mono text-fg-13">
-                {filteredDestStops.length} stops found
-              </span>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search destination location..."
-              aria-label="Search destination location"
-              value={destSearch}
-              onChange={(e) => setDestSearch(e.target.value)}
-              className="w-full p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2 focus:border-accent outline-none"
-            />
-
-            <select
-              id="travel-destination-select"
-              value={destination}
-              onChange={(e) => handleDestinationChange(e.target.value)}
-              className="w-full mw-select mw-scrollbar p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-              size={filteredDestStops.length > 8 ? 6 : Math.max(3, filteredDestStops.length)}
-            >
-              {isPlace(destination) && (
-                <option value={destination}>{labelOf(destination)}</option>
-              )}
-              {filteredDestStops.map((stop) => (
-                <option key={stop} value={stop}>
-                  {stop}
-                </option>
-              ))}
-            </select>
-            {destPlaces.length > 0 && (
-              <div className="space-y-1">
-                <div className="text-[10px] font-serif font-bold uppercase text-fg-13">Places</div>
-                <ul className="max-h-48 overflow-y-auto mw-scrollbar border border-line-11 divide-y divide-line-11 m-0 p-0 list-none">
-                  {destPlaces.map((record) => (
-                    <li key={record.key}>
-                      <button
-                        type="button"
-                        onClick={() => { handleDestinationChange(PLACE_PREFIX + record.key); setDestSearch(""); }}
-                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 bg-transparent border-0 hover:bg-surface-9"
-                      >
-                        {record.name}{" "}
-                        <span className="text-[10px] text-fg-13">
-                          {record.interior ? (sealed(record) ? sealedWay(record.key) : "inside") : formatRegionName(record.region || "") || "outdoors"}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          <TravelLocationPicker
+            id="travel-origin"
+            label="Origin location"
+            value={origin}
+            valueLabel={locationLabels.get(origin) || labelOf(origin)}
+            options={locationOptions}
+            onChange={handleOriginChange}
+            disabled={gameData.status !== "ready"}
+          />
+          <TravelLocationPicker
+            id="travel-destination"
+            label="Destination location"
+            value={destination}
+            valueLabel={locationLabels.get(destination) || labelOf(destination)}
+            options={locationOptions}
+            onChange={handleDestinationChange}
+            disabled={gameData.status !== "ready"}
+          />
 
           <details className="calculation-notes">
             <summary>How this is calculated</summary>

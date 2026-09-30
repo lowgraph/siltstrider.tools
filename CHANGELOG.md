@@ -1,5 +1,9 @@
 # Changelog
 
+## Travel place search — 2026-09-30
+
+- **One search for each end of a journey:** towns, transit stops and named places now share one list. Towns and stops appear first, followed by outdoor locations and rooms such as "Balmora › Council Club". Pelagiad appears once even though it has no transit stop. Each result says how it is reached, and typing a search leaves the route unchanged until you choose a result.
+
 ## Privacy, sign-in and launch readiness — 2026-09-29
 
 - **Explanations when you need them:** each tool's calculation and rules notes now sit in a closed "How this is calculated" disclosure, with plainer wording and the formulas inside. Travel's route is easier to reach on a phone. The Cloud Vault explains when character data is uploaded and how many saves each account can keep.

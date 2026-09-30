@@ -49,8 +49,14 @@ test('with the staged bundle, Pelagiad appears once and Balmora only as its room
   assert.ok(balmora.length > 0 && balmora.every(p => p.interior), 'the town is a stop; its rooms are places');
 });
 
-test('the Travel pickers use the shared search and plain buttons, not the browser grey', () => {
+test('Travel uses one shared combobox at each route end, without duplicate stop/place lists', () => {
   const page = fs.readFileSync(path.join(ROOT, 'components', 'calculators', 'travel', 'travel-workstation.jsx'), 'utf8');
-  assert.match(page, /matchPlaces\(places, query, \{ stops: availableStops \}\)/);
-  assert.equal((page.match(/className="w-full text-left px-2 py-1\.5 text-xs font-serif text-fg-2 bg-transparent border-0 hover:bg-surface-9"/g) || []).length, 2, 'origin and destination');
+  assert.equal((page.match(/<TravelLocationPicker\b/g) || []).length, 2, 'origin and destination');
+  assert.match(page, /buildTravelSearchOptions/);
+  assert.doesNotMatch(page, /filteredOriginStops|filteredDestStops|originPlaces|destPlaces|stops found/);
+  assert.doesNotMatch(page, /travel-origin-select|travel-destination-select/);
+  const picker = fs.readFileSync(path.join(ROOT, 'components', 'calculators', 'travel', 'travel-location-picker.jsx'), 'utf8');
+  assert.match(picker, /role="combobox"/);
+  assert.match(picker, /role="listbox"/);
+  assert.match(picker, /bg-transparent/);
 });
