@@ -17,7 +17,7 @@ The branch remains unmerged and has not been deployed.
 | Theme | `theme`: `ashfall` or `morrowind` | Existing Modern/Morrowind theme IDs; defaults to Modern. |
 | Version update policy | `versionUpdates: { policy: "pinned", notify: true }` | Notify about supported new datasets; explicit upgrades only. Notifications can be disabled. |
 | Default scope | `defaultScope`: `global` or `dataset` | Shared defaults alone, or shared defaults with matching dataset-specific overrides. |
-| Travel objective | `toolDefaults.travel.objective`: `hops`, `time`, `gold` | Fewest legs, Fastest or Cheapest. Explicit links and current edits win. |
+| Travel objective | `toolDefaults.travel.objective`: `hops`, `time`, `gold`, `real` | Fewest legs, Fastest, Cheapest or Least real time. Explicit links and current edits win. |
 | Gear preferences | `toolDefaults.gear`: sparse boolean map | Theft, endgame gear early, near-start gear, Dark Brotherhood armor, quest rewards and difficult encounters. |
 | Challenge defaults | `toolDefaults.challenge`: sparse settings | Preset, difficulty bands, restriction count and objective count; shared seeds retain their choices. |
 
@@ -60,7 +60,7 @@ needs no additional columns.
 
 1. **Theme**: Modern or Morrowind, remembered across devices. Keep motion/text-size
    preferences device/system-aware unless the user explicitly overrides them.
-2. **Travel objective**: Fewest legs, Fastest or Cheapest, with optional walking and
+2. **Travel objective**: Fewest legs, Fastest, Cheapest or Least real time, with optional walking and
    quest-teleport defaults. Endpoints and follower counts usually belong to a
    particular journey, not an account default.
 3. **Version update policy**: pinned by default, notify when a newer supported

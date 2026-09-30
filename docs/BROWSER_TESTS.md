@@ -10,12 +10,17 @@ node scripts/test-browser.cjs --axe-path 'A:\Cache\audit-tools\node_modules\axe-
 
 Alternatively, set `BROWSER_AXE_PATH` to the installed `axe.min.js` and run
 `npm run test:browser`. No browser or audit dependency is downloaded. The runner
-accepts `--chrome`, `--url` (localhost only), `--suite all|matrix|travel|tools|settings`,
+accepts `--chrome`, `--url` (localhost only), `--suite all|matrix|travel|tools|settings|polish`,
 and `--filter` to run only case names containing a given string. `--fail-fast`
 stops after the first failed case; `--trace-network` saves request lifecycle
 events beside the report. Timeout messages retain the pending request URLs or
 CDP expression, and the report includes the font states used for navigation.
 Keep output under the configured cache, outside the checkout.
+The `polish` suite checks calculator navigation at 375, 900, 1024, 1366, 1440 and
+1920 px in both themes, including row fit beside the world switch. At 375/1366 px
+it checks the default journey, Least real time, obtainable apparatus in quality
+order, custom soul sizes and the Constant Effect threshold. The Travel network
+case also rejects a No Route/error flash while data is pending.
 
 The full suite checks 16 pages/tool views in Vanilla, TR and TR + ARCE at 1366 and
 375 pixels, in both themes: one page heading, horizontal overflow, WCAG 2/2.1 AA

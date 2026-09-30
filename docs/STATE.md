@@ -63,6 +63,11 @@ Cheapest computes a Fewest legs baseline from the same graph, player prices and
 resource budgets, then compares known fares, outdoor movement, transitions and legs.
 The comparison is derived state; changing options or endpoints recomputes it and
 never spends inventory. Fastest continues minimizing in-game hours.
+Least real time (`real` in shared links and account defaults) minimizes known
+outdoor movement seconds, then transport/spell transitions, legs, gold and hours.
+Unknown movement does not count as zero. Menus, loading and indoor movement remain
+uncounted; the UI explains the approximation. Unsaved unlinked visits start with
+Seyda Neen to Balmora. A pending network shows Loading instead of No Route.
 
 ## 2. Binary Codec (`lib/cloud-save-codec.mjs`) — `SLT1`
 

@@ -116,7 +116,8 @@ export default function EnchantingWorkstation() {
 
   // Handle Soul Gem change
   const handleSoulGemChange = (e) => {
-    const val = Number(e.target.value);
+    const input = Number(e.target.value);
+    const val = Number.isFinite(input) ? Math.max(0, Math.trunc(input)) : 0;
     setSoul(val);
     if (val < 400 && enchantType === "const") {
       setEnchantType("used");
@@ -367,7 +368,7 @@ export default function EnchantingWorkstation() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="enchant-soul-select" className="text-xs uppercase font-serif font-bold text-fg-7 block mb-1">
-                Soul Gem
+                Example soul
               </label>
               <select
                 id="enchant-soul-select"
@@ -375,12 +376,17 @@ export default function EnchantingWorkstation() {
                 value={soul}
                 onChange={handleSoulGemChange}
               >
+                {!SOUL_GEMS.some(g => g.soul === soul) && <option value={soul}>Custom soul ({soul})</option>}
                 {SOUL_GEMS.map((g) => (
                   <option key={g.name} value={g.soul}>
                     {g.name} ({g.soul} soul)
                   </option>
                 ))}
               </select>
+              <label htmlFor="enchant-soul-size" className="text-xs font-serif text-fg-7 block mt-2 mb-2">Trapped soul size</label>
+              <input id="enchant-soul-size" type="number" min="0" step="1" value={soul} onChange={handleSoulGemChange}
+                className="w-full p-2 text-xs bg-surface-1 border border-line-9 text-fg-2" aria-describedby="enchant-soul-help" />
+              <p id="enchant-soul-help" className="text-[11px] text-fg-9 mt-1">Use the trapped creature&apos;s soul size, which can be smaller than the gem&apos;s capacity.</p>
             </div>
 
             <div>

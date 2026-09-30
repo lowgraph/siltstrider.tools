@@ -189,6 +189,9 @@ test('loading and unavailable networks expose status and retry above closed sett
   try {
     const task = document.querySelector('section[aria-label="Plan a journey"]');
     assert.match(task.querySelector('[role="status"]').textContent, /Loading travel network/);
+    assert.match(route().textContent, /Loading route/);
+    assert.doesNotMatch(route().textContent, /No Route|not in the active network/);
+    assert.equal(route().querySelector('.text-danger-7'), null);
     assert.equal(document.getElementById('travel-origin').disabled, true);
     t.state.status = 'error';
     await t.render();
@@ -196,6 +199,20 @@ test('loading and unavailable networks expose status and retry above closed sett
     await click(button('Retry'));
     assert.equal(t.retries(), 1);
     assert.equal(document.getElementById('travel-options').open, false);
+  } finally { await t.cleanup(); }
+});
+
+test('an unsaved visit starts in Seyda Neen with Balmora as its destination', async () => {
+  const data=fixture();
+  data.catalogs.Places[1].name='Balmora';
+  data.metadata.Travel.nodes['exterior:8,0'].name='Balmora';
+  const t=await mount({data});
+  try {
+    assert.equal(document.getElementById('travel-origin').value,'Seyda Neen');
+    assert.equal(document.getElementById('travel-destination').value,'Balmora');
+    assert.ok(button('Least real time'));
+    await click(button('Least real time'));
+    assert.match(window.location.search,/plan=real/);
   } finally { await t.cleanup(); }
 });
 
@@ -380,7 +397,7 @@ function mixedJourney() {
 }
 
 test('TRV-7 shows real movement and clock time together, and Cheapest compares the same options', async () => {
-  const t = await mount({ data: mixedJourney() });
+  const t = await mount({ data: mixedJourney(), search: '?from=Seyda%20Neen&to=Vivec' });
   try {
     assert.match(route().textContent, /1 h in-game/);
     assert.match(route().textContent, /Real Time Approximation: no outdoor movement \+ 1 transport\/spell transition/);
@@ -404,7 +421,7 @@ test('TRV-7 shows real movement and clock time together, and Cheapest compares t
 test('TRV-7 unknown fares stay explicit and comparisons clear on endpoint changes or older catalogs', async () => {
   const data = mixedJourney();
   delete data.catalogs.Travel.at(-1).price;
-  const t = await mount({ data });
+  const t = await mount({ data, search: '?from=Seyda%20Neen&to=Vivec' });
   try {
     await click(button('Cheapest'));
     assert.match(document.querySelector('.travel-tradeoff').textContent, /fare comparison unavailable/);

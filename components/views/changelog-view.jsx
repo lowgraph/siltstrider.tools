@@ -16,6 +16,10 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Travel starts with Seyda Neen to Balmora without a save or shared route. Least real time favors less outdoor movement, then fewer transport or spell transitions; menus and loading remain uncounted. The route shows a loading message while its network arrives.</li>
+            <li>Alchemy removes Secretmaster apparatus from its picks and orders tools from strongest to weakest.</li>
+            <li>Enchanting lets you type the trapped soul&apos;s size, including 300 in a Grand Soul Gem. Constant Effect still needs at least 400.</li>
+            <li>Wide screens show Alchemy, Enchanting and Spellmaking directly; compact screens group all three under Calculators.</li>
             <li>Your account can remember your world, theme, Travel, Gear Advisor and Challenge defaults across devices. Choose shared or world-specific defaults, optionally override save-derived Travel toggles, and reset one tool or all settings. Shared links keep their choices; guests keep their own browser preferences.</li>
             <li>The first time you open the Character Builder, it starts on the premade builds, so you can pick one and change it instead of composing a class from nothing. &ldquo;Build my own instead&rdquo; goes straight to the Custom Class Builder, and later visits open as before.</li>
             <li>Home offers two equal ways to start: &ldquo;Start a character&rdquo; beside &ldquo;Load your save&rdquo;, instead of a small &ldquo;No save yet?&rdquo; link. On a phone, starting a character comes first.</li>

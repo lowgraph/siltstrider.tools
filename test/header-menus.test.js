@@ -40,7 +40,7 @@ test('Enter or Space (a click with detail 0) opens a menu on its first item; the
   await header(async () => {
     await keyboardClick(calc());
     assert.equal(calc().getAttribute('aria-expanded'), 'true');
-    assert.equal(focused(), 'Enchanting', 'the first item of Calculators');
+    assert.equal(focused(), 'Alchemy', 'the first item of Calculators');
     await key(document.activeElement, 'Escape');
     assert.equal(calc().getAttribute('aria-expanded'), 'false');
     assert.equal(document.activeElement, calc(), 'Escape returns to the button');
@@ -61,16 +61,16 @@ test('the arrow keys open on the first or last item, and on an open menu move st
     calc().focus();
     await key(calc(), 'ArrowDown');
     assert.equal(calc().getAttribute('aria-expanded'), 'true', 'still open');
-    assert.equal(focused(), 'Enchanting', 'ArrowDown on the open menu: its first item');
+    assert.equal(focused(), 'Alchemy', 'ArrowDown on the open menu: its first item');
     await key(document.activeElement, 'ArrowDown');
-    assert.equal(focused(), 'Spellmaking', 'and the menu moves as before');
+    assert.equal(focused(), 'Enchanting', 'and the menu moves as before');
   });
 });
 
 test('a keyboard click on an open menu closes it where you are; opening the other closes the first', async () => {
   await header(async () => {
     await keyboardClick(calc());
-    assert.equal(focused(), 'Enchanting');
+    assert.equal(focused(), 'Alchemy');
     await keyboardClick(calc());
     assert.equal(calc().getAttribute('aria-expanded'), 'false');
     assert.equal(document.activeElement, calc(), 'closing does not move focus anywhere else');

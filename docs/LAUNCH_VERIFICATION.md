@@ -541,3 +541,69 @@ browser reports, axe JSON and screenshots in `acc-main-11c1c96-settings-browser`
 `acc-main-11c1c96-tools-browser` and `acc-main-11c1c96-travel-browser`.
 Only the feature branch is prepared for owner review; no feature merge into main,
 remote D1 apply or deployment is authorized by this preparation.
+
+## 13. Small tool polish — 30 September 2026
+
+Owner request: branch from `mt-account-settings` and polish Travel, Alchemy,
+Enchanting and calculator navigation. Branch `launch/small-polish` starts at
+`db9def9` (`feature/account-settings-preparation`), retaining account settings,
+save choices and shared-link precedence.
+
+- Unsaved unlinked Travel starts Seyda Neen → Balmora. Least real time (`real`)
+  minimizes estimated outdoor movement, then transport/spell transitions, with
+  existing scroll/Magicka budgets. Unknown movement is not treated as zero.
+  Menus, loading screens and indoor movement remain uncounted. The objective
+  round-trips through links and account defaults. Pending routes show Loading;
+  real network errors keep Retry.
+- Alchemy's site adapter hides Secretmaster tools and sorts obtainable apparatus
+  by quality descending, with stable name/ID ties. Published catalog records are
+  unchanged; the Journeyman mortar and optional None defaults are retained.
+- Enchanting accepts typed soul sizes, including 300. Empty/negative values are
+  nonnegative, fractions become integer sizes, and Constant Effect remains gated
+  at 400; lowering the soul switches an active Constant choice to When Used.
+- Navigation exposes all three calculators directly at 1440/1920 px. At
+  375/900/1024/1366 px, all three live in Calculators. Both themes keep the wide
+  links and world switch on the same row, with no horizontal overflow. Rules use
+  `.topbar`; the old `#react-header-slot` wrapper is absent from this layout.
+- `npm test`: **887 passed**, zero failures/skips/todos. Added tests cover unknown
+  and invalid movement, equal-time ties, scroll exhaustion, apparatus identity
+  and quality ties, custom soul sizes and the 399/400 Constant boundary.
+- Full local Chrome suite: **153/153 passed**, **232 accessibility audits with
+  zero violations**, no runtime exceptions or unexpected server errors, and
+  **439 settled font checks**. Includes all profiles, both themes, 1366/375 px,
+  Builder/calculator/Faction Journal/Level Simulator/Travel interactions, saved
+  Travel options, synthetic account settings and the 24 new polish cases.
+  Final navigation alignment was also checked at all six widths in both themes.
+- `npm run build:cloudflare`: **passed**, 24 static pages with repository config
+  unchanged. This checkout has no production Clerk key; the build establishes
+  compilation/export, not real production sign-in or release packaging.
+- Pipeline synthetic suite: **670 passed**. Shared COORDINATION and roadmap files
+  match byte for byte; synchronization preserves every existing pipeline note.
+- Both player changelogs and the shared coordination/roadmap record are updated.
+  No exported bundle, data extraction or D1 operation is part of this polish.
+
+The first mobile navigation attempt failed twice because its selectors targeted
+the removed header wrapper. Only that attempt was reverted, and work stopped;
+the owner explicitly authorized continuing with the current model. The final
+selectors and responsive behavior passed. Old tests expecting a two-item
+calculator menu were updated for the requested three-item menu.
+
+Evidence under `A:/Cache`: `small-polish-tests-verified.log`,
+`small-polish-build-final.log`, `small-polish-full-browser` and
+`small-polish-nav-aligned`, with reports, screenshots, axe results and network
+traces. Tests remain local, signed out and synthetic; real account sign-in,
+Cloud Vault writes, payments and other browser engines are outside this pass.
+
+Parent integration — 30 September: the owner authorized merging `launch/small-polish`
+into `feature/account-settings-preparation` and pushing the parent. The clean parent
+and its remote both started at `db9def9`; the polish tip was `1ac7788`. The merge had
+no conflicts, and its application tree matches the polish branch. Re-ran `npm test`
+on the merged checkout: **887 passed**, zero failures/skips/todos. The unchanged
+Cloudflare build passed with 24 static pages. The decompiler synthetic suite passed
+**670 tests** again; shared coordination and roadmap contents are identical.
+Full merged-checkout Chrome suite: **153/153 passed**, **232 accessibility audits
+with zero violations**, no runtime/server errors and **439 settled font checks**.
+Merged-checkout evidence: `A:/Cache/small-polish-parent-unit.log`,
+`small-polish-parent-build.log`, `small-polish-parent-pipeline.log` and
+`small-polish-parent-browser`. The browser run uses this parent checkout's server at
+`http://127.0.0.1:8791`, separate from the original polish server.

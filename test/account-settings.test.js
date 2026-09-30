@@ -2,6 +2,14 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const load = () => import('../lib/account-settings.mjs');
 
+test('least real time is a stored objective and shared/current choices keep precedence', async () => {
+  const { validateAccountSettings, resolveAccountTravelOptions } = await load();
+  const settings=validateAccountSettings({version:1,toolDefaults:{travel:{objective:'real'}}});
+  assert.equal(resolveAccountTravelOptions({settings}).objective,'real');
+  assert.equal(resolveAccountTravelOptions({settings,linkOverrides:{objective:'time'}}).objective,'time');
+  assert.equal(resolveAccountTravelOptions({settings,linkOverrides:{objective:'time'},sessionOverrides:{objective:'real'}}).objective,'real');
+});
+
 test('settings supply fresh sparse defaults and keep contract version separate from mod version', async () => {
   const { defaultAccountSettings, validateAccountSettings } = await load();
   const defaults = defaultAccountSettings();

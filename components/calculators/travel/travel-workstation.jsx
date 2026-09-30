@@ -72,7 +72,7 @@ export default function TravelWorkstation() {
   const isTr = world === "tr";
   const gameData = useGameData('travel', { enabled: true });
   const [origin, setOrigin] = useState("Seyda Neen");
-  const [destination, setDestination] = useState("Vivec");
+  const [destination, setDestination] = useState("Balmora");
   const [mageGuild,setMageGuild] = useState(true);
   const [conjurer,setConjurer] = useState(false);
   const [objective, setObjective] = useState("hops");
@@ -448,6 +448,7 @@ export default function TravelWorkstation() {
     });
   }, [origin, destination, routingGraph, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells, gameData.data]);
   const usablePlan = useMemo(() => withInterventionResources(planGraph, spellAccess), [planGraph, spellAccess]);
+  const routePending = gameData.status === 'idle' || gameData.status === 'loading';
   const route = useMemo(() => {
     const planned = planRoute(origin, destination, usablePlan.graph, {
       objective: priced ? objective : "hops",
@@ -636,20 +637,22 @@ export default function TravelWorkstation() {
           </h3>
           <span
             className={`px-2.5 py-0.5 border text-xs font-mono font-bold ${
-              route.isValid
+              routePending
+                ? "border-line-9 bg-surface-9 text-fg-7"
+                : route.isValid
                 ? route.hops === 0
                   ? "border-line-9 bg-surface-9 text-fg-7"
                   : "border-success-line-4 bg-success-surface-2 text-success-3"
                 : "border-danger-line-3 bg-danger-surface-2 text-danger-7"
             }`}
           >
-            {route.isValid
+            {routePending ? "Loading route..." : route.isValid
               ? route.hops === 0
                 ? "At Destination"
                 : `${route.hops} ${route.hops === 1 ? "Leg" : "Legs"}${
                     route.totals?.goldKnown && priced ? ` · ${route.totals.gold} gold` : ""
                   }${route.totals?.hoursKnown && priced ? ` · ${formatDuration(route.totals.hours)} in-game` : ""}`
-              : "No Route"}
+              : gameData.status === 'error' ? "Network unavailable" : "No Route"}
           </span>
         </div>
 
@@ -682,7 +685,9 @@ export default function TravelWorkstation() {
           </div>
 
           {/* Turn by turn steps list */}
-          {route.isValid ? (
+          {routePending ? (
+            <p role="status" className="m-0 p-4 text-center text-sm font-serif text-fg-9">Loading travel network and planning your route...</p>
+          ) : route.isValid ? (
             route.steps.length === 0 ? (
               <div className="p-4 text-center text-sm font-serif text-fg-9 bg-surface-3 border border-line-11">
                 You are already at {labelOf(origin)}. No transit required.
@@ -770,7 +775,7 @@ export default function TravelWorkstation() {
             )
           ) : (
             <div className="p-4 text-center text-sm font-serif text-danger-7 bg-danger-surface-2 border border-danger-line-3">
-              {route.message || "No fast-travel route found between these locations."}
+              {gameData.status === 'error' ? "Travel network unavailable. Use Retry above to load it again." : route.message || "No fast-travel route found between these locations."}
             </div>
           )}
         </div>
@@ -1018,7 +1023,7 @@ export default function TravelWorkstation() {
             <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
             <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. Scrolls start unticked and each route is limited to the number carried; replanning does not change the save. Known spells default on only at an estimated cast chance of at least 75% with enough current Magicka. This is a planner default, not a game rule: you can include a lower or unknown chance explicitly. Zero chance or insufficient Magicka excludes the spell. Estimates use Mysticism, Willpower, Luck, the spell&apos;s published cost and saved fatigue (full fatigue if unavailable); temporary effects such as Silence are not modeled. When cost and current Magicka are available, spell legs share that Magicka budget. Otherwise the budget cannot be checked. Routes assume successful casts and no recovery during the journey.</li>
             <li>Walking uses your Speed, Athletics and carried weight. Routes avoid slopes steeper than 46°, pass through the Ghostgate and swim only near land. Constant Water Walking allows walking across water; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
-            <li>Real Time Approximation adds outdoor movement at your estimated run, swim or Levitate speed. Transport and spell transitions are counted separately because their menus and loading times vary. Combat, detours, pauses and movement indoors add time. Cheapest compares the fare and movement time with Fewest legs using the same options. Fastest still minimizes in-game time.</li>
+            <li>Real Time Approximation adds outdoor movement at your estimated run, swim or Levitate speed. Least real time minimizes that movement, then transport/spell transitions when movement times tie. Menus and loading times vary and are not counted, so this is an approximation. Combat, detours, pauses and movement indoors add time. Cheapest compares the fare and movement time with Fewest legs using the same options. Fastest still minimizes in-game time.</li>
             <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
             <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>
             <li>Mark and Recall are not included.</li>
