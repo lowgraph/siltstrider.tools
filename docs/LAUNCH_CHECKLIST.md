@@ -102,7 +102,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
 ### 4. Priority 4: After launch (organized by priority)
 
 #### 4.1 Core routing and builder workflow
-- [ ] **C** **TRV-2** One place search: replace the dual stop list and "Places" cell list with a single unified combobox per route end; rank towns and transit stops first, then named exteriors, then interiors grouped under their town ("Balmora › Council Club").
+- [ ] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; branch `launch/trv-2-unified-place-search`; tests will be written but not run, per owner) One place search: replace the dual stop list and "Places" cell list with a single unified combobox per route end; rank towns and transit stops first, then named exteriors, then interiors grouped under their town ("Balmora › Council Club").
 - [ ] **C** **TRV-4 & TRV-5** Task-first Travel with folded options: place Origin, Destination, and "Plan for" at the top with route results immediately below; fold character and transit options into a one-line summary disclosure; move transit rules to a closed footer disclosure.
 - [x] **C** **BLD-2** Automatic Gear Advisor (started 2026-09-29 21:30 UTC, C; done `5e36716`): compute gear recommendations automatically when character build attributes/skills change, and add a quick-jump link from the top of the builder ("Early gear for this build ↓").
 - [ ] **C** **TRV-6** Remembered choices & single-use scrolls: persist player modifications to save-derived options across visits for that save; treat Intervention scrolls as single-use consumables rather than permanent routing access; consider cast chance before assuming known spells are usable.
