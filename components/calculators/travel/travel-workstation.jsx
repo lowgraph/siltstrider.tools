@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -12,8 +12,6 @@ import {
   travelDisposition,
   adaptTravelGraph,
   addInterventionEdges,
-  interventionsFromSave,
-  interventionSources,
   saveMarks,
   interventionMarkText,
   guildFromSave,
@@ -42,6 +40,8 @@ import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../..
 import TransitMap from "./transit-map";
 import TravelLocationPicker from "./travel-location-picker";
 import { buildTravelSearchOptions } from "../../../lib/travel-search.mjs";
+import { travelSaveKey, readTravelOverrides, writeTravelOverrides, applyTravelOverrides } from "../../../lib/travel-options.mjs";
+import { interventionAccess, withInterventionResources } from "../../../lib/travel-intervention-access.mjs";
 
 const POPULAR_HUBS = [
   { name: "Seyda Neen", desc: "Arrival Port", vanillaOnly: false },
@@ -61,7 +61,7 @@ function FromSave({ children = "from your save" }) {
 export default function TravelWorkstation() {
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world } = useShell();
+  const { world, profile = world } = useShell();
   const isTr = world === "tr";
   const gameData = useGameData('travel', { enabled: true });
   const [origin, setOrigin] = useState("Seyda Neen");
@@ -81,40 +81,75 @@ export default function TravelWorkstation() {
   const [waterWalking, setWaterWalking] = useState(false);
   const [fromSave, setFromSave] = useState(null);
   const carryingData = useGameData('carrying', { enabled: Boolean(activeSave?.save) });
+  const saveKey = useMemo(() => travelSaveKey(activeSave?.save, profile), [activeSave?.save, profile]);
+  const optionEdits = useRef({ key: undefined, values: {} });
+  const [rememberedCount, setRememberedCount] = useState(0);
+  const [storageKept, setStorageKept] = useState(true);
+  const [optionsRevision, setOptionsRevision] = useState(0);
+  const spellAccess = useMemo(() => interventionAccess(activeSave?.save, {
+    spellRecords: carryingData.data?.catalogs?.Spells,
+    sheet: activeSave?.sheet
+  }), [activeSave?.save, activeSave?.sheet, carryingData.data]);
 
   // The save's own standing with the Mages Guild decides which guides will serve.
   const saveGuild = useMemo(() => (activeSave?.save ? guildFromSave(activeSave.save) : null), [activeSave]);
   const guildNotice = guildGuideNotice(saveGuild, mageGuild);
   // A loaded save says which intervention the character can cast (the spell or a scroll)
   // and what it carries; options still holding those values are labelled "from your save".
-  const saveSpells = useMemo(() => (activeSave?.save ? interventionsFromSave(activeSave.save) : null), [activeSave]);
-  const saveSources = useMemo(() => (activeSave?.save ? interventionSources(activeSave.save) : null), [activeSave]);
+  const saveSpells = useMemo(() => (activeSave?.save ? Object.fromEntries(
+    Object.entries(spellAccess).map(([kind, option]) => [kind, option.defaultEnabled])
+  ) : null), [activeSave?.save, spellAccess]);
+  const saveSources = useMemo(() => (activeSave?.save ? Object.fromEntries(
+    Object.entries(spellAccess).map(([kind, option]) => [kind, option.source])
+  ) : null), [activeSave?.save, spellAccess]);
   const savedItems = useMemo(() => (activeSave?.save ? heldFromSave(activeSave.save) : null), [activeSave]);
   const marks = saveMarks(activeSave?.save ? { guild: saveGuild, spells: saveSpells } : null, { mageGuild, conjurer, spells });
 
-  useEffect(() => {
-    if (activeSave?.save) {
-      setSpells(saveSpells);
-      setHeld(savedItems);
-      if (saveGuild) {
-        setMageGuild(saveGuild.mageGuild);
-        setConjurer(saveGuild.conjurer);
-      }
-    }
-  }, [activeSave, saveGuild, saveSpells, savedItems]);
-
-  useEffect(() => {
-    if (!activeSave?.save) { setFromSave(null); return; }
-    if (carryingData.status !== 'ready') return;
+  const saveLoad = useMemo(() => {
+    if (!activeSave?.save || carryingData.status !== 'ready') return null;
     const catalogs = carryingData.data?.catalogs || {};
     const items = itemIndex(catalogs);
     const { weight, unknown } = carriedWeight(activeSave.save, items);
     const effects = constantEffects(activeSave.save, items, { enchantments: catalogs.Enchantments, spells: catalogs.Spells });
-    setCarried(weight);
-    setLevitate(effects.levitate);
-    setWaterWalking(effects.waterWalking > 0);
-    setFromSave({ weight, unknown, ...effects });
+    return { weight, unknown, ...effects };
   }, [activeSave, carryingData.status, carryingData.data]);
+
+  // Apply fresh data as defaults, then edits. Late catalog loads must not retick
+  // an option, and a different save/profile must not inherit another save's edits.
+  useEffect(() => {
+    if (!activeSave?.save && optionEdits.current.key === saveKey) return;
+    if (optionEdits.current.key !== saveKey) {
+      optionEdits.current = { key: saveKey, values: readTravelOverrides(saveKey) };
+      setStorageKept(true);
+    }
+    const defaults = {
+      mageGuild: saveGuild?.mageGuild ?? true, conjurer: saveGuild?.conjurer ?? false,
+      divine: saveSpells?.divine ?? false, almsivi: saveSpells?.almsivi ?? false,
+      held: savedItems || new Set(), carried: saveLoad?.weight ?? 0,
+      levitate: saveLoad?.levitate ?? 0, waterWalking: (saveLoad?.waterWalking ?? 0) > 0
+    };
+    const restored = applyTravelOverrides(defaults, optionEdits.current.values);
+    setMageGuild(restored.mageGuild); setConjurer(restored.conjurer);
+    setSpells({ divine: restored.divine && spellAccess.divine.available, almsivi: restored.almsivi && spellAccess.almsivi.available });
+    setHeld(restored.held); setCarried(restored.carried);
+    setLevitate(restored.levitate); setWaterWalking(restored.waterWalking);
+    setFromSave(saveLoad);
+    setRememberedCount(Object.keys(optionEdits.current.values).length);
+  }, [saveKey, saveGuild, saveSpells, savedItems, saveLoad, activeSave?.save, optionsRevision, spellAccess]);
+
+  const rememberChoice = (key, value) => {
+    if (!activeSave?.save) return;
+    const previous = optionEdits.current.key === saveKey ? optionEdits.current.values : readTravelOverrides(saveKey);
+    const values = { ...previous, [key]: key === "held" ? { ...previous.held, ...value } : value };
+    optionEdits.current = { key: saveKey, values };
+    setStorageKept(writeTravelOverrides(saveKey, values));
+    setRememberedCount(Object.keys(values).length);
+  };
+  const resetSaveOptions = () => {
+    optionEdits.current = { key: saveKey, values: {} };
+    setStorageKept(writeTravelOverrides(saveKey, {}));
+    setOptionsRevision(value => value + 1);
+  };
 
   const liveNetworkGraph = useMemo(() => {
     if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Travel)) {
@@ -376,16 +411,18 @@ export default function TravelWorkstation() {
       nodes: gameData.data?.metadata?.Travel?.nodes || {}
     });
   }, [origin, destination, routingGraph, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells, gameData.data]);
+  const usablePlan = useMemo(() => withInterventionResources(planGraph, spellAccess), [planGraph, spellAccess]);
   const route = useMemo(() => {
-    const planned = planRoute(origin, destination, planGraph, {
+    const planned = planRoute(origin, destination, usablePlan.graph, {
       objective: priced ? objective : "hops",
-      goldOf: (edge) => journeyGold(edge, player, settings)
+      goldOf: (edge) => journeyGold(edge, player, settings),
+      resources: usablePlan.resources
     });
     if (planned.isValid) return planned;
     const shut = [origin, destination].find((id) => isPlace(id) && !placePoints(id.slice(PLACE_PREFIX.length), access).length);
     if (shut) return { ...planned, message: `No door leads out of ${labelOf(shut)}. It is reached by a script or a spell, if at all.` };
     return planned;
-  }, [origin, destination, planGraph, objective, priced, player, settings, access, labelOf]);
+  }, [origin, destination, usablePlan, objective, priced, player, settings, access, labelOf]);
   const routeSpellEdges = useMemo(() => (route.isValid ? route.steps : [])
     .filter((step) => step.spell || step.walk || step.teleport)
     .map((step) => {
@@ -458,7 +495,8 @@ export default function TravelWorkstation() {
     access && walking && carried > 0 ? `carrying ${carried}` : null,
     access && walking && levitate > 0 ? `Levitate ${levitate}` : null,
     access && walking && waterWalking ? "Water Walking" : null,
-    teleports && questTeleports ? "quest teleports on" : null
+    teleports && questTeleports ? "quest teleports on" : null,
+    rememberedCount > 0 ? "remembered choices" : null
   ].filter(Boolean).join(" · ");
 
   return (
@@ -626,12 +664,15 @@ export default function TravelWorkstation() {
                           : step.teleport
                           ? `${step.label} at ${labelOf(step.from)}${step.board ? `, ${step.board}` : ""}`
                           : <>
-                              {step.spell ? `Cast ${step.kind}` : `Take the ${step.kind}`}
+                              {step.scroll ? `Use a ${step.kind} scroll` : step.spell ? `Cast ${step.kind}` : `Take the ${step.kind}`}
                               {step.providerName ? ` (${step.providerName})` : ""} from {labelOf(step.from)}
                               {step.board ? `, ${step.board}` : ""}
                               {step.alight ? ` to ${labelOf(step.to)}, ${step.alight}` : ""}
                             </>}
                       </div>
+                      {step.scroll && <p className="text-[11px] text-warning-2 m-0">Uses 1 scroll; {step.remaining} remaining for this journey.</p>}
+                      {Number.isFinite(step.castChance) && <p className="text-[11px] text-warning-2 m-0">Estimated cast chance: {step.castChance}%. The route assumes success; a failed cast spends Magicka.</p>}
+                      {step.resource === "magicka" && <p className="text-[11px] text-fg-9 m-0">Uses {step.uses} Magicka; {Math.round(step.remaining)} remaining for this journey.</p>}
                       {step.stepNumber === route.steps.length && step.walk && isPlace(step.to) && doorChain(step.to.slice(PLACE_PREFIX.length), access).length > 0 && (
                         <div className="text-[11px] text-fg-9">
                           Go in by the doors: outside → {doorChain(step.to.slice(PLACE_PREFIX.length), access).reverse().map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}
@@ -724,20 +765,28 @@ export default function TravelWorkstation() {
           <span className="text-xs text-fg-9"> — {characterSummary}</span>
         </summary>
         <div className="space-y-4 pt-3">
+          {activeSave?.save && (
+            <div className="space-y-2 text-xs text-fg-9">
+              <p className="m-0">{storageKept ? "Changes to save-derived options are remembered in this browser for this save and profile." : "Browser storage is unavailable. These changes last until the page reloads."}</p>
+              <button type="button" className="mw-btn min-h-11 px-3 py-2" onClick={resetSaveOptions}>Use save defaults</button>
+            </div>
+          )}
           <fieldset className="border-0 m-0 p-0 space-y-3">
             <legend className="text-sm font-serif font-bold text-accent mb-2">Your character</legend>
             <div className="flex flex-wrap gap-4 text-sm">
-              <label><input type="checkbox" checked={mageGuild} onChange={event=>setMageGuild(event.target.checked)}/> Mages Guild member{marks.mageGuild && <FromSave />}</label>
-              {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>setConjurer(event.target.checked)}/> Conjurer rank or higher{marks.conjurer && <FromSave />}</label>}
+              <label><input type="checkbox" checked={mageGuild} onChange={event=>{ setMageGuild(event.target.checked); rememberChoice("mageGuild", event.target.checked); }}/> Mages Guild member{marks.mageGuild && <FromSave />}</label>
+              {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>{ setConjurer(event.target.checked); rememberChoice("conjurer", event.target.checked); }}/> Conjurer rank or higher{marks.conjurer && <FromSave />}</label>}
               {intervention && Object.entries(INTERVENTION_KINDS).map(([kind, label]) => (
                 <label key={kind} className="whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={spells[kind]}
-                    onChange={(event) => setSpells((prev) => ({ ...prev, [kind]: event.target.checked }))}
+                    disabled={!spellAccess[kind].available}
+                    onChange={(event) => { setSpells((prev) => ({ ...prev, [kind]: event.target.checked })); rememberChoice(kind, event.target.checked); }}
                   />{" "}
                   {label}
                   {marks[kind] && <FromSave>{interventionMarkText(saveSources?.[kind], spells[kind])}</FromSave>}
+                  {spellAccess[kind].note && <span className="block text-[11px] text-fg-9 whitespace-normal">{spellAccess[kind].note}</span>}
                 </label>
               ))}
               {access && (
@@ -749,7 +798,8 @@ export default function TravelWorkstation() {
                       min={0}
                       step="0.5"
                       value={carried}
-                      onChange={(event) => setCarried(Math.max(0, Number(event.target.value) || 0))}
+                      max={1000000}
+                      onChange={(event) => { const next = Math.max(0, Math.min(1000000, Number(event.target.value) || 0)); setCarried(next); rememberChoice("carried", next); }}
                       className="flex-none"
                       style={{ width: "5.5rem" }}
                     />
@@ -762,13 +812,13 @@ export default function TravelWorkstation() {
                       min={0}
                       max={100}
                       value={levitate}
-                      onChange={(event) => setLevitate(Math.max(0, Math.min(100, Math.trunc(Number(event.target.value) || 0))))}
+                      onChange={(event) => { const next = Math.max(0, Math.min(100, Math.trunc(Number(event.target.value) || 0))); setLevitate(next); rememberChoice("levitate", next); }}
                       className="flex-none"
                       style={{ width: "4.5rem" }}
                     />
                   </label>
                   <label className="whitespace-nowrap">
-                    <input type="checkbox" checked={waterWalking} onChange={(event) => setWaterWalking(event.target.checked)} /> Constant Water Walking
+                    <input type="checkbox" checked={waterWalking} onChange={(event) => { setWaterWalking(event.target.checked); rememberChoice("waterWalking", event.target.checked); }} /> Constant Water Walking
                   </label>
                 </>
               )}
@@ -812,11 +862,15 @@ export default function TravelWorkstation() {
                       <input
                         type="checkbox"
                         checked={held.has(item.id)}
-                        onChange={(event) => setHeld((prev) => {
-                          const next = new Set(prev);
-                          if (event.target.checked) next.add(item.id); else next.delete(item.id);
-                          return next;
-                        })}
+                        onChange={(event) => {
+                          const enabled = event.target.checked;
+                          setHeld((prev) => {
+                            const next = new Set(prev);
+                            if (enabled) next.add(item.id); else next.delete(item.id);
+                            return next;
+                          });
+                          rememberChoice("held", { [item.id]: enabled });
+                        }}
                       />
                       {item.name}
                       {held.has(item.id) && savedItems?.has(item.id) && <FromSave />}
@@ -903,7 +957,7 @@ export default function TravelWorkstation() {
             <li>Fares are estimates based on distance, followers and your Mercantile, Personality and Luck. The provider&apos;s disposition is estimated from their usual value, your Personality and whether you share a race. Factions, bounties and diseases can change the price in-game.</li>
             <li>Before haggling, the fare is distance ÷ 4,000, at least 1 gold, multiplied by 1 + the number of followers. Guild Guides use a base fare of 10 gold and take no time; other transport takes distance ÷ 16,000 in-game hours. Distance uses the game&apos;s units.</li>
             <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
-            <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. A loaded save selects known spells or carried scrolls; scrolls are one use, but the planner does not spend them.</li>
+            <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. Scrolls start unticked and each route is limited to the number carried; replanning does not change the save. Known spells default on only at an estimated cast chance of at least 75% with enough current Magicka. This is a planner default, not a game rule: you can include a lower or unknown chance explicitly. Zero chance or insufficient Magicka excludes the spell. Estimates use Mysticism, Willpower, Luck, the spell&apos;s published cost and saved fatigue (full fatigue if unavailable); temporary effects such as Silence are not modeled. When cost and current Magicka are available, spell legs share that Magicka budget. Otherwise the budget cannot be checked. Routes assume successful casts and no recovery during the journey.</li>
             <li>Walking uses your Speed, Athletics and carried weight. Routes avoid slopes steeper than 46°, pass through the Ghostgate and swim only near land. Constant Water Walking allows walking across water; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
             <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
             <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>

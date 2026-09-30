@@ -22,6 +22,33 @@ The application state is managed by `CharacterProvider` via `useActiveCharacter(
 
 ---
 
+### C. Travel choices for imported saves
+
+Travel stores edits to save-derived guild, Intervention, held-item, carrying and
+constant-movement options under `silt-travel-options-v1` in this browser. Entries
+are keyed by world profile and the SHA-256 of the uncompressed SLT1 save body, so
+reloads and cloud/local restores reuse the snapshot's choices despite new load
+tokens. A different snapshot or profile has its own edits. The store retains at
+most 20 snapshots and saves only validated player overrides, not copied defaults.
+Catalog arrivals apply fresh save defaults first, then overrides; denied storage
+retains edits for the current session and reports that they will not survive reload.
+“Use save defaults” removes only the current entry. Clearing the active save returns
+Travel's manual planner defaults. Route style/objective/followers are separate from
+save-derived overrides and remain governed by the route controls and shared link.
+
+Intervention availability reads saved Mysticism, Willpower, Luck, Fatigue and current
+Magicka with published Spells cost/alwaysSucceeds fields from the existing carrying
+feature. Known spells default on at an estimated chance of at least 75% with enough
+current Magicka; this threshold is a planner policy. Lower/unknown chances require
+explicit selection, while zero chance and insufficient Magicka are excluded.
+Scrolls default off and count positive integer inventory stacks. The route search
+tracks remaining scrolls by Intervention kind and a shared Magicka budget across
+all legs, including named places and teleport-connected places. Replanning starts
+from the snapshot's quantities without modifying the imported save. Routes assume
+successful casts and no Magicka recovery. Explicitly selected spells without cost
+or current Magicka data cannot have their Magicka budget checked. Temporary Silence and other unmodeled
+cast modifiers are excluded from the estimate.
+
 ## 2. Binary Codec (`lib/cloud-save-codec.mjs`) — `SLT1`
 
 To store comprehensive character saves within Cloudflare D1's row size constraints and localStorage, Silt Strider implements a specialized binary format:

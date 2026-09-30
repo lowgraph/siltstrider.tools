@@ -37,13 +37,13 @@ function fixture() {
   };
 }
 
-async function mount({ data = fixture(), status = 'ready', activeSave = null } = {}) {
+async function mount({ data = fixture(), status = 'ready', activeSave = null, storage = null, carryingData = null } = {}) {
   const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/travel' });
   Object.assign(global, { window: dom.window, document: dom.window.document, IS_REACT_ACT_ENVIRONMENT: true });
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator });
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage || dom.window.localStorage });
   let retries = 0;
-  const state = { data, status, world: 'vanilla' };
-  const carrying = { status: 'ready', data: { catalogs: {} } };
+  const state = { data, status, world: 'vanilla', activeSave, carrying: carryingData || { status: 'ready', data: { catalogs: {} } } };
   // Picker keyboard behavior has its own tests. These adapters exercise the real
   // workstation's state, route engine and map callback without rendering SVG.
   function Picker({ id, label, value, options, onChange, disabled }) {
@@ -52,10 +52,10 @@ async function mount({ data = fixture(), status = 'ready', activeSave = null } =
     }, ...options.map(option => React.createElement('option', { key: option.id, value: option.id }, option.label))));
   }
   const deps = {
-    '../../character-context': { useActiveCharacter: () => ({ build: { race: 'Breton', className: 'Custom' }, sheet: null, activeSave }) },
+    '../../character-context': { useActiveCharacter: () => ({ build: { race: 'Breton', className: 'Custom' }, sheet: null, activeSave: state.activeSave }) },
     '../../shell-context': { useShell: () => ({ world: state.world }) },
     '../../use-game-data': { useGameData: tool => tool === 'carrying'
-      ? carrying
+      ? state.carrying
       : { status: state.status, data: state.data, retry: () => retries++ } },
     '../../use-search-intent': { useSearchIntent: () => null },
     './travel-location-picker': Picker,
@@ -76,7 +76,7 @@ async function mount({ data = fixture(), status = 'ready', activeSave = null } =
   await render();
   return {
     state, render, retries: () => retries,
-    cleanup: async () => { await React.act(async () => root.unmount()); dom.window.close(); }
+    cleanup: async () => { await React.act(async () => root.unmount()); delete globalThis.localStorage; dom.window.close(); }
   };
 }
 
@@ -216,5 +216,105 @@ test('older unpriced and empty bundles do not show unsupported objectives or sta
     assert.match(route().textContent, /No Route/);
     assert.equal(document.getElementById('travel-options').open, false);
     assert.equal(document.querySelector('[data-testid="map"]'), null);
+  } finally { await t.cleanup(); }
+});
+
+function memoryStorage() {
+  const records = new Map();
+  return { getItem: key => records.get(key) ?? null, setItem: (key, value) => records.set(key, value) };
+}
+function savedTraveller(name = 'Traveller', spells = ['divine intervention'], inventory = []) {
+  return { token: 1, sheet: { skills: { Mysticism: { v: 40 } }, attrs: { Willpower: { v: 40 }, Luck: { v: 40 } } },
+    save: { identity: { name }, vitals: { magicka: { current: 40, max: 40 }, fatigue: { current: 100, max: 100 } },
+      progress: { factions: [{ id: 'Mages Guild', rank: 0 }] }, stuff: { spells, inventory } } };
+}
+const spellCatalog = { status: 'ready', data: { catalogs: { Spells: [{ key: 'divine intervention', type: 'spell', cost: 8 }] } } };
+
+test('TRV-6 retains unchecked spells, removed items and carrying edits through reload and new load tokens', async () => {
+  const storage = memoryStorage(), activeSave = savedTraveller('Traveller', ['divine intervention'], [{ id: 'test_index', count: 1 }]);
+  let t = await mount({ activeSave, storage, carryingData: spellCatalog });
+  try {
+    assert.equal(input('Divine Intervention').checked, true);
+    assert.equal(input('Test Propylon Index').checked, true);
+    await click(input('Divine Intervention'));
+    await click(input('Test Propylon Index'));
+    await click(input('Mages Guild member'));
+    await type(input('Carrying'), '12.5');
+    assert.match(summary(), /remembered choices/);
+  } finally { await t.cleanup(); }
+  t = await mount({ activeSave: { ...activeSave, token: 99 }, storage, carryingData: spellCatalog });
+  try {
+    assert.equal(input('Divine Intervention').checked, false);
+    assert.equal(input('Test Propylon Index').checked, false);
+    assert.equal(input('Mages Guild member').checked, false);
+    assert.equal(input('Carrying').value, '12.5');
+    assert.doesNotMatch(input('Divine Intervention').closest('label').textContent, /from your save/);
+    await click(button('Use save defaults'));
+    assert.equal(input('Divine Intervention').checked, true);
+    assert.equal(input('Test Propylon Index').checked, true);
+    assert.equal(input('Mages Guild member').checked, true);
+    assert.equal(input('Carrying').value, '0');
+    assert.doesNotMatch(summary(), /remembered choices/);
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-6 isolates another save and profile, and late catalogs do not overwrite edits', async () => {
+  const activeSave = savedTraveller(), storage = memoryStorage();
+  const t = await mount({ activeSave, storage, carryingData: { status: 'loading', data: null } });
+  try {
+    await click(input('Mages Guild member'));
+    await type(input('Carrying'), '14');
+    t.state.carrying = spellCatalog;
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, false);
+    assert.equal(input('Carrying').value, '14');
+    t.state.activeSave = savedTraveller('Another traveller');
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, true);
+    assert.equal(input('Carrying').value, '0');
+    t.state.activeSave = activeSave;
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, false);
+    t.state.world = 'tr';
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, true);
+    t.state.world = 'vanilla';
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, false);
+    t.state.activeSave = null;
+    await t.render();
+    assert.equal(input('Mages Guild member').checked, true, 'clearing the save returns planner defaults');
+    assert.equal(input('Divine Intervention').checked, false);
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-6 scroll routes show a finite use and recomputing does not spend the save inventory', async () => {
+  const data = fixture(), cell = 'exterior:0,0';
+  data.catalogs.Intervention = [{ key: cell, divine: 0 }];
+  data.metadata.Intervention.markers.divine = [{ town: 'Vivec', cell: 'exterior:8,0', name: 'Vivec, Shrine' }];
+  const activeSave = savedTraveller('Scroll traveller', [], [{ id: 'sc_divineintervention', count: 1 }]);
+  const t = await mount({ data, activeSave });
+  try {
+    const box = input('Divine Intervention');
+    assert.equal(box.checked, false);
+    assert.match(box.closest('label').textContent, /1 use per journey/);
+    await click(box);
+    assert.match(route().textContent, /Use a Divine Intervention scroll/);
+    assert.match(route().textContent, /Uses 1 scroll; 0 remaining/);
+    await click(button('Fastest'));
+    assert.match(route().textContent, /Uses 1 scroll; 0 remaining/);
+    assert.equal(activeSave.save.stuff.inventory[0].count, 1);
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-6 denied storage keeps choices in this session across catalog updates and explains the limit', async () => {
+  const denied = { getItem() { throw Error('blocked'); }, setItem() { throw Error('blocked'); } };
+  const t = await mount({ activeSave: savedTraveller(), storage: denied, carryingData: spellCatalog });
+  try {
+    await click(input('Divine Intervention'));
+    t.state.carrying = { ...spellCatalog, data: { catalogs: { ...spellCatalog.data.catalogs } } };
+    await t.render();
+    assert.equal(input('Divine Intervention').checked, false);
+    assert.match(document.getElementById('travel-options').textContent, /These changes last until the page reloads/);
   } finally { await t.cleanup(); }
 });

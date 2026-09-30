@@ -1,5 +1,41 @@
 # Coordination
 
+## TRV-6: remembered choices and finite Intervention — 2026-09-30
+
+Implemented on `launch/trv-2-unified-place-search`. No exported schema or extraction
+changes. `lib/travel-options.mjs` keys browser overrides by profile plus SHA-256 of
+the uncompressed SLT1 snapshot, rather than the load token that changes on reload.
+Only edits to save-derived options are stored; validated entries are bounded to
+20 snapshots. Save defaults and later catalog loads are overlaid by edits. Reset
+clears this snapshot/profile only; denied storage retains this session's edits.
+Clearing the save restores manual planner defaults. Existing save provenance marks
+remain beside controls; the options disclosure explains local retention and reset.
+
+`lib/travel-intervention-access.mjs` reads published Spells from the existing
+carrying feature, saved stats/fatigue/current Magicka, and positive integer scroll
+stacks. Scrolls start off; selected scroll edges spend one use. Known spell defaults
+require at least 75% estimated cast chance and enough current Magicka. The threshold
+is a planner policy; lower/unknown chances can be selected explicitly, zero chance
+or insufficient Magicka cannot. Missing catalogs never fabricate a reliable chance.
+Routes state the chance and remaining scroll uses; the footer describes full-fatigue
+fallback, unmodeled temporary effects, assumed successful casts and no recovery.
+
+`planRoute` accepts optional resource budgets and keeps distinct states for paths
+that conserve different resources. Annotating the final graph covers stop, named
+place and teleport-connected Intervention edges. Both spell kinds share current
+Magicka when published cost and current Magicka are known; scroll counts are separate
+by kind. Unknown-data spell choices cannot have their Magicka budget verified.
+No replanning mutates inventory/vitals.
+Published Spells `cost`, `alwaysSucceeds`, `type`, and canonical Intervention IDs
+are assumed; no new loader catalog or rebuild is required.
+
+16 new tests written: four persistence/validation cases, eight consumable/casting
+and route cases, and four workstation cases added to `travel-task-layout.test.js`.
+Tests, build and browser verification **not run** in this implementation pass, per
+owner workflow. First future check: `npm test` in the site repository, then verify
+reload/save/profile switching, reset, scroll routes and cast notices on desktop
+and phone widths. No push/deploy. Ask before the next checklist item.
+
 ## TRV-4 & TRV-5: journey before options — 2026-09-30
 
 Implemented on `launch/trv-2-unified-place-search`, retaining TRV-2's pickers.
