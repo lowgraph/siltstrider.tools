@@ -38,6 +38,7 @@
 - **The Gear Advisor works on its own:** it recommends gear as soon as you change your character, without pressing Optimize Gear, and says what kind of character it read (a warrior, say). "Early gear for this build ↓" at the top of the Character Builder jumps down to it. Its item lists load as you scroll near it, so the Builder opens as quickly as before.
 - **Your own numbers in the calculators:** Alchemy, Enchanting and Spellmaking say whose skill and attributes they use ("Using Breton Custom: Alchemy 25") and let you type other numbers, from 0 to 1000, without building a character first. Numbers you type stay, even when you switch world, until "Reset to character sheet" (it used to say "Ingest Character Stats") puts your character's back.
 - **Save a character without an account:** "Save this character" in the Character Builder keeps it in this browser, and the list below loads or deletes it. The Cloud Vault's Local Browser Saves tab shows the same characters, ready to sync to your account. If the browser does not let the site keep data (some private windows), the button says so.
+- **More small print you can read:** the Equipped Loadouts' slot counts and empty slots, the Faction Journal's ranks you have not reached, Travel's stop labels and the Level Simulator's preset descriptions were too faint against their panels and are brighter, in both themes. Screen readers now name each Challenge Runs objective's checkbox.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 

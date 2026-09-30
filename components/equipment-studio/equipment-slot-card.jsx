@@ -189,7 +189,7 @@ export const EquipmentSlotCard = memo(function EquipmentSlotCard({
           className={`flex items-center justify-center w-8 h-8 flex-shrink-0 border transition-colors ${
             isEquipped
               ? "bg-surface-13 border-line-4 text-accent group-hover:border-accent"
-              : "bg-surface-1 border-line-12 text-fg-17"
+              : "bg-surface-1 border-line-12 text-fg-14"
           }`}
         >
           <SlotGlyph slot={slot} />
@@ -223,7 +223,7 @@ export const EquipmentSlotCard = memo(function EquipmentSlotCard({
                 {restrictionReason || "Beast Restricted"}
               </span>
             ) : (
-              <span className="font-serif text-xs italic text-fg-17">
+              <span className="font-serif text-xs italic text-fg-14">
                 Empty
               </span>
             )}

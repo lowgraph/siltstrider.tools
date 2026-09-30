@@ -368,7 +368,7 @@ export default function CloudVaultModal({
               ) : filteredCloudSaves.length === 0 ? (
                 <div className="text-center py-10 text-fg-14 font-serif text-sm space-y-1">
                   <p>No cloud saves found in this category.</p>
-                  <p className="text-xs text-fg-16">
+                  <p className="text-xs text-fg-14">
                     Save your active build above or drop an OpenMW .omwsave file to get started.
                   </p>
                 </div>

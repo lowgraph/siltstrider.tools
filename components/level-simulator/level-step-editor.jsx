@@ -88,7 +88,7 @@ export default function LevelStepEditor({
             onClick={() => onApplyStrategy("auto")}
           >
             <span className="text-fg-2 text-sm">Auto-Calculate Optimal Build</span>
-            <span className="text-[10px] text-fg-11 font-sans font-normal mt-0.5">
+            <span className="text-[10px] text-fg-9 font-sans font-normal mt-0.5">
               Rushes Endurance to 100 first for max HP, then auto-solves secondary attributes with 5x multipliers.
             </span>
           </button>
@@ -100,7 +100,7 @@ export default function LevelStepEditor({
             onClick={() => onApplyStrategy("rush_endurance")}
           >
             <span className="text-fg-2">Rush Endurance (+5)</span>
-            <span className="block text-[10px] text-fg-11 font-sans font-normal mt-0.5">
+            <span className="block text-[10px] text-fg-9 font-sans font-normal mt-0.5">
               Guarantees +5 Endurance every level until 100.
             </span>
           </button>
@@ -112,7 +112,7 @@ export default function LevelStepEditor({
             onClick={() => onApplyStrategy("triple_5")}
           >
             <span className="text-fg-2">Triple +5 (+5/+5/+5)</span>
-            <span className="block text-[10px] text-fg-11 font-sans font-normal mt-0.5">
+            <span className="block text-[10px] text-fg-9 font-sans font-normal mt-0.5">
               Pure min-maxing with 3x +5 attribute multipliers.
             </span>
           </button>
@@ -124,7 +124,7 @@ export default function LevelStepEditor({
             onClick={() => onApplyStrategy("efficient_luck")}
           >
             <span className="text-fg-2">Efficient (+5/+5/+1 Luck)</span>
-            <span className="block text-[10px] text-fg-11 font-sans font-normal mt-0.5">
+            <span className="block text-[10px] text-fg-9 font-sans font-normal mt-0.5">
               Two +5 bonuses plus steady +1 Luck every level.
             </span>
           </button>
@@ -134,7 +134,7 @@ export default function LevelStepEditor({
             onClick={onResetPlan}
           >
             <span>Reset to Level 1</span>
-            <span className="block text-[10px] text-fg-11 font-sans font-normal mt-0.5">
+            <span className="block text-[10px] text-fg-9 font-sans font-normal mt-0.5">
               Clears progression back to starting sheet.
             </span>
           </button>

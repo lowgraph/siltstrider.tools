@@ -82,6 +82,7 @@ export default function MinorObjectivesChecklist({
                   checked={isDone}
                   onChange={() => toggleCheck(i)}
                   className="mt-1 accent-accent cursor-pointer"
+                  aria-label={text}
                   onClick={(e) => e.stopPropagation()}
                 />
                 <div className="flex-1">

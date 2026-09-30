@@ -54,7 +54,7 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
             <span className="text-xs uppercase tracking-wider font-serif font-bold text-fg-14">
               Total Armor Rating
             </span>
-            <span className="text-[10px] font-mono text-fg-16">
+            <span className="text-[10px] font-mono text-fg-14">
               Morrowind Weighted
             </span>
           </div>
@@ -159,7 +159,7 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
             </div>
           </div>
         ) : (
-          <div className="py-2 text-center text-xs font-serif italic text-fg-16">
+          <div className="py-2 text-center text-xs font-serif italic text-fg-14">
             No weapon equipped in main hand (Hand-to-Hand active).
           </div>
         )}
@@ -176,7 +176,7 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
           <span className="text-xs uppercase tracking-wider font-serif font-bold text-fg-14">
             Active Constant Effects
           </span>
-          <span className="text-[10px] font-mono text-fg-16">
+          <span className="text-[10px] font-mono text-fg-14">
             {constantEffects.length} Passive{constantEffects.length === 1 ? "" : "s"}
           </span>
         </div>
@@ -204,7 +204,7 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
             ))}
           </div>
         ) : (
-          <div className="py-2 text-center text-xs font-serif italic text-fg-16">
+          <div className="py-2 text-center text-xs font-serif italic text-fg-14">
             No constant effect enchanted items currently equipped.
           </div>
         )}

@@ -412,7 +412,7 @@ export default function EnchantingWorkstation() {
                       enchantType === t.id
                         ? "bg-surface-18 border-accent text-accent"
                         : t.disabled
-                        ? "bg-surface-2 border-line-12 text-fg-17 cursor-not-allowed"
+                        ? "bg-surface-2 border-line-12 text-fg-14 cursor-not-allowed"
                         : "bg-surface-3 border-line-9 text-fg-13 hover:text-accent"
                     }`}
                     onClick={() => setEnchantType(t.id)}

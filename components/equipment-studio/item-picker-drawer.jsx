@@ -263,7 +263,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
                   );
                 })
               ) : (
-                <div className="py-8 text-center text-xs font-serif italic text-fg-16">
+                <div className="py-8 text-center text-xs font-serif italic text-fg-14">
                   No items found matching your filters.
                 </div>
               )}

@@ -684,7 +684,7 @@ export default function TravelWorkstation() {
                   : "border-line-9 bg-surface-3 text-fg-9 hover:border-line-1 hover:text-fg-2"
               }`}
             >
-              {labelOf(saveOrigin)} <span className="text-[10px] opacity-75">(where {activeSave?.save?.identity?.name || "your save"} stands)</span>
+              {labelOf(saveOrigin)} <span className="text-[10px]">(where {activeSave?.save?.identity?.name || "your save"} stands)</span>
             </button>
           )}
           {POPULAR_HUBS.filter((h) => !h.trOnly || isTr).map((hub) => {
@@ -700,7 +700,7 @@ export default function TravelWorkstation() {
                     : "border-line-9 bg-surface-3 text-fg-9 hover:border-line-1 hover:text-fg-2"
                 }`}
               >
-                {hub.name} <span className="text-[10px] opacity-75">({hub.desc})</span>
+                {hub.name} <span className="text-[10px]">({hub.desc})</span>
               </button>
             );
           })}

@@ -50,6 +50,7 @@ export default function ChangelogView() {
             <li>The Gear Advisor recommends gear as soon as you change your character, and &ldquo;Early gear for this build &darr;&rdquo; at the top of the Character Builder jumps down to it.</li>
             <li>Alchemy, Enchanting and Spellmaking let you type your own skill and attribute numbers; they stay when you switch world, until &ldquo;Reset to character sheet&rdquo; puts your character&apos;s back.</li>
             <li>&ldquo;Save this character&rdquo; in the Character Builder keeps a character in this browser, no account needed; the list below it loads or deletes them.</li>
+            <li>Faint small print in Equipped Loadouts, the Faction Journal, Travel and the Level Simulator is brighter, and Challenge Runs objective checkboxes are named for screen readers.</li>
           </ul>
         </section>
 
