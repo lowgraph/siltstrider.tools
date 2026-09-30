@@ -73,7 +73,7 @@ export default function MinorObjectivesChecklist({
               <li
                 key={i}
                 className={`p-2.5 bg-surface-5 border transition-colors flex items-start gap-3 cursor-pointer select-none ${
-                  isDone ? "border-success-line-5 bg-success-surface-1/40 opacity-75" : "border-line-11 hover:border-line-7"
+                  isDone ? "border-success-line-5 bg-success-surface-1/40" : "border-line-11 hover:border-line-7"
                 }`}
                 onClick={() => toggleCheck(i)}
               >

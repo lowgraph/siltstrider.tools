@@ -3,6 +3,7 @@
 ## Easier first steps — 2026-09-30
 
 - **Premade builds first for newcomers:** the first time you open the Character Builder, it starts on the Premade Builds Catalog, since picking a build and changing it is easier than composing a class from nothing. "Build my own instead" goes straight to the Custom Class Builder. After that first visit, or with a shared link, a loaded save or a saved character, the Builder opens as before.
+- **Two more bits of small print you can read:** for a Khajiit or Argonian, the Equipped Loadouts' Boots slot and its "Beast races cannot wear boots" were faded almost to the background; and a ticked Challenge Runs objective was faded as well as struck through. Both are readable now, in both themes.
 
 ## Privacy, sign-in and launch readiness — 2026-09-29
 

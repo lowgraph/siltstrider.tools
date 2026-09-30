@@ -55,7 +55,39 @@ test("Level Simulator preset descriptions are fg-9, which passes on the selected
   }
 });
 
-test('each minor objective checkbox is named by its objective', async () => {
+// Found live after the 15:46 release, when the random start drew a beast race: the Boots slot
+// was faded to half (2.2:1) and its reason, in danger-8, to 1.9:1.
+test('a slot a beast race cannot use is not faded, and its reason reads on its panel', async () => {
+  const file = path.join(ROOT, 'components/equipment-studio/equipment-slot-card.jsx');
+  const built = require('esbuild').buildSync({ entryPoints: [file], bundle: true, write: false, platform: 'node', format: 'cjs', jsx: 'automatic', external: ['react', 'react/jsx-runtime'] });
+  const m = new Module(file, module); m.paths = module.paths; m._compile(built.outputFiles[0].text, file);
+  const Card = m.exports.default;
+  const { renderToStaticMarkup } = require('react-dom/server');
+  const render = (props) => {
+    const host = new JSDOM(`<div>${renderToStaticMarkup(React.createElement(Card, { onSelectSlot() {}, onUnequipSlot() {}, ...props }))}</div>`).window.document.body.firstChild.firstChild;
+    return { card: host, reason: host.querySelector('.italic') };
+  };
+  // Boots, which no beast race can wear: nothing faded, the reason in a red that passes.
+  const boots = render({ slot: 'Boots', isRestricted: true, restrictionReason: 'Beast races cannot wear boots' });
+  assert.doesNotMatch(boots.card.className, /opacity-\d+/);
+  assert.equal(boots.reason.textContent.trim(), 'Beast races cannot wear boots');
+  assert.match(boots.reason.className, /\btext-danger-7\b/);
+  // A closed helmet already worn by a beast race: the item's name is shown, not faded either.
+  const helmet = render({ slot: 'Helmet', item: { id: 'iron_helmet', name: 'Iron Helmet' }, isRestricted: true, restrictionReason: 'Closed helmets incompatible with beast races' });
+  assert.doesNotMatch(helmet.card.className, /opacity-\d+/);
+  assert.match(helmet.card.textContent, /Iron Helmet/);
+  assert.equal(helmet.card.getAttribute('title'), 'Closed helmets incompatible with beast races');
+  // No reason given: the fallback still reads.
+  assert.equal(render({ slot: 'Boots', isRestricted: true }).reason.textContent.trim(), 'Beast Restricted');
+  for (const [theme, file] of THEMES) {
+    const surface = token(file, 'danger-surface-1');
+    assert.ok(ratio(token(file, 'danger-7'), surface) >= 4.5, `${theme} danger-7 on the restricted slot`);
+    assert.ok(ratio(token(file, 'fg-14'), surface) >= 4.5, `${theme} the slot's name there`);
+    assert.ok(ratio(token(file, 'danger-8'), surface) < 4.5, `${theme} danger-8 there is why it changed`);
+  }
+});
+
+test('each minor objective checkbox is named by its objective, and a ticked one is not faded', async () => {
   const file = path.join(ROOT, 'components/challenge-runs/minor-objectives-checklist.jsx');
   const built = require('esbuild').buildSync({ entryPoints: [file], bundle: true, write: false, platform: 'node', format: 'cjs', jsx: 'automatic', external: ['react', 'react/jsx-runtime'] });
   const m = new Module(file, module); m.paths = module.paths; m._compile(built.outputFiles[0].text, file);
@@ -71,6 +103,15 @@ test('each minor objective checkbox is named by its objective', async () => {
     assert.equal(boxes[0].getAttribute('aria-label'), 'Join the Fighters Guild', 'a plain string objective');
     assert.equal(boxes[1].getAttribute('aria-label'), 'Find the Dwemer Puzzle Box', 'an objective object');
     assert.ok(boxes.every((b) => b.hasAttribute('aria-label')), 'no checkbox is left without a name');
+    // Ticked, it is struck through, not faded: at 75% it measured 4.05 to 4.37:1 live.
+    await React.act(async () => boxes[0].click());
+    const done = boxes[0].closest('li');
+    assert.equal(boxes[0].checked, true);
+    assert.doesNotMatch(done.className, /opacity-\d+/);
+    assert.match(done.querySelector('.line-through').className, /\btext-success-6\b/);
+    for (const [theme, file] of THEMES) {
+      assert.ok(ratio(token(file, 'success-6'), token(file, 'surface-5')) >= 4.5, `${theme} success-6 on a ticked objective`);
+    }
   } finally {
     await React.act(async () => root.unmount());
     dom.window.close();
