@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { AccountProvider } from './account-context';
+import { AccountSettingsProvider } from './account-settings-context';
 import AccountPage from './account-page';
 import SiteHeader from './site-header';
 import SiteFooter from './site-footer';
@@ -200,14 +201,16 @@ function AppShellMain({ initialView = 'home' }) {
  */
 export default function AppShell({ initialView = 'home' }) {
   return (
+    <AccountProvider><AccountSettingsProvider>
     <ThemeProvider>
     <ShellProvider initialView={initialView}>
       <CharacterProvider>
         <ChallengeRunProvider>
-          <AccountProvider><AppShellMain initialView={initialView} /></AccountProvider>
+          <AppShellMain initialView={initialView} />
         </ChallengeRunProvider>
       </CharacterProvider>
     </ShellProvider>
     </ThemeProvider>
+    </AccountSettingsProvider></AccountProvider>
   );
 }

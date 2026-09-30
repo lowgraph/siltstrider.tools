@@ -225,8 +225,8 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   assert.equal(document.querySelector('header.topbar').classList.contains('drawer-open'),true);
 
   // Mobile drawer contains all sections; the everyday tools lead, the occasional ones follow
-  assert.match(drawer.textContent,/^ToolsCharacter BuilderLevel SimulatorTravel PlannerAlchemyFaction JournalChallenge Runs/);
-  assert.match(drawer.textContent,/More CalculatorsEnchantingSpellmaking/);
+  assert.match(drawer.textContent,/^ToolsCharacter BuilderLevel SimulatorTravel PlannerAlchemyEnchantingSpellmakingFaction JournalChallenge Runs/);
+  assert.match(drawer.textContent,/CalculatorsAlchemyEnchantingSpellmaking/);
   assert.match(drawer.textContent,/Extras & SiteHomeAbout Silt Strider/);
   assert.match(drawer.textContent,/Game World Profile/);
   assert.ok(document.querySelector('.nav-primary #react-nav-challenge'),'Challenge Runs is directly accessible');
@@ -258,7 +258,7 @@ test('React SiteHeader toggles hamburger drawer and renders desktop dropdowns wi
   await act(async()=>calcDropdownBtn.click());
   let dropdownMenu=document.querySelector('.nav-dropdown-menu');
   assert.ok(dropdownMenu);
-  assert.equal(dropdownMenu.textContent,'EnchantingSpellmaking');
+  assert.equal(dropdownMenu.textContent,'AlchemyEnchantingSpellmaking');
 
   // Clicking brand (within topbar, but outside dropdown) closes dropdown
   const brand=document.querySelector('.brand');

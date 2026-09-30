@@ -459,3 +459,151 @@ deploy"); it is not deployed. Production runs the Travel release (main `2c113b8`
 Worker `3ef09493`), restored at 21:30 UTC with the owner's authorization; Codex's
 section 10 on `launch/trv-mobile-verification` records it. This section is numbered 11
 so that section keeps its number when that branch merges.
+
+## 12. Account settings verification — 30 September 2026
+
+ACC-1 and ACC-2 are prepared on `feature/account-settings-preparation`. The
+initial implementation `d4de9e7` incorporated origin/main `2c113b8` at `7a9f0bd`;
+its verification is recorded below. Integration with the newer main `11c1c96`
+is recorded after it. The owner has not approved merging the settings branch
+into main or deploying it.
+
+- `npm test`: **836 passed, 0 failures, 0 skips**. Cases cover the schema, owner
+  isolation, UTF-8 limits, bad JSON/versions/revisions, concurrent creation,
+  stale writes, unknown/future data selections, network retry, delayed loads,
+  edits during writes, sign-out/account switches, guest adoption, coherent
+  world-specific presets, shared-route/seed precedence and resets.
+- The actual Worker verifies locally generated RSA session tokens through
+  Clerk's offline verifier against the in-memory migrated SQLite database.
+  Accounts with no username can persist preferences; another owner cannot read
+  them. Cross-origin writes are refused, and server failures retain reference
+  IDs without exposing SQL, settings or tokens. No real credentials are used.
+- Node 22.11.0 uses `--experimental-sqlite` and prints its **ExperimentalWarning**
+  in both SQLite test files. It is not suppressed. Existing Clerk development
+  telemetry notices in older test files remain; the new auth fixture adds none.
+- `npm run build:cloudflare`: **passed**, **24 static pages**. Wrangler Worker
+  compilation with `deploy --dry-run` also passed (no upload/deployment).
+- A fresh isolated local D1 directory received migrations **0001–0007**.
+  `migrations list --local` reported **No migrations to apply!**. The new table
+  exists, all **28 historical schema objects** match the 0001–0006 baseline,
+  and all seven existing application tables remain empty/unchanged. Seeded
+  schema tests separately verify that old save/profile/entitlement records survive.
+- Local Chrome/CDP: **33 cases passed, 0 failures**: four settings cases,
+  26 tool interactions and three Travel cases. Settings use synthetic identities
+  and local API fixtures; remaining cases are signed out. Both themes and
+  desktop/mobile widths are covered; tool inputs/sharing and saved Travel checks
+  also cover Vanilla, TR and TR + ARCE. **28 axe reports** had no critical/serious
+  WCAG 2/2.1 AA findings. No reported overflow, uncaught exceptions or unexpected
+  server errors. Settings screenshots were inspected in both themes and widths.
+- Evidence under `A:/Cache`: `acc2-final-test.log`, `acc2-final-build.log`,
+  `acc2-worker-dry-run.log`, `acc2-local-apply.log`; browser `report.json`, axe JSON
+  and screenshots in `acc2-settings-final-browser`, `acc2-tools-browser` and
+  `acc2-travel-browser`. Fresh D1 persistence: `acc2-final-local-20260930`.
+  Reproduce browser checks with [BROWSER_TESTS.md](BROWSER_TESTS.md), using the
+  dedicated local server at port 8790; occupied 8765/8766 servers were untouched.
+
+Real production sign-in, cross-device accounts and owner acceptance are still
+deployment checks. Modpack/version/update-notice controls stay unavailable
+until published release support exists; the two future gear filters stay hidden.
+Migration 0007 is unchanged from its reviewed ACC-1 shape. No extraction, remote
+database apply, main change or deployment occurred. The owner applies production
+0007 separately before deploying the settings API.
+
+### Integration with new main `11c1c96`
+
+The owner requested preparation against the new main. A normal merge combines
+the settings implementation `d4de9e7` with origin/main `11c1c960de344c8d550433ffb10776636bd479f8`;
+no rebase or main update. The two conflicts were confined to this verification
+record and the launch checklist. Main's launch completions and production history
+are preserved; the settings record is section 12, leaving section 10 reserved
+for the Travel acceptance branch. The original settings changelog entry is now
+under its correct 30 September heading in both changelogs.
+
+- `npm test`: **876 passed, 0 failures, 0 skips**. The SQLite experimental
+  warnings remain visible. `npm run build:cloudflare`: **24 static pages**;
+  Wrangler `deploy --dry-run` passed without uploading or deploying.
+- Fresh local D1: migrations **0001–0007 applied**, **none pending**;
+  `account_settings` exists. All **28 historical schema objects** match the
+  0001–0006 baseline and all seven historical application tables are unchanged.
+  Origin/main still ends at migration 0006; 0007 keeps its reviewed shape.
+- Local Chrome/CDP: **33 cases passed** (four settings, 26 tools, three Travel),
+  **28 axe reports**, no critical/serious findings, runtime errors or unexpected
+  server errors. Settings screenshots were inspected at desktop/mobile widths
+  in both themes. These retain the synthetic-account and local-only limits above.
+- The diff against this main contains exactly the original **38 settings paths**.
+  Main's first steps, phone navigation, tool controls, keyboard menus and Vault
+  hash checks are retained. GitHub main was checked again before committing.
+
+Evidence under `A:/Cache`: `acc-main-11c1c96-test.log`,
+`acc-main-11c1c96-build.log`, `acc-main-11c1c96-worker-dry-run.log`,
+`acc-main-11c1c96-local.log`; fresh D1 persistence `acc-main-11c1c96-local`;
+browser reports, axe JSON and screenshots in `acc-main-11c1c96-settings-browser`,
+`acc-main-11c1c96-tools-browser` and `acc-main-11c1c96-travel-browser`.
+Only the feature branch is prepared for owner review; no feature merge into main,
+remote D1 apply or deployment is authorized by this preparation.
+
+## 13. Small tool polish — 30 September 2026
+
+Owner request: branch from `mt-account-settings` and polish Travel, Alchemy,
+Enchanting and calculator navigation. Branch `launch/small-polish` starts at
+`db9def9` (`feature/account-settings-preparation`), retaining account settings,
+save choices and shared-link precedence.
+
+- Unsaved unlinked Travel starts Seyda Neen → Balmora. Least real time (`real`)
+  minimizes estimated outdoor movement, then transport/spell transitions, with
+  existing scroll/Magicka budgets. Unknown movement is not treated as zero.
+  Menus, loading screens and indoor movement remain uncounted. The objective
+  round-trips through links and account defaults. Pending routes show Loading;
+  real network errors keep Retry.
+- Alchemy's site adapter hides Secretmaster tools and sorts obtainable apparatus
+  by quality descending, with stable name/ID ties. Published catalog records are
+  unchanged; the Journeyman mortar and optional None defaults are retained.
+- Enchanting accepts typed soul sizes, including 300. Empty/negative values are
+  nonnegative, fractions become integer sizes, and Constant Effect remains gated
+  at 400; lowering the soul switches an active Constant choice to When Used.
+- Navigation exposes all three calculators directly at 1440/1920 px. At
+  375/900/1024/1366 px, all three live in Calculators. Both themes keep the wide
+  links and world switch on the same row, with no horizontal overflow. Rules use
+  `.topbar`; the old `#react-header-slot` wrapper is absent from this layout.
+- `npm test`: **887 passed**, zero failures/skips/todos. Added tests cover unknown
+  and invalid movement, equal-time ties, scroll exhaustion, apparatus identity
+  and quality ties, custom soul sizes and the 399/400 Constant boundary.
+- Full local Chrome suite: **153/153 passed**, **232 accessibility audits with
+  zero violations**, no runtime exceptions or unexpected server errors, and
+  **439 settled font checks**. Includes all profiles, both themes, 1366/375 px,
+  Builder/calculator/Faction Journal/Level Simulator/Travel interactions, saved
+  Travel options, synthetic account settings and the 24 new polish cases.
+  Final navigation alignment was also checked at all six widths in both themes.
+- `npm run build:cloudflare`: **passed**, 24 static pages with repository config
+  unchanged. This checkout has no production Clerk key; the build establishes
+  compilation/export, not real production sign-in or release packaging.
+- Pipeline synthetic suite: **670 passed**. Shared COORDINATION and roadmap files
+  match byte for byte; synchronization preserves every existing pipeline note.
+- Both player changelogs and the shared coordination/roadmap record are updated.
+  No exported bundle, data extraction or D1 operation is part of this polish.
+
+The first mobile navigation attempt failed twice because its selectors targeted
+the removed header wrapper. Only that attempt was reverted, and work stopped;
+the owner explicitly authorized continuing with the current model. The final
+selectors and responsive behavior passed. Old tests expecting a two-item
+calculator menu were updated for the requested three-item menu.
+
+Evidence under `A:/Cache`: `small-polish-tests-verified.log`,
+`small-polish-build-final.log`, `small-polish-full-browser` and
+`small-polish-nav-aligned`, with reports, screenshots, axe results and network
+traces. Tests remain local, signed out and synthetic; real account sign-in,
+Cloud Vault writes, payments and other browser engines are outside this pass.
+
+Parent integration — 30 September: the owner authorized merging `launch/small-polish`
+into `feature/account-settings-preparation` and pushing the parent. The clean parent
+and its remote both started at `db9def9`; the polish tip was `1ac7788`. The merge had
+no conflicts, and its application tree matches the polish branch. Re-ran `npm test`
+on the merged checkout: **887 passed**, zero failures/skips/todos. The unchanged
+Cloudflare build passed with 24 static pages. The decompiler synthetic suite passed
+**670 tests** again; shared coordination and roadmap contents are identical.
+Full merged-checkout Chrome suite: **153/153 passed**, **232 accessibility audits
+with zero violations**, no runtime/server errors and **439 settled font checks**.
+Merged-checkout evidence: `A:/Cache/small-polish-parent-unit.log`,
+`small-polish-parent-build.log`, `small-polish-parent-pipeline.log` and
+`small-polish-parent-browser`. The browser run uses this parent checkout's server at
+`http://127.0.0.1:8791`, separate from the original polish server.

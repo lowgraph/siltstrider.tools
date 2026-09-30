@@ -14,13 +14,14 @@ const list = (name) => {
 
 test('the nav row starts Build, Level, Travel, Alchemy, and Challenge Runs stays in it, last', () => {
   const row = list('PRIMARY_VIEWS');
-  assert.deepEqual(row.map((t) => t.label), ['Character Builder', 'Level Simulator', 'Travel Planner', 'Alchemy', 'Faction Journal', 'Challenge Runs']);
+  assert.deepEqual(row.map((t) => t.label), ['Character Builder', 'Level Simulator', 'Travel Planner', 'Alchemy', 'Enchanting', 'Spellmaking', 'Faction Journal', 'Challenge Runs']);
   assert.equal(new Set(row.map((t) => t.view)).size, row.length, 'no tool twice');
 });
 
 test('reordering lost no tool: the row, the Calculators menu and the account button cover all nine', () => {
   const reachable = [...list('PRIMARY_VIEWS'), ...list('CALC_MENU')].map((t) => t.view);
-  assert.deepEqual([...reachable].sort(), ['alchemy', 'builder', 'challenge', 'enchanting', 'factions', 'leveler', 'spellmaking', 'travel']);
+  assert.deepEqual([...new Set(reachable)].sort(), ['alchemy', 'builder', 'challenge', 'enchanting', 'factions', 'leveler', 'spellmaking', 'travel']);
+  assert.deepEqual(list('CALC_MENU').map(t=>t.view), ['alchemy','enchanting','spellmaking'], 'compact layouts group all calculators');
   assert.match(header, /id="react-nav-vault"[\s\S]*?onClick=\{e => navigate\(e, 'account'\)\}/, 'the Cloud Vault is the account button');
 });
 
@@ -33,7 +34,7 @@ test('the phone tab bar is Home, Build, Level, Travel; Alchemy is one tap into t
   const icons = header.match(/const TAB_ICON = \{([\s\S]*?)\n\};/)[1];
   for (const { view } of tabs) assert.match(icons, new RegExp(`\\n  ${view}: <`), `${view} has an icon`);
   assert.doesNotMatch(icons, /\n  alchemy: </, 'no icon left for a tab that is gone');
-  assert.ok(list('PRIMARY_VIEWS').some((t) => t.view === 'alchemy'), 'Alchemy stays in the phone menu (PRIMARY_VIEWS)');
+  assert.ok(list('CALC_MENU').some((t) => t.view === 'alchemy'), 'Alchemy stays in the phone calculator group');
   assert.match(header, /'Open menu: calculators, vault and more'/, 'the menu no longer promises Travel');
 });
 

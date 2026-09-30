@@ -1,6 +1,26 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const adapter=import('../lib/alchemy-catalogs.mjs');
+test('apparatus hides every Secretmaster type without changing catalog provenance',async()=>{
+ const {adaptAlchemy}=await adapter,f=fixture();
+ for(const type of ['mortar_and_pestle','alembic','calcinator','retort']) f.catalogs.Apparatus.push({key:'apparatus_sm_'+type+'_01',name:"SecretMaster's "+type,type,quality:2});
+ const out=adaptAlchemy(f);
+ assert.equal(Object.values(out.apparatus).flat().length,1);
+ assert.equal(f.catalogs.Apparatus.length,5);
+});
+test('apparatus sorts by effectiveness descending, with stable name ties',async()=>{
+ const {adaptAlchemy}=await adapter,f=fixture();
+ f.catalogs.Apparatus=[['z','Z Apprentice',0.5],['a','A Journeyman',1],['c','C Grandmaster',1.5],['b','B Master',1.2],['d','D Grandmaster',1.5]]
+  .map(([key,name,quality])=>({key,name,quality,type:'mortar_and_pestle'}));
+ assert.deepEqual(adaptAlchemy(f).apparatus.mortar.map(x=>x.id),['c','d','b','a','z']);
+});
+test('Secretmaster name variants are hidden even with a nonstandard catalog key',async()=>{
+ const {adaptAlchemy}=await adapter,f=fixture();
+ f.catalogs.Apparatus.push({key:'renamed',name:"secretmaster's Mortar",type:'mortar_and_pestle',quality:2});
+ assert.deepEqual(adaptAlchemy(f).apparatus.mortar.map(x=>x.id),['apparatus_j_mortar_01']);
+ f.catalogs.Apparatus=[];
+ assert.deepEqual(adaptAlchemy(f).apparatus.mortar,[]);
+});
 for (const [name, change] of [
  ['missing rules', f=>delete f.catalogs.EffectRules],
  ['missing harmful flag', f=>delete f.catalogs.EffectRules[0].harmful],

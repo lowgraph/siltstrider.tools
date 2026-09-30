@@ -3,6 +3,34 @@ const assert = require("node:assert/strict");
 
 const lib = () => import("../lib/travel-graph.mjs");
 
+test('least real time uses movement seconds independently of in-game hours', async () => {
+  const { planRoute } = await lib();
+  const graph = { A: [{to:'D',kind:'Walk',walk:true,movementSeconds:120,hours:0.01}, {to:'B',kind:'Boat',hours:20}],
+    B: [{to:'D',kind:'Walk',walk:true,movementSeconds:10,hours:1}], D: [] };
+  assert.deepEqual(planRoute('A','D',graph,{objective:'real'}).path,['A','B','D']);
+  assert.deepEqual(planRoute('A','D',graph,{objective:'time'}).path,['A','D']);
+});
+
+test('least real time breaks movement ties with transitions and keeps scroll budgets', async () => {
+  const { planRoute } = await lib();
+  const graph = { A: [{to:'D',kind:'Boat'}, {to:'B',kind:'Spell',resource:'scroll',uses:1}],
+    B: [{to:'D',kind:'Spell',resource:'scroll',uses:1}], D: [] };
+  assert.deepEqual(planRoute('A','D',graph,{objective:'real',resources:{scroll:2}}).path,['A','D']);
+  graph.A.shift();
+  assert.equal(planRoute('A','D',graph,{objective:'real',resources:{scroll:1}}).isValid,false);
+  assert.equal(planRoute('A','D',graph,{objective:'real',resources:{scroll:2}}).isValid,true);
+});
+
+test('unknown and negative movement estimates cannot beat known movement as zero seconds', async () => {
+  const { planRoute } = await lib();
+  for(const movementSeconds of [undefined,null,-1,NaN,Infinity]) {
+    const graph={A:[{to:'D',walk:true,movementSeconds},{to:'B',walk:true,movementSeconds:3}],B:[{to:'D',walk:true,movementSeconds:4}],D:[]};
+    assert.deepEqual(planRoute('A','D',graph,{objective:'real'}).path,['A','B','D']);
+  }
+  const graph={A:[{to:'D',indoors:true,walk:true}],D:[]};
+  assert.equal(planRoute('A','D',graph,{objective:'real'}).isValid,true);
+});
+
 // Darvame Hleran's side of the haggle as the pipeline publishes it (autocalc, level 0).
 const STRIDER = { mercantile: 29, personality: 38, luck: 40, disposition: 50, statsSource: "derived",
   haggles: true, priceable: true, race: "Dark Elf", female: true };

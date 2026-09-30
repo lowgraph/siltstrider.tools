@@ -32,6 +32,7 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>Sign-in information.</strong> Clerk manages authentication. When you use Google or Discord, Clerk processes the account identifier, email address, and basic profile information the provider supplies, such as a name or avatar. Silt Strider uses your Clerk account identifier to associate your saved data and supporter status with you. Site profile icons are selected from our built-in icons.</li>
         <li><strong>Profile information.</strong> We store your chosen username and icon identifier.</li>
+        <li><strong>Account preferences.</strong> When you are signed in, changes to your world, theme and tool defaults are saved to your account so you can use them across devices. Signed-out preferences stay in your browser; copying them to an account is your choice.</li>
         <li><strong>Saved characters.</strong> Cloud saves can contain builds, challenges, equipment, and imported game information such as character names, levels, inventory, locations, quests, and factions, along with save titles, revisions, and timestamps.</li>
         <li><strong>Supporter information.</strong> To match a Ko-fi payment to your account, we store an account support code and payment transaction identifier, amount, account identifier, and receipt timestamp. Our payment record does not retain donor emails or card details. Ko-fi and its payment processors handle payment information separately.</li>
         <li><strong>Technical and contact information.</strong> Hosting and authentication providers process information such as IP addresses, browser details, requests, and security logs. If you contact us, we receive the information in your message.</li>
@@ -41,7 +42,7 @@ export default function PrivacyPage() {
     <section><h2>Cookies, local files and browser storage</h2>
       <p>Opening a game save parses it in your browser. Opening it alone does not upload it to Cloud Vault. Choosing to save or upload it to the cloud sends its parsed character data to our service. You can use the planning tools without a cloud account.</p>
       <p><strong>Cookies.</strong> Silt Strider uses no advertising or tracking cookies. Clerk sets cookies and related browser storage to sign you in and keep your session; they are loaded only when you choose to sign in, or when the browser is already signed in. Visiting the tools without signing in sets no cookies.</p>
-      <p><strong>Browser storage.</strong> Your browser keeps local saves and preferences, such as your selected game world, theme, and current challenge run, so the tools remember them. They stay on your device.</p>
+      <p><strong>Browser storage.</strong> Your browser keeps local saves and preferences, such as your selected game world, theme, and current challenge run, so the tools remember them. Guest preferences and local saves stay on your device; signed-in account preferences also sync to our service.</p>
       <p><strong>Analytics.</strong> Cloudflare Web Analytics counts page visits through a small script. It sends page-view information, such as the page address, referring site, and browser type, to Cloudflare; it sets no cookies and stores nothing in your browser.</p>
       <p>Clearing site data removes locally stored information and may sign you out; it does not delete cloud records.</p>
     </section>

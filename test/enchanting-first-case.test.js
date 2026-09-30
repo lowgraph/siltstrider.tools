@@ -33,6 +33,45 @@ async function workstation(data) {
 const RESTORE = { key: 'restore', name: 'Restore Health', baseCost: 5, school: 'restoration', allowEnchanting: true, allowSpellmaking: true, castSelf: true, castTouch: true, castTarget: true };
 const DATA = { profile: 'vanilla', catalogs: { Attributes: [], Skills: [], MagicEffects: [], GameSettings: [], EffectRules: [RESTORE] } };
 
+async function withSoul(check) {
+  const Enchanting=await workstation(DATA);
+  const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
+  Object.assign(global,{window:dom.window,document:dom.window.document,IS_REACT_ACT_ENVIRONMENT:true});
+  const root=require('react-dom/client').createRoot(document.getElementById('root'));
+  const type=async value=>React.act(async()=>{
+    const control=document.getElementById('enchant-soul-size');
+    Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set.call(control,value);
+    control.dispatchEvent(new window.Event('input',{bubbles:true}));
+  });
+  try { await React.act(async()=>root.render(React.createElement(Enchanting))); await check(type); }
+  finally { await React.act(async()=>root.unmount()); dom.window.close(); }
+}
+
+test('a typed 300-point soul is retained as a custom soul, below the constant-effect threshold',async()=>withSoul(async type=>{
+  await type('300');
+  assert.equal(document.getElementById('enchant-soul-size').value,'300');
+  assert.equal(document.getElementById('enchant-soul-select').value,'300');
+  assert.match(document.getElementById('enchant-soul-select').selectedOptions[0].textContent,/Custom soul/);
+  assert.equal([...document.querySelectorAll('button')].find(b=>b.textContent==='Constant').disabled,true);
+}));
+
+test('typing across 400 enables constant effects and lowering the soul returns to when-used',async()=>withSoul(async type=>{
+  const constant=()=>[...document.querySelectorAll('button')].find(b=>b.textContent==='Constant');
+  await type('400'); assert.equal(constant().disabled,false);
+  await React.act(async()=>constant().click());
+  assert.equal(constant().getAttribute('aria-pressed'),'true');
+  await type('399'); assert.equal(constant().disabled,true);
+  assert.equal([...document.querySelectorAll('button')].find(b=>b.textContent==='When Used').getAttribute('aria-pressed'),'true');
+}));
+
+test('empty, negative and fractional typed soul sizes stay finite and nonnegative',async()=>withSoul(async type=>{
+  for(const [value,want] of [['','0'],['-10','0'],['300.9','300'],['1000','1000']]) {
+    await type(value);
+    assert.equal(document.getElementById('enchant-soul-size').value,want);
+    assert.equal(document.getElementById('enchant-soul-select').value,want);
+  }
+}));
+
 test('the first case: an Expensive Ring and a Lesser Soul Gem, too small a soul for Constant Effect', async () => {
   const { ENCHANT_BASE_ITEMS, SOUL_GEMS, DEFAULT_ENCHANT_ITEM, DEFAULT_SOUL_GEM } = await math();
   const item = ENCHANT_BASE_ITEMS.find((b) => b.name === DEFAULT_ENCHANT_ITEM);

@@ -2,6 +2,11 @@
 
 ## Easier journeys and first steps — 2026-09-30
 
+- **Travel starts with a useful trip:** without a save or shared route, start in Seyda Neen and head to Balmora. Least real time favors less outdoor movement, then fewer transport or spell transitions; menus and loading remain uncounted. While the network loads, the route shows a loading message.
+- **Alchemy tools you can obtain:** Secretmaster apparatus is removed from the picks, and tools run from strongest to weakest instead of alphabetically.
+- **Type the soul you trapped:** Enchanting accepts a custom soul size, including 300 in a Grand Soul Gem. Constant Effect still needs at least 400.
+- **Calculators within reach:** wide screens show Alchemy, Enchanting and Spellmaking directly; compact screens group all three under Calculators.
+- **Your settings across devices:** signed-in accounts can remember their world, theme, Travel, Gear Advisor and Challenge defaults. Choose shared or world-specific defaults, optionally override save-derived Travel toggles, and reset one tool or everything. Shared links keep their choices; guests keep their own browser preferences.
 - **One Travel network status:** the network name and stop count share one plain line. Loading and an error with Retry use that same line, and TR + ARCE is named explicitly.
 - **Clearer small print:** Gear Advisor runner-up buttons, Level Simulator preset descriptions, faction ranks and empty equipment slots are easier to read in both themes.
 - **See the real-time trade-off:** route results now show “Real Time Approximation” beside the time passing in-game. Walking, swimming and Levitate use your estimated movement speed; transport and spell transitions are counted separately. Cheapest explains how much gold it saves and how much movement it adds compared with Fewest legs using the same options. Combat, menus, loading and time indoors are excluded.

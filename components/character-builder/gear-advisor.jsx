@@ -1,5 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useAccountSettings } from '../account-settings-context';
+import { useShell } from '../shell-context';
+import { resolveAccountToolDefaults } from '../../lib/account-settings.mjs';
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
@@ -27,6 +30,18 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const [stealEarly, setStealEarly] = useState(DEFAULT_GEAR_TOGGLES.theft);
   const [endgameEarly, setEndgameEarly] = useState(DEFAULT_GEAR_TOGGLES.endgame);
   const [darkBrotherhood, setDarkBrotherhood] = useState(DEFAULT_GEAR_TOGGLES.darkBrotherhood);
+  const preferences = useAccountSettings();
+  const { profile } = useShell();
+  const gearEdits = useRef({ key: null, values: {} });
+  useEffect(() => {
+    if (!preferences?.ready) return;
+    const key = `${preferences.owner || 'guest'}:${profile}`;
+    if (gearEdits.current.key !== key) gearEdits.current = { key, values: {} };
+    const defaults = resolveAccountToolDefaults(preferences.settings, { world: profile }).gear;
+    const resolved = { ...defaults, ...gearEdits.current.values };
+    setNearStart(resolved.nearStart); setStealEarly(resolved.theft);
+    setEndgameEarly(resolved.endgame); setDarkBrotherhood(resolved.darkBrotherhood);
+  }, [preferences?.ready, preferences?.owner, preferences?.settings, profile]);
   const gearToggles = {theft:stealEarly,endgame:endgameEarly,nearStart,darkBrotherhood};
   const [optimizing, setOptimizing] = useState(false);
   const [hasRun, setHasRun] = useState(false);
@@ -127,7 +142,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
                 type="checkbox"
                 className="accent-accent w-4 h-4"
                 checked={stealEarly}
-                onChange={(e) => setStealEarly(e.target.checked)}
+                onChange={(e) => { gearEdits.current = { key: `${preferences?.owner || 'guest'}:${profile}`, values: { ...gearEdits.current.values, theft: e.target.checked } }; setStealEarly(e.target.checked); }}
               />
               <span>Steal early gear</span>
             </label>
@@ -137,7 +152,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
                 type="checkbox"
                 className="accent-accent w-4 h-4"
                 checked={endgameEarly}
-                onChange={(e) => setEndgameEarly(e.target.checked)}
+                onChange={(e) => { gearEdits.current = { key: `${preferences?.owner || 'guest'}:${profile}`, values: { ...gearEdits.current.values, endgame: e.target.checked } }; setEndgameEarly(e.target.checked); }}
               />
               <span>Endgame gear early</span>
             </label>
@@ -146,7 +161,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
                 type="checkbox"
                 className="accent-accent w-4 h-4"
                 checked={nearStart}
-                onChange={(e) => setNearStart(e.target.checked)}
+                onChange={(e) => { gearEdits.current = { key: `${preferences?.owner || 'guest'}:${profile}`, values: { ...gearEdits.current.values, nearStart: e.target.checked } }; setNearStart(e.target.checked); }}
               />
               <span>Near starting areas</span>
             </label>
@@ -156,7 +171,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
                 type="checkbox"
                 className="accent-accent w-4 h-4"
                 checked={darkBrotherhood}
-                onChange={(e) => setDarkBrotherhood(e.target.checked)}
+                onChange={(e) => { gearEdits.current = { key: `${preferences?.owner || 'guest'}:${profile}`, values: { ...gearEdits.current.values, darkBrotherhood: e.target.checked } }; setDarkBrotherhood(e.target.checked); }}
               />
               <span>Dark Brotherhood armor</span>
             </label>

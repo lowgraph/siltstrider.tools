@@ -1,6 +1,6 @@
 import { getCorsHeaders, json } from './cors.mjs';
 
-const API_ROUTES = new Set(['/api/saves', '/api/account', '/api/entitlements', '/api/premium/code', '/api/webhooks/kofi']);
+const API_ROUTES = new Set(['/api/saves', '/api/account', '/api/settings', '/api/entitlements', '/api/premium/code', '/api/webhooks/kofi']);
 const METHODS = new Set(['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']);
 
 function routeLabel(request) {

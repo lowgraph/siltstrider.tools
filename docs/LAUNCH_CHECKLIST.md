@@ -90,7 +90,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       Finishes: 100,110"). Show the name only, or say in words when the quest ends; test with
       a faction that has quests (FAC-1's page test used none).
 - [x] **C** **MOB-3** (started 2026-09-29 23:08 UTC, C; done with SITE-5 `86a0ce1`, merged `769db3b`, live as `4951b9b5`) No "Ctrl K" hint on touch devices. **SITE-5** Explain "TR + ARCE".
-- [ ] **C** **ACC-1** (started 2026-09-30 19:29 UTC, Codex; preparing on `feature/account-settings-preparation`) The account settings table as migration `0007_account_settings.sql`
+- [ ] **C** **ACC-1** (started 2026-09-30 19:29 UTC, Codex; prepared `09bd5fa`, main incorporated on `feature/account-settings-preparation`; awaiting owner merge) The account settings table as migration `0007_account_settings.sql`
       (owner decision, 30 September). After Travel is merged: merge `main` into
       `feature/account-settings-preparation` so only its own commits remain; promote
       `cloudflare/proposals/account_settings.sql` to `cloudflare/migrations/0007_account_settings.sql`
@@ -162,7 +162,7 @@ for now (owner, 30 September); other agents skip them.
 - [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged `e3ab542`) One network/loading/error/Retry line in Travel, including TR + ARCE.
 - [x] **C** (started 2026-09-30 20:39 UTC, C; done `b582e98` merged `d4e96bd`: Enter, Space or a screen reader opens on the first item, the mouse leaves focus on the button; checked in Chrome) Header menus focus their first item when opened from the keyboard.
 - [x] **C** (started 2026-09-30 20:34 UTC, C; done `f688888` merged `d4e96bd`: the API compares the stored bytes with `payload_hash` before unpacking; a mismatch is a 422 with a plain message and a reference, and nothing of the save) The Cloud Vault checks a save's hash on load.
-- [ ] **C** **ACC-2** Account settings for players, after ACC-1: the revision-checked
+- [ ] **C** **ACC-2** (started 2026-09-30 20:42 UTC, Codex; implemented on `feature/account-settings-preparation`, awaiting owner merge; local verification in LAUNCH_VERIFICATION §12) Account settings for players, after ACC-1: the revision-checked
       `/api/settings` (GET and PUT, owner from the Clerk session, 409 on a stale revision), a
       settings provider, and a settings page for world, theme, Travel, Gear Advisor and
       Challenge defaults with reset all and reset one tool (ACCOUNT_SETTINGS.md). Modpack and

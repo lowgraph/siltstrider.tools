@@ -63,6 +63,11 @@ Cheapest computes a Fewest legs baseline from the same graph, player prices and
 resource budgets, then compares known fares, outdoor movement, transitions and legs.
 The comparison is derived state; changing options or endpoints recomputes it and
 never spends inventory. Fastest continues minimizing in-game hours.
+Least real time (`real` in shared links and account defaults) minimizes known
+outdoor movement seconds, then transport/spell transitions, legs, gold and hours.
+Unknown movement does not count as zero. Menus, loading and indoor movement remain
+uncounted; the UI explains the approximation. Unsaved unlinked visits start with
+Seyda Neen to Balmora. A pending network shows Loading instead of No Route.
 
 ## 2. Binary Codec (`lib/cloud-save-codec.mjs`) — `SLT1`
 
@@ -88,10 +93,21 @@ To store comprehensive character saves within Cloudflare D1's row size constrain
 ### A. Cloudflare D1 Schema (`cloudflare/migrations/`)
 1. `0001_saved_characters.sql`: Historical prototype schema; retained as applied migration history.
 2. `0002_cloud_save_vault.sql`: Comprehensive `cloud_saves` table, user tier quotas, triggers, and views (`v_cloud_save_headers`, `v_user_entitlements`).
-3. `0003_account_profiles.sql`: Account display settings, preferences, and default profile options.
+3. `0003_account_profiles.sql`: Username, icon and update timestamp only; no world/tool preferences.
 4. `0004_premium_support.sql`: Supporter entitlements and verification mappings.
 5. `0005_premium_currencies.sql`: One-time tips in any currency.
 6. `0006_remove_empty_prototype.sql`: Retires the prototype table only if empty; refuses to discard rows.
+7. `0007_account_settings.sql` (ACC-1): Separate account-settings JSON document, revision and timestamps; no username or save-vault slot required.
+
+Account world/theme/tool preferences use the separate versioned `account_settings`
+table from migration 0007. ACC-2 implements the authenticated revision-checked
+settings API, owner-scoped provider and Your account controls; see
+[ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md). Guests retain separate browser-local
+preferences. Shared links and current edits win over defaults; Travel's stored
+per-save edits survive account overrides. Modpack/releases and update notices
+remain unavailable pending a release registry; the two future gear filters stay
+hidden pending row support. Migration application and deployment are separate
+owner steps.
 
 ### B. Entitlements & Ko-fi Integration
 - **Free Tier**: 5 cloud save slots.

@@ -107,7 +107,7 @@ export default function AlchemyWorkstation() {
   ),[bundleAlchemy]);
 
   // Selected apparatus qualities
-  const mortar = useMemo(() => apparatusTiers.mortar.find((a) => a.id === mortarId) || apparatusTiers.mortar[1] || apparatusTiers.mortar[0] || {id:"",quality:0}, [apparatusTiers, mortarId]);
+  const mortar = useMemo(() => apparatusTiers.mortar.find((a) => a.id === mortarId) || apparatusTiers.mortar.at(-1) || {id:"",quality:0}, [apparatusTiers, mortarId]);
   const alembic = useMemo(() => apparatusTiers.alembic.find((a) => a.id === alembicId) || apparatusTiers.alembic[0], [apparatusTiers, alembicId]);
   const calcinator = useMemo(() => apparatusTiers.calcinator.find((a) => a.id === calcinatorId) || apparatusTiers.calcinator[0], [apparatusTiers, calcinatorId]);
   const retort = useMemo(() => apparatusTiers.retort.find((a) => a.id === retortId) || apparatusTiers.retort[0], [apparatusTiers, retortId]);
