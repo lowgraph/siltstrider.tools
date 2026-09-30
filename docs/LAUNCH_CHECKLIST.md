@@ -126,7 +126,7 @@ for now (owner, 30 September); other agents skip them.
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
 - [x] **C** **SITE-4** (started 2026-09-30 16:29 UTC, C; done `dbbee2d` on `launch/home-1-mob-2-first-steps`, not merged: wherever a tool names the character, the name links to the Builder, as Home names it; the Level Simulator names it too; the Faction Journal's line, hidden at every width by a legacy `.hidden` rule, shows from 640 px) The character bar as a control that opens the Builder.
-- [ ] **C** **MOB-1 / MOB-4** A lighter phone header; one level of Builder tabs.
+- [ ] **C** **MOB-1 / MOB-4** (started 2026-09-30 16:58 UTC, C; on `launch/home-1-mob-2-first-steps`) A lighter phone header; one level of Builder tabs.
 - [ ] **C** **HOME-3** Outcomes on Home instead of counts ("27 skills modeled").
 
 **Controls and polish**
