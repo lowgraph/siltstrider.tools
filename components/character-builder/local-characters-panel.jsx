@@ -1,12 +1,26 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useActiveCharacter } from "../character-context";
+import { DEFAULT_BUILD, useActiveCharacter } from "../character-context";
 import {
   loadLocalCharacters,
   saveLocalCharacter,
   deleteLocalCharacter,
+  sanitizeBuild,
 } from "../../lib/character-vault.mjs";
+
+// This browser's storage, or null where it is blocked: reading window.localStorage itself
+// throws when a browser refuses site data.
+function browserStorage() {
+  try {
+    return typeof window === "undefined" ? null : window.localStorage || null;
+  } catch {
+    return null;
+  }
+}
+
+// A saved entry's name to show: a string, or a fallback (stored data can be anything).
+const text = (value) => (typeof value === "string" && value.trim() ? value : "");
 
 export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } = {}) {
   const activeChar = useActiveCharacter();
@@ -18,9 +32,10 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
   const [error, setError] = useState(null);
 
   const refreshList = useCallback(() => {
-    if (typeof window === "undefined" || !window.localStorage) return;
+    const storage = browserStorage();
+    if (!storage) return;
     try {
-      setSavedCharacters(loadLocalCharacters(window.localStorage));
+      setSavedCharacters(loadLocalCharacters(storage));
     } catch {
       setSavedCharacters([]);
     }
@@ -43,8 +58,9 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
       setError("No character build to save.");
       return;
     }
-    if (typeof window === "undefined" || !window.localStorage) {
-      setError("Browser storage is unavailable.");
+    const storage = browserStorage();
+    if (!storage) {
+      setError("This browser is not letting the site keep characters (private window or blocked site data).");
       return;
     }
 
@@ -60,7 +76,7 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
           name: charName,
           character: { ...build },
         },
-        window.localStorage
+        storage
       );
 
       refreshList();
@@ -75,19 +91,36 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
     }
   };
 
+  // A stored character is checked like a shared link's: unreadable ones are refused, and a
+  // loaded .omwsave is set aside so every tool uses the character just loaded.
   const handleLoad = (record) => {
     const char = record.character || record;
+    const clean = sanitizeBuild(char);
+    if (!clean) {
+      setError("This saved character cannot be read.");
+      setTimeout(() => setError(null), 4000);
+      return;
+    }
     if (typeof applyBuild === "function") {
-      applyBuild(char);
-      setFeedback(`Loaded "${record.name || char.name || "character"}"!`);
+      const current = activeChar?.build || DEFAULT_BUILD;
+      if (activeChar?.activeSave && typeof activeChar.clearSave === "function") activeChar.clearSave();
+      applyBuild({
+        ...DEFAULT_BUILD,
+        world: current.world,
+        arce: current.arce,
+        ...clean,
+        ...(Array.isArray(char.loadouts) ? { loadouts: char.loadouts } : {}),
+      });
+      setFeedback(`Loaded "${text(record.name) || clean.name || "character"}"!`);
       setTimeout(() => setFeedback(null), 2500);
     }
   };
 
   const handleDelete = (id, name) => {
-    if (typeof window === "undefined" || !window.localStorage) return;
+    const storage = browserStorage();
+    if (!storage) return;
     try {
-      deleteLocalCharacter(id, window.localStorage);
+      deleteLocalCharacter(id, storage);
       refreshList();
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("silt-local-saves-changed"));
@@ -145,13 +178,13 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
 
         {savedCharacters.length > 0 && (
           <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-            {savedCharacters.map((rec) => {
-              const char = rec.character || rec;
-              const displayName = rec.name || char.name || "Custom Character";
-              const summary = `${char.race || "Dark Elf"} · ${char.className || "Custom"} · ${char.sign || "The Lady"}`;
+            {savedCharacters.map((rec, index) => {
+              const char = (rec.character && typeof rec.character === "object") ? rec.character : rec;
+              const displayName = text(rec.name) || text(char.name) || "Custom Character";
+              const summary = `${text(char.race) || "Dark Elf"} · ${text(char.className) || "Custom"} · ${text(char.sign) || "The Lady"}`;
               return (
                 <div
-                  key={rec.id}
+                  key={typeof rec.id === "string" ? rec.id : `saved-${index}`}
                   className="p-2 bg-surface-2 border border-line-9 flex items-center justify-between gap-2 text-xs"
                 >
                   <div className="min-w-0 flex-1">

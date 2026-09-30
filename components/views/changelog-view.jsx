@@ -46,7 +46,7 @@ export default function ChangelogView() {
             <li>Accessible heading structure in Level Simulator and Cloud Vault: section headings now follow a strict logical hierarchy without skipped levels.</li>
             <li>Automatic Gear Advisor: gear recommendations now compute automatically as you modify character skills, attributes, and class archetypes, without requiring a scroll down and manual click on &ldquo;Optimize Gear&rdquo;. A quick-jump link at the top of the builder (&ldquo;Early gear for this build &darr;&rdquo;) anchors directly to recommended loadouts.</li>
             <li>Editable calculator skill inputs: Alchemy, Enchanting, and Spellmaking now display character stats in a natural &ldquo;Using {"{character}: {Skill} {value}"} &mdash; change&rdquo; summary and provide editable inputs for skills, governing attributes, and Luck so you can calculate with any custom numbers without needing to build a character first.</li>
-            <li>Local character save in Character Builder: the &ldquo;Saved Characters&rdquo; panel now includes an explicit &ldquo;Save this character&rdquo; action to store builds directly in your browser without requiring an account or signing in, alongside quick actions to load or delete saved builds, keeping Cloud Vault sync as an optional upgrade.</li>
+            <li>&ldquo;Save this character&rdquo; in the Character Builder keeps a character in this browser, no account needed; the list below it loads or deletes them.</li>
           </ul>
         </section>
 
