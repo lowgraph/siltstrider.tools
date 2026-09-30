@@ -659,6 +659,56 @@ test("Challenge Runs: Share copies a link that opens the same run, in its world"
   }
 });
 
+test("CHL-2: one lock per rolled item, on the sheet beside it; the settings' pickers show and release it", async () => {
+  const dom = setupDom("/challenge");
+  const root = createRoot(dom.window.document.getElementById("root"));
+  const doc = dom.window.document;
+  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
+  const locks = () => [...doc.querySelectorAll("#panel-challenge .run-summary-sheet button[aria-pressed]")];
+  const lock = (what) => locks().find((b) => b.textContent.trim() === `Lock ${what}`);
+  const row = (label) => [...doc.querySelectorAll("#panel-challenge .identity-slot")].find((r) => r.textContent.startsWith(label));
+  // Game data stays pending in these tests, so a picker lists only what the run holds.
+  const choose = (select, value) => act(async () => {
+    Object.getOwnPropertyDescriptor(dom.window.HTMLSelectElement.prototype, "value").set.call(select, value);
+    select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+  });
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+    const configurator = doc.querySelector("#panel-challenge .run-configurator");
+    assert.equal([...configurator.querySelectorAll("button")].filter((b) => /lock/i.test(b.textContent)).length, 0, "no lock buttons beside the settings");
+    assert.deepEqual(locks().map((b) => b.textContent.trim()),
+      ["Lock race", "Lock class", "Lock birthsign", "Lock major objective", "Lock restrictions", "Lock minor objectives"], "one per rolled item, in the order of the sheet");
+    assert.ok(["race", "class", "birthsign"].every((what) => lock(what).disabled), "nothing rolled, nothing to keep");
+
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    assert.ok(locks().every((b) => !b.disabled && b.getAttribute("aria-pressed") === "false"));
+    assert.equal(doc.getElementById("cfg-choose-race").value, "", "a rolled race is not a choice: its picker says Roll it");
+
+    // Locked on the sheet: a roll keeps it, its own Roll waits, and its picker shows it.
+    const race = row("Race").querySelector("strong").textContent;
+    await act(async () => lock("race").click());
+    assert.equal(lock("race").getAttribute("aria-pressed"), "true");
+    assert.equal(row("Race").querySelector("button").disabled, true, "the lock wins over the row's Roll");
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    assert.equal(row("Race").querySelector("strong").textContent, race);
+    assert.equal(doc.getElementById("cfg-choose-race").value, race, "the row shows the race alone, as the lock keeps it");
+
+    // "Roll it" in the picker releases the sheet's lock.
+    await choose(doc.getElementById("cfg-choose-race"), "");
+    assert.equal(lock("race").getAttribute("aria-pressed"), "false");
+    assert.equal(row("Race").querySelector("button").disabled, false);
+    // The objectives' locks are the sheet's too, and still keep them through a roll.
+    await act(async () => lock("restrictions").click());
+    const rests = [...doc.querySelectorAll("#panel-challenge .restrictions-tablet li")].map((li) => li.textContent);
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    assert.deepEqual([...doc.querySelectorAll("#panel-challenge .restrictions-tablet li")].map((li) => li.textContent), rests);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Challenge Runs: a character sent to the Build Optimizer can be sent back, with its changes", async () => {
   const dom = setupDom("/challenge");
   const root = createRoot(dom.window.document.getElementById("root"));

@@ -10,6 +10,7 @@ import { useChallengeRun } from "../challenge-run-context";
 import { DIFFICULTY_PRESETS, formatRunMarkdown } from "../../lib/challenge-math.mjs";
 import { formatRunSeed, generateSeededRun, newSeedCode, parseRunSeed, rollCardAspect } from "../../lib/challenge-engine.mjs";
 import { encodeShareUrl } from "../../lib/permalink-codec.mjs";
+import { chooseCharacterSlot } from "../../lib/challenge-choice.mjs";
 
 export default function ChallengeRunsRoot() {
   const shell = useShell();
@@ -331,18 +332,10 @@ export default function ChallengeRunsRoot() {
             onToggleLock={handleToggleLock}
             character={run}
             onUpdateCharacterSlot={(slot, val) => {
-              setRun((prev) => {
-                const next = { ...prev, [slot]: val, seedExact: false };
-                if (slot === "cls" && catalogs?.classes?.[val]) {
-                  const c = catalogs.classes[val];
-                  next.spec = c.spec;
-                  next.fav1 = c.fav[0];
-                  next.fav2 = c.fav[1];
-                  next.maj = [...c.maj];
-                  next.min = [...c.min];
-                }
-                return next;
-              });
+              // A chosen race, class or birthsign is locked, so a roll keeps it; "Roll it" unlocks.
+              const next = chooseCharacterSlot({ run, locks }, slot, val, catalogs);
+              setLocks(next.locks);
+              if (next.run !== run) setRun(next.run);
             }}
             races={races}
             classes={classNames}

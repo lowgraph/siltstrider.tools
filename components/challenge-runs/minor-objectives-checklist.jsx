@@ -1,4 +1,5 @@
 "use client";
+import LockToggle from "./lock-toggle";
 import { useState, useEffect } from "react";
 import { regionsIn } from "../../lib/challenge-math.mjs";
 
@@ -35,29 +36,20 @@ export default function MinorObjectivesChecklist({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           {onRollObjectives && (
             <button
               type="button"
-              className="mw-btn px-2 py-0.5 text-xs font-serif"
+              className="mw-btn px-2 py-0.5 text-xs font-serif whitespace-nowrap"
               onClick={onRollObjectives}
               title="Re-roll minor objectives"
               disabled={isLocked}
             >
-              Roll
+              Roll<span className="sr-only"> the minor objectives</span>
             </button>
           )}
 
-          <button
-            type="button"
-            className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-            }`}
-            onClick={onToggleLock}
-            title={isLocked ? "Unlock Minor Objectives" : "Lock Minor Objectives"}
-          >
-            {isLocked ? "Locked" : "Lock"}
-          </button>
+          <LockToggle locked={isLocked} what="minor objectives" onToggle={onToggleLock} />
         </div>
       </div>
 
