@@ -45,7 +45,7 @@ export default function ChangelogView() {
             <li>Touch-friendly Level Simulator buttons: the attribute priority reorder buttons now measure 24&times;24px, satisfying WCAG 2.2 target size guidelines.</li>
             <li>Accessible heading structure in Level Simulator and Cloud Vault: section headings now follow a strict logical hierarchy without skipped levels.</li>
             <li>Automatic Gear Advisor: gear recommendations now compute automatically as you modify character skills, attributes, and class archetypes, without requiring a scroll down and manual click on &ldquo;Optimize Gear&rdquo;. A quick-jump link at the top of the builder (&ldquo;Early gear for this build &darr;&rdquo;) anchors directly to recommended loadouts.</li>
-            <li>Editable calculator skill inputs: Alchemy, Enchanting, and Spellmaking now display character stats in a natural &ldquo;Using {"{character}: {Skill} {value}"} &mdash; change&rdquo; summary and provide editable inputs for skills, governing attributes, and Luck so you can calculate with any custom numbers without needing to build a character first.</li>
+            <li>Alchemy, Enchanting and Spellmaking let you type your own skill and attribute numbers, and &ldquo;Reset to character sheet&rdquo; puts your character&apos;s numbers back.</li>
           </ul>
         </section>
 

@@ -1,6 +1,7 @@
 "use client";
 import {effectNumber, allowedRanges, effectDraft, selectedEffect, baseCostLabel} from "../../../lib/effect-editor.mjs";
 import { useState, useEffect, useMemo, useCallback, useId } from "react";
+import { statNumber } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -21,7 +22,7 @@ export default function SpellmakingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world } = useShell();
+  const { world, profile } = useShell();
 
   // Character Magic Skills & Stats
   const baseAlt = sheet?.skills?.["Alteration"]?.v ?? 50;
@@ -62,7 +63,8 @@ export default function SpellmakingWorkstation() {
     setLuck(baseLuck);
     setMercantile(baseMerc);
     setPersonality(basePers);
-  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers]);
+    // A world switch goes back to the character sheet, as Alchemy (remounted per world) does.
+  }, [baseAlt, baseCon, baseDes, baseIll, baseMys, baseRes, baseWil, baseLuck, baseMerc, basePers, profile]);
 
   // Effect Stack
   const [effectsList, setEffectsList] = useState([
@@ -185,7 +187,7 @@ export default function SpellmakingWorkstation() {
   }, [primarySchool, alt, con, des, ill, mys, res]);
 
   const handleGoverningSkillChange = useCallback((val) => {
-    const num = Math.max(0, parseInt(val, 10) || 0);
+    const num = statNumber(val);
     switch (primarySchool) {
       case "Alteration": setAlt(num); break;
       case "Conjuration": setCon(num); break;
@@ -330,7 +332,7 @@ export default function SpellmakingWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={willpower}
-                onChange={(e) => setWillpower(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                onChange={(e) => setWillpower(statNumber(e.target.value))}
               />
             </div>
 
@@ -345,7 +347,7 @@ export default function SpellmakingWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={luck}
-                onChange={(e) => setLuck(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                onChange={(e) => setLuck(statNumber(e.target.value))}
               />
             </div>
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { statNumber } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -247,7 +248,7 @@ export default function AlchemyWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={skill}
-                onChange={(e) => setSkill(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                onChange={(e) => setSkill(statNumber(e.target.value))}
               />
             </div>
 
@@ -262,7 +263,7 @@ export default function AlchemyWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={intelligence}
-                onChange={(e) => setIntelligence(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                onChange={(e) => setIntelligence(statNumber(e.target.value))}
               />
             </div>
 
@@ -277,7 +278,7 @@ export default function AlchemyWorkstation() {
                 max="1000"
                 className="w-16 bg-surface-1 border border-line-9 px-2 py-0.5 text-xs font-mono text-accent font-bold"
                 value={luck}
-                onChange={(e) => setLuck(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                onChange={(e) => setLuck(statNumber(e.target.value))}
               />
             </div>
 

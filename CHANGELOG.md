@@ -33,7 +33,7 @@
 - **Touch-friendly Level Simulator buttons:** the attribute priority reorder buttons now measure 24×24px, satisfying WCAG 2.2 target size guidelines.
 - **Accessible heading structure in Level Simulator and Cloud Vault:** reorganized section headings so screen readers and assistive tools hear a strict logical outline (h2 tool title, h3 sections, h4 sub-items) with no skipped levels.
 - **Automatic Gear Advisor:** gear recommendations now compute automatically as you modify character skills, attributes, and class archetypes, without requiring a scroll down and manual click on "Optimize Gear". A quick-jump link at the top of the builder ("Early gear for this build ↓") anchors directly to recommended loadouts.
-- **Editable calculator skill inputs:** Alchemy, Enchanting, and Spellmaking now display character stats in a natural "Using {character}: {Skill} {value} — change" summary and provide editable inputs for skills, governing attributes, and Luck so you can calculate with any custom numbers without needing to build a character first.
+- **Your own numbers in the calculators:** Alchemy, Enchanting and Spellmaking say whose skill and attributes they use ("Using Breton Custom: Alchemy 25") and let you type other numbers, from 0 to 1000, without building a character first. "Reset to character sheet" (it used to say "Ingest Character Stats") puts your character's numbers back, and so does switching world.
 
 ## Gear Advisor ranks for your build — 2026-09-28
 
