@@ -32,6 +32,12 @@ First verification command: `npm test` in the site repository.
 ## Travel task-first — 30 September
 
 TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8 are merged to main (`e3ab542`).
+Main `2c113b8` was deployed separately at 20:32 UTC, then rolled back at 20:47
+after a mobile saved-choice assertion failed twice without diagnostics. Production
+is back on `1e84b1a`, Worker `24bd4ac1-e287-4c14-88d8-80bee20b42f9`; Travel
+remains on main. Bundle `3da03202` and D1 are unchanged. Failure evidence and the
+unconfirmed cause are in `docs/LAUNCH_VERIFICATION.md` §9. Stop fixes under the
+two-failure rule until the owner authorizes investigation.
 No bundle schema,
 loader, extraction or save-format changes. Invariants other agents must keep:
 
@@ -50,8 +56,8 @@ loader, extraction or save-format changes. Invariants other agents must keep:
   labels and fg-9 preset descriptions; do not reintroduce fg-16/fg-17 small print.
 
 First command in the site repository: `npm test`, before every commit. Browser
-command/scope: `docs/BROWSER_TESTS.md`; results: `docs/LAUNCH_VERIFICATION.md` §8.
-Deployment needs a separate owner request and its own Travel release/rollback.
+command/scope: `docs/BROWSER_TESTS.md`; results: `docs/LAUNCH_VERIFICATION.md` §§8–9.
+Further deployment needs a separate owner request.
 
 ## Release sprint ownership — 2026-09-29
 
