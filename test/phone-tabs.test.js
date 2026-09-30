@@ -42,7 +42,7 @@ async function renderHeader(shellOverrides = {}) {
 test("the phone tab bar offers the most used tools and a menu", async () => {
   const { tabs, cleanup } = await renderHeader();
   try {
-    assert.deepEqual(tabs.map(t => t.textContent), ["Home", "Build", "Level", "Alchemy", "Menu"]);
+    assert.deepEqual(tabs.map(t => t.textContent), ["Home", "Build", "Level", "Travel", "Menu"]);
     assert.equal(document.querySelector("nav.phone-tabs").getAttribute("aria-label"), "Main");
     assert.ok(tabs.every(t => t.getAttribute("type") === "button"));
     assert.equal(tabs[0].getAttribute("aria-current"), "page", "the current view is marked");
@@ -54,7 +54,7 @@ test("tabs navigate, and the menu tab opens and closes the drawer", async () => 
   const { tabs, navigated, cleanup } = await renderHeader({ view: "builder" });
   try {
     await act(async () => tabs[3].click());
-    assert.deepEqual(navigated, ["alchemy"]);
+    assert.deepEqual(navigated, ["travel"]);
 
     const drawer = document.getElementById("react-menu-drawer");
     const header = document.querySelector("header.topbar");
@@ -85,7 +85,7 @@ test("tabs navigate, and the menu tab opens and closes the drawer", async () => 
 });
 
 test("pages reached through the menu light up the menu tab", async () => {
-  const { tabs, cleanup } = await renderHeader({ view: "travel" });
+  const { tabs, cleanup } = await renderHeader({ view: "alchemy" });
   try {
     assert.ok(tabs.slice(0, 4).every(t => !t.hasAttribute("aria-current")));
     assert.equal(tabs[4].getAttribute("data-section"), "true");

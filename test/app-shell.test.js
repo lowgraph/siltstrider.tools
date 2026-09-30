@@ -659,6 +659,56 @@ test("Challenge Runs: Share copies a link that opens the same run, in its world"
   }
 });
 
+test("CHL-2: one lock per rolled item, on the sheet beside it; the settings' pickers show and release it", async () => {
+  const dom = setupDom("/challenge");
+  const root = createRoot(dom.window.document.getElementById("root"));
+  const doc = dom.window.document;
+  const settle = () => act(async () => { for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0)); });
+  const locks = () => [...doc.querySelectorAll("#panel-challenge .run-summary-sheet button[aria-pressed]")];
+  const lock = (what) => locks().find((b) => b.textContent.trim() === `Lock ${what}`);
+  const row = (label) => [...doc.querySelectorAll("#panel-challenge .identity-slot")].find((r) => r.textContent.startsWith(label));
+  // Game data stays pending in these tests, so a picker lists only what the run holds.
+  const choose = (select, value) => act(async () => {
+    Object.getOwnPropertyDescriptor(dom.window.HTMLSelectElement.prototype, "value").set.call(select, value);
+    select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+  });
+  try {
+    await act(async () => root.render(React.createElement(AppShell)));
+    await settle();
+    const configurator = doc.querySelector("#panel-challenge .run-configurator");
+    assert.equal([...configurator.querySelectorAll("button")].filter((b) => /lock/i.test(b.textContent)).length, 0, "no lock buttons beside the settings");
+    assert.deepEqual(locks().map((b) => b.textContent.trim()),
+      ["Lock race", "Lock class", "Lock birthsign", "Lock major objective", "Lock restrictions", "Lock minor objectives"], "one per rolled item, in the order of the sheet");
+    assert.ok(["race", "class", "birthsign"].every((what) => lock(what).disabled), "nothing rolled, nothing to keep");
+
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    assert.ok(locks().every((b) => !b.disabled && b.getAttribute("aria-pressed") === "false"));
+    assert.equal(doc.getElementById("cfg-choose-race").value, "", "a rolled race is not a choice: its picker says Roll it");
+
+    // Locked on the sheet: a roll keeps it, its own Roll waits, and its picker shows it.
+    const race = row("Race").querySelector("strong").textContent;
+    await act(async () => lock("race").click());
+    assert.equal(lock("race").getAttribute("aria-pressed"), "true");
+    assert.equal(row("Race").querySelector("button").disabled, true, "the lock wins over the row's Roll");
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    assert.equal(row("Race").querySelector("strong").textContent, race);
+    assert.equal(doc.getElementById("cfg-choose-race").value, race, "the row shows the race alone, as the lock keeps it");
+
+    // "Roll it" in the picker releases the sheet's lock.
+    await choose(doc.getElementById("cfg-choose-race"), "");
+    assert.equal(lock("race").getAttribute("aria-pressed"), "false");
+    assert.equal(row("Race").querySelector("button").disabled, false);
+    // The objectives' locks are the sheet's too, and still keep them through a roll.
+    await act(async () => lock("restrictions").click());
+    const rests = [...doc.querySelectorAll("#panel-challenge .restrictions-tablet li")].map((li) => li.textContent);
+    await act(async () => doc.getElementById("react-btn-generate-run").click());
+    assert.deepEqual([...doc.querySelectorAll("#panel-challenge .restrictions-tablet li")].map((li) => li.textContent), rests);
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});
+
 test("Challenge Runs: a character sent to the Build Optimizer can be sent back, with its changes", async () => {
   const dom = setupDom("/challenge");
   const root = createRoot(dom.window.document.getElementById("root"));
@@ -873,6 +923,33 @@ test("Bitter Cup is controlled in the level optimizer and survives navigation", 
   assert.equal(dom.window.document.getElementById("level-bittercup").checked,true);
   await act(async()=>dom.window.document.getElementById("level-bittercup").click());
   assert.equal(dom.window.document.getElementById("level-bittercup").checked,false);
+ } finally {await act(async()=>root.unmount());dom.window.close();}
+});
+
+test("LVL-2: the Bitter Cup waits under Advanced options, after the simulator's own controls, and opens it while on", async () => {
+ const dom=setupDom("/leveler"), root=createRoot(dom.window.document.getElementById("root"));
+ const doc=dom.window.document;
+ const go=async(view)=>act(async()=>{dom.window.history.pushState(null, "", "/"+view);dom.window.dispatchEvent(new dom.window.PopStateEvent("popstate"));});
+ const group=()=>doc.querySelector("#panel-leveler details.level-advanced");
+ try {
+  await act(async()=>root.render(React.createElement(AppShell)));
+  assert.ok(group(),"an Advanced options group");
+  assert.ok(group().contains(doc.getElementById("level-bittercup")),"the Bitter Cup is in it");
+  assert.equal(group().open,false,"closed while the Bitter Cup is off");
+  assert.match(group().querySelector("summary").textContent,/^Advanced options$/);
+  // Not the page's first control any more: the progression mode comes before it.
+  const controls=[...doc.querySelectorAll("#panel-leveler input, #panel-leveler select, #panel-leveler button, #panel-leveler summary")];
+  const statsOnly=controls.findIndex((el)=>el.textContent.trim()==="Stats Only");
+  assert.ok(statsOnly>=0,"the mode toggle is there");
+  assert.ok(controls.indexOf(group().querySelector("summary"))>statsOnly,"the group comes after the mode toggle");
+  await act(async()=>doc.getElementById("level-bittercup").click());
+  assert.equal(group().open,true);
+  assert.match(group().querySelector("summary").textContent,/Advanced options · Bitter Cup on/);
+  // Leaving and coming back with the Bitter Cup on: still open, so its effect is not hidden.
+  await go("builder"); await go("leveler");
+  assert.equal(group().open,true);
+  await act(async()=>doc.getElementById("level-bittercup").click());
+  assert.doesNotMatch(group().querySelector("summary").textContent,/Bitter Cup on/);
  } finally {await act(async()=>root.unmount());dom.window.close();}
 });
 

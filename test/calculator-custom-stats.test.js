@@ -39,6 +39,7 @@ async function workstation(tool) {
   const deps = {
     '../../character-context': { useActiveCharacter: () => ({ build: { race: 'Breton', className: 'Custom' }, sheet: SHEET }) },
     '../../shell-context': { useShell: () => ({ ...shell }) },
+    '../../active-character-link': require('./helpers/active-character-link.cjs'),'./ingredient-combobox': require('./helpers/ingredient-combobox.cjs'),
     '../../use-game-data': { useGameData: () => ({ status: 'ready', data }) },
     '../../use-search-intent': { useSearchIntent: () => null },
   };

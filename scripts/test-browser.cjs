@@ -136,6 +136,22 @@ async function select(selector, label) {
   await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});const option=[...el.options].find(o=>o.textContent.trim()===${JSON.stringify(label)});if(!option)throw Error('Missing option '+${JSON.stringify(label)});el.value=option.value;el.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   await pause(150);
 }
+// An ARIA combobox (each Alchemy slot, CALC-3): type the name and choose it with Enter.
+async function choose(selector, label) {
+  const box = JSON.stringify(selector);
+  await type(selector, label);
+  await until(`document.querySelector(${box}).getAttribute('aria-expanded')==='true'&&document.querySelector('#'+document.querySelector(${box}).getAttribute('aria-controls')+' [role=option][aria-selected=true]')?.textContent.trim()===${JSON.stringify(label)}`);
+  await key('Enter', 'Enter', 13);
+  await until(`document.querySelector(${box}).getAttribute('aria-expanded')==='false'`);
+  assert.equal(await evaluate(`document.querySelector(${box}).value`), label, `Chose ${label}`);
+}
+// The Builder's sections: tabs from 1024 px, one row of section buttons below (MOB-4).
+async function builderTab(tab) {
+  if (await evaluate('innerWidth >= 1024')) return click(`#btn-tab-${tab}`);
+  const label = { builder: 'Configure', equipment: 'Loadouts', premade: 'Premades' }[tab];
+  await evaluate(`(()=>{const el=[...document.querySelectorAll('.builder-phone-tabs button')].find(b=>b.textContent.trim()===${JSON.stringify(label)});if(!el)throw Error('Missing Builder section '+${JSON.stringify(label)});el.dataset.browserTab='target'})()`);
+  await click('[data-browser-tab="target"]'); await evaluate(`document.querySelector('[data-browser-tab="target"]')?.removeAttribute('data-browser-tab')`);
+}
 
 async function matrix() {
   const routes = ['home', 'builder', 'equipment', 'challenge', 'leveler', 'factions', 'alchemy', 'enchanting', 'spellmaking', 'travel', 'vault', 'account', 'about', 'changelog', 'privacy', 'terms'];
@@ -143,9 +159,9 @@ async function matrix() {
     await check(`${route}/${profile}/${width}`, async () => {
       await viewport(width); await navigate(route === 'equipment' ? 'builder' : route, profile);
       if (route === 'equipment') {
-        await click('#btn-tab-builder');
+        await builderTab('builder');
         await select('#builder-race', 'Khajiit');
-        await click('#btn-tab-equipment'); await idle(); await until('document.querySelector(".equipment-studio-root")');
+        await builderTab('equipment'); await idle(); await until('document.querySelector(".equipment-studio-root")');
       }
       const headings = await evaluate(`document.querySelectorAll('main h1').length`);
       assert.equal(headings, 1, 'Exactly one page h1');
@@ -186,8 +202,8 @@ async function toolsRegression() {
         await button('Reset to character sheet');
         if (route === 'alchemy') {
           assert.equal(await evaluate(`document.querySelector('[aria-label="Crucible 1 ingredient"]').value`), '', 'Empty ingredients');
-          await select('[aria-label="Crucible 1 ingredient"]', 'Wickwheat');
-          await select('[aria-label="Crucible 2 ingredient"]', 'Marshmerrow');
+          await choose('[aria-label="Crucible 1 ingredient"]', 'Wickwheat');
+          await choose('[aria-label="Crucible 2 ingredient"]', 'Marshmerrow');
           assert.match(await evaluate('document.querySelector(".alchemy-workstation").textContent'), /Restore Health/);
           await button('Clear All Ingredients');
         } else {
@@ -219,7 +235,7 @@ async function toolsRegression() {
       await click('[title="Copy run summary in markdown format"]'); await pause(100);
       assert.equal(await evaluate('navigator.clipboard.readText()'), summary, 'Seed repeats identical run');
       await click('#react-btn-to-optimizer'); await until('document.querySelector("#panel-build:not([hidden])")');
-      await click('#btn-tab-builder');
+      await builderTab('builder');
       await select('#builder-className', 'Custom Class');
       const characterFields = `['builder-race','builder-className','builder-sign','builder-spec','builder-fav1','builder-fav2'].map(id=>document.getElementById(id).value)`;
       const character = await evaluate(characterFields);
@@ -227,7 +243,7 @@ async function toolsRegression() {
       const buildLink = await evaluate('navigator.clipboard.readText()');
       await openDocument(buildLink); await until('document.getElementById("builder-className")?.value === "Custom"'); await idle(); await waitForFonts();
       assert.deepEqual(await evaluate(characterFields), character, 'Share restores character fields');
-      await click('#btn-tab-equipment'); await idle();
+      await builderTab('equipment'); await idle();
       await click('.equipment-ledger [role=button]');
       await until('document.querySelector("[role=dialog]")');
       assert.ok(await evaluate('document.querySelector("[role=dialog]").contains(document.activeElement)'), 'Dialog receives focus');

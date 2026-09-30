@@ -103,7 +103,9 @@ export default function CloudVaultModal({
 
           <div className="flex items-center gap-3">
             {vault.signedIn ? (
-              <div className="text-right hidden sm:block">
+              // max-sm:hidden: with a bare `hidden` plus sm:block, the legacy `.hidden { display:
+              // none !important }` in globals.css wins at every width, and the line never showed.
+              <div className="cloud-vault-account text-right max-sm:hidden">
                 <span className="text-xs text-fg-5 font-serif block">
                   {vault.user?.name || "Authenticated User"}
                 </span>

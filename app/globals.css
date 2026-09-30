@@ -2431,6 +2431,26 @@ body.view-travel .hero {
 .vault-trigger:disabled { opacity: 0.5; cursor: default; }
 @media (min-width: 900px) { .vault-trigger { width: 40px; height: 40px; } }
 
+/* MOB-1: on phones the header is one row: the site's name, then theme, search, account and
+   menu as icons. The taglines go (every page has its own heading), and search keeps its
+   label for screen readers only. Where the name would be squeezed, the account button
+   leaves the row; the menu has "Your account". */
+@media (max-width: 899px) {
+  .topbar { flex-wrap: wrap; align-items: center; gap: 6px; padding-inline: 8px; }
+  .topbar .brand { flex: 1 1 0; min-width: 0; padding-right: 0; }
+  .topbar .brand .brand-title { font-size: 1.5rem; line-height: 1.1; white-space: nowrap; }
+  .topbar .kicker { display: none; }
+  .header-actions { flex: none; margin-left: 0; gap: 6px; }
+  .header-actions .search-trigger { flex: none; width: 44px; padding: 0; justify-content: center; }
+  .search-trigger-label {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+}
+@media (max-width: 359px) {
+  .header-actions .vault-trigger { display: none; }
+}
+
 /* Theme switch. Classic Morrowind styling in both themes: in Ashfall it is the
    one piece of the old UI left on screen, the way back to it. */
 :root {
@@ -2915,10 +2935,6 @@ body.view-travel .hero {
 }
 .home-hub-root .home-title span { color: var(--color-accent); }
 .home-hub-root .home-lead { max-width: 36rem; font-size: 18px; line-height: 1.6; color: var(--color-fg-6); }
-.home-hub-root .home-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.home-hub-root .home-ctas-label { font-size: 15px; color: var(--color-fg-8); }
-.home-hub-root .home-ctas .home-link { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
-.home-hub-root .home-ctas .home-link svg { width: 16px; height: 16px; }
 .home-hub-root .home-link:disabled { opacity: 0.6; cursor: default; text-decoration: none; }
 .home-hub-root .home-cta { min-height: 48px; padding: 0 22px; font-size: 16px; font-weight: 700; }
 .home-hub-root .home-cta--primary { color: var(--color-fg-1); background: var(--color-surface-21); }
@@ -3013,9 +3029,10 @@ body.view-travel .hero {
   border-bottom: 2px solid transparent;
   border-image: var(--mw-groove) 2 repeat;
 }
-.home-hub-root .home-fact { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; }
+.home-hub-root .home-fact { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; container-type: inline-size; }
 .home-hub-root .home-fact + .home-fact { border-left: 1px solid var(--color-line-10); }
-.home-hub-root .home-fact-value { font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--color-accent); }
+/* HOME-3: the values are words ("Early gear"), so they shrink with a narrow tile rather than wrap. */
+.home-hub-root .home-fact-value { font-family: var(--font-display); font-size: min(40px, 17cqi); line-height: 1; white-space: nowrap; color: var(--color-accent); }
 .home-hub-root .home-fact-label { font-size: 14px; color: var(--color-fg-8); }
 
 /* Sections */
@@ -3144,7 +3161,32 @@ body.view-travel .hero {
 .home-hub-root .home-world-desc { font-size: 14px; line-height: 1.5; color: var(--color-fg-8); }
 .home-hub-root .home-world-content { color: var(--color-fg-4); }
 
-/* Save drop zone: the hero's primary action */
+/* First steps (HOME-1, MOB-2): start a character or load a save, as equals. Side by side
+   where the column has room; stacked, the character comes first, as on phones. */
+.home-hub-root .home-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 14px; width: 100%; max-width: 40rem; }
+.home-hub-root .home-start {
+  padding: 20px;
+  border: 2px solid var(--color-line-5);
+  background: color-mix(in srgb, var(--color-surface-3) 80%, transparent);
+}
+.home-hub-root .home-step-head { display: flex; align-items: center; gap: 12px; }
+.home-hub-root .home-step-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-line-5);
+  background: var(--color-surface-1);
+  color: var(--color-accent);
+}
+.home-hub-root .home-step-icon svg { width: 20px; height: 20px; }
+.home-hub-root .home-step-title { font-family: var(--font-display); font-size: 25px; line-height: 1.15; color: var(--color-fg-1); }
+.home-hub-root .home-step-note { font-size: 15px; line-height: 1.55; color: var(--color-fg-7); }
+.home-hub-root .home-step-row { margin-top: auto; padding-top: 4px; }
+.home-hub-root .home-step .home-cta { width: 100%; }
+
+/* Save drop zone: one of the two first steps */
 .home-hub-root .home-save {
   display: flex;
   align-items: flex-start;
@@ -3162,18 +3204,7 @@ body.view-travel .hero {
 }
 .home-hub-root .home-save[data-busy="true"] { opacity: 0.75; }
 .home-hub-root .home-save--loaded { flex-direction: column; gap: 12px; border-style: solid; border-color: var(--color-line-5); }
-.home-hub-root .home-save-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.home-hub-root .home-save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 4px; }
-.home-hub-root .home-save-icon {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--color-line-5);
-  background: var(--color-surface-1);
-  color: var(--color-accent);
-}
-.home-hub-root .home-save-icon svg { width: 22px; height: 22px; }
+.home-hub-root .home-step { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; max-width: none; }
 .home-hub-root .home-save-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
 .home-hub-root .home-save-title { font-family: var(--font-display); font-size: 25px; line-height: 1.15; color: var(--color-fg-1); }
 .home-hub-root .home-save-note { font-size: 15px; line-height: 1.55; color: var(--color-fg-7); }
@@ -3236,16 +3267,15 @@ body.view-travel .hero {
   .home-hub-root .home-fact { padding: 14px 12px; }
   .home-hub-root .home-fact:nth-child(3) { border-left: 0; }
   .home-hub-root .home-fact:nth-child(n + 3) { border-top: 1px solid var(--color-line-10); }
-  .home-hub-root .home-fact-value { font-size: 32px; }
+  .home-hub-root .home-fact-value { font-size: min(32px, 17cqi); }
   .home-hub-root .home-tools { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .home-hub-root .home-tools > .home-tool { grid-column: auto; padding: 14px; }
   .home-hub-root .home-tool--builder .home-preview { display: none; }
   .home-hub-root .home-tool-open { display: none; }
   .home-hub-root .home-tool--minor { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "icon title" "icon desc"; }
-  .home-hub-root .home-save { padding: 16px; gap: 12px; }
-  .home-hub-root .home-save-icon { display: none; }
-  .home-hub-root .home-save-title { font-size: 22px; }
-  .home-hub-root .home-save-row .home-cta { width: 100%; }
+  .home-hub-root :is(.home-save, .home-start) { padding: 16px; gap: 12px; }
+  .home-hub-root .home-step-icon { width: 34px; height: 34px; }
+  .home-hub-root :is(.home-save-title, .home-step-title) { font-size: 22px; }
   .home-hub-root .home-world { flex: 1 1 auto; padding: 0 10px; font-size: 14px; }
   .home-hub-root .home-colophon { grid-template-columns: 1fr 1fr; gap: 22px; }
 }

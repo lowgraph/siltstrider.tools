@@ -139,27 +139,29 @@ for now (owner, 30 September); other agents skip them.
       show Real Time Approximation beside in-game time.
 
 **First steps, phones and saving**
-- [ ] **C** **HOME-1 / MOB-2** Two equal first steps on Home, a character or a save; the
+- [x] **C** **HOME-1 / MOB-2** (started 2026-09-30 16:17 UTC, C; done `ef59aae` on `launch/home-1-mob-2-first-steps`, not merged: "Start a character" and "Load your save" as equal cards, the character first when they stack; the start button on a phone at 758 px, the save's used to lead at 893) Two equal first steps on Home, a character or a save; the
       character first on phones.
 - [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61`, merged `4d998be`, live as `4c464aa3`: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
-- [ ] **C** **SITE-4** The character bar as a control that opens the Builder.
-- [ ] **C** **MOB-1 / MOB-4** A lighter phone header; one level of Builder tabs.
-- [ ] **C** **HOME-3** Outcomes on Home instead of counts ("27 skills modeled").
+- [x] **C** **SITE-4** (started 2026-09-30 16:29 UTC, C; done `dbbee2d` on `launch/home-1-mob-2-first-steps`, not merged: wherever a tool names the character, the name links to the Builder, as Home names it; the Level Simulator names it too; the Faction Journal's line, hidden at every width by a legacy `.hidden` rule, shows from 640 px) The character bar as a control that opens the Builder.
+  - [x] **C** (started 2026-09-30 21:40 UTC, C; done `ee3dfb0` on `launch/home-1-mob-2-first-steps`, not merged: `max-sm:hidden`; the last bare `hidden` with `sm:` in components) The Cloud Vault's signed-in header line (name, tier and saves) shows from 640 px; the legacy `.hidden` rule hid it at every width (found with SITE-4; owner 30 September).
+- [x] **C** **MOB-1 / MOB-4** (started 2026-09-30 16:58 UTC, C; done `c91f585` on `launch/home-1-mob-2-first-steps`, not merged: a one-row 44 px phone header, pages start at 68 px instead of 257; one row of four Builder sections, the first field at 526-575 px instead of 915) A lighter phone header; one level of Builder tabs.
+- [x] **C** **HOME-3** (started 2026-09-30 17:09 UTC, C; done `30862de` on `launch/home-1-mob-2-first-steps`, not merged: ×5 level-ups, any town, early gear, 3 worlds, instead of skill, restriction and stop counts) Outcomes on Home instead of counts ("27 skills modeled").
 
 **Controls and polish**
-- [ ] **C** **CALC-3** One searchable box per Alchemy slot.
-- [ ] **C** **CHL-2** One lock per rolled item in Challenge Runs.
-- [ ] **C** **ENC-1** Enchanting starts with early-game items and soul gems.
-- [ ] **C** **SITE-3** Nav order by use: Character Builder, Level Simulator, Travel Planner,
+- [x] **C** **CALC-3** (started 2026-09-30 17:21 UTC, C; done `2ab91fc` on `launch/home-1-mob-2-first-steps`, not merged: one ARIA combobox per slot, names starting with the typed text first, arrows, Enter, click, Escape; no separate search field) One searchable box per Alchemy slot.
+- [x] **C** **CHL-2** (started 2026-09-30 17:28 UTC, C; done `710c95c` on `launch/home-1-mob-2-first-steps`, not merged: one lock per rolled item, on the sheet beside it; the settings choose instead of rolling, and a choice is locked) One lock per rolled item in Challenge Runs.
+- [x] **C** **ENC-1** (started 2026-09-30 17:16 UTC, C; done `eaa1c83` on `launch/home-1-mob-2-first-steps`, not merged: an Expensive Ring and a Lesser Soul Gem, as a Common Ring holds a single point; a new effect starts at 5 for 5 s so it fits; the ring, amulet, shirt and robe grades added) Enchanting starts with early-game items and soul gems.
+- [x] **C** **SITE-3** (started 2026-09-30 16:55 UTC, C; done `910abc5` on `launch/home-1-mob-2-first-steps`, not merged: the nav row and Home lead with Build, Level, Travel, Alchemy; the phone tab bar keeps Alchemy until Travel's phone layout is redone) Nav order by use: Character Builder, Level Simulator, Travel Planner,
       Alchemy, then the rest.
-- [ ] **C** **LVL-2 / LVL-3** The Bitter Cup under advanced options; untruncated attribute
+  - [x] **C** (started 2026-09-30 21:40 UTC, C; done `ee3dfb0` on `launch/home-1-mob-2-first-steps`, not merged: Home, Build, Level, Travel with a route icon; Alchemy in the menu) The phone tab bar has Travel instead of Alchemy, now that Travel's phone layout leads with the journey (TRV-4/5; owner 30 September).
+- [x] **C** **LVL-2 / LVL-3** (started 2026-09-30 20:35 UTC, C; done `2a86cff` on `launch/home-1-mob-2-first-steps`, not merged: the Bitter Cup under a closed Advanced options that opens while it is on; END, PER, STR in the priority list, full names for screen readers) The Bitter Cup under advanced options; untruncated attribute
       labels in the priority list.
 - [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged `e3ab542`) One network/loading/error/Retry line in Travel, including TR + ARCE.
-- [ ] **C** Header menus focus their first item when opened from the keyboard.
-- [ ] **C** The Cloud Vault checks a save's hash on load.
+- [x] **C** (started 2026-09-30 20:39 UTC, C; done `b582e98` on `launch/home-1-mob-2-first-steps`, not merged: Enter, Space or a screen reader opens on the first item, the mouse leaves focus on the button; checked in Chrome) Header menus focus their first item when opened from the keyboard.
+- [x] **C** (started 2026-09-30 20:34 UTC, C; done `f688888` on `launch/home-1-mob-2-first-steps`, not merged: the API compares the stored bytes with `payload_hash` before unpacking; a mismatch is a 422 with a plain message and a reference, and nothing of the save) The Cloud Vault checks a save's hash on load.
 - [ ] **C** **ACC-2** Account settings for players, after ACC-1: the revision-checked
       `/api/settings` (GET and PUT, owner from the Clerk session, 409 on a stale revision), a
       settings provider, and a settings page for world, theme, Travel, Gear Advisor and

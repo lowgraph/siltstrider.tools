@@ -107,7 +107,7 @@ test("HOME_TOOLS descriptions are enriched, complete, and contain no undefined p
   const tools = homeData.HOME_TOOLS;
   
   assert.equal(tools.length, 9, "all 9 tools must be present");
-  const expectedViews = ["builder", "leveler", "alchemy", "travel", "enchanting", "spellmaking", "factions", "challenge", "vault"];
+  const expectedViews = ["builder", "leveler", "travel", "alchemy", "enchanting", "spellmaking", "factions", "challenge", "vault"]; // SITE-3: most used first
   assert.deepEqual(tools.map(t => t.view), expectedViews, "expected all views in canonical order");
   
   for (const tool of tools) {

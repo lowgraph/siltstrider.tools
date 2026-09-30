@@ -411,3 +411,28 @@ test("LevelStepEditor provides 1-click presets and target level slider", async (
   }
 });
 
+test("LVL-3: the priority list uses the sheet's three-letter names, and screen readers still hear the full name", async () => {
+  const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
+  global.window = dom.window;
+  global.document = dom.window.document;
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+  const AttributePriorityRanker = component("components/level-simulator/attribute-priority-ranker.jsx");
+  const root = createRoot(document.getElementById("root"));
+  const priority = ["Endurance", "Personality", "Strength", "Willpower", "Intelligence", "Agility", "Speed", "Luck", "Mysticality"];
+  try {
+    await act(async () => root.render(React.createElement(AttributePriorityRanker, {
+      priority, archetypeId: "custom", detectedArchetype: null, onSelectArchetype() {}, onReorderPriority() {}
+    })));
+    const tiles = [...document.querySelectorAll(".priority-list > div")];
+    assert.equal(tiles.length, priority.length);
+    const shown = tiles.map((tile) => tile.querySelector('[aria-hidden="true"]').textContent.trim());
+    assert.deepEqual(shown, ["END", "PER", "STR", "WIL", "INT", "AGI", "SPD", "LUC", "MYS"], "an unknown name falls back to its first three letters");
+    assert.deepEqual(tiles.map((tile) => tile.querySelector(".sr-only").textContent), priority, "the full name for screen readers");
+    assert.deepEqual(tiles.map((tile) => tile.querySelector("[title]").getAttribute("title")), priority, "and on hover");
+    assert.equal(document.querySelectorAll(".priority-list .truncate").length, 0, "nothing is cut off");
+    assert.equal(document.querySelector('button[aria-label="Move Personality up"]') !== null, true, "the buttons keep the full name");
+  } finally {
+    await act(async () => root.unmount());
+    dom.window.close();
+  }
+});

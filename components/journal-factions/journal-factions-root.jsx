@@ -9,6 +9,7 @@ import { useShell } from "../shell-context";
 import {updateMembership} from "../../lib/faction-memberships.mjs";
 import FactionRoster from "./faction-roster";
 import FactionDetailView from "./faction-detail-view";
+import ActiveCharacterLink from "../active-character-link";
 import { getFactionQuests } from "../../lib/faction-math.mjs";
 
 const FALLBACK_FACTIONS = [
@@ -284,9 +285,11 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
         {/* Active Character Build Summary & Membership Toggle */}
         <div className="flex items-center gap-3 text-xs font-serif">
           {sheet && (
-            <div className="hidden sm:block text-right">
+            // max-sm:hidden: the legacy `.hidden { display: none !important }` in globals.css beats
+            // any sm:block paired with it, so this was hidden at every width.
+            <div className="max-sm:hidden text-right">
               <span className="text-fg-14 block text-[10px] uppercase">Active Character:</span>
-              <strong className="text-fg-6">{build.name || "Adventurer"}</strong> ({build.race} {build.className})
+              <ActiveCharacterLink build={build} />
             </div>
           )}
 

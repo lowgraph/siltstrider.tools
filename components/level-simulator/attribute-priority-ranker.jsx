@@ -69,9 +69,12 @@ export default function AttributePriorityRanker({
               <span className="font-mono text-[10px] text-accent font-bold w-4 shrink-0">
                 #{idx + 1}
               </span>
-              <span className="font-serif font-semibold text-fg-2 truncate" title={attr}>
-                {attr}
+              {/* LVL-3: the sheet's three-letter names fit where "Endurance" was cut to
+                  "Endur…"; screen readers and the tooltip keep the full name. */}
+              <span className="font-serif font-semibold text-fg-2" title={attr} aria-hidden="true">
+                {ATTR_ABBR[attr] || String(attr).slice(0, 3).toUpperCase()}
               </span>
+              <span className="sr-only">{attr}</span>
             </div>
             <div className="flex items-center gap-0.5 shrink-0 ml-1">
               <button

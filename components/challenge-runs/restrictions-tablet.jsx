@@ -1,4 +1,5 @@
 "use client";
+import LockToggle from "./lock-toggle";
 import { band } from "../../lib/challenge-math.mjs";
 
 export default function RestrictionsTablet({
@@ -21,29 +22,20 @@ export default function RestrictionsTablet({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           {onRollRestrictions && (
             <button
               type="button"
-              className="mw-btn px-2 py-0.5 text-xs font-serif"
+              className="mw-btn px-2 py-0.5 text-xs font-serif whitespace-nowrap"
               onClick={onRollRestrictions}
               title="Re-roll active restrictions"
               disabled={isLocked}
             >
-              Roll
+              Roll<span className="sr-only"> the restrictions</span>
             </button>
           )}
 
-          <button
-            type="button"
-            className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-            }`}
-            onClick={onToggleLock}
-            title={isLocked ? "Unlock Restrictions" : "Lock Restrictions"}
-          >
-            {isLocked ? "Locked" : "Lock"}
-          </button>
+          <LockToggle locked={isLocked} what="restrictions" onToggle={onToggleLock} />
         </div>
       </div>
 

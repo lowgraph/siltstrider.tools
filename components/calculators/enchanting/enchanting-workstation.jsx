@@ -5,9 +5,12 @@ import { statNumber, typedStats, typeStat, forgetTypedStats } from "../../../lib
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
+import ActiveCharacterLink from "../../active-character-link";
 import {
   SOUL_GEMS,
   ENCHANT_BASE_ITEMS,
+  DEFAULT_ENCHANT_ITEM,
+  DEFAULT_SOUL_GEM,
   calcEffectCost,
   calcEnchantmentTotalPoints,
   calcSelfEnchantChance,
@@ -15,6 +18,11 @@ import {
   calcBarterBuyPrice,
   getActiveEnchanters
 } from "../../../lib/enchant-math.mjs";
+
+// A new effect's starting numbers (ENC-1): 5 points for 5 seconds, so a single effect fits
+// the first case, an Expensive Ring (Restore Health on self costs about 6 of its 15 points;
+// 10 for 10 seconds, sized for an Exquisite Ring, cost 25).
+const NEW_EFFECT_ROW = Object.freeze({ effectKey: "", min: 5, max: 5, dur: 5, area: 0, range: "self" });
 
 // Where a number goes before there is anything to calculate: a dash, read out in words.
 const NO_RESULT = <><span aria-hidden="true">—</span><span className="sr-only">not calculated yet</span></>;
@@ -52,22 +60,14 @@ export default function EnchantingWorkstation() {
   }, [baseSkill, baseInt, baseLuck, baseMerc, basePers]);
 
   // Configuration
-  const [selectedBaseItem, setSelectedBaseItem] = useState("Exquisite Ring");
-  const [capacity, setCapacity] = useState(120);
-  const [soul, setSoul] = useState(400);
+  // ENC-1: an early enchantment first, not an Exquisite Ring and a Grand Soul Gem.
+  const [selectedBaseItem, setSelectedBaseItem] = useState(DEFAULT_ENCHANT_ITEM);
+  const [capacity, setCapacity] = useState(() => ENCHANT_BASE_ITEMS.find((b) => b.name === DEFAULT_ENCHANT_ITEM).capacity);
+  const [soul, setSoul] = useState(() => SOUL_GEMS.find((g) => g.name === DEFAULT_SOUL_GEM).soul);
   const [enchantType, setEnchantType] = useState("used"); // "used" | "strike" | "const"
 
   // Effects list
-  const [effectsList, setEffectsList] = useState([
-    {
-      effectKey: "",
-      min: 10,
-      max: 10,
-      dur: 10,
-      area: 0,
-      range: "self"
-    }
-  ]);
+  const [effectsList, setEffectsList] = useState(() => [{ ...NEW_EFFECT_ROW }]);
 
   const [selectedVendorId, setSelectedVendorId] = useState("galbedir");
   const [vendorSearch, setVendorSearch] = useState("");
@@ -125,17 +125,7 @@ export default function EnchantingWorkstation() {
 
   // Add / remove / update effects
   const handleAddEffect = () => {
-    setEffectsList((prev) => [
-      ...prev,
-      {
-        effectKey: "",
-        min: 10,
-        max: 10,
-        dur: 10,
-        area: 0,
-        range: "self"
-      }
-    ]);
+    setEffectsList((prev) => [...prev, { ...NEW_EFFECT_ROW }]);
   };
 
   const handleRemoveEffect = (index) => {
@@ -228,8 +218,8 @@ export default function EnchantingWorkstation() {
       <div className="p-3 bg-surface-5 border border-line-11 space-y-2.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-            <span className="font-serif font-bold text-accent whitespace-nowrap">
-              Using {build.race || "Adventurer"} {build.className || "Custom"}:
+            <span className="font-serif font-bold text-accent">
+              Using <ActiveCharacterLink build={build} />:
             </span>
             <span className="text-fg-9 whitespace-nowrap">
               Enchant <strong className="text-accent">{skill}</strong> (INT: <strong className="text-accent">{intelligence}</strong> | LUK: <strong className="text-accent">{luck}</strong>)
@@ -241,7 +231,7 @@ export default function EnchantingWorkstation() {
               onClick={() => setShowCustomInputs((v) => !v)}
               aria-expanded={showCustomInputs}
             >
-              {showCustomInputs ? "— hide inputs" : "— change"}
+              {showCustomInputs ? "— hide inputs" : "— type your own"}
             </button>
           </div>
 

@@ -14,6 +14,7 @@ async function workstation(tool, data) {
   const deps = {
     '../../character-context': { useActiveCharacter: () => ({ build: {}, sheet: {} }) },
     '../../shell-context': { useShell: () => ({ profile: 'vanilla', world: 'vanilla' }) },
+    '../../active-character-link': require('./helpers/active-character-link.cjs'),'./ingredient-combobox': require('./helpers/ingredient-combobox.cjs'),
     '../../use-game-data': { useGameData: () => ({ status: 'ready', data }) },
     '../../use-search-intent': { useSearchIntent: () => null },
   };
@@ -122,13 +123,13 @@ test('Alchemy shows no brew chance or value until two ingredients make a potion'
     assert.equal(value('Estimated Gold Value'), EMPTY);
     assert.match(document.body.textContent, /Select at least two ingredients/);
 
-    const slots = [...document.querySelectorAll('.alchemy-workstation select')].slice(4);
-    await choose(slots[0], 'a');
-    await choose(slots[1], 'c');
+    const { pickIngredient } = require('./helpers/ingredient-combobox.cjs');
+    await pickIngredient(React, window, 0, 'Ash Salts');
+    await pickIngredient(React, window, 1, 'Frost Salts');
     assert.equal(value('Brew Success Chance'), EMPTY, 'two ingredients that share nothing make no potion');
     assert.match(document.body.textContent, /No shared effects/);
 
-    await choose(slots[1], 'b');
+    await pickIngredient(React, window, 1, 'Fire Petal');
     assert.match(value('Brew Success Chance'), /^\d+%$/);
     assert.match(value('Estimated Gold Value'), /^\d+ g$/);
   });

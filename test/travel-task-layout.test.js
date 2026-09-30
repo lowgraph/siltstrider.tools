@@ -58,6 +58,7 @@ async function mount({ data = fixture(), status = 'ready', activeSave = null, st
       ? state.carrying
       : { status: state.status, data: state.data, retry: () => retries++ } },
     '../../use-search-intent': { useSearchIntent: () => null },
+    '../../active-character-link': require('./helpers/active-character-link.cjs'),
     './travel-location-picker': Picker,
     './transit-map': props => React.createElement('div', { 'data-testid': 'map' },
       React.createElement('button', { onClick: () => props.onSelectStop('Seyda Neen') }, 'Select Seyda Neen on map'))
@@ -437,4 +438,22 @@ test('TRV-8 keeps Retry in its single failure alert and replaces it when recover
     assert.equal(status().getAttribute('role'), 'status');
     assert.equal(button('Retry'), undefined);
   } finally { await t.cleanup(); }
+});
+
+// SITE-4 on the TRV-8 layout: the character is named once as a link, in the header, before the
+// journey; the live network status and the folded options' <summary> cannot hold a link.
+test('SITE-4: the header names the character as a link to the Builder, outside the status and the folded options', async () => {
+  for (const status of ['ready', 'loading', 'error']) {
+    const t = await mount({ status, data: status === 'ready' ? fixture() : null });
+    try {
+      const links = [...document.querySelectorAll('.travel-workstation a.active-character-link')];
+      assert.equal(links.length, 1, `${status}: one character link`);
+      const [link] = links;
+      assert.equal(link.getAttribute('href'), '/builder');
+      assert.match(link.closest('p').textContent, /^\s*Planning for Breton Custom · change in the Character Builder\s*$/, status);
+      assert.equal(link.closest('#travel-network-status, #travel-options, summary'), null, `${status}: not in the status line, a live region, or the options`);
+      before(link, document.querySelector('section[aria-label="Plan a journey"]'));
+      if (status === 'ready') assert.match(summary(), /Breton Custom/, 'the folded summary names the same character');
+    } finally { await t.cleanup(); }
+  }
 });

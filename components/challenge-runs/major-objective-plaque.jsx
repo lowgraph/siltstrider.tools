@@ -1,4 +1,5 @@
 "use client";
+import LockToggle from "./lock-toggle";
 import { regionsIn } from "../../lib/challenge-math.mjs";
 
 export default function MajorObjectivePlaque({
@@ -20,29 +21,20 @@ export default function MajorObjectivePlaque({
           </h4>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           {onRollMajor && (
             <button
               type="button"
-              className="mw-btn px-2 py-0.5 text-xs font-serif"
+              className="mw-btn px-2 py-0.5 text-xs font-serif whitespace-nowrap"
               onClick={onRollMajor}
               title="Roll another major objective"
               disabled={isLocked}
             >
-              Roll
+              Roll<span className="sr-only"> another major objective</span>
             </button>
           )}
 
-          <button
-            type="button"
-            className={`px-2 py-0.5 text-xs border rounded-none font-serif ${
-              isLocked ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-            }`}
-            onClick={onToggleLock}
-            title={isLocked ? "Unlock Major Objective" : "Lock Major Objective"}
-          >
-            {isLocked ? "Locked" : "Lock"}
-          </button>
+          <LockToggle locked={isLocked} what="major objective" onToggle={onToggleLock} />
         </div>
       </div>
 

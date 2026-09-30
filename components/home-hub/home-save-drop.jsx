@@ -109,33 +109,34 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
     );
   }
 
+  // One of Home's two first steps, beside "Start a character" (HOME-1); the hero shows the
+  // compatibility notice under both.
   return (
     <div
-      className="home-save"
+      className="home-save home-step"
       data-over={over ? "true" : undefined}
       data-busy={busy ? "true" : undefined}
       onDragEnter={drag}
       onDragOver={drag}
       onDragLeave={leave}
     >
-      <span className="home-save-icon"><UploadIcon /></span>
-      <div className="home-save-body">
-        <div className="home-save-title">{busy ? `Reading ${busy}…` : "Drop your OpenMW save here"}</div>
-        <div className="home-save-note">
-          Your character, gear, level and quests fill every tool. It is read in your browser: nothing is uploaded and
-          no account is needed.
-        </div>
-        <CompatibilityNotice />
-        <div className="home-save-row">
-          <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!enabled || Boolean(busy)} onClick={() => input.current?.click()}>
-            Choose a save file
-          </button>
-          <span className="home-save-hint">
-            <kbd>.omwsave</kbd> files are in <span>Documents › My Games › OpenMW › saves</span> on Windows
-          </span>
-        </div>
-        {error && <div className="home-save-error" role="alert">{error}</div>}
+      <div className="home-step-head">
+        <span className="home-step-icon"><UploadIcon /></span>
+        <div className="home-step-title">{busy ? `Reading ${busy}…` : "Load your save"}</div>
       </div>
+      <div className="home-step-note">
+        Drop an OpenMW save here or choose it: your character, gear and quests fill every tool. It is read in your
+        browser: nothing is uploaded.
+      </div>
+      <span className="home-save-hint">
+        <kbd>.omwsave</kbd> files are in <span>Documents › My Games › OpenMW › saves</span> on Windows
+      </span>
+      <div className="home-step-row">
+        <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!enabled || Boolean(busy)} onClick={() => input.current?.click()}>
+          Choose a save file
+        </button>
+      </div>
+      {error && <div className="home-save-error" role="alert">{error}</div>}
       {picker}
     </div>
   );
