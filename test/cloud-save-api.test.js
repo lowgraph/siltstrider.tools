@@ -1277,3 +1277,82 @@ print("OK_LIVE_RENAME_TYPE")
   assert.match(result, /OK_LIVE_RENAME_TYPE/);
 });
 
+/* ==================================================================== */
+/* The Cloud Vault checks a save's hash on load                         */
+/* ==================================================================== */
+
+async function storedSave(env, userId, token) {
+  const worker = (await import('../cloudflare/worker.mjs')).default;
+  const res = await worker.fetch(new Request(`${APP_ORIGIN}/api/saves`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ saveType: 'openmw_save', data: sampleOmwSave, name: 'Jiub the Checked' })
+  }), env);
+  assert.equal(res.status, 201);
+  const { id } = await res.json();
+  const get = () => worker.fetch(new Request(`${APP_ORIGIN}/api/saves/${id}`, { method: 'GET', headers: { Authorization: `Bearer ${token}` } }), env);
+  return { id, row: env.DB._cloudSaves.get(id), get };
+}
+async function captureErrors(run) {
+  const logged = [];
+  const real = console.error;
+  console.error = (entry) => logged.push(entry);
+  try { await run(); } finally { console.error = real; }
+  return logged;
+}
+
+test('Vault integrity: an intact save loads; its hash is checked in any letter case', async () => {
+  const env = createTestEnv();
+  const token = createSessionToken('user_integrity_ok');
+  const { row, get } = await storedSave(env, 'user_integrity_ok', token);
+  assert.match(row.payload_hash, /^[0-9a-f]{64}$/);
+  let res = await get();
+  assert.equal(res.status, 200);
+  assert.deepEqual((await res.json()).data, sampleOmwSave);
+  row.payload_hash = row.payload_hash.toUpperCase();
+  res = await get();
+  assert.equal(res.status, 200, 'a hash stored in capitals is the same hash');
+});
+
+test('Vault integrity: damaged bytes or a wrong hash are refused with a 422 the player can read, and logged without the save', async () => {
+  const env = createTestEnv();
+  const token = createSessionToken('user_integrity_bad');
+  const { row, get } = await storedSave(env, 'user_integrity_bad', token);
+  const original = Uint8Array.from(row.packed_payload);
+  const cases = [
+    ['one byte of the stored save changed', () => { const b = Uint8Array.from(original); b[b.length - 1] ^= 0x01; row.packed_payload = b; }],
+    ['the stored hash does not match', () => { row.packed_payload = Uint8Array.from(original); row.payload_hash = 'f'.repeat(64); }],
+    ['the stored hash is not a hash', () => { row.payload_hash = 'not-a-hash'; }],
+    ['no stored hash at all', () => { row.payload_hash = null; }],
+  ];
+  for (const [name, damage] of cases) {
+    damage();
+    let res;
+    const logged = await captureErrors(async () => { res = await get(); });
+    assert.equal(res.status, 422, name);
+    const body = await res.json();
+    assert.equal(body.error, 'INTEGRITY_ERROR', name);
+    assert.match(body.message, /no longer matches the checksum .* so it was not loaded\. Your other saves are not affected\. Reference: [0-9a-f-]{36}$/, name);
+    assert.equal(body.data, undefined, `${name}: nothing of the save is sent`);
+    assert.equal(logged.length, 1, name);
+    assert.deepEqual(Object.keys(logged[0]).sort(), ['event', 'requestId', 'route'], `${name}: the log holds no save, name or user`);
+    assert.equal(logged[0].requestId, body.requestId);
+  }
+});
+
+test('Vault integrity: the client throws the API\'s words, so the Vault shows them, and the save is not applied', async () => {
+  const { createCloudSaveClient, CloudSaveError } = await import('../lib/cloud-save-service.mjs');
+  const worker = (await import('../cloudflare/worker.mjs')).default;
+  const env = createTestEnv();
+  const token = createSessionToken('user_integrity_client');
+  const { id, row } = await storedSave(env, 'user_integrity_client', token);
+  const client = createCloudSaveClient({ baseUrl: 'https://siltstrider.tools', getToken: async () => token, fetchFn: async (url, options) => worker.fetch(new Request(url, options), env) });
+  assert.equal((await client.getSave(id)).name, 'Jiub the Checked');
+  row.payload_hash = '0'.repeat(64);
+  let thrown;
+  await captureErrors(async () => { try { await client.getSave(id); } catch (err) { thrown = err; } });
+  assert.ok(thrown instanceof CloudSaveError);
+  assert.equal(thrown.status, 422);
+  assert.equal(thrown.code, 'INTEGRITY_ERROR');
+  assert.match(thrown.message, /^This save no longer matches the checksum/);
+});

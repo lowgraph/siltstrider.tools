@@ -185,6 +185,20 @@ export async function handleGetSave(request, env, userId, saveId) {
     }
 
     const payloadBytes = toUint8Array(row.packed_payload);
+    // The Vault checks a save's hash on load: stored bytes that no longer match the hash
+    // recorded when they were saved are refused, not unpacked into a different, possibly
+    // damaged, character. A 422, not a 5xx: trying again cannot help, so the player is told
+    // what happened; the log holds the event and a reference, never the save.
+    const expectedHash = String(row.payload_hash || '').toLowerCase();
+    if (!/^[0-9a-f]{64}$/.test(expectedHash) || computeSha256Sync(payloadBytes) !== expectedHash) {
+      const requestId = crypto.randomUUID();
+      console.error({ event: 'save_integrity_failed', requestId, route: '/api/saves/:id' });
+      return json({
+        error: 'INTEGRITY_ERROR',
+        message: `This save no longer matches the checksum recorded when it was stored, so it was not loaded. Your other saves are not affected. Reference: ${requestId}`,
+        requestId,
+      }, 422, cors);
+    }
     let unpacked;
     try {
       unpacked = unpackCloudSave(payloadBytes);
