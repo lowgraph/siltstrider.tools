@@ -114,12 +114,12 @@ usability audit's. BLD-2, CALC-2 and BLD-4 were built early and are merged.
       under them, the other options folded.
 - [x] **C** **BLD-2** The Gear Advisor ranks by itself, with "Early gear for this build ↓" to
       reach it (started 2026-09-29 21:30 UTC, C; done `5e36716`, merged `ef3cdea` with review
-      fixes `5f11bea`: catalogs load near the screen, the name does not re-rank; not deployed).
+      fixes `5f11bea`: catalogs load near the screen, the name does not re-rank; live as `8f10cef2`).
 - [ ] **C** **TRV-6** Keep the player's own changes to a save's options across visits;
       Intervention scrolls as one use.
 - [x] **C** **CALC-2** Your own skill, attribute and Luck numbers in Alchemy, Enchanting and
       Spellmaking (started 2026-09-29 21:36 UTC, C; done `822c4dc`, merged `6178e87` with
-      review fixes `625c2b1`, `2b969fe`: 0 to 1000, a world switch resets them; not deployed).
+      review fixes `625c2b1`, `2b969fe`: 0 to 1000, a world switch resets them; live as `8f10cef2`).
 - [ ] **C** **TRV-7** Say what "Cheapest" costs in time ("saves 5 gold, 1 h 13 min slower").
 
 **First steps, phones and saving**
@@ -128,7 +128,7 @@ usability audit's. BLD-2, CALC-2 and BLD-4 were built early and are merged.
 - [ ] **C** **BLD-3** Premade builds first for newcomers.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
-      `66ff77f`: blocked storage, foreign values, loading over a save; not deployed).
+      `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
 - [ ] **C** **SITE-4** The character bar as a control that opens the Builder.
 - [ ] **C** **MOB-1 / MOB-4** A lighter phone header; one level of Builder tabs.
 - [ ] **C** **HOME-3** Outcomes on Home instead of counts ("27 skills modeled").
