@@ -1,5 +1,7 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { cheapestTradeoff } from "../../../lib/travel-tradeoff.mjs";
+import { realTimeText } from "../../../lib/travel-real-time.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -12,8 +14,6 @@ import {
   travelDisposition,
   adaptTravelGraph,
   addInterventionEdges,
-  interventionsFromSave,
-  interventionSources,
   saveMarks,
   interventionMarkText,
   guildFromSave,
@@ -32,7 +32,6 @@ import {
   doorChain,
   isPlace,
   placeFromSave,
-  matchPlaces,
   roomsThrough,
   PLACE_PREFIX,
   CELL
@@ -41,6 +40,10 @@ import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-t
 import { readRouteLink, writeRouteLink } from "../../../lib/travel-link.mjs";
 import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../../lib/travel-movement.mjs";
 import TransitMap from "./transit-map";
+import TravelLocationPicker from "./travel-location-picker";
+import { buildTravelSearchOptions } from "../../../lib/travel-search.mjs";
+import { travelSaveKey, readTravelOverrides, writeTravelOverrides, applyTravelOverrides } from "../../../lib/travel-options.mjs";
+import { interventionAccess, withInterventionResources } from "../../../lib/travel-intervention-access.mjs";
 
 const POPULAR_HUBS = [
   { name: "Seyda Neen", desc: "Arrival Port", vanillaOnly: false },
@@ -60,13 +63,11 @@ function FromSave({ children = "from your save" }) {
 export default function TravelWorkstation() {
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world } = useShell();
+  const { world, profile = world } = useShell();
   const isTr = world === "tr";
   const gameData = useGameData('travel', { enabled: true });
   const [origin, setOrigin] = useState("Seyda Neen");
   const [destination, setDestination] = useState("Vivec");
-  const [originSearch, setOriginSearch] = useState("");
-  const [destSearch, setDestSearch] = useState("");
   const [mageGuild,setMageGuild] = useState(true);
   const [conjurer,setConjurer] = useState(false);
   const [objective, setObjective] = useState("hops");
@@ -82,40 +83,75 @@ export default function TravelWorkstation() {
   const [waterWalking, setWaterWalking] = useState(false);
   const [fromSave, setFromSave] = useState(null);
   const carryingData = useGameData('carrying', { enabled: Boolean(activeSave?.save) });
+  const saveKey = useMemo(() => travelSaveKey(activeSave?.save, profile), [activeSave?.save, profile]);
+  const optionEdits = useRef({ key: undefined, values: {} });
+  const [rememberedCount, setRememberedCount] = useState(0);
+  const [storageKept, setStorageKept] = useState(true);
+  const [optionsRevision, setOptionsRevision] = useState(0);
+  const spellAccess = useMemo(() => interventionAccess(activeSave?.save, {
+    spellRecords: carryingData.data?.catalogs?.Spells,
+    sheet: activeSave?.sheet
+  }), [activeSave?.save, activeSave?.sheet, carryingData.data]);
 
   // The save's own standing with the Mages Guild decides which guides will serve.
   const saveGuild = useMemo(() => (activeSave?.save ? guildFromSave(activeSave.save) : null), [activeSave]);
   const guildNotice = guildGuideNotice(saveGuild, mageGuild);
   // A loaded save says which intervention the character can cast (the spell or a scroll)
   // and what it carries; options still holding those values are labelled "from your save".
-  const saveSpells = useMemo(() => (activeSave?.save ? interventionsFromSave(activeSave.save) : null), [activeSave]);
-  const saveSources = useMemo(() => (activeSave?.save ? interventionSources(activeSave.save) : null), [activeSave]);
+  const saveSpells = useMemo(() => (activeSave?.save ? Object.fromEntries(
+    Object.entries(spellAccess).map(([kind, option]) => [kind, option.defaultEnabled])
+  ) : null), [activeSave?.save, spellAccess]);
+  const saveSources = useMemo(() => (activeSave?.save ? Object.fromEntries(
+    Object.entries(spellAccess).map(([kind, option]) => [kind, option.source])
+  ) : null), [activeSave?.save, spellAccess]);
   const savedItems = useMemo(() => (activeSave?.save ? heldFromSave(activeSave.save) : null), [activeSave]);
   const marks = saveMarks(activeSave?.save ? { guild: saveGuild, spells: saveSpells } : null, { mageGuild, conjurer, spells });
 
-  useEffect(() => {
-    if (activeSave?.save) {
-      setSpells(saveSpells);
-      setHeld(savedItems);
-      if (saveGuild) {
-        setMageGuild(saveGuild.mageGuild);
-        setConjurer(saveGuild.conjurer);
-      }
-    }
-  }, [activeSave, saveGuild, saveSpells, savedItems]);
-
-  useEffect(() => {
-    if (!activeSave?.save) { setFromSave(null); return; }
-    if (carryingData.status !== 'ready') return;
+  const saveLoad = useMemo(() => {
+    if (!activeSave?.save || carryingData.status !== 'ready') return null;
     const catalogs = carryingData.data?.catalogs || {};
     const items = itemIndex(catalogs);
     const { weight, unknown } = carriedWeight(activeSave.save, items);
     const effects = constantEffects(activeSave.save, items, { enchantments: catalogs.Enchantments, spells: catalogs.Spells });
-    setCarried(weight);
-    setLevitate(effects.levitate);
-    setWaterWalking(effects.waterWalking > 0);
-    setFromSave({ weight, unknown, ...effects });
+    return { weight, unknown, ...effects };
   }, [activeSave, carryingData.status, carryingData.data]);
+
+  // Apply fresh data as defaults, then edits. Late catalog loads must not retick
+  // an option, and a different save/profile must not inherit another save's edits.
+  useEffect(() => {
+    if (!activeSave?.save && optionEdits.current.key === saveKey) return;
+    if (optionEdits.current.key !== saveKey) {
+      optionEdits.current = { key: saveKey, values: readTravelOverrides(saveKey) };
+      setStorageKept(true);
+    }
+    const defaults = {
+      mageGuild: saveGuild?.mageGuild ?? true, conjurer: saveGuild?.conjurer ?? false,
+      divine: saveSpells?.divine ?? false, almsivi: saveSpells?.almsivi ?? false,
+      held: savedItems || new Set(), carried: saveLoad?.weight ?? 0,
+      levitate: saveLoad?.levitate ?? 0, waterWalking: (saveLoad?.waterWalking ?? 0) > 0
+    };
+    const restored = applyTravelOverrides(defaults, optionEdits.current.values);
+    setMageGuild(restored.mageGuild); setConjurer(restored.conjurer);
+    setSpells({ divine: restored.divine && spellAccess.divine.available, almsivi: restored.almsivi && spellAccess.almsivi.available });
+    setHeld(restored.held); setCarried(restored.carried);
+    setLevitate(restored.levitate); setWaterWalking(restored.waterWalking);
+    setFromSave(saveLoad);
+    setRememberedCount(Object.keys(optionEdits.current.values).length);
+  }, [saveKey, saveGuild, saveSpells, savedItems, saveLoad, activeSave?.save, optionsRevision, spellAccess]);
+
+  const rememberChoice = (key, value) => {
+    if (!activeSave?.save) return;
+    const previous = optionEdits.current.key === saveKey ? optionEdits.current.values : readTravelOverrides(saveKey);
+    const values = { ...previous, [key]: key === "held" ? { ...previous.held, ...value } : value };
+    optionEdits.current = { key: saveKey, values };
+    setStorageKept(writeTravelOverrides(saveKey, values));
+    setRememberedCount(Object.keys(values).length);
+  };
+  const resetSaveOptions = () => {
+    optionEdits.current = { key: saveKey, values: {} };
+    setStorageKept(writeTravelOverrides(saveKey, {}));
+    setOptionsRevision(value => value + 1);
+  };
 
   const liveNetworkGraph = useMemo(() => {
     if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Travel)) {
@@ -245,7 +281,6 @@ export default function TravelWorkstation() {
     if (!saveOrigin || startedFrom === activeSave?.token) return;
     setStartedFrom(activeSave?.token ?? null);
     setOrigin(saveOrigin);
-    setOriginSearch("");
   }, [saveOrigin, activeSave, startedFrom]);
 
   const labelOf = useCallback((id) => {
@@ -321,7 +356,6 @@ export default function TravelWorkstation() {
     if (!intent || intent.kind !== "destination") return;
     if (availableStops.includes(intent.value)) {
       clearSearchIntent(intent);
-      setDestSearch("");
       handleDestinationChange(intent.value);
     } else if (gameData.status === "ready" || gameData.status === "error") {
       clearSearchIntent(intent);
@@ -335,30 +369,6 @@ export default function TravelWorkstation() {
     handleDestinationChange(prevOrigin);
   };
 
-  // Filtered stops for search
-  const filteredOriginStops = useMemo(() => {
-    if (!originSearch.trim()) return availableStops;
-    return availableStops.filter((s) =>
-      s.toLowerCase().includes(originSearch.toLowerCase())
-    );
-  }, [availableStops, originSearch]);
-
-  const filteredDestStops = useMemo(() => {
-    if (!destSearch.trim()) return availableStops;
-    return availableStops.filter((s) =>
-      s.toLowerCase().includes(destSearch.toLowerCase())
-    );
-  }, [availableStops, destSearch]);
-
-  // Any named place matching a search: tombs, caves, houses, shops, a town listed once.
-  // Needs Access to route.
-  const placeMatches = useCallback(
-    (query) => (access ? matchPlaces(places, query, { stops: availableStops }) : []),
-    [access, places, availableStops]
-  );
-  const originPlaces = useMemo(() => placeMatches(originSearch), [placeMatches, originSearch]);
-  const destPlaces = useMemo(() => placeMatches(destSearch), [placeMatches, destSearch]);
-  const sealed = useCallback((record) => record.interior && !placePoints(record.key, access).length, [access]);
   // How a room with no door out is reached: through its doors to a teleport's end or a
   // stop, if any; quest teleports only count when asked for on the route, so say so.
   const teleportEnds = useMemo(() => {
@@ -381,6 +391,19 @@ export default function TravelWorkstation() {
     return way === "everyday" ? "inside, by teleport" : way === "quest" ? "inside, by quest teleport" : "inside, no way in known";
   }, [access, teleportEnds, gameData.data]);
 
+  // One list for both route ends. Keep canonical IDs so shared links, save origins,
+  // swaps and the router keep using the same stops and cells as before.
+  const locationOptions = useMemo(() => buildTravelSearchOptions({
+    stops: availableStops,
+    places,
+    settlements: gameData.data?.metadata?.Places?.settlements || [],
+    graph: routingGraph,
+    includePlaces: Boolean(access)
+  }).map((option) => option.record?.interior && !placePoints(option.record.key, access).length
+    ? { ...option, badge: sealedWay(option.record.key) }
+    : option), [availableStops, places, gameData.data, routingGraph, access, sealedWay]);
+  const locationLabels = useMemo(() => new Map(locationOptions.map((option) => [option.id, option.label])), [locationOptions]);
+
   // Compute route: fewest legs, least gold for this character, or fewest in-game hours.
   const planGraph = useMemo(() => {
     const chosen = [origin, destination].filter(isPlace).map((id) => id.slice(PLACE_PREFIX.length));
@@ -390,16 +413,27 @@ export default function TravelWorkstation() {
       nodes: gameData.data?.metadata?.Travel?.nodes || {}
     });
   }, [origin, destination, routingGraph, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells, gameData.data]);
+  const usablePlan = useMemo(() => withInterventionResources(planGraph, spellAccess), [planGraph, spellAccess]);
   const route = useMemo(() => {
-    const planned = planRoute(origin, destination, planGraph, {
+    const planned = planRoute(origin, destination, usablePlan.graph, {
       objective: priced ? objective : "hops",
-      goldOf: (edge) => journeyGold(edge, player, settings)
+      goldOf: (edge) => journeyGold(edge, player, settings),
+      resources: usablePlan.resources
     });
     if (planned.isValid) return planned;
     const shut = [origin, destination].find((id) => isPlace(id) && !placePoints(id.slice(PLACE_PREFIX.length), access).length);
     if (shut) return { ...planned, message: `No door leads out of ${labelOf(shut)}. It is reached by a script or a spell, if at all.` };
     return planned;
-  }, [origin, destination, planGraph, objective, priced, player, settings, access, labelOf]);
+  }, [origin, destination, usablePlan, objective, priced, player, settings, access, labelOf]);
+  const tradeoff = useMemo(() => {
+    if (!priced || objective !== "gold" || !route.isValid || route.hops === 0) return null;
+    const fewest = planRoute(origin, destination, usablePlan.graph, {
+      objective: "hops", goldOf: (edge) => journeyGold(edge, player, settings),
+      resources: usablePlan.resources
+    });
+    return cheapestTradeoff(route, fewest);
+  }, [priced, objective, route, origin, destination, usablePlan, player, settings]);
+  const realTime = useMemo(() => realTimeText(route), [route]);
   const routeSpellEdges = useMemo(() => (route.isValid ? route.steps : [])
     .filter((step) => step.spell || step.walk || step.teleport)
     .map((step) => {
@@ -461,8 +495,23 @@ export default function TravelWorkstation() {
     }
   };
 
+  const selectedItems = carriedOptions.filter((item) => held.has(item.id)).length;
+  const characterSummary = [
+    activeSave?.save?.identity?.name || `${build.race || "Adventurer"} ${build.className || "Custom"}`,
+    mageGuild ? (isTr && conjurer ? "Mages Guild, Conjurer" : "Mages Guild") : "no Mages Guild",
+    intervention && Object.entries(INTERVENTION_KINDS).filter(([kind]) => spells[kind]).map(([, label]) => label).join(" + "),
+    selectedItems ? `${selectedItems} teleport item${selectedItems === 1 ? "" : "s"}` : null,
+    priced && followers > 0 ? `${followers} follower${followers === 1 ? "" : "s"}` : null,
+    access && walking ? "walking on" : "transport only",
+    access && walking && carried > 0 ? `carrying ${carried}` : null,
+    access && walking && levitate > 0 ? `Levitate ${levitate}` : null,
+    access && walking && waterWalking ? "Water Walking" : null,
+    teleports && questTeleports ? "quest teleports on" : null,
+    rememberedCount > 0 ? "remembered choices" : null
+  ].filter(Boolean).join(" · ");
+
   return (
-    <div className="travel-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">
+    <div className="travel-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-4">
       {/* Workstation Header Bar */}
       <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -470,69 +519,40 @@ export default function TravelWorkstation() {
             Travel Planner
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
-            Plan the fewest legs, the cheapest fare for your character, or the fastest trip across silt striders, pack guar caravans, sky lamps, boats, river striders, and Guild Guides in Vvardenfell and mainland Tamriel.
+            Choose your starting place, destination and what matters most for the journey.
           </p>
         </div>
       </div>
 
-      {/* Top Banner: Active Character & World Profile Strip & Live Game-Data Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-5 border border-line-11">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-          <span className="font-serif font-bold text-accent uppercase tracking-wider whitespace-nowrap">
-            Active Character:
-          </span>
-          <span className="font-bold text-fg-2 whitespace-nowrap">
-            {build.race || "Adventurer"} {build.className || "Custom"}
-          </span>
-          <span className="text-fg-13 hidden sm:inline">·</span>
-          <span className="text-fg-9 whitespace-nowrap">
-            Network:{" "}
-            <strong className="text-accent">
-              {isTr ? "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"}
-            </strong>
-          </span>
-          <span className="text-fg-13 hidden sm:inline">·</span>
-          <span className="text-fg-9 whitespace-nowrap">
-            Stops: <strong className="text-accent">{availableStops.length}</strong>
-          </span>
+      <section aria-label="Plan a journey" className="space-y-3">
+        <p id="travel-network-status" role={gameData.status === "error" ? "alert" : "status"} className="m-0 text-xs text-fg-9">
+          Network: {isTr ? profile === "tr_arce" ? "Tamriel Rebuilt + ARCE" : "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"} · {gameData.status === "ready"
+            ? `${availableStops.length} ${availableStops.length === 1 ? "stop" : "stops"}`
+            : gameData.status === "error"
+            ? <>Travel network unavailable. <button type="button" className="mw-btn" onClick={gameData.retry}>Retry</button></>
+            : "Loading travel network..."}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <TravelLocationPicker
+            id="travel-origin"
+            label="Origin location"
+            value={origin}
+            valueLabel={locationLabels.get(origin) || labelOf(origin)}
+            options={locationOptions}
+            onChange={handleOriginChange}
+            disabled={gameData.status !== "ready"}
+          />
+          <TravelLocationPicker
+            id="travel-destination"
+            label="Destination location"
+            value={destination}
+            valueLabel={locationLabels.get(destination) || labelOf(destination)}
+            options={locationOptions}
+            onChange={handleDestinationChange}
+            disabled={gameData.status !== "ready"}
+          />
+
         </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-          {gameData.status === 'ready' ? (
-            <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
-              <span>Live: {availableStops.length} Stops ({gameData.data?.profile?.toUpperCase() || world.toUpperCase()})</span>
-            </span>
-          ) : gameData.status === 'loading' ? (
-            <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block animate-pulse"/>
-              <span>Loading bundle...</span>
-            </span>
-          ) : null}
-
-          <button
-            type="button"
-            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
-            onClick={handleSwap}
-            title="Swap Origin and Destination"
-          >
-            Swap Origin and Destination
-          </button>
-          <button
-            type="button"
-            className="mw-btn px-2.5 py-1 text-xs font-serif font-bold"
-            onClick={copyRouteLink}
-            title="Copy a link to this route"
-          >
-            {copied ? "Link copied" : "Copy route link"}
-          </button>
-        </div>
-      </div>
-
-      {/* Quick Hub Jump Presets */}
-      <div className="flex flex-wrap gap-4 p-3 text-sm">
-        <label><input type="checkbox" checked={mageGuild} onChange={event=>setMageGuild(event.target.checked)}/> Mages Guild member{marks.mageGuild && <FromSave />}</label>
-        {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>setConjurer(event.target.checked)}/> Conjurer rank or higher{marks.conjurer && <FromSave />}</label>}
         {priced && (
           <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Route objective">
             <span className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider">Plan for:</span>
@@ -542,7 +562,7 @@ export default function TravelWorkstation() {
                 type="button"
                 aria-pressed={objective === id}
                 onClick={() => setObjective(id)}
-                className={`px-2.5 py-1 text-xs font-serif font-bold border transition-colors ${
+                className={`min-h-11 px-3 py-2 text-xs font-serif font-bold border transition-colors ${
                   objective === id
                     ? "border-accent bg-surface-17 text-accent"
                     : "border-line-9 bg-surface-3 text-fg-9 hover:border-line-1 hover:text-fg-2"
@@ -553,131 +573,361 @@ export default function TravelWorkstation() {
             ))}
           </div>
         )}
-        {intervention && Object.entries(INTERVENTION_KINDS).map(([kind, label]) => (
-          <label key={kind} className="whitespace-nowrap">
-            <input
-              type="checkbox"
-              checked={spells[kind]}
-              onChange={(event) => setSpells((prev) => ({ ...prev, [kind]: event.target.checked }))}
-            />{" "}
-            {label}
-            {marks[kind] && <FromSave>{interventionMarkText(saveSources?.[kind], spells[kind])}</FromSave>}
-          </label>
-        ))}
-        {teleports && (
-          <label className="whitespace-nowrap">
-            <input type="checkbox" checked={questTeleports} onChange={(event) => setQuestTeleports(event.target.checked)} /> Include quest teleports
-          </label>
-        )}
-        {access && (
-          <label className="whitespace-nowrap">
-            <input type="checkbox" checked={walking} onChange={(event) => setWalking(event.target.checked)} /> Walk between nearby places
-          </label>
-        )}
-        {access && walking && (
-          <>
-            <label className="flex items-center gap-1.5 whitespace-nowrap" title="Weight carried; it slows every walk, and past your capacity (Strength x 5) you cannot move.">
-              Carrying
-              <input
-                type="number"
-                min={0}
-                step="0.5"
-                value={carried}
-                onChange={(event) => setCarried(Math.max(0, Number(event.target.value) || 0))}
-                className="flex-none"
-                style={{ width: "5.5rem" }}
-              />
-              <span className="text-fg-13">of {Math.round(movement.capacity)}</span>
-            </label>
-            <label className="flex items-center gap-1.5 whitespace-nowrap" title="Magnitude of a Levitate always on, from gear or an ability; 0 for none.">
-              Constant Levitate
-              <input
-                type="number"
-                min={0}
-                max={100}
-                value={levitate}
-                onChange={(event) => setLevitate(Math.max(0, Math.min(100, Math.trunc(Number(event.target.value) || 0))))}
-                className="flex-none"
-                style={{ width: "4.5rem" }}
-              />
-            </label>
-            <label className="whitespace-nowrap">
-              <input type="checkbox" checked={waterWalking} onChange={(event) => setWaterWalking(event.target.checked)} /> Constant Water Walking
-            </label>
-          </>
-        )}
-        {priced && (
-          <label className="flex items-center gap-1.5 whitespace-nowrap">
-            Followers
-            <input
-              type="number"
-              min={0}
-              max={9}
-              value={followers}
-              onChange={(event) => setFollowers(Math.max(0, Math.min(9, Math.trunc(Number(event.target.value) || 0))))}
-              className="flex-none"
-              style={{ width: "5rem" }}
-            />
-          </label>
-        )}
+
+        <div className="flex flex-wrap items-center gap-2">
+          <button type="button" className="mw-btn min-h-11 px-3 py-2 text-xs font-serif font-bold" onClick={handleSwap}>
+            Swap Origin and Destination
+          </button>
+          <button type="button" className="mw-btn min-h-11 px-3 py-2 text-xs font-serif font-bold" onClick={copyRouteLink}>
+            {copied ? "Link copied" : "Copy route link"}
+          </button>
+        </div>
+      </section>
+
+      <section id="travel-results" aria-label="Planned route" className="space-y-4">
         {guildNotice && (
-          <p role="note" className="guild-guide-notice basis-full text-[11px] text-warning-2">{guildNotice}</p>
+          <p role="note" className="guild-guide-notice text-[11px] text-warning-2">{guildNotice}</p>
         )}
         {access && walking && movement.overloaded && (
-          <p role="alert" className="basis-full text-[11px] text-warning-2">
+          <p role="alert" className="text-[11px] text-warning-2">
             Carrying more than you can ({Math.round(movement.load)} of {Math.round(movement.capacity)}): you cannot move, so no route walks.
           </p>
         )}
-        {access && walking && fromSave && (
-          <p className="basis-full text-[11px] text-fg-13">
-            From your save: carrying {fromSave.weight}{fromSave.unknown ? ` (${fromSave.unknown} item${fromSave.unknown === 1 ? "" : "s"} this world's data does not know, not weighed)` : ""}
-            {fromSave.feather ? `, Feather ${fromSave.feather}` : ""}{fromSave.burden ? `, Burden ${fromSave.burden}` : ""}
-            {fromSave.sources.length ? `; always on from ${fromSave.sources.join(", ")}` : ""}.
+        <div className="flex flex-wrap gap-2 items-center justify-between border-b border-line-9 pb-1.5">
+          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider">
+            Route Dossier
+          </h3>
+          <span
+            className={`px-2.5 py-0.5 border text-xs font-mono font-bold ${
+              route.isValid
+                ? route.hops === 0
+                  ? "border-line-9 bg-surface-9 text-fg-7"
+                  : "border-success-line-4 bg-success-surface-2 text-success-3"
+                : "border-danger-line-3 bg-danger-surface-2 text-danger-7"
+            }`}
+          >
+            {route.isValid
+              ? route.hops === 0
+                ? "At Destination"
+                : `${route.hops} ${route.hops === 1 ? "Leg" : "Legs"}${
+                    route.totals?.goldKnown && priced ? ` · ${route.totals.gold} gold` : ""
+                  }${route.totals?.hoursKnown && priced ? ` · ${formatDuration(route.totals.hours)} in-game` : ""}`
+              : "No Route"}
+          </span>
+        </div>
+
+        {realTime && route.hops > 0 && (
+          <div className="space-y-1 text-xs text-fg-7">
+            <p className="travel-real-time m-0">{realTime}</p>
+            <p className="text-[11px] text-fg-9 m-0">Movement only; excludes combat, menus, loading screens and time indoors.</p>
+          </div>
+        )}
+        {tradeoff && <p role="note" className="travel-tradeoff text-xs text-fg-7 m-0">{tradeoff}</p>}
+
+        {/* Route Status Card */}
+        <div className="p-4 bg-surface-5 border border-line-11 space-y-4">
+          <div className="flex items-center justify-between text-xs pb-2 border-b border-line-11">
+            <div>
+              <span className="text-fg-13 uppercase font-serif font-bold block text-[10px]">
+                Origin
+              </span>
+              <span className="text-sm font-serif font-bold text-fg-2">{labelOf(origin)}</span>
+            </div>
+            <div className="text-center font-mono text-fg-13">
+              {route.hops > 0 ? `--> ${route.hops} transit legs -->` : "=="}
+            </div>
+            <div className="text-right">
+              <span className="text-fg-13 uppercase font-serif font-bold block text-[10px]">
+                Destination
+              </span>
+              <span className="text-sm font-serif font-bold text-fg-2">{labelOf(destination)}</span>
+            </div>
+          </div>
+
+          {/* Turn by turn steps list */}
+          {route.isValid ? (
+            route.steps.length === 0 ? (
+              <div className="p-4 text-center text-sm font-serif text-fg-9 bg-surface-3 border border-line-11">
+                You are already at {labelOf(origin)}. No transit required.
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="text-xs uppercase font-serif font-bold text-fg-7">
+                  Turn-By-Turn Navigation:
+                </div>
+                {route.steps.map((step) => (
+                  <div
+                    key={step.stepNumber}
+                    className="flex items-center justify-between gap-3 p-2.5 bg-surface-3 border border-line-11"
+                  >
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="text-xs font-serif font-bold text-fg-2">
+                        Leg {step.stepNumber}: {labelOf(step.from)} to {labelOf(step.to)}
+                      </div>
+                      {step.stepNumber === 1 && step.walk && isPlace(step.from) && doorChain(step.from.slice(PLACE_PREFIX.length), access).length > 0 && (
+                        <div className="text-[11px] text-fg-9">
+                          Leave by the doors: {doorChain(step.from.slice(PLACE_PREFIX.length), access).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")} → outside
+                        </div>
+                      )}
+                      <div className="text-[11px] text-fg-13">
+                        {step.indoors
+                          ? `Go through the doors: ${(step.doors || []).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}`
+                          : step.walk && step.levitate
+                          ? `Levitate about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, straight over whatever is below`
+                          : step.walk
+                          ? step.terrain
+                            ? `Walk about ${(step.distance / CELL).toFixed(1)} cells, heading ${step.direction}, to ${labelOf(step.to)}`
+                              + (step.straight && step.distance > step.straight * 1.15
+                                ? `, round high ground: ${(step.distance / step.straight).toFixed(1)}× the straight line`
+                                : "")
+                              + (step.water ? `, ${step.waterWalk ? "walking on the water for" : "swimming"} about ${Math.max(0.1, step.water / CELL).toFixed(1)} cells of it` : "")
+                            : `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, in a straight line`
+                          : step.teleport
+                          ? `${step.label} at ${labelOf(step.from)}${step.board ? `, ${step.board}` : ""}`
+                          : <>
+                              {step.scroll ? `Use a ${step.kind} scroll` : step.spell ? `Cast ${step.kind}` : `Take the ${step.kind}`}
+                              {step.providerName ? ` (${step.providerName})` : ""} from {labelOf(step.from)}
+                              {step.board ? `, ${step.board}` : ""}
+                              {step.alight ? ` to ${labelOf(step.to)}, ${step.alight}` : ""}
+                            </>}
+                      </div>
+                      {step.scroll && <p className="text-[11px] text-warning-2 m-0">Uses 1 scroll; {step.remaining} remaining for this journey.</p>}
+                      {Number.isFinite(step.castChance) && <p className="text-[11px] text-warning-2 m-0">Estimated cast chance: {step.castChance}%. The route assumes success; a failed cast spends Magicka.</p>}
+                      {step.resource === "magicka" && <p className="text-[11px] text-fg-9 m-0">Uses {step.uses} Magicka; {Math.round(step.remaining)} remaining for this journey.</p>}
+                      {step.stepNumber === route.steps.length && step.walk && isPlace(step.to) && doorChain(step.to.slice(PLACE_PREFIX.length), access).length > 0 && (
+                        <div className="text-[11px] text-fg-9">
+                          Go in by the doors: outside → {doorChain(step.to.slice(PLACE_PREFIX.length), access).reverse().map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}
+                        </div>
+                      )}
+                      {step.questGated && (
+                        <div className="text-[11px] text-warning-2">
+                          Quest teleport{step.conditions?.length ? `: ${step.conditions.join("; ")}` : ""}.
+                        </div>
+                      )}
+                      {step.ambiguous && (
+                        <div className="text-[11px] text-warning-2">
+                          From some rooms here the spell may land elsewhere; the engine&apos;s door order decides.
+                        </div>
+                      )}
+                      {step.kind === "Guild Guide" && (
+                        <div className="guild-guide-members text-[11px] text-fg-9">Mages Guild members only.</div>
+                      )}
+                      {(Number.isFinite(step.gold) || Number.isFinite(step.hours)) && (
+                        <div className="text-[11px] font-mono text-fg-9">
+                          {Number.isFinite(step.gold) ? `${step.gold} gold` : "price unknown"}
+                          {step.indoors ? " · time indoors not counted"
+                            : Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes in-game" : `${formatDuration(step.hours)} in-game`}` : ""}
+                        </div>
+                      )}
+                    </div>
+                    <span
+                      className={`shrink-0 whitespace-nowrap px-2 py-0.5 text-xs font-serif font-bold border ${getServiceBadge(
+                        step.kind
+                      )}`}
+                    >
+                      {step.kind}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )
+          ) : (
+            <div className="p-4 text-center text-sm font-serif text-danger-7 bg-danger-surface-2 border border-danger-line-3">
+              {route.message || "No fast-travel route found between these locations."}
+            </div>
+          )}
+        </div>
+
+        {route.isValid && route.totals?.goldKnown && Number.isFinite(activeSave?.save?.vitals?.gold)
+          && route.totals.gold > activeSave.save.vitals.gold && (
+          <p role="alert" className="text-[11px] text-warning-2 font-serif m-0">
+            This route costs {route.totals.gold} gold; {activeSave.save.identity?.name || "your character"} carries {activeSave.save.vitals.gold}.
           </p>
         )}
-        {activeSave?.save && carryingData.status === 'loading' && <p role="status" className="basis-full text-[11px]">Weighing your pack...</p>}
-        {gameData.status === 'loading' && <p role="status">Loading travel network...</p>}
-        {gameData.status === 'error' && <p role="alert">Travel network unavailable. <button onClick={gameData.retry}>Retry</button></p>}
-      </div>
-      {carriedOptions.length > 0 && (
-        <details className="p-3 bg-surface-5 border border-line-11">
-          <summary className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider cursor-pointer">
-            Items you carry ({carriedOptions.filter((item) => held.has(item.id)).length} of {carriedOptions.length})
-            {savedItems && carriedOptions.some((item) => held.has(item.id) && savedItems.has(item.id)) && (
-              <FromSave>{carriedOptions.filter((item) => held.has(item.id) && savedItems.has(item.id)).length} from your save</FromSave>
-            )}
-          </summary>
-          <p className="text-[11px] text-fg-13 mt-2 mb-2">
-            Propylon indices and teleporting amulets open routes. A loaded save ticks the ones in its pack.
+        {route.isValid && route.hops > 0 && priced && firstSeller && (
+          <p className="text-[11px] text-fg-13 font-serif m-0">
+            Fares for {sheet ? "your character" : "a starting character"}: Mercantile {player.mercantile}, Personality {player.personality}, Luck {player.luck}
+            {followers > 0 ? `, ${followers} follower${followers === 1 ? "" : "s"}` : ""}. A typical caravaner&apos;s estimated disposition toward you is {travelDisposition(firstSeller, player, settings)}.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
-            {carriedOptions.map((item) => (
-              <label key={item.id} className="flex items-center gap-1.5">
-                <input
-                  type="checkbox"
-                  checked={held.has(item.id)}
-                  onChange={(event) => setHeld((prev) => {
-                    const next = new Set(prev);
-                    if (event.target.checked) next.add(item.id); else next.delete(item.id);
-                    return next;
-                  })}
-                />
-                {item.name}
-                {held.has(item.id) && savedItems?.has(item.id) && <FromSave />}
-              </label>
-            ))}
+        )}
+
+        {/* Full Path Overview */}
+        {route.isValid && route.path.length > 1 && (
+          <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
+            <div className="text-xs uppercase font-serif font-bold text-fg-7">
+              Complete Waypoint Chain:
+            </div>
+            <div className="flex flex-wrap items-center gap-1 text-xs font-serif">
+              {route.path.map((node, i) => (
+                <span key={node} className="flex items-center gap-1">
+                  <span
+                    className={`font-bold ${
+                      i === 0 || i === route.path.length - 1
+                        ? "text-accent"
+                        : "text-fg-2"
+                    }`}
+                  >
+                    {labelOf(node)}
+                  </span>
+                  {i < route.path.length - 1 && (
+                    <span className="text-fg-13 mx-1">→</span>
+                  )}
+                </span>
+              ))}
+            </div>
           </div>
-        </details>
-      )}
-      <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
-        <div className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider">
-          Fast Origin Selector
+        )}
+
+      </section>
+
+      <details id="travel-options" className="p-3 bg-surface-5 border border-line-11">
+        <summary className="min-h-11 text-sm font-serif text-fg-2 cursor-pointer">
+          <span className="font-bold text-accent">Your character &amp; route options</span>
+          <span className="text-xs text-fg-9"> — {characterSummary}</span>
+        </summary>
+        <div className="space-y-4 pt-3">
+          {activeSave?.save && (
+            <div className="space-y-2 text-xs text-fg-9">
+              <p className="m-0">{storageKept ? "Changes to save-derived options are remembered in this browser for this save and profile." : "Browser storage is unavailable. These changes last until the page reloads."}</p>
+              <button type="button" className="mw-btn min-h-11 px-3 py-2" onClick={resetSaveOptions}>Use save defaults</button>
+            </div>
+          )}
+          <fieldset className="border-0 m-0 p-0 space-y-3">
+            <legend className="text-sm font-serif font-bold text-accent mb-2">Your character</legend>
+            <div className="flex flex-wrap gap-4 text-sm">
+              <label><input type="checkbox" checked={mageGuild} onChange={event=>{ setMageGuild(event.target.checked); rememberChoice("mageGuild", event.target.checked); }}/> Mages Guild member{marks.mageGuild && <FromSave />}</label>
+              {isTr && <label><input type="checkbox" checked={conjurer} disabled={!mageGuild} onChange={event=>{ setConjurer(event.target.checked); rememberChoice("conjurer", event.target.checked); }}/> Conjurer rank or higher{marks.conjurer && <FromSave />}</label>}
+              {intervention && Object.entries(INTERVENTION_KINDS).map(([kind, label]) => (
+                <label key={kind} className="whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    checked={spells[kind]}
+                    disabled={!spellAccess[kind].available}
+                    onChange={(event) => { setSpells((prev) => ({ ...prev, [kind]: event.target.checked })); rememberChoice(kind, event.target.checked); }}
+                  />{" "}
+                  {label}
+                  {marks[kind] && <FromSave>{interventionMarkText(saveSources?.[kind], spells[kind])}</FromSave>}
+                  {spellAccess[kind].note && <span className="block text-[11px] text-fg-9 whitespace-normal">{spellAccess[kind].note}</span>}
+                </label>
+              ))}
+              {access && (
+                <>
+                  <label className="flex items-center gap-1.5 whitespace-nowrap" title="Weight carried; it slows every walk, and past your capacity (Strength x 5) you cannot move.">
+                    Carrying
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.5"
+                      value={carried}
+                      max={1000000}
+                      onChange={(event) => { const next = Math.max(0, Math.min(1000000, Number(event.target.value) || 0)); setCarried(next); rememberChoice("carried", next); }}
+                      className="flex-none"
+                      style={{ width: "5.5rem" }}
+                    />
+                    <span className="text-fg-13">of {Math.round(movement.capacity)}</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 whitespace-nowrap" title="Magnitude of a Levitate always on, from gear or an ability; 0 for none.">
+                    Constant Levitate
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={levitate}
+                      onChange={(event) => { const next = Math.max(0, Math.min(100, Math.trunc(Number(event.target.value) || 0))); setLevitate(next); rememberChoice("levitate", next); }}
+                      className="flex-none"
+                      style={{ width: "4.5rem" }}
+                    />
+                  </label>
+                  <label className="whitespace-nowrap">
+                    <input type="checkbox" checked={waterWalking} onChange={(event) => { setWaterWalking(event.target.checked); rememberChoice("waterWalking", event.target.checked); }} /> Constant Water Walking
+                  </label>
+                </>
+              )}
+              {priced && (
+                <label className="flex items-center gap-1.5 whitespace-nowrap">
+                  Followers
+                  <input
+                    type="number"
+                    min={0}
+                    max={9}
+                    value={followers}
+                    onChange={(event) => setFollowers(Math.max(0, Math.min(9, Math.trunc(Number(event.target.value) || 0))))}
+                    className="flex-none"
+                    style={{ width: "5rem" }}
+                  />
+                </label>
+              )}
+              {access && walking && fromSave && (
+                <p className="basis-full text-[11px] text-fg-13">
+                  From your save: carrying {fromSave.weight}{fromSave.unknown ? ` (${fromSave.unknown} item${fromSave.unknown === 1 ? "" : "s"} this world's data does not know, not weighed)` : ""}
+                  {fromSave.feather ? `, Feather ${fromSave.feather}` : ""}{fromSave.burden ? `, Burden ${fromSave.burden}` : ""}
+                  {fromSave.sources.length ? `; always on from ${fromSave.sources.join(", ")}` : ""}.
+                </p>
+              )}
+              {activeSave?.save && carryingData.status === 'loading' && <p role="status" className="basis-full text-[11px]">Weighing your pack...</p>}
+            </div>
+            {carriedOptions.length > 0 && (
+              <details className="p-3 bg-surface-5 border border-line-11">
+                <summary className="text-xs font-serif font-bold text-fg-7 uppercase tracking-wider cursor-pointer">
+                  Items you carry ({carriedOptions.filter((item) => held.has(item.id)).length} of {carriedOptions.length})
+                  {savedItems && carriedOptions.some((item) => held.has(item.id) && savedItems.has(item.id)) && (
+                    <FromSave>{carriedOptions.filter((item) => held.has(item.id) && savedItems.has(item.id)).length} from your save</FromSave>
+                  )}
+                </summary>
+                <p className="text-[11px] text-fg-13 mt-2 mb-2">
+                  Propylon indices and teleporting amulets open routes. A loaded save ticks the ones in its pack.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                  {carriedOptions.map((item) => (
+                    <label key={item.id} className="flex items-center gap-1.5">
+                      <input
+                        type="checkbox"
+                        checked={held.has(item.id)}
+                        onChange={(event) => {
+                          const enabled = event.target.checked;
+                          setHeld((prev) => {
+                            const next = new Set(prev);
+                            if (enabled) next.add(item.id); else next.delete(item.id);
+                            return next;
+                          });
+                          rememberChoice("held", { [item.id]: enabled });
+                        }}
+                      />
+                      {item.name}
+                      {held.has(item.id) && savedItems?.has(item.id) && <FromSave />}
+                    </label>
+                  ))}
+                </div>
+              </details>
+            )}
+
+          </fieldset>
+          <fieldset className="border-0 m-0 p-0">
+            <legend className="text-sm font-serif font-bold text-accent mb-2">Route style</legend>
+            <div className="flex flex-wrap gap-4 text-sm">
+              {teleports && (
+                <label className="whitespace-nowrap">
+                  <input type="checkbox" checked={questTeleports} onChange={(event) => setQuestTeleports(event.target.checked)} /> Include quest teleports
+                </label>
+              )}
+              {access && (
+                <label className="whitespace-nowrap">
+                  <input type="checkbox" checked={walking} onChange={(event) => setWalking(event.target.checked)} /> Walk between nearby places
+                </label>
+              )}
+
+            </div>
+          </fieldset>
         </div>
+      </details>
+
+      <details className="p-3 bg-surface-5 border border-line-11 space-y-2">
+        <summary className="min-h-11 text-xs font-serif font-bold text-fg-7 cursor-pointer">Quick starting places</summary>
         <div className="flex flex-wrap items-center gap-2">
           {saveOrigin && (
             <button
               type="button"
-              onClick={() => { handleOriginChange(saveOrigin); setOriginSearch(""); }}
+              onClick={() => handleOriginChange(saveOrigin)}
               className={`px-2.5 py-1 text-xs font-serif font-bold border transition-colors ${
                 origin === saveOrigin
                   ? "border-accent bg-surface-17 text-accent"
@@ -705,346 +955,38 @@ export default function TravelWorkstation() {
             );
           })}
         </div>
-      </div>
+      </details>
 
-      {/* Main 2-Pane Workstation Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        {/* Left Pane: Route Origin & Destination Configuration */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
-            Transit Itinerary Setup
-          </h3>
-
-          {/* Origin Stop */}
-          <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="travel-origin-select" className="text-xs uppercase font-serif font-bold text-fg-7">
-                Origin Location
-              </label>
-              <span className="text-[10px] font-mono text-fg-13">
-                {filteredOriginStops.length} stops found
-              </span>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search origin location..."
-              aria-label="Search departure location"
-              value={originSearch}
-              onChange={(e) => setOriginSearch(e.target.value)}
-              className="w-full p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2 focus:border-accent outline-none"
-            />
-
-            <select
-              id="travel-origin-select"
-              value={origin}
-              onChange={(e) => handleOriginChange(e.target.value)}
-              className="w-full mw-select mw-scrollbar p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-              size={filteredOriginStops.length > 8 ? 6 : Math.max(3, filteredOriginStops.length)}
-            >
-              {isPlace(origin) && (
-                <option value={origin}>{labelOf(origin)}</option>
-              )}
-              {filteredOriginStops.map((stop) => (
-                <option key={stop} value={stop}>
-                  {stop}
-                </option>
-              ))}
-            </select>
-            {originPlaces.length > 0 && (
-              <div className="space-y-1">
-                <div className="text-[10px] font-serif font-bold uppercase text-fg-13">Places</div>
-                <ul className="max-h-48 overflow-y-auto mw-scrollbar border border-line-11 divide-y divide-line-11 m-0 p-0 list-none">
-                  {originPlaces.map((record) => (
-                    <li key={record.key}>
-                      <button
-                        type="button"
-                        onClick={() => { handleOriginChange(PLACE_PREFIX + record.key); setOriginSearch(""); }}
-                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 bg-transparent border-0 hover:bg-surface-9"
-                      >
-                        {record.name}{" "}
-                        <span className="text-[10px] text-fg-13">
-                          {record.interior ? (sealed(record) ? sealedWay(record.key) : "inside") : formatRegionName(record.region || "") || "outdoors"}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Destination Stop */}
-          <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="travel-destination-select" className="text-xs uppercase font-serif font-bold text-fg-7">
-                Destination Location
-              </label>
-              <span className="text-[10px] font-mono text-fg-13">
-                {filteredDestStops.length} stops found
-              </span>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search destination location..."
-              aria-label="Search destination location"
-              value={destSearch}
-              onChange={(e) => setDestSearch(e.target.value)}
-              className="w-full p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2 focus:border-accent outline-none"
-            />
-
-            <select
-              id="travel-destination-select"
-              value={destination}
-              onChange={(e) => handleDestinationChange(e.target.value)}
-              className="w-full mw-select mw-scrollbar p-2 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-              size={filteredDestStops.length > 8 ? 6 : Math.max(3, filteredDestStops.length)}
-            >
-              {isPlace(destination) && (
-                <option value={destination}>{labelOf(destination)}</option>
-              )}
-              {filteredDestStops.map((stop) => (
-                <option key={stop} value={stop}>
-                  {stop}
-                </option>
-              ))}
-            </select>
-            {destPlaces.length > 0 && (
-              <div className="space-y-1">
-                <div className="text-[10px] font-serif font-bold uppercase text-fg-13">Places</div>
-                <ul className="max-h-48 overflow-y-auto mw-scrollbar border border-line-11 divide-y divide-line-11 m-0 p-0 list-none">
-                  {destPlaces.map((record) => (
-                    <li key={record.key}>
-                      <button
-                        type="button"
-                        onClick={() => { handleDestinationChange(PLACE_PREFIX + record.key); setDestSearch(""); }}
-                        className="w-full text-left px-2 py-1.5 text-xs font-serif text-fg-2 bg-transparent border-0 hover:bg-surface-9"
-                      >
-                        {record.name}{" "}
-                        <span className="text-[10px] text-fg-13">
-                          {record.interior ? (sealed(record) ? sealedWay(record.key) : "inside") : formatRegionName(record.region || "") || "outdoors"}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          <details className="calculation-notes">
-            <summary>How this is calculated</summary>
-            <div>
-              <ul>
-                <li>Your choice of fewest legs, least gold or fastest route sets the first priority. If routes tie, the other two measures decide.</li>
-                <li>Fares are estimates based on distance, followers and your Mercantile, Personality and Luck. The provider&apos;s disposition is estimated from their usual value, your Personality and whether you share a race. Factions, bounties and diseases can change the price in-game.</li>
-                <li>Before haggling, the fare is distance ÷ 4,000, at least 1 gold, multiplied by 1 + the number of followers. Guild Guides use a base fare of 10 gold and take no time; other transport takes distance ÷ 16,000 in-game hours. Distance uses the game&apos;s units.</li>
-                <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
-                <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. A loaded save selects known spells or carried scrolls; scrolls are one use, but the planner does not spend them.</li>
-                <li>Walking uses your Speed, Athletics and carried weight. Routes avoid slopes steeper than 46°, pass through the Ghostgate and swim only near land. Constant Water Walking allows walking across water; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
-                <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
-                <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>
-                <li>Mark and Recall are not included.</li>
-              </ul>
-            </div>
-          </details>
+      {mapData && (
+        <TransitMap
+          edges={[...mapData.edges, ...routeSpellEdges]}
+          positions={routePositions}
+          regions={mapData.regions}
+          unplaced={mapData.unplaced}
+          route={route}
+          labelOf={labelOf}
+          origin={origin}
+          destination={destination}
+          onSelectStop={handleDestinationChange}
+        />
+      )}
+      <details className="calculation-notes">
+        <summary>How routes are worked out</summary>
+        <div>
+          <ul>
+            <li>Your choice of fewest legs, least gold or fastest route sets the first priority. If routes tie, the other two measures decide.</li>
+            <li>Fares are estimates based on distance, followers and your Mercantile, Personality and Luck. The provider&apos;s disposition is estimated from their usual value, your Personality and whether you share a race. Factions, bounties and diseases can change the price in-game.</li>
+            <li>Before haggling, the fare is distance ÷ 4,000, at least 1 gold, multiplied by 1 + the number of followers. Guild Guides use a base fare of 10 gold and take no time; other transport takes distance ÷ 16,000 in-game hours. Distance uses the game&apos;s units.</li>
+            <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
+            <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. Scrolls start unticked and each route is limited to the number carried; replanning does not change the save. Known spells default on only at an estimated cast chance of at least 75% with enough current Magicka. This is a planner default, not a game rule: you can include a lower or unknown chance explicitly. Zero chance or insufficient Magicka excludes the spell. Estimates use Mysticism, Willpower, Luck, the spell&apos;s published cost and saved fatigue (full fatigue if unavailable); temporary effects such as Silence are not modeled. When cost and current Magicka are available, spell legs share that Magicka budget. Otherwise the budget cannot be checked. Routes assume successful casts and no recovery during the journey.</li>
+            <li>Walking uses your Speed, Athletics and carried weight. Routes avoid slopes steeper than 46°, pass through the Ghostgate and swim only near land. Constant Water Walking allows walking across water; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
+            <li>Real Time Approximation adds outdoor movement at your estimated run, swim or Levitate speed. Transport and spell transitions are counted separately because their menus and loading times vary. Combat, detours, pauses and movement indoors add time. Cheapest compares the fare and movement time with Fewest legs using the same options. Fastest still minimizes in-game time.</li>
+            <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
+            <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>
+            <li>Mark and Recall are not included.</li>
+          </ul>
         </div>
-
-        {/* Right Pane: Turn-by-Turn Route Itinerary Dossier */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-line-9 pb-1.5">
-            <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider">
-              Route Dossier
-            </h3>
-            <span
-              className={`px-2.5 py-0.5 border text-xs font-mono font-bold ${
-                route.isValid
-                  ? route.hops === 0
-                    ? "border-line-9 bg-surface-9 text-fg-7"
-                    : "border-success-line-4 bg-success-surface-2 text-success-3"
-                  : "border-danger-line-3 bg-danger-surface-2 text-danger-7"
-              }`}
-            >
-              {route.isValid
-                ? route.hops === 0
-                  ? "At Destination"
-                  : `${route.hops} ${route.hops === 1 ? "Leg" : "Legs"}${
-                      route.totals?.goldKnown && priced ? ` · ${route.totals.gold} gold` : ""
-                    }${route.totals?.hoursKnown && priced ? ` · ${formatDuration(route.totals.hours)}` : ""}`
-                : "No Route"}
-            </span>
-          </div>
-
-          {/* Route Status Card */}
-          <div className="p-4 bg-surface-5 border border-line-11 space-y-4">
-            <div className="flex items-center justify-between text-xs pb-2 border-b border-line-11">
-              <div>
-                <span className="text-fg-13 uppercase font-serif font-bold block text-[10px]">
-                  Origin
-                </span>
-                <span className="text-sm font-serif font-bold text-fg-2">{labelOf(origin)}</span>
-              </div>
-              <div className="text-center font-mono text-fg-13">
-                {route.hops > 0 ? `--> ${route.hops} transit legs -->` : "=="}
-              </div>
-              <div className="text-right">
-                <span className="text-fg-13 uppercase font-serif font-bold block text-[10px]">
-                  Destination
-                </span>
-                <span className="text-sm font-serif font-bold text-fg-2">{labelOf(destination)}</span>
-              </div>
-            </div>
-
-            {/* Turn by turn steps list */}
-            {route.isValid ? (
-              route.steps.length === 0 ? (
-                <div className="p-4 text-center text-sm font-serif text-fg-9 bg-surface-3 border border-line-11">
-                  You are already at {labelOf(origin)}. No transit required.
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="text-xs uppercase font-serif font-bold text-fg-7">
-                    Turn-By-Turn Navigation:
-                  </div>
-                  {route.steps.map((step) => (
-                    <div
-                      key={step.stepNumber}
-                      className="flex items-center justify-between gap-3 p-2.5 bg-surface-3 border border-line-11"
-                    >
-                      <div className="min-w-0 flex-1 space-y-0.5">
-                        <div className="text-xs font-serif font-bold text-fg-2">
-                          Leg {step.stepNumber}: {labelOf(step.from)} to {labelOf(step.to)}
-                        </div>
-                        {step.stepNumber === 1 && step.walk && isPlace(step.from) && doorChain(step.from.slice(PLACE_PREFIX.length), access).length > 0 && (
-                          <div className="text-[11px] text-fg-9">
-                            Leave by the doors: {doorChain(step.from.slice(PLACE_PREFIX.length), access).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")} → outside
-                          </div>
-                        )}
-                        <div className="text-[11px] text-fg-13">
-                          {step.indoors
-                            ? `Go through the doors: ${(step.doors || []).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}`
-                            : step.walk && step.levitate
-                            ? `Levitate about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, straight over whatever is below`
-                            : step.walk
-                            ? step.terrain
-                              ? `Walk about ${(step.distance / CELL).toFixed(1)} cells, heading ${step.direction}, to ${labelOf(step.to)}`
-                                + (step.straight && step.distance > step.straight * 1.15
-                                  ? `, round high ground: ${(step.distance / step.straight).toFixed(1)}× the straight line`
-                                  : "")
-                                + (step.water ? `, ${step.waterWalk ? "walking on the water for" : "swimming"} about ${Math.max(0.1, step.water / CELL).toFixed(1)} cells of it` : "")
-                              : `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, in a straight line`
-                            : step.teleport
-                            ? `${step.label} at ${labelOf(step.from)}${step.board ? `, ${step.board}` : ""}`
-                            : <>
-                                {step.spell ? `Cast ${step.kind}` : `Take the ${step.kind}`}
-                                {step.providerName ? ` (${step.providerName})` : ""} from {labelOf(step.from)}
-                                {step.board ? `, ${step.board}` : ""}
-                                {step.alight ? ` to ${labelOf(step.to)}, ${step.alight}` : ""}
-                              </>}
-                        </div>
-                        {step.stepNumber === route.steps.length && step.walk && isPlace(step.to) && doorChain(step.to.slice(PLACE_PREFIX.length), access).length > 0 && (
-                          <div className="text-[11px] text-fg-9">
-                            Go in by the doors: outside → {doorChain(step.to.slice(PLACE_PREFIX.length), access).reverse().map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}
-                          </div>
-                        )}
-                        {step.questGated && (
-                          <div className="text-[11px] text-warning-2">
-                            Quest teleport{step.conditions?.length ? `: ${step.conditions.join("; ")}` : ""}.
-                          </div>
-                        )}
-                        {step.ambiguous && (
-                          <div className="text-[11px] text-warning-2">
-                            From some rooms here the spell may land elsewhere; the engine&apos;s door order decides.
-                          </div>
-                        )}
-                        {step.kind === "Guild Guide" && (
-                          <div className="guild-guide-members text-[11px] text-fg-9">Mages Guild members only.</div>
-                        )}
-                        {(Number.isFinite(step.gold) || Number.isFinite(step.hours)) && (
-                          <div className="text-[11px] font-mono text-fg-9">
-                            {Number.isFinite(step.gold) ? `${step.gold} gold` : "price unknown"}
-                            {step.indoors ? " · time indoors not counted"
-                              : Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes" : formatDuration(step.hours)}` : ""}
-                          </div>
-                        )}
-                      </div>
-                      <span
-                        className={`shrink-0 whitespace-nowrap px-2 py-0.5 text-xs font-serif font-bold border ${getServiceBadge(
-                          step.kind
-                        )}`}
-                      >
-                        {step.kind}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )
-            ) : (
-              <div className="p-4 text-center text-sm font-serif text-danger-7 bg-danger-surface-2 border border-danger-line-3">
-                {route.message || "No fast-travel route found between these locations."}
-              </div>
-            )}
-          </div>
-
-          {route.isValid && route.totals?.goldKnown && Number.isFinite(activeSave?.save?.vitals?.gold)
-            && route.totals.gold > activeSave.save.vitals.gold && (
-            <p role="alert" className="text-[11px] text-warning-2 font-serif m-0">
-              This route costs {route.totals.gold} gold; {activeSave.save.identity?.name || "your character"} carries {activeSave.save.vitals.gold}.
-            </p>
-          )}
-          {route.isValid && route.hops > 0 && priced && firstSeller && (
-            <p className="text-[11px] text-fg-13 font-serif m-0">
-              Fares for {sheet ? "your character" : "a starting character"}: Mercantile {player.mercantile}, Personality {player.personality}, Luck {player.luck}
-              {followers > 0 ? `, ${followers} follower${followers === 1 ? "" : "s"}` : ""}. A typical caravaner&apos;s estimated disposition toward you is {travelDisposition(firstSeller, player, settings)}.
-            </p>
-          )}
-
-          {/* Full Path Overview */}
-          {route.isValid && route.path.length > 1 && (
-            <div className="p-3 bg-surface-5 border border-line-11 space-y-2">
-              <div className="text-xs uppercase font-serif font-bold text-fg-7">
-                Complete Waypoint Chain:
-              </div>
-              <div className="flex flex-wrap items-center gap-1 text-xs font-serif">
-                {route.path.map((node, i) => (
-                  <span key={node} className="flex items-center gap-1">
-                    <span
-                      className={`font-bold ${
-                        i === 0 || i === route.path.length - 1
-                          ? "text-accent"
-                          : "text-fg-2"
-                      }`}
-                    >
-                      {labelOf(node)}
-                    </span>
-                    {i < route.path.length - 1 && (
-                      <span className="text-fg-13 mx-1">→</span>
-                    )}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {mapData && (
-            <TransitMap
-              edges={[...mapData.edges, ...routeSpellEdges]}
-              positions={routePositions}
-              regions={mapData.regions}
-              unplaced={mapData.unplaced}
-              route={route}
-              labelOf={labelOf}
-              origin={origin}
-              destination={destination}
-              onSelectStop={(stop) => {
-                setDestSearch("");
-                handleDestinationChange(stop);
-              }}
-            />
-          )}
-        </div>
-      </div>
+      </details>
     </div>
   );
 }

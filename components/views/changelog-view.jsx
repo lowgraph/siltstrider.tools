@@ -18,9 +18,14 @@ export default function ChangelogView() {
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>The first time you open the Character Builder, it starts on the premade builds, so you can pick one and change it instead of composing a class from nothing. &ldquo;Build my own instead&rdquo; goes straight to the Custom Class Builder, and later visits open as before.</li>
             <li>For a Khajiit or Argonian, the Boots slot in Equipped Loadouts and its &ldquo;Beast races cannot wear boots&rdquo; are readable instead of faded, and so is a ticked Challenge Runs objective.</li>
+            <li>Travel has one plain network status with the network name and stop count. Loading and an error with Retry appear in the same place; TR + ARCE is named explicitly.</li>
+            <li>Gear Advisor runner-up buttons, Level Simulator preset descriptions, faction ranks and empty equipment slots have clearer small print in both themes.</li>
+            <li>Travel shows &ldquo;Real Time Approximation&rdquo; beside in-game time, with movement minutes and transport or spell transitions listed separately. Cheapest compares its fare and movement with Fewest legs using your current options. Combat, menus, loading and time indoors are excluded.</li>
+            <li>Travel remembers edits to a loaded save&apos;s guild, Intervention, items and movement options in this browser for that save and world profile. &ldquo;Use save defaults&rdquo; clears them. Scrolls start unticked and have a limited number of uses per journey; known spells show estimated cast chance and need enough Magicka. Replanning does not spend anything in your save.</li>
+            <li>Travel puts Origin, Destination and &ldquo;Plan for&rdquo; above the route answer. Character and route options start folded with a summary of your choices; quick starting places open on demand, and &ldquo;How routes are worked out&rdquo; is at the bottom. Guild and carrying warnings stay beside the route.</li>
+            <li>Travel has one search for each end of a journey. Towns and transit stops come first, then outdoor places and rooms such as &ldquo;Balmora › Council Club&rdquo;. Pelagiad appears once, and typing a search keeps your route until you choose a result.</li>
           </ul>
         </section>
-
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-29">September 29, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">

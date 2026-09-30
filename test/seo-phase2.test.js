@@ -7,11 +7,11 @@ const path = require("node:path");
 
 const ROOT = path.join(__dirname, "..");
 
-function assertCalculationDisclosure(source) {
+function assertCalculationDisclosure(source, title = "How this is calculated") {
   const disclosures = [...source.matchAll(/<details\b([^>]*\bcalculation-notes\b[^>]*)>([\s\S]*?)<\/details>/g)];
   assert.equal(disclosures.length, 1, "one calculation disclosure per tool");
   assert.doesNotMatch(disclosures[0][1], /\bopen\b/, "explanations start closed");
-  assert.match(disclosures[0][2], /^\s*<summary>How this is calculated<\/summary>/, "native summary names the disclosure");
+  assert.ok(disclosures[0][2].trimStart().startsWith(`<summary>${title}</summary>`), "native summary names the disclosure");
   return disclosures[0][2];
 }
 
@@ -147,7 +147,7 @@ test("Travel keeps routing explanations in a closed disclosure", () => {
     "utf8"
   );
 
-  const explanation = assertCalculationDisclosure(travelSrc);
+  const explanation = assertCalculationDisclosure(travelSrc, "How routes are worked out");
   assert.match(explanation, /fewest legs, least gold or fastest route/, "must explain the routing objectives");
   assert.match(explanation, /distance ÷ 4,000/, "must show the fare formula");
   assert.match(explanation, /Time spent indoors is not counted/, "must keep limits on route time");

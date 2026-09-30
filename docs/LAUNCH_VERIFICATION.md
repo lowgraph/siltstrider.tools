@@ -311,3 +311,47 @@ node node_modules/wrangler/bin/wrangler.js d1 execute siltstrider-db --remote --
 - The user runs multi-minute jobs (gear rows, rebuilds) themselves; hand them the
   command.
 - Keep `COORDINATION.md` identical in both repositories.
+
+## 8. Travel integration verification — 30 September 2026
+
+Merge inputs: main `0bc1a7f`, Travel `5170293`. Verified in the actual main
+worktree `A:/Claude/mt-travel-merge`, with repository build config unchanged.
+No extraction, schema change, deployment or production write.
+
+- `npm test`: **787 passed, 0 failures** on the actual merged checkout.
+- `npm run build:cloudflare`: **passed**, with the repository's
+  `next.config.mjs` unchanged and physical local dependencies. No preview root
+  adjustment or alternate compiler.
+- Full local Chrome/CDP suite: **125 cases passed, 0 failures**. Sixteen pages/tool
+  views × Vanilla, TR and TR + ARCE × 1366/375 px × Modern/Morrowind UI, plus
+  interaction cases: **216 WCAG 2/2.1 AA theme audits, 0 reported violations**,
+  no horizontal overflow, uncaught exceptions or unexpected server errors.
+- Flows: Travel keyboard search, cancellation, swaps, objectives, sharing,
+  real-time comparison, forced colors and network failure/retry; imported
+  synthetic saves, local choices, profile isolation and reset; all calculators'
+  custom/empty states and inputs; challenge seeds/exports/sharing; Builder
+  sharing and equipment dialog focus/Escape; Faction Journal search/rank/empty
+  states; Level Simulator modes, target level and priority ordering. Builder,
+  calculators, Faction Journal and Level Simulator interactions ran in both
+  themes, at both widths, in all three profiles.
+- Browser-runner investigation: changing the departing document's theme just
+  before navigation left Pelagiad loading. Interaction cases now store the theme
+  for the arriving document's existing initialization. Navigation waits for that
+  document's load event; bounded font-state checks retain font-error/loading
+  failures and identify unfinished faces. All **411 font checks** completed,
+  including loaded Pelagiad. Failure stacks, pending requests and optional
+  lifecycle traces are retained. This changes local test setup only.
+- Main's unfaded restriction/rank cards, danger-7/fg-14 equipment text and fg-9
+  Level Simulator descriptions are retained, including the automatically merged
+  contrast-sensitive files. Both sets of 30 September player changelogs share
+  one day's list. The checklist retains the owner's section 4 and priorities.
+- Evidence: `A:/Cache/trv-final-npm-test.log`, `A:/Cache/trv-final-build.log`,
+  `A:/Cache/trv-merged-final-browser/report.json`; screenshots, axe JSON and
+  request trace beside the browser report. Earlier failed runs remain in the
+  cache for diagnosis. Reproduce with [BROWSER_TESTS.md](BROWSER_TESTS.md).
+
+These are local signed-out checks. Production sign-in, Cloud Vault, payments,
+real-save corpus, other browser engines and manual screen-reader review were
+not repeated. Deployment remains a separate owner ask: ship Travel as its own
+release, retaining the previous production version so rollback removes Travel
+without rolling back the earlier launch improvements.

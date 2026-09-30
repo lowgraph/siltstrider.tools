@@ -268,6 +268,18 @@ test("stops are joined over the grid when there is one, as legs that say so", as
     "a wall end to end: no walk, though the straight line is short");
 });
 
+test("real movement seconds combine the dry and swum parts at their separate speeds", async () => {
+  const { walkGrid, addStopWalks } = await lib();
+  const grid = walkGrid(drawGrid([".~..", ".~..", ".~..", ".~.."]));
+  const points = new Map([["West", [at(0, 1)]], ["East", [at(2, 1)]]]);
+  const land = { "exterior:0,0": "ffffffffffffffff" };
+  const graph = addStopWalks({ West: [], East: [] }, points, land, 300, { grid, swim: 100 });
+  const leg = graph.West.find(edge => edge.to === "East");
+  assert.ok(leg && leg.water > 0);
+  assert.ok(Math.abs(leg.movementSeconds - ((leg.distance - leg.water) / 300 + leg.water / 100)) < 0.01);
+  assert.ok(leg.movementSeconds > leg.distance / 300, "swimming adds real time");
+});
+
 test("a place walled in reaches the network the long way round", async () => {
   const { walkGrid, addPlaces, PLACE_PREFIX, PLACE_WALK_LIMIT } = await lib();
   // A ring wall three cells wide with its only gate at the far end: the stop is just

@@ -115,7 +115,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
             <div className="pt-1">
               <button
                 type="button"
-                className="text-xs text-fg-10 hover:text-accent underline cursor-pointer"
+                className="text-xs text-fg-10 hover:text-accent underline cursor-pointer bg-transparent border-0 p-0"
                 onClick={() => setShowAlts(!showAlts)}
               >
                 {showAlts ? "Hide runner-up picks ▲" : `View ${alternatives.length} runner-up pick${alternatives.length > 1 ? "s" : ""} ▼`}

@@ -1,6 +1,13 @@
 # Changelog
 
-## Easier first steps — 2026-09-30
+## Easier journeys and first steps — 2026-09-30
+
+- **One Travel network status:** the network name and stop count share one plain line. Loading and an error with Retry use that same line, and TR + ARCE is named explicitly.
+- **Clearer small print:** Gear Advisor runner-up buttons, Level Simulator preset descriptions, faction ranks and empty equipment slots are easier to read in both themes.
+- **See the real-time trade-off:** route results now show “Real Time Approximation” beside the time passing in-game. Walking, swimming and Levitate use your estimated movement speed; transport and spell transitions are counted separately. Cheapest explains how much gold it saves and how much movement it adds compared with Fewest legs using the same options. Combat, menus, loading and time indoors are excluded.
+- **Travel remembers your choices:** changes to a loaded save’s guild, Intervention, carried items and movement options stay in this browser for that save and world profile. “Use save defaults” clears those edits. Intervention scrolls start unticked and each journey can use only the number carried. Known spells show estimated cast chance and need enough current Magicka; uncertain or low-chance spells start unticked. Replanning does not spend the save’s items or Magicka.
+- **Your journey comes first:** Origin, Destination and “Plan for” now sit above the route answer on every screen size. Character and route options start folded with a summary of your choices; guild, spells, items and carrying have their own group, while walking and quest teleports are under Route style. Quick starting places open on demand, and “How routes are worked out” is at the bottom. Guild and carrying warnings stay beside the route.
+- **One search for each end of a journey:** towns, transit stops and named places now share one list. Towns and stops appear first, followed by outdoor locations and rooms such as "Balmora › Council Club". Pelagiad appears once even though it has no transit stop. Each result says how it is reached, and typing a search leaves the route unchanged until you choose a result.
 
 - **Premade builds first for newcomers:** the first time you open the Character Builder, it starts on the Premade Builds Catalog, since picking a build and changing it is easier than composing a class from nothing. "Build my own instead" goes straight to the Custom Class Builder. After that first visit, or with a shared link, a loaded save or a saved character, the Builder opens as before.
 - **Two more bits of small print you can read:** for a Khajiit or Argonian, the Equipped Loadouts' Boots slot and its "Beast races cannot wear boots" were faded almost to the background; and a ticked Challenge Runs objective was faded as well as struck through. Both are readable now, in both themes.

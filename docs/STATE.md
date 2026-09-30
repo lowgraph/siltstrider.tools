@@ -22,6 +22,48 @@ The application state is managed by `CharacterProvider` via `useActiveCharacter(
 
 ---
 
+### C. Travel choices for imported saves
+
+Travel stores edits to save-derived guild, Intervention, held-item, carrying and
+constant-movement options under `silt-travel-options-v1` in this browser. Entries
+are keyed by world profile and the SHA-256 of the uncompressed SLT1 save body, so
+reloads and cloud/local restores reuse the snapshot's choices despite new load
+tokens. A different snapshot or profile has its own edits. The store retains at
+most 20 snapshots and saves only validated player overrides, not copied defaults.
+Catalog arrivals apply fresh save defaults first, then overrides; denied storage
+retains edits for the current session and reports that they will not survive reload.
+“Use save defaults” removes only the current entry. Clearing the active save returns
+Travel's manual planner defaults. Route style/objective/followers are separate from
+save-derived overrides and remain governed by the route controls and shared link.
+
+Intervention availability reads saved Mysticism, Willpower, Luck, Fatigue and current
+Magicka with published Spells cost/alwaysSucceeds fields from the existing carrying
+feature. Known spells default on at an estimated chance of at least 75% with enough
+current Magicka; this threshold is a planner policy. Lower/unknown chances require
+explicit selection, while zero chance and insufficient Magicka are excluded.
+Scrolls default off and count positive integer inventory stacks. The route search
+tracks remaining scrolls by Intervention kind and a shared Magicka budget across
+all legs, including named places and teleport-connected places. Replanning starts
+from the snapshot's quantities without modifying the imported save. Routes assume
+successful casts and no Magicka recovery. Explicitly selected spells without cost
+or current Magicka data cannot have their Magicka budget checked. Temporary Silence and other unmodeled
+cast modifiers are excluded from the estimate.
+
+### D. Travel time and Cheapest comparisons
+
+Outdoor movement edges carry `movementSeconds` alongside in-game `hours`, including
+separate run/swim timing, Water Walking and flight. Seconds are computed before
+timescale; paid transport and teleport clock jumps are counted as transitions,
+not converted into real-time minutes. Indoor movement remains uncounted. Invalid
+or unknown movement records cannot produce a claimed complete movement duration.
+
+Route results show “Real Time Approximation” and explicitly label game-clock time.
+The estimate excludes combat, menus, loading screens, detours and indoor movement.
+Cheapest computes a Fewest legs baseline from the same graph, player prices and
+resource budgets, then compares known fares, outdoor movement, transitions and legs.
+The comparison is derived state; changing options or endpoints recomputes it and
+never spends inventory. Fastest continues minimizing in-game hours.
+
 ## 2. Binary Codec (`lib/cloud-save-codec.mjs`) — `SLT1`
 
 To store comprehensive character saves within Cloudflare D1's row size constraints and localStorage, Silt Strider implements a specialized binary format:
