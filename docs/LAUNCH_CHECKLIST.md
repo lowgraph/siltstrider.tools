@@ -121,7 +121,7 @@ for now (owner, 30 September); other agents skip them.
 **First steps, phones and saving**
 - [ ] **C** **HOME-1 / MOB-2** Two equal first steps on Home, a character or a save; the
       character first on phones.
-- [ ] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; on `launch/bld-3-premades-first`) Premade builds first for newcomers.
+- [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61` on `launch/bld-3-premades-first`, not merged: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
