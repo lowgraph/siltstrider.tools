@@ -22,15 +22,16 @@ const descriptions = {
   vault: 'Cloud character storage, OpenMW save ingestion, and build synchronization.'
 };
 
-// The everyday tools sit in the nav row; the rest wait in the two menus, and the
-// Cloud Vault is the account button beside search.
+// The everyday tools sit in the nav row, most used first (SITE-3: Build, Level, Travel,
+// Alchemy, then the rest); the others wait in the two menus, and the Cloud Vault is the
+// account button beside search.
 const PRIMARY_VIEWS = [
-  { view: 'challenge', label: 'Challenge Runs', id: 'react-nav-challenge' },
   { view: 'builder', label: 'Character Builder', id: 'react-nav-build' },
   { view: 'leveler', label: 'Level Simulator', id: 'react-nav-leveler' },
-  { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
   { view: 'travel', label: 'Travel Planner', id: 'react-nav-travel' },
-  { view: 'factions', label: 'Faction Journal', id: 'react-nav-factions' }
+  { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
+  { view: 'factions', label: 'Faction Journal', id: 'react-nav-factions' },
+  { view: 'challenge', label: 'Challenge Runs', id: 'react-nav-challenge' }
 ];
 const CALC_MENU = [
   { view: 'enchanting', label: 'Enchanting' },
@@ -54,7 +55,7 @@ const TAB_ICON = {
   builder: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" /></>,
   challenge: <><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" /></>,
   leveler: <><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></>,
-  alchemy: <path d="M10 3h4 M10.5 3v5L5.5 17a2.5 2.5 0 0 0 2.2 4h8.6a2.5 2.5 0 0 0 2.2-4l-5-9V3 M7.5 14h9" />,
+  travel: <><circle cx="6" cy="18.5" r="2.5" /><circle cx="18" cy="5.5" r="2.5" /><path d="M6 16v-3a3 3 0 0 1 3-3h6a3 3 0 0 0 3-3V8" /></>,
   vault: <><circle cx="12" cy="8.5" r="3.5" /><path d="M5.5 19.5c.9-3.2 3.4-5 6.5-5s5.6 1.8 6.5 5" /><circle cx="12" cy="12" r="10" /></>,
   menu: <path d="M4 7h16M4 12h16M4 17h16" />,
   close: <path d="M6 6l12 12M18 6 6 18" />
@@ -63,7 +64,7 @@ const PHONE_TABS = [
   { view: 'home', label: 'Home' },
   { view: 'builder', label: 'Build' },
   { view: 'leveler', label: 'Level' },
-  { view: 'alchemy', label: 'Alchemy' }
+  { view: 'travel', label: 'Travel' }
 ];
 const TabIcon = ({ name }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -168,31 +169,36 @@ export default function SiteHeader({ shell: propShell } = {}) {
     };
   }, [shell.ready]);
 
+  // A menu opened from the keyboard puts focus on its first item (its last for ArrowUp), as
+  // a menu button does; opened with the mouse, focus stays where the pointer left it. A
+  // keyboard or screen reader activation is a click with detail 0; a mouse click counts its
+  // clicks. The focus waits for the menu to render.
+  const pendingFocus = useRef(null);
+  const focusItem = (type, which) => {
+    const items = (type === 'calc' ? calcMenuRef : moreMenuRef).current?.querySelectorAll('[role="menuitem"]');
+    if (!items?.length) return false;
+    (which === 'last' ? items[items.length - 1] : items[0]).focus();
+    return true;
+  };
+  useEffect(() => {
+    const want = pendingFocus.current;
+    if (want && focusItem(want.type, want.which)) pendingFocus.current = null;
+  });
+  const toggleMenu = (type, event) => {
+    const opening = type === 'calc' ? !calcOpen : !moreOpen;
+    pendingFocus.current = opening && event?.detail === 0 ? { type, which: 'first' } : null;
+    setCalcOpen(type === 'calc' ? opening : false);
+    setMoreOpen(type === 'more' ? opening : false);
+  };
+
   const handleDropdownBtnKeyDown = (e, type) => {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (type === 'calc') {
-        setCalcOpen(true);
-        setMoreOpen(false);
-        setTimeout(() => {
-          const items = calcMenuRef.current?.querySelectorAll('[role="menuitem"]');
-          if (items?.length) {
-            const target = e.key === 'ArrowDown' ? items[0] : items[items.length - 1];
-            target.focus();
-          }
-        }, 0);
-      } else if (type === 'more') {
-        setMoreOpen(true);
-        setCalcOpen(false);
-        setTimeout(() => {
-          const items = moreMenuRef.current?.querySelectorAll('[role="menuitem"]');
-          if (items?.length) {
-            const target = e.key === 'ArrowDown' ? items[0] : items[items.length - 1];
-            target.focus();
-          }
-        }, 0);
-      }
-    }
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault();
+    const which = e.key === 'ArrowDown' ? 'first' : 'last';
+    if ((type === 'calc' ? calcOpen : moreOpen) && focusItem(type, which)) return;
+    pendingFocus.current = { type, which };
+    setCalcOpen(type === 'calc');
+    setMoreOpen(type === 'more');
   };
 
   const handleMenuKeyDown = (e, menuRef, btnRef, closeMenu) => {
@@ -254,17 +260,6 @@ export default function SiteHeader({ shell: propShell } = {}) {
         <div className="brand-title"><a href="/" className="brand-home" onClick={e => navigate(e, 'home')}>Silt Strider</a></div>
         <p className="kicker">siltstrider.tools — Morrowind build planner &amp; challenge run generator<span className="page-sub">{descriptions[shell.view]}</span></p>
       </div>
-      <button
-        ref={menu}
-        type="button"
-        className="hamburger"
-        aria-label={open ? 'Close menu' : 'Open menu'}
-        aria-expanded={open}
-        aria-controls="react-menu-drawer"
-        onClick={() => setOpen(!open)}
-      >
-        {open ? '✕' : '☰'}
-      </button>
       <div className="header-actions">
       <ThemeToggle />
       <button
@@ -294,6 +289,19 @@ export default function SiteHeader({ shell: propShell } = {}) {
         <ProfileIcon premium={account?.profile?.premium === true} id={account?.profile?.iconId ?? 0} size={26} />
       </button>
       </div>
+      {/* Phones only (MOB-1): the last of the one-row header's buttons, right before the
+          menu it opens, so the keyboard meets them in the order they are seen. */}
+      <button
+        ref={menu}
+        type="button"
+        className="hamburger"
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
+        aria-controls="react-menu-drawer"
+        onClick={() => setOpen(!open)}
+      >
+        {open ? '✕' : '☰'}
+      </button>
       <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} profile={shell.profile} navigate={view => shell.navigate(view)} />
       <div className={'header-tools menu-drawer' + (open ? ' open' : '')} id="react-menu-drawer">
         <div className="nav-primary">
@@ -324,7 +332,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
               aria-expanded={calcOpen}
               aria-controls={calcOpen ? "react-calc-dropdown-menu" : undefined}
               aria-label="Calculators menu"
-              onClick={() => { setCalcOpen(!calcOpen); setMoreOpen(false); }}
+              onClick={e => toggleMenu('calc', e)}
               onKeyDown={e => handleDropdownBtnKeyDown(e, 'calc')}
             >
               Calculators <span className="dropdown-caret" aria-hidden="true">{calcOpen ? '▴' : '▾'}</span>
@@ -365,7 +373,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
               aria-expanded={moreOpen}
               aria-controls={moreOpen ? "react-more-dropdown-menu" : undefined}
               aria-label="More pages menu"
-              onClick={() => { setMoreOpen(!moreOpen); setCalcOpen(false); }}
+              onClick={e => toggleMenu('more', e)}
               onKeyDown={e => handleDropdownBtnKeyDown(e, 'more')}
             >
               More <span className="dropdown-caret" aria-hidden="true">{moreOpen ? '▴' : '▾'}</span>
@@ -499,7 +507,7 @@ export default function SiteHeader({ shell: propShell } = {}) {
           type="button"
           aria-expanded={open}
           aria-controls="react-menu-drawer"
-          aria-label={open ? 'Close menu' : 'Open menu: travel, calculators, vault and more'}
+          aria-label={open ? 'Close menu' : 'Open menu: calculators, vault and more'}
           data-section={!open && !onTabView ? 'true' : undefined}
           onClick={toggleMenuFromTabs}
         >

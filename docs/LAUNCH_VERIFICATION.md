@@ -11,16 +11,16 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `1e84b1a` (site `main`, pushed) |
-| Live Worker version | `24bd4ac1-e287-4c14-88d8-80bee20b42f9`, deployed 2026-09-30 16:04 UTC, tagged `1e84b1a` |
+| Live commit | `1e84b1a` (restored after the Travel release failed production acceptance; Travel remains on main) |
+| Live Worker version | `24bd4ac1-e287-4c14-88d8-80bee20b42f9`, tagged `1e84b1a`; restored to 100% at 2026-09-30 20:47 UTC |
 | Security headers | `public/_headers`: nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'`, referrer policy, permissions policy, host-only HSTS; verified live after the 16:49 release (they took a minute or two to appear) |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `3da0320236da77ec085d105d`, snapshot `1613a1123ed9…` |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0006 applied; `wrangler d1 migrations list siltstrider-db --remote` reports none pending |
-| D1 Time Travel bookmark | `0000003e-00000002-000050f5-376b3c432b1be8aa90f68a30d28ab5d1`, captured 10:57 UTC with the backup |
-| Pipeline repo | `master` at `26f0bd5`, pushed |
+| D1 Time Travel bookmark | `00000052-00000000-000050f6-c17dba71fbf6e72b2fd75d79b0a04533`, captured before the 20:32 UTC Travel release (recovery information only; no new data export) |
+| Pipeline repo | `master`; identical coordination rollback record, synchronized in the release session |
 
 Deployment history since the last tagged release before this batch:
 
@@ -46,7 +46,12 @@ Deployment history since the last tagged release before this batch:
 | `8f10cef2-f828-4ac4-b634-6664ddbf6604` | 09-30 00:31 | `8410c63` | tagged; Gemini's BLD-2 (Gear Advisor ranks by itself; catalogs load near the screen), CALC-2 (your own numbers in the calculators) and BLD-4 (save a character without an account), each with review fixes; deployed from the `mt-site-1` worktree on a clean `main` |
 | `415d9c89-3242-4777-9f5f-d955d4e6b79c` | 09-30 00:47 | `cd01737` | tagged; typed calculator numbers stay across a world switch until Reset (owner, 30 September) |
 | `4c464aa3-db84-44be-a1a7-d8572e75d27c` | 09-30 15:46 | `4d998be` | tagged; the acceptance re-run's fixes (`03c3361`: fg-14 for text on the equipment panels, no fading on faction ranks or Travel stop labels, Level Simulator preset descriptions, named objective checkboxes) and BLD-3 (premade builds first for newcomers); deployed from the `mt-site-1` worktree on a clean `main` |
-| `24bd4ac1-e287-4c14-88d8-80bee20b42f9` | 09-30 16:04 | `1e84b1a` | tagged; no fading on a beast race's Boots slot (axe found it live on `4c464aa3` when the random start drew a Khajiit) or on a ticked Challenge objective; current |
+| `24bd4ac1-e287-4c14-88d8-80bee20b42f9` | 09-30 16:04 | `1e84b1a` | tagged; no fading on a beast race's Boots slot (axe found it live on `4c464aa3` when the random start drew a Khajiit) or on a ticked Challenge objective; Travel rollback target |
+| `3ef09493-cb5a-42e2-96fd-ca54c168d3e2` | 09-30 20:32 | `2c113b8` | tagged; standalone Travel release: TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8; unchanged bundle and D1 schema; rolled back after repeated mobile acceptance failure |
+| `24bd4ac1-e287-4c14-88d8-80bee20b42f9` (rollback) | 09-30 20:47 | `1e84b1a` | previous production version restored at 100%; current; no data or schema rollback |
+
+Rollback from the Travel release `3ef09493` to `24bd4ac1` removes the Travel batch
+and retains the earlier launch improvements. No schema or bundle change is involved.
 
 Rollback from `24bd4ac1`: `4c464aa3` drops only the Boots-slot and ticked-objective contrast fixes. From `4c464aa3`: `415d9c89` drops only the acceptance re-run's fixes and BLD-3. From `415d9c89`: `8f10cef2` drops only the kept calculator numbers. From `8f10cef2`: `4951b9b5` drops only BLD-2, CALC-2 and BLD-4. From `4951b9b5`: `1fa07549` drops only the contrast, 24px buttons, heading levels, FAC-3, MOB-3 and SITE-5. From `1fa07549`: `719660ae` drops only CHL-1 and FAC-1. From `719660ae`: `e5a3b044` drops only SITE-1, LINK-1, CALC-1 and SITE-2 / VLT-1. From `e5a3b044`: `3daf4aa0` drops only the ARCE random-start fix. From `3daf4aa0`: `8da9cada` drops only TRV-3, Claims and HOME-2. From `8da9cada`: `6be6a2d4` drops only TRV-6 and BLD-1. From `6be6a2d4`: `65f849c7` drops only LVL-1 and TRV-1 (COORDINATION, "UX pass for launch"). From `65f849c7`: `af7c20e4` drops only its batch (see COORDINATION, "Accessibility and crash fixes from the second audit"). From `af7c20e4`: `e0103bde` retains the bundle-derived social card and valid schema. From `e0103bde`: `343fa189` differs only in the social card graphic and launch docs. From `343fa189`: `64cf5d59` differs only in the About wording (it drops the
 "open-source" claim, which stays true either way). From `64cf5d59`: `8c8fe551` drops only the sign-in fix and wording; `9efa1a55`
@@ -61,7 +66,7 @@ current schema and codec. `972dee9c` is an unknown commit: do not roll back to i
 
 | Suite | Where | Command | Result at hand-off |
 | --- | --- | --- | --- |
-| Site | `A:\Claude\morrowind-tools` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **730 pass, 0 fail, 0 todo, 0 skipped** at `1e84b1a` |
+| Site | `A:\Claude\mt-travel-merge` (clean main worktree) | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; npm test` | **787 pass, 0 fail, 0 todo, 0 skipped** at the `2c113b8` Travel release |
 | Pipeline | `C:\Users\tiago\OneDrive\Documents\ChatGPT\OpenMW Decompiler` | `$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'; python -B -m unittest discover -s . -p "test_*.py"` | **670 pass** (pre-existing ResourceWarnings from unclosed sqlite in older tests) |
 | Release build | site | `npm run build:cloudflare` | passes; 22 static routes |
 | Worker dry run | site | `node node_modules/wrangler/bin/wrangler.js deploy --dry-run --keep-vars` | passes |
@@ -353,15 +358,115 @@ No extraction, schema change, deployment or production write.
 
 These are local signed-out checks. Production sign-in, Cloud Vault, payments,
 real-save corpus, other browser engines and manual screen-reader review were
-not repeated. Deployment remains a separate owner ask: ship Travel as its own
+not repeated during integration. Deployment was a separate owner ask: ship Travel as its own
 release, retaining the previous production version so rollback removes Travel
-without rolling back the earlier launch improvements.
+without rolling back the earlier launch improvements. The authorized release is
+recorded below.
 
-## 9. Account settings verification — 30 September 2026
+## 9. Travel production release and rollback — 30 September 2026
 
-ACC-1 and ACC-2 are prepared on `feature/account-settings-preparation`, based on
-the normal merge of origin/main `2c113b8` into the branch at `7a9f0bd`. The owner
-has not approved merging the settings branch or deploying it.
+Owner request: "Deploy main". Released from the clean, synchronized main worktree
+`A:/Claude/mt-travel-merge`, commit `2c113b85ea98c42db66e3e667abe2440bd67237e`.
+The later account-settings merge contains documentation only; no settings API or
+migration is in this release.
+
+- Deployed at **20:32 UTC**, tagged `2c113b8`, Worker version
+  **`3ef09493-cb5a-42e2-96fd-ca54c168d3e2`**, initially 100% of traffic. The message identifies
+  TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8 as their own Travel release.
+- **Rollback target:** `24bd4ac1-e287-4c14-88d8-80bee20b42f9` (live commit
+  `1e84b1a` before this release). It retains the previous launch fixes. The bundle
+  stays `3da0320236da77ec085d105d`; no schema, binding, configuration or data change
+  was made. `--keep-vars` retained dashboard variables.
+- Pre-release `npm test`: **787 passed, zero failures/skips/todos**;
+  `npm run build:cloudflare` and `wrangler deploy --dry-run --keep-vars`: **passed**.
+  Main and production were rechecked immediately before deploying.
+- Recovery: D1 UUID confirmed; no pending migrations; fresh Time Travel bookmark
+  recorded in section 1. No migration, private-row read or full data export ran.
+  Bundle pointer, manifest and before/after deployment history are saved in
+  `A:/Cache/trv-release-20260930`.
+- Live HTTP checks: homepage **200**; homepage and a static JavaScript asset match
+  the release output by SHA-256; `www` Builder **301** to the apex with its query
+  preserved; signed-out `/api/account`, `/api/saves` and `/api/entitlements` **401**.
+  Security headers and live bundle/snapshot match the verified build.
+- Production Chrome sweep: **124 of 125 passed**; **216 WCAG 2/2.1 AA audits,
+  zero violations**, no horizontal overflow, runtime exceptions or server errors.
+  Sixteen views in all three profiles, both themes and 1366/375 px; Travel
+  keyboard/search/swap/sharing, real-time comparison and loading/failure/retry;
+  Builder, calculator, challenge, Faction Journal and Level Simulator interactions.
+  A temporary copy of the local runner allowed only the production origin and used
+  the same checked-in assertions in a disposable signed-out browser.
+- The last mobile synthetic-save persistence case initially reported
+  `Save/profile override isolation: true !== false` for the guild choice after
+  navigation. Desktop passed. A focused repeat of both widths with click/storage
+  diagnostics passed **2/2**: clicks hit the inputs, edited values were stored,
+  and save/profile isolation and reset worked. Repeating the original test logic
+  without added diagnostics then failed again at **375 px**, while desktop passed.
+  Both failures are `AssertionError [ERR_ASSERTION]` at the guild assertion in
+  `scripts/test-browser.cjs:310`: the vanilla save's unchecked guild edit should
+  survive navigation, but the control was checked. The cause remains unconfirmed;
+  diagnostic timing may change the outcome. No application fix was attempted.
+- **Rolled back at 20:47 UTC** to `24bd4ac1-e287-4c14-88d8-80bee20b42f9`,
+  confirmed active at 100%. Home, Travel, Builder and the bundle pointer return
+  **200**, signed-out account **401**, and the bundle is unchanged. Travel remains
+  on main for investigation; further fixes stopped under the two-failure rule.
+  Do not re-release this batch until the original mobile check passes reliably.
+- Pipeline coordination verification: **670 tests passed**; the identical release
+  initial handoff was pushed as `a7b71fe`, then corrected to record the rollback.
+
+Evidence: `A:/Cache/trv-release-tests.log`, `trv-release-build.log`,
+`trv-release-dry-run.log`, `trv-release-deploy.log`; browser reports under
+`A:/Cache/trv-release-20260930/production-browser` and
+`production-save-diagnostic` and `production-save-repeat`, including screenshots, axe results, font states,
+request traces and failure HTML. These production checks stayed signed out and
+used synthetic saves locally; real sign-in, Cloud Vault ownership/writes, payments,
+other browser engines and manual screen-reader acceptance were not repeated.
+
+## 11. Launch package integration verification — 30 September 2026
+
+Merge commit: `d4e96bdaec9112fe9739da76452a0565b3440bb6`.
+Merge inputs: main `054fef5`, `launch/home-1-mob-2-first-steps` `6d6c2e6`
+(HOME-1/MOB-2, SITE-4, SITE-3, MOB-1/MOB-4, HOME-3, ENC-1, CALC-3, CHL-2,
+LVL-2/LVL-3, header menus, Cloud Vault hash check, the phone tab bar's Travel tab, the Vault header's account line). Prepared and verified in
+`A:/Claude/mt-site-1` with physical dependencies and repository build config
+unchanged. No extraction, schema change, migration, deployment or production write.
+
+- Conflicts: `travel-workstation.jsx` (main's TRV-8 layout kept whole; SITE-4's
+  character link moves to the Travel header as "Planning for <name> · change",
+  outside the live network status and the folded options' `<summary>`) and this
+  checklist (both sides' records kept).
+- Main's `test/travel-task-layout.test.js` registers the character-link helper
+  (16 of its tests failed without it) and gains a SITE-4 Travel test. Main's
+  browser runner chooses Alchemy ingredients through CALC-3's combobox (`choose`)
+  and uses MOB-4's section buttons below 1024 px (`builderTab`).
+- `npm test`: **827 passed, 0 failures**. `npm run build` and
+  `npm run build:cloudflare`: **passed**.
+- Local Chrome/CDP runner (`scripts/test-browser.cjs`) on the dev server:
+  **125 cases passed, 0 failures**: sixteen views × three profiles × 1366/375 px ×
+  both themes with axe (WCAG 2/2.1 AA, 0 critical/serious), no overflow, runtime
+  exceptions or server errors; tool, challenge, Builder, Faction/Level and Travel
+  interactions. The 375 px saved-Travel case (section 9) passed **7 of 7** runs
+  locally; the cause of its production failure is still unconfirmed (section 10).
+- Axe with best-practice rules on every page, both themes, desktop and phone:
+  **0 violations in 76 runs** on the first trial merge, and 0 in the 38 phone runs again after the phone tab bar change. Keyboard audit (first trial): 40 page checks pass (30 keyboard, 10 forced colours) and 4 dialogs (focus inside, trapped, Escape closes, focus returns).
+- Evidence: `A:/Cache/launch-package-browser/` (reports, screenshots, axe JSON).
+
+Local signed-out checks only. The Cloud Vault hash check is covered by
+`test/cloud-save-api.test.js` against the Worker route with a simulated D1; a
+signed-in production load was not run.
+
+Main was fast-forwarded to this merge on the owner's word ("merge to main, but don't
+deploy"); it is not deployed. Production runs the Travel release (main `2c113b8`,
+Worker `3ef09493`), restored at 21:30 UTC with the owner's authorization; Codex's
+section 10 on `launch/trv-mobile-verification` records it. This section is numbered 11
+so that section keeps its number when that branch merges.
+
+## 12. Account settings verification — 30 September 2026
+
+ACC-1 and ACC-2 are prepared on `feature/account-settings-preparation`. The
+initial implementation `d4de9e7` incorporated origin/main `2c113b8` at `7a9f0bd`;
+its verification is recorded below. Integration with the newer main `11c1c96`
+is recorded after it. The owner has not approved merging the settings branch
+into main or deploying it.
 
 - `npm test`: **836 passed, 0 failures, 0 skips**. Cases cover the schema, owner
   isolation, UTF-8 limits, bad JSON/versions/revisions, concurrent creation,
@@ -403,3 +508,36 @@ until published release support exists; the two future gear filters stay hidden.
 Migration 0007 is unchanged from its reviewed ACC-1 shape. No extraction, remote
 database apply, main change or deployment occurred. The owner applies production
 0007 separately before deploying the settings API.
+
+### Integration with new main `11c1c96`
+
+The owner requested preparation against the new main. A normal merge combines
+the settings implementation `d4de9e7` with origin/main `11c1c960de344c8d550433ffb10776636bd479f8`;
+no rebase or main update. The two conflicts were confined to this verification
+record and the launch checklist. Main's launch completions and production history
+are preserved; the settings record is section 12, leaving section 10 reserved
+for the Travel acceptance branch. The original settings changelog entry is now
+under its correct 30 September heading in both changelogs.
+
+- `npm test`: **876 passed, 0 failures, 0 skips**. The SQLite experimental
+  warnings remain visible. `npm run build:cloudflare`: **24 static pages**;
+  Wrangler `deploy --dry-run` passed without uploading or deploying.
+- Fresh local D1: migrations **0001–0007 applied**, **none pending**;
+  `account_settings` exists. All **28 historical schema objects** match the
+  0001–0006 baseline and all seven historical application tables are unchanged.
+  Origin/main still ends at migration 0006; 0007 keeps its reviewed shape.
+- Local Chrome/CDP: **33 cases passed** (four settings, 26 tools, three Travel),
+  **28 axe reports**, no critical/serious findings, runtime errors or unexpected
+  server errors. Settings screenshots were inspected at desktop/mobile widths
+  in both themes. These retain the synthetic-account and local-only limits above.
+- The diff against this main contains exactly the original **38 settings paths**.
+  Main's first steps, phone navigation, tool controls, keyboard menus and Vault
+  hash checks are retained. GitHub main was checked again before committing.
+
+Evidence under `A:/Cache`: `acc-main-11c1c96-test.log`,
+`acc-main-11c1c96-build.log`, `acc-main-11c1c96-worker-dry-run.log`,
+`acc-main-11c1c96-local.log`; fresh D1 persistence `acc-main-11c1c96-local`;
+browser reports, axe JSON and screenshots in `acc-main-11c1c96-settings-browser`,
+`acc-main-11c1c96-tools-browser` and `acc-main-11c1c96-travel-browser`.
+Only the feature branch is prepared for owner review; no feature merge into main,
+remote D1 apply or deployment is authorized by this preparation.

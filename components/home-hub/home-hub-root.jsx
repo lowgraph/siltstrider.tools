@@ -4,10 +4,8 @@ import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 import { getGameDataLoader } from "../use-game-data";
 import { adaptTravelGraph } from "../../lib/travel-graph.mjs";
-import { ALL_SKILLS } from "../../lib/level-math.mjs";
-import { POOL } from "../../lib/challenge-math.mjs";
 import {
-  WORLD_PROFILES, alchemyPreview, characterSummary, exampleRoute, healthGap, nextLevelUp, stopCount, worldLabel
+  HOME_OUTCOMES, alchemyPreview, characterSummary, exampleRoute, healthGap, nextLevelUp, worldLabel
 } from "../../lib/home-data.mjs";
 import HomeHero from "./home-hero";
 import HomeTools from "./home-tools";
@@ -84,15 +82,7 @@ export default function HomeHubRoot({ loader, shell: shellOverride, character: c
   const levelUp = useMemo(() => (sheet ? nextLevelUp(sheet, catalogs, options) : null), [sheet, catalogs, options]);
   const health = useMemo(() => (sheet ? healthGap(sheet, catalogs, options, 30) : null), [sheet, catalogs, options]);
   const route = useMemo(() => exampleRoute(world, graph), [world, graph]);
-  const stops = useMemo(() => stopCount(world, graph), [world, graph]);
   const alchemy = useMemo(() => (sheet ? alchemyPreview(sheet, ingredients) : null), [sheet, ingredients]);
-
-  const facts = [
-    { value: ALL_SKILLS.length, label: "skills modeled for every character" },
-    { value: POOL.length, label: "hand-picked challenge restrictions" },
-    { value: stops, label: `travel stops in ${worldLabel(profile)}` },
-    { value: WORLD_PROFILES.length, label: "world profiles: Vanilla, TR and TR + ARCE" }
-  ];
 
   return (
     <div className="home-hub-root">
@@ -108,8 +98,8 @@ export default function HomeHubRoot({ loader, shell: shellOverride, character: c
         onSelectWorld={id => shell?.setProfile?.(id)}
       />
 
-      <section className="home-facts" aria-label="Silt Strider in numbers">
-        {facts.map(fact => (
+      <section className="home-facts" aria-label="What Silt Strider does for your character">
+        {HOME_OUTCOMES.map(fact => (
           <div className="home-fact" key={fact.label}>
             <span className="home-fact-value">{fact.value}</span>
             <span className="home-fact-label">{fact.label}</span>

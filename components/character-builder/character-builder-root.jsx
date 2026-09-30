@@ -12,6 +12,15 @@ import { generateBuildShareUrl } from "../../lib/character-vault.mjs";
 import { isNewcomer, markBuilderVisited } from "../../lib/builder-first-visit.mjs";
 import { useActiveCharacter } from "../character-context";
 
+// Below 1024 px (MOB-4): the Builder's sections in one row; "Configure" and "Sheet" are the
+// two halves of the Custom Class Builder, which sit side by side on wider screens.
+const PHONE_SECTIONS = [
+  { id: "config", label: "Configure" },
+  { id: "sheet", label: "Sheet" },
+  { id: "equipment", label: "Loadouts" },
+  { id: "premade", label: "Premades" }
+];
+
 export default function CharacterBuilderRoot() {
   const shell = useShell();
   const {
@@ -56,6 +65,15 @@ export default function CharacterBuilderRoot() {
     if (!newcomer || chose.current) return;
     setActiveTab(isStarter ? "premade" : "builder");
   }, [newcomer, isStarter]);
+
+  const selectSection = useCallback((id) => {
+    if (id === "config" || id === "sheet") {
+      chooseTab("builder");
+      setMobileTab(id);
+    } else {
+      chooseTab(id);
+    }
+  }, [chooseTab]);
 
   // Pure state updater: premade build selection
   const handleSelectPremade = useCallback(
@@ -140,12 +158,32 @@ export default function CharacterBuilderRoot() {
         )}
       </div>
 
+      {/* MOB-4: below 1024 px, where the configurator and the sheet take turns, one row of
+          four sections replaces this bar and the Configurator / Character Sheet toggle. */}
+      <div className="builder-phone-tabs lg:hidden grid grid-cols-4 gap-1 p-1 bg-surface-2 border border-line-11" role="group" aria-label="Character Builder sections">
+        {PHONE_SECTIONS.map(({ id, label }) => {
+          const current = id === "config" || id === "sheet" ? activeTab === "builder" && mobileTab === id : activeTab === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={current}
+              className={`mw-btn min-h-11 px-1 text-xs sm:text-sm font-serif font-bold transition-all ${current ? "active" : ""}`}
+              onClick={() => selectSection(id)}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Top Mode Selectors: 3-Way CRPG Studio Bar */}
-      <div className="mode-bar-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="mode-bar-grid max-lg:hidden grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <button
             type="button"
             id="btn-tab-builder"
+            aria-pressed={activeTab === "builder"}
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "builder" ? "active ring-1 ring-accent" : ""
             }`}
@@ -158,6 +196,7 @@ export default function CharacterBuilderRoot() {
           <button
             type="button"
             id="btn-tab-equipment"
+            aria-pressed={activeTab === "equipment"}
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "equipment" ? "active ring-1 ring-accent" : ""
             }`}
@@ -170,6 +209,7 @@ export default function CharacterBuilderRoot() {
           <button
             type="button"
             id="btn-tab-premade"
+            aria-pressed={activeTab === "premade"}
             className={`w-full mw-btn py-3 px-4 font-serif text-sm sm:text-base font-bold tracking-wide transition-all shadow-md ${
               activeTab === "premade" ? "active ring-1 ring-accent" : ""
             }`}
@@ -179,30 +219,6 @@ export default function CharacterBuilderRoot() {
           </button>
         </div>
       </div>
-
-      {/* Mobile View Toggle (Visible on screens < 1024px when builder is active) */}
-      {activeTab === "builder" && (
-        <div className="flex lg:hidden items-center gap-2 w-full p-1 bg-surface-2 border border-line-11 mb-6">
-          <button
-            type="button"
-            className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${
-              mobileTab === "config" ? "active" : ""
-            }`}
-            onClick={() => setMobileTab("config")}
-          >
-            Configurator
-          </button>
-          <button
-            type="button"
-            className={`flex-1 py-2 px-3 text-sm font-serif font-bold transition-all mw-btn ${
-              mobileTab === "sheet" ? "active" : ""
-            }`}
-            onClick={() => setMobileTab("sheet")}
-          >
-            Character Sheet
-          </button>
-        </div>
-      )}
 
       {/* Main Content Area */}
       {activeTab === "premade" ? (

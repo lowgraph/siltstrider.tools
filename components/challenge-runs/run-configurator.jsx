@@ -167,122 +167,50 @@ export default function RunConfigurator({
         </div>
       </div>
 
-      {/* Slot-Pinning Locks */}
+      {/* CHL-2: choose instead of rolling. A choice here is kept when you roll (its lock on
+          the sheet turns on); "Roll it" gives the slot back to the dice. The locks themselves
+          are only on the sheet, next to what they keep. */}
       <div className="border-t border-line-11 pt-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <label className="text-xs uppercase tracking-widest font-serif font-bold text-accent">
-            Pinned Slots (Locks)
-          </label>
-          <span className="text-[11px] text-fg-13 font-serif">
-            Locked slots stay unchanged on roll
+        <div>
+          <span id="cfg-choose-label" className="text-xs uppercase tracking-widest font-serif font-bold text-accent block">
+            Choose instead of rolling
           </span>
+          <p className="text-[11px] text-fg-11 font-serif mt-1 mb-0">
+            A choice here stays when you roll. To keep a rolled result, lock it on the sheet.
+          </p>
         </div>
 
-        <div className="space-y-2.5">
-          {/* Race Pin */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.race ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-              }`}
-              onClick={() => onToggleLock("race")}
-            >
-              {locks.race ? "Locked" : "Lock"}
-            </button>
-            <select
-              className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-              value={character?.race || ""}
-              aria-label="Pin race"
-              onChange={(e) => onUpdateCharacterSlot("race", e.target.value)}
-              disabled={!locks.race && !character?.race}
-            >
-              <option value="">(Roll on generate)</option>
-              {races.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Class Pin */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.cls ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-              }`}
-              onClick={() => onToggleLock("cls")}
-            >
-              {locks.cls ? "Locked" : "Lock"}
-            </button>
-            <select
-              className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-              value={character?.cls || ""}
-              aria-label="Pin class"
-              onChange={(e) => onUpdateCharacterSlot("cls", e.target.value)}
-              disabled={!locks.cls && !character?.cls}
-            >
-              <option value="">(Roll on generate)</option>
-              <option value="Custom">Custom Class</option>
-              {classes.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sign Pin */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className={`px-2.5 py-1.5 text-xs border rounded-none font-serif w-20 shrink-0 text-center ${
-                locks.sign ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-              }`}
-              onClick={() => onToggleLock("sign")}
-            >
-              {locks.sign ? "Locked" : "Lock"}
-            </button>
-            <select
-              className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
-              value={character?.sign || ""}
-              aria-label="Pin birthsign"
-              onChange={(e) => onUpdateCharacterSlot("sign", e.target.value)}
-              disabled={!locks.sign && !character?.sign}
-            >
-              <option value="">(Roll on generate)</option>
-              {signs.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Quick Lock Switches for Objectives & Restrictions */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <button
-              type="button"
-              className={`py-1.5 px-2 text-xs border font-serif text-center ${
-                locks.major ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-              }`}
-              onClick={() => onToggleLock("major")}
-            >
-              {locks.major ? "Major: Locked" : "Major: Lock"}
-            </button>
-
-            <button
-              type="button"
-              className={`py-1.5 px-2 text-xs border font-serif text-center ${
-                locks.rest ? "bg-surface-18 border-accent text-accent" : "bg-surface-3 border-line-9 text-fg-13"
-              }`}
-              onClick={() => onToggleLock("rest")}
-            >
-              {locks.rest ? "Restrictions: Locked" : "Restrictions: Lock"}
-            </button>
-          </div>
+        <div className="space-y-2.5" role="group" aria-labelledby="cfg-choose-label">
+          {[
+            { slot: "race", label: "Race", options: races.map((r) => [r, r]) },
+            { slot: "cls", label: "Class", options: [["Custom", "Custom Class"], ...classes.map((c) => [c, c])] },
+            { slot: "sign", label: "Birthsign", options: signs.map((s) => [s, s]) }
+          ].map(({ slot, label, options: listed }) => {
+            // The locked value is always an option, so the picker never says "Roll it" for a
+            // kept slot (before the lists load, or for a value they do not hold).
+            const kept = locks[slot] ? character?.[slot] || "" : "";
+            const options = kept && !listed.some(([value]) => value === kept) ? [[kept, kept], ...listed] : listed;
+            return (
+            <div key={slot} className="flex items-center gap-2">
+              <label htmlFor={`cfg-choose-${slot}`} className="text-xs font-serif font-bold text-fg-7 w-20 shrink-0">
+                {label}
+              </label>
+              <select
+                id={`cfg-choose-${slot}`}
+                className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
+                value={kept}
+                onChange={(e) => onUpdateCharacterSlot(slot, e.target.value)}
+              >
+                <option value="">Roll it</option>
+                {options.map(([value, text]) => (
+                  <option key={value} value={value}>
+                    {text}
+                  </option>
+                ))}
+              </select>
+            </div>
+            );
+          })}
         </div>
       </div>
 

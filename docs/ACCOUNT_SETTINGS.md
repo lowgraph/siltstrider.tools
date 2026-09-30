@@ -262,16 +262,17 @@ Worker also compiled with `wrangler deploy --dry-run`. Fresh local migrations
 and the 28-object historical schema comparison passed. Chrome ran 33 settings,
 tool and Travel cases at desktop/mobile widths in both themes, with 28 axe
 reports and no critical/serious findings, runtime errors or server errors.
-Evidence and limits: [LAUNCH_VERIFICATION.md](LAUNCH_VERIFICATION.md) §9.
+Evidence and limits: [LAUNCH_VERIFICATION.md](LAUNCH_VERIFICATION.md) §12.
 
 ACC-2 implements the authenticated API/provider/account UI and connects World,
 theme and tool defaults/reset actions. Version notifications need a release
 registry; future dataset selectors remain unavailable until registry/loader
 support exists. Schema, API, client state and React/browser integration are
 verified locally; production sign-in remains an owner acceptance check.
-The owner confirmed main is ready; origin/main `2c113b8`
-has been merged into the settings branch without rebasing. Only settings work
-differs from main; local migration, tests and build passed after the merge.
+The latest origin/main `11c1c96` has also been incorporated into the settings
+branch without rebasing. Only settings work differs from that main; local
+migration, tests and build passed after integration. The verification record
+above describes the original implementation; §12 also records the new-main checks.
 The owner decides whether to merge the feature branch to main and applies the
 production migration separately. No remote migration or deployment was done here.
 

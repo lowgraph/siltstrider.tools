@@ -182,14 +182,14 @@ test("the home page shows the character, real counts and every tool", async () =
 
     const facts = [...container.querySelectorAll(".home-fact")].map(f => f.textContent);
     assert.deepEqual(facts, [
-      "27skills modeled for every character",
-      "103hand-picked challenge restrictions",
-      "4travel stops in Vanilla",
-      "3world profiles: Vanilla, TR and TR + ARCE"
-    ], "the stop count comes from the loaded travel network");
+      "×5attribute bonuses, planned level by level",
+      "Any townreached by silt strider, boat, Guild Guide or on foot, at your fare",
+      "Early gearfor your build, and where to buy or find it",
+      "3 worldsVanilla, Tamriel Rebuilt and TR + ARCE, each from its own game data"
+    ], "what the site does for the character (HOME-3), not counts");
 
     const tools = [...container.querySelectorAll("a.home-tool")];
-    assert.deepEqual(tools.map(a => a.getAttribute("href")), ["/builder", "/leveler", "/alchemy", "/travel", "/enchanting", "/spellmaking", "/factions", "/challenge", "/vault"]);
+    assert.deepEqual(tools.map(a => a.getAttribute("href")), ["/builder", "/leveler", "/travel", "/alchemy", "/enchanting", "/spellmaking", "/factions", "/challenge", "/vault"]);
     assert.match(container.querySelector(".home-tool--travel").textContent, /3 hops from Seyda Neen to Sadrith Mora/);
     assert.match(container.querySelector(".home-tool--alchemy").textContent, /8% chance for Dark Elf Nightblade to brew a potion/);
     assert.match(container.querySelector(".home-tool--alchemy").textContent, /3 ingredients to brew with/, "the count comes from the loaded Ingredients catalog");
@@ -200,6 +200,30 @@ test("the home page shows the character, real counts and every tool", async () =
   } finally { await cleanup(); }
 });
 
+test("HOME-3: the strip says what the site does, the same in any world, before the data loads and with a save", async () => {
+  const { HOME_OUTCOMES, WORLD_PROFILES } = await import("../lib/home-data.mjs");
+  const strip = container => [...container.querySelectorAll(".home-fact")].map(f => f.textContent);
+  const expected = HOME_OUTCOMES.map(f => f.value + f.label);
+  // No count of internals, and no number that could come out as NaN, 0 or undefined.
+  for (const fact of HOME_OUTCOMES) {
+    assert.doesNotMatch(fact.label, /skills modeled|restrictions|travel stops|world profiles/);
+    assert.doesNotMatch(fact.value, /NaN|undefined|^0/);
+  }
+  assert.equal(HOME_OUTCOMES.at(-1).value, `${WORLD_PROFILES.length} worlds`, "the one number left is the worlds you can plan in");
+  const cases = [
+    { shell: { profile: "tr_arce", world: "tr", arce: true } },
+    { shell: { ready: false }, character: { build: BUILD, sheet: null, catalogs: null } },
+    { character: { build: BUILD, sheet: SHEET, catalogs: null, activeSave: { token: 1, profile: "tr", sheet: { ...SHEET, level: 9 }, save: { identity: { name: "Kimble", level: 9 } }, unresolved: [], unworn: [] } } }
+  ];
+  for (const options of cases) {
+    const { container, cleanup } = await renderHome(options);
+    try {
+      assert.deepEqual(strip(container), expected);
+      assert.equal(container.querySelector(".home-facts").getAttribute("aria-label"), "What Silt Strider does for your character");
+    } finally { await cleanup(); }
+  }
+});
+
 test("buttons and links navigate, switch worlds and open search", async () => {
   const { container, calls, cleanup } = await renderHome({ shell: { profile: "tr", world: "tr" } });
   try {
@@ -207,16 +231,15 @@ test("buttons and links navigate, switch worlds and open search", async () => {
     const button = text => [...container.querySelectorAll("button")].find(b => b.textContent.trim().startsWith(text));
 
     assert.equal(button("Roll a challenge run"), undefined, "the hero no longer offers challenge runs");
-    await click(button("Start a new build"));
+    await click(button("Open the Character Builder"));
     await click(button("Plan level-ups"));
     await click(container.querySelector("a.home-tool--alchemy"));
     await click([...container.querySelectorAll(".home-colophon a")].find(a => a.textContent === "Challenge Runs"));
     await click([...container.querySelectorAll(".home-colophon a")].find(a => a.textContent === "Changelog"));
     assert.deepEqual(calls.navigate, ["builder", "leveler", "alchemy", "challenge", "changelog"]);
 
-    const hero = [...container.querySelector(".home-hero-copy").children].map(el => el.className);
-    assert.ok(hero.indexOf("home-save") < hero.indexOf("home-worlds"), "the save drop zone comes first");
-    assert.equal(hero.indexOf("home-worlds") + 1, hero.indexOf("home-ctas"), "the world choice sits right above Start a new build");
+    const hero = [...container.querySelector(".home-hero-copy").children].map(el => el.className.split(" ")[0]);
+    assert.ok(hero.indexOf("home-steps") < hero.indexOf("home-worlds"), "the first steps come before the world choice");
     const worlds = [...container.querySelectorAll(".home-world")];
     assert.deepEqual(worlds.map(w => w.textContent), ["Vanilla", "Tamriel Rebuilt", "TR + ARCE"]);
     assert.equal(worlds[1].getAttribute("aria-pressed"), "true", "Tamriel Rebuilt is the active world");
@@ -233,7 +256,9 @@ test("buttons and links navigate, switch worlds and open search", async () => {
 test("before the shell is ready the actions wait, and before the sheet loads the card says so", async () => {
   const { container, calls, cleanup } = await renderHome({ shell: { ready: false }, character: { build: BUILD, sheet: null, catalogs: null } });
   try {
-    assert.ok([...container.querySelectorAll(".home-ctas button, .home-character-actions button, .home-world, .home-save button")].every(b => b.disabled));
+    const actions = [...container.querySelectorAll(".home-steps button, .home-character-actions button, .home-world")];
+    assert.ok(actions.length >= 7);
+    assert.ok(actions.every(b => b.disabled), "both first steps wait too");
     assert.match(container.querySelector(".home-character").textContent, /Loading the character sheet/);
     assert.equal(container.querySelector(".home-levelup"), null);
     assert.equal(container.querySelector(".home-tool--leveler .home-preview"), null, "no Health preview without a sheet");
@@ -254,7 +279,8 @@ test("a save dropped or chosen on the home page loads into every tool; a .ess is
   const { container, calls, cleanup } = await renderHome();
   try {
     const zone = container.querySelector(".home-save");
-    assert.match(zone.textContent, /Drop your OpenMW save here/);
+    assert.match(zone.textContent, /Load your save/);
+    assert.match(zone.textContent, /Drop an OpenMW save here/);
     const converted = { identity: { name: "Kimble", level: 3 }, stuff: {} };
 
     const drop = file => act(async () => {
@@ -281,6 +307,49 @@ test("a save dropped or chosen on the home page loads into every tool; a .ess is
   } finally { await cleanup(); }
 });
 
+test("HOME-1 / MOB-2: starting a character and loading a save are equal first steps, the character first", async () => {
+  const { BUILDS } = await import("../lib/premade-data.mjs");
+  const { File } = require("node:buffer");
+  const { container, calls, cleanup } = await renderHome();
+  try {
+    const steps = [...container.querySelector(".home-steps").children];
+    const kind = s => (s.classList.contains("home-start") ? "start" : s.classList.contains("home-save") ? "save" : s.className);
+    assert.deepEqual(steps.map(kind), ["start", "save"], "the character first: that is also what comes first when they stack on a phone");
+    assert.deepEqual(steps.map(s => [...s.querySelectorAll("button.home-cta--primary")].map(b => b.textContent.trim())),
+      [["Open the Character Builder"], ["Choose a save file"]], "one primary button each, as equals");
+    assert.ok(steps.every(s => s.querySelector(".home-step-title") && s.querySelector(".home-step-note")), "built the same way");
+    assert.deepEqual(steps.map(s => s.querySelector(".home-step-title").textContent), ["Start a character", "Load your save"]);
+    assert.match(steps[0].textContent, new RegExp(`Pick one of ${BUILDS.length} premade builds or make your own class`));
+    assert.equal(container.querySelectorAll(".home-hero .compatibility-notice").length, 1, "the compatibility notice once, under both");
+    assert.equal(container.querySelector(".home-ctas"), null, "no small 'No save yet?' link any more");
+
+    await act(async () => steps[0].querySelector("button").dispatchEvent(new window.MouseEvent("click", { bubbles: true })));
+    assert.deepEqual(calls.navigate, ["builder"]);
+
+    // A refused file: the error shows in the save step and starting a character is still there.
+    await act(async () => {
+      const event = new window.Event("drop", { bubbles: true, cancelable: true });
+      Object.defineProperty(event, "dataTransfer", { value: { types: ["Files"], files: [new File(["TES3"], "Save 1.ess")] } });
+      window.dispatchEvent(event);
+      for (let i = 0; i < 5; i++) await new Promise(r => setTimeout(r, 0));
+    });
+    assert.ok(container.querySelector(".home-save .home-save-error"));
+    assert.ok(container.querySelector(".home-start"));
+  } finally { await cleanup(); }
+});
+
+test("the first steps sit side by side where there is room, and stack in the page's order elsewhere", () => {
+  const css = fs.readFileSync(path.join(__dirname, "..", "app", "globals.css"), "utf8");
+  const ashfall = fs.readFileSync(path.join(__dirname, "..", "app", "theme-ashfall.css"), "utf8");
+  assert.match(css, /\.home-steps \{[^}]*grid-template-columns: repeat\(auto-fit, minmax\(17rem, 1fr\)\)/, "two columns from about 560 px, one below");
+  for (const sheet of [css, ashfall]) {
+    const rules = sheet.match(/[^{}]*\.home-(steps|start|step|save)\b[^{}]*\{[^}]*\}/g) || [];
+    assert.ok(rules.length > 3);
+    assert.ok(rules.every(r => !/(^|[\s;{])order:/.test(r) && !/flex-direction: (row|column)-reverse/.test(r)), "no reordering: phones read and tab in the page's order");
+  }
+  assert.match(ashfall, /\.home-start \{[^}]*border-radius: var\(--af-radius-card\)/, "the start step has the save step's shape in the modern theme");
+});
+
 test("with a save loaded the hero offers next steps and the card shows the save", async () => {
   const saved = { ...SHEET, level: 3, fromSave: true };
   const activeSave = {
@@ -292,6 +361,8 @@ test("with a save loaded the hero offers next steps and the card shows the save"
   try {
     const zone = container.querySelector(".home-save--loaded");
     assert.match(zone.textContent, /Kimble, level 3 Tom Catess/);
+    assert.equal(container.querySelector(".home-start"), null, "with a save loaded, its panel is the only step");
+    assert.equal(container.querySelectorAll(".home-hero .compatibility-notice").length, 1, "the notice once, in the save's panel");
     assert.match(zone.textContent, /Tamriel Rebuilt/);
     assert.match(zone.textContent, /3 things from the save's mods could not be matched/);
     const card = container.querySelector(".home-character");

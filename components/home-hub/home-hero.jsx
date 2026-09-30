@@ -1,13 +1,37 @@
 "use client";
 import { useEffect, useState } from "react";
+import { BUILDS } from "../../lib/premade-data.mjs";
+import CompatibilityNotice from "../compatibility-notice";
 import HomeSaveDrop from "./home-save-drop";
 import HomeWorlds from "./home-worlds";
 
-const Arrow = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
+const PersonIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" />
   </svg>
 );
+
+// HOME-1 / MOB-2: starting a character is a first step equal to loading a save, since
+// most visitors, and nearly all on phones, have no save to hand. It comes first.
+function StartStep({ ready, onNavigate }) {
+  return (
+    <div className="home-step home-start">
+      <div className="home-step-head">
+        <span className="home-step-icon"><PersonIcon /></span>
+        <div className="home-step-title">Start a character</div>
+      </div>
+      <div className="home-step-note">
+        Pick one of {BUILDS.length} premade builds or make your own class. Every tool works with it, and no account is
+        needed.
+      </div>
+      <div className="home-step-row">
+        <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!ready} onClick={() => onNavigate("builder")}>
+          Open the Character Builder
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function CharacterCard({ character, fromSave, levelUp, profileLabel, ready, onNavigate }) {
   return (
@@ -105,20 +129,19 @@ export default function HomeHero({
         <div className="home-lead">
           A free, data-driven companion for The Elder Scrolls III. Build a character, simulate every level-up for ×5 multipliers, brew potions and plan your travel across Vvardenfell and Tamriel Rebuilt, with every number read straight from the game files.
         </div>
-        <HomeSaveDrop
-          activeSave={save?.activeSave}
-          onLoad={save?.loadSave}
-          onClear={save?.clearSave}
-          onNavigate={onNavigate}
-          ready={ready}
-        />
-        <HomeWorlds profile={profile} ready={ready} onSelect={onSelectWorld} />
-        <div className="home-ctas">
-          <span className="home-ctas-label">No save yet?</span>
-          <button type="button" className="home-link" disabled={!ready} onClick={() => onNavigate("builder")}>
-            Start a new build <Arrow />
-          </button>
+        {/* With a save loaded, its panel is the next step and there is no other to offer. */}
+        <div className="home-steps">
+          {!save?.activeSave && <StartStep ready={ready} onNavigate={onNavigate} />}
+          <HomeSaveDrop
+            activeSave={save?.activeSave}
+            onLoad={save?.loadSave}
+            onClear={save?.clearSave}
+            onNavigate={onNavigate}
+            ready={ready}
+          />
         </div>
+        {!save?.activeSave && <CompatibilityNotice />}
+        <HomeWorlds profile={profile} ready={ready} onSelect={onSelectWorld} />
       </div>
       <CharacterCard
         character={character}

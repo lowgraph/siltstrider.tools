@@ -42,6 +42,7 @@ import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-t
 import { readRouteLink, writeRouteLink } from "../../../lib/travel-link.mjs";
 import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../../lib/travel-movement.mjs";
 import TransitMap from "./transit-map";
+import ActiveCharacterLink from "../../active-character-link";
 import TravelLocationPicker from "./travel-location-picker";
 import { buildTravelSearchOptions } from "../../../lib/travel-search.mjs";
 import { travelSaveKey, readTravelOverrides, writeTravelOverrides } from "../../../lib/travel-options.mjs";
@@ -553,6 +554,9 @@ export default function TravelWorkstation() {
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
             Choose your starting place, destination and what matters most for the journey.
+          </p>
+          <p className="text-xs text-fg-9 mt-1.5 m-0 font-serif">
+            Planning for <ActiveCharacterLink build={build} />
           </p>
         </div>
       </div>
