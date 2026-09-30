@@ -421,7 +421,7 @@ request traces and failure HTML. These production checks stayed signed out and
 used synthetic saves locally; real sign-in, Cloud Vault ownership/writes, payments,
 other browser engines and manual screen-reader acceptance were not repeated.
 
-## 10. Launch package integration verification — 30 September 2026
+## 11. Launch package integration verification — 30 September 2026
 
 Merge commit: `d4e96bdaec9112fe9739da76452a0565b3440bb6`.
 Merge inputs: main `054fef5`, `launch/home-1-mob-2-first-steps` `6d6c2e6`
@@ -445,7 +445,7 @@ unchanged. No extraction, schema change, migration, deployment or production wri
   both themes with axe (WCAG 2/2.1 AA, 0 critical/serious), no overflow, runtime
   exceptions or server errors; tool, challenge, Builder, Faction/Level and Travel
   interactions. The 375 px saved-Travel case (section 9) passed **7 of 7** runs
-  locally; its production failure is not explained by this and remains open.
+  locally; the cause of its production failure is still unconfirmed (section 10).
 - Axe with best-practice rules on every page, both themes, desktop and phone:
   **0 violations in 76 runs** on the first trial merge, and 0 in the 38 phone runs again after the phone tab bar change. Keyboard audit (first trial): 40 page checks pass (30 keyboard, 10 forced colours) and 4 dialogs (focus inside, trapped, Escape closes, focus returns).
 - Evidence: `A:/Cache/launch-package-browser/` (reports, screenshots, axe JSON).
@@ -455,5 +455,7 @@ Local signed-out checks only. The Cloud Vault hash check is covered by
 signed-in production load was not run.
 
 Main was fast-forwarded to this merge on the owner's word ("merge to main, but don't
-deploy"); it is not deployed. Main also holds the Travel batch rolled back in section 9,
-so the next deploy of main ships both unless one is taken out first.
+deploy"); it is not deployed. Production runs the Travel release (main `2c113b8`,
+Worker `3ef09493`), restored at 21:30 UTC with the owner's authorization; Codex's
+section 10 on `launch/trv-mobile-verification` records it. This section is numbered 11
+so that section keeps its number when that branch merges.
