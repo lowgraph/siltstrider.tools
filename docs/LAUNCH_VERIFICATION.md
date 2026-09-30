@@ -420,3 +420,40 @@ Evidence: `A:/Cache/trv-release-tests.log`, `trv-release-build.log`,
 request traces and failure HTML. These production checks stayed signed out and
 used synthetic saves locally; real sign-in, Cloud Vault ownership/writes, payments,
 other browser engines and manual screen-reader acceptance were not repeated.
+
+## 10. Launch package integration verification — 30 September 2026
+
+Merge commit: `d4e96bdaec9112fe9739da76452a0565b3440bb6`.
+Merge inputs: main `054fef5`, `launch/home-1-mob-2-first-steps` `6d6c2e6`
+(HOME-1/MOB-2, SITE-4, SITE-3, MOB-1/MOB-4, HOME-3, ENC-1, CALC-3, CHL-2,
+LVL-2/LVL-3, header menus, Cloud Vault hash check, the phone tab bar's Travel tab, the Vault header's account line). Prepared and verified in
+`A:/Claude/mt-site-1` with physical dependencies and repository build config
+unchanged. No extraction, schema change, migration, deployment or production write.
+
+- Conflicts: `travel-workstation.jsx` (main's TRV-8 layout kept whole; SITE-4's
+  character link moves to the Travel header as "Planning for <name> · change",
+  outside the live network status and the folded options' `<summary>`) and this
+  checklist (both sides' records kept).
+- Main's `test/travel-task-layout.test.js` registers the character-link helper
+  (16 of its tests failed without it) and gains a SITE-4 Travel test. Main's
+  browser runner chooses Alchemy ingredients through CALC-3's combobox (`choose`)
+  and uses MOB-4's section buttons below 1024 px (`builderTab`).
+- `npm test`: **827 passed, 0 failures**. `npm run build` and
+  `npm run build:cloudflare`: **passed**.
+- Local Chrome/CDP runner (`scripts/test-browser.cjs`) on the dev server:
+  **125 cases passed, 0 failures**: sixteen views × three profiles × 1366/375 px ×
+  both themes with axe (WCAG 2/2.1 AA, 0 critical/serious), no overflow, runtime
+  exceptions or server errors; tool, challenge, Builder, Faction/Level and Travel
+  interactions. The 375 px saved-Travel case (section 9) passed **7 of 7** runs
+  locally; its production failure is not explained by this and remains open.
+- Axe with best-practice rules on every page, both themes, desktop and phone:
+  **0 violations in 76 runs** on the first trial merge, and 0 in the 38 phone runs again after the phone tab bar change. Keyboard audit (first trial): 40 page checks pass (30 keyboard, 10 forced colours) and 4 dialogs (focus inside, trapped, Escape closes, focus returns).
+- Evidence: `A:/Cache/launch-package-browser/` (reports, screenshots, axe JSON).
+
+Local signed-out checks only. The Cloud Vault hash check is covered by
+`test/cloud-save-api.test.js` against the Worker route with a simulated D1; a
+signed-in production load was not run.
+
+Main was fast-forwarded to this merge on the owner's word ("merge to main, but don't
+deploy"); it is not deployed. Main also holds the Travel batch rolled back in section 9,
+so the next deploy of main ships both unless one is taken out first.
