@@ -43,3 +43,46 @@ This is a local signed-out Chrome suite. It does not replace a production build,
 real OpenMW corpus checks, other browser engines, manual screen-reader review or
 the owner-run production sign-in, Cloud Vault and payment acceptance checks in
 [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md).
+
+## Signed-in Cloud Vault
+
+Two local setups cover what the signed-out suite cannot. Both use `scripts/local-stack.cjs`:
+this checkout's pages and Worker with a local database, served by `wrangler dev --local`
+from `wrangler.local.jsonc` (no routes, no account, a placeholder database) and a build in
+`.next-export-local` or `.next-export-vault`, never `.next-export`, which deploys upload.
+
+**Automated, no Clerk** (`scripts/test-vault.cjs`). Each run makes an RSA key, gives the
+local Worker its public half as `CLERK_JWT_KEY` (Clerk's own offline verifier, with a
+placeholder instance and secret), signs session tokens for made-up users, and installs a
+stand-in for Clerk's browser object before the site's scripts. It builds, starts its own
+Worker on port 8788 with a fresh database, and checks: the signed-out Vault; the API
+(owners only; expired, foreign and malformed tokens refused); save, rename, reload, load
+and delete through the page; one token renewal after a 401; a save whose stored hash was
+damaged (refused with a reference, logged, nothing loaded); the free quota and a supporter's
+25 slots; and axe (WCAG 2.2 AA and best practice) on the signed-in Vault with a rename open,
+the Vault window and the account page, in both themes at 1366 and 375 px, plus the Vault
+window's account line at each width. About 30 seconds:
+
+```powershell
+$env:TEMP='A:\Cache'; $env:TMP='A:\Cache'
+node scripts/test-vault.cjs --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\vault-browser'
+```
+
+`--no-build` reuses the last build, `--filter` runs matching cases, `--port` moves the Worker.
+
+**Real Clerk, signed in once by the owner.** The Clerk development instance's keys in
+`.env.local` (`pk_test_`/`sk_test_`; the script refuses live keys) go to Wrangler with
+`--env-file`, so no copy is written. Build, then start (or the `site-1-local-stack` preview):
+
+```powershell
+node scripts/local-stack.cjs build; node scripts/local-stack.cjs start --port 8787
+```
+
+Open http://localhost:8787/vault and sign up with an address like `you+clerk_test@example.com`
+(the development instance requires a 15-character password; the email code is `424242`).
+The local database lives in `A:/Cache/silt-local-stack/clerk`; `node scripts/local-stack.cjs sql
+"<SQL>"` runs SQL on it, e.g. to damage a save's hash. Rebuild with the site stopped: Windows
+will not replace a folder Wrangler is serving.
+
+Neither setup tests the production keys, Google or Discord sign-in, or the live database;
+those stay in the owner's production checks.
