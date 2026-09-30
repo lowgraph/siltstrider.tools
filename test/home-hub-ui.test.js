@@ -189,7 +189,7 @@ test("the home page shows the character, real counts and every tool", async () =
     ], "the stop count comes from the loaded travel network");
 
     const tools = [...container.querySelectorAll("a.home-tool")];
-    assert.deepEqual(tools.map(a => a.getAttribute("href")), ["/builder", "/leveler", "/alchemy", "/travel", "/enchanting", "/spellmaking", "/factions", "/challenge", "/vault"]);
+    assert.deepEqual(tools.map(a => a.getAttribute("href")), ["/builder", "/leveler", "/travel", "/alchemy", "/enchanting", "/spellmaking", "/factions", "/challenge", "/vault"]);
     assert.match(container.querySelector(".home-tool--travel").textContent, /3 hops from Seyda Neen to Sadrith Mora/);
     assert.match(container.querySelector(".home-tool--alchemy").textContent, /8% chance for Dark Elf Nightblade to brew a potion/);
     assert.match(container.querySelector(".home-tool--alchemy").textContent, /3 ingredients to brew with/, "the count comes from the loaded Ingredients catalog");

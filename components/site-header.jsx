@@ -22,15 +22,16 @@ const descriptions = {
   vault: 'Cloud character storage, OpenMW save ingestion, and build synchronization.'
 };
 
-// The everyday tools sit in the nav row; the rest wait in the two menus, and the
-// Cloud Vault is the account button beside search.
+// The everyday tools sit in the nav row, most used first (SITE-3: Build, Level, Travel,
+// Alchemy, then the rest); the others wait in the two menus, and the Cloud Vault is the
+// account button beside search.
 const PRIMARY_VIEWS = [
-  { view: 'challenge', label: 'Challenge Runs', id: 'react-nav-challenge' },
   { view: 'builder', label: 'Character Builder', id: 'react-nav-build' },
   { view: 'leveler', label: 'Level Simulator', id: 'react-nav-leveler' },
-  { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
   { view: 'travel', label: 'Travel Planner', id: 'react-nav-travel' },
-  { view: 'factions', label: 'Faction Journal', id: 'react-nav-factions' }
+  { view: 'alchemy', label: 'Alchemy', id: 'react-nav-alchemy' },
+  { view: 'factions', label: 'Faction Journal', id: 'react-nav-factions' },
+  { view: 'challenge', label: 'Challenge Runs', id: 'react-nav-challenge' }
 ];
 const CALC_MENU = [
   { view: 'enchanting', label: 'Enchanting' },
