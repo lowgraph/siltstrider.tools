@@ -20,9 +20,10 @@ Six integration tests written in `test/travel-task-layout.test.js` cover reading
 order, grouping and closed defaults, settings/fare updates, swapping/map selection,
 visible save/overload notices, loading/retry, and older/empty bundles. The existing
 SEO disclosure assertion uses Travel's new title and retains its formula checks.
-Tests, build and browser verification **not run** in this implementation pass, per
-owner workflow (the previous execution authorization was for TRV-2). First future
-check: `npm test` in the site; then check desktop and phone widths with options
+Initially left unrun per owner workflow; the owner subsequently authorized tests
+on 30 September. **`npm test` passed: 724 tests, 0 failures**, including all six new
+TRV-4 & TRV-5 integration tests. No fixes needed. Build and browser verification
+remain pending. First future check: desktop and phone widths with options
 closed/open, map selection and a loaded save. No push or deployment. Ask the owner
 before starting the next checklist item.
 
