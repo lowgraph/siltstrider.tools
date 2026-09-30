@@ -1,5 +1,36 @@
 # Coordination
 
+## TRV-7: real-time approximation and Cheapest trade-offs — 2026-09-30
+
+Implemented on `launch/trv-2-unified-place-search`. Outdoor walking, swimming,
+Water Walking and Levitate edges now carry `movementSeconds`, calculated from
+their distances and the character's movement speeds before timescale is applied.
+`planRoute` preserves those seconds on movement steps. This is internal planner
+state only; no exported bundle schema, loader, extraction or save format changes.
+Clock jumps from boats, Guild Guides and spells never enter real movement totals.
+
+`lib/travel-real-time.mjs` totals known movement seconds and separately counts
+transport/spell transitions and uncounted indoor movement. Missing/malformed
+movement durations report unavailable instead of showing a partial estimate.
+Results label game-clock time “in-game”, show “Real Time Approximation”, and state
+that combat, menus, loading and time indoors are excluded. Fastest retains its
+existing in-game-time objective.
+
+Cheapest alone computes a Fewest legs baseline with identical graph, prices,
+followers, options and consumable budgets. `lib/travel-tradeoff.mjs` reports gold
+savings, movement seconds added/avoided, transition and leg differences. Unknown
+fares never yield a claimed saving. The baseline neither spends scrolls nor changes
+the selected route. Zero-leg and invalid routes show no comparison.
+
+`npm test` passed: **754 tests, 0 failures**, including 14 new cases across real-time,
+trade-off and workstation tests plus extended flight/Water Walking assertions.
+Chrome CDP visual checks on the local dev server at 1366 and 390 pixels passed:
+visible comparison, no horizontal overflow, no runtime exceptions, and comparison
+clears when changing objective. Screenshots/report: `A:/Cache/trv-7-visual/`.
+First future check: `npm test`; then verify mixed routes with imported saves at
+desktop/phone widths. Tests are required before every commit per owner instruction.
+Build not run. No push/deploy. Ask before starting the next Travel checklist item.
+
 ## TRV-6: remembered choices and finite Intervention — 2026-09-30
 
 Implemented on `launch/trv-2-unified-place-search`. No exported schema or extraction

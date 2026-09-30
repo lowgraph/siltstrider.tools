@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { cheapestTradeoff } from "../../../lib/travel-tradeoff.mjs";
+import { realTimeText } from "../../../lib/travel-real-time.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
@@ -423,6 +425,15 @@ export default function TravelWorkstation() {
     if (shut) return { ...planned, message: `No door leads out of ${labelOf(shut)}. It is reached by a script or a spell, if at all.` };
     return planned;
   }, [origin, destination, usablePlan, objective, priced, player, settings, access, labelOf]);
+  const tradeoff = useMemo(() => {
+    if (!priced || objective !== "gold" || !route.isValid || route.hops === 0) return null;
+    const fewest = planRoute(origin, destination, usablePlan.graph, {
+      objective: "hops", goldOf: (edge) => journeyGold(edge, player, settings),
+      resources: usablePlan.resources
+    });
+    return cheapestTradeoff(route, fewest);
+  }, [priced, objective, route, origin, destination, usablePlan, player, settings]);
+  const realTime = useMemo(() => realTimeText(route), [route]);
   const routeSpellEdges = useMemo(() => (route.isValid ? route.steps : [])
     .filter((step) => step.spell || step.walk || step.teleport)
     .map((step) => {
@@ -580,7 +591,7 @@ export default function TravelWorkstation() {
             Carrying more than you can ({Math.round(movement.load)} of {Math.round(movement.capacity)}): you cannot move, so no route walks.
           </p>
         )}
-        <div className="flex items-center justify-between border-b border-line-9 pb-1.5">
+        <div className="flex flex-wrap gap-2 items-center justify-between border-b border-line-9 pb-1.5">
           <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider">
             Route Dossier
           </h3>
@@ -598,10 +609,18 @@ export default function TravelWorkstation() {
                 ? "At Destination"
                 : `${route.hops} ${route.hops === 1 ? "Leg" : "Legs"}${
                     route.totals?.goldKnown && priced ? ` · ${route.totals.gold} gold` : ""
-                  }${route.totals?.hoursKnown && priced ? ` · ${formatDuration(route.totals.hours)}` : ""}`
+                  }${route.totals?.hoursKnown && priced ? ` · ${formatDuration(route.totals.hours)} in-game` : ""}`
               : "No Route"}
           </span>
         </div>
+
+        {realTime && route.hops > 0 && (
+          <div className="space-y-1 text-xs text-fg-7">
+            <p className="travel-real-time m-0">{realTime}</p>
+            <p className="text-[11px] text-fg-9 m-0">Movement only; excludes combat, menus, loading screens and time indoors.</p>
+          </div>
+        )}
+        {tradeoff && <p role="note" className="travel-tradeoff text-xs text-fg-7 m-0">{tradeoff}</p>}
 
         {/* Route Status Card */}
         <div className="p-4 bg-surface-5 border border-line-11 space-y-4">
@@ -695,7 +714,7 @@ export default function TravelWorkstation() {
                         <div className="text-[11px] font-mono text-fg-9">
                           {Number.isFinite(step.gold) ? `${step.gold} gold` : "price unknown"}
                           {step.indoors ? " · time indoors not counted"
-                            : Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes" : formatDuration(step.hours)}` : ""}
+                            : Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes in-game" : `${formatDuration(step.hours)} in-game`}` : ""}
                         </div>
                       )}
                     </div>
@@ -959,6 +978,7 @@ export default function TravelWorkstation() {
             <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
             <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. Scrolls start unticked and each route is limited to the number carried; replanning does not change the save. Known spells default on only at an estimated cast chance of at least 75% with enough current Magicka. This is a planner default, not a game rule: you can include a lower or unknown chance explicitly. Zero chance or insufficient Magicka excludes the spell. Estimates use Mysticism, Willpower, Luck, the spell&apos;s published cost and saved fatigue (full fatigue if unavailable); temporary effects such as Silence are not modeled. When cost and current Magicka are available, spell legs share that Magicka budget. Otherwise the budget cannot be checked. Routes assume successful casts and no recovery during the journey.</li>
             <li>Walking uses your Speed, Athletics and carried weight. Routes avoid slopes steeper than 46°, pass through the Ghostgate and swim only near land. Constant Water Walking allows walking across water; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
+            <li>Real Time Approximation adds outdoor movement at your estimated run, swim or Levitate speed. Transport and spell transitions are counted separately because their menus and loading times vary. Combat, detours, pauses and movement indoors add time. Cheapest compares the fare and movement time with Fewest legs using the same options. Fastest still minimizes in-game time.</li>
             <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
             <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>
             <li>Mark and Recall are not included.</li>

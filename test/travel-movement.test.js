@@ -124,6 +124,7 @@ test("with Water Walking the sea is walked, at the run speed, as far as it goes"
   const leg = legs.West[0];
   assert.deepEqual([leg.to, leg.waterWalk, leg.water], ["East", true, 8 * 2048]);
   close(leg.hours, (leg.distance / 287) * 30 / 3600, "all of it at the run speed, none at the swim speed");
+  close(leg.movementSeconds, leg.distance / 287, "Water Walking real seconds use running speed");
 });
 
 test("with Levitate a flight goes straight over what the ground cannot cross, and only when quicker", async () => {
@@ -135,6 +136,7 @@ test("with Levitate a flight goes straight over what the ground cannot cross, an
   const flown = addStopWalks(graph(), points, LAND, 287, { grid: walled, fly: 182 }).North[0];
   assert.deepEqual([flown.to, flown.levitate, flown.distance], ["South", true, 2 * 2048]);
   close(flown.hours, (2 * 2048 / 182) * 30 / 3600, "at the fly speed");
+  close(flown.movementSeconds, 2 * 2048 / 182, "real flight seconds use the fly speed");
   const open = walkGrid(drawGrid(["................", "................", "................"]));
   const walked = addStopWalks(graph(), points, LAND, 287, { grid: open, fly: 182 }).North[0];
   assert.equal(walked.levitate, undefined, "running is quicker than flying at 182, so the leg is walked");

@@ -49,6 +49,21 @@ successful casts and no Magicka recovery. Explicitly selected spells without cos
 or current Magicka data cannot have their Magicka budget checked. Temporary Silence and other unmodeled
 cast modifiers are excluded from the estimate.
 
+### D. Travel time and Cheapest comparisons
+
+Outdoor movement edges carry `movementSeconds` alongside in-game `hours`, including
+separate run/swim timing, Water Walking and flight. Seconds are computed before
+timescale; paid transport and teleport clock jumps are counted as transitions,
+not converted into real-time minutes. Indoor movement remains uncounted. Invalid
+or unknown movement records cannot produce a claimed complete movement duration.
+
+Route results show “Real Time Approximation” and explicitly label game-clock time.
+The estimate excludes combat, menus, loading screens, detours and indoor movement.
+Cheapest computes a Fewest legs baseline from the same graph, player prices and
+resource budgets, then compares known fares, outdoor movement, transitions and legs.
+The comparison is derived state; changing options or endpoints recomputes it and
+never spends inventory. Fastest continues minimizing in-game hours.
+
 ## 2. Binary Codec (`lib/cloud-save-codec.mjs`) — `SLT1`
 
 To store comprehensive character saves within Cloudflare D1's row size constraints and localStorage, Silt Strider implements a specialized binary format:

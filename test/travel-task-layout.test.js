@@ -318,3 +318,68 @@ test('TRV-6 denied storage keeps choices in this session across catalog updates 
     assert.match(document.getElementById('travel-options').textContent, /These changes last until the page reloads/);
   } finally { await t.cleanup(); }
 });
+
+function mixedJourney() {
+  const data = fixture(), a = 'exterior:0,0', b = 'exterior:8,0', c = 'exterior:2,0';
+  data.catalogs.Travel[0] = { ...data.catalogs.Travel[0], price: 10, fromPos: [4096, 4096], toPos: [69632, 4096] };
+  data.catalogs.Travel.push({ from: c, to: b, mode: 'boat', provider: 'driver', price: 5, hours: 2,
+    fromPos: [20480, 4096], toPos: [69632, 4096] });
+  data.metadata.Travel.nodes[c] = { key: c, name: 'Balmora' };
+  data.metadata.Access.land = Object.fromEntries([0, 1, 2].map(x => [`exterior:${x},0`, 'ffffffffffffffff']));
+  return data;
+}
+
+test('TRV-7 shows real movement and clock time together, and Cheapest compares the same options', async () => {
+  const t = await mount({ data: mixedJourney() });
+  try {
+    assert.match(route().textContent, /1 h in-game/);
+    assert.match(route().textContent, /Real Time Approximation: no outdoor movement \+ 1 transport\/spell transition/);
+    assert.equal(document.querySelector('.travel-tradeoff'), null);
+    await click(button('Cheapest'));
+    assert.match(document.querySelector('.travel-real-time').textContent, /~1 min 5 sec movement \+ 1 transport\/spell transition/);
+    const note = document.querySelector('.travel-tradeoff');
+    assert.match(note.textContent, /saves 5 gold, adds ~1 min 5 sec of movement, 1 more leg/);
+    assert.equal(note.closest('details'), null);
+    assert.match(route().textContent, /excludes combat, menus, loading screens and time indoors/);
+    await type(input('Followers'), '2');
+    assert.match(document.querySelector('.travel-tradeoff').textContent, /saves 15 gold/);
+    await type(input('Carrying'), '100');
+    assert.match(document.querySelector('.travel-real-time').textContent, /~1 min 16 sec movement/);
+    await click(button('Fastest'));
+    assert.equal(document.querySelector('.travel-tradeoff'), null);
+    assert.match(document.querySelector('.travel-real-time').textContent, /no outdoor movement/);
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-7 unknown fares stay explicit and comparisons clear on endpoint changes or older catalogs', async () => {
+  const data = mixedJourney();
+  delete data.catalogs.Travel.at(-1).price;
+  const t = await mount({ data });
+  try {
+    await click(button('Cheapest'));
+    assert.match(document.querySelector('.travel-tradeoff').textContent, /fare comparison unavailable/);
+    assert.doesNotMatch(document.querySelector('.travel-tradeoff').textContent, /saves/);
+    await click(button('Select Seyda Neen on map'));
+    assert.equal(document.querySelector('.travel-tradeoff'), null);
+    assert.equal(document.querySelector('.travel-real-time'), null);
+    t.state.data = { catalogs: { Travel: [] }, metadata: {} };
+    await t.render();
+    assert.equal(document.querySelector('.travel-tradeoff'), null);
+  } finally { await t.cleanup(); }
+});
+
+test('TRV-7 baseline comparison leaves selected single-use scroll routes intact', async () => {
+  const data = fixture(), cell = 'exterior:0,0';
+  data.catalogs.Intervention = [{ key: cell, divine: 0 }];
+  data.metadata.Intervention.markers.divine = [{ town: 'Vivec', cell: 'exterior:8,0', name: 'Vivec, Shrine' }];
+  const activeSave = savedTraveller('Scroll traveller', [], [{ id: 'sc_divineintervention', count: 1 }]);
+  const t = await mount({ data, activeSave });
+  try {
+    await click(input('Divine Intervention'));
+    await click(button('Cheapest'));
+    assert.match(document.querySelector('.travel-tradeoff').textContent, /same fare, same outdoor movement time/);
+    assert.match(document.querySelector('.travel-real-time').textContent, /1 transport\/spell transition/);
+    assert.match(route().textContent, /Uses 1 scroll; 0 remaining/);
+    assert.equal(activeSave.save.stuff.inventory[0].count, 1);
+  } finally { await t.cleanup(); }
+});
