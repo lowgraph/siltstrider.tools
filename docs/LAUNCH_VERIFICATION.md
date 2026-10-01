@@ -1205,3 +1205,100 @@ Recovery records and evidence are outside Git at
 and after, D1 info/bookmark/migration lists, release pointer/manifest, unit/build/
 dry-run/deploy logs, `live-http.json`, and `live-browser-summary.json` plus each
 live run's report, network trace, screenshots and audits.
+
+## 27. QA reproduction — 1 October 2026
+
+Reproduction only, on `qa/reproduce` from `origin/main` `a8139c5`; claims were
+published first as `e25a7ed`. The signed-out production checks targeted release
+`3879ce7b`. The local dev server used the unchanged staged bundle
+`a29adea046e6086c2c7ee654`. No application/data changes, migration, production
+writes, merge or deployment. QA-13 and QA-14 were left intact.
+
+Rates below count valid observations, not failed selector/fixture setup. Unless
+specified otherwise, each browser case ran locally and live at 1366 and 375 px
+in both themes. Unit expectations marked `{ todo: '<QA-id> not fixed yet' }`
+were also run with `QA_UNMARK_TODOS=1`: all **35** marked unit cases failed on
+their behavior assertions; six unmarked controls passed. The eight marked
+phone-layout cases likewise failed unmarked against the captured live report;
+the Race popover control passed. These are open findings, not fixes.
+
+Full pre-commit `npm test`: **951 passed, zero failures, 35 TODO** (986 tests).
+QA-20's final catalog/UI batch passed **20/20 locally and 20/20 live**.
+
+| Item | Reproduced | Rate / evidence | Cause (file and function) | Test | Smallest proposed fix |
+|---|---|---|---|---|---|
+| QA-01 | Yes | Two Constant effects show 50 instead of 75, 4/4 locally and 4/4 live; three effects and mixed ranges fail unit expectations too. | `lib/enchant-math.mjs`, `calcEffectCost` / `calcEnchantmentTotalPoints`: final accumulated cost is rounded instead of summing each running cost's floor; range/Constant handling also differs. | `test/qa-calculation-reproduction.test.js`, `QA-01 accumulated points` (five cases, including a passing one-effect control). | Preserve each cumulative float cost and sum its floor; apply OpenMW's area minimum, Target and Constant rules in the same order. |
+| QA-02 | Partly | Floor, chance and price expectations fail directly. Common Ring UI setup failed on two attempts; its exact visible capacity case is not claimed as reproduced. | `lib/enchant-math.mjs`, `calcEnchantmentTotalPoints`, `calcSelfEnchantChance`, `calcEnchantGoldCost`: rounding, different chance coefficients, and price from rounded capacity with an extra Constant multiplier. | Same file, `QA-02 per-effect floor` (four cases), `QA-02 chance uses OpenMW…`, `QA-02 base price truncates…`. | Separate capacity points from final precise effect cost; use engine chance coefficients/fatigue/type multiplier and price truncation. |
+| QA-03 | Yes | +3 shown instead of +3.5, 4/4 locally and 4/4 live; five gains total 21 instead of 22.5. | `lib/level-math.mjs`, `calculateHealthGain`: `Math.floor(Endurance / 10)`. | Same file, `QA-03 fractional Health` (35/45/55), `QA-03 five level gains preserve 22.5 Health`. | Keep fractional Health through progression and formatting. |
+| QA-04 | Partly | All five pure chart expectations fail. Live captured chart begins at 50 for a sheet with Health 35. Synthetic-save chart UI setup failed twice, so the save-specific chart claim is not reproduced. | `lib/level-math.mjs`, `normalizeCharacterState` / `calculateHealthGrowthCurve`: normalized state is treated as a build and recomputed; chart normalization and Bitter Cup do not preserve the supplied sheet. | Same file, `QA-04 chart starts…` (35/45/67.5), `QA-04 Endurance 30…`, `QA-04 Bitter Cup…`. | Normalize once and pass the actual initial sheet and completed picks to the chart; preserve Health and identity fields. |
+| QA-05 | Partly | Hydrated Builder retains the premade title after edits. Simulator stale identity reproduced at desktop in both themes locally/live; live phone did not reproduce it; local phone selector setup failed twice. | `components/character-context.jsx`, `updateField`; `components/character-builder/character-sheet.jsx`, title rendering; `lib/level-math.mjs`, `normalizeCharacterState`: name survives edits and sheet normalization loses identity. | `test/qa-hydrated-title.test.js`, `QA-05 hydrated fresh premade…`; calculation test `QA-05 Simulator sheet keeps…`; browser `QA-05/title`. | Label an edited premade as derived from its source or update its title, and carry configured identity into the Simulator. |
+| QA-06 | Yes | Three unobtainable tools in TR and TR + ARCE, 8/8 locally and 8/8 live; Vanilla control passes. | `lib/alchemy-catalogs.mjs`, `adaptAlchemy`: vanilla ID / `Secretmaster` prefix filter misses TR IDs and the name's space. | `test/qa-catalog-reproduction.test.js`, `QA-06` for TR and TR + ARCE; browser apparatus case. | Match the actual unobtainable apparatus records across profiles. |
+| QA-07 | Yes | Apostrophe search has no match while the prior Silt Strider route remains visible, 4/4 locally and 4/4 live. | `lib/travel-search.mjs`, `searchTravelOptions` / normalization; `matchPlaces`; Travel picker query and committed endpoint are separate, so rejected text leaves the previous route. | Same catalog test file, `QA-07` apostrophe spellings and `matchPlaces`; browser `QA-07/search`. | Normalize apostrophe/hyphen variants and visibly mark a route stale while an uncommitted search fails, preserving cancel behavior. |
+| QA-08 | Yes | Early and Late tables break words in all eight checks per host at 375/390 px, both themes; the table boxes themselves fit. | `components/character-builder/gear-sources.jsx`, `SourceRow`, and `components/character-builder/best-in-slot-view.jsx`, compact table rendering; inherited word wrapping with narrow columns. | `test/qa-layout.browser.cjs`, `QA-08` Early/Late at both widths; runner `QA-08`. | Stack Slot / Item / Where at phone widths and keep words intact. |
+| QA-09 | Partly | Birthsign, Specialization and both Favored Attribute popovers overflow right in 16/16 observations per host. Race stayed inside the viewport in 4/4 per host; its reported below-tab-bar symptom was not reproduced. | `components/character-builder/configurator.jsx`, `InfoTip`: fixed-width absolute popup without viewport clamping or flipping. | Same layout test file, four TODO cases and a passing Race control; runner `QA-09`. | Clamp/flip the popup within the viewport and above the phone tab bar. |
+| QA-10 | Yes | Optimized kit/alternatives show forbidden body parts for Argonian, Khajiit and ARCE Cathay-raht, 12/12 per host. An earlier Suthay control was discarded because that record is not a beast. | `lib/best-in-slot.mjs`, `resolveBestInSlotPicks`: named/fallback premade paths bypass `scoreItem`'s beast check; weapon-preference replacement spreads original slots back into the result. `recommended-loadout` checks only when applying gear, too late for display. | Catalog test file, three `QA-10` races; runner `QA-10/endgame`. | Apply the published body-part eligibility to every final slot and runner-up before presentation. |
+| QA-11 | Yes | Twelve `<Deprecated>` entries in each TR profile, 8/8 per host; raw relation labels also fail rendered-component tests. All three requested names exist in the published catalog. | `components/journal-factions/faction-roster.jsx`, roster filtering; `faction-detail-view.jsx`, relation rendering: deprecated entries retained, raw IDs title-cased rather than looked up. | `test/qa-copy-reproduction.test.js`, `QA-11 roster…` / `QA-11 relation display…`; catalog-name passing control. | Filter deprecated rows and resolve reaction IDs through Factions. No missing-name pipeline request is needed. |
+| QA-12 | Yes | Required playstyle/trade-off copy absent in visible premade cards, 4/4 per host and rendered-component test. | `components/character-builder/premade-browser.jsx`, premade card copy. | Copy test file, `QA-12 premades describe…`; browser `QA-12/premade-copy` (runner now expands all cards). | Add curated plays-like/trade-off lines and spell out Major/Minor skills. |
+| QA-15 | Yes | About lacks attribution/license/repository copy, 4/4 per host; claim-scan control permits “open source” for code. | `components/views/about-view.jsx`, About copy; `test/site-claims.test.js` is not the blocker. | Copy test file, `QA-15 About attributes…` and passing claim-scan control; runner `QA-15/about`. | Add the requested AGPL code attribution, game/mod-data distinction and LowGraph repository link. |
+| QA-16 | Yes — High | Ebonheart → Mournhold returns No Route in all three worlds, walking on/off: 24/24 per host. | `lib/travel-stops.mjs`, `buildTransitStops` / `transitEndpointStops`: the teleport's exact destination exists in the graph but the Mournhold city choice does not expand to it. `usableTeleport` and `addTeleports` retain the route. | Catalog test file, three `QA-16 Mournhold city choice…`; runner `QA-16/Mournhold`. | Attach teleport endpoint town information from Places/settlements and resolve the city to its actual destination stop. |
+| QA-17 | Partly — expected 404 only | 1,168 first navigations across both hosts: 1,104 strict passes, 64 expected HTTP 404 console errors; zero React hydration warnings or uncaught exceptions. | No hydration cause found. Chrome logs the intentional missing-page request as an error; the requested fail-on-any-error policy catches it. | `scripts/test-browser.cjs --suite hydration`; 456-case full matrix per host, plus populated challenge-link and visible-loaded-save reruns, 64 each per host. | No application fix proposed. Decide whether freeze acceptance should exempt the expected 404 resource error. |
+| QA-18 | Not reproduced on phone; laptop unverified | 31/31 phone interaction cases per host; stored Travel edits survive actual taps/navigation 20/20 per host. Touch=5/coarse/hover-none verified before testing. Two touch-plus-fine-pointer emulation attempts still reported coarse, so laptop hint behavior is unverified. | No phone defect found; CDP failed to supply the required laptop capability combination. | Runner `--suite touch --touch`: hints, five popovers, header/phone navigation, ingredient/effect pickers, saved Travel; laptop capability assertion. | No speculative fix. Test a physical touchscreen laptop with a fine pointer before accepting that condition. |
+| QA-19 | No | All nine requests return 401 with no Set-Cookie or account data: five local (including PUT), four production GETs. | No fault found; anonymous guard rejects before database access. | `test/qa-signed-out-api.test.js`, five API guards; recorded HTTP checks against `scripts/local-stack.cjs` and production. | None. Production PUT was not attempted. |
+| QA-20 | No | All 5,755 suggested pairs (55 Vanilla, 2,850 per TR profile) contain Restore Health on both catalog ingredients; all 20 Vanilla guild ranks match. | No mismatch found in `findAlchemyPairs`, `solvePromotionGaps`, or the staged Ingredient/Factions records. | Catalog test file `QA-20 every suggested…`; copy test file `QA-20 Vanilla Fighters/Mages…`; runner `QA-20` compares visible suggestions and all rank meters. | None; no High catalog mismatch. |
+
+### Engine expectations and exact records
+
+Checked the pinned [OpenMW 0.51 enchanting implementation](https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/apps/openmw/mwmechanics/enchanting.cpp),
+[NpcStats implementation](https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/apps/openmw/mwmechanics/npcstats.cpp),
+[NpcStats declarations](https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/apps/openmw/mwmechanics/npcstats.hpp)
+and `MechanicsManager::buildPlayer`, rather than the report's 0.49 reference.
+
+- Enchanting accumulates precise effect cost, floors each running value for
+  capacity, then sums those floors. Area has a minimum of one. Target multiplies
+  the running cost by 1.5; Constant uses duration 100. Two 5/5 Constant effects
+  have running costs 25.025 and 50.05: capacity **75**, base price **50,050**
+  before barter (site: 50 points and 250,000). Three effects need 150 points.
+- A 5/5, five-second Target effect has precise cost **1.9125**, capacity **1**
+  and base price **1,912**, so it fits a Common Ring. Price is based on the final
+  precise cost, not the sum of capacity points; simply changing points would
+  still leave price wrong. At Enchant 50 / Intelligence 40 / Luck 40 and full
+  fatigue the one-point chance is **73%**. Chance includes fatigue, effect count
+  and a Constant multiplier; the site's current coefficients differ. The
+  original reported chance discrepancy cannot be matched without its stats.
+- `levelUp` adds a float Endurance gain; `updateHealth` calculates the base half
+  from base Strength/Endurance and is documented/called at character creation.
+  `levelUp` does not retroactively recompute that base half. The chart must retain
+  supplied Health and apply future fractional gains, rather than reconstruct it
+  from current Strength/Endurance.
+- The missed TR apparatus keys are `tr_m7_apparatus_sm_alembic_02` (“Secret
+  Master's Alembic”), `tr_m7_apparatus_sm_calcin_02` (“Secret Master's
+  Calcinator”) and `tr_m7_apparatus_sm_retort_02` (“Secret Master's Retort”).
+  They occur in both TR profiles. The mortar's different name already matches
+  the filter.
+- Factions already publishes `t_cyr_fightersguild` → “Cyrodiil Fighters Guild”,
+  `t_glb_archaeologicalsociety` → “Imperial Archaeological Society”, and
+  `t_mw_imperialnavy` → “East Navy”.
+- `mhtransportscript` is present and usable in every Teleports catalog, with no
+  required quest. Asciene Rane connects Ebonheart's Grand Council interior to
+  Mournhold's Royal Palace reception; the destination city expansion is missing.
+
+### Limits, rerun commands and evidence
+
+Two failed attempts ended the Common Ring UI, synthetic-save chart UI and
+touch/fine-pointer emulation reproductions. Selector/storage setup failures are
+listed as limits, not counted as confirmed application failures. Earlier full
+QA runner reports include such failures and must not be used as acceptance
+failure totals. No patch was made to the application for any finding.
+
+`npm test` keeps known failures as TODO. To prove the calculation/catalog/copy/
+hydrated-title expectations still fail, set `QA_UNMARK_TODOS=1` and run their
+four test files explicitly; unset it afterwards. Phone assertions are separate:
+set `QA_BROWSER_REPORT` to a fresh QA browser `report.json`, then run
+`node --test test/qa-layout.browser.cjs`, optionally with the same unmark flag.
+See `docs/BROWSER_TESTS.md` for the reusable QA, hydration and touch commands.
+
+Evidence is in `A:/Cache/qa-reproduce-20261001/`: unit unmarked/TODO logs,
+API results, local Worker build/log/state, all Chrome reports, first-navigation
+console streams, HTML and screenshots, and pinned OpenMW sources. Production
+browser requests block account writes; only signed-out public views and GET API
+checks ran. The local Worker uses its own synthetic database under that cache.

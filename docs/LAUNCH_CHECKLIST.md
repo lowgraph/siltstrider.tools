@@ -201,53 +201,53 @@ first impression and regression). Personas: R Reddit first visit, V veteran, N n
 Q regression run. Each item: re-check the report's case first, fix, re-check after, plus the
 usual tests (at least three edge cases for a logic change) and changelog.
 
-- [ ] **C** **QA-01** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, V; NUM-05; confirmed in code) Enchanting costs several effects
+- [ ] **C** **QA-01** (reproduced, `test/qa-calculation-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, V; NUM-05; confirmed in code) Enchanting costs several effects
       wrong: each effect's points are its own plus the running total before it, and the
       item's total is the sum of those running costs (OpenMW 0.51 `enchanting.cpp`);
       `calcEnchantmentTotalPoints` (`lib/enchant-math.mjs`) returns only the last running
       cost. Two Constant Effects of 5/5 must read 75 points, not 50. Fix with QA-02.
-- [ ] **C** **QA-02** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, V; NUM-04; confirmed in code) Enchanting rounds points to
+- [ ] **C** **QA-02** (reproduced, `test/qa-calculation-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, V; NUM-04; confirmed in code) Enchanting rounds points to
       nearest instead of flooring each effect: a 5/5, 5 s Target Fortify Attribute is 1.875
       points, shown as 2, so it "does not fit" a Common Ring and its base price doubles.
       Afterwards re-check the self-enchant chance (16% vs the engine's 15%) and the base
       price (2,000 vs 1,500 g) from SUS-01.
-- [ ] **C** **QA-03** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, V; NUM-02; confirmed in code) Level Simulator Health per level
+- [ ] **C** **QA-03** (reproduced, `test/qa-calculation-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, V; NUM-02; confirmed in code) Level Simulator Health per level
       is floored (`floor(END / 10)`, `lib/level-math.mjs`); OpenMW keeps the fraction (10% of
       Endurance): END 35 to 55 gives 22.5 over five levels, the site 21. Confirm against
       OpenMW 0.51's `npcstats.cpp` first (the report cited 0.49); change the explanation too.
-- [ ] **C** **QA-04** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
+- [ ] **C** **QA-04** (reproduced, `test/qa-calculation-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
       starts at 50 whatever the character's Health (35, 45), says "Endurance 100 at Lv 6"
       when ten +5 steps are needed, and its forecast moves when Bitter Cup changes only
       Personality and Willpower. Check each symptom on its own; the Bitter Cup one may be
       legitimate if the plan's later picks change.
-- [ ] **C** **QA-05** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
+- [ ] **C** **QA-05** (reproduced, `test/qa-hydrated-title.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
       title goes stale after an edit: the Builder sheet ("Imperial Agent" over a Female
       Breton), Home's character card ("Argonian Marsh Monk" over a Nord), and the Level
       Simulator naming two characters ("Argonian male — Spear scout" beside "Male Dark Elf").
       One fresh character through Builder, edit race, Home, Level Simulator: every heading
       must agree, or the premade's name must read as its source.
-- [ ] **C** **QA-06** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
+- [ ] **C** **QA-06** (reproduced, `test/qa-catalog-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
       apparatus is still offered in TR and TR + ARCE Alchemy (Alembic, Calcinator, Retort),
       though the 30 September changelog says it is gone: the filter in
       `lib/alchemy-catalogs.mjs` matches only vanilla keys and names starting "Secretmaster".
-- [ ] **C** **QA-07** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
+- [ ] **C** **QA-07** (reproduced, `test/qa-catalog-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
       "Ald-ruhn" works, and the previous route stays on screen. Ignore apostrophes and
       hyphens in matching; clear or mark a stale route when the search changes. Check Vos,
       Sadrith Mora, Ebonheart and Mournhold too.
-- [ ] **C** **QA-08** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
+- [ ] **C** **QA-08** (reproduced, `test/qa-layout.browser.cjs`; scope and limits in LAUNCH_VERIFICATION §27) (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
       breaks into fragments ("Ald- / ruhn — / sold by / Dander / a"). Stack slot, item and
       source at phone width; Early and Late game, 375 and 390 px.
-- [ ] **C** **QA-09** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
+- [ ] **C** **QA-09** (reproduced, `test/qa-layout.browser.cjs`; scope and limits in LAUNCH_VERIFICATION §27) (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
       off-screen. Keep every info popover inside the viewport; check each info icon at 375 px.
-- [ ] **C** **QA-10** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
+- [ ] **C** **QA-10** (reproduced, `test/qa-catalog-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
       wear in the Gear Advisor's runner-up picks (Masque of Clavicus Vile, Boots of Blinding
       Speed) under the advisor's own note that they are excluded. Seen once; check Argonian,
       Khajiit and an ARCE Khajiit form, every runner-up list.
-- [ ] **C** **QA-11** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
+- [ ] **C** **QA-11** (reproduced, `test/qa-copy-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
       shows raw codes ("T_cyr_fightersguild", "T_mw_imperialnavy") in Inter-Faction Relations
       and literal "<Deprecated>" factions in the list. Readable names (ask the pipeline if the
       catalog lacks them); hide deprecated factions.
-- [ ] **C** **QA-12** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (High, N; U04, F08) Premade build cards say nothing about how a build
+- [ ] **C** **QA-12** (reproduced, `test/qa-copy-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High, N; U04, F08) Premade build cards say nothing about how a build
       plays, and "Maj:", "Min:" and "Magic Specialization" go unexplained. One "plays like"
       line and one trade-off per playstyle; spell out Major and Minor skills. Copy only.
 - [x] **C** **QA-13** (done by CALC-4, merged `ef67b3e`, live as `3879ce7b`; retest 1 October: Restore Health found and its first pair carried into the calculator in all three worlds, desktop and 375 px) (High, N; U20) A first potion needs ingredient names: searching
@@ -257,19 +257,19 @@ usual tests (at least three edge cases for a logic change) and changelog.
       kept in this browser while the Vault's Local Browser Saves lists 0 and "No local
       characters found". Say what each is: the open save stays until cleared; Local Browser
       Saves are characters saved with "Save this character".
-- [ ] **C** **QA-15** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (Low, R; owner decision) About says the site is open source (code under
+- [ ] **C** **QA-15** (reproduced, `test/qa-copy-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
       AGPL-3.0; not the game or mod data), links https://github.com/lowgraph/siltstrider.tools
       and says it is made by LowGraph. Keep `test/site-claims.test.js` and the licence
       wording rules (COORDINATION, Licences).
-- [ ] **C** **QA-16** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) (found in the 1 October retest; re-check first) Travel: Ebonheart to
+- [ ] **C** **QA-16** (reproduced, `test/qa-catalog-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
       Mournhold showed No Route, though the Mournhold teleport from Ebonheart is everyday
       travel (Teleports policy). Check in Vanilla, TR and TR + ARCE with walking on and off;
       if it reproduces it is a wrong answer (High).
 
-- [ ] **C** **QA-17** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) First-navigation console and hydration checks, fresh/stored world/save/shared links, desktop/phone and both themes; random Home/Builder repeated ten times.
-- [ ] **C** **QA-18** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) Real touch emulation: hints, navigation, all Configure popovers, saved Travel options repeated twenty times, ingredient and effect pickers.
-- [ ] **C** **QA-19** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) Signed-out account/settings/saves/entitlements API: 401, no account data or Set-Cookie; local PUT and live GET only.
-- [ ] **C** **QA-20** (reproducing since 2026-10-01 15:09 UTC, Codex, on qa/reproduce) Reverse-Alchemy Restore Health pairs and Vanilla guild rank requirements against the staged catalogs.
+- [ ] **C** **QA-17** (not reproduced, see LAUNCH_VERIFICATION §27) First-navigation console and hydration checks, fresh/stored world/save/shared links, desktop/phone and both themes; random Home/Builder repeated ten times.
+- [ ] **C** **QA-18** (not reproduced, see LAUNCH_VERIFICATION §27) Real touch emulation: hints, navigation, all Configure popovers, saved Travel options repeated twenty times, ingredient and effect pickers.
+- [ ] **C** **QA-19** (not reproduced, see LAUNCH_VERIFICATION §27) Signed-out account/settings/saves/entitlements API: 401, no account data or Set-Cookie; local PUT and live GET only.
+- [ ] **C** **QA-20** (not reproduced, see LAUNCH_VERIFICATION §27) Reverse-Alchemy Restore Health pairs and Vanilla guild rank requirements against the staged catalogs.
 ### Cut line
 
 At the freeze, whatever is left of sections 3 and 4 moves after launch; note it in
