@@ -238,7 +238,7 @@ commands in BROWSER_TESTS.md.
 
 #### 1. Test portability
 
-- [ ] **C** **Test portability** Three of these tests read the staged bundle and fail where none is staged (a
+- [ ] **C** **Test portability** (started 2026-10-01 20:16 UTC, Codex, on launch/character-preservation) Three of these tests read the staged bundle and fail where none is staged (a
       fresh clone, a cloud session): `QA-11 published faction names…` and both `QA-20`
       catalog tests. Skip them without a bundle, as the other bundle tests do.
 
