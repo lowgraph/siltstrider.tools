@@ -126,7 +126,11 @@ export default function HomeTools({ character, health, route, alchemy, onNavigat
               <Icon view={tool.view} />
               {tool.badge && <span className="home-chip">{tool.badge}</span>}
             </span>
-            <span className="home-tool-title mw-caption">{tool.title}</span>
+            <span className="home-tool-title mw-caption">
+              {tool.title}
+              {/* Morrowind UI shows the badge in the title bar instead of the top row; only one copy is ever displayed. */}
+              {tool.badge && <span className="home-chip home-chip--caption">{tool.badge}</span>}
+            </span>
             <span className="home-tool-desc">{tool.description}</span>
             {!MINOR.has(tool.view) && <Preview view={tool.view} character={character} health={health} route={route} alchemy={alchemy} />}
             <span className="home-tool-open">Open {tool.title} →</span>

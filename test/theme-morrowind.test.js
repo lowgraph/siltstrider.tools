@@ -161,3 +161,41 @@ test("stylesheet load order in app/layout.jsx preserves CSS cascade integrity", 
   assert.ok(gIdx < mIdx, "globals.css must load before theme-morrowind.css");
   assert.ok(mIdx < aIdx, "theme-morrowind.css must load before theme-ashfall.css so Ashfall can override if needed");
 });
+
+// Elements added only for the Morrowind layout must not render in Modern UI at all: an empty
+// divider still takes a flex or grid gap, which moved Modern UI's Home card (QA, 1 October).
+test("elements that exist only for the Morrowind layout are display: none outside Morrowind UI", () => {
+  const hidden = new Set();
+  postcss.parse(morrowindCss).walkRules(rule => {
+    const none = rule.nodes.some(d => d.type === "decl" && d.prop === "display" && /^none\b/.test(d.value));
+    if (!none) return;
+    for (const sel of rule.selectors) {
+      const m = sel.match(/^:root:not\(\[data-theme="morrowind"\]\)\s+\.([a-z0-9-]+)$/);
+      if (m) hidden.add(m[1]);
+    }
+  });
+  const morrowindOnly = ["attr-full", "home-character-title-bar", "home-character-stats-grid", "home-vital-bar-num", "home-hr", "home-chip--caption"];
+  for (const cls of morrowindOnly) assert.ok(hidden.has(cls), `.${cls} must be hidden outside Morrowind UI`);
+  // Every Morrowind-only class used in the Home components must be in that list.
+  const homeJsx = ["home-hero.jsx", "home-tools.jsx"].map(f => fs.readFileSync(path.join(repoRoot, "components", "home-hub", f), "utf8")).join("\n");
+  for (const cls of morrowindOnly) assert.ok(homeJsx.includes(cls), `.${cls} is listed but no longer used; update the list`);
+});
+
+// The game-style copies on the Home card (title bar, stats grid, numbers on the bars) are
+// aria-hidden, so the originals must stay in the accessibility tree: hide them visually, never
+// with display: none or visibility: hidden.
+test("Morrowind UI never removes the character card's name, summary or vital values from screen readers", () => {
+  const originals = [".home-character-name", ".home-character-line", ".home-vital-value"];
+  postcss.parse(morrowindCss).walkRules(rule => {
+    const touches = rule.selectors.filter(sel => sel.startsWith(':root[data-theme="morrowind"]') && originals.some(o => sel.endsWith(o)));
+    if (!touches.length) return;
+    for (const d of rule.nodes.filter(n => n.type === "decl")) {
+      assert.ok(!(d.prop === "display" && /^none\b/.test(d.value)), `${touches.join(", ")} must not be display: none`);
+      assert.ok(!(d.prop === "visibility" && /hidden/.test(d.value)), `${touches.join(", ")} must not be visibility: hidden`);
+    }
+  });
+  const hero = fs.readFileSync(path.join(repoRoot, "components", "home-hub", "home-hero.jsx"), "utf8");
+  for (const cls of ["home-character-title-bar", "home-character-stats-grid"]) {
+    assert.match(hero, new RegExp(`className="${cls}[^"]*" aria-hidden="true"`), `.${cls} duplicates visible text and must stay aria-hidden`);
+  }
+});
