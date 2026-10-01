@@ -51,7 +51,7 @@ export default function AboutView() {
                 <strong className="text-fg-2">Alchemy:</strong> Mortar and pestle quality sets base potion strength and duration; the Retort amplifies positive effects, the Alembic suppresses negative side-effects, and the Calcinator magnifies all effect magnitudes. Brew chance scales directly with Alchemy skill, Intelligence, and Luck.
               </li>
               <li>
-                <strong className="text-fg-2">Level Progression:</strong> Health gains on level-up are strictly non-retroactive, calculated as 10% of current Endurance (<span className="font-mono text-accent">⌊Endurance / 10⌋</span>). Governing skill increases generate 2× to 5× attribute multipliers (10 skill increases for a 5× multiplier) up to the 100 attribute cap.
+                <strong className="text-fg-2">Level Progression:</strong> Health gains on level-up are non-retroactive, calculated as 10% of the new Endurance with fractions kept (<span className="font-mono text-accent">Endurance / 10</span>). Starting Health stays unchanged. Governing skill increases generate 2× to 5× attribute multipliers (10 skill increases for a 5× multiplier) up to the 100 attribute cap.
               </li>
               <li>
                 <strong className="text-fg-2">Travel Routing:</strong> A shortest-path search finds the fewest legs, the cheapest fare or the fastest trip across silt striders, boats, river striders, and Guild Guides. Fares and travel hours follow OpenMW&apos;s travel window and your character&apos;s haggling, and the search accounts for Mages Guild membership and rank requirements.
@@ -91,8 +91,15 @@ export default function AboutView() {
             </p>
           </div>
 
-          <div className="border-t border-line-12 pt-3">
+          <div className="about-colophon border-t border-line-12 pt-3">
             <h3 className="text-base font-serif text-accent mb-1">Colophon</h3>
+            <p className="text-xs text-fg-7 mb-2">
+              Made by LowGraph. The site&apos;s code is open source under the GNU Affero General Public License (AGPL-3.0-or-later).{" "}
+              <a href="https://github.com/lowgraph/siltstrider.tools" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-fg-2">View the code on GitHub</a>.
+            </p>
+            <p className="text-xs text-fg-7 mb-2">
+              The code licence does not cover game or mod data: those rights remain with Bethesda Softworks and the Tamriel Rebuilt, Project Tamriel and ARCE teams. Pelagiad keeps its own font licence. The Silt Strider name, logo and social card image are not licensed for reuse.
+            </p>
             <p className="text-xs text-fg-7">
               The site&apos;s code was written with AI assistance. Builds and gear recommendations are checked by script against data read from the game files. Restrictions and objectives are human curated.
             </p>

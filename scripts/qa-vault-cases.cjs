@@ -21,8 +21,17 @@ module.exports=async c=>{
       });
       await c.check(`QA-22/save-permalink/${width}/${theme}`,async()=>{
         await c.open('/vault?world=vanilla');await c.until(c.card(raw.identity.name));await c.evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>window.__qaCopied=value}})`);await c.inCard(raw.identity.name,'Share Link');await c.until('window.__qaCopied');
-        const decoded=decodeShareUrl(await c.evaluate('window.__qaCopied'));
-        assert.deepEqual({world:decoded.world,arce:decoded.arce,race:decoded.build.race,gender:decoded.build.gender,className:decoded.build.className,maj:decoded.build.maj,min:decoded.build.min},{world:'tr',arce:true,race:expected.race,gender:'Female',className:expected.className,maj:expected.maj,min:expected.min});return decoded;
+        const url=await c.evaluate('window.__qaCopied');
+        const decoded=decodeShareUrl(url);
+        assert.deepEqual({world:decoded.world,arce:decoded.arce,race:decoded.build.race,gender:decoded.build.gender,className:decoded.build.className,maj:decoded.build.maj,min:decoded.build.min},{world:'tr',arce:true,race:expected.race,gender:'Female',className:expected.className,maj:expected.maj,min:expected.min});
+        assert.equal(decoded.build.sign,expected.sign);
+        await c.open(new URL(url).pathname+new URL(url).search);
+        await c.until('document.querySelector("#builder-race")?.value==='+JSON.stringify(expected.race));
+        await c.until('document.querySelector(".character-sheet") && !document.querySelector("main").textContent.includes("Calculating statistics")');
+        const recipient=await c.evaluate(`({race:document.querySelector('#builder-race').value,gender:[...document.querySelectorAll('.configurator button.active')].find(b=>['Male','Female'].includes(b.textContent.trim()))?.textContent.trim(),sign:document.querySelector('#builder-sign').value,world:localStorage.getItem('mw-world'),arce:localStorage.getItem('mw-arce')})`);
+        assert.deepEqual(recipient,{race:expected.race,gender:'Female',sign:expected.sign,world:'tr',arce:'1'});
+        await c.screenshot(`QA-22-save-recipient-${width}-${theme}`);
+        return {decoded,recipient};
       });
     }
   } finally {

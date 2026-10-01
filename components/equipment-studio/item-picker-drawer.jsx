@@ -19,6 +19,7 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
   onRetry,
   slot,
   race = "",
+  beast,
   currentLoadout = {},
   onEquipItem,
   onUnequipSlot,
@@ -40,8 +41,8 @@ export const ItemPickerDrawer = memo(function ItemPickerDrawer({
   );
 
   const slotName = SLOT_DISPLAY_NAMES[slot] || slot;
-  const isBeast = isBeastRace(race);
-  const baselineList = useMemo(() => itemsForSlot(catalogItems, slot, race), [catalogItems, slot, race]);
+  const isBeast = typeof beast === 'boolean' ? beast : isBeastRace(race);
+  const baselineList = useMemo(() => itemsForSlot(catalogItems, slot, race, {beast}), [catalogItems, slot, race, beast]);
 
   // Filter items
   const filteredItems = useMemo(() => {

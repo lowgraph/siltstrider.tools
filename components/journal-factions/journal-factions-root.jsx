@@ -9,6 +9,7 @@ import { useShell } from "../shell-context";
 import {updateMembership} from "../../lib/faction-memberships.mjs";
 import FactionRoster from "./faction-roster";
 import FactionDetailView from "./faction-detail-view";
+import { isDisplayFaction } from "../../lib/faction-display.mjs";
 import ActiveCharacterLink from "../active-character-link";
 import { getFactionQuests } from "../../lib/faction-math.mjs";
 
@@ -197,7 +198,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   const gameData = useGameData('factions', { enabled: Boolean(shell?.ready) });
 
   const isLive = Boolean(initialFactions) || (gameData.status === 'ready' && gameData.data?.catalogs?.Factions);
-  const factionsList = initialFactions || (isLive ? gameData.data.catalogs.Factions : FALLBACK_FACTIONS);
+  const factionCatalog = initialFactions || (isLive ? gameData.data.catalogs.Factions : FALLBACK_FACTIONS);
+  const factionsList = useMemo(() => factionCatalog.filter(isDisplayFaction), [factionCatalog]);
   const questCatalog = initialQuests ? { records: initialQuests } : (isLive ? { records: gameData.data?.catalogs?.Quests || [] } : { records: [] });
 
   const [selectedFactionKey, setSelectedFactionKey] = useState("fighters guild");
@@ -330,6 +332,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
         <div className="flex-1 h-full overflow-hidden flex flex-col">
           <FactionDetailView
             faction={selectedFaction}
+            factions={factionCatalog}
             character={character}
             membership={currentMembership}
             joinedFactionKeys={joinedFactionKeys}

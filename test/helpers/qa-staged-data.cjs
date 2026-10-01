@@ -1,10 +1,21 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '../../public/game-data');
-exports.loader = async () => {
+// Skip only an absent pointer. Once staged, malformed or incomplete bundles
+// must still reach the loader and fail their integrity/behaviour assertions.
+exports.staged = (options = {}, dataRoot = root) => {
+  try {
+    fs.statSync(path.join(dataRoot, 'current.json'));
+    return {...options};
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    return {...options, skip: 'no staged game bundle (run npm run data:stage)'};
+  }
+};
+exports.loader = async (dataRoot = root) => {
   const {createBundleLoader} = await import('../../lib/bundle-loader.mjs');
   return createBundleLoader({baseUrl:'http://qa.invalid/game-data/',cacheStorage:null,
-    fetcher:async url => new Response(fs.readFileSync(path.join(root,new URL(url).pathname.replace('/game-data/',''))))});
+    fetcher:async url => new Response(fs.readFileSync(path.join(dataRoot,new URL(url).pathname.replace('/game-data/',''))))});
 };
 exports.todo = id => process.env.QA_UNMARK_TODOS === '1' ? {} : {todo:`${id} not fixed yet`};
 exports.save = () => {

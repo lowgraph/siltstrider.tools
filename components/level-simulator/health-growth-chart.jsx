@@ -69,7 +69,9 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
 
   const showMarker = enduranceMaxLevel != null && enduranceMaxLevel > startLevel && enduranceMaxLevel < endLevel;
   const markerX = showMarker ? getX(enduranceMaxLevel) : 0;
-  const markerLeft = markerX + 4 + 130 > width - PAD.right;
+  const markerLabel = `Endurance 100 at Lv ${enduranceMaxLevel}`;
+  const markerLabelWidth = markerLabel.length * TEXT * 0.62;
+  const markerLabelX = Math.max(PAD.left, Math.min(markerX + 4, width - PAD.right - markerLabelWidth));
 
   const pick = (e) => {
     const box = e.currentTarget.getBoundingClientRect();
@@ -150,14 +152,14 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
             <g>
               <line x1={markerX} y1={PAD.top} x2={markerX} y2={PAD.top + plotH} strokeDasharray="3,3" style={{ stroke: "var(--color-line-7)" }} />
               <text
-                x={markerLeft ? markerX - 4 : markerX + 4}
+                x={markerLabelX}
                 y={PAD.top + TEXT}
                 fontSize={TEXT}
-                textAnchor={markerLeft ? "end" : "start"}
+                textAnchor="start"
                 className="font-serif"
                 style={{ fill: "var(--color-fg-9)", ...halo }}
               >
-                Endurance 100 at Lv {enduranceMaxLevel}
+                {markerLabel}
               </text>
             </g>
           )}

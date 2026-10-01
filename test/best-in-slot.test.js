@@ -74,6 +74,11 @@ if (!bisData) {
         source: { kind: 'placed', routes: 1, easiestLevel: 12, questGrants: [] },
         effects: [{ name: 'Fortify Attribute', attribute: 'personality', magnitude: 30 }]
       },
+      'qa_runner_up_helm': {
+        key: 'qa_runner_up_helm', name: 'QA – Runner-up helm', slot: 'helmet',
+        beastWearable: true, armorRating: 40, armorClass: 'heavy',
+        source: { kind: 'placed', routes: 1, easiestLevel: 0, questGrants: [] }, effects: []
+      },
       'mantle of woe': {
         key: 'mantle of woe',
         name: 'Mantle of Woe',
@@ -91,6 +96,7 @@ if (!bisData) {
         key: 'keening',
         name: 'Keening',
         slot: 'weapon',
+        type: 'SB1H',
         weaponSkill: 'short_blade',
         damage: 18,
         beastWearable: true,
@@ -168,7 +174,8 @@ if (!bisData) {
         fighter: false,
         toggles: { allowFormidableSources: false },
         slots: {
-          helmet: [{ item: 'daedric_helm_clavicusvile', score: 7.0, reasons: [['Heavy armour 80', 2.0]], warnings: [] }],
+          helmet: [{ item: 'daedric_helm_clavicusvile', score: 7.0, reasons: [['Heavy armour 80', 2.0]], warnings: [] }, { item: 'qa_runner_up_helm', score: 1, reasons: [], warnings: [] }],
+          boots: [{ item: 'boots of blinding speed_x', score: 2, reasons: [], warnings: ['Blind 100'] }],
           robe: [{ item: 'mantle of woe', score: 11.0, reasons: [['Fortify Maximum Magicka 50', 6.0]], warnings: ['Weakness to Normal Weapons 20'] }],
           weapon: [{ item: 'keening', score: 14.3, reasons: [['Fortify Magicka 50', 6.0]], warnings: [] }],
           ring: [
@@ -188,7 +195,8 @@ if (!bisData) {
         fighter: false,
         toggles: { allowFormidableSources: true },
         slots: {
-          helmet: [{ item: 'daedric_helm_clavicusvile', score: 7.0, reasons: [['Heavy armour 80', 2.0]], warnings: [] }],
+          helmet: [{ item: 'daedric_helm_clavicusvile', score: 7.0, reasons: [['Heavy armour 80', 2.0]], warnings: [] }, { item: 'qa_runner_up_helm', score: 1, reasons: [], warnings: [] }],
+          boots: [{ item: 'boots of blinding speed_x', score: 2, reasons: [], warnings: ['Blind 100'] }],
           robe: [{ item: 'mantle of woe', score: 11.0, reasons: [['Fortify Maximum Magicka 50', 6.0]], warnings: ['Weakness to Normal Weapons 20'] }],
           weapon: [{ item: 'keening', score: 14.3, reasons: [['Fortify Magicka 50', 6.0]], warnings: [] }],
           ring: [

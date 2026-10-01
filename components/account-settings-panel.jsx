@@ -47,7 +47,11 @@ export default function AccountSettingsPanel() {
     </div>}
     <fieldset disabled={!ready || conflict} className="border-0 p-0 m-0 space-y-4">
       <legend className="sr-only">Account preferences</legend>
-      <label className="settings-choice">Preferred world<select value={settings.world} onChange={event => shell.setProfile(event.target.value)}>{WORLDS.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
+      <label className="settings-choice">Preferred world<select value={settings.worldChosen ? settings.world : 'browser'} onChange={event => {
+        const world = event.target.value;
+        if (world === 'browser') change({ worldChosen: false });
+        else { change({ world, worldChosen: true }); shell.setProfile(world); }
+      }}><option value="browser">Use this browser&apos;s world</option>{WORLDS.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <p className="text-sm text-fg-9">Shared links keep their world and choices. Settings do not change your imported character or its save.</p>
       <label className="settings-choice">Theme<select value={settings.theme} onChange={event => change({ theme: event.target.value })}><option value="ashfall">Modern UI</option><option value="morrowind">Morrowind UI</option></select></label>
       <label className="flex gap-2 items-start"><input type="checkbox" checked={settings.overrideSaveToggles} onChange={event => change({ overrideSaveToggles: event.target.checked })} />Use my stored defaults instead of save-derived Travel toggles</label>

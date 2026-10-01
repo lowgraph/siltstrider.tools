@@ -120,11 +120,9 @@ test('applyBitterCup and computeSheet handle Bitter Cup mechanics and canonical 
   assert.ok(sheet.attrs.Endurance.parts.includes('+20 Bitter Cup'));
   assert.ok(sheet.attrs.Willpower.parts.includes('-20 Bitter Cup'));
 
-  // Health reflects the higher Endurance base:
-  // strForHp: 50
-  // endForHp: 95 - 25 (Lady) = 70
-  // Health: floor((50 + 70) / 2) = 60 (up from 50!)
-  assert.equal(sheet.health, 60);
+  // Bitter Cup is acquired after creation: Endurance affects future gains,
+  // but neither it nor the Lady recalculates the starting Health.
+  assert.equal(sheet.health, 50);
 
   // 2. Canonical tie-breaker: highest tied attributes pick first in ATTRS
   const tiedHigh = {

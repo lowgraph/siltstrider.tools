@@ -39,6 +39,7 @@ async function open(url, storage) {
     await React.act(async () => root.render(React.createElement(ChallengeRunProvider, null, React.createElement(Probe))));
     return {
       race: challenge.run.race,
+      profile: challenge.run.profile,
       kept: { world: window.localStorage.getItem('mw-world'), arce: window.localStorage.getItem('mw-arce') },
       search: window.location.search
     };
@@ -53,6 +54,7 @@ test('a run link that names no world opens the run and keeps the world this brow
   assert.doesNotMatch(url, /world=|arce=/);
   const opened = await open(url, { 'mw-world': 'tr', 'mw-arce': '1' });
   assert.equal(opened.race, 'Nord', 'the run opens');
+  assert.equal(opened.profile, 'tr_arce', 'a legacy seedless run captures the visitor world');
   assert.deepEqual(opened.kept, { world: 'tr', arce: '1' }, 'TR + ARCE is not reset to vanilla');
   assert.equal(opened.search, '', 'the address bar is clean');
 });
@@ -60,11 +62,13 @@ test('a run link that names no world opens the run and keeps the world this brow
 test('a vanilla run link switches a TR + ARCE browser to vanilla', async () => {
   const opened = await open(await runLink('vanilla', false), { 'mw-world': 'tr', 'mw-arce': '1' });
   assert.equal(opened.race, 'Nord');
+  assert.equal(opened.profile, 'vanilla');
   assert.deepEqual(opened.kept, { world: 'vanilla', arce: '0' });
 });
 
 test('a TR + ARCE run link on a first visit keeps TR + ARCE', async () => {
   const opened = await open(await runLink('tr', true), {});
   assert.equal(opened.race, 'Nord');
+  assert.equal(opened.profile, 'tr_arce');
   assert.deepEqual(opened.kept, { world: 'tr', arce: '1' });
 });

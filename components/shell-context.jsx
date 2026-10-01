@@ -113,7 +113,8 @@ export function ShellProvider({ children, initialView = 'home' }) {
     linked.current = params.has('world') || params.has('arce') ? readCurrentState(initialView) : null;
   }
   const preferred = choice && choice.owner === preferences?.owner ? normalizeProfile({ profile: choice.profile })
-    : linked.current || (preferences?.ready ? normalizeProfile({ profile: preferences.settings.world }) : null);
+    : linked.current || (preferences?.ready && (!preferences.owner || preferences.settings.worldChosen)
+      ? normalizeProfile({ profile: preferences.settings.world }) : null);
   // One object per initialView: useSyncExternalStore compares snapshots by identity, so
   // a fresh object on every call reads as a change and React warns of a render loop.
   const serverState = useMemo(
@@ -172,7 +173,9 @@ export function ShellProvider({ children, initialView = 'home' }) {
     const { world, arce } = normalizeProfile({ profile });
     linked.current = null;
     setChoice({ owner: preferences?.owner, profile });
-    preferences?.update(settings => ({ ...settings, world: profile }));
+    // Header choices and loaded characters select this session's world. Only the
+    // account's Preferred world control may change a signed-in account preference.
+    if (!preferences?.owner) preferences?.update(settings => ({ ...settings, world: profile }));
     try { if (!preferences?.owner) {
       window.localStorage.setItem('mw-world', world);
       window.localStorage.setItem('mw-arce', arce ? '1' : '0');

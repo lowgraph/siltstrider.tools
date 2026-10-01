@@ -1391,3 +1391,640 @@ for this merge. Real Clerk acceptance remains for the final acceptance pass.
 Runner servers closed after both suites; the owner's existing test server remains.
 Evidence: `A:/Cache/qa-reproduce-20261001/signout-main-*.log`,
 `A:/Cache/signout-main-browser-20261001/` and `A:/Cache/signout-main-vault-20261001/`.
+
+
+## 30. QA-21/23 character world preservation — 1 October 2026
+
+Branch `launch/character-preservation`, taken over 18:14 UTC from the unfinished
+implementation at `8cd2975`; claim pushed as `c4612b6`. Main `4f9c4bb` incorporated
+as `993b812`, including QA-24 and both README updates. No merge to main,
+deployment, production write, D1 migration or game-data rebuild in this work.
+
+| Item | Result | Cause / change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-21 | Fixed on branch; standalone and modal Vault load TR + ARCE from Vanilla, correct race/sign and populated sheet | `AppShellMain` and `CloudVaultWorkstation` used plain `setBuild`; now use `CharacterProvider.loadBuild`, validate world/identity, prepare catalogs before applying, and await load/errors | `test/qa-account-reproduction.test.js`: Vault world, old builds, malformed inputs, unavailable catalogs; `test/local-save-review.test.js`: asynchronous load failure; Chrome `QA-21/Vault-world` and `QA-21/modal-world` |
+| QA-23 | Fixed on branch; browser world survives untouched accounts and sign-in hand-off, including restored ARCE save | `ShellProvider` used every stored world; settings v2 `worldChosen` records explicit account choice. Header and character loads keep session selection without updating the account default | Hydrated tests in `test/qa-account-reproduction.test.js`, `test/account-settings-ui.test.js`; version/intent cases in `test/account-settings.test.js`, read-only legacy upgrade in `test/account-settings-api.test.js`; Chrome `QA-23/sign-in-handoff` and `QA-23/explicit-preference` |
+
+Version 1 retains its other settings but upgrades to `worldChosen: false`: it
+cannot distinguish explicit account intent from automatically recorded worlds.
+No settings row is rewritten on read. The next deliberate settings write uses
+version 2 and existing revision guards. Previously chosen account worlds must be
+chosen again. A pre-v2 Worker refuses v2 settings instead of erasing them; a future
+release's rollback plan needs a compatible settings reader. See ACCOUNT_SETTINGS.
+
+Final verification:
+
+- Full unit suite: 1,012 tests, 974 passed, 38 existing TODO, 0 failures.
+- `npm run build:cloudflare`: passed with repository config unchanged; 24 pages.
+- Chrome QA-21/23 matrix: 16/16, 1366/375 px and both themes, 0 runtime/server errors.
+- Main's QA-24 sign-out matrix: 8/8, unsaved ARCE and loaded save, both widths/themes.
+- Normal local Vault regression: 10/10, API/account isolation, quota, save actions,
+  token renewal, damaged records and axe on pages/dialog in both widths/themes.
+
+The initial browser pass found the standalone Vault callback omitted by the
+inherited changes; that callback is now fixed. The modal/phone runner now opens
+visible phone controls and focuses the modal load control before scrolling, waits
+for paint, and confirms a pointer hit rather than clicking clipped controls. One
+Cloudflare build generated 24 pages then hit Windows `kill EPERM`; its isolated
+rerun passed. Synthetic Clerk authentication tests the real local pages, Worker
+and fresh D1, not Clerk email-code screens or production redirects; real Clerk
+acceptance remains in the final release pass. QA records were deleted in `finally`
+and runner servers shut down. QA-22/25 remain open and TODO.
+
+Evidence under `A:/Cache/`: `character-preservation-unit-final.log`,
+`character-preservation-build-final-retry.log`,
+`character-preservation-browser-visible-20261001/`,
+`character-preservation-signout-painted-20261001/`, and
+`character-preservation-vault-painted-20261001/`.
+
+## 31. QA-22 share the source character and run — 1 October 2026
+
+Claimed at 18:50 UTC on `launch/character-preservation`, claim `f17ae43` pushed
+before implementation. This push also published the completed QA-21/23 branch
+work (`1029357`); main and production are unchanged.
+
+Both original TODOs failed when unmarked before the fix: the imported save link
+contained raw IDs, empty skill groups, male gender and Vanilla; the Vanilla run
+link used the visitor's TR world. They are now enforced tests.
+
+| Item | Result / rate | Cause (file and function) / fix | Tests |
+| --- | --- | --- | --- |
+| QA-22, imported saves | Fixed on branch; 4/4 Chrome cases, 1366/375 px in both themes; copied links reopen the resolved character with a populated sheet | `use-cloud-vault.js`, `shareBuildLink`, used the list summary. Fetch the full owned record, then `save-share-link.mjs`, `generateSaveShareUrl`, resolves the save's content-file profile and its character catalogs through `buildFromSave`. Preserve gender, race/sign labels, class, favored attributes and major/minor choices; never apply the save or borrow active-character defaults. Unresolved identity, invalid class data and fetch failures return an error, without copying a substitute | `test/qa-account-reproduction.test.js`, imported link, full-record fetch without session changes, unresolved/unsupported rows and existing build links; `test/save-share-link.test.js`, all profiles, custom classes, missing identity, malformed save, duplicate skills/attributes, unavailable catalogs; Chrome `QA-22/save-permalink` |
+| QA-22, challenge runs | Fixed on branch; 4/4 Chrome cases, same widths/themes; change header to TR, copy a Vanilla run, reopen it in Vanilla with its character/restrictions/objectives intact | `challenge-runs-root.jsx`, `handleCopyPermalink`, encoded the shell's world. `challenge-engine.mjs`, `profileForRun`, uses retained run metadata, or its old seed; seeded generation and sanitizing retain profile. `challenge-run-context.jsx` captures the opening profile for seedless links before removing the query | Enforced hydrated challenge copy test; `test/save-share-link.test.js`, Vanilla/TR/ARCE, legacy seeds, seedless/invalid metadata; `test/share-link-world.test.js`, link capture with/without world; Chrome `QA-22/challenge-permalink` |
+
+Build permalinks still carry character creation choices, not the save's level,
+progression or inventory. Older seedless stored runs that never recorded a world
+cannot recover it; the existing visitor-world fallback remains for those records.
+No game-data/schema, D1 migration, account preference or production change.
+
+Final verification: `npm test`: **1,022 tests, 986 passed, 36 existing TODO,
+0 failures**. Cloudflare build with unchanged config: **24 pages, passed**.
+Chrome: **8/8** local Vault cases (4 QA-21 and 4 QA-22), plus **4/4** challenge
+recipient cases; zero runtime/server errors. All synthetic "QA – " records were
+deleted in `finally`, and isolated runner servers closed. No real Clerk or
+production writes. Main/deployment remain separate owner actions.
+
+The first recipient check used a nonexistent `.character-sheet-root` selector;
+the runner was corrected to the actual `.character-sheet` and active gender
+button, then the full matrix passed. The new catalog test also corrected its
+expectation: `Hara` resolves to **The Thief**, as published, rather than The Tower.
+Application resolution follows those catalogs without editing them.
+
+Evidence in `A:/Cache/`: `qa22-before-fix.log`, `qa22-unit-final.log`,
+`qa22-cloudflare-build-final.log`, `qa22-vault-verified-20261001/`, and
+`qa22-challenge-verified-20261001/`. QA-25 and the other open checklist items remain
+outside this task.
+
+## 32. QA-01/02 enchanting running costs — 1 October 2026
+
+Claimed 19:11 UTC on `launch/character-preservation`; claim `3c45912` pushed before
+implementation. Main, production, game data, migrations and repository build
+configuration are unchanged.
+
+Source comparison: OpenMW **0.51.0**, [enchanting.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/enchanting.cpp)
+(`getEffectCosts`, `getEnchantPoints`, `getEnchantChance`, `getEnchantPrice`),
+[enchanting.hpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/enchanting.hpp)
+(precise points are the default), [enchantingdialog.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwgui/enchantingdialog.cpp)
+(capacity/display uses floors), and [creaturestats.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/creaturestats.cpp)
+(`getFatigueTerm`). Read the staged GameSettings directly; all three profiles
+currently provide cost multiplier 0.5, Constant duration 100, chance penalty 3,
+Constant chance multiplier 0.5, value multiplier 1000, fatigue base 1.25 and
+fatigue multiplier 0.5. No real-data rebuild was performed.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-01 | Fixed on branch; 12/12 Chrome cases, all profiles, both widths/themes | `lib/enchant-math.mjs`, `calcEnchantmentTotalPoints`, kept only the final cost. `calcEnchantmentCosts` now retains each running float cost; capacity adds its floor, chance adds its precise value, and price uses the final one. Minimum magnitude/area/cost and Target multiplication follow source order; Constant changes duration | `test/qa-calculation-reproduction.test.js`: one/two/three effects, area and Target→Self; `test/enchanting-costs.test.js`: separate outputs, order-sensitive price, area/Constant/float cases and settings; `test/enchanting-first-case.test.js`: two-effect UI; Chrome `QA-01/enchanting` |
+| QA-02 | Fixed on branch; 12/12 Chrome cases, same matrix; Common Ring setup now completes | `calcEnchantmentTotalPoints` rounded instead of adding floors, `calcSelfEnchantChance` had different coefficients, and `calcEnchantGoldCost` took rounded capacity with an extra Constant price multiplier. Workstation now passes distinct precise chance and final price inputs; chance uses source coefficients/fatigue/Constant multiplier then truncates and clamps; base price truncates before existing barter | Original four floor cases plus chance/price tests now enforced; `test/enchanting-costs.test.js`: Common Ring downstream outputs, fatigue, item/type multipliers, custom/malformed settings and empty/minimum rows; real UI test checks no overflow and 70% / 1,912 gold; Chrome `QA-02/enchanting` |
+
+Before fixing, **9/11** unmarked reproduction cases failed. Afterward:
+
+| Example (base cost 1) | Capacity points | Precise chance points | Final cost for price | Base gold | Chance at Enchant 50 / Int 40 / Luck 40, full fatigue |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| One 5/5 Constant Effect | 25 | ≈25.025 | ≈25.025 | 25,025 | 0% |
+| Two 5/5 Constant Effects | 75 | ≈75.075 | ≈50.05 | 50,050 | 0% |
+| Three 5/5 Constant Effects | 150 | ≈150.15 | ≈75.075 | 75,075 | 0% |
+| One 5/5, 5-second Target effect | 1 | ≈1.9125 | ≈1.9125 | 1,912 | 70% |
+
+Correction to §27: its **73%** for the Target example used the floored point.
+The header declares precise points as the default, so that example is **70%**.
+Its effect count matters through accumulated points; `getEnchantItemsCount` is
+the number of items (normally one), not the number of effects. Chrome uses
+Enchant 300 for the two-Constant case to check the nonzero **54%** result too.
+Float arithmetic and truncation are retained: reversing Self/Target can change
+the final price, and a nominal 3.825 float cost can truncate to 3,824 gold.
+The site still estimates full fatigue for one item; this work does not add an
+ammunition batch workflow or address FLOW-01's On Strike item restrictions.
+
+Final verification: `npm test`: **1,033 tests; 1,006 passed, 27 existing TODO,
+0 failures**. `npm run build:cloudflare`: **24 pages, passed**. Chrome:
+**24/24**, 1366/375 px, Ashfall/Morrowind themes, Vanilla/TR/TR + ARCE,
+zero runtime/server errors; screenshots reviewed at desktop and phone widths.
+Only isolated local pages/Worker and browser state were used; no accounts or
+production writes. The server closed after the matrix. First run on another
+checkout: `npm test`, then BROWSER_TESTS' `--suite qa --filter '/enchanting/'`.
+
+Evidence under `A:/Cache/`: `qa01-02-before-fix.log`, `qa01-02-unit-final.log`,
+`qa01-02-cloudflare-build-final.log` and `qa01-02-browser-final-20261001/`.
+
+## 33. QA-03/04 Level Health and chart — 1 October 2026
+
+Claimed 19:34 UTC on `launch/character-preservation`; `bb02f56` pushed before
+implementation (also publishing the preceding enchanting fix `df261d0`). Main,
+production, game data, migrations and repository build configuration are unchanged.
+
+Checked OpenMW **0.51.0** [npcstats.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/npcstats.cpp)
+(`levelUp`, `updateHealth`) and [mechanicsmanagerimp.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp)
+(`buildPlayer`). `levelUp` adds the post-pick Endurance times
+`fLevelUpHealthEndMult` to existing Health as a float. All three staged profiles
+provide the float representation of 0.1; the site's default-rule calculation
+keeps fractions using Endurance / 10. `updateHealth` floors the creation base
+half; the level-up path does not recalculate it. Neither later Strength nor
+Bitter Cup changes can retroactively replace that starting Health. The simulator
+continues to use its default leveling rules, with the existing modded-save notice.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-03 | Fixed on branch; all 12 build cases show +3.5 for Endurance 35 | `lib/level-math.mjs`, `calculateHealthGain`, floored each gain. Keep the fraction through steps and chart; five gains at 35/40/45/50/55 total 22.5. `lib/character-math.mjs`, `computeSheet`, now fixes creation Health before Bitter Cup. Simulator, About and FAQ explanations remove the floor | Original four QA-03 cases; `test/level-health-preservation.test.js`: five actual steps end at 57.5 from 35, Strength/Cup do not recalculate the base, and creation Health in all profiles; existing malformed/infinite/uncapped Endurance tests updated |
+| QA-04 | Fixed on branch; 28/28 Chrome cases overall: 12 build, four Cup, 12 loaded-save | `normalizeCharacterState` treated normalized `attributes`/`skills` as a raw build and recomputed with catalogs; `calculateHealthGrowthCurve` repeated it. Preserve existing values and applied Cup metadata; apply Cup only once. Chart starts from supplied Health/Endurance and marks level 15 from Endurance 30. Keep marker text within the phone chart | Original five QA-04 cases; new state round-trip tests at Health 0/35/67.5, level 12, Endurance 30/95/100 boundaries and unchanged one-step picks; `test/level-simulator-ui.test.js` renders with catalogs; Chrome `--filter '/level-health/'` |
+
+All **9/9** original unmarked QA-03/04 cases failed before the fixes and are now
+enforced. Independent Bitter Cup checks isolate a completed one-step forecast:
+Personality/Willpower change, picks remain unchanged, and Health is identical.
+The browser example stays at **40 → 47 rushed / 46.5 delayed** before and after;
+the unit example stays at **35 → 38.5**. If Cup changes Endurance, future gains
+change legitimately, while starting Health remains fixed. Three synthetic-save
+values (**35, 45, 67.5**) remain the first chart point at the save's level 3.
+The historical 58/57 report is not used as a new starting-Health assumption.
+
+Verification: `npm test`: **1,046 tests; 1,028 passed, 18 existing TODO,
+0 failures**. `npm run build:cloudflare`: **24 pages, passed**. Chrome:
+**28/28**, 1366/375 px, Ashfall/Morrowind themes; build checks in Vanilla/TR/
+TR + ARCE, no runtime/server errors. A first screenshot review caught the
+level-15 marker clipping on phone; after repositioning it, the full matrix
+was repeated with a label-bounds assertion. Screenshots reviewed. Pipeline:
+**685 passed** after copying the identical COORDINATION.md; no pipeline code
+changed. Only isolated local pages/Worker and synthetic browser state were used;
+the local server closed afterward. QA-05 and other open findings remain separate.
+
+Evidence under `A:/Cache/`: `qa03-04-before-fix.log`, `qa03-04-unit-final.log`,
+`qa03-04-cloudflare-build-final.log`, `qa03-04-pipeline-tests.log`, and
+`qa03-04-browser-final-20261001/`. First command on another checkout: `npm test`,
+then BROWSER_TESTS' `--suite qa --filter '/level-health/'`.
+
+## 34. QA-05 character identity labels — 1 October 2026
+
+Claimed 19:50 UTC on `launch/character-preservation`; `da380f4` pushed before
+implementation (also publishing the preceding Health fix `4c89666`). Main,
+production, datasets, migrations and repository build configuration are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-05 | Fixed on branch; both original unmarked tests failed before the fix; 12/12 final Chrome flows | `CharacterProvider::updateField` retained a premade's name after edits; `CharacterSheet`, `characterSummary` and `ProgressionSheet` presented it as a current title. New premades carry optional `premadeSource`, and all three use `characterName`: an edited source reads "Based on …". `computeSheet` omitted gender and selected race/sign display names; staged catalog objects do not have the `name` normalization expected, so `normalizeCharacterState` defaulted to Male Dark Elf / The Lady. Retain identity/class choices and explicit raceName/signName in computed sheets; normalize those labels | `test/qa-hydrated-title.test.js`: hydrateRoot with actual Builder, Home and Simulator components; `test/qa-calculation-reproduction.test.js`: Female Breton / The Tower identity; `test/character-identity.test.js`: seven edited choices, custom/legacy names, invalid markers, build-link/cloud round trips and all-profile progression identities; Chrome `QA-05/title` |
+
+Fresh premades retain their original title until their creation choices change.
+New edits keep that title as an explicitly labeled source, with the current
+race, gender and birthsign displayed below. Choosing a new premade starts a
+new source; custom names remain names. The source marker is optional and
+validated against the premade pool, retained in share links, sanitizing and
+full build snapshots. Older builds without a marker retain their stored names:
+the site cannot infer whether a player entered a name matching a premade.
+No stored records were migrated or rewritten. The fixed server/first-client
+render remains unchanged; random starts still occur only after hydration.
+
+Chrome matrix: Vanilla/TR/TR + ARCE × 1366/375 px × Ashfall/Morrowind. Fresh
+Vanilla/TR starts use the Altmer Atronach Spellweaver, and TR + ARCE uses the
+Duadri female Mysticism/Acrobatics premade. Edit to Female Breton / The Tower,
+then use the actual header/phone navigation to Home and Level Simulator.
+All three headings agree on the source and current identity. Each case checks
+first-navigation console hydration messages and heading overflow and saves
+three screenshots. Desktop and phone screenshots reviewed; no clipped titles.
+Unit cases also keep the disambiguated **Khajiit (Cathay-raht)** label through
+sheet normalization and later progression, and preserve custom class choices.
+
+Verification: `npm test`: **1,058 tests; 1,042 passed, 16 existing TODO,
+0 failures**. `npm run build:cloudflare`: **24 pages, passed**. Chrome:
+**12/12**, zero runtime/server errors. Pipeline: **685 passed** after copying
+identical COORDINATION.md; only that document changed in the pipeline. Only an
+isolated local Worker and synthetic browser state were used; the server closed
+afterward. No account or production writes. QA-06 and other open items remain
+separate. Evidence under `A:/Cache/`: `qa05-before-fix.log`, `qa05-unit-final.log`,
+`qa05-cloudflare-build-final.log`, `qa05-pipeline-tests.log`, and
+`qa05-browser-20261001/`. First command: `npm test`, then BROWSER_TESTS'
+`--suite qa --filter 'QA-05/'`.
+
+## 35. Test portability — 1 October 2026
+
+Claimed 20:16 UTC on `launch/character-preservation`; claim `16d27c6` was pushed
+before implementation, also publishing checklist priority reordering `9479261`.
+Only tests and handoff/verification documents change; no application code, data,
+build configuration, main merge or deployment.
+
+The checklist named three passing checks: QA-11's published faction names and
+both QA-20 catalog comparisons. Later enforced character/world, sharing,
+Enchanting, Health and hydrated-title regressions also read the staged bundle.
+An isolated copy of tracked files, with dependencies linked but no game-data
+folder, initially reported **37 failures**. Two came from incomplete BestInSlot
+fallback UI fixtures; a shared-link UI case passed in isolation and the final
+full no-bundle run without changing it. The other failures required catalogs.
+
+`test/helpers/qa-staged-data.cjs` now supplies `staged()` test options. Only a
+missing `current.json` skips a catalog-dependent case, with an explicit staging
+instruction. Existing TODO metadata remains intact. A present pointer does not
+skip malformed JSON, missing manifests/payloads, or corrupt data; other filesystem
+errors are rethrown. Pure calculations, synthetic saves, share codecs and
+catalog-independent hydration tests continue to run. BestInSlot's existing
+synthetic fallback now includes a one-handed weapon type, boots warnings and a
+second helmet recommendation, keeping its UI assertions meaningful without data.
+
+`test/qa-staged-data.test.js` adds **4 passing synthetic tests**: missing data
+folder/pointer with preserved options; malformed pointer; missing manifest;
+and a valid catalog followed by missing/corrupt payloads. Fixtures use the
+configured temporary directory and are removed after each test. The real staged
+bundle was neither moved nor modified.
+
+Verification:
+
+- **With staged data:** `npm test`: **1,062 tests; 1,046 passed, 16 existing TODO,
+  0 skipped, 0 failures**. All three requested catalog checks run and pass.
+- **Without staged data:** full `npm test` in `A:/Cache/test-portability-20261001`:
+  **1,062 tests; 1,006 passed, 51 skipped, 5 TODO, 0 failures**. These skips include
+  six existing skip cases and eleven catalog-dependent TODO cases; those TODOs
+  are still present and run when data is staged.
+- **Pipeline:** **685 passed**, after synchronizing the identical COORDINATION.md;
+  only that document changes in the pipeline. UI_TRANSFORMATION.md remains identical.
+
+No browser/build run is needed for these test-only changes. QA findings remain
+open independently; **QA-10** is the next unfinished priority, then **QA-16**.
+Evidence: `A:/Cache/test-portability-before.log`, `test-portability-helper.log`,
+`test-portability-without-bundle.log`, `test-portability-staged.log`, and
+`test-portability-pipeline.log`. First command on another checkout: `npm test`;
+run `npm run data:stage` when catalog acceptance is needed.
+
+## 36. QA-10 beast equipment eligibility — 1 October 2026
+
+Claimed 20:28 UTC on `launch/character-preservation`; claim `3c734a5` was pushed
+before implementation. Main, production, datasets, migrations and repository
+build configuration are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-10 | Fixed on branch; original browser reproduced 12/12, final expanded matrix passes 28/28 | `lib/best-in-slot.mjs`, `resolveBestInSlotPicks`: named/fallback records bypassed the dynamic scorer's beast check, and weapon preferences restored original armor slots. Filter every final primary and runner-up after those paths: explicit wearable flag, no footwear, and no closed-head body parts from Armor. Respect Races' boolean `beast` instead of overriding an explicit false with the race name. Carry the flag through `recommendedLoadouts`, `validateSlotEquip`/`equipItem`, Builder, Equipment Studio, ledger and picker | Three original catalog cases now unmarked; `test/beast-recommendations.test.js` has 14 cases; `test/equipment-studio-ui.test.js` adds three actual inspector/picker interactions; Chrome `--suite qa --filter 'QA-10/'` |
+
+All **3/3 original unmarked catalog cases failed before the fix**. Combined with
+the first synthetic path/edge tests, the corrected baseline was **12 failures,
+3 passing dynamic-path controls out of 15**. The initial synthetic weapon fixture
+needed its WEAP record type before that baseline; no production code was changed
+to accommodate it. The named, dynamic and closest-premade paths now share the
+final gate, including no weapon preference, one-handed and two-handed modes.
+Eligible open helmets remain; filtering retains ranking order without mutating
+catalogs. Missing item metadata, null picks, absent wearable flags and flags
+contradicted by closed-head body parts/footwear cannot leak into a beast's kit.
+
+Races' published flags distinguish **Cathay-raht/Naga (beasts)** from
+**Khajiit (Suthay) (not a beast)**. The latter keeps eligible boots and helmets,
+and the inspector/picker must not call them restricted merely because its name
+contains Khajiit. An optional boolean is passed through equip validation; legacy
+callers without one retain race-name inference. This is session/catalog context,
+not a new stored-build field. No catalog, extraction or data-schema change.
+
+Browser matrix: 1366/375 px × Ashfall/Morrowind × seven profile/race cases:
+Vanilla Argonian, Khajiit and High Elf; TR Argonian; TR + ARCE Cathay-raht,
+Naga and Suthay. Each of **28 cases** checks both weapon preferences (**56 kit
+states**), opens every real runner-up control, then equips the late-game kit
+(**28 transfers**). The old runner looked for "Show alternatives", while the
+actual control says "View … runner-up picks"; that selector is corrected and
+asserted. An initial expanded run passed 24/28: the Suthay control incorrectly
+required Boots of Blinding Speed, while its valid catalog recommendation was
+Honor's March. After changing that expectation to catalog footwear, the final
+full run passes **28/28**, with **zero runtime/server errors** and **84 screenshots**.
+Desktop/phone screenshots reviewed; the existing phone table word-breaking
+finding remains **QA-08**, outside this eligibility fix.
+
+Verification before committing:
+
+- `npm test`: **1,079 tests; 1,066 passed, 13 existing TODO, 0 failures**.
+- No-bundle full suite: **1,079 tests; 1,022 passed, 52 skipped, 5 TODO,
+  0 failures**. New synthetic cases run; the real catalog matrix skips explicitly.
+- `npm run build:cloudflare`: **24 pages, passed**, with config unchanged.
+- Pipeline: **685 passed**, after copying identical COORDINATION.md;
+  only that document changes there. UI_TRANSFORMATION.md remains identical.
+
+Both player changelogs and BROWSER_TESTS are updated. This checkout already had
+a dev server on **http://127.0.0.1:8794**; it was reused and left running, without
+stopping another session. No account or production writes. **QA-16** is the next
+unfinished priority, then **QA-07 + QA-25**. Evidence under `A:/Cache/`:
+`qa10-before-fix-final.log`, `qa10-browser-before/`, `qa10-unit-final.log`,
+`qa10-without-bundle.log`, `qa10-build-final.log`, `qa10-pipeline.log`, and
+`qa10-browser-verified/`. First command: `npm test`, then BROWSER_TESTS'
+`--suite qa --filter 'QA-10/'`.
+
+## 37. QA-08 phone gear tables — 1 October 2026
+
+Claimed 20:51 UTC on `launch/character-preservation`; claim `e3bade4` was pushed
+before implementation, after pushing QA-10 in both repositories. The owner
+requested QA-08 ahead of QA-16. Main and production are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-08 | Fixed on branch; baseline reproduces 8/8, final matrix passes 36/36 | `gear-sources.jsx` `SourceRow`, `best-in-slot-view.jsx` `BisPickRow`, and `app/globals.css`: three narrow phone columns inherit mid-word wrapping. At up to 640 px, stack slot, item and source in each row, including alternatives; retain whole words and add a visible source label. Desktop retains columns; native table headings, column scopes and accessible names remain | Six enforced cases in `test/qa-layout.browser.cjs`, fed by Chrome `--suite qa --filter 'QA-08'` |
+
+The original four browser-report tests all failed with TODO marks removed before
+the fix. Names such as Dandera and Pelagiad broke across lines in both Early and
+Late tables at 375/390 px in both themes. The expanded checks now inspect every
+visible cell, including item names, group headings, acquisition notes and opened
+runner-ups; they check whole words, text bounds, table bounds and row layout.
+Source labels must appear on phones, and desktop rows must remain columns.
+Chrome's accessibility tree must retain each named native table.
+
+Final matrix: Early/Late × Vanilla/TR/TR + ARCE × 375/390/1366 px ×
+Ashfall/Morrowind. A fixed build keeps the comparisons reproducible; every real
+runner-up control is opened. **36/36 cases pass**, measuring **1,374 rows across
+the matrix**, with **0 runtime errors**, **0 server errors** and **54 screenshots**.
+Early/Late, runner-up and desktop captures were visually reviewed.
+
+Verification before committing:
+
+- `npm test`: **1,079 tests; 1,066 passed, 13 existing TODO, 0 failures**.
+- Browser-report assertions: **6 passed, 0 TODO, 0 failures**.
+- `npm run build:cloudflare`: **24 pages, passed**, with config unchanged.
+- Pipeline: **685 passed**; only COORDINATION.md changes there. Both copies of
+  COORDINATION.md and UI_TRANSFORMATION.md remain identical.
+
+Both player changelogs and BROWSER_TESTS are updated. No ranking, calculation,
+data, exported schema, account, migration or deployment change. **QA-09 popovers
+remain open**; next priority is **QA-16**, then **QA-07 + QA-25**, after owner
+go-ahead. The existing dev server at **http://127.0.0.1:8794** stays running.
+Evidence under `A:/Cache/`: `qa08-browser-before/`, `qa08-wrapper-before.log`,
+`qa08-browser-after/`, `qa08-wrapper-final.log`, `qa08-unit-final.log`,
+`qa08-build-final.log` and `qa08-pipeline.log`. First command: `npm test`, then
+BROWSER_TESTS' QA-08 runner and report-wrapper commands.
+
+## 38. QA-09 Configure explanations — 1 October 2026
+
+Claimed 21:10 UTC on `launch/character-preservation`; claim `7cd2ed9` was pushed
+before implementation. Main and production are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-09 | Fixed on branch; initial centered-pointer run reproduces 16/20; final 30/30 mouse and 30/30 touch | `configurator.jsx`, `InfoTip`: fixed-width absolute boxes always opened below/right, with no screen or navigation bounds. A body portal clamps fixed coordinates to the visual viewport, header and phone tab bar; flip above when needed, constrain long text with internal scrolling, reposition on resize/page scroll/font load | Eight cases in `test/configuration-info-tip.test.js`; five original report tests in `test/qa-layout.browser.cjs` now enforced; Chrome `--suite qa --filter 'QA-09'`, repeated with `--touch` |
+
+The original report wrapper passed Race and failed the other four tests without
+TODO marks. Centering the trigger did not reproduce Race's bottom overlap;
+the new bottom-edge component test failed on the old code and now passes.
+The corrected component harness produced eight pre-fix failures. It covers
+right/bottom edges, long text in a 320 px-high viewport, offset visual viewport,
+resize, off-screen anchors, updated text, dismissal and clean hydration.
+
+Each final browser case opens the explanation normally and near the bottom at
+360 px height, resizes to 420 px, scrolls while open, opens by Enter and closes
+by Escape from the explanation with focus restored, and checks outside dismissal.
+The pointer/touch toggle must close it as well. Boxes clear both visible navigation
+bars. Five controls × 375/390/1366 px × two themes, repeated with real CDP touch:
+**60/60 cases, 360 placement measurements, zero runtime/server errors**.
+The first expanded run lacked Enter's CDP character input; using the existing
+runner's Enter pattern corrected that test input. Final mouse/touch reports each
+pass all five enforced wrapper tests. **120 screenshots**; phone, bottom-edge,
+touch and desktop captures reviewed. Focusable explanations keep trigger/control
+linkage and stable hydration IDs; internal scrolling does not reset itself.
+
+Verification before committing: `npm test` **1,087 tests, 1,074 passed, 13 existing
+TODO, 0 failures**; release build **24 pages passed** with config unchanged;
+pipeline **685 passed** after syncing identical COORDINATION.md. Only that
+document changes in the pipeline; UI_TRANSFORMATION.md remains identical.
+Both player changelogs and BROWSER_TESTS are updated. No game-data, ranking,
+schema, migration, account or deployment changes. Existing server **8794** stays
+running. Evidence in `A:/Cache/`: `qa09-browser-before/`, `qa09-wrapper-before.log`,
+`qa09-component-before.log`, `qa09-unit-final.log`, `qa09-build-final.log`,
+`qa09-pipeline.log`, `qa09-browser-verified/`, `qa09-touch-verified/`, and
+`qa09-wrapper-{mouse,touch}.log`. First command: `npm test`, then BROWSER_TESTS'
+QA-09 commands. Next authorized items: QA-16, QA-07/25, QA-06 and QA-05 recheck.
+
+## 39. QA-16 Ebonheart to Mournhold — 1 October 2026
+
+Claimed 21:38 UTC on `launch/character-preservation`, claim `d3f4dc3`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-16 | Fixed on branch; baseline 24/24 reproduced, final 24/24 pass | `travel-stops.mjs`, `buildTransitStops`/`transitEndpointStops`: the Teleports catalog contains the Royal Palace landing, but Travel metadata has no node for that room, so the Mournhold city choice cannot reach it. Missing interior metadata now uses the published Places name, with the cell-name fallback; its comma-separated town prefix supplies a case-insensitive boundary alias | Three original catalog cases enforced; six synthetic cases in `test/teleport-stop-aliases.test.js`; Chrome `--suite qa --filter 'QA-16'` |
+
+`mhtransportscript` is everyday dialogue from Ebonheart's Grand Council Chambers
+to Mournhold's Royal Palace Reception Area. `usableTeleport` and `addTeleports`
+already retained it; no teleport policy change. Keep full room labels and exact
+stop IDs. Explicit node metadata wins. Exterior positions remain separate and
+aliases create no free graph edges; quest and item restrictions still apply.
+No bundle rebuild or schema change; the workstation passes its existing Places
+catalog to the stop builder. All three original catalog cases failed unmarked
+before the fix. New tests cover four route objectives, absent/malformed/frozen
+Places, case, metadata priority, separate rooms and quest/held-item gates.
+
+Final matrix: three worlds × walking on/off × 1366/375 px × both themes:
+**24/24 passed**, with **24 screenshots**, **zero runtime/server errors**.
+Verification: `npm test` **1,093 tests, 1,083 passed, 10 remaining TODO, 0 failures**;
+release build **24 pages passed**, config unchanged; pipeline **685 passed**.
+Both changelogs and BROWSER_TESTS updated; shared coordination/roadmap copies
+remain identical. Main, production, migrations and account data are unchanged.
+The existing dev server at 8794 remains running. Evidence in `A:/Cache/`:
+`qa16-before-tests.log`, `qa16-browser-before/`, `qa16-targeted.log`,
+`qa16-unit-final.log`, `qa16-build-final.log`, `qa16-browser-verified/`,
+`qa16-pipeline.log`. First command: `npm test`, then the QA-16 Chrome case.
+Next authorized work is QA-07/25, QA-06 and the QA-05 regression recheck.
+
+## 40. QA-07/25 Travel search and link precedence — 1 October 2026
+
+Claimed 21:54 UTC on `launch/character-preservation`, claim `e8d72e2`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-07 | Fixed on branch; original spelling tests 3/3 failed, final Chrome 12/12 pass | `travel-search.mjs` searchTravelOptions and `travel-walk.mjs` matchPlaces compared punctuation literally; shared search-only normalization preserves canonical IDs. TravelLocationPicker now reports draft state so TravelWorkstation hides the previous dossier/map until selection or cancellation | Three original tests enforced, three frozen/null/specific-room spelling cases and three draft lifecycle cases; Chrome QA-07 |
+| QA-25 | Fixed on branch; original hydrated save test failed, final Chrome 12/12 pass | TravelWorkstation save-origin effect replaced the link marker with the restored save's token. Capture the initial explicit from before the URL writer fills defaults and preserve it through that first restoration | Original hydrateRoot test enforced; missing-from, destination-only and plan-only controls; later imported save updates origin; Chrome QA-25 |
+
+Desktop/phone screenshots reviewed. Both browser matrices have zero runtime or
+server errors. The first QA-25 runner attempt used an unavailable readiness helper;
+replaced it with the network-status predicate, then all 12 passed. Synthetic saves
+match the selected profiles; no account writes, data rebuild or production changes.
+Full suite: **1,102 tests, 1,096 passed, 6 remaining TODO, 0 failures**. Release
+build: **24 pages passed**, config unchanged. Pipeline: **685 passed** after
+copying identical coordination. Both changelogs updated. Existing server 8794
+stays running. Evidence: `A:/Cache/qa07-browser-final/`, `qa25-browser-verified/`,
+`qa07-25-unit.log`, `qa07-25-build.log` and `qa07-25-pipeline.log`.
+Next authorized work: QA-06, then recheck completed QA-05.
+
+## 41. QA-06 obtainable Alchemy apparatus — 1 October 2026
+
+Claimed 22:04 UTC on `launch/character-preservation`, claim `cb15b35`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-06 | Fixed on branch; original staged tests 2/2 failed, final Chrome 12/12 pass (48 selectors) | `lib/alchemy-catalogs.mjs`, adaptAlchemy filtered only leading apparatus_sm_ keys and unspaced Secretmaster names. Match the key segment after a mod prefix and spaced names, including apostrophes, without matching incidental name fragments | Both original catalog cases enforced; five synthetic adapter edge cases; Chrome QA-06 |
+
+The staged TR and TR + ARCE leaks were `tr_m7_apparatus_sm_alembic_02`,
+`tr_m7_apparatus_sm_calcin_02` and `tr_m7_apparatus_sm_retort_02`, named Secret
+Master's Alembic/Calcinator/Retort (the UI adds 2x quality). No catalog edits:
+source records and provenance remain intact. Ordinary Master/Grandmaster tools
+remain, with effectiveness descending and stable name/ID ties. All four types,
+renamed tools and frozen inputs have synthetic coverage.
+
+Chrome: three worlds × 1366/375 × both themes, **12/12 passed**, 12 screenshots,
+zero runtime/server errors; desktop/phone reviewed. Full suite: **1,107 tests,
+1,103 passed, 4 remaining TODO, 0 failures**. Release build: **24 pages passed**,
+config unchanged. Pipeline: **685 passed** after identical coordination sync.
+Preserved the concurrent Morrowind theme coordination entry added by another
+session. Both changelogs updated. No data rebuild, schema, migration, account or
+production change. Existing server 8794 stays running. Evidence:
+`A:/Cache/qa06-browser-final/`, `qa06-unit.log`, `qa06-build.log`,
+`qa06-pipeline.log`. Next: QA-05 regression recheck (already fixed in §34).
+
+## 42. QA-05 identity regression recheck — 1 October 2026
+
+Recheck claimed 22:08 UTC on `launch/character-preservation`, claim `d041fe9`.
+Implementation already fixed in `fdb9c9c` (§34); no further application changes.
+
+| Item | Result / rate | Cause / runner change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-05 | Existing fix passes the current branch: Chrome 12/12, all three views in each case | Keep computeSheet identity fields and characterName's premade-source label from §34. The browser case now uses a real random start and always changes race/sign; it waits for first-visit initialization and excludes Next dev's toolbar | 33 identity, hydrateRoot and first-visit tests passed, plus the original Simulator identity case; Chrome QA-05 |
+
+Before correction, a global Math.random=0 override allowed the click to reach
+Configure but its React handler did not change the tab. Native randomness passed.
+The next phone setup clicked Next's dev indicator instead of Home; the captured
+screenshot showed its open menu covering the tab. Hide only nextjs-portal in
+this test, then the isolated phone case passed in six seconds. No production UI
+change. Interrupted long retrying runners and their isolated Chrome processes
+were stopped; the final matrix used an enforced **60-second overall timeout**.
+After the interrupted server stopped, restored dev port **8794** and reran.
+
+Final Chrome: **12/12 passed in 51 seconds** (three worlds × 1366/375 × both themes), **36
+screenshots**, zero runtime/server errors or hydration warnings. Edited race,
+gender and birthsign agree across Builder, Home and Simulator; titles retain
+"Based on" and headings do not overflow. Phone/desktop captures reviewed.
+Full suite before commit: **1,107 tests, 1,103 passed, 4 remaining TODO, 0 failures**.
+Release build remains §41's **24 pages passed**: no application/config change in
+this recheck. Pipeline: **685 passed** after syncing identical coordination.
+Both player changelogs already contain the QA-05 fix; no duplicate release entry.
+Evidence: `A:/Cache/qa05-recheck-final-verified/`, `qa05-phone-bounded/`,
+`qa05-recheck-hydration.log`, `qa05-recheck-unit-final.log`, and
+`qa05-recheck-pipeline.log`. All work in the authorized batch is complete locally;
+no push, merge, deployment, account write or dataset rebuild. Server 8794 stays
+available. First command: `npm test`, then BROWSER_TESTS' QA-05 filter.
+
+## 43. QA-12 premade explanations — 1 October 2026
+
+Claimed 22:38 UTC on `launch/character-preservation`, claim `605501a`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-12 | Fixed on branch; original unmarked test failed, final Chrome 12/12 pass | PremadeBrowser had no playstyle/trade-off copy and abbreviated/clamped skill labels. Add concise copy per playstyle, race-mode copy using the first Major skill, full labels and specialization explanation | Original copy assertion enforced; nine new component/copy cases in premade-copy.test.js; Chrome QA-12 |
+
+This is presentation only: premade stats, pools, save/link fields and selection
+callbacks remain unchanged. All 41 playstyle builds, 20 base race builds and
+42 additional ARCE race builds have both explanations. Missing/unknown copy uses
+a generic fallback; frozen records stay unchanged. The browser matrix covers
+both grouping modes in three worlds at desktop/phone widths and both themes,
+**12/12 passed / 24 groups**, 24 screenshots, zero runtime/server errors.
+Phone and desktop captures reviewed. Full suite: **1,116 tests, 1,113 passed,
+3 remaining TODO, 0 failures**. Release build: **24 pages passed**, config
+unchanged. Pipeline: **685 passed** after identical coordination sync. Both
+player changelogs updated. Evidence: `A:/Cache/qa12-browser-verified/`,
+`qa12-phone-first/`, `qa12-unit.log`, `qa12-build.log`, `qa12-pipeline.log`.
+No dataset rebuild, migration, account write or deployment. Server 8794 remains
+available. Next authorized work: QA-11, then QA-15; push after each item.
+
+## 44. QA-11 faction names and deprecated entries — 1 October 2026
+
+Claimed 22:45 UTC on `launch/character-preservation`, claim `b778518`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-11 | Fixed on branch; both original unmarked tests failed, final Chrome 12/12 pass | FactionRoster and JournalFactionsRoot displayed all records; FactionDetailView title-cased raw reaction IDs. faction-display.mjs filters deprecated display records and resolves case-insensitive published names; the detail receives the full catalog | Both original cases enforced; six new display/integration cases in faction-display.test.js; Chrome QA-11 |
+
+The catalog already provides Cyrodiil Fighters Guild (`t_cyr_fightersguild`),
+Imperial Archaeological Society (`t_glb_archaeologicalsociety`) and East Navy
+(`t_mw_imperialnavy`). No pipeline request or rebuild is needed. Vanilla keeps
+29 displayed factions; TR and TR + ARCE show 91 of 103, hiding 12 deprecated
+records. Saved memberships, source records and numeric relations stay intact.
+The visible membership count excludes hidden records. Unknown internal IDs use
+Unknown faction; ordinary human-readable fallback names remain available.
+
+Chrome: three worlds × 1366/375 × both themes, **12/12 passed**, 28 screenshots,
+zero runtime/server errors. Each reported name is checked against the staged
+catalog and scrolled into view for its capture; phone and desktop reviewed.
+The initial phone assertion overlooked uppercase CSS in innerText; the runner
+now waits for the loaded badge and reads textContent. Full suite: **1,122 tests,
+1,121 passed, 1 remaining TODO, 0 failures**. Release build: **24 pages passed**,
+configuration unchanged. Pipeline: **685 passed** after identical coordination
+sync. Both player changelogs updated. Evidence: `A:/Cache/qa11-browser-verified/`,
+`qa11-phone-verified/`, `qa11-unit.log`, `qa11-build.log`, `qa11-pipeline.log`.
+No dataset, schema, migration, account or production change. Server 8794 remains
+available. Next authorized work: QA-15, after this item's push.
+
+## 45. QA-15 About attribution and licence — 1 October 2026
+
+Claimed 22:58 UTC on `launch/character-preservation`, claim `65fa0bf`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-15 | Fixed on branch; original unmarked test failed, final Chrome 4/4 pass | AboutView's Colophon omitted the author, code licence and repository link. Add LowGraph attribution, AGPL-3.0-or-later for the code and the GitHub link; distinguish game/mod-data, font and branding rights | Original About case enforced and strengthened in qa-copy-reproduction.test.js; license.test.js covers the actual view; unchanged site-claims tests; Chrome QA-15 |
+
+The AI-assistance paragraph and Pelagiad's SIL Open Font License 1.1 credit stay
+unchanged. The code licence does not cover Bethesda or community game/mod data;
+the name, logo and social card image remain unlicensed for reuse. The repository
+link opens with noopener/noreferrer. No README, LICENSE or package changes.
+Chrome: 1366/375 px × both themes, **4/4 passed**, four screenshots, zero runtime
+or server errors and no page overflow. Phone/desktop captures reviewed.
+
+Full site suite: **1,122 passed, 0 failures, 0 remaining TODO**. Focused copy,
+claim and licence checks: **12/12 passed**, including all three licence checks.
+Release build: **24 pages passed**, configuration unchanged. Pipeline: **685
+passed** after identical coordination sync. Both player changelogs updated.
+Evidence: `A:/Cache/qa15-browser-final/`, `qa15-before.log`, `qa15-unit.log`,
+`qa15-build.log`, `qa15-pipeline.log`. All authorized QA-12/11/15 items are
+complete on this branch, pushed separately. No merge, deployment, dataset,
+migration or account change. Server 8794 remains available. First command:
+`npm test`, then the documented QA browser filters; freeze acceptance and
+release preparation remain a separate step against the final build.
+
+## 46. Character-preservation branch merge — 1 October 2026
+
+Owner-authorized no-ff merge of `launch/character-preservation` (`c065581`) into
+clean main (`4f9c4bb`) in `A:/Claude/mt-signout-main-merge`. Fresh fetch and
+merge-tree preview found no conflicts. Verification below used the actual
+uncommitted merged checkout, staged bundle `a29adea046e6086c2c7ee654`, dev server
+8798 and the built local Worker; the production table and release history remain
+unchanged. This integrates test portability, QA-21/23/22, QA-01/02/03/04/05/06/07,
+QA-08/09/10/11/12/15/16/25, retaining main's earlier QA-24 merge and README update.
+
+| Check | Result |
+| --- | --- |
+| `npm test` | **1,122 passed, 0 failed, 0 TODO**, including licence and hydrated character/world tests |
+| `npm run build:cloudflare` | **24 pages generated**, repository configuration unchanged |
+| Chrome page matrix | **96/96 passed**, all 16 views × three worlds × 1366/375; both themes per case, including axe and overflow checks |
+| Chrome QA regressions | **270/270 distinct cases passed**, all documented QA targets; phone tables/popovers also at 390 px |
+| Synthetic local Worker/Vault | **32/32 passed**: QA-21/23 character preservation 16, QA-21/22 save shares 8, QA-24 sign-out 8; 1366/375 in both themes |
+| Browser layout evidence wrapper | **11/11 passed** against consolidated current QA reports |
+| Pipeline | **685 passed** after identical coordination sync |
+
+All completed browser reports have zero runtime/server errors. Reviewed phone
+Health/faction and desktop Loadouts/About captures. No application resolution or
+new fix was needed; branch code merged unchanged. Checklist records the original
+implementation commits and integration in this merge, without deployment claims.
+Both changelogs retain the existing player entries; shared coordination records
+the main handoff. README, LICENSE, package files, configs, bundle and migrations
+are unchanged relative to pre-merge main.
+
+The first broad Vanilla matrix hit its 60-second limit while opening Loadouts;
+the isolated case and the final 32-case matrix passed. The combined QA run hit
+its five-minute limit before completion, without assertion failures. Replaced it
+with focused groups and split the intensive gear check by race: all 270 cases
+have completed reports. TR + ARCE matrix and sign-out wrappers reached their
+shutdown deadline after writing fully passing reports; those reports are checked
+explicitly. No timed-out/incomplete QA run is included in the 270 count. Temporary
+orchestration stopped each isolated runner after its completed report or deadline;
+no repository runner or application patch was introduced.
+
+Evidence: `A:/Cache/qa-main-merge-unit.log`, `qa-main-merge-build.log`,
+`qa-main-merge-qa-report.json`, `qa-main-merge-browser-batch.json`,
+`qa-main-merge-beast-batch.json`, the three `qa-main-merge-matrix-*` reports,
+`qa-main-merge-character/`, `qa-main-merge-vault-shares/`,
+`qa-main-merge-signout/`, and `qa-main-merge-pipeline.log`.
+No deployment, real-account write, production migration or data rebuild.
+Freeze-day hydration, physical-device and real-provider sign-in acceptance remain
+separate. First command: `npm test`, then the documented browser/Vault runners.

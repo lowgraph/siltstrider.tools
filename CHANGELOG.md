@@ -2,6 +2,34 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- About credits LowGraph and links to the project’s open source code under AGPL-3.0-or-later. It distinguishes the code licence from game and mod data, font and branding rights.
+
+- Faction Journal uses published faction names in friendly and hostile relations and leaves deprecated entries out of its roster. Saved memberships stay intact.
+
+- Premade cards explain how each build plays and its trade-off. Major and Minor skills are written out, and specialization explains which skills it helps; the explanations also appear when browsing by race.
+
+- Alchemy leaves Secret Master’s apparatus out of every world, including Tamriel Rebuilt’s renamed tools. Available tools remain ordered by effectiveness.
+
+- Travel accepts Ald’ruhn, Ald-ruhn and Aldruhn in place searches. While you edit a location, it asks you to choose a result instead of showing the previous trip; cancelling restores it. Shared journeys keep their starting point when a saved character loads.
+
+- Travel finds the everyday Ebonheart–Mournhold teleport in all three worlds, including with walking switched off. Named cities now include teleport-only rooms that were missing from the transport stop list.
+
+- Character Builder's Configure explanations stay inside the screen and above the phone tab bar. They open above their buttons when needed; long text scrolls inside the box. Tap again, tap outside or press Escape to close.
+
+- On phones, Gear Advisor stacks each recommendation's slot, item and source so names stay readable. This applies to early-game equipment, the optimized endgame kit and its runner-ups; desktop tables keep their columns.
+
+- Gear Advisor keeps boots and closed helmets out of beast races' optimized kits and every runner-up list, including after changing weapon preference. Open helmets remain available; ARCE races that are not beasts keep their eligible footwear. Equipping recommendations uses the same race rules.
+
+- Builder, Home and Level Simulator show the same current race, gender and birthsign. After you edit a premade, its old title reads "Based on …" rather than describing the edited character; your own character names stay unchanged.
+
+- Level Simulator keeps fractional Health gains, following the OpenMW 0.51 source. Its chart starts from your character's Health and Endurance, including loaded saves; starting at 30 Endurance reaches 100 at level 15 with +5 each level. Bitter Cup changes future gains when it changes Endurance, without recalculating starting Health.
+
+- Enchanting counts every effect's running cost toward capacity, rounding each down. Two Constant Effects of 5 points now use 75 capacity points; a 5-point, 5-second Target effect fits a Common Ring at 1 point. Self-enchant chance uses the costs before rounding, and the base price uses the final running cost without an extra Constant multiplier, following the OpenMW 0.51 source.
+
+- Share links from imported Cloud Vault saves carry the save's world, race, gender, birthsign and class choices. Challenge links keep the run's world after you switch worlds. A save with choices the site's data cannot resolve shows an error instead of sharing a different character.
+
+- Loading a character build from Cloud Vault selects its saved world before showing its statistics. Signing in keeps this browser's world until you choose a Preferred world in Your account; header changes and loaded saves do not replace that preference.
+
 - **Keep your character when signing out:** an unsaved Builder character survives the return to Home, including its world, race, birthsign, skill choices and equipment. Loaded saves continue to stay in this browser until cleared.
 - **Try a longer journey when needed:** Travel first plans with nearby walks and short swims. If no route is available, it tries long walks and open-water swims, including routes to Ald Redaynia. Normal trips still use transport, and mixed legs show walking and swimming time separately.
 - **Where to get an ingredient:** each selected Alchemy ingredient now has a "Where to get it" button. See shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened; changing an ingredient closes its old sources. The effect finder also keeps its pair shortcut.

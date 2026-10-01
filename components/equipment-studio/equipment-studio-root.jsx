@@ -124,7 +124,7 @@ export default function EquipmentStudioRoot({
   // Equip single item to slot
   const handleEquipItem = useCallback(
     (slot, item) => {
-      const result = equipItem(activeItems, slot, item, { race: character.race });
+      const result = equipItem(activeItems, slot, item, { race: character.race, beast: character.beast });
       if (result.success) {
         const next = loadouts.map((l) =>
           l.id === activeLoadoutId ? { ...l, items: result.loadout } : l
@@ -132,7 +132,7 @@ export default function EquipmentStudioRoot({
         commitLoadouts(next);
       }
     },
-    [activeItems, character.race, loadouts, activeLoadoutId, commitLoadouts]
+    [activeItems, character.race, character.beast, loadouts, activeLoadoutId, commitLoadouts]
   );
 
   // Unequip single slot
@@ -219,6 +219,7 @@ export default function EquipmentStudioRoot({
           onRetry={result.retry}
           slot={activePickerSlot}
           race={character.race}
+          beast={character.beast}
           currentLoadout={activeItems}
           onEquipItem={handleEquipItem}
           onUnequipSlot={handleUnequipSlot}

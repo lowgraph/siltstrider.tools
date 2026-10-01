@@ -288,3 +288,25 @@ acceptance remain separate owner checks.
 
 References: [D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 and [D1 JSON storage](https://developers.cloudflare.com/d1/sql-api/query-json/).
+
+
+## Explicit Preferred world (QA-23, branch implementation — 1 October)
+
+`launch/character-preservation` adds settings document version 2 and
+`worldChosen: false` by default. Only Your account's Preferred world control sets
+this flag true. Its "Use this browser's world" option clears it. Header world
+changes and loading characters select the current session without rewriting an
+account's Preferred world; shared links and deliberate current choices retain
+priority. Signed-out browser settings remain separate from account settings.
+
+Version 1 documents are read as version 2 with `worldChosen: false`, preserving
+all other settings. Version 1 cannot distinguish an explicit account choice from
+an automatically recorded header/save world, so it cannot establish that intent.
+Hydration reads do not rewrite rows; the next deliberate settings write uses
+version 2 under the same revision guard. Existing explicit preferences from
+version 1 must be chosen again in the account control.
+
+No D1 migration, extraction or bundle change is needed. This branch is not
+released. Code before this change rejects stored version 2 documents rather than
+erasing them; a future deployment must include that settings compatibility limit
+in its rollback plan.

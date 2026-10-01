@@ -4,10 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { searchTravelOptions } from "../../../lib/travel-search.mjs";
 
 /** One editable search, one ranked list, and a separate committed route endpoint. */
-export default function TravelLocationPicker({ id, label, value, valueLabel, options, onChange, disabled = false, scopeKey = null }) {
+export default function TravelLocationPicker({ id, label, value, valueLabel, options, onChange, onDraftChange, disabled = false, scopeKey = null }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [draft, setDraft] = useState(false);
+  useEffect(() => { onDraftChange?.(draft); }, [draft, onDraftChange]);
   const listRef = useRef(null);
   const listId = `${id}-results`;
   const statusId = `${id}-status`;
@@ -18,7 +20,7 @@ export default function TravelLocationPicker({ id, label, value, valueLabel, opt
   // Only a changed location list or world supersedes that draft.
   const optionKeys = useMemo(() => options.map(option => option.id).join('\u0000'), [options]);
 
-  const close = () => { setOpen(false); setQuery(""); setActiveIndex(-1); };
+  const close = () => { setOpen(false); setQuery(""); setActiveIndex(-1); setDraft(false); };
   const startSearch = () => {
     if (disabled || open) return;
     setQuery("");
@@ -28,6 +30,7 @@ export default function TravelLocationPicker({ id, label, value, valueLabel, opt
 
   // Swaps, shared links, save imports and changed world/options supersede a draft.
   useEffect(() => {
+    setDraft(false);
     setOpen(false);
     setQuery("");
     setActiveIndex(-1);
@@ -85,7 +88,7 @@ export default function TravelLocationPicker({ id, label, value, valueLabel, opt
         placeholder="Search towns, stops and places…"
         onFocus={startSearch}
         onClick={startSearch}
-        onChange={(event) => { setQuery(event.target.value); setActiveIndex(-1); setOpen(true); }}
+        onChange={(event) => { setQuery(event.target.value); setActiveIndex(-1); setOpen(true); setDraft(true); }}
         onKeyDown={onKeyDown}
         onBlur={close}
         className="w-full min-h-11 p-2 text-sm font-serif bg-surface-1 border border-line-9 text-fg-2 focus:border-accent"

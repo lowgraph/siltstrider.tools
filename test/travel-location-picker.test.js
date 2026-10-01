@@ -50,6 +50,7 @@ async function setup(overrides = {}) {
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator });
   const Picker = loadPicker();
   const calls = [];
+  const drafts = [];
   let update;
   function Harness() {
     const [state, setState] = React.useState({
@@ -66,6 +67,7 @@ async function setup(overrides = {}) {
         options: state.options,
         scopeKey: state.profile,
         disabled: state.disabled,
+        onDraftChange(draft) { drafts.push({ end, draft }); },
         onChange(id) {
           calls.push({ end, id });
           setState(previous => ({ ...previous, [end]: id }));
@@ -96,7 +98,7 @@ async function setup(overrides = {}) {
   };
   const patch = async fields => act(async () => update(fields));
   const cleanup = async () => { await act(async () => root.unmount()); dom.window.close(); };
-  return { calls, input, focus, type, key, listbox, options, active, patch, cleanup };
+  return { calls, drafts, input, focus, type, key, listbox, options, active, patch, cleanup };
 }
 
 function assertClosed(t, label, end = 'from') {
@@ -330,4 +332,19 @@ test('an empty catalog remains searchable without allowing a nonexistent route s
     await t.key('Escape');
     assertClosed(t, '');
   } finally { await t.cleanup(); }
+});
+
+for (const action of ['Escape', 'Enter', 'profile']) test(`QA-07 draft lifecycle: ${action}`, async () => {
+  const t = await setup();
+  try {
+    await t.focus(); assert.equal(t.drafts.at(-2)?.draft, false);
+    await t.type(action === 'Enter' ? 'Vivec' : 'missing place');
+    assert.equal(t.drafts.filter(d => d.end === 'from').at(-1).draft, true);
+    await t.patch({options: OPTIONS.map(o => ({...o}))});
+    assert.equal(t.input().value, action === 'Enter' ? 'Vivec' : 'missing place');
+    if(action === 'profile') await t.patch({profile:'tr'});
+    else {if(action === 'Enter') await t.key('ArrowDown'); await t.key(action);}
+    assert.equal(t.drafts.filter(d => d.end === 'from').at(-1).draft, false);
+    assert.equal(t.calls.length, action === 'Enter' ? 1 : 0);
+  } finally {await t.cleanup();}
 });

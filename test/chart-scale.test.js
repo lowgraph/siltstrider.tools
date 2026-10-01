@@ -49,8 +49,8 @@ test("the health curve reports Endurance per level and when the rushed path maxe
   assert.equal(curve.enduranceMaxLevel, 13, "40 Endurance plus 5 a level reaches 100 at level 13");
   assert.equal(curve.optimalEndurance[curve.levels.indexOf(13)], 100);
   assert.equal(curve.delayedEndurance[curve.levels.indexOf(20)], 40, "the delayed path holds Endurance until level 20");
-  assert.equal(curve.optimalHealth.at(-1), 294);
-  assert.equal(curve.delayedHealth.at(-1), 161);
+  assert.equal(curve.optimalHealth.at(-1), 297);
+  assert.equal(curve.delayedHealth.at(-1), 165);
 });
 
 test("a character already at Endurance 100 is maxed from the start", async () => {

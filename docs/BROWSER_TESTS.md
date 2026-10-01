@@ -37,6 +37,13 @@ that control needs physical-device acceptance rather than fabricated capabilitie
 `--suite qa` retains failing expectation checks and screenshots for open findings.
 Use `--filter QA-08`, for example, for a single item. Its popover measurements also
 reserve the phone tab bar; Gear checks use text Range boxes to detect broken words.
+`--suite qa --filter 'QA-10/'` now enforces 28 kit/transfer cases at 1366/375 px
+in both themes: Vanilla Argonian/Khajiit/High Elf, TR Argonian, and TR + ARCE
+Cathay-raht/Naga/Suthay. Each case checks both weapon preferences, opens every
+actual "View … runner-up picks" control and equips the late-game recommendations.
+Beasts must have no forbidden primary/runner-up/equipped item; non-beast controls
+retain catalog footwear without a beast restriction in the inspector. Three
+screenshots per case capture both recommendation modes and the equipped kit.
 The layout TODO wrapper can be run against a fresh report:
 
 ```powershell
@@ -183,20 +190,21 @@ This does not replace the owner's real development/production Clerk acceptance.
 node scripts/test-vault.cjs --signout-preservation --port 8797 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\signout-preservation'
 ```
 
-`--qa-reproduction` runs only the signed-in QA-21 / imported-save QA-22 cases.
+`--qa-reproduction` runs the signed-in QA-21 / imported-save QA-22 regressions.
 It uses a synthetic “QA – Vault Reproduction” identity, creates two “QA – ”
 records in a fresh local database, and deletes both in `finally`. It verifies
 the selected theme through account settings before testing each width. Known
-behavior assertions intentionally fail until the application is fixed:
+behavior assertions are enforced on `launch/character-preservation`; QA-22 also
+opens each copied link and checks the recipient character and populated sheet:
 
 ```powershell
 node scripts/test-vault.cjs --qa-reproduction --port 8796 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa-vault'
 ```
 
 The corresponding hydrated/hook expectations are in
-`test/qa-account-reproduction.test.js`, marked TODO. `--suite qa --filter QA-22`
+`test/qa-account-reproduction.test.js`. `--suite qa --filter QA-22`
 in the ordinary Chrome runner checks that a challenge's link retains its rolled
-world after a visitor changes world. Synthetic authentication does not verify
+world after a visitor changes world, then opens the recipient link. Synthetic authentication does not verify
 Clerk's real email-code or redirect behavior; use an owner-prepared throwaway
 session for that final check.
 
@@ -216,3 +224,140 @@ will not replace a folder Wrangler is serving.
 
 Neither setup tests the production keys, Google or Discord sign-in, or the live database;
 those stay in the owner's production checks.
+
+
+`--character-preservation` checks QA-21 and QA-23 on the real local pages and
+Worker with synthetic Clerk authentication, at 1366/375 px in both themes. It
+loads a TR + ARCE build through the standalone and modal Vault from Vanilla,
+restores an unsaved ARCE build
+through the sign-in hand-off, checks that hydration and header changes do not
+write a Preferred world, and tests explicit account choices and returning to
+browser preferences. The suite creates only "QA – " records and deletes them.
+QA-24 remains covered separately by `--signout-preservation`.
+
+```powershell
+node scripts/test-vault.cjs --character-preservation --port 8797 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\character-preservation'
+```
+
+The QA-21/22/23 reproduction tests are now enforced, including hydrated sign-in,
+version 1 compatibility, rejected Vault loads and share links. QA-25 now enforces
+explicit journey-origin precedence through save restoration.
+QA-22 edge cases and saved run profiles are in `test/save-share-link.test.js`.
+
+QA-01/02's `--suite qa --filter '/enchanting/'` checks both findings in all three
+worlds at 1366/375 px and both themes (24 cases). The Constant case checks
+75 capacity points, 50,050 base gold and 54% at Enchant 300 / Intelligence 40 /
+Luck 40; the Common Ring Target case checks 1 capacity point, 1,912 base gold,
+70% at 50/40/40, and no over-capacity warning. Each saves a screenshot.
+`test/enchanting-costs.test.js` covers area, order, one/three effects, precise
+chance inputs, fatigue, float/truncation boundaries and profile GMST values.
+The original QA-01/02 reproduction tests are enforced rather than TODO.
+
+QA-03/04's `--suite qa --filter '/level-health/'` checks fractional gains and
+the chart's starting Health/Endurance in Vanilla, TR and TR + ARCE, at 1366/375
+px and both themes. It checks the complete one-step forecast before/after a
+Bitter Cup that changes only Personality/Willpower, and loaded saves at 35,
+45 and 67.5 Health. Each case saves a screenshot; the Endurance 100 label must
+fit inside the chart. The nine original QA-03/04 TODO cases are now enforced;
+`test/level-health-preservation.test.js` adds normalization, zero/fractional
+Health, level-boundary, repeated Cup and non-retroactive base checks.
+
+QA-05's `--suite qa --filter 'QA-05/'` follows a fresh premade through Builder
+edits to Female Breton / The Tower, Home and Level Simulator. It checks source
+titles and identity details in Vanilla/TR/TR + ARCE at 1366/375 px in both
+themes, including an ARCE premade, first-navigation hydration messages and
+heading overflow. Each case captures all three headings. The two original
+QA-05 TODO cases are enforced; `test/qa-hydrated-title.test.js` uses hydrateRoot
+with all three actual components, and `test/character-identity.test.js` covers
+custom names, unknown markers, edited choices, links/snapshots and ARCE labels.
+
+QA-08's `--suite qa --filter 'QA-08'` checks the Early and Late gear tables in
+Vanilla/TR/TR + ARCE at 375, 390 and 1366 px in both themes (36 cases). It opens
+every runner-up control, checks whole words and text/viewport bounds in every
+cell, requires stacked phone rows and desktop columns, and confirms native
+tables remain in Chrome's accessibility tree. It captures Early/Late tables and
+expanded runner-up rows. The six browser-report assertions are enforced; QA-09's
+separate popover TODOs remain.
+
+```powershell
+node scripts/test-browser.cjs --suite qa --filter 'QA-08' --url http://127.0.0.1:8765 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa08-browser'
+$env:QA_BROWSER_REPORT='A:\Cache\qa08-browser\report.json'
+node --test --test-name-pattern='QA-08' test/qa-layout.browser.cjs
+```
+
+QA-09's `--suite qa --filter 'QA-09'` checks all five Configure explanations at
+375/390/1366 px in both themes (30 cases). Each checks normal placement, a button
+near the bottom in a 360 px-high viewport, resize to 420 px and page scrolling,
+keyboard opening/Escape with focus restoration, and outside dismissal. Every
+box must stay inside the visual viewport and clear the visible header/tab bar.
+Repeat with `--touch` for actual CDP touch events; touch emulation uses five touch
+points and a coarse pointer. Both runs capture normal and bottom-edge placement.
+The five original browser-report tests are now enforced; eight actual Configure
+component tests cover long text, small/offset viewports, resize, scroll, content
+changes, dismissal and hydration without needing a staged bundle.
+
+```powershell
+node scripts/test-browser.cjs --suite qa --filter 'QA-09' --url http://127.0.0.1:8765 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa09-browser'
+node scripts/test-browser.cjs --suite qa --filter 'QA-09' --touch --url http://127.0.0.1:8765 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa09-touch'
+$env:QA_BROWSER_REPORT='A:\Cache\qa09-browser\report.json'
+node --test --test-name-pattern='QA-09' test/qa-layout.browser.cjs
+$env:QA_BROWSER_REPORT='A:\Cache\qa09-touch\report.json'
+node --test --test-name-pattern='QA-09' test/qa-layout.browser.cjs
+```
+
+QA-16's `--suite qa --filter 'QA-16'` checks Ebonheart → Mournhold in all three
+worlds, with walking on/off, at 1366/375 px in both themes (24 cases). It requires
+the Asciene Rane dialogue route and captures every itinerary. Three original
+catalog cases are enforced; `test/teleport-stop-aliases.test.js` covers missing
+metadata/Places, authoritative names, case, exact room IDs, no free transfers,
+malformed frozen records and quest/held-item gates.
+
+QA-07's `--suite qa --filter 'QA-07'` checks all three spelling variants,
+selecting a result, an impossible query with no stale dossier, and Escape
+restoration. QA-25's `--filter 'QA-25'` restores a synthetic save in each profile
+and requires the explicit Balmora → Ald-ruhn origin/destination and `plan=time`.
+Each filter covers three worlds × 1366/375 px × both themes (12 cases), with
+screenshots. Use the same URL/axe/out arguments as the QA-16 runner above.
+
+QA-06's `--suite qa --filter 'QA-06'` inspects all four apparatus selectors in
+three worlds, at 1366/375 px in both themes (12 cases / 48 lists) and captures
+screenshots. Every list must omit Secret Master's tools. Five synthetic adapter
+edge cases cover mod-prefixed keys, renamed tools, spaced/curly-apostrophe names,
+ordinary Master tools, ordering and frozen catalog provenance.
+
+QA-05's `--suite qa --filter 'QA-05/'` starts from a real random premade,
+waits for first-visit initialization, changes race/birthsign to different choices
+and selects Female. Builder, Home and Level Simulator must all show the same
+current identity and "Based on" source title. Twelve cases cover three worlds,
+1366/375 px and both themes, with three screenshots per case. Do not globally
+replace Math.random in Chrome: that can interfere with React's event handling.
+The case hides only `nextjs-portal`, whose dev toolbar overlaps the phone Home
+tab; production has no toolbar. Deterministic JSDOM hydrateRoot tests remain.
+
+QA-12's `--suite qa --filter 'QA-12/'` checks expanded premade cards in both
+By Playstyle and By Race, including ARCE's additional race builds, across three
+worlds × 1366/375 px × both themes (12 cases / 24 groups). Each card needs Plays
+like, Trade-off, full Major/Minor labels and explained specialization; the page
+must fit the viewport. Nine component/copy cases enforce unchanged build loading,
+collapse/expand, all profiles/modes and missing/unknown/frozen inputs. Screenshots
+capture both groups. Use the existing runner URL/axe/out arguments; this item's
+acceptance run is bounded to 60 seconds overall.
+
+QA-11's `--suite qa --filter 'QA-11/'` checks the visible faction count, hidden
+deprecated rows and relation names against the staged Factions catalog in all
+three worlds, 1366/375 px and both themes (12 cases). TR/TR + ARCE explicitly
+check Cyrodiil Fighters Guild, Imperial Archaeological Society and East Navy;
+Vanilla checks Mages Guild. Screenshots scroll each expected relation label into
+view (28 captures). The live badge uses uppercase CSS: read its textContent and
+wait for the expected count. Synthetic tests also cover malformed/frozen records,
+unknown IDs, unchanged relation values and retained saved memberships. Use the
+existing runner URL/axe/out arguments; bound the matrix to 60 seconds overall.
+
+QA-15's `--suite qa --filter 'QA-15/'` checks About in 1366/375 px and both themes
+(four cases), with a Colophon screenshot per case. Require LowGraph attribution,
+AGPL-3.0-or-later for the code, explicit game/mod-data and branding exclusions,
+AI-assistance disclosure and the repository link with noopener/noreferrer. The
+page must fit the viewport. `test/qa-copy-reproduction.test.js` enforces the copy
+and retained font credit; `test/license.test.js` includes the actual About view
+in its licence-file guard. Existing README/LICENSE wording stays untouched. Use
+the existing URL/axe/out arguments and a 60-second overall runner limit.

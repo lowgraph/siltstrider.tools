@@ -124,7 +124,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
           )}
         </td>
 
-        <td className="py-2.5 px-3 align-top text-xs text-fg-8">
+        <td data-label="Acquisition & Location" className="py-2.5 px-3 align-top text-xs text-fg-8">
           <span className="font-serif">{formatSource(item.source)}</span>
           {item.source?.easiestLevel > 30 && (
             <div className="mt-1">
@@ -153,7 +153,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
                   <span className="ml-2 font-mono text-fg-10">Score: {aPick.score}</span>
                 )}
               </td>
-              <td className="py-1.5 px-3">{formatSource(aItem.source)}</td>
+              <td data-label="Acquisition & Location" className="py-1.5 px-3">{formatSource(aItem.source)}</td>
             </tr>
           );
         })}
@@ -221,12 +221,12 @@ export function BestInSlotView({
             </h4>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse border border-line-12 bg-surface-3">
+              <table className="gear-table w-full text-left border-collapse border border-line-12 bg-surface-3" aria-label={`Endgame equipment: ${group.label}`}>
                 <thead>
                   <tr className="bg-surface-6 border-b border-line-11 text-xs font-serif text-accent">
-                    <th className="py-2 px-3 w-36">Slot</th>
-                    <th className="py-2 px-3">Recommended Item</th>
-                    <th className="py-2 px-3 w-64">Acquisition &amp; Location</th>
+                    <th scope="col" className="py-2 px-3 w-36">Slot</th>
+                    <th scope="col" className="py-2 px-3">Recommended Item</th>
+                    <th scope="col" className="py-2 px-3 w-64">Acquisition &amp; Location</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -1,11 +1,13 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const React=require('react');
 const {renderToString}=require('react-dom/server');const {hydrateRoot}=require('react-dom/client');const {JSDOM}=require('jsdom');
-const fs=require('node:fs'),path=require('node:path');const {todo,loader,save}=require('./helpers/qa-staged-data.cjs');
+const fs=require('node:fs'),path=require('node:path');const {todo,loader,save,staged}=require('./helpers/qa-staged-data.cjs');
 const ui=require('./helpers/qa-render.cjs');
 let api=()=>({});
+let unavailableCatalogs=false;
 const originalFetch=global.fetch;
 global.fetch=async (url,options={})=>{
   const pathname=new URL(String(url),'http://localhost').pathname;
+  if(unavailableCatalogs && /\/(tr|tr_arce)\//.test(pathname)) throw Error('QA catalog unavailable');
   if(pathname.startsWith('/game-data/')) return new Response(fs.readFileSync(path.join(__dirname,'../public',pathname)));
   return Response.json(await api(pathname,options));
 };
@@ -29,26 +31,44 @@ async function mount(child,{url='http://localhost/builder',storage={},sessionSto
 }
 const build={world:'tr',arce:true,name:'QA – Cathay-raht',race:'Khajiit (Cathay-raht)',gender:'Female',className:'Mage',sign:'The Tower',spec:'Magic',fav1:'Intelligence',fav2:'Willpower',maj:['Alchemy','Enchant','Destruction','Restoration','Mysticism'],min:['Athletics','Spear','Heavy Armor','Armorer','Long Blade']};
 
-test('QA-21 Vault load applies the stored build world like a shared link',todo('QA-21'),async()=>{
+test('QA-21 unavailable catalogs fail the Vault load without clearing the current character',staged(),async()=>{
+  let character,shell,vault;
+  api=pathname=>pathname==='/api/saves/qa-build'?{save:{id:'qa-build',name:build.name,save_type:'character_build',data:build}}:{};
+  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();vault=ui.useCloudVault({onApplyBuild:character.loadBuild});return null;}
+  const mounted=await mount(e(Probe),{signedIn:true});
+  try {
+    await mounted.wait(()=>shell.ready&&character.catalogs);
+    const before=character.build;
+    unavailableCatalogs=true;
+    let result;await React.act(async()=>{result=await vault.loadSaveIntoSession('qa-build');});
+    assert.equal(result.success,false);
+    assert.match(result.error,/QA catalog unavailable/);
+    assert.equal(shell.profile,'vanilla');
+    assert.deepEqual(character.build,before);
+  } finally {unavailableCatalogs=false;await mounted.close();}
+});
+
+test('QA-21 Vault load applies the stored build world like a shared link',staged(),async()=>{
   let character,shell,vault;api=pathname=>pathname==='/api/saves/qa-build'?{save:{id:'qa-build',name:build.name,save_type:'character_build',data:build}}:{};
-  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();vault=ui.useCloudVault({onApplyBuild:character.setBuild});return null;}
+  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();vault=ui.useCloudVault({onApplyBuild:character.loadBuild});return null;}
   const mounted=await mount(e(Probe),{signedIn:true});
   try {await mounted.wait(()=>shell.ready);await React.act(async()=>{const result=await vault.loadSaveIntoSession('qa-build');assert.equal(result.success,true);});assert.deepEqual(mounted.errors,[]);assert.deepEqual([shell.world,shell.arce],['tr',true],'Vault load activates the build profile');}
   finally {await mounted.close();}
 });
 
-test('QA-22 imported-save permalink describes the resolved save, including world and gender',todo('QA-22'),async()=>{
+test('QA-22 imported-save permalink describes the resolved save, including world and gender',staged(),async()=>{
   const raw=save();raw.identity.name='QA – Imported Cathay-raht';raw.identity.race='T_Els_Cathay-raht';raw.identity.gender='Female';raw.identity.birthsign='Hara';raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm','ARCE - All Races and Classes Enabled.esp');
   const l=await loader(),{adaptCharacterCatalogs}=await import('../lib/character-catalogs.mjs'),{buildFromSave}=await import('../lib/omwsave-import.mjs'),{decodeShareUrl}=await import('../lib/permalink-codec.mjs');
   const catalogs=adaptCharacterCatalogs(await l.loadFeature('tr_arce','character'),await l.loadCatalog('tr_arce','Spells'));
   const resolved=buildFromSave(raw,catalogs,{profile:'tr_arce'}).build;let vault;
+  api=pathname=>pathname==='/api/saves/qa-save'?{save:{id:'qa-save',save_type:'openmw_save',data:raw}}:{};
   function Probe(){vault=ui.useCloudVault();return null;}
   const mounted=await mount(e(Probe));
   try {let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save',save_type:'openmw_save',race:raw.identity.race,class_name:'mage',birthsign:'Hara',data:raw});});assert.equal(result.success,true);const decoded=decodeShareUrl(result.url);assert.deepEqual({world:decoded.world,arce:decoded.arce,race:decoded.build.race,gender:decoded.build.gender,className:decoded.build.className,maj:decoded.build.maj,min:decoded.build.min},{world:'tr',arce:true,race:resolved.race,gender:'Female',className:resolved.className,maj:resolved.maj,min:resolved.min});}
   finally {await mounted.close();}
 });
 
-test('QA-22 challenge permalink keeps the rolled world after the visitor changes world',todo('QA-22'),async()=>{
+test('QA-22 challenge permalink keeps the rolled world after the visitor changes world',async()=>{
   const {formatRunSeed,generateSeededRun}=await import('../lib/challenge-engine.mjs'),{decodeShareUrl}=await import('../lib/permalink-codec.mjs');
   const seed=formatRunSeed({code:'QA222',profile:'vanilla',allowedBands:{Easy:true},restrictionCount:1,objectiveCount:1});
   const run=generateSeededRun(seed,{world:'vanilla'}).run;let challenge;
@@ -58,13 +78,74 @@ test('QA-22 challenge permalink keeps the rolled world after the visitor changes
   finally {await mounted.close();}
 });
 
-test('QA-23 hydrated sign-in hand-off keeps browser world until an account chooses it',todo('QA-23'),async()=>{
+test('QA-22 sharing fetches the full save and leaves the active character and world unchanged',staged(),async()=>{
+  const raw=save();raw.identity.gender='Female';let character,shell,vault,fetches=0;
+  api=pathname=>{
+    if(pathname==='/api/saves/qa-save'){fetches++;return {save:{id:'qa-save',save_type:'openmw_save',data:raw}};}
+    return {};
+  };
+  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();vault=ui.useCloudVault();return null;}
+  const mounted=await mount(e(Probe),{signedIn:true,storage:{'mw-world':'tr','mw-arce':'1'}});
+  try {
+    await mounted.wait(()=>character.sheet&&shell.ready);const before=character.build;
+    let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save',save_type:'openmw_save',race:'wrong summary',data:{identity:{race:'wrong inline payload'}}});});
+    assert.equal(result.success,true);assert.equal(fetches,1);
+    const {decodeShareUrl}=await import('../lib/permalink-codec.mjs');const decoded=decodeShareUrl(result.url);
+    assert.equal(decoded.profile,'vanilla');assert.equal(decoded.build.race,'Breton');assert.equal(decoded.build.gender,'Female');
+    assert.deepEqual(character.build,before);assert.equal(character.activeSave,null);assert.equal(shell.profile,'tr_arce');assert.deepEqual(mounted.errors,[]);
+  } finally {await mounted.close();}
+});
+
+test('QA-22 unresolved and unsupported cloud records report failure without copying defaults',staged(),async()=>{
+  const raw=save();raw.identity.race='Unknown mod race';let vault,type='openmw_save';
+  api=pathname=>pathname==='/api/saves/qa-save'?{save:{save_type:type,data:raw}}:{};
+  function Probe(){vault=ui.useCloudVault();return null;}
+  const mounted=await mount(e(Probe),{signedIn:true});
+  try {
+    let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save'});});
+    assert.equal(result.success,false);assert.equal(mounted.copied(),'');assert.match(vault.errorMessage,/race could not be resolved/);assert.equal(vault.actionBusy,false);
+    type='challenge_run';await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save'});});
+    assert.equal(result.success,false);assert.equal(mounted.copied(),'');assert.match(vault.errorMessage,/cannot be shared as a character build/);
+  } finally {await mounted.close();}
+});
+
+test('QA-22 sharing keeps existing character-build fields and world',async()=>{
+  let vault;api=pathname=>pathname==='/api/saves/qa-build'?{save:{save_type:'character_build',data:{build}}}:{};
+  function Probe(){vault=ui.useCloudVault();return null;}
+  const mounted=await mount(e(Probe),{signedIn:true});
+  try {
+    let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-build',save_type:'character_build'});});
+    const {decodeShareUrl}=await import('../lib/permalink-codec.mjs');const decoded=decodeShareUrl(result.url);
+    assert.equal(result.success,true);assert.equal(decoded.profile,'tr_arce');assert.equal(decoded.build.race,build.race);assert.deepEqual(decoded.build.maj,build.maj);
+  } finally {await mounted.close();}
+});
+
+test('QA-23 hydrated sign-in hand-off keeps browser world until an account chooses it',async()=>{
   const {defaultAccountSettings}=await import('../lib/account-settings.mjs'),{HANDOFF_KEY}=await import('../lib/sign-in-handoff.mjs');
   let finishSettings,shell,character;api=pathname=>pathname==='/api/settings'?new Promise(resolve=>{finishSettings=resolve;}):{username:'QA_Reproduction',iconId:0};
   function Probe(){shell=ui.useShell();character=ui.useActiveCharacter();return null;}
   const mounted=await mount(e(Probe),{account:true,signedIn:true,storage:{'mw-world':'tr','mw-arce':'1'},sessionStorage:{[HANDOFF_KEY]:JSON.stringify({at:Date.now(),build})}});
   try {await mounted.wait(()=>finishSettings&&shell.ready);assert.equal(shell.profile,'tr_arce','browser world before the account response');assert.equal(character.build.name,build.name,'actual sign-in hand-off restored');await React.act(async()=>{finishSettings({settings:defaultAccountSettings(),revision:0});});assert.deepEqual(mounted.errors,[],'no hydration mismatch');assert.equal(shell.profile,'tr_arce','an untouched account must not override the browser');}
   finally {await mounted.close();}
+});
+
+test('QA-23 restored ARCE save keeps its identity when untouched account settings arrive late',staged(),async()=>{
+  const {defaultAccountSettings}=await import('../lib/account-settings.mjs');
+  const {rememberSave}=await import('../lib/active-save-store.mjs');
+  const raw=save();raw.identity.name='QA – Sign-in save';raw.identity.race='T_Els_Cathay-raht';raw.identity.gender='Female';
+  raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm','ARCE - All Races and Classes Enabled.esp');
+  const storage={'mw-world':'tr','mw-arce':'1'};await rememberSave(raw,{setItem:(key,value)=>storage[key]=value});
+  let finishSettings,character,shell;
+  api=pathname=>pathname==='/api/settings'?new Promise(resolve=>{finishSettings=resolve;}):{username:'QA_Reproduction',iconId:0};
+  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();return null;}
+  const mounted=await mount(e(Probe),{account:true,signedIn:true,storage});
+  try {
+    await mounted.wait(()=>finishSettings&&character.activeSave&&character.sheet);
+    await React.act(async()=>finishSettings({settings:defaultAccountSettings(),revision:0}));
+    assert.equal(shell.profile,'tr_arce');assert.equal(character.build.race,build.race);
+    assert.equal(character.build.gender,'Female');assert.equal(character.build.name,raw.identity.name);
+    assert.ok(character.sheet);assert.deepEqual(mounted.errors,[]);
+  } finally {await mounted.close();}
 });
 
 test('QA-24 sign-out preserves an unsaved character before Clerk navigation',async()=>{
@@ -133,7 +214,7 @@ test('QA-24 a failed Clerk sign-out removes the marker and keeps the current cha
   } finally { await mounted.close(); }
 });
 
-test('QA-24 loaded saves skip the unsaved sign-out marker and remain restorable', async () => {
+test('QA-24 loaded saves skip the unsaved sign-out marker and remain restorable',staged(), async () => {
   const { SIGN_OUT_EVENT, SIGN_OUT_HANDOFF_KEY } = await import('../lib/sign-in-handoff.mjs');
   const { rememberSave } = await import('../lib/active-save-store.mjs');
   let character;
@@ -157,12 +238,63 @@ test('QA-24 loaded saves skip the unsaved sign-out marker and remain restorable'
   } finally { await returned.close(); }
 });
 
-test('QA-25 loaded save cannot override an explicit Travel starting point',todo('QA-25'),async()=>{
+test('QA-25 loaded save cannot override an explicit Travel starting point',staged(),async()=>{
   const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};const raw=save();raw.identity.name='QA – Route Traveller';await rememberSave(raw,{setItem:(key,value)=>storage[key]=value});
   api=()=>({});let character;function Probe(){character=ui.useActiveCharacter();return e(ui.Travel);}
   const mounted=await mount(e(Probe),{url:'http://localhost/travel?from=Balmora&to=Ald-ruhn&plan=time',storage});
-  try {await mounted.wait(()=>character.activeSave&&document.querySelector('#travel-origin')?.value&&document.querySelector('#travel-network-status')?.textContent.includes('stops'));await React.act(async()=>{await new Promise(resolve=>setTimeout(resolve,100));});assert.equal(new URL(window.location.href).searchParams.get('plan'),'time');assert.equal(document.querySelector('#travel-origin').value,'Balmora','explicit link wins after asynchronous save restoration');}
+  try {await mounted.wait(()=>character.activeSave&&document.querySelector('#travel-origin')?.value&&document.querySelector('#travel-network-status')?.textContent.includes('stops'));await React.act(async()=>{await new Promise(resolve=>setTimeout(resolve,100));});assert.equal(new URL(window.location.href).searchParams.get('plan'),'time');assert.equal(document.querySelector('#travel-origin').value,'Balmora','explicit link wins after asynchronous save restoration');
+    const next=save();next.identity.cell='Vivec';next.identity.name='QA – Later save';await React.act(async()=>character.loadSave(next));
+    await mounted.wait(()=>document.querySelector('#travel-origin').value==='Vivec');assert.deepEqual(mounted.errors,[]);}
   finally {await mounted.close();}
 });
 
+test('QA-21 legacy builds retain the current world and valid equipment; bad skills use defaults',staged(), async()=>{
+  let character,shell;
+  api=()=>({});
+  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();return null;}
+  const mounted=await mount(e(Probe),{storage:{'mw-world':'tr','mw-arce':'1'}});
+  try {
+    await mounted.wait(()=>shell.profile==='tr_arce'&&character.catalogs?.profile==='tr_arce');
+    const legacy={...build,maj:'invalid',min:[],loadouts:[{id:'early',name:'QA – Equipment',items:[]}]};
+    delete legacy.world;delete legacy.arce;
+    await React.act(async()=>character.loadBuild(legacy));
+    assert.equal(shell.profile,'tr_arce');
+    assert.equal(character.build.race,build.race);
+    assert.equal(character.build.maj.length,5);
+    assert.equal(character.build.min.length,5);
+    assert.deepEqual(character.build.loadouts,legacy.loadouts);
+    assert.ok(character.sheet);
+    assert.deepEqual(mounted.errors,[]);
+  } finally {await mounted.close();}
+});
+
+test('QA-21 invalid world, unreadable build and missing race leave the loaded save intact',staged(),async()=>{
+  let character,shell;
+  api=()=>({});
+  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();return null;}
+  const mounted=await mount(e(Probe));
+  try {
+    await mounted.wait(()=>shell.ready&&character.catalogs);
+    await React.act(async()=>character.loadSave(save()));
+    const before=character.build,active=character.activeSave,profile=shell.profile;
+    for(const input of [null,{...build,world:'other'},{...build,arce:'false'},{...build,race:'Missing QA race'}]) {
+      await React.act(async()=>assert.rejects(()=>character.loadBuild(input)));
+      assert.deepEqual(character.build,before);
+      assert.equal(character.activeSave,active);
+      assert.equal(shell.profile,profile);
+    }
+  } finally {await mounted.close();}
+});
+
 test.after(()=>{global.fetch=originalFetch;});
+
+for(const query of ['', '?to=Ald-ruhn', '?plan=real']) test(`QA-25 save origin remains the default without explicit from: ${query}`,staged(),async()=>{
+  const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};const raw=save();raw.identity.cell='Balmora';
+  await rememberSave(raw,{setItem:(k,v)=>storage[k]=v});api=()=>({});let character;
+  function Probe(){character=ui.useActiveCharacter();return e(ui.Travel);}
+  const mounted=await mount(e(Probe),{url:'http://localhost/travel'+query,storage});
+  try {await mounted.wait(()=>character.activeSave&&document.querySelector('#travel-origin')?.value==='Balmora');
+    assert.equal(document.querySelector('#travel-origin').value,'Balmora');assert.deepEqual(mounted.errors,[]);
+    if(query.includes('plan'))assert.equal(new URL(window.location.href).searchParams.get('plan'),'real');
+  }finally{await mounted.close();}
+});

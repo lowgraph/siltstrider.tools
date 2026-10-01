@@ -47,7 +47,7 @@ export const EquipmentLedger = memo(function EquipmentLedger({
   onUnequipSlot,
 }) {
   const [mobileFilter, setMobileFilter] = useState("all"); // "all" | "defense" | "attire"
-  const isBeast = isBeastRace(character.race);
+  const isBeast = typeof character.beast === 'boolean' ? character.beast : isBeastRace(character.race);
   const totalAR = computeTotalArmorRating(loadout, skills);
   const strength = attributes?.Strength?.v ?? attributes?.Strength ?? 40;
   const enc = computeEncumbrance(loadout, strength);

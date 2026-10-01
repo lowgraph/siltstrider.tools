@@ -1,5 +1,200 @@
 # Coordination
 
+## Launch QA integration — 1 October
+
+Owner-authorized merge of launch/character-preservation (c065581) into main
+(4f9c4bb); no conflicts, dataset/schema changes, migration or deployment.
+Retain character/world precedence, exact link choices, engine-source calculation
+rules, beast eligibility, display-only faction filtering and hydration-safe UI.
+All implementation QA items are now on main; freeze acceptance remains separate.
+Verification: LAUNCH_VERIFICATION §46. First command: `npm test`, then the local
+Chrome and synthetic Vault runners in BROWSER_TESTS against the merged checkout.
+
+
+## Faction display labels (QA-11) — 1 October
+
+Filter <Deprecated> records from the Journal's roster, selection and displayed
+counts; keep the full catalog for case-insensitive published relation-name lookup.
+Unknown internal IDs display Unknown faction; ordinary fallback names still work.
+Keep saved memberships, relation adjustments and bundle records unchanged. No
+exported schema, dataset or rebuild. First command: `npm test`, then Chrome
+QA-11 in BROWSER_TESTS (three worlds, both themes, desktop/phone). Verification:
+§44. Next authorized work: QA-15; push after each completed item.
+
+
+## Premade explanations (QA-12) — 1 October
+
+Each premade card has plays-like/trade-off copy, full Major/Minor skill labels
+and a specialization explanation. Keep choices and save/link shapes unchanged.
+Playstyle groups use category copy; race/ARCE groups use the first Major skill
+for presentation only. Null/unknown inputs use generic copy; frozen inputs stay
+untouched. No exported dataset/schema/rebuild. First command: `npm test`, then
+Chrome QA-12 in BROWSER_TESTS. Verification: §43. Next: QA-11, then QA-15; push
+after each authorized item.
+
+## Morrowind Game Theme (DESIGN) — 1 October
+
+The Morrowind UI now closely resembles The Elder Scrolls III: Morrowind game menus:
+- Black windows (`#000000`), off-black page ground (`#0e0d0b`), and game font colors (`#caa560` normal, `#dfc99f` header/hover, `#f3eddd` pressed, `#b3a887` secondary).
+- Procedural noise frames in `public/textures/`: `mw-window.svg` (window border), `mw-button-grain.svg` (button/input bevel), and `mw-panel-grain.svg` (engraved groove line).
+- Title bars (`.mw-caption`) on character cards and tool workstations with authentic groove lines.
+- Game stats window layout for the character card on Home (full attribute names, level/race/class/sign grid, centered bar values) with dual-mode DOM switching that preserves Modern UI (Ashfall) identically.
+- Buttons meet 44px min-height in Morrowind UI.
+- All Morrowind UI override rules strictly isolated in `app/theme-morrowind.css` under `:root[data-theme="morrowind"]` and `:root:not([data-theme="morrowind"])`. Modern UI (`data-theme="ashfall"`) is pixel-identical outside the theme toggle preview.
+- All 1007 tests pass (`npm test`). Leftover-brown audit across all 15 routes shows 0 violations.
+- First command: `npm test` in `A:/Claude/mt-game-theme`.
+
+## Obtainable apparatus (QA-06) — 1 October
+
+Alchemy excludes apparatus_sm_ keys at the start or after a mod prefix, and
+Secretmaster/Secret Master names (straight/curly apostrophes). Keep ordinary
+Master/Grandmaster tools, effectiveness ordering, and immutable catalog/source
+records. This is site filtering only: no exported data/schema change or rebuild.
+First command: `npm test`, then Chrome QA-06 in BROWSER_TESTS. Verification: §41.
+Next authorized work: regression-check the completed QA-05.
+
+## Travel search and link origin (QA-07/25) — 1 October
+
+Normalize apostrophes/dashes only for search comparisons, never route IDs or
+catalog labels. City searches stay grouped; named rooms remain searchable.
+Uncommitted picker edits hide the old dossier and map; Escape/blur cancels and
+selection commits. Preserve the initial explicit link origin through the first
+async save restoration; without from, the save wins, and a later imported save
+can start a new journey. No dataset/schema change. First command: `npm test`,
+then Chrome QA-07 and QA-25 filters in BROWSER_TESTS. Verification: §40.
+Next authorized work: QA-06, then the completed QA-05 regression recheck.
+
+## Teleport-only stop aliases (QA-16) — 1 October
+
+When Travel node metadata is absent, buildTransitStops uses a published Places
+name (or the interior cell name) and its "Town, room" prefix for a boundary alias.
+Explicit Travel metadata wins; keep the full room label and exact stop ID.
+Exterior coordinates remain distinct; aliases expand only origin/destination,
+never graph edges or free intermediate transfers. Apply usableTeleport's quest
+and held-item gates before building the network. No exported schema/rebuild.
+First command: `npm test`, then Chrome `--suite qa --filter 'QA-16'` in
+BROWSER_TESTS. Verification: LAUNCH_VERIFICATION §39. Next: QA-07/25, then QA-06.
+
+## Configure help placement (QA-09) — 1 October
+
+All five Configurator InfoTips use a body portal with fixed coordinates measured
+after opening. Clamp to visualViewport and visible header/tab-bar bounds; flip
+above when below is too short, and scroll long text inside the available space.
+Reposition on resize, page scroll and font load; keep internal scrolling intact.
+Retain stable hydration IDs, trigger/control linkage, tap-toggle, outside/focus
+dismissal and Escape focus restoration. No exported schema or data change.
+First command: `npm test`, then BROWSER_TESTS' QA-09 Chrome and `--touch` runs
+and enforced report wrapper. Verification: LAUNCH_VERIFICATION §38.
+Next authorized work: QA-16, QA-07/25, QA-06, then recheck the completed QA-05.
+
+## Phone gear tables (QA-08) — 1 October
+
+Claimed 20:51 UTC on `launch/character-preservation`, after QA-10 was pushed.
+Early/late recommendations and expanded runner-ups stack slot, item and source
+at widths up to 640 px. Keep `.gear-table`, the source cell's `data-label`, native
+table headings/column scopes and accessible names; phone CSS must override
+mid-word wrapping and narrow first cells. Desktop keeps its three columns.
+No ranking, dataset, exported schema, migration or production change. First
+command: `npm test`, then Chrome `--suite qa --filter 'QA-08'` and the enforced
+report wrapper in BROWSER_TESTS. Verification: LAUNCH_VERIFICATION §37.
+QA-09 popovers are still open; next priority is QA-16 after owner go-ahead.
+
+## Beast equipment eligibility (QA-10) — 1 October
+
+Claimed 20:28 UTC on `launch/character-preservation`. BestInSlot filters every
+final primary/runner-up after named, dynamic, fallback and weapon-preference
+paths. Beast picks need explicit `beastWearable: true`; exclude footwear and
+closed-head Armor body parts. Preserve open helmets and catalog order, without
+mutating bundle records. Races' boolean `beast` overrides name inference (ARCE
+Suthay is not a beast). Carry it through recommendations, equip validation,
+inspector and item picker; callers without it retain legacy inference.
+No exported schema, dataset, migration or production change. First command:
+`npm test`, then Chrome `--suite qa --filter 'QA-10/'` in BROWSER_TESTS.
+Verification: LAUNCH_VERIFICATION §36. Next target: QA-16, after owner go-ahead.
+
+## Test portability — 1 October
+
+QA catalog tests use `staged()` in `test/helpers/qa-staged-data.cjs`: skip only
+when `public/game-data/current.json` is absent. Preserve TODO metadata; a
+present but malformed/incomplete bundle must fail through the normal loader.
+Apply the same guard to catalog-dependent character, share, Health and hydration
+cases; pure/synthetic tests still run. The BestInSlot fallback fixture includes
+weapon type, boots warnings and runner-ups. No runtime or dataset changes.
+First command: `npm test`; stage a bundle to run the catalog checks too.
+Verification: LAUNCH_VERIFICATION §35. Next target: QA-10, after owner go-ahead.
+
+## Character identity labels (QA-05) — 1 October
+
+Rechecked after QA-16/07/25/06: all three views retain edited identity in three
+worlds, both themes and phone/desktop. Chrome must use native randomness; a
+global constant Math.random override interferes with React event handling.
+Exclude only Next dev's toolbar (nextjs-portal) when testing the phone Home tab;
+production has no toolbar. Deterministic hydrateRoot tests remain. Verification:
+§42; first command remains `npm test`, then the QA-05 browser filter.
+
+Claimed 19:50 UTC on `launch/character-preservation`. Computed sheets retain
+raceName/signName, gender, class and class choices for normalization; catalog
+race/sign objects are facts, not the selected display labels (ARCE especially).
+Builder, Home and Simulator use `characterName`. New premades carry optional
+`premadeSource`; validate it against the known pool and retain it in build links,
+sanitizing and snapshots. An edited premade title reads "Based on …"; custom
+names and legacy names without that marker remain names. Keep first hydration
+fixed; random draws happen in effects. No exported dataset, migration or
+production change. First command: `npm test` in `A:/Claude/mt-calc-4-main-merge`,
+then Chrome `--suite qa --filter 'QA-05/'` as in BROWSER_TESTS. Verification: §34.
+
+## Level Health preservation (QA-03/04) — 1 October
+
+Claimed 19:34 UTC on `launch/character-preservation`. OpenMW 0.51.0
+`NpcStats::levelUp` keeps fractional Endurance gains; `updateHealth` sets the
+creation base in `MechanicsManager::buildPlayer`, not on later level-ups.
+Keep existing Health and attributes when normalizing a sheet or normalized
+state with catalogs. Bitter Cup applies once and never recalculates creation
+Health; changed Endurance affects future gains. The chart uses that same state;
+Endurance 30 with +5 per level reaches 100 at level 15. Keep the marker label
+inside the phone chart. No dataset, extraction, migration or production change.
+First command: `npm test` in `A:/Claude/mt-calc-4-main-merge`, then Chrome
+`--suite qa --filter '/level-health/'` as in BROWSER_TESTS. Verification: §33.
+
+## Enchanting running costs (QA-01/02) — 1 October
+
+Claimed 19:11 UTC on `launch/character-preservation`. Follow OpenMW 0.51.0
+`Enchanting::getEffectCosts/getEnchantPoints/getEnchantChance/getEnchantPrice`.
+Retain each cumulative float cost: clamp to 1 before Target ×1.5; Constant uses
+the profile's duration multiplier. Capacity adds each cost's floor, chance adds
+the precise costs, and base price truncates only the final cost × value multiplier.
+Chance uses Enchant + 0.2 Intelligence + 0.1 Luck, the profile's chance penalty,
+full fatigue for this UI and the Constant chance multiplier; truncate, then clamp
+to 0–100. Never feed capacity points into chance or price. Consume the staged
+GameSettings; no bundle, extraction, migration or production change. Two 5/5
+Constant effects need 75 capacity points and 50,050 base gold; the 5/5, 5-second
+Target example needs 1 capacity point and 1,912 base gold (70% at 50/40/40 stats).
+First command: `npm test` in `A:/Claude/mt-calc-4-main-merge`, then Chrome
+`--suite qa --filter '/enchanting/'` as in BROWSER_TESTS. Verification: §32.
+
+## Character world preservation (QA-21/22/23) — 1 October
+
+`launch/character-preservation` was taken over at 18:14 UTC and includes main's
+QA-24 sign-out fix. Vault modal/workstation loads use `loadBuild`, await the
+build's profile catalogs, and retain the current character/save if validation
+or fetching fails. Legacy builds without a world keep the current world.
+Account settings version 2 adds `worldChosen`; only the account control chooses
+a Preferred world. Header/save/build loads change this session, not the account
+preference. Read version 1 as unchosen without writing it; preserve other settings.
+Keep shared-link/current-edit priority, guest/account isolation and fixed first
+hydration render. Existing version 1 preferences need an explicit choice again;
+old code rejects version 2 documents, so account rollback needs a compatible reader.
+QA-22 sharing fetches the full stored save, resolves its own profile catalogs and
+refuses unresolved or invalid class choices; it never applies the save or borrows
+the active character. Build links carry creation choices, not saved progression.
+Challenge links use the run's profile (legacy seeds supply it); seedless links
+capture their opening world before cleaning the URL. Preserve run profile in
+storage and sanitizing. No header-world substitution when copying an existing run.
+No bundle, extraction, D1 migration or deployment. First command: `npm test` in
+`A:/Claude/mt-calc-4-main-merge`, then `--character-preservation` and
+`--signout-preservation` in `docs/BROWSER_TESTS.md`, then QA-22's Vault and ordinary
+Chrome cases. Verification: LAUNCH_VERIFICATION §§30–31.
+
 ## Character through sign-out (QA-24) — 1 October
 
 QA-24 (`aebd6c0`, branch tip `bce1401`) is integrated into main from `0c55696`
@@ -219,6 +414,13 @@ Asking the pipeline, not yet a contract change: modpack and mod-version settings
 published release registry (stable modpack IDs, immutable release IDs mapped to bundles),
 and the Gear Advisor's quest-reward and difficult-encounter settings need gear-row fields
 that tell those picks apart. Until then those settings stay unavailable.
+
+QA-15 (1 October): About credits LowGraph, links the code repository and names
+AGPL-3.0-or-later for the code only. Keep the game/mod-data and branding exclusions,
+Pelagiad's separate OFL credit and AI-assistance disclosure. No exported schema,
+dataset or rebuild. Verification: LAUNCH_VERIFICATION §45; first command remains
+`npm test`, then Chrome QA-15 in BROWSER_TESTS. All three authorized items are
+complete on the site branch; freeze acceptance remains a separate step.
 
 First verification command: `npm test` in the site repository.
 

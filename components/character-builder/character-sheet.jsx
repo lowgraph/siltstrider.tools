@@ -5,6 +5,7 @@ import SkillDisplayGrid from "./skill-display-grid";
 import RaceMagic from "./race-magic";
 import { startingSpells } from "../../lib/character-math.mjs";
 import { useShell } from "../shell-context";
+import { characterName } from "../../lib/character-name.mjs";
 
 export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment = null, onOpenPaperdoll = null }) {
   const shell = useShell();
@@ -46,9 +47,9 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
     >
       {/* Header Summary */}
       <div className="border-b border-line-11 pb-3">
-        <h3 className="font-serif text-xl font-bold text-fg-2 tracking-wide flex items-center justify-between">
-          <span>{build.name || build.className || "Custom Build"}</span>
-          <span className="text-sm font-mono font-medium text-accent flex items-center gap-2">
+        <h3 className="font-serif text-xl font-bold text-fg-2 tracking-wide flex flex-wrap gap-2 items-center justify-between">
+          <span>{characterName(build)}</span>
+          <span className="text-sm font-mono font-medium text-accent flex flex-wrap items-center gap-2">
             <span>{build.gender} {build.race} · {build.sign}</span>
             {sheet.bitterCup && (
               <span className="text-xs px-1.5 py-0.5 bg-surface-11 border border-line-8 text-accent font-serif font-bold">

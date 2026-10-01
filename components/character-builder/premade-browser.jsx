@@ -1,6 +1,7 @@
 "use client";
 import { useState, useMemo } from "react";
 import { BUILDS, RACE_BUILDS, ARCE_BUILDS } from "../../lib/premade-data.mjs";
+import { premadeCopy, SPECIALIZATION_COPY } from "../../lib/premade-copy.mjs";
 
 // `onBuildOwn`: given on a newcomer's first visit (BLD-3), which opens here, to say why and
 // offer the Custom Class Builder instead.
@@ -145,6 +146,10 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
       </div>
 
       {/* Collapsible Build Categories */}
+      <p className="text-xs text-fg-7 leading-relaxed">
+        Each card explains what it plays like and its trade-off. Major skills are your strongest starting class skills;
+        Minor skills are supporting class skills. Both count toward leveling up.
+      </p>
       <div className="space-y-3 max-h-[620px] overflow-y-auto pr-1.5">
         {categories.map((cat) => {
           const inCat = filteredBuilds.filter((b) => (b.cat || "Other") === cat);
@@ -181,7 +186,7 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
                   {inCat.map((b) => (
                     <div
                       key={b.name}
-                      className="p-4 bg-surface-3 border border-line-11 hover:border-accent rounded transition-all cursor-pointer group flex flex-col justify-between"
+                      className="premade-build-card p-4 bg-surface-3 border border-line-11 hover:border-accent rounded transition-all cursor-pointer group flex flex-col justify-between"
                       onClick={() => onSelectBuild(b)}
                     >
                       <div>
@@ -193,23 +198,25 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
                             {b.gender} {b.race}
                           </span>
                         </div>
+                        <p className="premade-plays text-xs text-fg-7 mt-2 leading-relaxed"><strong className="text-fg-2">Plays like:</strong> {premadeCopy(b).plays}</p>
+                        <p className="premade-tradeoff text-xs text-fg-9 mt-1 leading-relaxed"><strong className="text-fg-2">Trade-off:</strong> {premadeCopy(b).tradeoff}</p>
                         <div className="text-xs text-fg-8 mt-1.5">
                           Sign: <span className="text-fg-2 font-medium">{b.sign}</span> · Favored:{" "}
                           <span className="text-fg-2 font-medium">{b.fav}</span>
                         </div>
-                        <div className="text-xs text-fg-4 mt-1 line-clamp-1">
-                          <strong className="text-accent">Maj:</strong> {b.maj}
+                        <div className="text-xs text-fg-4 mt-1">
+                          <strong className="text-accent">Major skills:</strong> {b.maj}
                         </div>
-                        <div className="text-xs text-fg-14 mt-0.5 line-clamp-1">
-                          <strong className="text-fg-9">Min:</strong> {b.min}
+                        <div className="text-xs text-fg-14 mt-0.5">
+                          <strong className="text-fg-9">Minor skills:</strong> {b.min}
                         </div>
                       </div>
 
                       <div className="mt-3 pt-2.5 border-t border-line-12 flex items-center justify-between">
-                        <span className="text-xs text-fg-14 italic">{b.spec} Specialization</span>
+                        <span className="text-xs text-fg-9 mr-2">Specialization: {b.spec}. {SPECIALIZATION_COPY[b.spec]}</span>
                         <button
                           type="button"
-                          className="mw-btn px-3 py-1 text-xs font-serif font-bold"
+                          className="mw-btn shrink-0 whitespace-nowrap px-3 py-1 text-xs font-serif font-bold"
                           onClick={(e) => {
                             e.stopPropagation();
                             onSelectBuild(b);

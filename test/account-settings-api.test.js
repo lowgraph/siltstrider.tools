@@ -50,7 +50,7 @@ test('stale writes and simultaneous first creation cannot overwrite another docu
 test('invalid documents, revisions, caller IDs and unsupported data choices are rejected', async t => {
   const { call, defaults, db } = await fixture(t);
   for (const revision of [undefined, null, -1, 1.5, '0', true, 2 ** 54]) assert.equal((await call('PUT', { settings: defaults(), revision })).status, 400);
-  for (const settings of [null, [], { version: 2 }, { version: 1, unknown: 1 }, { ...defaults(), modpackId: 'pack' }, { ...defaults(), world: 'tr', modVersionId: 'old-tr' }, { version: 1, toolDefaults: { gear: { questRewards: false } } }]) assert.equal((await call('PUT', { settings, revision: 0 })).status, 400);
+  for (const settings of [null, [], { version: 3 }, { version: 1, unknown: 1 }, { ...defaults(), modpackId: 'pack' }, { ...defaults(), world: 'tr', modVersionId: 'old-tr' }, { version: 1, toolDefaults: { gear: { questRewards: false } } }]) assert.equal((await call('PUT', { settings, revision: 0 })).status, 400);
   assert.equal((await call('PUT', '{')).status, 400);
   assert.equal((await call('PUT', { settings: defaults(), revision: 0, clerk_user_id: 'victim' })).status, 400);
   assert.equal((await call('GET', undefined, '')).status, 401);
@@ -68,7 +68,7 @@ test('request limits count UTF-8 bytes even without content-length', async t => 
 
 test('future stored contracts and unavailable datasets report an error without erasing rows', async t => {
   const { call, db } = await fixture(t);
-  for (const document of ['{"version":2,"future":true}', '{"version":1,"modpackId":"future-pack"}', '{"version":1,"world":"tr","modVersionId":"old-release"}', '{"version":1,"toolDefaults":{"gear":{"questRewards":true}}}']) {
+  for (const document of ['{"version":3,"future":true}', '{"version":1,"modpackId":"future-pack"}', '{"version":1,"world":"tr","modVersionId":"old-release"}', '{"version":1,"toolDefaults":{"gear":{"questRewards":true}}}']) {
     db.prepare('INSERT OR REPLACE INTO account_settings VALUES (?, ?, 1, ?, ?)').run('one', document, 'now', 'now');
     const response = await call('GET');
     assert.equal(response.status, 409);
@@ -119,4 +119,16 @@ test('the actual Worker verifies offline session tokens and isolates settings ow
   assert.equal(failed.status, 500);
   assert.equal(logs[0].route, '/api/settings');
   assert.doesNotMatch(JSON.stringify([logs, await failed.json()]), /private-|SQL contains/);
+});
+
+
+test('QA-23 stored version 1 settings read without writes and upgrade on an explicit choice',async t=>{
+  const {call,db}=await fixture(t);
+  const legacy=JSON.stringify({version:1,world:'tr',theme:'morrowind'});
+  db.prepare('INSERT INTO account_settings VALUES (?, ?, 7, ?, ?)').run('one',legacy,'created','before');
+  const read=await call('GET');assert.equal(read.status,200);
+  const body=await read.json();assert.equal(body.settings.version,2);assert.equal(body.settings.worldChosen,false);assert.equal(body.revision,7);
+  assert.equal(db.prepare('SELECT settings_json FROM account_settings WHERE clerk_user_id=?').get('one').settings_json,legacy);
+  const write=await call('PUT',{revision:7,settings:{...body.settings,world:'tr_arce',worldChosen:true}});assert.equal(write.status,200);
+  const after=await (await call('GET')).json();assert.equal(after.revision,8);assert.equal(after.settings.worldChosen,true);assert.equal(after.settings.world,'tr_arce');
 });

@@ -11,8 +11,8 @@ import {
   ENCHANT_BASE_ITEMS,
   DEFAULT_ENCHANT_ITEM,
   DEFAULT_SOUL_GEM,
-  calcEffectCost,
-  calcEnchantmentTotalPoints,
+  enchantingSettings,
+  calcEnchantmentCosts,
   calcSelfEnchantChance,
   calcEnchantGoldCost,
   calcBarterBuyPrice,
@@ -152,17 +152,17 @@ export default function EnchantingWorkstation() {
     });
   }, [effectsList, availableEffects, gameData.data, enchantType]);
 
-  const totalPoints = useMemo(() => {
-    return calcEnchantmentTotalPoints(calculatedEffects, enchantType);
-  }, [calculatedEffects, enchantType]);
+  const mathSettings = useMemo(() => enchantingSettings(gameData.data?.catalogs?.GameSettings), [gameData.data]);
+  const costs = useMemo(() => calcEnchantmentCosts(calculatedEffects, enchantType, mathSettings), [calculatedEffects, enchantType, mathSettings]);
+  const totalPoints = costs.capacityPoints;
 
   const selfChance = useMemo(() => {
-    return calcSelfEnchantChance(skill, intelligence, luck, totalPoints);
-  }, [skill, intelligence, luck, totalPoints]);
+    return calcSelfEnchantChance(skill, intelligence, luck, costs.precisePoints, { type: enchantType, settings: mathSettings });
+  }, [skill, intelligence, luck, costs.precisePoints, enchantType, mathSettings]);
 
   const baseGoldCost = useMemo(() => {
-    return calcEnchantGoldCost(totalPoints, enchantType);
-  }, [totalPoints, enchantType]);
+    return calcEnchantGoldCost(costs.finalEffectCost, enchantType, mathSettings);
+  }, [costs.finalEffectCost, enchantType, mathSettings]);
 
   const enchantersList = useMemo(() => {
     let list = null;
@@ -632,9 +632,10 @@ export default function EnchantingWorkstation() {
               <div>
                 <p>Stronger, longer-lasting and wider effects use more enchantment points. The total must fit within the item&apos;s capacity. Target range costs 1.5 times as much as Self or Touch.</p>
                 <p>Constant Effect needs a soul worth at least 400 points, such as a Golden Saint or Ascended Sleeper held in a Grand Soul Gem or Azura&apos;s Star.</p>
-                <p>Points: <span className="font-mono">((Min + Max) × Duration + Area) × BaseCost × 0.025</span>. Min and Max are effect strength, Duration is seconds, Area is feet, and BaseCost is the effect&apos;s base cost. Constant Effect uses 100 for Duration.</p>
+                <p>Each effect adds <span className="font-mono">((Min + Max) × Duration + Area) × BaseCost × {mathSettings.fEffectCostMult * 0.05}</span> to a running cost. Min, Max and Area count as at least 1; the running cost is at least 1, then Target multiplies it by 1.5. Constant Effect uses {mathSettings.fEnchantmentConstantDurationMult} for Duration. Capacity adds each running cost rounded down, so earlier effects count again as later effects are added.</p>
                 <p>Your Enchant skill, Intelligence, Luck and fatigue affect the chance of making the item yourself. More points make it harder. This estimate assumes full fatigue.</p>
-                <p>Success chance: <span className="font-mono">(0.75×Enchant + 0.25×Int + 0.1×Luck − 2.5×Points) × Fatigue</span>. Int means Intelligence; Fatigue is the multiplier for how rested you are.</p>
+                <p>Success chance: <span className="font-mono">(Enchant + 0.2×Int + 0.1×Luck − {mathSettings.fEnchantmentChanceMult}×Precise Points) × Fatigue</span>, with an additional ×{mathSettings.fEnchantmentConstantChanceMult} for Constant Effect, truncated and limited to 0–100%. Precise Points adds the running costs before rounding; Int means Intelligence. Full fatigue uses ×{mathSettings.fFatigueBase}.</p>
+                <p>Base Gold Value uses only the final running cost ×{mathSettings.fEnchantmentValueMult}, truncated before barter. Constant Effect has no extra price multiplier. These calculations follow the OpenMW 0.51 source for a single item.</p>
                 <p>A hired enchanter&apos;s price depends on their Mercantile and disposition toward you, as well as your Mercantile, Personality and Luck.</p>
               </div>
             </details>

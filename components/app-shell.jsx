@@ -61,7 +61,7 @@ const VIEW_BODY_CLASSES = [
 
 function AppShellMain({ initialView = 'home' }) {
   const shell = useShell();
-  const { build, setBuild, loadSave, activeSave } = useActiveCharacter();
+  const { build, loadBuild, loadSave, activeSave } = useActiveCharacter();
   const activeView = shell?.view && KNOWN_VIEWS.includes(shell.view) ? shell.view : initialView;
 
   // Synchronize body class with the active view for shared page styles
@@ -190,7 +190,7 @@ function AppShellMain({ initialView = 'home' }) {
       <SiteFooter />
 
       {/* Global Cloud Vault modal */}
-      <CloudVaultModal activeSave={activeSave} activeBuild={build} onApplyBuild={setBuild} onApplySave={loadSave} />
+      <CloudVaultModal activeSave={activeSave} activeBuild={build} onApplyBuild={loadBuild} onApplySave={loadSave} />
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { readStoredProfile, readVisitorProfile, useShell } from "./shell-context
 import { getGameDataLoader } from "./use-game-data";
 import { createCharacterCatalogService } from "../lib/character-catalogs.mjs";
 import { createDefaultLoadoutPresets } from "../lib/equipment-math.mjs";
-import { decodeShareUrl } from "../lib/permalink-codec.mjs";
+import { decodeShareUrl, normalizeProfile } from "../lib/permalink-codec.mjs";
 import { sanitizeBuild } from "../lib/character-vault.mjs";
 import { rememberSave, recallSave, forgetSave } from "../lib/active-save-store.mjs";
 import { hasClerkSession } from "../lib/clerk-browser.mjs";
@@ -132,9 +132,9 @@ export function CharacterProvider({ children, initialBuild = null }) {
 
   // Compute live character sheet
   const sheet = useMemo(() => {
-    if (!catalogs) return null;
+    if (!catalogs || catalogs.profile !== shell.profile) return null;
     return computeSheet(build, catalogs);
-  }, [build, catalogs]);
+  }, [build, catalogs, shell.profile]);
 
   // Pure state mutators
   const updateField = useCallback((field, value) => {
@@ -233,6 +233,33 @@ export function CharacterProvider({ children, initialBuild = null }) {
     forgetSave();
   }, []);
 
+  // A stored build carries its own world, just as a shared link does. Prepare
+  // its catalogs before applying it; the ordinary setter is for field edits.
+  const loadBuild = useCallback(async (input) => {
+    const clean = sanitizeBuild(input);
+    if (!clean) throw new Error("This record does not contain a valid character build.");
+    const namesWorld = Object.hasOwn(input, "world") || Object.hasOwn(input, "arce");
+    if (Object.hasOwn(input, "world") && !["vanilla", "tr", "tr_arce"].includes(input.world)) {
+      throw new Error("This character's world is not supported.");
+    }
+    if (Object.hasOwn(input, "arce") && typeof input.arce !== "boolean") {
+      throw new Error("This character's ARCE choice is not supported.");
+    }
+    const profile = namesWorld ? normalizeProfile({ profile: input.world === "tr_arce" ? "tr_arce" : undefined,
+      world: input.world, arce: input.arce }) : shell.ready === false ? readVisitorProfile()
+      : normalizeProfile({ profile: shell.profile });
+    const data = await service.prepare(profile.profile);
+    if (!data.races[clean.race] || !data.signs[clean.sign]) {
+      throw new Error("This character's race or birthsign is not available in its world.");
+    }
+    const next = { ...DEFAULT_BUILD, ...clean, world: profile.world, arce: profile.arce,
+      ...(Array.isArray(input.loadouts) ? { loadouts: input.loadouts } : {}),
+      ...(Array.isArray(input.factionMemberships) ? { factionMemberships: input.factionMemberships } : {}) };
+    clearSave();
+    shell.setProfile?.(profile.profile);
+    setBuild(next);
+  }, [service, shell, clearSave, setBuild]);
+
   // A save loaded before this page load comes back, until it is cleared. A shared
   // build link opened with the page wins: it replaces the character, save and all.
   const restoring = useRef(false);
@@ -324,7 +351,7 @@ export function CharacterProvider({ children, initialBuild = null }) {
     () => ({
       build,
       setBuild,
-      loadBuild: setBuild,
+      loadBuild,
       sheet,
       catalogs,
       updateField,
@@ -338,7 +365,7 @@ export function CharacterProvider({ children, initialBuild = null }) {
       clearSave
     }),
     [build, sheet, catalogs, updateField, swapSkill, selectClassPreset, selectPremade,
-     rollRandomBuild, isStarter, activeSave, loadSave, clearSave]
+     rollRandomBuild, isStarter, activeSave, loadSave, clearSave, loadBuild]
   );
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;

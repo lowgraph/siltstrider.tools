@@ -73,6 +73,9 @@ export default function TravelWorkstation() {
   const gameData = useGameData('travel', { enabled: true });
   const [origin, setOrigin] = useState("Seyda Neen");
   const [destination, setDestination] = useState("Balmora");
+  const [originDraft, setOriginDraft] = useState(false);
+  const [destinationDraft, setDestinationDraft] = useState(false);
+  const searching = originDraft || destinationDraft;
   const [mageGuild,setMageGuild] = useState(true);
   const [conjurer,setConjurer] = useState(false);
   const [objective, setObjective] = useState("hops");
@@ -97,6 +100,7 @@ export default function TravelWorkstation() {
     const link = readRouteLink(window.location.search, ROUTE_OBJECTIVES);
     const shared = Boolean(link.from || link.to);
     routeChoices.current = {
+      from: link.from,
       ...(shared || link.plan ? { objective: link.plan || 'hops' } : {}),
       ...(shared || link.walk !== null ? { walking: link.walk ?? true } : {}),
       ...(shared || link.quest !== null ? { questTeleports: link.quest ?? false } : {})
@@ -194,6 +198,7 @@ export default function TravelWorkstation() {
       const providers = gameData.data.metadata?.Travel?.providers || {};
       return buildTransitStops(records, nodes, { mageGuild, conjurer: isTr && conjurer, providers,
         access: { records: gameData.data.catalogs.Access || [] },
+        places: gameData.data.catalogs.Places || [],
         teleports: (gameData.data.catalogs.Teleports || []).filter(t => usableTeleport(t, held, questTeleports)),
         intervention: { records: gameData.data.catalogs.Intervention || [], markers: gameData.data.metadata?.Intervention?.markers || {} }
       });
@@ -316,8 +321,9 @@ export default function TravelWorkstation() {
 
   useEffect(() => {
     if (!saveOrigin || startedFrom === activeSave?.token) return;
+    const initialLink = routeChoices.current?.from && (startedFrom === null || startedFrom === "link");
     setStartedFrom(activeSave?.token ?? null);
-    setOrigin(saveOrigin);
+    if (!initialLink) setOrigin(saveOrigin);
   }, [saveOrigin, activeSave, startedFrom]);
 
   const labelOf = useCallback((id) => {
@@ -617,6 +623,7 @@ export default function TravelWorkstation() {
             options={locationOptions}
             scopeKey={profile}
             onChange={handleOriginChange}
+            onDraftChange={setOriginDraft}
             disabled={gameData.status !== "ready"}
           />
           <TravelLocationPicker
@@ -627,6 +634,7 @@ export default function TravelWorkstation() {
             options={locationOptions}
             scopeKey={profile}
             onChange={handleDestinationChange}
+            onDraftChange={setDestinationDraft}
             disabled={gameData.status !== "ready"}
           />
 
@@ -663,6 +671,7 @@ export default function TravelWorkstation() {
       </section>
 
       <section id="travel-results" aria-label="Planned route" className="space-y-4">
+        {searching ? <p role="status" className="p-4 text-sm font-serif text-fg-9">Choose a search result to plan your route, or cancel to return to the previous trip.</p> : <>
         {guildNotice && (
           <p role="note" className="guild-guide-notice text-[11px] text-warning-2">{guildNotice}</p>
         )}
@@ -863,6 +872,7 @@ export default function TravelWorkstation() {
           </div>
         )}
 
+        </>}
       </section>
 
       <details id="travel-options" className="p-3 bg-surface-5 border border-line-11">
@@ -1042,7 +1052,7 @@ export default function TravelWorkstation() {
         </div>
       </details>
 
-      {mapData && (
+      {mapData && !searching && (
         <TransitMap
           edges={[...mapData.edges, ...routeEdges]}
           positions={routePositions}

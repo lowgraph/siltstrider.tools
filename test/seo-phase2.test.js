@@ -35,7 +35,7 @@ test("AboutView contains dedicated System Accuracy & Game Mechanics section", ()
 
   // Level progression mechanics
   assert.match(aboutSrc, /non-retroactive/, "must specify non-retroactive health growth");
-  assert.match(aboutSrc, /⌊Endurance \/ 10⌋/, "must show Endurance health formula");
+  assert.match(aboutSrc, /Endurance \/ 10/, "must show Endurance health formula");
   assert.match(aboutSrc, /2× to 5× attribute multipliers/, "must describe attribute multipliers");
 
   // Travel routing mechanics
@@ -137,8 +137,12 @@ test("Enchanting Workstation has constant effect soul rule, point formula, and s
   assert.match(enchantSrc, /Golden Saint or Ascended Sleeper/, "must cite Golden Saint or Ascended Sleeper");
 
   // Enchantment points and Self-enchant formula cues
-  assert.match(enchantSrc, /Points: <span[^>]*>\(\(Min \+ Max\) × Duration \+ Area\) × BaseCost × 0\.025<\/span>/, "must show enchantment points formula");
-  assert.match(enchantSrc, /\(0\.75×Enchant \+ 0\.25×Int \+ 0\.1×Luck − 2\.5×Points\) × Fatigue/, "must show self-enchant formula");
+  assert.match(explanation, /\(\(Min \+ Max\) × Duration \+ Area\) × BaseCost/, "must show effect cost formula");
+  assert.match(explanation, /Capacity adds each running cost rounded down/, "must explain cumulative capacity floors");
+  assert.match(explanation, /Enchant \+ 0\.2×Int \+ 0\.1×Luck/, "must show OpenMW attribute coefficients");
+  assert.match(explanation, /Precise Points/, "chance uses precise points");
+  assert.match(explanation, /Base Gold Value uses only the final running cost/, "price uses the final cost");
+  assert.doesNotMatch(explanation, /0\.75×Enchant|0\.25×Int|2\.5×Points/, "retired coefficients must not remain in the explanation");
 });
 
 test("Travel keeps routing explanations in a closed disclosure", () => {
@@ -165,7 +169,7 @@ test("Level Simulator keeps leveling explanations in a closed disclosure", () =>
   assert.match(levelerSrc, /10 Major or Minor skill increases/, "must mention 10 skill increases requirement");
   assert.match(levelerSrc, /1–4 = 2×/, "must explain multiplier tier 2x");
   assert.match(levelerSrc, /10\+ = 5×/, "must explain multiplier tier 5x");
-  assert.match(levelerSrc, /⌊Endurance \/ 10⌋/, "must show non-retroactive health gain formula");
+  assert.match(levelerSrc, /Endurance \/ 10/, "must show non-retroactive health gain formula");
 });
 
 test("Character Builder keeps header hierarchy and a closed calculation disclosure", () => {
