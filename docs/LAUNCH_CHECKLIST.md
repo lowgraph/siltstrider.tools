@@ -315,11 +315,11 @@ commands in BROWSER_TESTS.md.
 
 #### 9. QA-07 + QA-25 — Travel search and link precedence
 
-- [ ] **C** **QA-07** (reproduced 4/4; cause `searchTravelOptions` normalization and `matchPlaces`; the rejected query leaves the committed route; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
+- [ ] **C** **QA-07** (started 2026-10-01 21:54 UTC, Codex, on launch/character-preservation) (reproduced 4/4; cause `searchTravelOptions` normalization and `matchPlaces`; the rejected query leaves the committed route; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
       "Ald-ruhn" works, and the previous route stays on screen. Ignore apostrophes and
       hyphens in matching; clear or mark a stale route when the search changes. Check Vos,
       Sadrith Mora, Ebonheart and Mournhold too.
-- [ ] **C** **QA-25** (partly reproduced: unit assertion only (two DOM attempts stalled); `travel-workstation.jsx` lets the restored save's token override a link origin; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
+- [ ] **C** **QA-25** (started 2026-10-01 21:54 UTC, Codex, on launch/character-preservation) (partly reproduced: unit assertion only (two DOM attempts stalled); `travel-workstation.jsx` lets the restored save's token override a link origin; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
       link's starting point is replaced by the save's position (`/travel?from=Balmora…` plans
       from Seyda Neen; the plan is kept). COORDINATION, Travel from the loaded save: a link
       wins over the save's starting point.
