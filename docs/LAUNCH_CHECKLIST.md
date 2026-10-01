@@ -226,20 +226,20 @@ usual tests (at least three edge cases for a logic change) and changelog.
       Simulator naming two characters ("Argonian male — Spear scout" beside "Male Dark Elf").
       One fresh character through Builder, edit race, Home, Level Simulator: every heading
       must agree, or the premade's name must read as its source.
-- [ ] **C** **QA-06** (High, Q; SS-01 regression; confirmed in code) Secret Master's
+- [ ] **C** **QA-06** (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
       apparatus is still offered in TR and TR + ARCE Alchemy (Alembic, Calcinator, Retort),
       though the 30 September changelog says it is gone: the filter in
       `lib/alchemy-catalogs.mjs` matches only vanilla keys and names starting "Secretmaster".
-- [ ] **C** **QA-07** (High, N; F01) Travel's place search finds nothing for "Ald'ruhn"; only
+- [ ] **C** **QA-07** (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
       "Ald-ruhn" works, and the previous route stays on screen. Ignore apostrophes and
       hyphens in matching; clear or mark a stale route when the search changes. Check Vos,
       Sadrith Mora, Ebonheart and Mournhold too.
 - [ ] **C** **QA-08** (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
       breaks into fragments ("Ald- / ruhn — / sold by / Dander / a"). Stack slot, item and
       source at phone width; Early and Late game, 375 and 390 px.
-- [ ] **C** **QA-09** (High, N; F05) On a phone the Builder's Specialization help opens mostly
+- [ ] **C** **QA-09** (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
       off-screen. Keep every info popover inside the viewport; check each info icon at 375 px.
-- [ ] **C** **QA-10** (High, V; FLOW-02) Beast races are offered helmets and boots they cannot
+- [ ] **C** **QA-10** (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
       wear in the Gear Advisor's runner-up picks (Masque of Clavicus Vile, Boots of Blinding
       Speed) under the advisor's own note that they are excluded. Seen once; check Argonian,
       Khajiit and an ARCE Khajiit form, every runner-up list.
@@ -250,10 +250,10 @@ usual tests (at least three edge cases for a logic change) and changelog.
 - [ ] **C** **QA-12** (High, N; U04, F08) Premade build cards say nothing about how a build
       plays, and "Maj:", "Min:" and "Magic Specialization" go unexplained. One "plays like"
       line and one trade-off per playstyle; spell out Major and Minor skills. Copy only.
-- [ ] **C** **QA-13** (High, N; U20) A first potion needs ingredient names: searching
+- [x] **C** **QA-13** (done by CALC-4, merged `ef67b3e`, live as `3879ce7b`; retest 1 October: Restore Health found and its first pair carried into the calculator in all three worlds, desktop and 375 px) (High, N; U20) A first potion needs ingredient names: searching
       "Restore Health" in Alchemy finds nothing. CALC-4 answers it if it lands before the
       freeze; otherwise a starter-recipe line (Marshmerrow with Saltrice or Wickwheat).
-- [ ] **C** **QA-14** (Medium, R; SS-07; owner: change the wording) A loaded save says it is
+- [x] **C** **QA-14** (no change made; the retest on `3879ce7b`, 1 October, found the Vault already tells the open save from Local Browser Saves, with "Save this character" rows marked Local storage) (Medium, R; SS-07; owner: change the wording) A loaded save says it is
       kept in this browser while the Vault's Local Browser Saves lists 0 and "No local
       characters found". Say what each is: the open save stays until cleared; Local Browser
       Saves are characters saved with "Save this character".
@@ -261,6 +261,10 @@ usual tests (at least three edge cases for a logic change) and changelog.
       AGPL-3.0; not the game or mod data), links https://github.com/lowgraph/siltstrider.tools
       and says it is made by LowGraph. Keep `test/site-claims.test.js` and the licence
       wording rules (COORDINATION, Licences).
+- [ ] **C** **QA-16** (found in the 1 October retest; re-check first) Travel: Ebonheart to
+      Mournhold showed No Route, though the Mournhold teleport from Ebonheart is everyday
+      travel (Teleports policy). Check in Vanilla, TR and TR + ARCE with walking on and off;
+      if it reproduces it is a wrong answer (High).
 
 ### Cut line
 
@@ -294,7 +298,16 @@ Medium, one persona:
 Low:
 - [ ] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run.
 - [ ] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%.
-- [ ] **C** F10: "Emerald [ingred_…]" shows raw IDs; name the difference instead.
+- [ ] **C** F10, CALC-4-01: raw ingredient IDs on screen ("Emerald [ingred_emerald_01]",
+      "Braided Bread [t_ingfood_breadkeptu_02]") in Alchemy, its effect finder and the
+      calculator slots; name the difference instead.
+- [ ] **C** REG-01 (retest 1 October, 375 px, 10 of 10): Travel's Followers count and "Include
+      quest teleports" reset on reload while the save's options stay. They are journey
+      choices kept only in the route link, not save options; decide whether a signed-out
+      visitor's choice should stick, as account settings do for signed-in players.
+- [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
+      calculator), and a world switch clears the chosen effects and ingredients. Both
+      deliberate for now; say so on the page.
 - [ ] **C** SS-08: on a phone the selected faction is not visible beside its details.
 - [ ] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones.
 - [ ] **C** SS-10: "1 ranks" in search.
