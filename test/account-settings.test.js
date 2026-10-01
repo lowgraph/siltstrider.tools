@@ -19,12 +19,12 @@ test('settings supply fresh sparse defaults and keep contract version separate f
   for (const world of ['vanilla', 'tr', 'tr_arce']) {
     assert.equal(validateAccountSettings({ version: 1, world }).world, world);
   }
-  assert.equal(validateAccountSettings({ version: 1, world: 'tr', modVersionId: 'tr-25.12' }).version, 1);
+  assert.equal(validateAccountSettings({ version: 1, world: 'tr', modVersionId: 'tr-25.12' }).version, 2);
 });
 
 test('settings reject malformed shapes, wrong booleans, unknown fields and unsupported versions', async () => {
   const { validateAccountSettings } = await load();
-  for (const value of [null, [], {}, { version: null }, { version: '1' }, { version: 2 },
+  for (const value of [null, [], {}, { version: null }, { version: '1' }, { version: 3 },
     { version: 1, world: 'other' }, { version: 1, overrideSaveToggles: 'false' },
     { version: 1, toolDefaults: null }, { version: 1, toolDefaults: [] },
     { version: 1, toolDefaults: { travel: null } },
@@ -255,4 +255,30 @@ test('scoped preference edits keep explicit false, remove inherited fields and p
   assert.equal(accountToolChoices(inherited, { world: 'tr' }).travel.mageGuild, true);
   assert.equal(inherited.datasetOverrides[0].toolDefaults.travel.objective, 'gold');
   assert.equal(original.datasetOverrides.length, 0);
+});
+
+
+test('QA-23 version 1 settings upgrade without inventing an explicit Preferred world', async () => {
+  const {validateAccountSettings}=await load();
+  const upgraded=validateAccountSettings({version:1,world:'tr_arce',theme:'morrowind',toolDefaults:{travel:{walking:false}}});
+  assert.equal(upgraded.version,2);
+  assert.equal(upgraded.worldChosen,false);
+  assert.equal(upgraded.world,'tr_arce');
+  assert.equal(upgraded.theme,'morrowind');
+  assert.equal(upgraded.toolDefaults.travel.walking,false);
+});
+
+test('QA-23 an explicit Preferred world survives round trips and resets to browser choice', async () => {
+  const {validateAccountSettings,resetAccountSettings}=await load();
+  for(const world of ['vanilla','tr','tr_arce']) {
+    const settings=validateAccountSettings({version:2,world,worldChosen:true});
+    assert.equal(validateAccountSettings(JSON.parse(JSON.stringify(settings))).worldChosen,true);
+    assert.equal(resetAccountSettings(settings).worldChosen,false);
+  }
+});
+
+test('QA-23 preferred-world intent rejects non-booleans and version 1 intent fields', async () => {
+  const {validateAccountSettings}=await load();
+  for(const worldChosen of [null,0,'false',[],{}]) assert.throws(()=>validateAccountSettings({version:2,worldChosen}));
+  for(const worldChosen of [false,true]) assert.throws(()=>validateAccountSettings({version:1,worldChosen}));
 });

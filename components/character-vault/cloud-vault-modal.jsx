@@ -345,12 +345,11 @@ export default function CloudVaultModal({
                         <button
                           type="button"
                           className="mw-btn px-2.5 py-1 text-xs font-serif text-fg-2"
-                          onClick={() => {
-                            if (typeof onApplyBuild === "function") {
-                              onApplyBuild(char);
-                            }
-                            onClose();
+                          onClick={async () => {
+                            const result = await vault.loadLocalBuild(char);
+                            if (result.success) onClose();
                           }}
+                          disabled={vault.actionBusy}
                         >
                           Load Build →
                         </button>

@@ -81,7 +81,7 @@ async function mount(t, { url = 'https://siltstrider.tools/account', settings, r
 
 test('account preferences hydrate without writes, apply world/theme/tools and need no username', async t => {
   const { defaultAccountSettings } = await import('../lib/account-settings.mjs');
-  const settings = { ...defaultAccountSettings(), world: 'tr_arce', theme: 'morrowind', toolDefaults: { travel: {}, gear: { theft: true }, challenge: { preset: 'cursed' } } };
+  const settings = { ...defaultAccountSettings(), world: 'tr_arce', worldChosen: true, theme: 'morrowind', toolDefaults: { travel: {}, gear: { theft: true }, challenge: { preset: 'cursed' } } };
   const errors = [], previous = console.error;
   console.error = (...args) => { errors.push(args.join(' ')); previous(...args); };
   t.after(() => { console.error = previous; });
@@ -102,7 +102,8 @@ test('World and theme clicks before a delayed response win without changing gues
   const ui = await mount(t, { delay: response, initialize: win => { win.localStorage.setItem('mw-world', 'vanilla'); win.localStorage.setItem('silt-theme', 'ashfall'); } });
   await act(async () => { ui.observe().shell.setProfile('tr'); ui.observe().theme.setTheme('morrowind'); });
   await act(async () => resolve(Response.json({ settings: defaultAccountSettings(), revision: 3 })));
-  assert.equal(ui.observe().preferences.settings.world, 'tr');
+  assert.equal(ui.observe().preferences.settings.world, 'vanilla');
+  assert.equal(ui.observe().preferences.settings.worldChosen, false);
   assert.equal(ui.observe().preferences.settings.theme, 'morrowind');
   assert.equal(ui.observe().shell.profile, 'tr');
   assert.equal(window.localStorage.getItem('mw-world'), 'vanilla');
@@ -115,7 +116,7 @@ test('a cleaned shared world keeps priority over a late account default', async 
   const response = new Promise(yes => { resolve = yes; });
   const ui = await mount(t, { url: 'https://siltstrider.tools/account?world=vanilla&arce=0', delay: response });
   await act(async () => { window.history.replaceState({}, '', '/account'); window.dispatchEvent(new window.Event('silt-shell-change')); });
-  await act(async () => resolve(Response.json({ settings: { ...defaultAccountSettings(), world: 'tr_arce' }, revision: 1 })));
+  await act(async () => resolve(Response.json({ settings: { ...defaultAccountSettings(), world: 'tr_arce', worldChosen: true }, revision: 1 })));
   assert.equal(ui.observe().shell.profile, 'vanilla');
   assert.equal(ui.observe().preferences.settings.world, 'tr_arce');
   assert.equal(ui.calls.filter(call => call.method === 'PUT').length, 0);
@@ -143,7 +144,7 @@ test('controls edit sparse world-specific choices and reset only the requested t
 
 test('sign-out restores guest preferences rather than keeping the account document', async t => {
   const { defaultAccountSettings } = await import('../lib/account-settings.mjs');
-  const ui = await mount(t, { settings: { ...defaultAccountSettings(), world: 'tr_arce', theme: 'morrowind' }, initialize: win => { win.localStorage.setItem('mw-world', 'tr'); win.localStorage.setItem('silt-theme', 'ashfall'); } });
+  const ui = await mount(t, { settings: { ...defaultAccountSettings(), world: 'tr_arce', worldChosen: true, theme: 'morrowind' }, initialize: win => { win.localStorage.setItem('mw-world', 'tr'); win.localStorage.setItem('silt-theme', 'ashfall'); } });
   await ui.changeOwner(null);
   assert.equal(ui.observe().preferences.owner, null);
   assert.equal(ui.observe().preferences.settings.world, 'tr');
@@ -217,4 +218,29 @@ test('reset all clears account scopes and preferences while retaining the genera
   await act(async () => ui.observe().preferences.retry());
   assert.equal(ui.calls.at(-1).body.revision, 6);
   assert.deepEqual(ui.calls.at(-1).body.settings, defaultAccountSettings());
+});
+
+
+test('QA-23 account Preferred world is explicit; header and browser choices do not autosave it', async t => {
+  const ui=await mount(t,{hydrate:true});
+  assert.equal(ui.observe().preferences.settings.worldChosen,false);
+  await ui.choose('Preferred world','tr_arce');
+  assert.equal(ui.observe().preferences.settings.worldChosen,true);
+  assert.equal(ui.observe().preferences.settings.world,'tr_arce');
+  assert.equal(ui.observe().shell.profile,'tr_arce');
+  await act(async()=>ui.observe().shell.setProfile('tr'));
+  assert.equal(ui.observe().preferences.settings.world,'tr_arce');
+  assert.equal(ui.observe().shell.profile,'tr');
+  await ui.choose('Preferred world','browser');
+  assert.equal(ui.observe().preferences.settings.worldChosen,false);
+});
+
+test('QA-23 legacy account world does not replace the browser or write during hydration', async t => {
+  const ui=await mount(t,{hydrate:true,settings:{version:1,world:'vanilla'},initialize:win=>{
+    win.localStorage.setItem('mw-world','tr');win.localStorage.setItem('mw-arce','1');
+  }});
+  assert.equal(ui.observe().shell.profile,'tr_arce');
+  assert.equal(ui.observe().preferences.settings.version,2);
+  assert.equal(ui.observe().preferences.settings.worldChosen,false);
+  assert.equal(ui.calls.filter(call=>call.method==='PUT').length,0);
 });

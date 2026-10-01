@@ -93,7 +93,7 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
 
   // A stored character is checked like a shared link's: unreadable ones are refused, and a
   // loaded .omwsave is set aside so every tool uses the character just loaded.
-  const handleLoad = (record) => {
+  const handleLoad = async (record) => {
     const char = record.character || record;
     const clean = sanitizeBuild(char);
     if (!clean) {
@@ -103,16 +103,20 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
     }
     if (typeof applyBuild === "function") {
       const current = activeChar?.build || DEFAULT_BUILD;
-      if (activeChar?.activeSave && typeof activeChar.clearSave === "function") activeChar.clearSave();
-      applyBuild({
-        ...DEFAULT_BUILD,
-        world: current.world,
-        arce: current.arce,
-        ...clean,
-        ...(Array.isArray(char.loadouts) ? { loadouts: char.loadouts } : {}),
-      });
-      setFeedback(`Loaded "${text(record.name) || clean.name || "character"}"!`);
-      setTimeout(() => setFeedback(null), 2500);
+      try {
+        await applyBuild({
+          ...DEFAULT_BUILD,
+          world: current.world,
+          arce: current.arce,
+          ...clean,
+          ...(Array.isArray(char.loadouts) ? { loadouts: char.loadouts } : {}),
+        });
+        if (activeChar?.activeSave && typeof activeChar.clearSave === "function") activeChar.clearSave();
+        setFeedback(`Loaded "${text(record.name) || clean.name || "character"}"!`);
+        setTimeout(() => setFeedback(null), 2500);
+      } catch (err) {
+        setError(err.message || "This saved character could not be loaded.");
+      }
     }
   };
 

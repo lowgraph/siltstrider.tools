@@ -1391,3 +1391,48 @@ for this merge. Real Clerk acceptance remains for the final acceptance pass.
 Runner servers closed after both suites; the owner's existing test server remains.
 Evidence: `A:/Cache/qa-reproduce-20261001/signout-main-*.log`,
 `A:/Cache/signout-main-browser-20261001/` and `A:/Cache/signout-main-vault-20261001/`.
+
+
+## 30. QA-21/23 character world preservation — 1 October 2026
+
+Branch `launch/character-preservation`, taken over 18:14 UTC from the unfinished
+implementation at `8cd2975`; claim pushed as `c4612b6`. Main `4f9c4bb` incorporated
+as `993b812`, including QA-24 and both README updates. No merge to main,
+deployment, production write, D1 migration or game-data rebuild in this work.
+
+| Item | Result | Cause / change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-21 | Fixed on branch; standalone and modal Vault load TR + ARCE from Vanilla, correct race/sign and populated sheet | `AppShellMain` and `CloudVaultWorkstation` used plain `setBuild`; now use `CharacterProvider.loadBuild`, validate world/identity, prepare catalogs before applying, and await load/errors | `test/qa-account-reproduction.test.js`: Vault world, old builds, malformed inputs, unavailable catalogs; `test/local-save-review.test.js`: asynchronous load failure; Chrome `QA-21/Vault-world` and `QA-21/modal-world` |
+| QA-23 | Fixed on branch; browser world survives untouched accounts and sign-in hand-off, including restored ARCE save | `ShellProvider` used every stored world; settings v2 `worldChosen` records explicit account choice. Header and character loads keep session selection without updating the account default | Hydrated tests in `test/qa-account-reproduction.test.js`, `test/account-settings-ui.test.js`; version/intent cases in `test/account-settings.test.js`, read-only legacy upgrade in `test/account-settings-api.test.js`; Chrome `QA-23/sign-in-handoff` and `QA-23/explicit-preference` |
+
+Version 1 retains its other settings but upgrades to `worldChosen: false`: it
+cannot distinguish explicit account intent from automatically recorded worlds.
+No settings row is rewritten on read. The next deliberate settings write uses
+version 2 and existing revision guards. Previously chosen account worlds must be
+chosen again. A pre-v2 Worker refuses v2 settings instead of erasing them; a future
+release's rollback plan needs a compatible settings reader. See ACCOUNT_SETTINGS.
+
+Final verification:
+
+- Full unit suite: 1,012 tests, 974 passed, 38 existing TODO, 0 failures.
+- `npm run build:cloudflare`: passed with repository config unchanged; 24 pages.
+- Chrome QA-21/23 matrix: 16/16, 1366/375 px and both themes, 0 runtime/server errors.
+- Main's QA-24 sign-out matrix: 8/8, unsaved ARCE and loaded save, both widths/themes.
+- Normal local Vault regression: 10/10, API/account isolation, quota, save actions,
+  token renewal, damaged records and axe on pages/dialog in both widths/themes.
+
+The initial browser pass found the standalone Vault callback omitted by the
+inherited changes; that callback is now fixed. The modal/phone runner now opens
+visible phone controls and focuses the modal load control before scrolling, waits
+for paint, and confirms a pointer hit rather than clicking clipped controls. One
+Cloudflare build generated 24 pages then hit Windows `kill EPERM`; its isolated
+rerun passed. Synthetic Clerk authentication tests the real local pages, Worker
+and fresh D1, not Clerk email-code screens or production redirects; real Clerk
+acceptance remains in the final release pass. QA records were deleted in `finally`
+and runner servers shut down. QA-22/25 remain open and TODO.
+
+Evidence under `A:/Cache/`: `character-preservation-unit-final.log`,
+`character-preservation-build-final-retry.log`,
+`character-preservation-browser-visible-20261001/`,
+`character-preservation-signout-painted-20261001/`, and
+`character-preservation-vault-painted-20261001/`.

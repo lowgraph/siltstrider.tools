@@ -290,7 +290,7 @@ Checks the live QA could not run (sent to Codex with the QA-01 to QA-16 reproduc
 
 From the signed-in QA (live, 1 October, three email-only QA accounts, cleaned up; report
 `siltstrider-account-qa-2026-10-01.md`, F-ids):
-- [ ] **C** **QA-21** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation) (reproduced 4/4 and in a real Clerk session; `AppShell` passes `setBuild` as `onApplyBuild`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-1) "Load this build into Character Builder" in the Cloud Vault
+- [x] **C** **QA-21** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §30; not merged or deployed) (reproduced 4/4 and in a real Clerk session; `AppShell` passes `setBuild` as `onApplyBuild`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-1) "Load this build into Character Builder" in the Cloud Vault
       leaves a TR + ARCE build in the visitor's world: Vanilla, race shown as Argonian, the
       sheet stuck on "Calculating statistics…" (2 of 2). The Vault applies builds with the
       provider's plain `setBuild`, which ignores `build.world` and `build.arce`
@@ -302,7 +302,7 @@ From the signed-in QA (live, 1 October, three email-only QA accounts, cleaned up
       TR + ARCE save; it opens as a different or broken character (2 of 2 saves; Builder
       builds are fine). A challenge run's link took the visitor's current world (`world=tr`)
       for a run rolled in Vanilla. A link must describe its own character or run.
-- [ ] **C** **QA-23** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation) (reproduced, hydrated test and real session; `ShellProvider` takes `preferences.settings.world` whenever ready, and `setProfile` saves every header world change, so an explicit account choice cannot be told apart: record whether the Preferred world was chosen on the account; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
+- [x] **C** **QA-23** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §30; not merged or deployed) (reproduced, hydrated test and real session; `ShellProvider` takes `preferences.settings.world` whenever ready, and `setProfile` saves every header world change, so an explicit account choice cannot be told apart: record whether the Preferred world was chosen on the account; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
       when the address has no `?world=` (3 of 3): an unsaved TR + ARCE character, or a loaded
       TR + ARCE save, comes back in Vanilla, the save re-read as plain Khajiit
       (`shell-context.jsx`). A new account has chosen nothing yet, but switching world or

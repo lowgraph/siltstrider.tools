@@ -12,7 +12,7 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
   let charCtx = null;
   try { charCtx = useActiveCharacter(); } catch {}
   const build = propBuild !== undefined ? propBuild : charCtx?.build;
-  const setBuild = propSetBuild || charCtx?.setBuild;
+  const setBuild = propSetBuild || charCtx?.loadBuild;
   const activeSave = charCtx?.activeSave;
   const vault = useCloudVault({ activeSave, activeBuild: build, onApplyBuild: setBuild, onApplySave: charCtx?.loadSave });
 
@@ -342,11 +342,8 @@ export default function CloudVaultWorkstation({ activeBuild: propBuild, onApplyB
                     <button
                       type="button"
                       className="flex-1 mw-btn py-1 px-2 text-xs font-serif font-bold text-accent"
-                      onClick={() => {
-                        if (typeof setBuild === "function") {
-                          setBuild(char);
-                        }
-                      }}
+                      onClick={() => vault.loadLocalBuild(char)}
+                      disabled={vault.actionBusy}
                     >
                       Load Build →
                     </button>

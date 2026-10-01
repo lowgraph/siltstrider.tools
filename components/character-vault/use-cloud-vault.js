@@ -416,6 +416,24 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
     [onApplySave]
   );
 
+  // Local Vault rows use the same asynchronous character loader, including
+  // catalog errors. Keep the dialog open when loading fails.
+  const loadLocalBuild = useCallback(async (data) => {
+    setActionBusy(true);
+    setErrorMessage(null);
+    try {
+      if (typeof onApplyBuild !== "function") throw new Error("Loading a build needs the character provider.");
+      await onApplyBuild(data);
+      setStatusMessage("Character loaded into Character Builder.");
+      return { success: true };
+    } catch (error) {
+      setErrorMessage(error.message || "This character could not be loaded.");
+      return { success: false };
+    } finally {
+      setActionBusy(false);
+    }
+  }, [onApplyBuild]);
+
   // Load a save into active session
   const loadSaveIntoSession = useCallback(
     async (id) => {
@@ -441,7 +459,7 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
 
         if (buildToApply) {
           if (typeof onApplyBuild === "function") {
-            onApplyBuild(buildToApply);
+            await onApplyBuild(buildToApply);
           }
           setStatusMessage(`Loaded "${save.name}" into Character Builder!`);
           setTimeout(() => {
@@ -609,6 +627,7 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
     duplicateSave,
     shareBuildLink,
     loadSaveIntoSession,
+    loadLocalBuild,
     openSaveFile,
     exportSaveJson,
     openSignIn,

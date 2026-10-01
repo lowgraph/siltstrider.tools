@@ -114,7 +114,9 @@ async function key(keyName, code, number, modifiers = 0) {
   await pause(60);
 }
 async function click(selector) {
-  const box = await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});if(!el)throw Error('Missing '+${JSON.stringify(selector)});el.scrollIntoView({block:'center'});const r=el.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
+  // Re-measure after scrolling has painted. A themed dialog can scroll its own
+  // body, and coordinates captured before that paint hit the clipped card edge.
+  const box = await evaluate(`(async()=>{const selector=${JSON.stringify(selector)};let el=document.querySelector(selector);if(!el)throw Error('Missing '+selector);el.scrollIntoView({block:'center',behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));el=document.querySelector(selector);if(!el)throw Error('Missing after scroll '+selector);const r=el.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;const hit=document.elementFromPoint(x,y);if(hit!==el&&!el.contains(hit))throw Error('Click target is clipped or covered: '+selector);return {x,y}})()`);
   for (const type of ['mousePressed', 'mouseReleased']) await send('Input.dispatchMouseEvent', { type, button: 'left', clickCount: 1, ...box });
   await pause(150);
 }
@@ -313,7 +315,8 @@ async function cases() {
   try {
     socket = await connect(profile);
     await open('/about');
-    if (args.includes('--signout-preservation')) await require('./signout-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,button,click,evaluate,check,screenshot});
+    if (args.includes('--character-preservation')) await require('./character-preservation-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,click,evaluate,check,pause,screenshot});
+    else if (args.includes('--signout-preservation')) await require('./signout-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,button,click,evaluate,check,screenshot});
     else if (args.includes('--qa-reproduction')) await require('./qa-vault-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,evaluate,text,check,pause,screenshot});
     else await cases();
   } finally {

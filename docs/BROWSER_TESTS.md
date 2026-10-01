@@ -216,3 +216,21 @@ will not replace a folder Wrangler is serving.
 
 Neither setup tests the production keys, Google or Discord sign-in, or the live database;
 those stay in the owner's production checks.
+
+
+`--character-preservation` checks QA-21 and QA-23 on the real local pages and
+Worker with synthetic Clerk authentication, at 1366/375 px in both themes. It
+loads a TR + ARCE build through the standalone and modal Vault from Vanilla,
+restores an unsaved ARCE build
+through the sign-in hand-off, checks that hydration and header changes do not
+write a Preferred world, and tests explicit account choices and returning to
+browser preferences. The suite creates only "QA – " records and deletes them.
+QA-24 remains covered separately by `--signout-preservation`.
+
+```powershell
+node scripts/test-vault.cjs --character-preservation --port 8797 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\character-preservation'
+```
+
+The QA-21/23 reproduction tests are now enforced, including hydrated sign-in,
+version 1 compatibility and rejected Vault loads. QA-22 and QA-25 remain TODO;
+`--qa-reproduction` still includes the unfixed imported-save link finding.

@@ -150,3 +150,14 @@ test("saving in the Builder shows up in the Cloud Vault's local tab, and a forei
     assert.match(document.body.textContent, /Hrolfa/, 'the new save is in the Vault too');
   }, { Component: Modal, props: { activeBuild: BUILD, isOpen: true, onClose() {} } });
 });
+
+
+test('QA-21 an asynchronous local load failure keeps the existing save and reports the error',async()=>{
+  const stored=JSON.stringify([{id:'qa-local',name:'QA – Local',character:BUILD}]);
+  await mount({stored,context:{activeSave:{token:1},loadBuild:async()=>{throw Error('QA catalog unavailable');}}},async({cleared})=>{
+    await click([...panel().querySelectorAll('button')].find(b=>b.textContent.trim()==='Load'));
+    assert.equal(cleared(),0);
+    assert.match(panel().textContent,/QA catalog unavailable/);
+    assert.doesNotMatch(panel().textContent,/Loaded "QA/);
+  });
+});
