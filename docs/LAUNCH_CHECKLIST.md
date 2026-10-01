@@ -170,7 +170,7 @@ for now (owner, 30 September); other agents skip them.
       carry them.
 
 **Features**
-- [ ] **C** **CALC-4** Reverse alchemy: pick the effects, get the ingredients.
+- [ ] **C** **CALC-4** (started 2026-10-01 00:43 UTC, Codex; branch `launch/calc-4-reverse-alchemy`) Reverse alchemy: pick the effects, get the ingredients.
 
 ### Cut line
 
