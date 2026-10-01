@@ -1,32 +1,39 @@
 # Silt Strider Tools
 
-A data-driven companion for **Morrowind and Tamriel Rebuilt**: plan characters,
-compare equipment, calculate potions and spells, and explore progression using
-structured game data.
+Independent technical project · AI-assisted development
+
+Silt Strider Tools uses validated, versioned game-data catalogs to power
+interconnected tools for **Morrowind, Tamriel Rebuilt and ARCE**. Plan characters,
+compare equipment, calculate potions and spells, and explore progression through
+shared character state and structured data. The application brings record lookup,
+calculations, save import and planning workflows into one interface.
 
 [Live application](https://siltstrider.tools/) ·
-[Engineering case study](docs/CASE_STUDY.md) ·
+[Technical case study](docs/CASE_STUDY.md) ·
 [Architecture](docs/ARCHITECTURE.md) ·
 [Five-minute demo](docs/DEMO.md) ·
 [Data pipeline](https://github.com/lowgraph/openmw-decompiler)
 
 ## Project and contribution
 
-This is a human-directed, AI-assisted portfolio project. My work centers on product
-requirements, decomposition, data and application boundaries, game research,
-recommendation policies, acceptance criteria, hands-on validation, and release
-decisions. Specialized coding agents contributed implementation: Codex on the
-application, Claude on the pipeline, and Antigravity on UI architecture.
+This is independent project work developed with AI assistance. I define product
+behavior, data requirements, workflows, validation rules, UX decisions, test
+scenarios and acceptance criteria. My work also includes decisions about component
+structure and integration, reviewing generated implementations, debugging and
+refining behavior, validating outputs, and documenting release checks.
 
-The code is not presented as entirely hand-written. The case study explains the
-choices, defects, and validation behind it, with links to inspectable implementation.
+AI coding tools, including Codex, Claude and Antigravity, assist with implementation
+and iteration across the application and data pipeline. The
+[case study](docs/CASE_STUDY.md) links these decisions and validation work to the
+implementation and regression tests.
 
 ## What you can explore
 
 - **Character planning:** premade and custom builds, skill and attribute calculations,
   early-game recommendations, and late-game best-in-slot comparisons.
-- **Shared tools:** alchemy, enchanting, spellmaking, travel, a level simulator, and
-  faction progression requirements.
+- **Shared tools:** alchemy with effect-based ingredient-pair search and sourcing
+  locations, enchanting, spellmaking, travel with real-time movement estimates,
+  a level simulator, and faction progression requirements.
 - **Existing characters:** parse an OpenMW `.omwsave` in the browser and use its
   observations in character, equipment, progression, and journal views.
 - **Repeatable challenges:** seeded runs, saved preferences, and shareable links.
@@ -50,8 +57,17 @@ flowchart LR
 ```
 
 The [pipeline repository](https://github.com/lowgraph/openmw-decompiler) owns extraction
-and analytical datasets. This repository owns the web application. The browser reads
+and analytical datasets: it extracts plugin records, normalizes them into SQLite,
+tracks provenance, applies authored policies, and generates JSON bundles. This
+repository consumes those bundles in the web application; the browser reads
 published catalogs, never extraction databases.
+
+Each bundle carries a schema version, release identifier, extraction snapshot and
+per-file byte counts and SHA-256 hashes. Staging validates every catalog and profile
+delta before switching `current.json`. The browser loads catalogs on demand,
+checks their integrity, and pins one release for the page's lifetime to keep tools
+on a consistent dataset. Application commits and dataset releases are tracked
+separately.
 
 | Layer | Implementation |
 | --- | --- |
@@ -61,11 +77,11 @@ published catalogs, never extraction databases.
 | Backend | Cloudflare Worker routes, D1 schema, Clerk token verification |
 | Verification | Node test runner, jsdom, synthetic fixtures, contract tests |
 
-The current entry point is a **native React AppShell**. The original HTML and
-archived adapters remain regression references; production no longer depends on
-extracting that HTML before development or builds.
+The entry point is a **native React AppShell**. The standalone HTML application
+and archived adapters have been removed; development and builds use the React
+components directly.
 
-## Engineering evidence
+## Implementation evidence
 
 | Decision or problem | Inspect the implementation |
 | --- | --- |
@@ -133,8 +149,10 @@ See the [release procedure](docs/DEPLOYMENT.md) for the manual Cloudflare workfl
   presence in source does not prove a particular production environment is configured.
 - Gear recommendations depend on published candidates and authored policy. They do
   not simulate every possible script or guarantee every acquisition route.
-- Alchemy now consumes engine rules and profile settings; the latest corrections
-  have automated coverage. Browser visual verification and release are still pending.
+- Game calculations follow the OpenMW 0.51 source and use published engine rules
+  and profile settings. Known calculation, integration and interface findings are
+  tracked in the [launch checklist](docs/LAUNCH_CHECKLIST.md); release and retest
+  evidence is recorded in [launch verification](docs/LAUNCH_VERIFICATION.md).
 - No adoption, performance, or production-reliability metrics are claimed here.
 - The [demo guide](docs/DEMO.md) includes the checks required before presenting a release.
 
