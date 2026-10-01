@@ -1,0 +1,22 @@
+// The local test site only (scripts/local-stack.cjs): never deploy with this file.
+// No routes and no account; the database's name and ID are placeholders that match no real
+// database, so a stray --remote finds nothing. Pages come from .next-export-local, a build
+// made with the Clerk development key, and APP_ORIGIN and the Clerk keys are passed in by
+// the script (--var and --env-file), so none of them live here.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "siltstrider-local",
+  "compatibility_date": "2026-09-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "cloudflare/worker.mjs",
+  "workers_dev": false,
+  "assets": { "directory": "./.next-export-local", "html_handling": "auto-trailing-slash", "not_found_handling": "404-page", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "siltstrider-local",
+      "database_id": "00000000-0000-4000-8000-000000000000",
+      "migrations_dir": "cloudflare/migrations"
+    }
+  ]
+}

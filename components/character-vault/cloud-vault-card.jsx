@@ -78,7 +78,8 @@ export default function CloudVaultCard({
             <form onSubmit={handleSaveRename} className="flex items-center gap-2">
               <input
                 type="text"
-                className="bg-surface-1 border border-line-7 px-2 py-1 text-sm text-fg-2 font-serif w-full max-w-[260px] focus:outline-none focus:border-accent"
+                className="bg-surface-1 border border-line-7 px-2 py-1 text-sm text-fg-2 font-serif w-full max-w-[260px] min-w-0 focus:outline-none focus:border-accent"
+                aria-label="New name for this save"
                 value={nameVal}
                 onChange={(e) => setNameVal(e.target.value)}
                 onInput={(e) => setNameVal(e.target.value)}
@@ -87,7 +88,7 @@ export default function CloudVaultCard({
               />
               <button
                 type="submit"
-                className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-accent"
+                className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-accent whitespace-nowrap shrink-0"
                 onClick={handleSaveRename}
                 disabled={isBusy || !nameVal.trim()}
               >
@@ -95,7 +96,7 @@ export default function CloudVaultCard({
               </button>
               <button
                 type="button"
-                className="mw-btn px-2.5 py-1 text-xs font-serif text-fg-9"
+                className="mw-btn px-2.5 py-1 text-xs font-serif text-fg-9 whitespace-nowrap shrink-0"
                 onClick={handleCancelRename}
                 disabled={isBusy}
               >
@@ -109,7 +110,7 @@ export default function CloudVaultCard({
               </h4>
               <button
                 type="button"
-                className="text-xs text-fg-14 hover:text-accent underline font-serif ml-1"
+                className="text-xs text-fg-14 hover:text-accent underline font-serif ml-1 bg-transparent border-0"
                 onClick={() => setEditing(true)}
                 title="Rename this save"
                 disabled={isBusy}
@@ -245,7 +246,7 @@ export default function CloudVaultCard({
           ) : (
             <button
               type="button"
-              className="text-xs text-fg-12 hover:text-danger-7 underline font-serif"
+              className="text-xs text-fg-12 hover:text-danger-7 underline font-serif bg-transparent border-0"
               onClick={() => setConfirmDelete(true)}
               disabled={isBusy}
             >

@@ -75,6 +75,10 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       link, a link without a world.
 - [x] **O** (done, owner, reported 2026-09-29 20:33 UTC: the old save deleted and the character saved again; works across browsers) Real sign-in test on production (LAUNCH_VERIFICATION §5 item 6), and delete the
       10:54 save and save the Khajiit again, if not done already.
+- [x] **C** **VAULT-TEST** (started 2026-09-30 22:12 UTC, C; done `a7bd0a4` on `launch/vault-signed-in-tests`, not merged: `scripts/local-stack.cjs` and `scripts/test-vault.cjs`, 10 of 10 cases; the owner's real Clerk sign-in checked on the local site; its axe pass fixed the Vault card's grey Rename and Delete, an unnamed rename box and the account page's heading order) Signed-in Cloud Vault tests before the next deploy (owner, 30
+      September): a local copy of the site with the Worker and a local database, signed in once by
+      the owner with a Clerk development test account; and an automated signed-in suite that signs
+      its own tokens (no Clerk), with axe on the signed-in pages.
 
 ### 2. Before launch: clarity
 

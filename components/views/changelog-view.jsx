@@ -41,6 +41,7 @@ export default function ChangelogView() {
             <li>Travel remembers edits to a loaded save&apos;s guild, Intervention, items and movement options in this browser for that save and world profile. &ldquo;Use save defaults&rdquo; clears them. Scrolls start unticked and have a limited number of uses per journey; known spells show estimated cast chance and need enough Magicka. Replanning does not spend anything in your save.</li>
             <li>Travel puts Origin, Destination and &ldquo;Plan for&rdquo; above the route answer. Character and route options start folded with a summary of your choices; quick starting places open on demand, and &ldquo;How routes are worked out&rdquo; is at the bottom. Guild and carrying warnings stay beside the route.</li>
             <li>Travel has one search for each end of a journey. Towns and transit stops come first, then outdoor places and rooms such as &ldquo;Balmora › Council Club&rdquo;. Pelagiad appears once, and typing a search keeps your route until you choose a result.</li>
+            <li>On each Cloud Vault save, Rename and Delete no longer sit in grey boxes, renaming keeps its Save and Cancel buttons whole, and screen readers name the rename box. &ldquo;Become a Premium supporter&rdquo; on Your account is a proper section heading.</li>
           </ul>
         </section>
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">

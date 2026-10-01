@@ -28,6 +28,7 @@
 - **More room on a phone:** the header is one row, the site's name and then theme, search, account and menu buttons (search is a magnifier; its taglines are gone), so pages start about 190 pixels higher. In the Character Builder, one row of four sections (Configure, Sheet, Loadouts, Premades) replaces the three stacked tabs and the second Configurator / Character Sheet toggle, and the form starts in the first screen. In the phone menu, Character Builder and Challenge Runs no longer look dimmer than the other tools.
 - **The most used tools first:** the menu bar now reads Character Builder, Level Simulator, Travel Planner, Alchemy, Faction Journal and Challenge Runs, and Home lists Travel before Alchemy. On a phone, the bottom bar has Travel in place of Alchemy, which is a tap away in the menu.
 - **Two more bits of small print you can read:** for a Khajiit or Argonian, the Equipped Loadouts' Boots slot and its "Beast races cannot wear boots" were faded almost to the background; and a ticked Challenge Runs objective was faded as well as struck through. Both are readable now, in both themes.
+- **Tidier Cloud Vault saves:** on each saved character, Rename and Delete no longer sit in grey boxes (Delete was barely readable), renaming keeps its Save and Cancel buttons whole instead of breaking their words, and screen readers now name the box you type the new name in. On Your account, "Become a Premium supporter" is a proper section heading.
 
 ## Privacy, sign-in and launch readiness — 2026-09-29
 
