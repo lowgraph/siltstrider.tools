@@ -333,7 +333,7 @@ commands in BROWSER_TESTS.md.
 
 #### 11. QA-05 — stale character titles
 
-- [x] **C** **QA-05** (started 2026-10-01 19:50 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §34; not merged or deployed) (partly reproduced: Builder title stale after hydration; Simulator identity stale on desktop, not on live phone; cause `updateField`, `character-sheet.jsx`, `normalizeCharacterState`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
+- [x] **C** **QA-05** (regression recheck started 2026-10-01 22:08 UTC, Codex, on launch/character-preservation) (started 2026-10-01 19:50 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §34; not merged or deployed) (partly reproduced: Builder title stale after hydration; Simulator identity stale on desktop, not on live phone; cause `updateField`, `character-sheet.jsx`, `normalizeCharacterState`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
       title goes stale after an edit: the Builder sheet ("Imperial Agent" over a Female
       Breton), Home's character card ("Argonian Marsh Monk" over a Nord), and the Level
       Simulator naming two characters ("Argonian male — Spear scout" beside "Male Dark Elf").
