@@ -7,11 +7,14 @@ const assert = require('node:assert/strict');
 const args = process.argv.slice(2);
 const option = (name, fallback) => args.includes(name) ? args[args.indexOf(name) + 1] : fallback;
 const base = option('--url', 'http://127.0.0.1:8765');
-if (!['localhost', '127.0.0.1'].includes(new URL(base).hostname)) throw Error('Browser tests require a local server.');
+const productionReadOnly = args.includes('--production-read-only');
+const touch = args.includes('--touch');
+if (!['localhost', '127.0.0.1'].includes(new URL(base).hostname) && !(productionReadOnly && base === 'https://siltstrider.tools')) throw Error('Browser tests require a local server, or explicit read-only production QA.');
 const suite = option('--suite', 'all');
 const filter = option('--filter', '');
 const failFast = args.includes('--fail-fast');
-if (!['all', 'matrix', 'travel', 'tools', 'settings', 'polish'].includes(suite)) throw Error('Use --suite all, matrix, travel, tools, settings or polish.');
+if (!['all', 'matrix', 'travel', 'tools', 'settings', 'polish', 'hydration', 'qa', 'touch'].includes(suite)) throw Error('Unknown browser suite.');
+if (productionReadOnly && !['hydration','qa','touch'].includes(suite)) throw Error('Production QA permits only hydration, qa and touch suites.');
 const output = path.resolve(option('--out', `A:/Cache/travel-branch-browser-${Date.now()}`));
 const chromePath = option('--chrome', 'C:/Program Files/Google/Chrome/Application/chrome.exe');
 const axePath = option('--axe-path', process.env.BROWSER_AXE_PATH);
@@ -91,7 +94,9 @@ async function navigate(route, profile = 'vanilla', extra = '') {
   await idle();
   await waitForFonts();
 }
-async function viewport(width) { await send('Emulation.setDeviceMetricsOverride', { width, height: width < 600 ? 844 : 900, deviceScaleFactor: 1, mobile: false }); }
+async function viewport(width) {
+  await send('Emulation.setDeviceMetricsOverride', { width, height: touch ? 812 : width < 600 ? 844 : 900, deviceScaleFactor: touch ? 3 : 1, mobile: touch });
+}
 async function screenshot(name) {
   const capture = await send('Page.captureScreenshot', { format: 'png' });
   fs.writeFileSync(path.join(output, `${name}.png`), Buffer.from(capture.data, 'base64'));
@@ -105,8 +110,13 @@ async function key(key, code, number, modifiers = 0) {
 async function click(selector) {
   await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});if(!el)throw Error('Missing control: '+${JSON.stringify(selector)});el.scrollIntoView({block:'center'});})()`);
   const rect = await evaluate(`(()=>{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
-  await send('Input.dispatchMouseEvent', { type: 'mousePressed', button: 'left', clickCount: 1, ...rect });
-  await send('Input.dispatchMouseEvent', { type: 'mouseReleased', button: 'left', clickCount: 1, ...rect });
+  if (touch) {
+    await send('Input.dispatchTouchEvent', {type:'touchStart',touchPoints:[{...rect,radiusX:1,radiusY:1,force:1,id:1}]});
+    await send('Input.dispatchTouchEvent', {type:'touchEnd',touchPoints:[]});
+  } else {
+    await send('Input.dispatchMouseEvent', { type: 'mousePressed', button: 'left', clickCount: 1, ...rect });
+    await send('Input.dispatchMouseEvent', { type: 'mouseReleased', button: 'left', clickCount: 1, ...rect });
+  }
   await pause(150);
 }
 async function button(text) {
@@ -159,7 +169,8 @@ async function choose(selector, label) {
   const box = JSON.stringify(selector);
   await type(selector, label);
   await until(`document.querySelector(${box}).getAttribute('aria-expanded')==='true'&&document.querySelector('#'+document.querySelector(${box}).getAttribute('aria-controls')+' [role=option][aria-selected=true]')?.textContent.trim()===${JSON.stringify(label)}`);
-  await key('Enter', 'Enter', 13);
+  if (touch) await click('#'+await evaluate(`document.querySelector(${box}).getAttribute('aria-controls')`)+' [role=option][aria-selected=true]');
+  else await key('Enter', 'Enter', 13);
   await until(`document.querySelector(${box}).getAttribute('aria-expanded')==='false'`);
   assert.equal(await evaluate(`document.querySelector(${box}).value`), label, `Chose ${label}`);
 }
@@ -784,6 +795,8 @@ async function polishRegression() {
     }
     if (msg.method === 'Page.frameNavigated' && !msg.params.frame.parentId) activeLoaderId = msg.params.frame.loaderId;
     if (msg.method === 'Runtime.exceptionThrown') report.runtimeErrors.push({ case: current, message: msg.params.exceptionDetails.exception?.description || msg.params.exceptionDetails.text });
+    if (msg.method === 'Runtime.consoleAPICalled') (report.console ||= []).push({case:current,type:msg.params.type,message:msg.params.args.map(a=>a.value ?? a.description ?? '').join(' ')});
+    if (msg.method === 'Log.entryAdded') (report.console ||= []).push({case:current,type:msg.params.entry.level,message:msg.params.entry.text,url:msg.params.entry.url});
     if (msg.method === 'Network.requestWillBeSent' && msg.params.request.url.startsWith(base) && msg.params.type !== 'WebSocket') {
       if (msg.params.request.url.endsWith('/IngredientSources.json')) ingredientSourceRequests.push({ case: current, url: msg.params.request.url });
       requests.set(msg.params.requestId, {url:msg.params.request.url,type:msg.params.type,loaderId:msg.params.loaderId,frameId:msg.params.frameId});
@@ -795,15 +808,27 @@ async function polishRegression() {
     }
     if (msg.method === 'Network.responseReceived' && !deliberateFailure && msg.params.response.url.startsWith(base) && msg.params.response.status >= 500) report.serverErrors.push({ case: current, url: new URL(msg.params.response.url).pathname, status: msg.params.response.status });
     if (msg.method === 'Fetch.requestPaused') {
-      if (fetchMode === 'hold') heldRequests.push(msg.params.requestId);
+      if (productionReadOnly && !['GET','HEAD','OPTIONS'].includes(msg.params.request.method)) await send('Fetch.failRequest',{requestId:msg.params.requestId,errorReason:'BlockedByClient'});
+      else if (fetchMode === 'hold') heldRequests.push(msg.params.requestId);
       else await send(fetchMode === 'fail' ? 'Fetch.failRequest' : 'Fetch.continueRequest', { requestId: msg.params.requestId, ...(fetchMode === 'fail' ? { errorReason: 'Failed' } : {}) });
     }
   });
   evaluate = async expression => { const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (result.exceptionDetails) throw Error(result.exceptionDetails.exception?.description || result.exceptionDetails.text); return result.result.value; };
-  await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable');
+  await send('Page.enable'); await send('Runtime.enable'); await send('Log.enable'); await send('Network.enable');
+  if (productionReadOnly) await send('Fetch.enable',{patterns:[{urlPattern:base+'/api/*'}]});
+  if (touch) {
+    await send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:5});
+    await send('Emulation.setEmitTouchEventsForMouse',{enabled:true,configuration:'mobile'});
+    await send('Emulation.setEmulatedMedia',{features:[{name:'pointer',value:'coarse'},{name:'hover',value:'none'}]});
+    await send('Emulation.setUserAgentOverride',{userAgent:'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36',platform:'Android'});
+  }
   await send('Page.setLifecycleEventsEnabled', {enabled:true});
   // Focused interaction runs also need a same-origin document before using storage.
-  await navigate('home');
+  const qaContext = {base,report,output,send,evaluate,check,until,idle,viewport,navigate,openDocument,pause,click,button,type,select,choose,builderTab,screenshot,waitForFonts,touch,filter};
+  if (suite === 'hydration') await require('./qa-browser-cases.cjs').hydration(qaContext);
+  else await navigate('home');
+  if (suite === 'qa') await require('./qa-browser-cases.cjs').qa(qaContext);
+  if (suite === 'touch') await require('./qa-browser-cases.cjs').touch(qaContext);
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) { await cityStopRegression(); await longJourneyRegression(); await travel(); }
   if (['all','tools'].includes(suite)) { await toolsRegression(); await reverseAlchemyRegression(); await factionAndLevelRegression(); await savedTravel(); }

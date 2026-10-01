@@ -11,11 +11,53 @@ node scripts/test-browser.cjs --axe-path 'A:\Cache\audit-tools\node_modules\axe-
 Alternatively, set `BROWSER_AXE_PATH` to the installed `axe.min.js` and run
 `npm run test:browser`. No browser or audit dependency is downloaded. The runner
 accepts `--chrome`, `--url` (localhost only), `--suite all|matrix|travel|tools|settings|polish`,
-and `--filter` to run only case names containing a given string. `--fail-fast`
+and `--filter` to run only case names containing a given string. Additional reproduction suites are `qa`, `hydration` and `touch`. `--fail-fast`
 stops after the first failed case; `--trace-network` saves request lifecycle
 events beside the report. Timeout messages retain the pending request URLs or
 CDP expression, and the report includes the font states used for navigation.
 Keep output under the configured cache, outside the checkout.
+
+QA reproduction (1 October): `--suite hydration` enables `Runtime.consoleAPICalled`,
+`Runtime.exceptionThrown` and `Log.entryAdded` before the first `Page.navigate`.
+It checks 16 routes, including a 404, six storage/link scenarios, 1366/375 px and
+both themes. Fresh Home and Builder are repeated ten times: 456 cases. The loaded
+save is the synthetic `qa-traveller.json` packed into `silt-active-save`; Home and
+Builder must visibly restore its name. Console errors, hydration warnings and
+uncaught exceptions fail. The intentional 404's resource error currently fails
+this strict rule; keep that visible until the owner chooses the acceptance policy.
+
+`--suite touch --touch` sets CDP touch emulation to five points, mobile 375×812 at
+DPR 3, a mobile user agent, coarse pointer and no hover. It asserts the actual
+capabilities, uses `Input.dispatchTouchEvent` for taps, checks search/navigation,
+five Configure popovers, both Alchemy pickers and twenty saved-Travel repetitions.
+The final laptop control records whether Chrome actually provides touch plus a
+fine pointer. Chrome on this host retains coarse pointer when touch is enabled;
+that control needs physical-device acceptance rather than fabricated capabilities.
+
+`--suite qa` retains failing expectation checks and screenshots for open findings.
+Use `--filter QA-08`, for example, for a single item. Its popover measurements also
+reserve the phone tab bar; Gear checks use text Range boxes to detect broken words.
+The layout TODO wrapper can be run against a fresh report:
+
+```powershell
+$env:QA_BROWSER_REPORT='A:\Cache\qa-reproduce-20261001\qa-live-final\report.json'
+node --test test/qa-layout.browser.cjs
+$env:QA_UNMARK_TODOS='1'
+node --test test/qa-layout.browser.cjs
+Remove-Item Env:QA_UNMARK_TODOS
+Remove-Item Env:QA_BROWSER_REPORT
+```
+
+The ordinary reproduction tests use `{ todo: '<QA-id> not fixed yet' }` through a
+shared helper; `QA_UNMARK_TODOS=1` removes only those marks. Unit tests need the
+staged bundle. The explicit layout wrapper needs the measured browser report and
+is deliberately outside the server-free `npm test` glob.
+
+Production confirmation requires `--production-read-only --url https://siltstrider.tools`
+and accepts only `qa`, `hydration` or `touch`. It uses a fresh Chrome profile,
+never signs in, and blocks API methods other than GET/HEAD/OPTIONS. Storage and
+synthetic saves remain in that isolated profile. Production API QA-19 uses GET only;
+the PUT check belongs to `scripts/local-stack.cjs` with its local database.
 The `polish` suite checks calculator navigation at 375, 900, 1024, 1366, 1440 and
 1920 px in both themes, including row fit beside the world switch. At 375/1366 px
 it checks the default journey, Least real time, obtainable apparatus in quality
@@ -129,6 +171,23 @@ node scripts/test-vault.cjs --axe-path 'A:\Cache\audit-tools\node_modules\axe-co
 ```
 
 `--no-build` reuses the last build, `--filter` runs matching cases, `--port` moves the Worker.
+
+`--qa-reproduction` runs only the signed-in QA-21 / imported-save QA-22 cases.
+It uses a synthetic “QA – Vault Reproduction” identity, creates two “QA – ”
+records in a fresh local database, and deletes both in `finally`. It verifies
+the selected theme through account settings before testing each width. Known
+behavior assertions intentionally fail until the application is fixed:
+
+```powershell
+node scripts/test-vault.cjs --qa-reproduction --port 8796 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa-vault'
+```
+
+The corresponding hydrated/hook expectations are in
+`test/qa-account-reproduction.test.js`, marked TODO. `--suite qa --filter QA-22`
+in the ordinary Chrome runner checks that a challenge's link retains its rolled
+world after a visitor changes world. Synthetic authentication does not verify
+Clerk's real email-code or redirect behavior; use an owner-prepared throwaway
+session for that final check.
 
 **Real Clerk, signed in once by the owner.** The Clerk development instance's keys in
 `.env.local` (`pk_test_`/`sk_test_`; the script refuses live keys) go to Wrangler with

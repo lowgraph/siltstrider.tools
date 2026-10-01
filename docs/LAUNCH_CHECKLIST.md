@@ -20,7 +20,7 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 | Date | What |
 | --- | --- |
 | **By Monday 5 October** | Anything from the priority list not done by now moves after launch (see the cut line). |
-| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**); on a real phone (QA could only emulate one): no Ctrl K hint on touch, Travel options changed for a loaded save survive leaving Travel and coming back (the unexplained 30 September failure; 0 of 31 in the 1 October QA run), and a real `.omwsave` loads (**O**); Google and Discord sign-in with an unsaved TR + ARCE character, which must come back in TR + ARCE (the signed-in QA could test email only) (**O**). |
+| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression; also `scripts/test-browser.cjs --suite hydration` and `--suite touch --touch`, BROWSER_TESTS.md, with the 404 page's expected error exempt) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**); on a real phone (QA could only emulate one): no Ctrl K hint on touch, Travel options changed for a loaded save survive leaving Travel and coming back (the unexplained 30 September failure; 0 of 31 in the 1 October QA run), and a real `.omwsave` loads (**O**); Google and Discord sign-in with an unsaved TR + ARCE character, which must come back in TR + ARCE (the signed-in QA could test email only); on a touchscreen laptop the Ctrl K hint still shows (emulation could not combine touch with a fine pointer) (**O**). |
 | **Tuesday 6 October, 13:30 UTC: launch** | Post r/Morrowind (flair Showcase), r/OpenMW (unless refused), r/TamrielRebuilt, Morrowserver `#modding`, Morrowind Modding Community, OpenMW Discord if approved; stay a few hours for comments, ready for "was it made with AI?" (**O**). Watch Worker logs and error references, API requests, D1 and Clerk sign-ins; fix only breakage, deploy only on the owner's go-ahead (**C**). |
 | **Wednesday 7 October** | Show HN and the X thread (**O**). |
 | **From Thursday 8 October** | Creator outreach, one at a time, through business contacts (**O**). Feedback from the threads, and whatever the freeze left of sections 3 and 4, goes into a new after-launch list (**C**). |
@@ -201,53 +201,53 @@ first impression and regression). Personas: R Reddit first visit, V veteran, N n
 Q regression run. Each item: re-check the report's case first, fix, re-check after, plus the
 usual tests (at least three edge cases for a logic change) and changelog.
 
-- [ ] **C** **QA-01** (High, V; NUM-05; confirmed in code) Enchanting costs several effects
+- [ ] **C** **QA-01** (reproduced 4/4 local and live; cause `calcEffectCost`/`calcEnchantmentTotalPoints`; OpenMW 0.51: running costs 25.025 and 50.05, capacity 75, base price 50,050 (site 50 and 250,000); test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-05; confirmed in code) Enchanting costs several effects
       wrong: each effect's points are its own plus the running total before it, and the
       item's total is the sum of those running costs (OpenMW 0.51 `enchanting.cpp`);
       `calcEnchantmentTotalPoints` (`lib/enchant-math.mjs`) returns only the last running
       cost. Two Constant Effects of 5/5 must read 75 points, not 50. Fix with QA-02.
-- [ ] **C** **QA-02** (High, V; NUM-04; confirmed in code) Enchanting rounds points to
+- [ ] **C** **QA-02** (partly reproduced: floor, chance and price tests fail; the Common Ring UI case not; OpenMW 0.51: 1.9125 points, capacity 1, base price 1,912 (price from the precise cost, so fix with QA-01); the engine's chance also counts fatigue, effect count and a Constant multiplier; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-04; confirmed in code) Enchanting rounds points to
       nearest instead of flooring each effect: a 5/5, 5 s Target Fortify Attribute is 1.875
       points, shown as 2, so it "does not fit" a Common Ring and its base price doubles.
       Afterwards re-check the self-enchant chance (16% vs the engine's 15%) and the base
       price (2,000 vs 1,500 g) from SUS-01.
-- [ ] **C** **QA-03** (High, V; NUM-02; confirmed in code) Level Simulator Health per level
+- [ ] **C** **QA-03** (reproduced 4/4 local and live; OpenMW 0.51 `levelUp` adds a float Endurance gain, and does not recompute the base half retroactively; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-02; confirmed in code) Level Simulator Health per level
       is floored (`floor(END / 10)`, `lib/level-math.mjs`); OpenMW keeps the fraction (10% of
       Endurance): END 35 to 55 gives 22.5 over five levels, the site 21. Confirm against
       OpenMW 0.51's `npcstats.cpp` first (the report cited 0.49); change the explanation too.
-- [ ] **C** **QA-04** (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
+- [ ] **C** **QA-04** (partly reproduced: all five chart expectations fail in unit tests, live chart starts at 50 for Health 35; cause `normalizeCharacterState`/`calculateHealthGrowthCurve` recompute the sheet; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
       starts at 50 whatever the character's Health (35, 45), says "Endurance 100 at Lv 6"
       when ten +5 steps are needed, and its forecast moves when Bitter Cup changes only
       Personality and Willpower. Check each symptom on its own; the Bitter Cup one may be
       legitimate if the plan's later picks change.
-- [ ] **C** **QA-05** (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
+- [ ] **C** **QA-05** (partly reproduced: Builder title stale after hydration; Simulator identity stale on desktop, not on live phone; cause `updateField`, `character-sheet.jsx`, `normalizeCharacterState`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
       title goes stale after an edit: the Builder sheet ("Imperial Agent" over a Female
       Breton), Home's character card ("Argonian Marsh Monk" over a Nord), and the Level
       Simulator naming two characters ("Argonian male — Spear scout" beside "Male Dark Elf").
       One fresh character through Builder, edit race, Home, Level Simulator: every heading
       must agree, or the premade's name must read as its source.
-- [ ] **C** **QA-06** (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
+- [ ] **C** **QA-06** (reproduced 8/8; the missed keys are `tr_m7_apparatus_sm_alembic_02`, `_calcin_02`, `_retort_02`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
       apparatus is still offered in TR and TR + ARCE Alchemy (Alembic, Calcinator, Retort),
       though the 30 September changelog says it is gone: the filter in
       `lib/alchemy-catalogs.mjs` matches only vanilla keys and names starting "Secretmaster".
-- [ ] **C** **QA-07** (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
+- [ ] **C** **QA-07** (reproduced 4/4; cause `searchTravelOptions` normalization and `matchPlaces`; the rejected query leaves the committed route; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
       "Ald-ruhn" works, and the previous route stays on screen. Ignore apostrophes and
       hyphens in matching; clear or mark a stale route when the search changes. Check Vos,
       Sadrith Mora, Ebonheart and Mournhold too.
-- [ ] **C** **QA-08** (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
+- [ ] **C** **QA-08** (reproduced 8/8; `gear-sources.jsx` `SourceRow`, `best-in-slot-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
       breaks into fragments ("Ald- / ruhn — / sold by / Dander / a"). Stack slot, item and
       source at phone width; Early and Late game, 375 and 390 px.
-- [ ] **C** **QA-09** (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
+- [ ] **C** **QA-09** (partly reproduced: Birthsign, Specialization and both Favored Attribute overflow 16/16; Race stays inside; `configurator.jsx` `InfoTip` has no clamping; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
       off-screen. Keep every info popover inside the viewport; check each info icon at 375 px.
-- [ ] **C** **QA-10** (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
+- [ ] **C** **QA-10** (reproduced 12/12 (Argonian, Khajiit, ARCE Cathay-raht); `resolveBestInSlotPicks` named and fallback premade paths skip the beast check; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
       wear in the Gear Advisor's runner-up picks (Masque of Clavicus Vile, Boots of Blinding
       Speed) under the advisor's own note that they are excluded. Seen once; check Argonian,
       Khajiit and an ARCE Khajiit form, every runner-up list.
-- [ ] **C** **QA-11** (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
+- [ ] **C** **QA-11** (reproduced 8/8; the names are in the published catalog (no pipeline request needed): filter deprecated rows in `faction-roster.jsx`, look relation IDs up in `faction-detail-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
       shows raw codes ("T_cyr_fightersguild", "T_mw_imperialnavy") in Inter-Faction Relations
       and literal "<Deprecated>" factions in the list. Readable names (ask the pipeline if the
       catalog lacks them); hide deprecated factions.
-- [ ] **C** **QA-12** (High, N; U04, F08) Premade build cards say nothing about how a build
+- [ ] **C** **QA-12** (reproduced 4/4; `premade-browser.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; U04, F08) Premade build cards say nothing about how a build
       plays, and "Maj:", "Min:" and "Magic Specialization" go unexplained. One "plays like"
       line and one trade-off per playstyle; spell out Major and Minor skills. Copy only.
 - [x] **C** **QA-13** (done by CALC-4, merged `ef67b3e`, live as `3879ce7b`; retest 1 October: Restore Health found and its first pair carried into the calculator in all three worlds, desktop and 375 px) (High, N; U20) A first potion needs ingredient names: searching
@@ -257,52 +257,61 @@ usual tests (at least three edge cases for a logic change) and changelog.
       kept in this browser while the Vault's Local Browser Saves lists 0 and "No local
       characters found". Say what each is: the open save stays until cleared; Local Browser
       Saves are characters saved with "Save this character".
-- [ ] **C** **QA-15** (Low, R; owner decision) About says the site is open source (code under
+- [ ] **C** **QA-15** (reproduced 4/4; `about-view.jsx`; `test/site-claims.test.js` already allows "open source" for the code; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
       AGPL-3.0; not the game or mod data), links https://github.com/lowgraph/siltstrider.tools
       and says it is made by LowGraph. Keep `test/site-claims.test.js` and the licence
       wording rules (COORDINATION, Licences).
-- [ ] **C** **QA-16** (found in the 1 October retest; re-check first) Travel: Ebonheart to
+- [ ] **C** **QA-16** (reproduced 24/24, all worlds, walking on and off: High, a wrong answer; the Mournhold teleport is in every Teleports catalog, but `buildTransitStops`/`transitEndpointStops` (`lib/travel-stops.mjs`) do not expand the Mournhold city choice to its destination stop; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
       Mournhold showed No Route, though the Mournhold teleport from Ebonheart is everyday
       travel (Teleports policy). Check in Vanilla, TR and TR + ARCE with walking on and off;
       if it reproduces it is a wrong answer (High).
 
+Reproduction (Codex, 1 October, `qa/reproduce`, LAUNCH_VERIFICATION §27): every open
+item below has a failing test marked `{ todo: '<QA-id> not fixed yet' }` in `test/qa-*`
+(41 todo; `npm test` stays green). A fix removes its item's todo mark, so the test proves
+it; `QA_UNMARK_TODOS=1` runs them all as real tests. Phone layout assertions:
+`test/qa-layout.browser.cjs` with `QA_BROWSER_REPORT`; commands in BROWSER_TESTS.md.
+- [ ] **C** Three of these tests read the staged bundle and fail where none is staged (a
+      fresh clone, a cloud session): `QA-11 published faction names…` and both `QA-20`
+      catalog tests. Skip them without a bundle, as the other bundle tests do.
+
 Checks the live QA could not run (sent to Codex with the QA-01 to QA-16 reproduction,
 1 October); each becomes a finding if it fails:
-- [ ] **C** **QA-17** Hydration and console errors on first load: every route, fresh, with a
+- [x] **C** **QA-17** (done: no hydration warnings or uncaught exceptions in 1,168 first navigations; only the intended 404 page logs its expected 404 error, which `--suite hydration` should exempt at the freeze; LAUNCH_VERIFICATION §27) Hydration and console errors on first load: every route, fresh, with a
       stored TR + ARCE world, a loaded save and each shared-link kind, 1366 and 375 px, both
       themes; Home and Builder ten times fresh. Kept as `--suite hydration` in the runner.
-- [ ] **C** **QA-18** Real touch emulation (touch points, coarse pointer, no hover, tap
+- [x] **C** **QA-18** (done: no phone fault, 31/31 by tap and Travel save options 20/20; a touchscreen laptop (touch with a fine pointer) could not be emulated, so check one by hand; LAUNCH_VERIFICATION §27) Real touch emulation (touch points, coarse pointer, no hover, tap
       events): no Ctrl K hint, tab bar, menus and popovers by tap, Travel save options 20
       times by tap, Alchemy pickers. Kept as `--touch` in the runner.
-- [ ] **C** **QA-19** The signed-out API: GET `/api/account`, `/api/settings`, `/api/saves`,
+- [x] **C** **QA-19** (done: all nine requests 401, no data, no Set-Cookie (production PUT not attempted); LAUNCH_VERIFICATION §27) The signed-out API: GET `/api/account`, `/api/settings`, `/api/saves`,
       `/api/entitlements` and PUT `/api/settings` answer 401, with no data and no Set-Cookie.
-- [ ] **C** **QA-20** Game data QA could not source: reverse alchemy's Restore Health pairs and
+- [x] **C** **QA-20** (done: all 5,755 suggested pairs have Restore Health on both ingredients; all 20 Vanilla guild ranks match; LAUNCH_VERIFICATION §27) Game data QA could not source: reverse alchemy's Restore Health pairs and
       the Vanilla Fighters and Mages Guild ranks, against the staged catalogs.
 
 From the signed-in QA (live, 1 October, three email-only QA accounts, cleaned up; report
 `siltstrider-account-qa-2026-10-01.md`, F-ids):
-- [ ] **C** **QA-21** (High; F-1) "Load this build into Character Builder" in the Cloud Vault
+- [ ] **C** **QA-21** (reproduced 4/4 and in a real Clerk session; `AppShell` passes `setBuild` as `onApplyBuild`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-1) "Load this build into Character Builder" in the Cloud Vault
       leaves a TR + ARCE build in the visitor's world: Vanilla, race shown as Argonian, the
       sheet stuck on "Calculating statistics…" (2 of 2). The Vault applies builds with the
       provider's plain `setBuild`, which ignores `build.world` and `build.arce`
       (`app-shell.jsx`, `character-context.jsx` `loadBuild`). Loading a build must set its
       world, as a shared link does (LINK-1).
-- [ ] **C** **QA-22** (High; F-2, F-17) Share links carry the wrong character. An imported
+- [ ] **C** **QA-22** (reproduced, local, live and real session; `shareBuildLink` (`use-cloud-vault.js`) uses only the save summary; `handleCopyPermalink` (`challenge-runs-root.jsx`) uses the shell's world; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-2, F-17) Share links carry the wrong character. An imported
       save's "Copy shareable permalink" writes raw ids (`className:"mage"`,
       `T_Els_Cathay-raht`), empty skill lists, the wrong gender and `world=vanilla` for a
       TR + ARCE save; it opens as a different or broken character (2 of 2 saves; Builder
       builds are fine). A challenge run's link took the visitor's current world (`world=tr`)
       for a run rolled in Vanilla. A link must describe its own character or run.
-- [ ] **C** **QA-23** (High; F-3, F-9) Signing in switches to the account's Preferred world
+- [ ] **C** **QA-23** (reproduced, hydrated test and real session; `ShellProvider` takes `preferences.settings.world` whenever ready, and `setProfile` saves every header world change, so an explicit account choice cannot be told apart: record whether the Preferred world was chosen on the account; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
       when the address has no `?world=` (3 of 3): an unsaved TR + ARCE character, or a loaded
       TR + ARCE save, comes back in Vanilla, the save re-read as plain Khajiit
       (`shell-context.jsx`). A new account has chosen nothing yet, but switching world or
       loading a save already auto-saves a Preferred world (F-9), which then wins. On sign-in
       the browser's world must win until the player chooses one on the account.
-- [ ] **C** **QA-24** (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
+- [ ] **C** **QA-24** (reproduced, real session; `account-page.jsx` signs out with no hand-off and `takeCharacterAfterSignIn` refuses a signed-out return: needs its own signed-out return marker; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
       Home afresh and the Builder shows a random premade (2 of 2). A loaded save survives.
       Keep the character through sign-out as through sign-in (`SIGN_IN_EVENT` hand-off).
-- [ ] **C** **QA-25** (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
+- [ ] **C** **QA-25** (partly reproduced: unit assertion only (two DOM attempts stalled); `travel-workstation.jsx` lets the restored save's token override a link origin; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
       link's starting point is replaced by the save's position (`/travel?from=Balmora…` plans
       from Seyda Neen; the plan is kept). COORDINATION, Travel from the loaded save: a link
       wins over the save's starting point.
