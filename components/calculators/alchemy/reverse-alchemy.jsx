@@ -3,8 +3,11 @@ import { useMemo, useRef, useState } from "react";
 import { alchemyEffectOptions, findAlchemyPairs } from "../../../lib/reverse-alchemy.mjs";
 import { formatEffectLabel } from "../../../lib/alchemy-math.mjs";
 import { rankOptions } from "../../../lib/option-search.mjs";
+import { SourceDetails } from "./ingredient-sources";
 
-export default function ReverseAlchemy({ ingredients, onUsePair }) {
+/** `sources` is the lazily loaded IngredientSources (lib/ingredient-sources.mjs sourceIndex);
+ *  `onWantSources` asks for it the first time a pair's "Where to get them" opens. */
+export default function ReverseAlchemy({ ingredients, onUsePair, sources = { status: "idle" }, onWantSources }) {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState([]);
   const [limit, setLimit] = useState(12);
@@ -35,11 +38,12 @@ export default function ReverseAlchemy({ ingredients, onUsePair }) {
       </ul>
       <p role="status" className="text-xs text-fg-7">{result.total ? `${result.total} ingredient pair${result.total === 1 ? "" : "s"}. Showing ${result.pairs.length}.` : "No ingredient pair makes all the chosen effects. Remove an effect to broaden the search."}</p>
       {!!result.total && <>
-        <p className="text-xs text-fg-9">Pairs with fewer additional effects come first, then lower ingredient value. Shop availability is not listed yet. Using a pair replaces all four ingredient slots.</p>
+        <p className="text-xs text-fg-9">Pairs with fewer additional effects come first, then lower ingredient value. &ldquo;Where to get them&rdquo; lists the shops, plants, creatures and places for each ingredient in this world. Using a pair replaces all four ingredient slots.</p>
         <ul aria-label="Ingredient pairs" tabIndex={0} className="list-none m-0 p-0 space-y-2 max-h-80 overflow-y-auto">
           {result.pairs.map(pair => <li key={pair.id} className="reverse-alchemy-pair border border-line-9 bg-surface-1 p-3 space-y-2">
             <p className="text-sm font-serif text-fg-2 m-0 break-words">{pair.ingredients.map(ingredient => ingredient.n).join(" + ")}</p>
             <p className="text-xs text-fg-7 m-0">{pair.extras.length ? `Also makes: ${pair.extras.map(item => formatEffectLabel(item.effect) + (item.effect.harmful || item.effect.bad ? " (harmful)" : "")).join(", ")}.` : "No additional shared effects."}</p>
+            <PairSources pair={pair} sources={sources} onWantSources={onWantSources} />
             <button type="button" className="mw-btn text-xs px-3 py-2" aria-label={`Use ${pair.ingredients.map(ingredient => ingredient.n).join(" and ")}`}
               onClick={() => onUsePair(pair.ingredients)}>Use this pair</button>
           </li>)}
@@ -48,4 +52,14 @@ export default function ReverseAlchemy({ ingredients, onUsePair }) {
       </>}
     </>}
   </section>;
+}
+
+/** Where to get a pair's two ingredients, folded until asked for: opening it is what loads
+ *  the catalog (about 170 KB in Tamriel Rebuilt). */
+function PairSources({ pair, sources, onWantSources }) {
+  const names = pair.ingredients.map(ingredient => ingredient.n).join(" and ");
+  return <details className="reverse-alchemy-sources" onToggle={event => { if (event.currentTarget.open) onWantSources?.(); }}>
+    <summary className="text-xs font-serif text-accent cursor-pointer min-h-6 py-1">Where to get them<span className="sr-only">: {names}</span></summary>
+    <div className="pt-2 space-y-2 break-words"><SourceDetails ingredients={pair.ingredients} sources={sources} /></div>
+  </details>;
 }

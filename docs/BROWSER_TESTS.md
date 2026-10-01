@@ -40,6 +40,15 @@ The tools suite also checks `Alchemy effect finder` across all three profiles,
 both themes and 1366/375 px: effect search, multiple desired effects, filling a
 pair while clearing the other slots, focus on the potion output, empty matches,
 profile isolation, no overflow and axe accessibility.
+The `Alchemy` filter includes 12 selected-ingredient cases across the same matrix:
+"Where to get it" appears in every filled slot without an effect-finder recipe,
+selection alone triggers no source download, keyboard activation opens the panel,
+replacement closes old content, clearing removes it, and world changes reset it.
+Two additional cases hold/fail the IngredientSources request and verify neutral
+loading and Retry at 1366/375 px. Open source panels receive axe audits and screenshots.
+Run all 26 Alchemy cases with `--suite tools --filter Alchemy` against this checkout's
+local server. Optional-catalog absence, malformed records and inherited TR/ARCE
+source provenance also have synthetic unit tests.
 Each save edit is checked before navigation, followed by a check that all four
 choices reached local storage. A failure there distinguishes an unapplied or
 unstored edit from the later save/profile restoration assertion.

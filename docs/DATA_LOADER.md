@@ -9,6 +9,18 @@ data groups, not declarations that the calculators' engine rules are complete.
 
 ## Local setup
 
+`ingredientSources` is a separate lazy feature: required `Places`, optional
+`IngredientSources`. Alchemy enables it when "Where to get it" on a selected
+ingredient or "Where to get them" on a pair is opened. Selecting ingredients
+or effects alone does not download it. Older bundles show an unavailable notice;
+network/integrity failures show Retry without clearing the chosen ingredient.
+The workstation remounts on profile changes, resetting selections and disclosures;
+the loader still pins and verifies one bundle and retains inherited TR/ARCE data.
+Source text preserves stock/restocking, per-draw chances, quantity and level,
+locked finds and each source's actual regions/cells. Absence means no source is
+listed, not proof that only theft or a quest can obtain it. Truncated records say
+the list is incomplete. This consumes pipeline schema 1.0.0 without changing it.
+
 Run `npm run data:stage` to validate and copy the completed bundle from
 `A:/Cache/OpenMWFoundation/app-bundle` into ignored `public/game-data`. For another source:
 

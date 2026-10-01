@@ -8,6 +8,7 @@ for(const tool of ['alchemy','enchanting','spellmaking']) test(tool+' uses loade
  let character={build:{},sheet:null};
  const fakeData={status:'ready',data:{profile:'vanilla',catalogs:{Attributes:[],Skills:[],MagicEffects:[],EffectRules:[],Ingredients:[],Apparatus:[],GameSettings:[]}}};
  const deps={'../../character-context':{useActiveCharacter:()=>character},'../../shell-context':{useShell:()=>({profile:'vanilla',world:'vanilla'})},'../../active-character-link': require('./helpers/active-character-link.cjs'),'./reverse-alchemy': require('./helpers/reverse-alchemy.cjs'),'./ingredient-combobox': require('./helpers/ingredient-combobox.cjs'),'../../use-game-data':{useGameData:()=>fakeData},'../../use-search-intent':{useSearchIntent:()=>null}};
+ deps['./ingredient-sources']=require('./helpers/ingredient-sources.cjs');
  if(tool==='alchemy') deps['../../../lib/alchemy-catalogs.mjs']={adaptAlchemy:()=>({ingredients:[],apparatus:{mortar:[],alembic:[],retort:[],calcinator:[]},settings:{}})};
  const file=path.resolve('components/calculators/'+tool+'/'+tool+'-workstation.jsx');
  const code=require('esbuild').transformSync(fs.readFileSync(file,'utf8'),{loader:'jsx',format:'cjs',jsx:'automatic'}).code;
