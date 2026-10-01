@@ -356,7 +356,7 @@ commands in BROWSER_TESTS.md.
 
 #### 14. QA-11 — faction names and deprecated entries
 
-- [ ] **C** **QA-11** (reproduced 8/8; the names are in the published catalog (no pipeline request needed): filter deprecated rows in `faction-roster.jsx`, look relation IDs up in `faction-detail-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
+- [ ] **C** **QA-11** (started 2026-10-01 22:45 UTC, Codex, on launch/character-preservation) (reproduced 8/8; the names are in the published catalog (no pipeline request needed): filter deprecated rows in `faction-roster.jsx`, look relation IDs up in `faction-detail-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
       shows raw codes ("T_cyr_fightersguild", "T_mw_imperialnavy") in Inter-Faction Relations
       and literal "<Deprecated>" factions in the list. Readable names (ask the pipeline if the
       catalog lacks them); hide deprecated factions.
