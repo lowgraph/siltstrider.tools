@@ -9,22 +9,18 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 ## 1. Production state at hand-off
 
-This table records the earlier Travel rollback hand-off. The current release is
-main `216cd90`, Worker `d523b9ba`, with migrations 0001–0007; see §16 for its
-verification and rollback target. Earlier release history remains below.
-
 | Item | Value |
 | --- | --- |
-| Live commit | `1e84b1a` (restored after the Travel release failed production acceptance; Travel remains on main) |
-| Live Worker version | `24bd4ac1-e287-4c14-88d8-80bee20b42f9`, tagged `1e84b1a`; restored to 100% at 2026-09-30 20:47 UTC |
+| Live commit | `216cd90` (account settings and tool polish; release verification in §16) |
+| Live Worker version | `d523b9ba-92b1-4fed-9056-89ee19916a49`, tagged `216cd90`; deployed at 100% on 2026-10-01 00:11 UTC |
 | Security headers | `public/_headers`: nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'`, referrer policy, permissions policy, host-only HSTS; verified live after the 16:49 release (they took a minute or two to appear) |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `3da0320236da77ec085d105d`, snapshot `1613a1123ed9…` |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
-| D1 migrations | 0001–0006 applied; `wrangler d1 migrations list siltstrider-db --remote` reports none pending |
-| D1 Time Travel bookmark | `00000052-00000000-000050f6-c17dba71fbf6e72b2fd75d79b0a04533`, captured before the 20:32 UTC Travel release (recovery information only; no new data export) |
-| Pipeline repo | `master`; identical coordination rollback record, synchronized in the release session |
+| D1 migrations | 0001–0007 applied; none pending at the 00:11 release |
+| D1 Time Travel bookmark | `00000059-00000000-000050f7-69367513ae9acb9d9add96e963178727`, captured before the 2026-10-01 00:11 UTC release; private migration backup and preservation checks in §15 |
+| Pipeline repo | `master` at `129b2d1`; identical coordination record, synchronized in this session |
 
 Deployment history since the last tagged release before this batch:
 
@@ -52,9 +48,17 @@ Deployment history since the last tagged release before this batch:
 | `4c464aa3-db84-44be-a1a7-d8572e75d27c` | 09-30 15:46 | `4d998be` | tagged; the acceptance re-run's fixes (`03c3361`: fg-14 for text on the equipment panels, no fading on faction ranks or Travel stop labels, Level Simulator preset descriptions, named objective checkboxes) and BLD-3 (premade builds first for newcomers); deployed from the `mt-site-1` worktree on a clean `main` |
 | `24bd4ac1-e287-4c14-88d8-80bee20b42f9` | 09-30 16:04 | `1e84b1a` | tagged; no fading on a beast race's Boots slot (axe found it live on `4c464aa3` when the random start drew a Khajiit) or on a ticked Challenge objective; Travel rollback target |
 | `3ef09493-cb5a-42e2-96fd-ca54c168d3e2` | 09-30 20:32 | `2c113b8` | tagged; standalone Travel release: TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8; unchanged bundle and D1 schema; rolled back after repeated mobile acceptance failure |
-| `24bd4ac1-e287-4c14-88d8-80bee20b42f9` (rollback) | 09-30 20:47 | `1e84b1a` | previous production version restored at 100%; current; no data or schema rollback |
+| `24bd4ac1-e287-4c14-88d8-80bee20b42f9` (rollback) | 09-30 20:47 | `1e84b1a` | previous production version restored at 100%; superseded by the later releases below; no data or schema rollback |
 | `3ef09493-cb5a-42e2-96fd-ca54c168d3e2` (restored) | 09-30 21:30 | `2c113b8` | owner-authorized return to the Travel release for live reproduction; active version captured before the next release |
 | `d523b9ba-92b1-4fed-9056-89ee19916a49` | 10-01 00:11 | `216cd90` | tagged; current main, account settings and tool polish; 100% traffic; migration 0007 had already been applied separately |
+
+For the current release, §16 records code rollback target `3ef09493`: this is
+the Travel version that failed the 375 px saved-Travel check (§9). Later reruns
+passed (§10), but the cause of the original failure remains unconfirmed.
+`24bd4ac1` (`1e84b1a`, before Travel) is the last version that passed full
+acceptance. Both versions are compatible with migration 0007 because its table
+is additive. Leave the rollback choice for the freeze; this handoff selects
+neither version for a rollback.
 
 Rollback from the Travel release `3ef09493` to `24bd4ac1` removes the Travel batch
 and retains the earlier launch improvements. No schema or bundle change is involved.
@@ -427,6 +431,48 @@ request traces and failure HTML. These production checks stayed signed out and
 used synthetic saves locally; real sign-in, Cloud Vault ownership/writes, payments,
 other browser engines and manual screen-reader acceptance were not repeated.
 
+## 10. Travel mobile failure investigation — 30 September 2026
+
+The owner authorized investigation, then explicitly authorized putting the same
+Travel version back on live because the site has no users yet. At **21:30 UTC**,
+`3ef09493-cb5a-42e2-96fd-ca54c168d3e2` (`2c113b8`) returned to 100% of traffic.
+Rollback version `24bd4ac1-e287-4c14-88d8-80bee20b42f9` remains available.
+No new application code, bundle, migration, binding or configuration was deployed.
+Before that, explicit diagnostic version overrides selected Travel at 0% while
+ordinary traffic remained on the restored release; that split is now removed.
+
+- The original failing assertion checks restoration after navigation, without
+  first verifying that the checkbox edits took effect. Failure HTML shows save
+  defaults; the failed disposable browser's stored options contain no overrides.
+  This does not establish whether clicks missed, edits were cleared, or an
+  application race occurred. The root cause remains **unconfirmed**.
+- Focused 1366/375 px reproductions passed **2/2 each** on the local static export,
+  local Worker and a local mirror of the HTTPS origin. Passive input tracing on
+  the export, a throttled export and the remote diagnostic version also passed
+  **2/2 each**. The original uninstrumented remote diagnostic flow passed **2/2**.
+  Three further original-timing mobile repetitions on live passed **3/3**.
+- The full original browser suite on live passed **125/125**, including the final
+  mobile save case: **216 accessibility audits with zero violations**, no runtime
+  exceptions or unexpected server errors, and **411 settled font checks**. It
+  covered both themes, 1366/375 px and all three profiles, including Builder,
+  calculator, Faction Journal, Level Simulator and Travel interactions. Only
+  failure-state capture was added, after a failed assertion; click timing and
+  the assertions in this run were the original ones.
+- Traced successful runs hit the intended controls and write the expected
+  `false/true/false/12.5` choices under the vanilla save key. Adding diagnostics
+  can change timing; successful traces do not explain the earlier failures.
+- The checked-in browser test now verifies every edited control and the stored
+  choices **before** navigation, so a future failure identifies whether editing,
+  storage or restoration failed. The added checks passed **2/2 locally** and
+  **2/2 on live**. Click behavior and application persistence code are unchanged.
+- `npm test`: **787 passed**, zero failures/skips/todos. Pipeline handoff
+  verification: **670 passed**. The existing production build is reused; no
+  rebuild was necessary for test-runner and documentation changes.
+
+Evidence: `A:/Cache/trv-mobile-investigation`, including `original-live-full`, `original-live-repeat`,
+`verified-edits-local`, `verified-edits-live`, the earlier focused reports and
+the routing records. These checks stayed signed out and used synthetic saves.
+
 ## 11. Launch package integration verification — 30 September 2026
 
 Merge commit: `d4e96bdaec9112fe9739da76452a0565b3440bb6`.
@@ -741,6 +787,9 @@ polish; it is not a separate Travel-only code release.
   Previous active Worker and code rollback target:
   `3ef09493-cb5a-42e2-96fd-ca54c168d3e2`. Code rollback leaves the additive settings
   table intact; it reverts this complete main release, not just the tool polish.
+  This target is the Travel version that failed the 375 px check (§9). The last
+  version that passed full acceptance is `24bd4ac1` (`1e84b1a`, before Travel).
+  Both are compatible with additive migration 0007; choose at the freeze.
 
 Private release evidence: `A:/Cache/account-settings-release-20260930` contains
 unit/build/deployment logs, recovery metadata, before/after deployment history,
@@ -751,3 +800,33 @@ Release documentation is synchronized between the site and pipeline repositories
 Shared coordination and roadmap files match byte for byte, preserving all prior
 pipeline notes. Evidence: `documentation-unit.log`, `documentation-pipeline.log`
 and `browser.json` in the private release directory.
+
+## 17. Travel diagnostic merge and release-record housekeeping — 30 September locally
+
+Merged `launch/trv-mobile-verification` at `19bdd92` into clean main `c64679f`
+with `--no-ff`. Only LAUNCH_VERIFICATION conflicted: preserved main's content,
+inserted the branch's exact §10 between §§9 and 11, and retained the runner's
+checks of each edited control and all four stored choices before navigation.
+The coordination investigation is folded into its existing Travel entry.
+
+- `npm test`: **887 passed**, zero failures/skips/todos.
+- Local Chrome saved-Travel case on this checkout's dev server at
+  `http://127.0.0.1:8792`: **1366 px 2/2; 375 px 2/2**. Two independent runner
+  invocations used fresh disposable profiles. All four cases passed applied
+  edits, stored choices, restoration, world isolation and reset; no runtime or
+  unexpected server errors. **46 settled font checks** across both runs.
+- Pipeline synthetic tests: **670 passed** before its coordination commit.
+  COORDINATION and the unchanged roadmap match byte for byte in both repositories.
+- Verified all **17 distinct implementation commits** against release `216cd90`
+  using `git merge-base --is-ancestor`, then added its Worker to the **18 requested
+  checklist entries**. CALC-4 remains open. The production table reflects §16,
+  and rollback guidance distinguishes the failed Travel version from the last
+  fully accepted pre-Travel version; the freeze will choose the target.
+- Documentation and the test runner only. No application code, bundle,
+  configuration, migration or deployment changed. These local repetitions do
+  not establish the cause of the historical production failure in §§9–10.
+
+Evidence under `A:/Cache`: `trv-housekeeping-unit.log`,
+`trv-housekeeping-pipeline.log`, `trv-housekeeping-ancestry.json`,
+`trv-housekeeping-browser-summary.json` and `trv-housekeeping-browser-1`/`-2`
+(reports, synthetic fixture, screenshots and request traces).

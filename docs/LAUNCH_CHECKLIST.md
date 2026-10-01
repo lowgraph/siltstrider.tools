@@ -35,10 +35,9 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
   Guides work from Mages Guild halls and need membership.
 - **Usability audit:** its assessment is accepted, including theft off by default in the
   Gear Advisor (BLD-1).
-- **Account settings (30 September):** the `account_settings` table is created before
-  launch, while no real users hold data, so launch week carries no migration. The settings
-  API and page may follow (section 4). Design: [ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md) on
-  `feature/account-settings-preparation`.
+- **Account settings (30 September):** migration 0007, the settings API and account
+  controls are merged and live as `d523b9ba`. Design and current behavior:
+  [ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md) on `main`.
 
 ## Priority list
 
@@ -124,44 +123,44 @@ audit's. BLD-2, CALC-2 and BLD-4 were built early and are live. The TRV items ar
 for now (owner, 30 September); other agents skip them.
 
 **Travel and the Builder**
-- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; done `866bd3a`, merged `e3ab542`) One place search per route end: towns and stops first, then named places.
-- [x] **C** **TRV-4 / TRV-5** (started 2026-09-30 15:29 UTC, Codex; done `597214d`, merged `e3ab542`) Task-first Travel: from, to and "plan for" at the top, the route
+- [x] **C** **TRV-2** (started 2026-09-30 00:14 UTC, Codex; done `866bd3a`, merged `e3ab542`, live as `d523b9ba`) One place search per route end: towns and stops first, then named places.
+- [x] **C** **TRV-4 / TRV-5** (started 2026-09-30 15:29 UTC, Codex; done `597214d`, merged `e3ab542`, live as `d523b9ba`) Task-first Travel: from, to and "plan for" at the top, the route
       under them, the other options folded.
 - [x] **C** **BLD-2** The Gear Advisor ranks by itself, with "Early gear for this build ↓" to
       reach it (started 2026-09-29 21:30 UTC, C; done `5e36716`, merged `ef3cdea` with review
       fixes `5f11bea`: catalogs load near the screen, the name does not re-rank; live as `8f10cef2`).
-- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; done `7a85863`, merged `e3ab542`) Keep the player's changes to a save's options across visits; Intervention
+- [x] **C** **TRV-6** (started 2026-09-30 15:56 UTC, Codex; done `7a85863`, merged `e3ab542`, live as `d523b9ba`) Keep the player's changes to a save's options across visits; Intervention
       scrolls have finite uses and known spells respect cast chance and current Magicka.
 - [x] **C** **CALC-2** Your own skill, attribute and Luck numbers in Alchemy, Enchanting and
       Spellmaking (started 2026-09-29 21:36 UTC, C; done `822c4dc`, merged `6178e87` with
       review fixes `625c2b1`, `2b969fe`: 0 to 1000; live as `8f10cef2`. Typed numbers now stay across a world switch until Reset, owner 30 September, `cd01737`, live as `415d9c89`).
-- [x] **C** **TRV-7** (started 2026-09-30 16:35 UTC, Codex; done `1604656`, merged `e3ab542`) Say what Cheapest saves in gold and adds in movement compared with Fewest legs;
+- [x] **C** **TRV-7** (started 2026-09-30 16:35 UTC, Codex; done `1604656`, merged `e3ab542`, live as `d523b9ba`) Say what Cheapest saves in gold and adds in movement compared with Fewest legs;
       show Real Time Approximation beside in-game time.
 
 **First steps, phones and saving**
-- [x] **C** **HOME-1 / MOB-2** (started 2026-09-30 16:17 UTC, C; done `ef59aae` merged `d4e96bd`: "Start a character" and "Load your save" as equal cards, the character first when they stack; the start button on a phone at 758 px, the save's used to lead at 893) Two equal first steps on Home, a character or a save; the
+- [x] **C** **HOME-1 / MOB-2** (started 2026-09-30 16:17 UTC, C; done `ef59aae` merged `d4e96bd`, live as `d523b9ba`: "Start a character" and "Load your save" as equal cards, the character first when they stack; the start button on a phone at 758 px, the save's used to lead at 893) Two equal first steps on Home, a character or a save; the
       character first on phones.
 - [x] **C** **BLD-3** (started 2026-09-30 15:31 UTC, C; done `c965c61`, merged `4d998be`, live as `4c464aa3`: a browser's first Builder opens on the catalog while the character is the random start, with "Build my own instead"; later visits, links, saves and saved characters open the Custom Class Builder) Premade builds first for newcomers.
 - [x] **C** **BLD-4** "Save this character" without an account, with load and delete
       (started 2026-09-29 21:53 UTC, C; done `9d5b8ef`, merged `6a573c6` with review fixes
       `66ff77f`: blocked storage, foreign values, loading over a save; live as `8f10cef2`).
-- [x] **C** **SITE-4** (started 2026-09-30 16:29 UTC, C; done `dbbee2d` merged `d4e96bd`: wherever a tool names the character, the name links to the Builder, as Home names it; the Level Simulator names it too; the Faction Journal's line, hidden at every width by a legacy `.hidden` rule, shows from 640 px) The character bar as a control that opens the Builder.
-  - [x] **C** (started 2026-09-30 21:40 UTC, C; done `ee3dfb0` merged `d4e96bd`: `max-sm:hidden`; the last bare `hidden` with `sm:` in components) The Cloud Vault's signed-in header line (name, tier and saves) shows from 640 px; the legacy `.hidden` rule hid it at every width (found with SITE-4; owner 30 September).
-- [x] **C** **MOB-1 / MOB-4** (started 2026-09-30 16:58 UTC, C; done `c91f585` merged `d4e96bd`: a one-row 44 px phone header, pages start at 68 px instead of 257; one row of four Builder sections, the first field at 526-575 px instead of 915) A lighter phone header; one level of Builder tabs.
-- [x] **C** **HOME-3** (started 2026-09-30 17:09 UTC, C; done `30862de` merged `d4e96bd`: ×5 level-ups, any town, early gear, 3 worlds, instead of skill, restriction and stop counts) Outcomes on Home instead of counts ("27 skills modeled").
+- [x] **C** **SITE-4** (started 2026-09-30 16:29 UTC, C; done `dbbee2d` merged `d4e96bd`, live as `d523b9ba`: wherever a tool names the character, the name links to the Builder, as Home names it; the Level Simulator names it too; the Faction Journal's line, hidden at every width by a legacy `.hidden` rule, shows from 640 px) The character bar as a control that opens the Builder.
+  - [x] **C** (started 2026-09-30 21:40 UTC, C; done `ee3dfb0` merged `d4e96bd`, live as `d523b9ba`: `max-sm:hidden`; the last bare `hidden` with `sm:` in components) The Cloud Vault's signed-in header line (name, tier and saves) shows from 640 px; the legacy `.hidden` rule hid it at every width (found with SITE-4; owner 30 September).
+- [x] **C** **MOB-1 / MOB-4** (started 2026-09-30 16:58 UTC, C; done `c91f585` merged `d4e96bd`, live as `d523b9ba`: a one-row 44 px phone header, pages start at 68 px instead of 257; one row of four Builder sections, the first field at 526-575 px instead of 915) A lighter phone header; one level of Builder tabs.
+- [x] **C** **HOME-3** (started 2026-09-30 17:09 UTC, C; done `30862de` merged `d4e96bd`, live as `d523b9ba`: ×5 level-ups, any town, early gear, 3 worlds, instead of skill, restriction and stop counts) Outcomes on Home instead of counts ("27 skills modeled").
 
 **Controls and polish**
-- [x] **C** **CALC-3** (started 2026-09-30 17:21 UTC, C; done `2ab91fc` merged `d4e96bd`: one ARIA combobox per slot, names starting with the typed text first, arrows, Enter, click, Escape; no separate search field) One searchable box per Alchemy slot.
-- [x] **C** **CHL-2** (started 2026-09-30 17:28 UTC, C; done `710c95c` merged `d4e96bd`: one lock per rolled item, on the sheet beside it; the settings choose instead of rolling, and a choice is locked) One lock per rolled item in Challenge Runs.
-- [x] **C** **ENC-1** (started 2026-09-30 17:16 UTC, C; done `eaa1c83` merged `d4e96bd`: an Expensive Ring and a Lesser Soul Gem, as a Common Ring holds a single point; a new effect starts at 5 for 5 s so it fits; the ring, amulet, shirt and robe grades added) Enchanting starts with early-game items and soul gems.
-- [x] **C** **SITE-3** (started 2026-09-30 16:55 UTC, C; done `910abc5` merged `d4e96bd`: the nav row and Home lead with Build, Level, Travel, Alchemy; the phone tab bar keeps Alchemy until Travel's phone layout is redone) Nav order by use: Character Builder, Level Simulator, Travel Planner,
+- [x] **C** **CALC-3** (started 2026-09-30 17:21 UTC, C; done `2ab91fc` merged `d4e96bd`, live as `d523b9ba`: one ARIA combobox per slot, names starting with the typed text first, arrows, Enter, click, Escape; no separate search field) One searchable box per Alchemy slot.
+- [x] **C** **CHL-2** (started 2026-09-30 17:28 UTC, C; done `710c95c` merged `d4e96bd`, live as `d523b9ba`: one lock per rolled item, on the sheet beside it; the settings choose instead of rolling, and a choice is locked) One lock per rolled item in Challenge Runs.
+- [x] **C** **ENC-1** (started 2026-09-30 17:16 UTC, C; done `eaa1c83` merged `d4e96bd`, live as `d523b9ba`: an Expensive Ring and a Lesser Soul Gem, as a Common Ring holds a single point; a new effect starts at 5 for 5 s so it fits; the ring, amulet, shirt and robe grades added) Enchanting starts with early-game items and soul gems.
+- [x] **C** **SITE-3** (started 2026-09-30 16:55 UTC, C; done `910abc5` merged `d4e96bd`, live as `d523b9ba`: the nav row and Home lead with Build, Level, Travel, Alchemy; the phone tab bar keeps Alchemy until Travel's phone layout is redone) Nav order by use: Character Builder, Level Simulator, Travel Planner,
       Alchemy, then the rest.
-  - [x] **C** (started 2026-09-30 21:40 UTC, C; done `ee3dfb0` merged `d4e96bd`: Home, Build, Level, Travel with a route icon; Alchemy in the menu) The phone tab bar has Travel instead of Alchemy, now that Travel's phone layout leads with the journey (TRV-4/5; owner 30 September).
-- [x] **C** **LVL-2 / LVL-3** (started 2026-09-30 20:35 UTC, C; done `2a86cff` merged `d4e96bd`: the Bitter Cup under a closed Advanced options that opens while it is on; END, PER, STR in the priority list, full names for screen readers) The Bitter Cup under advanced options; untruncated attribute
+  - [x] **C** (started 2026-09-30 21:40 UTC, C; done `ee3dfb0` merged `d4e96bd`, live as `d523b9ba`: Home, Build, Level, Travel with a route icon; Alchemy in the menu) The phone tab bar has Travel instead of Alchemy, now that Travel's phone layout leads with the journey (TRV-4/5; owner 30 September).
+- [x] **C** **LVL-2 / LVL-3** (started 2026-09-30 20:35 UTC, C; done `2a86cff` merged `d4e96bd`, live as `d523b9ba`: the Bitter Cup under a closed Advanced options that opens while it is on; END, PER, STR in the priority list, full names for screen readers) The Bitter Cup under advanced options; untruncated attribute
       labels in the priority list.
-- [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged `e3ab542`) One network/loading/error/Retry line in Travel, including TR + ARCE.
-- [x] **C** (started 2026-09-30 20:39 UTC, C; done `b582e98` merged `d4e96bd`: Enter, Space or a screen reader opens on the first item, the mouse leaves focus on the button; checked in Chrome) Header menus focus their first item when opened from the keyboard.
-- [x] **C** (started 2026-09-30 20:34 UTC, C; done `f688888` merged `d4e96bd`: the API compares the stored bytes with `payload_hash` before unpacking; a mismatch is a 422 with a plain message and a reference, and nothing of the save) The Cloud Vault checks a save's hash on load.
+- [x] **C** **TRV-8** (started 2026-09-30 17:03 UTC, Codex; done `dce0622`, merged `e3ab542`, live as `d523b9ba`) One network/loading/error/Retry line in Travel, including TR + ARCE.
+- [x] **C** (started 2026-09-30 20:39 UTC, C; done `b582e98` merged `d4e96bd`, live as `d523b9ba`: Enter, Space or a screen reader opens on the first item, the mouse leaves focus on the button; checked in Chrome) Header menus focus their first item when opened from the keyboard.
+- [x] **C** (started 2026-09-30 20:34 UTC, C; done `f688888` merged `d4e96bd`, live as `d523b9ba`: the API compares the stored bytes with `payload_hash` before unpacking; a mismatch is a 422 with a plain message and a reference, and nothing of the save) The Cloud Vault checks a save's hash on load.
 - [x] **C** **ACC-2** (started 2026-09-30 20:42 UTC, Codex; done `d4de9e7`, merged `b45f686`, live as `d523b9ba`; verification in LAUNCH_VERIFICATION §§12–16) Account settings for players, after ACC-1: the revision-checked
       `/api/settings` (GET and PUT, owner from the Clerk session, 409 on a stale revision), a
       settings provider, and a settings page for world, theme, Travel, Gear Advisor and
