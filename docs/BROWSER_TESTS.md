@@ -235,3 +235,12 @@ node scripts/test-vault.cjs --character-preservation --port 8797 --axe-path 'A:\
 The QA-21/22/23 reproduction tests are now enforced, including hydrated sign-in,
 version 1 compatibility, rejected Vault loads and share links. QA-25 remains TODO.
 QA-22 edge cases and saved run profiles are in `test/save-share-link.test.js`.
+
+QA-01/02's `--suite qa --filter '/enchanting/'` checks both findings in all three
+worlds at 1366/375 px and both themes (24 cases). The Constant case checks
+75 capacity points, 50,050 base gold and 54% at Enchant 300 / Intelligence 40 /
+Luck 40; the Common Ring Target case checks 1 capacity point, 1,912 base gold,
+70% at 50/40/40, and no over-capacity warning. Each saves a screenshot.
+`test/enchanting-costs.test.js` covers area, order, one/three effects, precise
+chance inputs, fatigue, float/truncation boundaries and profile GMST values.
+The original QA-01/02 reproduction tests are enforced rather than TODO.

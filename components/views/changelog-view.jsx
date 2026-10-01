@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Enchanting counts every effect&apos;s running cost toward capacity, rounding each down. Two Constant Effects of 5 points now use 75 capacity points; a 5-point, 5-second Target effect fits a Common Ring at 1 point. Self-enchant chance uses the costs before rounding, and the base price uses the final running cost without an extra Constant multiplier, following the OpenMW 0.51 source.</li>
             <li>Share links from imported Cloud Vault saves carry the save&apos;s world, race, gender, birthsign and class choices. Challenge links keep the run&apos;s world after you switch worlds. A save with choices the site&apos;s data cannot resolve shows an error instead of sharing a different character.</li>
             <li>Loading a character build from Cloud Vault selects its saved world before showing its statistics. Signing in keeps this browser&apos;s world until you choose a Preferred world in Your account; header changes and loaded saves do not replace that preference.</li>
             <li>Signing out keeps your unsaved Builder character when you return to Home, including its world, race, birthsign, skill choices and equipment. Loaded saves continue to stay in this browser until cleared.</li>

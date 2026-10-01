@@ -201,12 +201,12 @@ first impression and regression). Personas: R Reddit first visit, V veteran, N n
 Q regression run. Each item: re-check the report's case first, fix, re-check after, plus the
 usual tests (at least three edge cases for a logic change) and changelog.
 
-- [ ] **C** **QA-01** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation) (reproduced 4/4 local and live; cause `calcEffectCost`/`calcEnchantmentTotalPoints`; OpenMW 0.51: running costs 25.025 and 50.05, capacity 75, base price 50,050 (site 50 and 250,000); test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-05; confirmed in code) Enchanting costs several effects
+- [x] **C** **QA-01** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §32; not merged or deployed) (reproduced 4/4 local and live; cause `calcEffectCost`/`calcEnchantmentTotalPoints`; OpenMW 0.51: running costs 25.025 and 50.05, capacity 75, base price 50,050 (site 50 and 250,000); test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-05; confirmed in code) Enchanting costs several effects
       wrong: each effect's points are its own plus the running total before it, and the
       item's total is the sum of those running costs (OpenMW 0.51 `enchanting.cpp`);
       `calcEnchantmentTotalPoints` (`lib/enchant-math.mjs`) returns only the last running
       cost. Two Constant Effects of 5/5 must read 75 points, not 50. Fix with QA-02.
-- [ ] **C** **QA-02** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation) (partly reproduced: floor, chance and price tests fail; the Common Ring UI case not; OpenMW 0.51: 1.9125 points, capacity 1, base price 1,912 (price from the precise cost, so fix with QA-01); the engine's chance also counts fatigue, effect count and a Constant multiplier; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-04; confirmed in code) Enchanting rounds points to
+- [x] **C** **QA-02** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §32; not merged or deployed) (partly reproduced: floor, chance and price tests fail; the Common Ring UI case not; OpenMW 0.51: 1.9125 points, capacity 1, base price 1,912 (price from the precise cost, so fix with QA-01); the engine's chance uses precise points, fatigue, item count and a Constant multiplier; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-04; confirmed in code) Enchanting rounds points to
       nearest instead of flooring each effect: a 5/5, 5 s Target Fortify Attribute is 1.875
       points, shown as 2, so it "does not fit" a Common Ring and its base price doubles.
       Afterwards re-check the self-enchant chance (16% vs the engine's 15%) and the base

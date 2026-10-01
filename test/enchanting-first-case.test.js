@@ -33,8 +33,8 @@ async function workstation(data) {
 const RESTORE = { key: 'restore', name: 'Restore Health', baseCost: 5, school: 'restoration', allowEnchanting: true, allowSpellmaking: true, castSelf: true, castTouch: true, castTarget: true };
 const DATA = { profile: 'vanilla', catalogs: { Attributes: [], Skills: [], MagicEffects: [], GameSettings: [], EffectRules: [RESTORE] } };
 
-async function withSoul(check) {
-  const Enchanting=await workstation(DATA);
+async function withSoul(check,data=DATA) {
+  const Enchanting=await workstation(data);
   const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});
   Object.assign(global,{window:dom.window,document:dom.window.document,IS_REACT_ACT_ENVIRONMENT:true});
   const root=require('react-dom/client').createRoot(document.getElementById('root'));
@@ -80,6 +80,36 @@ test('the first case: an Expensive Ring and a Lesser Soul Gem, too small a soul 
   assert.deepEqual([gem.name, gem.soul], ['Lesser Soul Gem', 30]);
   assert.ok(!gem.canCe && gem.soul < 400, 'Constant Effect needs 400');
 });
+
+const FORTIFY = { ...RESTORE, key: 'fortify', name: 'Fortify Attribute', baseCost: 1 };
+const QA_DATA = { ...DATA, catalogs: { ...DATA.catalogs, EffectRules: [FORTIFY] } };
+const output = label => [...document.querySelectorAll('span')].find(node => node.textContent === label)?.parentElement.textContent;
+const choose = (selector, value) => React.act(async () => {
+  const control = document.querySelector(selector); control.value = value;
+  control.dispatchEvent(new window.Event('change', { bubbles: true }));
+});
+
+test('QA-02 Common Ring UI floors capacity while showing precise-cost chance and base price', async () => withSoul(async () => {
+  await choose('select[aria-label="Effect 1"]', 'fortify');
+  await choose('#enchant-item-select', 'Common Ring');
+  await choose('select[id$="-range"]', 'target');
+  assert.match(document.body.textContent, /1 \/ 1 Points/);
+  assert.doesNotMatch(document.body.textContent, /exceed the selected item capacity/);
+  assert.equal(output('Self-Enchant Chance'), 'Self-Enchant Chance70%');
+  assert.equal(output('Base Gold Value'), 'Base Gold Value1,912 g');
+}, QA_DATA));
+
+test('QA-01 Constant UI shows 75 points, zero default chance and 50,050 base gold for two effects', async () => withSoul(async type => {
+  await choose('select[aria-label="Effect 1"]', 'fortify');
+  await type('400');
+  await React.act(async () => [...document.querySelectorAll('button')].find(b => b.textContent === 'Constant').click());
+  await React.act(async () => [...document.querySelectorAll('button')].find(b => b.textContent === 'Add Effect').click());
+  await choose('select[aria-label="Effect 2"]', 'fortify');
+  assert.match(document.body.textContent, /75 \/ 15 Points/);
+  assert.match(document.body.textContent, /exceed the selected item capacity by 60 points/);
+  assert.equal(output('Self-Enchant Chance'), 'Self-Enchant Chance0%');
+  assert.equal(output('Base Gold Value'), 'Base Gold Value50,050 g');
+}, QA_DATA));
 
 test('each kind of item is listed from the cheapest grade up', async () => {
   const { ENCHANT_BASE_ITEMS } = await math();

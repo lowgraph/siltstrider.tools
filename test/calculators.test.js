@@ -12,7 +12,7 @@ test("Enchanting Math: calculates base points, CE validity, and self-enchant rat
   // Single effect cost
   const effect = { n: "Fortify Strength", b: 1, mag: 1, dur: 1, ce: 1 };
   const costUsed = calcEffectCost(effect, "used", 10, 10, 10, 0, "self", 0);
-  assert.equal(costUsed, 5.025); // ((10+10)*10 + 1) * 1 * 0.5 * 0.05 = 201 * 0.025 = 5.025
+  assert.ok(Math.abs(costUsed - 5.025) < 0.000001); // OpenMW's 32-bit float running cost.
   assert.ok(costUsed > 0);
 
   // Constant effect

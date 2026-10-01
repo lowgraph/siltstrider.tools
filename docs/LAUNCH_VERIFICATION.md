@@ -1474,3 +1474,54 @@ Evidence in `A:/Cache/`: `qa22-before-fix.log`, `qa22-unit-final.log`,
 `qa22-cloudflare-build-final.log`, `qa22-vault-verified-20261001/`, and
 `qa22-challenge-verified-20261001/`. QA-25 and the other open checklist items remain
 outside this task.
+
+## 32. QA-01/02 enchanting running costs — 1 October 2026
+
+Claimed 19:11 UTC on `launch/character-preservation`; claim `3c45912` pushed before
+implementation. Main, production, game data, migrations and repository build
+configuration are unchanged.
+
+Source comparison: OpenMW **0.51.0**, [enchanting.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/enchanting.cpp)
+(`getEffectCosts`, `getEnchantPoints`, `getEnchantChance`, `getEnchantPrice`),
+[enchanting.hpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/enchanting.hpp)
+(precise points are the default), [enchantingdialog.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwgui/enchantingdialog.cpp)
+(capacity/display uses floors), and [creaturestats.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/creaturestats.cpp)
+(`getFatigueTerm`). Read the staged GameSettings directly; all three profiles
+currently provide cost multiplier 0.5, Constant duration 100, chance penalty 3,
+Constant chance multiplier 0.5, value multiplier 1000, fatigue base 1.25 and
+fatigue multiplier 0.5. No real-data rebuild was performed.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-01 | Fixed on branch; 12/12 Chrome cases, all profiles, both widths/themes | `lib/enchant-math.mjs`, `calcEnchantmentTotalPoints`, kept only the final cost. `calcEnchantmentCosts` now retains each running float cost; capacity adds its floor, chance adds its precise value, and price uses the final one. Minimum magnitude/area/cost and Target multiplication follow source order; Constant changes duration | `test/qa-calculation-reproduction.test.js`: one/two/three effects, area and Target→Self; `test/enchanting-costs.test.js`: separate outputs, order-sensitive price, area/Constant/float cases and settings; `test/enchanting-first-case.test.js`: two-effect UI; Chrome `QA-01/enchanting` |
+| QA-02 | Fixed on branch; 12/12 Chrome cases, same matrix; Common Ring setup now completes | `calcEnchantmentTotalPoints` rounded instead of adding floors, `calcSelfEnchantChance` had different coefficients, and `calcEnchantGoldCost` took rounded capacity with an extra Constant price multiplier. Workstation now passes distinct precise chance and final price inputs; chance uses source coefficients/fatigue/Constant multiplier then truncates and clamps; base price truncates before existing barter | Original four floor cases plus chance/price tests now enforced; `test/enchanting-costs.test.js`: Common Ring downstream outputs, fatigue, item/type multipliers, custom/malformed settings and empty/minimum rows; real UI test checks no overflow and 70% / 1,912 gold; Chrome `QA-02/enchanting` |
+
+Before fixing, **9/11** unmarked reproduction cases failed. Afterward:
+
+| Example (base cost 1) | Capacity points | Precise chance points | Final cost for price | Base gold | Chance at Enchant 50 / Int 40 / Luck 40, full fatigue |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| One 5/5 Constant Effect | 25 | ≈25.025 | ≈25.025 | 25,025 | 0% |
+| Two 5/5 Constant Effects | 75 | ≈75.075 | ≈50.05 | 50,050 | 0% |
+| Three 5/5 Constant Effects | 150 | ≈150.15 | ≈75.075 | 75,075 | 0% |
+| One 5/5, 5-second Target effect | 1 | ≈1.9125 | ≈1.9125 | 1,912 | 70% |
+
+Correction to §27: its **73%** for the Target example used the floored point.
+The header declares precise points as the default, so that example is **70%**.
+Its effect count matters through accumulated points; `getEnchantItemsCount` is
+the number of items (normally one), not the number of effects. Chrome uses
+Enchant 300 for the two-Constant case to check the nonzero **54%** result too.
+Float arithmetic and truncation are retained: reversing Self/Target can change
+the final price, and a nominal 3.825 float cost can truncate to 3,824 gold.
+The site still estimates full fatigue for one item; this work does not add an
+ammunition batch workflow or address FLOW-01's On Strike item restrictions.
+
+Final verification: `npm test`: **1,033 tests; 1,006 passed, 27 existing TODO,
+0 failures**. `npm run build:cloudflare`: **24 pages, passed**. Chrome:
+**24/24**, 1366/375 px, Ashfall/Morrowind themes, Vanilla/TR/TR + ARCE,
+zero runtime/server errors; screenshots reviewed at desktop and phone widths.
+Only isolated local pages/Worker and browser state were used; no accounts or
+production writes. The server closed after the matrix. First run on another
+checkout: `npm test`, then BROWSER_TESTS' `--suite qa --filter '/enchanting/'`.
+
+Evidence under `A:/Cache/`: `qa01-02-before-fix.log`, `qa01-02-unit-final.log`,
+`qa01-02-cloudflare-build-final.log` and `qa01-02-browser-final-20261001/`.

@@ -137,8 +137,12 @@ test("Enchanting Workstation has constant effect soul rule, point formula, and s
   assert.match(enchantSrc, /Golden Saint or Ascended Sleeper/, "must cite Golden Saint or Ascended Sleeper");
 
   // Enchantment points and Self-enchant formula cues
-  assert.match(enchantSrc, /Points: <span[^>]*>\(\(Min \+ Max\) × Duration \+ Area\) × BaseCost × 0\.025<\/span>/, "must show enchantment points formula");
-  assert.match(enchantSrc, /\(0\.75×Enchant \+ 0\.25×Int \+ 0\.1×Luck − 2\.5×Points\) × Fatigue/, "must show self-enchant formula");
+  assert.match(explanation, /\(\(Min \+ Max\) × Duration \+ Area\) × BaseCost/, "must show effect cost formula");
+  assert.match(explanation, /Capacity adds each running cost rounded down/, "must explain cumulative capacity floors");
+  assert.match(explanation, /Enchant \+ 0\.2×Int \+ 0\.1×Luck/, "must show OpenMW attribute coefficients");
+  assert.match(explanation, /Precise Points/, "chance uses precise points");
+  assert.match(explanation, /Base Gold Value uses only the final running cost/, "price uses the final cost");
+  assert.doesNotMatch(explanation, /0\.75×Enchant|0\.25×Int|2\.5×Points/, "retired coefficients must not remain in the explanation");
 });
 
 test("Travel keeps routing explanations in a closed disclosure", () => {

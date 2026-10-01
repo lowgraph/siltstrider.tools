@@ -11,7 +11,7 @@ const pointCases = [
   ['Target followed by Self', [effect({range:'target'}),effect()], 'used',4],
   ['area 20 followed by area 10', [effect({range:'target',area:20}),effect({range:'touch',area:10})], 'used',6]
 ];
-for(const [name,rows,type,expected] of pointCases) test(`QA-01 accumulated points: ${name}`,name==='one Constant effect'?{}:todo('QA-01'),async()=>{
+for(const [name,rows,type,expected] of pointCases) test(`QA-01 accumulated points: ${name}`,async()=>{
   const {calcEnchantmentTotalPoints}=await import('../lib/enchant-math.mjs');assert.equal(calcEnchantmentTotalPoints(rows,type),expected);
 });
 for(const [name,row,expected] of [
@@ -19,17 +19,17 @@ for(const [name,row,expected] of [
   ['Target area 20',effect({range:'target',area:20}),2],
   ['Target magnitude 2 duration 20',effect({min:2,max:2,dur:20,range:'target'}),3],
   ['Self magnitude 5 duration 10',effect({dur:10}),2]
-]) test(`QA-02 per-effect floor: ${name}`,name==='Target magnitude 2 duration 20'?{}:todo('QA-02'),async()=>{
+]) test(`QA-02 per-effect floor: ${name}`,async()=>{
   const {calcEnchantmentTotalPoints}=await import('../lib/enchant-math.mjs');assert.equal(calcEnchantmentTotalPoints([row]),expected);
 });
-test('QA-02 chance uses OpenMW skill + 0.2 Intelligence + 0.1 Luck, points multiplier 3 and truncation',todo('QA-02'),async()=>{
+test('QA-02 chance uses OpenMW skill + 0.2 Intelligence + 0.1 Luck, points multiplier 3 and truncation',async()=>{
   const {calcSelfEnchantChance}=await import('../lib/enchant-math.mjs');
   // Full fatigue (1.25), one point, no constant multiplier.
   assert.equal(calcSelfEnchantChance(10,40,40,1),23);
   assert.equal(calcSelfEnchantChance(50,40,40,1),73);
   assert.equal(calcSelfEnchantChance(50,40,40,4),62);
 });
-test('QA-02 base price truncates the final running cost and has no Constant price multiplier',todo('QA-02'),async()=>{
+test('QA-02 base price truncates the final running cost and has no Constant price multiplier',async()=>{
   const {calcEnchantGoldCost}=await import('../lib/enchant-math.mjs');
   assert.equal(calcEnchantGoldCost(1.9125,'used'),1912);
   assert.equal(calcEnchantGoldCost(50.05,'const'),50050);

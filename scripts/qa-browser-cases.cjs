@@ -72,17 +72,23 @@ exports.qa = async c => {
     await c.viewport(width);
     const script=await seed(c,{},theme);
     try {
-      for(const id of ['QA-01','QA-02']) await c.check(`${id}/enchanting/${width}/${theme}`,async()=>{
-        await c.navigate('enchanting');
+      for(const profile of ['vanilla','tr','tr_arce']) for(const id of ['QA-01','QA-02']) await c.check(`${id}/enchanting/${profile}/${width}/${theme}`,async()=>{
+        await c.navigate('enchanting',profile);
         await c.until(`document.querySelector('select[aria-label="Effect 1"]')?.options.length>20`);
         await c.select('select[aria-label="Effect 1"]','Fortify Attribute (base 1)');
         if(id==='QA-01') {await c.type('#enchant-soul-size','400');await c.button('Constant');await c.button('Add Effect');await c.select('select[aria-label="Effect 2"]','Fortify Attribute (base 1)');}
         else {const ring=await c.evaluate(`[...document.querySelector('#enchant-item-select').options].find(o=>o.textContent.startsWith('Common Ring')).textContent.trim()`);await c.select('#enchant-item-select',ring);await c.select('select[id$="-range"]','Target');}
-        const text=await body(c);await record(c,id,{width,theme,text});
-        const points=await c.evaluate(`(()=>{const label=[...document.querySelectorAll('span,div,p')].find(e=>e.childElementCount===0&&e.textContent.trim()==='Enchantment Points');return label?.parentElement.textContent})()`);
-        await c.screenshot(`${id}-${width}-${theme}`);
-        if(id==='QA-02') assert.match(text,/1 \/ 1 Points/);else assert.match(text,/75\s*\/|75\s*points|75\/|75 of/i,points);
-        return {points,text};
+        if(!await c.evaluate('Boolean(document.querySelector("#ench-skill-input"))')) await c.click('#ench-toggle-custom-stats');
+        await c.type('#ench-skill-input',id==='QA-01'?'300':'50');await c.type('#ench-int-input','40');await c.type('#ench-luck-input','40');
+        const read=()=>c.evaluate(`(()=>{const output=label=>[...document.querySelectorAll('span')].find(e=>e.childElementCount===0&&e.textContent.trim()===label)?.parentElement.textContent;return {points:output('Capacity Usage'),chance:output('Self-Enchant Chance'),gold:output('Base Gold Value'),text:document.querySelector('main').textContent}})()`);
+        await c.until(id==='QA-01'?'document.querySelector("main").textContent.includes("50,050 g")':'document.querySelector("main").textContent.includes("1,912 g")');
+        const actual=await read();await record(c,id,{profile,width,theme,...actual});
+        await c.evaluate(`(()=>{const label=[...document.querySelectorAll('span')].find(e=>e.textContent.trim()==='Capacity Usage');label?.parentElement.parentElement.scrollIntoView({block:'center',behavior:'instant'});})()`);
+        await c.pause(150);
+        await c.screenshot(`${id}-${profile}-${width}-${theme}`);
+        if(id==='QA-02') {assert.match(actual.points,/1 \/ 1 Points/);assert.match(actual.chance,/70%/);assert.match(actual.gold,/1,912 g/);assert.doesNotMatch(actual.text,/exceed the selected item capacity/);}
+        else {assert.match(actual.points,/75 \/ 15 Points/);assert.match(actual.chance,/54%/);assert.match(actual.gold,/50,050 g/);}
+        return actual;
       });
       await c.check(`QA-05/title/${width}/${theme}`,async()=>{
         await c.navigate('builder');await readyBuilder(c);await c.builderTab('builder');

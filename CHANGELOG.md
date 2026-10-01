@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Enchanting counts every effect's running cost toward capacity, rounding each down. Two Constant Effects of 5 points now use 75 capacity points; a 5-point, 5-second Target effect fits a Common Ring at 1 point. Self-enchant chance uses the costs before rounding, and the base price uses the final running cost without an extra Constant multiplier, following the OpenMW 0.51 source.
+
 - Share links from imported Cloud Vault saves carry the save's world, race, gender, birthsign and class choices. Challenge links keep the run's world after you switch worlds. A save with choices the site's data cannot resolve shows an error instead of sharing a different character.
 
 - Loading a character build from Cloud Vault selects its saved world before showing its statistics. Signing in keeps this browser's world until you choose a Preferred world in Your account; header changes and loaded saves do not replace that preference.
