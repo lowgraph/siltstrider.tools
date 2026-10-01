@@ -179,7 +179,7 @@ export default function AlchemyWorkstation() {
       {/* Workstation Header Bar */}
       <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
+          <h2 className="mw-caption font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
             Alchemy
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
@@ -302,7 +302,7 @@ export default function AlchemyWorkstation() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left Pane: Apparatus Rack & Ingredient Crucible */}
         <div className="space-y-4">
-          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
+          <h3 className="mw-caption text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
             Apparatus Rack &amp; Ingredients
           </h3>
 
@@ -467,7 +467,7 @@ export default function AlchemyWorkstation() {
 
         {/* Right Pane: Brew Dossier & Potion Preview */}
         <div className="space-y-4">
-          <h3 id="alchemy-potion-output" tabIndex={-1} className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
+          <h3 id="alchemy-potion-output" tabIndex={-1} className="mw-caption text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
             Potion Preview &amp; Output
           </h3>
 

@@ -122,7 +122,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
     >
       <div className="home-step-head">
         <span className="home-step-icon"><UploadIcon /></span>
-        <div className="home-step-title">{busy ? `Reading ${busy}…` : "Load your save"}</div>
+        <div className="home-step-title mw-caption">{busy ? `Reading ${busy}…` : "Load your save"}</div>
       </div>
       <div className="home-step-note">
         Drop an OpenMW save here or choose it: your character, gear and quests fill every tool. It is read in your

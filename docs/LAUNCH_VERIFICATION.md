@@ -2028,3 +2028,61 @@ Evidence: `A:/Cache/qa-main-merge-unit.log`, `qa-main-merge-build.log`,
 No deployment, real-account write, production migration or data rebuild.
 Freeze-day hydration, physical-device and real-provider sign-in acceptance remain
 separate. First command: `npm test`, then the documented browser/Vault runners.
+
+## 47. Morrowind game theme merge — 1 October 2026
+
+Owner-authorized no-ff merge of `origin/design/morrowind-game-theme` (`d85a931`)
+into clean main (`c3e740b`) in `A:/Claude/mt-signout-main-merge`. Fetch and
+merge-tree preview found three documentation/changelog conflicts. Kept main's
+QA records and both sets of 1 October changelog entries. Application files merged
+without conflicts; no additional application fix was introduced. The theme spec
+now records implementation, the checklist records integration, and the existing
+single DESIGN coordination entry records the main handoff.
+
+Verification used the actual merged checkout, bundle `a29adea046e6086c2c7ee654`,
+dev server 8798 and a fresh built local Worker on 8797. The Modern UI baseline
+was the prior QA checkout on 8794, whose application matches pre-merge main.
+Production state and release history remain unchanged.
+
+| Check | Result |
+| --- | --- |
+| `npm test` | **1,130 passed, 0 failed, 0 TODO**, including eight new theme checks and the licence/character-preservation tests |
+| `npm run build:cloudflare` | **24 pages generated**, repository configuration unchanged |
+| Chrome page matrix | **96/96 passed**, 16 views × three worlds × 1366/375; both themes per case, with axe and overflow checks |
+| Chrome QA regressions | **102/102 passed**: phone gear tables 36, Configure popovers 30, character identity 12, Enchanting calculations 24; gear/popovers also at 390 px |
+| Chrome tool interactions | **50/50 passed**: reverse Alchemy and ingredient sources 24, loading/failure/retry 2, Faction Journal/Level Simulator 12, tool inputs/sharing/navigation 12 |
+| Synthetic local Worker/Vault | **10/10 passed**, including save lifecycle, ownership, quotas and signed-in Vault/account axe at 1366/375 in both themes |
+| Modern UI comparison | **30/30 passed**, all 15 routes at 1366/375; zero changed pixels outside the excluded theme-toggle capture region and intentional changelog entry |
+| Keyboard focus | Account and Vault at both widths: five successive keyboard stops each retain a visible outline of at least 2 px in Morrowind UI |
+| Pipeline | **685 passed** after identical coordination sync; roadmap already identical |
+
+The **258 completed browser cases** have zero runtime/server errors and no
+captured React hydration warning. Full-page captures use the same fixed character
+on both checkouts. The comparison hides the Next.js dev toolbar, disables
+animation/carets, excludes the theme-toggle paint region (24 px around its measured
+box), and removes only the newly added theme changelog line from the comparison
+DOM. The ordinary page matrix captures that line unchanged. Inspected the new
+Home stats window beside the approved mockup and the phone calculator layout.
+
+The spec's broad colour heuristic still flags semantic green status/skill
+indicators, red hostile-faction badges and the tan Health-chart legend. These
+are existing status/chart elements, not brown window panels; preserved their
+meaning and recorded their computed colours in the visual report. This replaces
+the branch's older blanket claim of zero heuristic matches on every route.
+
+The first combined Alchemy and tool-sharing groups reached their 90-second bounds
+without an assertion failure. Split them by interaction/world; every case then
+completed. Incomplete runs are excluded from the count. The temporary screenshot
+script also needed corrections for legal pages without a theme toggle and its
+comparison variables; these were capture-harness errors, with no application
+patch. Final aggregate assertions pass. Temporary capture/orchestration scripts
+are removed after verification; reports, screenshots and logs stay in the cache.
+
+Evidence: `A:/Cache/theme-main-merge-unit.log`, `theme-main-merge-build.log`,
+`theme-merge-verification.json`, `theme-merge-browser*-batch.json`,
+`theme-merge-browser*/`, `theme-merge-visual-*/`, `theme-merge-vault/`, and
+`theme-merge-pipeline.log`. Shared coordination is synchronized to the pipeline;
+README, licence, package/config files, bundle and migrations are unchanged.
+No deployment, production write, real-account change or data rebuild. Freeze-day
+acceptance remains separate. First command: `npm test`, then BROWSER_TESTS.md's
+Chrome matrix, QA-08/09 and local Vault suites against the final release checkout.

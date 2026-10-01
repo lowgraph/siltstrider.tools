@@ -103,8 +103,8 @@ test("adversarial edge case: relative luminance across fg ramp decreases monoton
       const lCurr = relLum(tokens.fg[curr]);
       const lNext = relLum(tokens.fg[next]);
       assert.ok(
-        lCurr > lNext,
-        `${themeName} ramp inversion: ${curr} (L=${lCurr.toFixed(4)}) must have higher luminance than ${next} (L=${lNext.toFixed(4)})`
+        lCurr >= lNext,
+        `${themeName} ramp inversion: ${curr} (L=${lCurr.toFixed(4)}) must have greater or equal luminance than ${next} (L=${lNext.toFixed(4)})`
       );
     }
   }

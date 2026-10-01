@@ -1,0 +1,659 @@
+/*
+ * Morrowind UI: authentic CRPG styling closer to The Elder Scrolls III: Morrowind game menus.
+ *
+ * Every rule in this file is strictly scoped to :root[data-theme="morrowind"].
+ * Modern UI (Ashfall) is loaded after globals.css and must not be affected by any rule here.
+ */
+
+/* ---- Typography, Ground & Links ------------------------------------------- */
+:root[data-theme="morrowind"] body {
+  font-family: var(--font-sans);
+  background-color: var(--offblack);
+  color: var(--color-fg-2);
+}
+
+:root[data-theme="morrowind"] a {
+  color: var(--color-link);
+}
+
+:root[data-theme="morrowind"] a:hover {
+  color: var(--color-link-hover);
+}
+
+:root[data-theme="morrowind"] a:active {
+  color: var(--color-link-active);
+}
+
+:root[data-theme="morrowind"] :focus-visible {
+  outline: 2px solid var(--color-select) !important;
+  outline-offset: 2px !important;
+}
+
+/* The site title is a link but reads as the header, not as a dialogue topic. */
+:root[data-theme="morrowind"] .brand-home {
+  color: var(--color-fg-3);
+}
+
+:root[data-theme="morrowind"] .brand-home:hover {
+  color: var(--color-fg-1);
+}
+
+/* Home headline: pressed-bright line with "Morrowind" in normal tan, as in the mockup. */
+:root[data-theme="morrowind"] #panel-home .home-hub-root .home-title,
+:root[data-theme="morrowind"] .home-hub-root .home-title {
+  color: var(--color-fg-1);
+}
+
+:root[data-theme="morrowind"] .home-hub-root .home-title span {
+  color: var(--color-fg-2);
+}
+
+/* Any pressed toggle in a tool (Travel's "Plan for", option chips, locks) shows the game's
+   selection: blue text and the underline mark. */
+:root[data-theme="morrowind"] main button[aria-pressed="true"]:not(.theme-toggle) {
+  color: var(--color-select) !important;
+  box-shadow: inset 0 -2px 0 var(--color-select-mark) !important;
+}
+
+/* ---- Controls: Buttons (min 44px) & Selection ---------------------------- */
+:root[data-theme="morrowind"] .mw-btn,
+:root[data-theme="morrowind"] .btn,
+:root[data-theme="morrowind"] .account-bar .btn,
+:root[data-theme="morrowind"] #local-characters .row .btn,
+:root[data-theme="morrowind"] .account-page button {
+  min-height: 44px;
+  background: #000000 !important;
+  color: var(--color-fg-2) !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+:root[data-theme="morrowind"] .mw-btn:hover:not(:disabled),
+:root[data-theme="morrowind"] .btn:hover:not(:disabled),
+:root[data-theme="morrowind"] .account-bar .btn:hover:not(:disabled),
+:root[data-theme="morrowind"] #local-characters .row .btn:hover:not(:disabled),
+:root[data-theme="morrowind"] .account-page button:hover:not(:disabled) {
+  background: #000000 !important;
+  color: var(--color-fg-3) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="morrowind"] .mw-btn:active:not(:disabled),
+:root[data-theme="morrowind"] .btn:active:not(:disabled),
+:root[data-theme="morrowind"] .account-bar .btn:active:not(:disabled),
+:root[data-theme="morrowind"] #local-characters .row .btn:active:not(:disabled),
+:root[data-theme="morrowind"] .account-page button:active:not(:disabled) {
+  background: #000000 !important;
+  color: var(--color-fg-1) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="morrowind"] .mw-btn.active,
+:root[data-theme="morrowind"] .mw-btn[aria-pressed="true"],
+:root[data-theme="morrowind"] .btn.on,
+:root[data-theme="morrowind"] .btn[aria-pressed="true"],
+:root[data-theme="morrowind"] .mode-bar .mw-btn.active,
+:root[data-theme="morrowind"] .mode-bar .mw-btn[aria-pressed="true"],
+:root[data-theme="morrowind"] .mode-bar-grid .mw-btn.active,
+:root[data-theme="morrowind"] .mode-bar-grid .mw-btn[aria-pressed="true"],
+:root[data-theme="morrowind"] .vault-trigger.on,
+:root[data-theme="morrowind"] #react-header-slot .hamburger[aria-expanded="true"] {
+  background: #000000 !important;
+  color: var(--color-select) !important;
+  box-shadow: inset 0 -2px 0 var(--color-select-mark) !important;
+}
+
+/* ---- Containers vs Bevels (Panels use 2px groove) ------------------------ */
+:root[data-theme="morrowind"] .seg {
+  border-width: 2px !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #000000 !important;
+}
+
+:root[data-theme="morrowind"] .seg .seg-btn {
+  min-height: 44px;
+  background: transparent !important;
+  color: var(--color-fg-2) !important;
+  font-family: var(--font-serif);
+}
+
+:root[data-theme="morrowind"] .seg .seg-btn + .seg-btn {
+  border-left: 1px solid var(--color-line-9) !important;
+}
+
+:root[data-theme="morrowind"] .seg .seg-btn:hover {
+  color: var(--color-fg-3) !important;
+}
+
+:root[data-theme="morrowind"] .seg .seg-btn.on,
+:root[data-theme="morrowind"] .seg .seg-btn[aria-pressed="true"] {
+  background: #000000 !important;
+  color: var(--color-select) !important;
+  box-shadow: inset 0 -2px 0 var(--color-select-mark) !important;
+}
+
+:root[data-theme="morrowind"] .menu-drawer.open,
+:root[data-theme="morrowind"] #react-header-slot #react-menu-drawer.open,
+:root[data-theme="morrowind"] header.drawer-open .account-bar,
+:root[data-theme="morrowind"] header:has(.menu-drawer.open) .account-bar {
+  border-width: 2px !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #000000 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95) !important;
+}
+
+:root[data-theme="morrowind"] .nav-dropdown-menu {
+  border-width: 2px !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #000000 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95) !important;
+}
+
+:root[data-theme="morrowind"] .dropdown-item {
+  color: var(--color-fg-2) !important;
+  font-family: var(--font-serif);
+}
+
+:root[data-theme="morrowind"] .dropdown-item:hover,
+:root[data-theme="morrowind"] .dropdown-item:focus-visible {
+  background: #000000 !important;
+  color: var(--color-fg-3) !important;
+}
+
+:root[data-theme="morrowind"] .dropdown-item.on,
+:root[data-theme="morrowind"] .dropdown-item[aria-current="page"] {
+  background: #000000 !important;
+  color: var(--color-select) !important;
+  border-left: none !important;
+  padding-left: 12px !important;
+  box-shadow: inset 0 -2px 0 var(--color-select-mark) !important;
+}
+
+:root[data-theme="morrowind"] .search-dialog {
+  border: 6px solid transparent !important;
+  border-image: var(--mw-border) 6 repeat !important;
+  background: #000000 !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.95) !important;
+}
+
+/* ---- Home Hub Cards & Phase 4 Window Structure --------------------------- */
+:root[data-theme="morrowind"] .home-hub-root .home-character {
+  border-width: 2px !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #000000 !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="morrowind"] .home-hub-root .home-tool,
+:root[data-theme="morrowind"] .home-step,
+:root[data-theme="morrowind"] .home-save {
+  background: #000000 !important;
+  border-width: 2px !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="morrowind"] .home-hub-root .home-tool-open {
+  color: var(--color-link) !important;
+  font-family: var(--font-serif);
+  text-decoration: none;
+}
+
+:root[data-theme="morrowind"] .home-hub-root .home-tool-open:hover {
+  color: var(--color-link-hover) !important;
+  text-decoration: underline;
+}
+
+:root[data-theme="morrowind"] .home-hub-root .home-tool-open:active {
+  color: var(--color-link-active) !important;
+}
+
+:root[data-theme="morrowind"] .home-preview,
+:root[data-theme="morrowind"] .home-premades li,
+:root[data-theme="morrowind"] .home-tags li {
+  background: #000000 !important;
+  border-color: var(--color-line-11) !important;
+  color: var(--color-fg-2) !important;
+}
+
+:root[data-theme="morrowind"] .home-chip,
+:root[data-theme="morrowind"] .home-news-tag,
+:root[data-theme="morrowind"] .gtag {
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  color: var(--color-fg-3) !important;
+  background: #000000 !important;
+  font-family: var(--font-serif) !important;
+  font-size: 12.5px !important;
+  border-radius: 0 !important;
+}
+
+/* Phase 4: Title Bar Captions */
+:root[data-theme="morrowind"] .mw-caption {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+:root[data-theme="morrowind"] .mw-caption::before,
+:root[data-theme="morrowind"] .mw-caption::after {
+  content: "";
+  flex: 1 1 24px;
+  height: 2px;
+  background: #000000;
+  border: 2px solid transparent;
+  border-image: var(--mw-groove) 2 repeat;
+}
+
+:root[data-theme="morrowind"] .home-tool-title.mw-caption {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+:root[data-theme="morrowind"] .home-tool-top {
+  display: none !important;
+}
+
+/* The "Popular" and "New" badges move into the title bar, as in the mockup; the top-row copy
+   is hidden above, and Modern UI hides this copy instead. */
+:root[data-theme="morrowind"] .home-tool-title .home-chip--caption {
+  flex: none;
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+  padding: 1px 8px !important;
+}
+
+:root[data-theme="morrowind"] .home-step-icon {
+  display: none !important;
+}
+
+:root[data-theme="morrowind"] .home-step-title.mw-caption {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  font-size: 19px !important;
+  color: var(--color-fg-3) !important;
+  font-weight: 400 !important;
+  width: 100% !important;
+}
+
+/* Phase 4: Current-Character Card as Game Stats Window */
+:root[data-theme="morrowind"] .home-character-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+:root[data-theme="morrowind"] .home-character-title-bar {
+  display: flex !important;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: var(--color-fg-3);
+  margin-bottom: 8px;
+}
+
+:root[data-theme="morrowind"] .home-monogram {
+  display: none !important;
+}
+
+/* The original name, summary line and vital values stay readable to screen readers: the
+   game-style copies drawn instead (title bar, stats grid, numbers on the bars) are
+   aria-hidden, so hide these visually only, never with display: none. */
+:root[data-theme="morrowind"] .home-character-id .home-character-name,
+:root[data-theme="morrowind"] .home-character-line,
+:root[data-theme="morrowind"] .home-vital-value {
+  display: block !important;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+:root[data-theme="morrowind"] .home-character-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 28px;
+  font-family: var(--font-serif);
+  font-size: 15.5px;
+}
+
+:root[data-theme="morrowind"] .home-character-stats-grid > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+:root[data-theme="morrowind"] .home-character-stats-grid span:last-child {
+  color: var(--color-fg-3);
+}
+
+:root[data-theme="morrowind"] .home-vitals {
+  position: relative !important;
+  padding: 10px 12px !important;
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #000000 !important;
+  display: grid !important;
+  grid-template-columns: 76px minmax(0, 1fr) !important;
+  gap: 6px 14px !important;
+  align-items: center !important;
+  font-family: var(--font-serif) !important;
+  font-size: 15.5px !important;
+}
+
+:root[data-theme="morrowind"] .home-vital {
+  display: contents !important;
+}
+
+:root[data-theme="morrowind"] .home-vital-label {
+  color: var(--color-fg-2) !important;
+  font-family: var(--font-serif) !important;
+  font-size: 15.5px !important;
+}
+
+:root[data-theme="morrowind"] .home-vital-bar {
+  position: relative !important;
+  height: 18px !important;
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #000000 !important;
+}
+
+:root[data-theme="morrowind"] .home-vital-bar-num {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: var(--font-serif) !important;
+  font-size: 13.5px !important;
+  line-height: 1 !important;
+  color: var(--color-fg-1) !important;
+}
+
+:root[data-theme="morrowind"] .home-hr {
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--color-line-1);
+  border-bottom: 1px solid var(--color-line-11);
+  margin: 6px 0;
+}
+
+/* Elements that exist only for the Morrowind layout: Modern UI must not render them at all
+   (display: none also keeps them out of flex and grid gaps). */
+:root:not([data-theme="morrowind"]) .attr-full,
+:root:not([data-theme="morrowind"]) .home-character-title-bar,
+:root:not([data-theme="morrowind"]) .home-character-stats-grid,
+:root:not([data-theme="morrowind"]) .home-vital-bar-num,
+:root:not([data-theme="morrowind"]) .home-hr,
+:root:not([data-theme="morrowind"]) .home-chip--caption {
+  display: none !important;
+}
+
+:root[data-theme="morrowind"] .attr-short,
+:root[data-theme="morrowind"] .home-monogram {
+  display: none !important;
+}
+
+:root[data-theme="morrowind"] .attr-full {
+  display: inline !important;
+}
+
+:root[data-theme="morrowind"] .home-character-title-bar {
+  display: flex !important;
+}
+
+:root[data-theme="morrowind"] .home-character-stats-grid {
+  display: grid !important;
+}
+
+:root[data-theme="morrowind"] .home-vital-bar-num {
+  display: flex !important;
+}
+
+:root[data-theme="morrowind"] .home-meter span {
+  background: linear-gradient(180deg, #caa560, #6e562b) !important;
+}
+
+:root[data-theme="morrowind"] .enchanting-workstation div[class*="bg-accent"] {
+  background: var(--gradient-magicka) !important;
+}
+
+:root[data-theme="morrowind"] span[class*="bg-accent"] {
+  background-color: var(--color-select-mark) !important;
+}
+
+:root[data-theme="morrowind"] .home-attributes {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 3px 28px !important;
+  font-family: var(--font-serif) !important;
+  font-size: 15.5px !important;
+}
+
+:root[data-theme="morrowind"] .home-attribute {
+  display: flex !important;
+  justify-content: space-between !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+:root[data-theme="morrowind"] .home-attribute dt {
+  font-family: var(--font-serif) !important;
+  color: var(--color-fg-2) !important;
+  font-size: 15.5px !important;
+}
+
+:root[data-theme="morrowind"] .home-attribute dd {
+  font-family: var(--font-serif) !important;
+  color: var(--color-fg-3) !important;
+  font-size: 15.5px !important;
+}
+
+:root[data-theme="morrowind"] .home-majors {
+  margin-top: 0 !important;
+}
+
+:root[data-theme="morrowind"] .home-majors ul {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 3px 28px !important;
+  font-family: var(--font-serif) !important;
+  font-size: 15.5px !important;
+}
+
+:root[data-theme="morrowind"] .home-majors li {
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+:root[data-theme="morrowind"] .home-majors li span:first-child {
+  color: var(--color-fg-2) !important;
+}
+
+:root[data-theme="morrowind"] .home-majors li .home-num {
+  color: var(--color-fg-3) !important;
+}
+
+/* ---- Sweeping Legacy Brown Literals & Gold Glows ------------------------- */
+:root[data-theme="morrowind"] .kicker { color: var(--color-fg-2) !important; }
+:root[data-theme="morrowind"] .kicker .page-sub { color: var(--color-fg-5) !important; }
+:root[data-theme="morrowind"] .sub { color: var(--color-fg-2) !important; }
+:root[data-theme="morrowind"] .panel p { color: var(--color-fg-2) !important; }
+:root[data-theme="morrowind"] .pool { border-color: var(--color-line-9) !important; }
+:root[data-theme="morrowind"] .pool li { color: var(--color-fg-5) !important; }
+:root[data-theme="morrowind"] .vital-label { color: var(--color-fg-2) !important; }
+:root[data-theme="morrowind"] .tip { color: var(--color-fg-5) !important; border-left-color: var(--color-line-3) !important; }
+:root[data-theme="morrowind"] .summary { border-top-color: var(--color-line-9) !important; }
+:root[data-theme="morrowind"] .muted { color: var(--color-fg-5) !important; }
+:root[data-theme="morrowind"] .account-bar::before { color: var(--color-accent) !important; }
+:root[data-theme="morrowind"] .game-data-status { color: var(--color-fg-3) !important; border-color: var(--color-line-3) !important; background: #000000 !important; }
+:root[data-theme="morrowind"] .mw-warning-scroll { background: #000000 !important; }
+
+/* Table rows & Gear Box */
+:root[data-theme="morrowind"] #gear-box tbody tr:nth-child(even),
+:root[data-theme="morrowind"] .gear-results-container tbody tr:nth-child(even) {
+  background: var(--color-surface-8) !important;
+}
+
+:root[data-theme="morrowind"] #gear-box tbody tr:hover,
+:root[data-theme="morrowind"] .gear-results-container tbody tr:hover {
+  background: var(--color-surface-13) !important;
+}
+
+:root[data-theme="morrowind"] #gear-box th[colspan],
+:root[data-theme="morrowind"] .gear-results-container th[colspan] {
+  background: #000000 !important;
+}
+
+:root[data-theme="morrowind"] #gear-box th,
+:root[data-theme="morrowind"] #gear-box td,
+:root[data-theme="morrowind"] #gear-box details {
+  border-color: var(--color-line-9) !important;
+}
+
+:root[data-theme="morrowind"] .gear-ar-tag {
+  background: #000000 !important;
+  border-color: var(--color-line-3) !important;
+  color: var(--color-fg-3) !important;
+}
+
+:root[data-theme="morrowind"] .gear-results-container .region-tag,
+:root[data-theme="morrowind"] #gear-box .region-tag,
+:root[data-theme="morrowind"] .region-tag {
+  border-color: var(--color-line-3) !important;
+  color: var(--color-fg-3) !important;
+  background: #000000 !important;
+}
+
+:root[data-theme="morrowind"] .gear-results-container details summary,
+:root[data-theme="morrowind"] #gear-box details summary,
+:root[data-theme="morrowind"] #local-characters summary {
+  background: #000000 !important;
+  color: var(--color-fg-3) !important;
+}
+
+:root[data-theme="morrowind"] .gear-results-container details summary:hover,
+:root[data-theme="morrowind"] #gear-box details summary:hover,
+:root[data-theme="morrowind"] #local-characters summary:hover {
+  background: #000000 !important;
+  color: var(--color-fg-1) !important;
+}
+
+:root[data-theme="morrowind"] .gear-results-container .gear-note,
+:root[data-theme="morrowind"] #gear-box .gear-note,
+:root[data-theme="morrowind"] .gear-note-text,
+:root[data-theme="morrowind"] .gear-results-container details > p.muted,
+:root[data-theme="morrowind"] #gear-box details > p.muted {
+  color: var(--color-fg-5) !important;
+}
+
+:root[data-theme="morrowind"] #gear-box .where {
+  color: var(--color-fg-2) !important;
+}
+
+:root[data-theme="morrowind"] body.view-challenge #react-nav-challenge,
+:root[data-theme="morrowind"] body.view-builder #react-nav-build,
+:root[data-theme="morrowind"] #btn-gear {
+  color: var(--color-fg-2) !important;
+}
+
+/* Vitals bars: frame is 2px groove, number in Pelagiad fg-1 */
+:root[data-theme="morrowind"] .vital-bar {
+  border: 2px solid transparent !important;
+  border-image: var(--mw-groove) 2 repeat !important;
+  background: #000000 !important;
+}
+
+:root[data-theme="morrowind"] .vital-bar span {
+  font-family: var(--font-serif) !important;
+  color: var(--color-fg-1) !important;
+  text-shadow: none !important;
+}
+
+/* Form fields & selects in black background */
+:root[data-theme="morrowind"] .mw-select,
+:root[data-theme="morrowind"] .mw-input,
+:root[data-theme="morrowind"] select,
+:root[data-theme="morrowind"] input[type="text"],
+:root[data-theme="morrowind"] input[type="search"],
+:root[data-theme="morrowind"] textarea,
+:root[data-theme="morrowind"] #local-characters select,
+:root[data-theme="morrowind"] #local-characters input[type="text"] {
+  background-color: #000000 !important;
+  color: var(--color-fg-2) !important;
+}
+
+:root[data-theme="morrowind"] .mw-select option,
+:root[data-theme="morrowind"] .mw-select optgroup,
+:root[data-theme="morrowind"] select option {
+  background-color: #000000 !important;
+  color: var(--color-fg-2) !important;
+}
+
+/* Search trigger and vault trigger */
+:root[data-theme="morrowind"] .search-trigger {
+  background: #000000 !important;
+  color: var(--color-fg-4) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="morrowind"] .search-trigger svg {
+  color: var(--color-fg-2) !important;
+}
+
+:root[data-theme="morrowind"] .vault-trigger {
+  background: #000000 !important;
+  color: var(--color-fg-2) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="morrowind"] .vault-trigger:hover:not(:disabled),
+:root[data-theme="morrowind"] .vault-trigger.on {
+  color: var(--color-fg-3) !important;
+}
+
+/* Account Page buttons & icons */
+:root[data-theme="morrowind"] .account-page button {
+  background: #000000 !important;
+  color: var(--color-fg-2) !important;
+}
+
+:root[data-theme="morrowind"] .account-page button:hover:not(:disabled) {
+  background: #000000 !important;
+  color: var(--color-fg-3) !important;
+}
+
+:root[data-theme="morrowind"] .account-icons svg,
+:root[data-theme="morrowind"] .account-preview svg {
+  color: var(--color-accent) !important;
+}
+
+/* WebKit Scrollbars */
+:root[data-theme="morrowind"] ::-webkit-scrollbar-track,
+:root[data-theme="morrowind"] .mw-scrollbar::-webkit-scrollbar-track {
+  background: var(--mw-scroll-track) !important;
+  border-color: #000000 !important;
+}
+
+:root[data-theme="morrowind"] ::-webkit-scrollbar-thumb,
+:root[data-theme="morrowind"] .mw-scrollbar::-webkit-scrollbar-thumb,
+:root[data-theme="morrowind"] select[size]::-webkit-scrollbar-thumb {
+  background: var(--mw-scroll-thumb) !important;
+  border-color: #000000 !important;
+}
+
+:root[data-theme="morrowind"] ::-webkit-scrollbar-thumb:hover,
+:root[data-theme="morrowind"] .mw-scrollbar::-webkit-scrollbar-thumb:hover,
+:root[data-theme="morrowind"] select[size]::-webkit-scrollbar-thumb:hover {
+  background: var(--mw-scroll-thumb-hover) !important;
+}

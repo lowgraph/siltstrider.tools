@@ -193,6 +193,12 @@ for now (owner, 30 September); other agents skip them.
   - [x] **C** **CALC-4 where to get** (started 2026-10-01 02:28 UTC, C; resumed Codex, 1 October; done `5965af7`, corrected data `be29f68`, merged `ef67b3e` through `c2bf5d8`; live as `3879ce7b`) Each selected Alchemy ingredient has a "Where to get it" button, with the pair shortcut retained:
         shops, plants, creatures and finds from `IngredientSources`, loaded only when opened.
 
+- [x] **C** **DESIGN — Morrowind game theme** (implemented `84d8d56`, QA `d85a931`;
+      integration authorized 1 October, Codex; merged with this commit, not deployed)
+      Black windows, tan text, procedural frames and the Home stats window. Modern
+      UI retains its layout, apart from the theme-toggle preview. Merged-checkout
+      verification: LAUNCH_VERIFICATION §47; spec: MORROWIND_GAME_THEME.md.
+
 ### 5. QA findings (1 October): fix before the freeze
 
 From the triage of the five QA reports (live site, signed out, 1 October). Source IDs in

@@ -82,6 +82,13 @@
   --color-accent-4: #c75a28;
   --color-accent-5: #9e4a24;
 
+  /* Game UI link and selection colors (Ashfall maps to accent) */
+  --color-link: var(--color-accent);
+  --color-link-hover: var(--color-accent);
+  --color-link-active: var(--color-accent);
+  --color-select: var(--color-accent);
+  --color-select-mark: var(--color-accent);
+
   --color-danger-1: #ffd9d6;
   --color-danger-2: #fca5a0;
   --color-danger-3: #f7867f;

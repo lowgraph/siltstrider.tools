@@ -893,72 +893,79 @@ body.view-challenge #panel-challenge > .row:last-of-type {
 @theme static {
 
   /* Text. fg-1 is the brightest; higher numbers are quieter. */
-  --color-fg-1: #ffffff;
-  --color-fg-2: #f3e6c8;
-  --color-fg-3: #ffd9b3;
-  --color-fg-4: #e0cfab;
-  --color-fg-5: #c4b998;
-  --color-fg-6: #c9b88e;
-  --color-fg-7: #c2b291;
-  --color-fg-8: #b8a078;
-  --color-fg-9: #a8997c;
-  --color-fg-10: #a89066;
-  --color-fg-11: #9e8b6b;
-  --color-fg-12: #a2876e;
-  --color-fg-13: #99866c;
-  --color-fg-14: #968366;
-  --color-fg-15: #8d7c62;
-  --color-fg-16: #6e5d3f;
-  --color-fg-17: #5a4c33;
-  --color-fg-18: #4a3b25;
+  --color-fg-1: #f3eddd;
+  --color-fg-2: #caa560;
+  --color-fg-3: #dfc99f;
+  --color-fg-4: #caa560;
+  --color-fg-5: #b3a887;
+  --color-fg-6: #b3a887;
+  --color-fg-7: #b3a887;
+  --color-fg-8: #b3a887;
+  --color-fg-9: #a49a7c;
+  --color-fg-10: #a49a7c;
+  --color-fg-11: #9c9174;
+  --color-fg-12: #9c9174;
+  --color-fg-13: #948a6e;
+  --color-fg-14: #948a6e;
+  --color-fg-15: #8a8066;
+  --color-fg-16: #6e6450;
+  --color-fg-17: #5a5242;
+  --color-fg-18: #4a4336;
 
   /* Surfaces. surface-1 is the deepest well; higher numbers sit higher (lighter). */
-  --color-surface-1: #0c0906;
-  --color-surface-2: #100d08;
-  --color-surface-3: #14100a;
-  --color-surface-4: #16120b;
-  --color-surface-5: #19140c;
-  --color-surface-6: #1a140d;
-  --color-surface-7: #181510;
-  --color-surface-8: #201811;
-  --color-surface-9: #1f1911;
-  --color-surface-10: #1f1a10;
-  --color-surface-11: #251a0e;
-  --color-surface-12: #241c13;
-  --color-surface-13: #261d12;
-  --color-surface-14: #251e13;
-  --color-surface-15: #2d1e0d;
-  --color-surface-16: #2b1f14;
-  --color-surface-17: #2a2215;
-  --color-surface-18: #2d2214;
-  --color-surface-19: #2f2214;
-  --color-surface-20: #382b13;
-  --color-surface-21: #3a2d1d;
-  --color-surface-22: #3d301b;
-  --color-surface-23: #453218;
-  --color-surface-24: #8c7853;
+  --color-surface-1: #000000;
+  --color-surface-2: #000000;
+  --color-surface-3: #000000;
+  --color-surface-4: #000000;
+  --color-surface-5: #000000;
+  --color-surface-6: #000000;
+  --color-surface-7: #000000;
+  --color-surface-8: #0a0908;
+  --color-surface-9: #0a0908;
+  --color-surface-10: #0a0908;
+  --color-surface-11: #0a0908;
+  --color-surface-12: #0a0908;
+  --color-surface-13: #100e0b;
+  --color-surface-14: #100e0b;
+  --color-surface-15: #100e0b;
+  --color-surface-16: #100e0b;
+  --color-surface-17: #100e0b;
+  --color-surface-18: #16130f;
+  --color-surface-19: #16130f;
+  --color-surface-20: #16130f;
+  --color-surface-21: #16130f;
+  --color-surface-22: #16130f;
+  --color-surface-23: #1d1914;
+  --color-surface-24: #9f7f45;
 
   /* Borders and dividers. line-1 is the most prominent. */
-  --color-line-1: #8c7853;
-  --color-line-2: #6e5833;
-  --color-line-3: #5c4a38;
-  --color-line-4: #5c4827;
-  --color-line-5: #5e4327;
-  --color-line-6: #4a3e20;
-  --color-line-7: #4a3b26;
-  --color-line-8: #4a341b;
-  --color-line-9: #3a2e1d;
-  --color-line-10: #352514;
-  --color-line-11: #2a2215;
-  --color-line-12: #221c13;
+  --color-line-1: #bea47b;
+  --color-line-2: #a98f62;
+  --color-line-3: #9f7f45;
+  --color-line-4: #8b7b5a;
+  --color-line-5: #857048;
+  --color-line-6: #7d6c4c;
+  --color-line-7: #76663f;
+  --color-line-8: #706044;
+  --color-line-9: #6b5c40;
+  --color-line-10: #5a4c33;
+  --color-line-11: #4f442f;
+  --color-line-12: #2b251a;
 
   /* Accent (gold in the classic theme). Shared by text, fills and borders. */
-  --color-accent: #d4b06a;
-  --color-accent-1: #ffd700;
-  --color-accent-2: #d4a86a;
-  --color-accent-3: #c49750;
-  --color-accent-4: #a6824a;
-  --color-accent-5: #8e7436;
+  --color-accent: #dfc99f;
+  --color-accent-1: #f3eddd;
+  --color-accent-2: #caa560;
+  --color-accent-3: #b3a887;
+  --color-accent-4: #9f7f45;
+  --color-accent-5: #6e562b;
+
+  /* Game UI link and selection colors */
+  --color-link: #707ecf;
+  --color-link-hover: #8f9bda;
+  --color-link-active: #afb8e4;
+  --color-select: #9fa9df;
+  --color-select-mark: #6070ca;
 
   /* Danger / negative (text) */
   --color-danger-1: #ffd6d6;
@@ -1061,7 +1068,7 @@ body.view-challenge #panel-challenge > .row:last-of-type {
   --parchment: #e4d2a8;
   --parchment-dark: #d4be8c;
   --gold: var(--color-accent);
-  --offblack: #0c0a08;
+  --offblack: #0e0d0b;
   --journal: #12100c;
   --surface: var(--color-surface-7);
   --radius: 0;
@@ -1073,13 +1080,13 @@ body.view-challenge #panel-challenge > .row:last-of-type {
   /* Page and section titles. Pelagiad here; Ashfall swaps in Instrument Serif. */
   --font-display: "Pelagiad", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
 
-  --mw-border: url("/textures/mw-border.png");
-  --mw-bevel: url("/textures/mw-bevel.png");
-  --mw-groove: url("/textures/mw-groove.png");
+  --mw-border: url("/textures/mw-window.svg");
+  --mw-bevel: url("/textures/mw-button-grain.svg");
+  --mw-groove: url("/textures/mw-panel-grain.svg");
 
-  --mw-scroll-thumb: #4e3c23;
-  --mw-scroll-thumb-hover: #785d37;
-  --mw-scroll-track: var(--color-surface-3);
+  --mw-scroll-thumb: #9f7f45;
+  --mw-scroll-thumb-hover: #bea47b;
+  --mw-scroll-track: #000000;
 }
 
 html,
@@ -2503,10 +2510,10 @@ body.view-travel .hero {
 /* Theme switch. Classic Morrowind styling in both themes: in Ashfall it is the
    one piece of the old UI left on screen, the way back to it. */
 :root {
-  --classic-gold: #d4b06a;
-  --classic-gold-bright: #f0d48a;
-  --classic-brown: #1a140d;
-  --classic-brown-hi: #3a2a18;
+  --classic-gold: #caa560;
+  --classic-gold-bright: #dfc99f;
+  --classic-brown: #000000;
+  --classic-brown-hi: #000000;
 }
 .theme-toggle {
   position: relative;
@@ -2516,7 +2523,7 @@ body.view-travel .hero {
   height: 40px;
   padding: 0 14px 0 10px;
   border: 4px solid transparent;
-  border-image: url("/textures/mw-bevel.png") 4 repeat;
+  border-image: url("/textures/mw-button-grain.svg") 4 repeat;
   background: linear-gradient(180deg, var(--classic-brown-hi) 0%, var(--classic-brown) 100%);
   background-clip: padding-box;
   color: var(--classic-gold);
@@ -2528,8 +2535,8 @@ body.view-travel .hero {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
   transition: color 0.15s ease, filter 0.15s ease;
 }
-.theme-toggle:hover { color: var(--classic-gold-bright); filter: brightness(1.12); }
-.theme-toggle:focus-visible { outline: 2px solid var(--classic-gold); outline-offset: 2px; }
+.theme-toggle:hover { color: var(--classic-gold-bright); filter: none; }
+.theme-toggle:focus-visible { outline: 2px solid var(--classic-gold); outline-color: #9fa9df; outline-offset: 2px; }
 .theme-toggle-face { display: inline-flex; align-items: center; gap: 8px; }
 .theme-toggle-glyph { width: 20px; height: 20px; flex: none; }
 .theme-toggle-face--to-ashfall .theme-toggle-glyph { color: #ff7a3d; filter: drop-shadow(0 0 4px rgba(255, 122, 61, 0.55)); }

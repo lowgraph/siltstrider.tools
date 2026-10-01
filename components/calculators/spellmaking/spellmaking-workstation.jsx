@@ -251,7 +251,7 @@ export default function SpellmakingWorkstation() {
       {/* Workstation Header Bar */}
       <div className="bg-surface-7 p-4 border border-line-11 mw-groove-panel flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
+          <h2 className="mw-caption font-serif text-xl sm:text-2xl font-bold text-fg-2 tracking-wide m-0">
             Spellmaking
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
@@ -369,7 +369,7 @@ export default function SpellmakingWorkstation() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left Pane: Grimoire Configuration */}
         <div className="space-y-4">
-          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
+          <h3 className="mw-caption text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
             Spellcraft Configuration
           </h3>
 
@@ -555,7 +555,7 @@ export default function SpellmakingWorkstation() {
 
         {/* Right Pane: Dossier & Barter */}
         <div className="space-y-4">
-          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
+          <h3 className="mw-caption text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
             Spellmaking Output &amp; Barter
           </h3>
 

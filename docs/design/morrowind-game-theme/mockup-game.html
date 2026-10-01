@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Reference mockup: the front page in the "closer to the game" Morrowind theme. Static HTML; open it from this folder. See docs/MORROWIND_GAME_THEME.md. -->
+<title>Silt Strider front page, closer to the game</title>
+</head>
+<body>
+<style>
+@font-face { font-family: "Pelagiad"; src: url("../../../public/fonts/Pelagiad.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+body { margin: 0; background: #0e0d0b; }
+a { color: #707ecf; } a:hover { color: #8f9bda; } a:active { color: #afb8e4; }
+:focus-visible { outline: 2px solid #9fa9df; outline-offset: 2px; }
+.gwin { background: #000000; border: 6px solid transparent; border-image: url("../../../public/textures/mw-window.svg") 6 repeat; }
+.gw { background: #000000; border: 2px solid transparent; border-image: url("../../../public/textures/mw-panel-grain.svg") 2 repeat; }
+.gw-in { background: #000000; border: 2px solid transparent; border-image: url("../../../public/textures/mw-panel-grain.svg") 2 repeat; }
+.gcap { display: flex; align-items: center; gap: 12px; padding: 8px 12px; }
+.gcap::before, .gcap::after { content: ""; flex: 1 1 24px; height: 2px; background: #000000; border: 2px solid transparent; border-image: url("../../../public/textures/mw-panel-grain.svg") 2 repeat; }
+.ghr { height: 0; border-top: 1px solid #c4ae7f; border-bottom: 1px solid #43311e; }
+.gbtn { box-sizing: border-box; min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #000000; color: #caa560; font-family: Pelagiad, Georgia, serif; font-size: 15px; border: 4px solid transparent; border-image: url("../../../public/textures/mw-button-grain.svg") 4 repeat; cursor: pointer; text-decoration: none; }
+.gbtn:hover { color: #dfc99f; }
+.gbtn:active { color: #f3eddd; }
+.gbar { position: relative; display: block; height: 18px; background: #000000; border: 2px solid transparent; border-image: url("../../../public/textures/mw-panel-grain.svg") 2 repeat; }
+.gbar-num { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: center; font-family: Pelagiad, Georgia, serif; font-size: 13.5px; line-height: 1; color: #f3eddd; }
+.gsel { min-height: 44px; padding: 0 14px; background: transparent; border: 0; color: #caa560; font-family: Pelagiad, Georgia, serif; font-size: 15px; cursor: pointer; }
+.gsel:hover { color: #dfc99f; }
+.gsel[aria-pressed="true"] { color: #9fa9df; box-shadow: inset 0 -2px 0 #6070ca; }
+.gtag { border: 2px solid transparent; border-image: url("../../../public/textures/mw-panel-grain.svg") 2 repeat; color: #dfc99f; background: #000000; font-family: Pelagiad, Georgia, serif; font-size: 12.5px; padding: 1px 8px; }
+.gtopic { color: #707ecf; font-family: Pelagiad, Georgia, serif; font-size: 16px; text-decoration: none; }
+.gtopic:hover { color: #8f9bda; text-decoration: underline; }
+.gtopic:active { color: #afb8e4; }
+.gmenu { color: #caa560; text-decoration: none; }
+.gmenu:hover { color: #dfc99f; text-decoration: underline; }
+</style>
+<div style="background: #0e0d0b; color: #caa560; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.5; padding: 0 12px 28px; box-sizing: border-box; min-height: 100%">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px; padding-top: 26px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<a href="https://siltstrider.tools/" style="font-family: Pelagiad, Georgia, serif; font-size: 70px; line-height: 1.05; color: #dfc99f; text-decoration: none">Silt Strider</a>
+<p style="margin: 0; font-family: Pelagiad, Georgia, serif; font-size: 15px; line-height: 1.45; color: #caa560">siltstrider.tools — Morrowind build planner &amp; challenge run generator<br>Pick a planner for this playthrough.</p>
+</div>
+<div style="display: flex; gap: 12px; align-items: center">
+<button type="button" class="gbtn">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"></path></svg>
+Modern UI</button>
+<label class="gw-in" style="box-sizing: border-box; min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 10px; width: 290px; outline: 1px solid #000000">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<input type="search" aria-label="Search items, spells and places" placeholder="Search items, spells, places…" style="flex-grow: 1; min-width: 0; background: transparent; border: 0; color: #dfc99f; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; outline: none">
+<span style="font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; color: #b3a887; border: 1px solid #4f442f; padding: 0 6px">Ctrl K</span>
+</label>
+<button type="button" class="gbtn" aria-label="Your account" style="width: 44px; padding: 0">
+<svg width="18" height="18" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 5a11 11 0 1 0 7 18A12 12 0 0 1 20 5z"></path><path d="M28 9l1.5 3 3 .5-2.2 2 .6 3-2.9-1.5-2.9 1.5.6-3-2.2-2 3-.5z"></path></svg>
+</button>
+</div>
+</header>
+
+<nav aria-label="Tools" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" class="gbtn">Character Builder</button>
+<button type="button" class="gbtn">Level Simulator</button>
+<button type="button" class="gbtn">Travel Planner</button>
+<button type="button" class="gbtn">Faction Journal</button>
+<button type="button" class="gbtn">Challenge Runs</button>
+<button type="button" class="gbtn">Calculators ▾</button>
+<button type="button" class="gbtn">More ▾</button>
+</div>
+<div class="gw" role="group" aria-label="World" style="display: flex">
+<button type="button" class="gsel" aria-pressed="true">Vanilla</button>
+<button type="button" class="gsel" aria-pressed="false">Tamriel Rebuilt</button>
+<button type="button" class="gsel" aria-pressed="false">TR + ARCE</button>
+</div>
+</nav>
+
+<main style="padding: 18px 0">
+<div class="gwin" style="max-width: 1328px; margin: 16px auto 0; box-sizing: border-box">
+<div class="gcap" style="font-family: Pelagiad, Georgia, serif; font-size: 15px; color: #dfc99f">siltstrider.tools</div>
+<div style="padding: 24px 40px 40px">
+
+<div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+<div style="flex: 1 1 560px; max-width: 660px; display: flex; flex-direction: column; gap: 22px">
+<div class="gw-in" style="display: inline-flex; align-self: flex-start; align-items: center; gap: 10px; padding: 4px 12px 4px 4px; font-family: Pelagiad, Georgia, serif; font-size: 14px; color: #caa560">
+<span class="gtag">New</span>
+Search every item, spell and place
+<span style="font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; color: #b3a887; border: 1px solid #4f442f; padding: 0 6px">Ctrl K</span>
+</div>
+<h1 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 72px; line-height: 1.02; color: #f3eddd">Plan the perfect <span style="color: #caa560">Morrowind</span> run.</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.65; color: #caa560; max-width: 590px">A free, data-driven companion for The Elder Scrolls III. Build a character, simulate every level-up for ×5 multipliers, brew potions and plan your travel across Vvardenfell and Tamriel Rebuilt, with every number read straight from the game files.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<section class="gw" style="flex: 1 1 280px; display: flex; flex-direction: column">
+<div class="gcap"><h2 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Start a character</h2></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 14px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Pick one of 41 premade builds or make your own class. Every tool works with it, and no account is needed.</p>
+<a href="https://siltstrider.tools/builder" class="gbtn" style="margin-top: auto">Open the Character Builder</a>
+</div>
+</section>
+<section class="gw" style="flex: 1 1 280px; display: flex; flex-direction: column">
+<div class="gcap"><h2 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Load your save</h2></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<div style="border: 1px dashed #6b5c40; padding: 12px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 15px">Drop an OpenMW save here or choose it: your character, gear and quests fill every tool. It is read in your browser: nothing is uploaded.</p>
+<p style="margin: 0; font-size: 13.5px; color: #b3a887"><code style="font-family: Consolas, ui-monospace, monospace; color: #dfc99f">.omwsave</code> files are in Documents › My Games › OpenMW › saves on Windows</p>
+</div>
+<button type="button" class="gbtn" style="margin-top: auto">Choose a save file</button>
+</div>
+</section>
+</div>
+<p class="gw-in" style="margin: 0; padding: 10px 14px; font-size: 14px; line-height: 1.5; color: #dfc99f"><strong style="font-family: Pelagiad, Georgia, serif; font-weight: 400; color: #f3eddd">OpenMW only.</strong> Tested with vanilla Morrowind, Tamriel Rebuilt (TR), and TR + ARCE. Other mods are untested; imported data and calculations may be incomplete or inaccurate. Original Morrowind <code style="font-family: Consolas, ui-monospace, monospace">.ess</code> saves are not supported.</p>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #dfc99f">Your Morrowind</h2>
+<div class="gw" role="group" aria-label="World" style="display: flex; align-self: flex-start">
+<button type="button" class="gsel" aria-pressed="true">Vanilla</button>
+<button type="button" class="gsel" aria-pressed="false">Tamriel Rebuilt</button>
+<button type="button" class="gsel" aria-pressed="false">TR + ARCE</button>
+</div>
+<p style="margin: 0; font-size: 15px; color: #b3a887"><span style="color: #dfc99f">Morrowind · Tribunal · Bloodmoon.</span> Every tool follows this; a save sets it for you.</p>
+</div>
+</div>
+
+<aside class="gw" aria-label="Current character" style="flex: 0 1 520px; margin-top: 150px">
+<div class="gcap"><h2 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Redguard Long Blade Duelist</h2></div>
+<div style="padding: 6px 20px 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-family: Pelagiad, Georgia, serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #dfc99f">Current character</span>
+<span class="gtag">Vanilla</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 28px; font-family: Pelagiad, Georgia, serif; font-size: 15.5px">
+<div style="display: flex; justify-content: space-between"><span>Level</span><span style="color: #dfc99f">1</span></div>
+<div style="display: flex; justify-content: space-between"><span>Race</span><span style="color: #dfc99f">Redguard, female</span></div>
+<div style="display: flex; justify-content: space-between"><span>Class</span><span style="color: #dfc99f">Custom</span></div>
+<div style="display: flex; justify-content: space-between"><span>Sign</span><span style="color: #dfc99f">The Warrior</span></div>
+</div>
+<div class="gw-in" style="padding: 10px 12px; display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 6px 14px; align-items: center; font-family: Pelagiad, Georgia, serif; font-size: 15.5px">
+<span>Health</span><span class="gbar"><span style="display: block; height: 100%; width: 100%; background: linear-gradient(180deg, #9b2d16, #2f0e07)"></span><span class="gbar-num">50/50</span></span>
+<span>Magicka</span><span class="gbar"><span style="display: block; height: 100%; width: 100%; background: linear-gradient(180deg, #28347b, #0c1025)"></span><span class="gbar-num">30/30</span></span>
+<span>Fatigue</span><span class="gbar"><span style="display: block; height: 100%; width: 100%; background: linear-gradient(180deg, #00722e, #00240e)"></span><span class="gbar-num">170/170</span></span>
+</div>
+<div class="ghr"></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 28px; font-family: Pelagiad, Georgia, serif; font-size: 15.5px">
+<div style="display: flex; justify-content: space-between"><span>Strength <span aria-label="favored" style="color: #dfc99f">★</span></span><span style="color: #dfc99f">50</span></div>
+<div style="display: flex; justify-content: space-between"><span>Speed <span aria-label="favored" style="color: #dfc99f">★</span></span><span style="color: #dfc99f">50</span></div>
+<div style="display: flex; justify-content: space-between"><span>Intelligence</span><span style="color: #dfc99f">30</span></div>
+<div style="display: flex; justify-content: space-between"><span>Endurance</span><span style="color: #dfc99f">50</span></div>
+<div style="display: flex; justify-content: space-between"><span>Willpower</span><span style="color: #dfc99f">30</span></div>
+<div style="display: flex; justify-content: space-between"><span>Personality</span><span style="color: #dfc99f">40</span></div>
+<div style="display: flex; justify-content: space-between"><span>Agility</span><span style="color: #dfc99f">40</span></div>
+<div style="display: flex; justify-content: space-between"><span>Luck</span><span style="color: #dfc99f">40</span></div>
+</div>
+<div class="ghr"></div>
+<div>
+<h3 style="margin: 0 0 6px; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 16px; color: #dfc99f">Major Skills</h3>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 28px; font-family: Pelagiad, Georgia, serif; font-size: 15.5px">
+<div style="display: flex; justify-content: space-between"><span>Long Blade</span><span style="color: #dfc99f">50</span></div>
+<div style="display: flex; justify-content: space-between"><span>Medium Armor</span><span style="color: #dfc99f">40</span></div>
+<div style="display: flex; justify-content: space-between"><span>Athletics</span><span style="color: #dfc99f">40</span></div>
+<div style="display: flex; justify-content: space-between"><span>Block</span><span style="color: #dfc99f">35</span></div>
+<div style="display: flex; justify-content: space-between"><span>Armorer</span><span style="color: #dfc99f">35</span></div>
+</div>
+</div>
+<div style="display: flex; gap: 12px">
+<a href="https://siltstrider.tools/builder" class="gbtn" style="flex: 1">Resume build</a>
+<a href="https://siltstrider.tools/leveler" class="gbtn" style="flex: 1">Plan level-ups</a>
+</div>
+<div class="ghr"></div>
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 16px; color: #dfc99f">Next level-up</h3>
+<div style="display: flex; gap: 6px; flex-wrap: wrap"><span class="gtag">Endurance ×5</span><span class="gtag">Strength ×5</span><span class="gtag">Agility ×5</span></div>
+</div>
+<div style="text-align: right; font-family: Pelagiad, Georgia, serif; font-size: 15.5px">
+<div>Level <span style="color: #dfc99f">1 → 2</span></div>
+<div>Health <span style="color: #dfc99f">50 → 55</span></div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+
+<div class="gw-in" style="margin-top: 56px; display: flex; flex-wrap: wrap">
+<div style="flex: 1 1 240px; padding: 20px"><div style="font-family: Pelagiad, Georgia, serif; font-size: 34px; color: #dfc99f; line-height: 1.2">×5</div><div style="font-size: 14.5px; color: #b3a887">attribute bonuses, planned level by level</div></div>
+<div style="flex: 1 1 240px; padding: 20px; border-left: 1px solid #c4ae7f; box-shadow: inset 1px 0 0 #43311e"><div style="font-family: Pelagiad, Georgia, serif; font-size: 34px; color: #dfc99f; line-height: 1.2">Any town</div><div style="font-size: 14.5px; color: #b3a887">reached by silt strider, boat, Guild Guide or on foot, at your fare</div></div>
+<div style="flex: 1 1 240px; padding: 20px; border-left: 1px solid #c4ae7f; box-shadow: inset 1px 0 0 #43311e"><div style="font-family: Pelagiad, Georgia, serif; font-size: 34px; color: #dfc99f; line-height: 1.2">Early gear</div><div style="font-size: 14.5px; color: #b3a887">for your build, and where to buy or find it</div></div>
+<div style="flex: 1 1 240px; padding: 20px; border-left: 1px solid #c4ae7f; box-shadow: inset 1px 0 0 #43311e"><div style="font-family: Pelagiad, Georgia, serif; font-size: 34px; color: #dfc99f; line-height: 1.2">3 worlds</div><div style="font-size: 14.5px; color: #b3a887">Vanilla, Tamriel Rebuilt and TR + ARCE, each from its own game data</div></div>
+</div>
+
+<section style="margin-top: 56px; display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-family: Pelagiad, Georgia, serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #dfc99f">The toolbox</p>
+<h2 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 42px; line-height: 1.1; color: #f3eddd">Nine tools. One character.</h2>
+<p style="margin: 0; font-size: 16.5px; color: #b3a887; max-width: 700px">Your character follows you between tools, so gear, level-ups and potions are worked out for the build you are actually playing.</p>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 10px">
+<article class="gw" style="flex: 1 1 560px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Character Builder</h3></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Pick a race, class and birthsign and watch the character sheet update. Balance major/minor skills, then find the best early-game gear and late-game equipment.</p>
+<div class="gw-in" style="padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 14.5px"><span style="color: #dfc99f">41</span> premade builds to start from</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px">
+<span style="border: 1px solid #4f442f; padding: 3px 9px">Pure mage</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Battlemage</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Pure melee</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Assassin</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Archer</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Thief</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Healer</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Monk</span><span style="border: 1px solid #4f442f; padding: 3px 9px">+4 more</span>
+</div>
+<div style="border-top: 1px solid #4f442f; padding-top: 8px; display: flex; flex-direction: column; gap: 4px; font-size: 15px">
+<div style="display: flex; justify-content: space-between; gap: 12px"><span style="color: #dfc99f">Altmer Atronach Spellweaver</span><span style="color: #b3a887">High Elf · The Atronach</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px"><span style="color: #dfc99f">Redguard Lady Spellsword</span><span style="color: #b3a887">Redguard · The Lady</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px"><span style="color: #dfc99f">Orc Endurance Crusher</span><span style="color: #b3a887">Orc · The Lady</span></div>
+</div>
+</div>
+<a href="https://siltstrider.tools/builder" class="gtopic">Open Character Builder →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 460px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"></path></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Level Simulator</h3><span class="gtag">Popular</span></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Efficient leveling progression. Calculate which miscellaneous skills to train each level for maximum ×5 attribute multipliers and optimal non-retroactive Health.</p>
+<div class="gw-in" style="padding: 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 15px"><span style="font-family: Pelagiad, Georgia, serif; font-size: 26px; color: #f3eddd">+72</span> Health by level 30 for Redguard Long Blade Duelist when Endurance goes first</div>
+<svg viewBox="0 0 440 70" width="100%" height="70" aria-hidden="true"><path d="M4 64 C120 52 260 30 436 4" fill="none" stroke="#dfc99f" stroke-width="2.5"></path><path d="M4 64 C140 58 290 40 436 16" fill="none" stroke="#b3a887" stroke-width="2" stroke-dasharray="6 5"></path></svg>
+<div style="display: flex; gap: 18px; font-size: 13.5px; color: #b3a887"><span>— Endurance first</span><span>- - Endurance late</span></div>
+</div>
+<a href="https://siltstrider.tools/leveler" class="gtopic" style="margin-top: auto">Open Level Simulator →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 520px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Travel Planner</h3></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Fewest legs, cheapest fare or fastest trip between towns by silt strider, boat, river strider and Guild Guide across Vvardenfell and mainland Tamriel.</p>
+<div class="gw-in" style="padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 14.5px"><span style="color: #dfc99f">4</span> hops from Seyda Neen to Raven Rock</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px">
+<span style="border: 1px solid #4f442f; padding: 3px 9px; color: #dfc99f">Seyda Neen</span><span style="color: #b3a887">→</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Gnisis</span><span style="color: #b3a887">→</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Khuul</span><span style="color: #b3a887">→</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Fort Frostmoth</span><span style="color: #b3a887">→</span><span style="border: 1px solid #4f442f; padding: 3px 9px; color: #dfc99f">Raven Rock</span>
+</div>
+</div>
+<a href="https://siltstrider.tools/travel" class="gtopic" style="margin-top: auto">Open Travel Planner →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 520px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"></path></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Alchemy</h3></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Four ingredients, your apparatus (mortar, alembic, calcinator, retort) and the potion you brew, by the formulas in OpenMW's source.</p>
+<div class="gw-in" style="padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 15px"><span style="font-family: Pelagiad, Georgia, serif; font-size: 26px; color: #f3eddd">12%</span> chance for Redguard Long Blade Duelist to brew a potion</div>
+<div class="gbar" style="height: 12px"><div style="width: 12%; height: 100%; background: linear-gradient(180deg, #caa560, #6e562b)"></div></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px"><span style="border: 1px solid #4f442f; padding: 3px 9px">Alchemy 5</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Intelligence 30</span><span style="border: 1px solid #4f442f; padding: 3px 9px">Luck 40</span></div>
+<div style="font-size: 14px; color: #b3a887"><span style="color: #dfc99f">126</span> ingredients to brew with</div>
+</div>
+<a href="https://siltstrider.tools/alchemy" class="gtopic">Open Alchemy →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 340px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"></path></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Enchanting</h3></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Soul gems, cast-on-strike and constant effect enchantment costs, and your formulaic chance to succeed.</p>
+<a href="https://siltstrider.tools/enchanting" class="gtopic" style="margin-top: auto">Open Enchanting →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 340px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><path d="M4 20L16 8M14 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"></path></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Spellmaking</h3></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Magicka cost, cast chance percentage and spellmaker gold price for custom spells across all six schools of magic.</p>
+<a href="https://siltstrider.tools/spellmaking" class="gtopic" style="margin-top: auto">Open Spellmaking →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 340px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Faction Journal</h3><span class="gtag">New</span></div>
+<div style="padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+<p style="margin: 0; font-size: 15px">Track guild and Great House memberships, favored skills, promotion requirements and how factions regard each other.</p>
+<a href="https://siltstrider.tools/factions" class="gtopic" style="margin-top: auto">Open Faction Journal →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 520px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="1"></circle><circle cx="15" cy="15" r="1"></circle><circle cx="15" cy="9" r="1"></circle></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Challenge Runs</h3></div>
+<div style="padding: 4px 18px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between">
+<p style="margin: 0; font-size: 15px; flex: 1 1 260px">Roll a goal and rules to live by. Lock what you like, reroll the rest.</p>
+<a href="https://siltstrider.tools/challenge" class="gtopic">Open Challenge Runs →</a>
+</div>
+</article>
+<article class="gw" style="flex: 1 1 520px; display: flex; flex-direction: column">
+<div class="gcap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#caa560" stroke-width="1.6" aria-hidden="true"><path d="M7 18a5 5 0 0 1-.5-10A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"></path></svg><h3 style="margin: 0; font-family: Pelagiad, Georgia, serif; font-weight: 400; font-size: 19px; color: #dfc99f; white-space: nowrap">Cloud Vault</h3></div>
+<div style="padding: 4px 18px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between">
+<p style="margin: 0; font-size: 15px; flex: 1 1 260px">Keep characters in the cloud, across devices. Inspect and import OpenMW .omwsave files directly in your browser.</p>
+<a href="https://siltstrider.tools/vault" class="gtopic">Open Cloud Vault →</a>
+</div>
+</article>
+</div>
+</section>
+
+<footer style="margin-top: 56px; display: flex; flex-direction: column; gap: 28px">
+<div class="ghr"></div>
+<div style="display: flex; flex-wrap: wrap; gap: 32px">
+<div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-family: Pelagiad, Georgia, serif; font-size: 22px; color: #dfc99f">Silt Strider Tools</div>
+<p style="margin: 0; font-size: 16px; max-width: 360px">A free, unofficial toolbox for The Elder Scrolls III: Morrowind.</p>
+<a href="https://ko-fi.com/" class="gmenu">Support on Ko-fi</a>
+<div style="display: flex; gap: 18px"><a href="https://siltstrider.tools/privacy" class="gmenu">Privacy Policy</a><span aria-hidden="true" style="color: #b3a887">·</span><a href="https://siltstrider.tools/terms" class="gmenu">Terms of Service</a></div>
+</div>
+<nav aria-label="Planners" style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: Pelagiad, Georgia, serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #dfc99f">Planners</span><a href="https://siltstrider.tools/builder" class="gmenu">Character Builder</a><a href="https://siltstrider.tools/leveler" class="gmenu">Level Simulator</a><a href="https://siltstrider.tools/factions" class="gmenu">Faction Journal</a></nav>
+<nav aria-label="Calculators" style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: Pelagiad, Georgia, serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #dfc99f">Calculators</span><a href="https://siltstrider.tools/travel" class="gmenu">Travel Planner</a><a href="https://siltstrider.tools/alchemy" class="gmenu">Alchemy</a><a href="https://siltstrider.tools/enchanting" class="gmenu">Enchanting</a><a href="https://siltstrider.tools/spellmaking" class="gmenu">Spellmaking</a></nav>
+<nav aria-label="More" style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: Pelagiad, Georgia, serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #dfc99f">More</span><a href="https://siltstrider.tools/challenge" class="gmenu">Challenge Runs</a><a href="https://siltstrider.tools/vault" class="gmenu">Cloud Vault</a><a href="https://siltstrider.tools/about" class="gmenu">About &amp; credits</a><a href="https://siltstrider.tools/changelog" class="gmenu">Changelog</a></nav>
+</div>
+<p style="margin: 0; font-size: 13.5px; color: #b3a887">Game data read straight from Morrowind.esm, Tribunal.esm, Bloodmoon.esm, Tamriel_Data and TR_Mainland (26.08 Poison Song). Typeface: Pelagiad by Isak Larborn. Looking for the <em>Tales from Nirn</em> TES3MP server? Visit <a href="https://siltstrider.com" style="text-decoration: underline">siltstrider.com</a>.</p>
+</footer>
+</div>
+</div>
+</main>
+
+<p style="margin: 36px 0 0; text-align: center; font-size: 15px; color: #dfc99f">Unofficial fan project — not affiliated with Bethesda. <a href="https://siltstrider.tools/about" style="text-decoration: underline">About &amp; credits</a> · <a href="https://siltstrider.tools/changelog" style="text-decoration: underline">Changelog</a> · <a href="https://siltstrider.tools/privacy" style="text-decoration: underline">Privacy Policy</a> · <a href="https://siltstrider.tools/terms" style="text-decoration: underline">Terms of Service</a> · <a href="https://siltstrider.tools/about" style="text-decoration: underline">Report a bug</a></p>
+</div>
+</body>
+</html>
