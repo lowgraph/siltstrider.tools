@@ -5,7 +5,7 @@ import {useShell} from './shell-context';
 import ProfileIcon from './profile-icon';
 import {PROFILE_ICONS,validateProfile} from '../lib/account-profile.mjs';
 import {ensureClerk} from '../lib/clerk-browser.mjs';
-import {SIGN_IN_EVENT} from '../lib/sign-in-handoff.mjs';
+import {SIGN_IN_EVENT,SIGN_OUT_EVENT,forgetCharacterForSignOut} from '../lib/sign-in-handoff.mjs';
 import AccountSettingsPanel from './account-settings-panel';
 export default function AccountPage(){
  const account=useAccount(),shell=useShell();
@@ -16,8 +16,8 @@ export default function AccountPage(){
  const [username,setUsername]=useState(''),[iconId,setIcon]=useState(0),[message,setMessage]=useState(''),[busy,setBusy]=useState(false);
  useEffect(()=>{setUsername(account.profile?.username||'');setIcon(account.profile?.iconId||0);},[account.profile,account.user?.id]);
  async function submit(event){event.preventDefault();setBusy(true);setMessage('');try{await account.save(validateProfile({username,iconId}));setMessage('Profile saved.');}catch(e){setMessage(e.message);}finally{setBusy(false);}}
- // Google and Discord reload the page on the way back; the builder keeps its character for it.
- async function auth(action){try{if(action==='openSignIn')window.dispatchEvent(new Event(SIGN_IN_EVENT));const clerk=await ensureClerk();await clerk[action]();}catch(e){setMessage(e.message);}}
+ // Sign-in and sign-out can reload Home; keep the unsaved character before Clerk navigates.
+ async function auth(action){try{if(action==='openSignIn')window.dispatchEvent(new Event(SIGN_IN_EVENT));if(action==='signOut')window.dispatchEvent(new Event(SIGN_OUT_EVENT));const clerk=await ensureClerk();await clerk[action]();}catch(e){if(action==='signOut')forgetCharacterForSignOut();setMessage(e.message);}}
  return <section className="account-page"><h1>Your account</h1><p>Choose how you appear on Silt Strider.</p>
  <p>{account.profile?.premium ? 'Premium supporter · 25 cloud-save slots · thank you for supporting Silt Strider.' : 'Free account · 5 cloud-save slots'}</p>
  <button onClick={()=>shell.navigate('vault')}>Open Cloud Vault →</button>

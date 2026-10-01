@@ -1330,3 +1330,41 @@ API results, local Worker build/log/state, all Chrome reports, first-navigation
 console streams, HTML and screenshots, and pinned OpenMW sources. Production
 browser requests block account writes; only signed-out public views and GET API
 checks ran. The local Worker uses its own synthetic database under that cache.
+
+## 28. QA-24 character through sign-out — 1 October 2026
+
+Implemented on `launch/character-signout-preservation` from main `0c55696`.
+QA-21/23 belong to the other session's `launch/character-preservation`; its
+uncommitted edits were left intact. The account button announces sign-out before
+Clerk navigates. A separate tab marker restores the entire unsaved character,
+including its world, once on a signed-out return within 15 minutes. Shared build
+links win, loaded saves keep using their existing storage, and failed sign-out
+discards the marker. No settings format, D1 migration or published data change.
+
+- Targeted hand-off/account tests: **16 passed, zero failures, five unrelated TODO**.
+- Full `npm test`: **961 passed, zero failures, 40 TODO** (1,001 tests).
+  QA-24's reproduction expectation is now enforced; nine new tests cover expiry,
+  malformed/future markers, cancelled/failed authentication, denied storage,
+  actual hydration with an ARCE identity and loadouts, shared links and saves.
+- Normal Turbopack static export: **24 pages generated**, configuration unchanged.
+- Local Chrome `--signout-preservation`: **8/8 passed**, unsaved ARCE and loaded-save
+  cases at 1366/375 px, both themes, with zero runtime/server errors. After a full
+  Home return the identity matches; the marker is gone; a later ordinary refresh
+  starts afresh. Screenshots captured and the phone Morrowind sheet inspected.
+- Existing local Vault regression: **10/10 passed**, including signed-out API,
+  account isolation, quota, save/rename/load/delete, token renewal, corrupt-save
+  handling and signed-in axe checks in both themes/widths; zero runtime/server errors.
+
+The new worktree first needed its own locked dependencies: Turbopack rejects a
+node_modules junction outside its root. The fresh runner then exposed a padded
+Base64 placeholder publishable key; the test-only key now uses Base64url. Neither
+setup failure reached a browser case. No real Clerk key/account was needed for
+these checks: Clerk sign-out is simulated, while local pages/Worker and the full
+navigation are real. Final real-Clerk acceptance remains required. No production
+request, push, merge or deployment ran for this branch. Temporary runner servers
+closed on completion; the owner's existing test server is untouched.
+
+Evidence: `A:/Cache/qa-reproduce-20261001/signout-*.log`,
+`A:/Cache/signout-preservation-20261001-browser/` and
+`A:/Cache/signout-vault-regression-20261001/` (reports, screenshots, audits and
+isolated local Worker state).
