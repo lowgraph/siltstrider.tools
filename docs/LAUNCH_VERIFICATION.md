@@ -1758,3 +1758,43 @@ Evidence under `A:/Cache/`: `qa08-browser-before/`, `qa08-wrapper-before.log`,
 `qa08-browser-after/`, `qa08-wrapper-final.log`, `qa08-unit-final.log`,
 `qa08-build-final.log` and `qa08-pipeline.log`. First command: `npm test`, then
 BROWSER_TESTS' QA-08 runner and report-wrapper commands.
+
+## 38. QA-09 Configure explanations — 1 October 2026
+
+Claimed 21:10 UTC on `launch/character-preservation`; claim `7cd2ed9` was pushed
+before implementation. Main and production are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-09 | Fixed on branch; initial centered-pointer run reproduces 16/20; final 30/30 mouse and 30/30 touch | `configurator.jsx`, `InfoTip`: fixed-width absolute boxes always opened below/right, with no screen or navigation bounds. A body portal clamps fixed coordinates to the visual viewport, header and phone tab bar; flip above when needed, constrain long text with internal scrolling, reposition on resize/page scroll/font load | Eight cases in `test/configuration-info-tip.test.js`; five original report tests in `test/qa-layout.browser.cjs` now enforced; Chrome `--suite qa --filter 'QA-09'`, repeated with `--touch` |
+
+The original report wrapper passed Race and failed the other four tests without
+TODO marks. Centering the trigger did not reproduce Race's bottom overlap;
+the new bottom-edge component test failed on the old code and now passes.
+The corrected component harness produced eight pre-fix failures. It covers
+right/bottom edges, long text in a 320 px-high viewport, offset visual viewport,
+resize, off-screen anchors, updated text, dismissal and clean hydration.
+
+Each final browser case opens the explanation normally and near the bottom at
+360 px height, resizes to 420 px, scrolls while open, opens by Enter and closes
+by Escape from the explanation with focus restored, and checks outside dismissal.
+The pointer/touch toggle must close it as well. Boxes clear both visible navigation
+bars. Five controls × 375/390/1366 px × two themes, repeated with real CDP touch:
+**60/60 cases, 360 placement measurements, zero runtime/server errors**.
+The first expanded run lacked Enter's CDP character input; using the existing
+runner's Enter pattern corrected that test input. Final mouse/touch reports each
+pass all five enforced wrapper tests. **120 screenshots**; phone, bottom-edge,
+touch and desktop captures reviewed. Focusable explanations keep trigger/control
+linkage and stable hydration IDs; internal scrolling does not reset itself.
+
+Verification before committing: `npm test` **1,087 tests, 1,074 passed, 13 existing
+TODO, 0 failures**; release build **24 pages passed** with config unchanged;
+pipeline **685 passed** after syncing identical COORDINATION.md. Only that
+document changes in the pipeline; UI_TRANSFORMATION.md remains identical.
+Both player changelogs and BROWSER_TESTS are updated. No game-data, ranking,
+schema, migration, account or deployment changes. Existing server **8794** stays
+running. Evidence in `A:/Cache/`: `qa09-browser-before/`, `qa09-wrapper-before.log`,
+`qa09-component-before.log`, `qa09-unit-final.log`, `qa09-build-final.log`,
+`qa09-pipeline.log`, `qa09-browser-verified/`, `qa09-touch-verified/`, and
+`qa09-wrapper-{mouse,touch}.log`. First command: `npm test`, then BROWSER_TESTS'
+QA-09 commands. Next authorized items: QA-16, QA-07/25, QA-06 and QA-05 recheck.

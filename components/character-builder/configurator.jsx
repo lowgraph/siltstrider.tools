@@ -1,41 +1,122 @@
 "use client";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useId, useRef, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { ATTRS, ATTR_TIP, SKILL_GOV, ATTR_ABBR } from "../../lib/character-math.mjs";
 import SkillAttributeSummary from "./skill-picker/skill-attribute-summary";
 
 function InfoTip({ text }) {
   const [open, setOpen] = useState(false);
+  const id = useId();
+  const buttonRef = useRef(null);
+  const panelRef = useRef(null);
+  const panelId = `configuration-info-${id}`;
+
+  useLayoutEffect(() => {
+    if (!open || !text) return;
+    const button = buttonRef.current, panel = panelRef.current;
+    const viewport = window.visualViewport;
+    const place = () => {
+      const anchor = button.getBoundingClientRect();
+      const x = viewport?.offsetLeft || 0, y = viewport?.offsetTop || 0;
+      const left = x + 8, right = x + (viewport?.width || window.innerWidth) - 8;
+      const header = document.querySelector('.topbar')?.getBoundingClientRect();
+      const bar = document.querySelector('.phone-tabs')?.getBoundingClientRect();
+      const top = Math.max(y + 8, header?.height && header.top <= y ? header.bottom + 8 : y + 8);
+      const bottom = Math.min(y + (viewport?.height || window.innerHeight), bar?.height ? bar.top : Infinity) - 8;
+      if (anchor.bottom <= top || anchor.top >= bottom || right <= left || bottom <= top) {
+        setOpen(false);
+        return;
+      }
+      panel.style.width = `${Math.min(256, right - left)}px`;
+      panel.style.maxHeight = 'none';
+      const size = panel.getBoundingClientRect();
+      const below = Math.max(0, bottom - Math.max(anchor.bottom + 7, top));
+      const above = Math.max(0, Math.min(anchor.top - 7, bottom) - top);
+      const flip = size.height > below && above > below;
+      const available = flip ? above : below;
+      const height = Math.min(size.height, available);
+      panel.style.left = `${Math.max(left, Math.min(anchor.left, right - size.width))}px`;
+      panel.style.top = `${Math.max(top, Math.min(flip ? anchor.top - 7 - height : anchor.bottom + 7, bottom - height))}px`;
+      panel.style.maxHeight = `${available}px`;
+      panel.style.visibility = 'visible';
+    };
+    const scroll = (event) => {
+      // Scrolling a long explanation must not reset its own scroll position.
+      if (!(event.target instanceof window.Node) || !panel.contains(event.target)) place();
+    };
+    const outside = (event) => {
+      if (!button.contains(event.target) && !panel.contains(event.target)) setOpen(false);
+    };
+    const escape = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        button.focus({preventScroll: true});
+      }
+    };
+    place();
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', scroll, true);
+    viewport?.addEventListener('resize', place);
+    viewport?.addEventListener('scroll', place);
+    document.addEventListener('pointerdown', outside);
+    document.addEventListener('focusin', outside);
+    document.addEventListener('keydown', escape);
+    document.fonts?.addEventListener('loadingdone', place);
+    const observer = window.ResizeObserver ? new window.ResizeObserver(place) : null;
+    observer?.observe(button);
+    return () => {
+      window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', scroll, true);
+      viewport?.removeEventListener('resize', place);
+      viewport?.removeEventListener('scroll', place);
+      document.removeEventListener('pointerdown', outside);
+      document.removeEventListener('focusin', outside);
+      document.removeEventListener('keydown', escape);
+      document.fonts?.removeEventListener('loadingdone', place);
+      observer?.disconnect();
+    };
+  }, [open, text]);
   if (!text) return null;
 
   return (
     <span className="relative inline-block ml-1 align-middle shrink-0">
       <button
+        ref={buttonRef}
+        id={`configuration-info-button-${id}`}
         type="button"
         className="w-6 h-6 sm:w-5 sm:h-5 text-xs font-serif font-bold bg-surface-17 text-accent border border-line-7 hover:bg-surface-21 hover:text-fg-2 inline-flex items-center justify-center cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
         onClick={(e) => {
           e.preventDefault();
           setOpen((o) => !o);
         }}
-        onKeyDown={(e) => {
-          if (e.key === "Escape" && open) {
-            setOpen(false);
-          }
-        }}
         title="Toggle mechanics explanation"
         aria-label="Information"
         aria-expanded={open}
+        aria-controls={open ? panelId : undefined}
+        aria-describedby={open ? panelId : undefined}
       >
         i
       </button>
-      {open && (
+      {open && createPortal(
         <span
-          className="absolute z-50 left-0 top-7 w-64 p-2.5 text-xs text-fg-2 bg-surface-3 shadow-2xl font-serif leading-relaxed block mw-groove-panel"
+          ref={panelRef}
+          id={panelId}
+          role="region"
+          aria-label="Mechanics explanation"
+          tabIndex={0}
+          className="configuration-info-popover fixed z-50 w-64 p-2.5 text-xs text-fg-2 bg-surface-3 shadow-2xl font-serif font-normal leading-relaxed block mw-groove-panel"
           style={{
+            left: 0,
+            top: 0,
+            visibility: 'hidden',
+            overflowY: 'auto',
+            overscrollBehavior: 'contain',
             boxShadow: "0 8px 24px rgba(0,0,0,0.8)"
           }}
         >
           {text}
-        </span>
+        </span>, document.body
       )}
     </span>
   );

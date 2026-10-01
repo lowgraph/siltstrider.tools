@@ -283,3 +283,23 @@ node scripts/test-browser.cjs --suite qa --filter 'QA-08' --url http://127.0.0.1
 $env:QA_BROWSER_REPORT='A:\Cache\qa08-browser\report.json'
 node --test --test-name-pattern='QA-08' test/qa-layout.browser.cjs
 ```
+
+QA-09's `--suite qa --filter 'QA-09'` checks all five Configure explanations at
+375/390/1366 px in both themes (30 cases). Each checks normal placement, a button
+near the bottom in a 360 px-high viewport, resize to 420 px and page scrolling,
+keyboard opening/Escape with focus restoration, and outside dismissal. Every
+box must stay inside the visual viewport and clear the visible header/tab bar.
+Repeat with `--touch` for actual CDP touch events; touch emulation uses five touch
+points and a coarse pointer. Both runs capture normal and bottom-edge placement.
+The five original browser-report tests are now enforced; eight actual Configure
+component tests cover long text, small/offset viewports, resize, scroll, content
+changes, dismissal and hydration without needing a staged bundle.
+
+```powershell
+node scripts/test-browser.cjs --suite qa --filter 'QA-09' --url http://127.0.0.1:8765 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa09-browser'
+node scripts/test-browser.cjs --suite qa --filter 'QA-09' --touch --url http://127.0.0.1:8765 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa09-touch'
+$env:QA_BROWSER_REPORT='A:\Cache\qa09-browser\report.json'
+node --test --test-name-pattern='QA-09' test/qa-layout.browser.cjs
+$env:QA_BROWSER_REPORT='A:\Cache\qa09-touch\report.json'
+node --test --test-name-pattern='QA-09' test/qa-layout.browser.cjs
+```

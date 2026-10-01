@@ -56,15 +56,69 @@ exports.hydration = async c => {
 async function record(c,id,detail) {(c.report.observations ||= []).push({id,...detail});return detail;}
 async function body(c) {return c.evaluate('document.querySelector("main").innerText');}
 async function readyBuilder(c) {await c.until('document.querySelector(".builder-phone-tabs, #btn-tab-builder")');await c.builderTab('builder');await c.until('document.querySelector("#builder-race option[value=Breton]")');}
-async function info(c,index) {
-  await c.evaluate(`(()=>{const e=document.querySelectorAll('button[aria-label="Information"]')[${index}];if(!e)throw Error('Missing Configure popover');e.dataset.qaInfo='yes'})()`);
-  await c.click('[data-qa-info=yes]');
-  await c.pause(200);
-  const result=await c.evaluate(`(()=>{const b=document.querySelector('[data-qa-info=yes]'),e=b.parentElement.querySelector('span.absolute'),r=e?.getBoundingClientRect(),bar=document.querySelector('.phone-tabs');return {text:e?.textContent,box:r?{x:r.x,y:r.y,right:r.right,bottom:r.bottom}:null,width:innerWidth,height:innerHeight,barTop:bar?.getBoundingClientRect().top}})()`);
-  await c.click('[data-qa-info=yes]');await c.evaluate(`document.querySelector('[data-qa-info=yes]')?.removeAttribute('data-qa-info')`);
-  return result;
+async function press(c,key,code,number) {
+  await c.send('Input.dispatchKeyEvent',{type:'keyDown',key,code,windowsVirtualKeyCode:number,...(key==='Enter'?{text:'\r'}:{})});
+  await c.send('Input.dispatchKeyEvent',{type:'keyUp',key,code,windowsVirtualKeyCode:number});
+  await c.pause(100);
 }
-function assertBox(detail) {assert.ok(detail.box && detail.box.x>=0 && detail.box.y>=0 && detail.box.right<=detail.width+1 && detail.box.bottom<=Math.min(detail.height,detail.barTop??detail.height),'Popover stays in the visible viewport: '+JSON.stringify(detail));}
+async function point(c,x,y) {
+  if(c.touch){
+    await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,radiusX:1,radiusY:1,force:1,id:1}]});
+    await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  }else{
+    await c.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,x,y});
+    await c.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,x,y});
+  }
+  await c.pause(100);
+}
+async function infoBox(c) {
+  return c.evaluate(`(()=>{
+    const b=document.querySelector('[data-qa-info=yes]'),e=document.getElementById(b.getAttribute('aria-controls'))||b.parentElement.querySelector('span.absolute');
+    const r=e?.getBoundingClientRect(),bar=document.querySelector('.phone-tabs')?.getBoundingClientRect(),header=document.querySelector('.topbar')?.getBoundingClientRect(),v=window.visualViewport;
+    const x=v?.offsetLeft||0,y=v?.offsetTop||0;
+    return {text:e?.textContent,box:r?{x:r.x,y:r.y,right:r.right,bottom:r.bottom}:null,width:innerWidth,height:innerHeight,barTop:bar?.height?bar.top:undefined,
+      visible:{left:x,top:Math.max(y,header?.height&&header.top<=y?header.bottom:0),right:x+(v?.width||innerWidth),bottom:Math.min(y+(v?.height||innerHeight),bar?.height?bar.top:Infinity)},
+      expanded:b.getAttribute('aria-expanded'),linked:!!e&&b.getAttribute('aria-controls')===e.id};
+  })()`);
+}
+async function info(c,index,{bottom=false,keyboard=false,outside=false,capture}={}) {
+  const width=await c.evaluate('innerWidth');
+  await c.evaluate(`(()=>{const e=document.querySelectorAll('button[aria-label="Information"]')[${index}];if(!e)throw Error('Missing Configure popover');e.dataset.qaInfo='yes'})()`);
+  try{
+    if(bottom){
+      await c.send('Emulation.setDeviceMetricsOverride',{width,height:360,deviceScaleFactor:c.touch?3:1,mobile:c.touch});await c.pause(100);
+      await c.evaluate(`(()=>{const b=document.querySelector('[data-qa-info=yes]'),bar=document.querySelector('.phone-tabs').getBoundingClientRect();window.scrollBy(0,b.getBoundingClientRect().bottom-((bar.height?bar.top:innerHeight)-24));})()`);
+      await c.pause(100);
+      const r=await c.evaluate(`(()=>{const r=document.querySelector('[data-qa-info=yes]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);await point(c,r.x,r.y);
+    }else if(keyboard){
+      await c.evaluate(`(()=>{const b=document.querySelector('[data-qa-info=yes]');b.scrollIntoView({block:'center'});b.focus({preventScroll:true})})()`);await press(c,'Enter','Enter',13);
+    }else await c.click('[data-qa-info=yes]');
+    await c.pause(100);
+    const result=await infoBox(c);
+    assert.equal(result.expanded,'true','Help opens by '+(keyboard?'keyboard':'pointer'));assert.ok(result.text);assert.equal(result.linked,true);assertBox(result);
+    if(capture)await c.screenshot(capture);
+    if(bottom){
+      await c.send('Emulation.setDeviceMetricsOverride',{width,height:420,deviceScaleFactor:c.touch?3:1,mobile:c.touch});await c.pause(150);
+      const resized=await infoBox(c);assertBox(resized);
+      await c.evaluate('window.scrollBy(0,20)');await c.pause(100);
+      const scrolled=await infoBox(c);assertBox(scrolled);result.followups=[resized,scrolled];
+    }
+    if(keyboard){
+      await c.evaluate(`document.getElementById(document.querySelector('[data-qa-info=yes]').getAttribute('aria-controls')).focus()`);await press(c,'Escape','Escape',27);
+      assert.equal(await c.evaluate(`document.activeElement===document.querySelector('[data-qa-info=yes]')`),true);
+    }else if(outside)await point(c,4,Math.max(12,result.box.y+8));
+    else {
+      const r=await c.evaluate(`(()=>{const r=document.querySelector('[data-qa-info=yes]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);await point(c,r.x,r.y);
+    }
+    assert.equal(await c.evaluate(`document.querySelector('[data-qa-info=yes]').getAttribute('aria-expanded')`),'false');
+    assert.equal(await c.evaluate(`!!document.querySelector('.configuration-info-popover')`),false);
+    return result;
+  }finally{
+    await c.evaluate(`document.querySelector('[data-qa-info=yes]')?.removeAttribute('data-qa-info')`);
+    if(bottom)await c.viewport(width);
+  }
+}
+function assertBox(detail) {const v=detail.visible||{left:0,top:0,right:detail.width,bottom:Math.min(detail.height,detail.barTop??detail.height)};assert.ok(detail.box && detail.box.x>=v.left && detail.box.y>=v.top && detail.box.right<=v.right+1 && detail.box.bottom<=v.bottom,'Popover stays in the visible viewport: '+JSON.stringify(detail));}
 exports.qa = async c => {
   const {encodeShareUrl}=await import('../lib/permalink-codec.mjs');
   const healthBuild={race:'Dark Elf',gender:'Female',sign:'The Tower',name:'QA Health Test',spec:'Magic',fav1:'Intelligence',fav2:'Willpower',maj:['Alchemy','Enchant','Destruction','Restoration','Mysticism'],min:['Athletics','Spear','Heavy Armor','Armorer','Long Blade']};
@@ -250,10 +304,18 @@ exports.qa = async c => {
     } finally {await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier}).catch(()=>{});}
   }
   if(c.filter && !['QA-08','QA-09'].some(id=>id.includes(c.filter)||c.filter.startsWith(id))) return;
-  if(!c.filter || 'QA-09'.includes(c.filter)||c.filter.startsWith('QA-09')) for(const width of [375,390]) for(const theme of ['ashfall','morrowind']) {
+  if(!c.filter || 'QA-09'.includes(c.filter)||c.filter.startsWith('QA-09')) for(const width of [375,390,1366]) for(const theme of ['ashfall','morrowind']) {
     await c.viewport(width);await c.evaluate(`localStorage.removeItem('silt-active-save');localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
     await c.navigate('builder');await readyBuilder(c);await c.builderTab('builder');
-    for(let index=0;index<5;index++) await c.check(`QA-09/popover-${index+1}/${width}/${theme}`,async()=>{const d=await info(c,index);await record(c,'QA-09',{width,theme,index,...d});assertBox(d);return d;});
+    for(let index=0;index<5;index++) await c.check(`QA-09/popover-${index+1}/${width}/${theme}`,async()=>{
+      const name=`qa09-${index+1}-${width}-${theme}`;
+      const normal=await info(c,index,{capture:name+'-normal'});
+      const bottom=await info(c,index,{bottom:true,capture:name+'-bottom'});
+      const keyboard=await info(c,index,{keyboard:true});
+      const outside=await info(c,index,{outside:true});
+      const d={...normal,width,theme,index,positions:[normal,bottom,...bottom.followups,keyboard,outside],tap:c.touch};
+      await record(c,'QA-09',d);return d;
+    });
   }
   if(c.filter && !('QA-08'.includes(c.filter)||c.filter.startsWith('QA-08'))) return;
   for(const profile of ['vanilla','tr','tr_arce']) for(const width of [375,390,1366]) for(const theme of ['ashfall','morrowind']) {
