@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Gear Advisor keeps boots and closed helmets out of beast races' optimized kits and every runner-up list, including after changing weapon preference. Open helmets remain available; ARCE races that are not beasts keep their eligible footwear. Equipping recommendations uses the same race rules.
+
 - Builder, Home and Level Simulator show the same current race, gender and birthsign. After you edit a premade, its old title reads "Based on …" rather than describing the edited character; your own character names stay unchanged.
 
 - Level Simulator keeps fractional Health gains, following the OpenMW 0.51 source. Its chart starts from your character's Health and Endurance, including loaded saves; starting at 30 Endurance reaches 100 at level 15 with +5 each level. Bitter Cup changes future gains when it changes Endurance, without recalculating starting Health.

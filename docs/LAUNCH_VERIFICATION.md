@@ -1659,3 +1659,61 @@ Evidence: `A:/Cache/test-portability-before.log`, `test-portability-helper.log`,
 `test-portability-without-bundle.log`, `test-portability-staged.log`, and
 `test-portability-pipeline.log`. First command on another checkout: `npm test`;
 run `npm run data:stage` when catalog acceptance is needed.
+
+## 36. QA-10 beast equipment eligibility — 1 October 2026
+
+Claimed 20:28 UTC on `launch/character-preservation`; claim `3c734a5` was pushed
+before implementation. Main, production, datasets, migrations and repository
+build configuration are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-10 | Fixed on branch; original browser reproduced 12/12, final expanded matrix passes 28/28 | `lib/best-in-slot.mjs`, `resolveBestInSlotPicks`: named/fallback records bypassed the dynamic scorer's beast check, and weapon preferences restored original armor slots. Filter every final primary and runner-up after those paths: explicit wearable flag, no footwear, and no closed-head body parts from Armor. Respect Races' boolean `beast` instead of overriding an explicit false with the race name. Carry the flag through `recommendedLoadouts`, `validateSlotEquip`/`equipItem`, Builder, Equipment Studio, ledger and picker | Three original catalog cases now unmarked; `test/beast-recommendations.test.js` has 14 cases; `test/equipment-studio-ui.test.js` adds three actual inspector/picker interactions; Chrome `--suite qa --filter 'QA-10/'` |
+
+All **3/3 original unmarked catalog cases failed before the fix**. Combined with
+the first synthetic path/edge tests, the corrected baseline was **12 failures,
+3 passing dynamic-path controls out of 15**. The initial synthetic weapon fixture
+needed its WEAP record type before that baseline; no production code was changed
+to accommodate it. The named, dynamic and closest-premade paths now share the
+final gate, including no weapon preference, one-handed and two-handed modes.
+Eligible open helmets remain; filtering retains ranking order without mutating
+catalogs. Missing item metadata, null picks, absent wearable flags and flags
+contradicted by closed-head body parts/footwear cannot leak into a beast's kit.
+
+Races' published flags distinguish **Cathay-raht/Naga (beasts)** from
+**Khajiit (Suthay) (not a beast)**. The latter keeps eligible boots and helmets,
+and the inspector/picker must not call them restricted merely because its name
+contains Khajiit. An optional boolean is passed through equip validation; legacy
+callers without one retain race-name inference. This is session/catalog context,
+not a new stored-build field. No catalog, extraction or data-schema change.
+
+Browser matrix: 1366/375 px × Ashfall/Morrowind × seven profile/race cases:
+Vanilla Argonian, Khajiit and High Elf; TR Argonian; TR + ARCE Cathay-raht,
+Naga and Suthay. Each of **28 cases** checks both weapon preferences (**56 kit
+states**), opens every real runner-up control, then equips the late-game kit
+(**28 transfers**). The old runner looked for "Show alternatives", while the
+actual control says "View … runner-up picks"; that selector is corrected and
+asserted. An initial expanded run passed 24/28: the Suthay control incorrectly
+required Boots of Blinding Speed, while its valid catalog recommendation was
+Honor's March. After changing that expectation to catalog footwear, the final
+full run passes **28/28**, with **zero runtime/server errors** and **84 screenshots**.
+Desktop/phone screenshots reviewed; the existing phone table word-breaking
+finding remains **QA-08**, outside this eligibility fix.
+
+Verification before committing:
+
+- `npm test`: **1,079 tests; 1,066 passed, 13 existing TODO, 0 failures**.
+- No-bundle full suite: **1,079 tests; 1,022 passed, 52 skipped, 5 TODO,
+  0 failures**. New synthetic cases run; the real catalog matrix skips explicitly.
+- `npm run build:cloudflare`: **24 pages, passed**, with config unchanged.
+- Pipeline: **685 passed**, after copying identical COORDINATION.md;
+  only that document changes there. UI_TRANSFORMATION.md remains identical.
+
+Both player changelogs and BROWSER_TESTS are updated. This checkout already had
+a dev server on **http://127.0.0.1:8794**; it was reused and left running, without
+stopping another session. No account or production writes. **QA-16** is the next
+unfinished priority, then **QA-07 + QA-25**. Evidence under `A:/Cache/`:
+`qa10-before-fix-final.log`, `qa10-browser-before/`, `qa10-unit-final.log`,
+`qa10-without-bundle.log`, `qa10-build-final.log`, `qa10-pipeline.log`, and
+`qa10-browser-verified/`. First command: `npm test`, then BROWSER_TESTS'
+`--suite qa --filter 'QA-10/'`.

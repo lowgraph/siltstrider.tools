@@ -37,6 +37,13 @@ that control needs physical-device acceptance rather than fabricated capabilitie
 `--suite qa` retains failing expectation checks and screenshots for open findings.
 Use `--filter QA-08`, for example, for a single item. Its popover measurements also
 reserve the phone tab bar; Gear checks use text Range boxes to detect broken words.
+`--suite qa --filter 'QA-10/'` now enforces 28 kit/transfer cases at 1366/375 px
+in both themes: Vanilla Argonian/Khajiit/High Elf, TR Argonian, and TR + ARCE
+Cathay-raht/Naga/Suthay. Each case checks both weapon preferences, opens every
+actual "View … runner-up picks" control and equips the late-game recommendations.
+Beasts must have no forbidden primary/runner-up/equipped item; non-beast controls
+retain catalog footwear without a beast restriction in the inspector. Three
+screenshots per case capture both recommendation modes and the equipped kit.
 The layout TODO wrapper can be run against a fresh report:
 
 ```powershell

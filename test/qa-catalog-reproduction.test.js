@@ -10,7 +10,7 @@ for(const spelling of ["Ald'ruhn",'Ald’ruhn','Aldruhn']) test(`QA-07 town punc
   const options=buildTravelSearchOptions({stops:['Ald-ruhn'],includePlaces:false});assert.equal(searchTravelOptions(options,spelling).total,1);
   assert.equal(matchPlaces([{key:'exterior:-2,6',name:'Ald-ruhn',interior:false,grid:[-2,6]}],spelling).length,1);
 });
-for(const race of ['Argonian','Khajiit','Khajiit (Cathay-raht)']) test(`QA-10 premade endgame armor and runner-ups wearable: ${race}`,staged(todo('QA-10')),async()=>{
+for(const race of ['Argonian','Khajiit','Khajiit (Cathay-raht)']) test(`QA-10 premade endgame armor and runner-ups wearable: ${race}`,staged(),async()=>{
   const l=await loader();const data=await l.loadFeature(race.includes('(')?'tr_arce':'vanilla','bestInSlot');
   const {resolveBestInSlotPicks}=await import('../lib/best-in-slot.mjs');
   // Reproduce a premade whose race is edited: its original catalog name survives.

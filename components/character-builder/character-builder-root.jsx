@@ -230,7 +230,7 @@ export default function CharacterBuilderRoot() {
       ) : activeTab === "equipment" ? (
         <EquipmentStudioRoot
           key={activeSave?.token ?? "build"}
-          character={build}
+          character={{ ...build, beast: Boolean(catalogs?.races?.[build.race]?.beast) }}
           // A loaded save is the character wearing this gear: its real skills and
           // attributes decide armour rating and carrying capacity, not level-1 values.
           skills={activeSave?.sheet?.skills || sheet?.skills || {}}

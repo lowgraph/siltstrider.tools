@@ -91,7 +91,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       const groups = late
         ? resolveBestInSlotPicks(bisResult.data, build, { beast, weaponSetup, allowFormidableSources:endgameEarly }).groups
         : buildGearGroups(result.data.catalogs, build, gearToggles, displayedRanking, {beast});
-      onEquip(recommendedLoadouts(groups, bisResult.data.catalogs, build, {late}));
+      onEquip(recommendedLoadouts(groups, bisResult.data.catalogs, build, {late,beast}));
     } catch (error) { setRankError(error.message); }
   };
 

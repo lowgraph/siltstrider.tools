@@ -206,8 +206,8 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. Skip completed implementation items while retaining their
-merge/deploy status. **Next unfinished target: QA-10**, then **QA-16**.
-QA-21/23, QA-22, QA-01/02, QA-03/04 and QA-05 are complete on this branch;
+merge/deploy status. **Next unfinished target: QA-16**, then **QA-07 + QA-25**.
+Test portability, QA-21/23, QA-22, QA-01/02, QA-03/04, QA-10 and QA-05 are complete on this branch;
 QA-24 is merged to main. Final acceptance still waits for the remaining fixes.
 
 | Order | Target | Why |
@@ -301,7 +301,7 @@ commands in BROWSER_TESTS.md.
 
 #### 7. QA-10 — beast-race equipment eligibility
 
-- [ ] **C** **QA-10** (started 2026-10-01 20:28 UTC, Codex, on launch/character-preservation) (reproduced 12/12 (Argonian, Khajiit, ARCE Cathay-raht); `resolveBestInSlotPicks` named and fallback premade paths skip the beast check; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
+- [x] **C** **QA-10** (started 2026-10-01 20:28 UTC, Codex, on launch/character-preservation; done on this branch, original three tests enforced plus `test/beast-recommendations.test.js` and inspector tests; 28/28 Chrome, LAUNCH_VERIFICATION §36; not merged or deployed) (reproduced 12/12 (Argonian, Khajiit, ARCE Cathay-raht); `resolveBestInSlotPicks` named and fallback premade paths skip the beast check; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
       wear in the Gear Advisor's runner-up picks (Masque of Clavicus Vile, Boots of Blinding
       Speed) under the advisor's own note that they are excluded. Seen once; check Argonian,
       Khajiit and an ARCE Khajiit form, every runner-up list.

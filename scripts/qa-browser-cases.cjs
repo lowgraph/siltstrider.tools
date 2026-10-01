@@ -145,14 +145,33 @@ exports.qa = async c => {
         await c.evaluate(`document.querySelector('.health-growth-chart-wrap').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-04-cup-${width}-${theme}`);
         return record(c,'QA-04',{width,theme,before,after});
       });
-      for(const race of ['Argonian','Khajiit','Khajiit (Cathay-raht)']) await c.check(`QA-10/endgame/${race}/${width}/${theme}`,async()=>{
-        const arce=race.includes('(');await c.openDocument(c.base+encodeShareUrl({view:'builder',world:arce?'tr':'vanilla',arce,build:{...healthBuild,name:'Altmer Atronach Spellweaver',race}}));await c.idle();await readyBuilder(c);
+      for(const {race,profile,beast} of [
+        {race:'Argonian',profile:'vanilla',beast:true},{race:'Khajiit',profile:'vanilla',beast:true},
+        {race:'Argonian',profile:'tr',beast:true},{race:'Khajiit (Cathay-raht)',profile:'tr_arce',beast:true},
+        {race:'Naga',profile:'tr_arce',beast:true},{race:'Khajiit (Suthay)',profile:'tr_arce',beast:false},
+        {race:'High Elf',profile:'vanilla',beast:false}
+      ]) await c.check(`QA-10/endgame/${race}/${profile}/${width}/${theme}`,async()=>{
+        const arce=profile==='tr_arce';await c.openDocument(c.base+encodeShareUrl({view:'builder',world:profile==='vanilla'?'vanilla':'tr',arce,build:{...healthBuild,name:'Altmer Atronach Spellweaver',race}}));await c.idle();await readyBuilder(c);
         await c.evaluate(`document.getElementById('gear-advisor').scrollIntoView({block:'start'})`);await c.idle();await c.button('Optimize Gear');await c.until('document.querySelector(".best-in-slot-recommendations table")');
-        const buttons=await c.evaluate(`[...document.querySelectorAll('.best-in-slot-recommendations button')].filter(b=>/Show alternatives/.test(b.textContent)).map((b,i)=>{b.dataset.qaAlternative=i;return '[data-qa-alternative="'+i+'"]'})`);
-        for(const b of buttons) await c.click(b);
-        const text=await c.evaluate(`document.querySelector('.best-in-slot-recommendations').innerText`);
-        const l=await fixture.loader(),data=await l.loadFeature(arce?'tr_arce':'vanilla','bestInSlot');const forbidden=Object.values(data.metadata.BestInSlot.items).filter(i=>i.beastWearable===false&&text.includes(i.name)).map(i=>i.name);
-        await record(c,'QA-10',{width,theme,race,text,forbidden});assert.deepEqual(forbidden,[]);return text;
+        const l=await fixture.loader(),data=await l.loadFeature(profile,'bestInSlot');const modes=[];
+        for(const mode of ['One-handed + shield','Two-handed']) {
+          await c.button(mode);
+          const buttons=await c.evaluate(`[...document.querySelectorAll('.best-in-slot-recommendations button')].filter(b=>/^View .*runner-up/.test(b.textContent)).map((b,i)=>{b.dataset.qaAlternative=i;return '[data-qa-alternative="'+i+'"]'})`);
+          for(const b of buttons) await c.click(b);
+          assert.ok(await c.evaluate(`[...document.querySelectorAll('.best-in-slot-recommendations button')].every(b=>!/^View .*runner-up/.test(b.textContent))`),'Every runner-up list was opened');
+          const text=await c.evaluate(`document.querySelector('.best-in-slot-recommendations').innerText`);
+          const forbidden=Object.values(data.metadata.BestInSlot.items).filter(i=>i.beastWearable===false&&text.includes(i.name)).map(i=>i.name);
+          if(beast)assert.deepEqual(forbidden,[]);else assert.ok(Object.values(data.metadata.BestInSlot.items).some(i=>i.slot==='boots'&&text.includes(i.name)),'Non-beast control retains catalog footwear');
+          modes.push({mode,opened:buttons.length,forbidden,text});
+          await c.evaluate(`document.querySelector('.best-in-slot-recommendations').scrollIntoView({block:'start',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-10-${race}-${profile}-${width}-${theme}-${mode==='Two-handed'?'two':'one'}`);
+        }
+        await c.button('Equip late-game recommendations →');await c.until('document.querySelector(".equipment-studio-root")?.textContent.includes("Recommended late-game gear")');
+        const equipped=await c.evaluate(`document.querySelector('.equipment-studio-root').innerText`);
+        const forbidden=Object.values(data.metadata.BestInSlot.items).filter(i=>i.beastWearable===false&&equipped.includes(i.name)).map(i=>i.name);
+        if(beast)assert.deepEqual(forbidden,[]);else assert.ok(Object.values(data.metadata.BestInSlot.items).some(i=>i.slot==='boots'&&equipped.includes(i.name)),'Catalog non-beast footwear can be equipped');
+        if(!beast)assert.ok(!equipped.includes('Beast races cannot wear boots'),'Non-beast inspector does not mark eligible footwear restricted');
+        await c.evaluate(`document.querySelector('.equipment-studio-root').scrollIntoView({block:'start',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-10-${race}-${profile}-${width}-${theme}-equipped`);
+        return record(c,'QA-10',{width,theme,race,profile,beast,modes,equipped,forbidden});
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-06/apparatus/${profile}/${width}/${theme}`,async()=>{
         await c.navigate('alchemy',profile);await c.until('document.querySelector("#alc-mortar-select option")?.parentElement.options.length>1');

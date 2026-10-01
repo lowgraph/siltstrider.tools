@@ -30,6 +30,29 @@ const EquipmentStatsSummary = component("components/equipment-studio/equipment-s
 const LoadoutTabsBar = component("components/equipment-studio/loadout-tabs-bar.jsx", "LoadoutTabsBar");
 const ItemPickerDrawer = component("components/equipment-studio/item-picker-drawer.jsx", "ItemPickerDrawer");
 
+for (const [race, beast, allowed] of [["Khajiit (Suthay)", false, true], ["QA Beast", true, false], ["Argonian", undefined, false]]) {
+  test(`QA-10 inspector and picker respect catalog beast flag for ${race}`, async () => {
+    const dom = setupDom(), root = createRoot(document.getElementById("root"));
+    const boots = {key:"qa_boots",name:"QA Boots",type:"boots",weight:1,armorRating:5};
+    try {
+      await act(async () => root.render(React.createElement(EquipmentStudioRoot, {
+        character:{race,beast}, equipmentResult:{status:"ready",data:{catalogs:{Armor:[boots]}}}
+      })));
+      const card = [...document.querySelectorAll('[role="button"]')].find(e => e.textContent.includes("Boots"));
+      assert.equal(card.textContent.includes("Beast races cannot wear boots"), !allowed);
+      await act(async () => card.click());
+      assert.equal(document.body.textContent.includes("Beast Anatomy Note"), !allowed);
+      const choice = [...document.querySelectorAll('[role="dialog"] button')].find(e => e.textContent.trim() === "Equip" && e.parentElement.textContent.includes("QA Boots"));
+      assert.equal(Boolean(choice), allowed);
+      if (choice) {
+        await act(async () => choice.click());
+        assert.ok(document.body.textContent.includes("QA Boots"));
+        assert.equal(document.querySelector('[role="dialog"]'), null, "equipping closes the picker");
+      }
+    } finally {await act(async () => root.unmount());dom.window.close();}
+  });
+}
+
 function setupDom() {
   const dom = new JSDOM("<!DOCTYPE html><html><body><div id='root'></div></body></html>", {
     url: "http://localhost:8765"
