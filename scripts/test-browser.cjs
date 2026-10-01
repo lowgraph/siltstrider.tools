@@ -330,6 +330,41 @@ async function toolsRegression() {
   }
 }
 
+async function reverseAlchemyRegression() {
+  for (const profile of ['vanilla','tr','tr_arce']) for (const width of [1366,375]) for (const theme of ['ashfall','morrowind']) {
+    await check(`Alchemy effect finder/${profile}/${width}/${theme}`, async () => {
+      await viewport(width);
+      await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await navigate('alchemy', profile);
+      assert.equal(await evaluate('document.querySelectorAll(".reverse-alchemy-pair").length'), 0, 'No recipe before choosing an effect');
+      await choose('[aria-label="Crucible 3 ingredient"]', 'Wickwheat');
+      await choose('[aria-label="Crucible 4 ingredient"]', 'Marshmerrow');
+      await type('#reverse-alchemy-search', 'restore health');
+      await button('Restore Health');
+      await until('document.querySelector(".reverse-alchemy-pair")');
+      const pairNames = await evaluate(`document.querySelector('.reverse-alchemy-pair > p').textContent.split(' + ')`);
+      await click('.reverse-alchemy-pair button');
+      assert.deepEqual(await evaluate(`[1,2,3,4].map(i=>document.querySelector('[aria-label="Crucible '+i+' ingredient"]').value)`), [...pairNames,'',''], 'Chosen pair replaces every slot');
+      assert.match(await evaluate('document.getElementById("potion-name-input").value'), /Restore Health/);
+      assert.equal(await evaluate('document.activeElement.id'), 'alchemy-potion-output', 'Chosen pair moves focus to the potion output');
+      await type('#reverse-alchemy-search', 'no-such-effect-xyz');
+      assert.ok(await evaluate('document.querySelector(".reverse-alchemy").textContent.includes("No matching effect")'));
+      await type('#reverse-alchemy-search', '');
+      await click('[aria-label="Remove Restore Health"]');
+      assert.equal(await evaluate('document.querySelectorAll(".reverse-alchemy-pair").length'), 0, 'Removing targets clears results');
+      await type('#reverse-alchemy-search', 'restore health'); await button('Restore Health');
+      await type('#reverse-alchemy-search', 'restore fatigue'); await button('Restore Fatigue');
+      assert.ok(await evaluate(`document.querySelectorAll('[aria-label="Desired potion effects"] li').length===2`), 'Multiple targets selected');
+      assert.ok(await evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), 'No horizontal overflow');
+      assertAccessible(await audit(`reverse-alchemy-${profile}-${width}-${theme}`));
+      await screenshot(`reverse-alchemy-${profile}-${width}-${theme}`);
+      await navigate('alchemy', profile === 'vanilla' ? 'tr' : 'vanilla');
+      assert.equal(await evaluate('document.querySelectorAll(".reverse-alchemy-pair").length'), 0, 'World switch clears prior recipes');
+      return { searched: true, multipleEffects: true, filledPair: true, clearedOtherSlots: true, focus: true, worldIsolation: true };
+    });
+  }
+}
+
 async function factionAndLevelRegression() {
   for (const profile of ['vanilla','tr','tr_arce']) for (const width of [1366,375]) for (const theme of ['ashfall','morrowind']) {
     await check(`Faction and Level interactions/${profile}/${width}/${theme}`, async () => {
@@ -581,7 +616,7 @@ async function polishRegression() {
   await navigate('home');
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) await travel();
-  if (['all','tools'].includes(suite)) { await toolsRegression(); await factionAndLevelRegression(); await savedTravel(); }
+  if (['all','tools'].includes(suite)) { await toolsRegression(); await reverseAlchemyRegression(); await factionAndLevelRegression(); await savedTravel(); }
   if (['all','settings'].includes(suite)) await settingsRegression();
   if (['all','polish'].includes(suite)) await polishRegression();
   await send('Browser.close').catch(() => {});

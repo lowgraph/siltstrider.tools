@@ -7,6 +7,7 @@ import { useGameData } from "../../use-game-data";
 import { useSearchIntent } from "../../use-search-intent";
 import { clearSearchIntent } from "../../../lib/search-intent.mjs";
 import IngredientCombobox from "./ingredient-combobox";
+import ReverseAlchemy from "./reverse-alchemy";
 import ActiveCharacterLink from "../../active-character-link";
 import { adaptAlchemy } from "../../../lib/alchemy-catalogs.mjs";
 import {
@@ -284,6 +285,11 @@ export default function AlchemyWorkstation() {
         )}
       </div>
 
+      <ReverseAlchemy ingredients={allIngredients} onUsePair={([first, second]) => {
+        setSlot1(first); setSlot2(second); setSlot3(null); setSlot4(null); setCustomPotionName("");
+        document.getElementById("alchemy-potion-output")?.focus();
+      }} />
+
       {/* Main 2-Pane Workstation Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left Pane: Apparatus Rack & Ingredient Crucible */}
@@ -450,7 +456,7 @@ export default function AlchemyWorkstation() {
 
         {/* Right Pane: Brew Dossier & Potion Preview */}
         <div className="space-y-4">
-          <h3 className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
+          <h3 id="alchemy-potion-output" tabIndex={-1} className="text-sm font-serif font-bold text-accent uppercase tracking-wider border-b border-line-9 pb-1.5">
             Potion Preview &amp; Output
           </h3>
 

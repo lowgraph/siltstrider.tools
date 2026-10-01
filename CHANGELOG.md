@@ -2,6 +2,7 @@
 
 ## Easier journeys and first steps — 2026-09-30
 
+- **Find a potion's ingredients:** choose the effects you want, see ingredient pairs and their additional effects, and load a pair into the Alchemy calculator. Shop availability is not listed yet.
 - **Travel starts with a useful trip:** without a save or shared route, start in Seyda Neen and head to Balmora. Least real time favors less outdoor movement, then fewer transport or spell transitions; menus and loading remain uncounted. While the network loads, the route shows a loading message.
 - **Alchemy tools you can obtain:** Secretmaster apparatus is removed from the picks, and tools run from strongest to weakest instead of alphabetically.
 - **Type the soul you trapped:** Enchanting accepts a custom soul size, including 300 in a Grand Soul Gem. Constant Effect still needs at least 400.

@@ -126,7 +126,7 @@ async function workstation(data) {
     '../../character-context': { useActiveCharacter: () => ({ build: {}, sheet: {} }) },
     '../../shell-context': { useShell: () => ({ profile: 'vanilla', world: 'vanilla' }) },
     '../../active-character-link': require('./helpers/active-character-link.cjs'),
-    './ingredient-combobox': combobox,
+    './reverse-alchemy': require('./helpers/reverse-alchemy.cjs'),'./ingredient-combobox': combobox,
     '../../use-game-data': { useGameData: () => ({ status: 'ready', data }) },
     '../../use-search-intent': { useSearchIntent: () => null },
   };

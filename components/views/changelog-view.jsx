@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Choose the potion effects you want to find ingredient pairs, see their additional effects, and load a pair into the Alchemy calculator. Shop availability is not listed yet.</li>
             <li>Travel starts with Seyda Neen to Balmora without a save or shared route. Least real time favors less outdoor movement, then fewer transport or spell transitions; menus and loading remain uncounted. The route shows a loading message while its network arrives.</li>
             <li>Alchemy removes Secretmaster apparatus from its picks and orders tools from strongest to weakest.</li>
             <li>Enchanting lets you type the trapped soul&apos;s size, including 300 in a Grand Soul Gem. Constant Effect still needs at least 400.</li>

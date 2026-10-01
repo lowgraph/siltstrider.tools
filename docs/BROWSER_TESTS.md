@@ -36,6 +36,10 @@ Travel checks cover keyboard search/cancellation/selection, swap, objectives,
 share restoration, result reading order, forced-colors focus, real-time trade-offs,
 network loading/failure/retry, synthetic save import, persisted option edits,
 three-profile isolation and resetting to save defaults.
+The tools suite also checks `Alchemy effect finder` across all three profiles,
+both themes and 1366/375 px: effect search, multiple desired effects, filling a
+pair while clearing the other slots, focus on the potion output, empty matches,
+profile isolation, no overflow and axe accessibility.
 Each save edit is checked before navigation, followed by a check that all four
 choices reached local storage. A failure there distinguishes an unapplied or
 unstored edit from the later save/profile restoration assertion.

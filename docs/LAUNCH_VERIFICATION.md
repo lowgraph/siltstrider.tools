@@ -20,7 +20,7 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0007 applied; none pending at the 00:11 release |
 | D1 Time Travel bookmark | `00000059-00000000-000050f7-69367513ae9acb9d9add96e963178727`, captured before the 2026-10-01 00:11 UTC release; private migration backup and preservation checks in §15 |
-| Pipeline repo | `master` at `129b2d1`; identical coordination record, synchronized in this session |
+| Pipeline repo | `master` at `83b0159` locally (`origin/master` at `129b2d1`); identical branch coordination record |
 
 Deployment history since the last tagged release before this batch:
 
@@ -830,3 +830,42 @@ Evidence under `A:/Cache`: `trv-housekeeping-unit.log`,
 `trv-housekeeping-pipeline.log`, `trv-housekeeping-ancestry.json`,
 `trv-housekeeping-browser-summary.json` and `trv-housekeeping-browser-1`/`-2`
 (reports, synthetic fixture, screenshots and request traces).
+
+## 18. CALC-4 ingredient-pair finder on its branch — 30 September locally
+
+`launch/calc-4-reverse-alchemy` starts at main `f5b1f56`; claim `73b75be` was
+committed after 887 passing tests. The implemented finder searches the current
+profile's potion effects, accepts up to four targets and lists distinct ingredient
+pairs that share every selected effect. Attribute/skill targets remain distinct;
+additional shared effects, including harmful ones, are shown. Pairs rank by fewer
+extras, then ingredient base value; this is not a vendor quote. Using a pair clears
+the other slots and moves focus to the existing potion output. Typed stats,
+apparatus choices and the forward calculator remain intact; world changes reset
+the finder through the existing workstation lifecycle.
+
+- Full unit suite: **895 passed**, zero failures/skips/todos. Eight new tests
+  cover target identity, multi-effect intersections, duplicate records/slots,
+  malformed/null input, harmful extras, missing prices, deterministic pagination,
+  frozen records, sparse effects and React search/use/remove behavior.
+- Focused Chrome cases: **12/12 passed**, all three profiles, both themes,
+  1366/375 px. Checks search, multiple targets, use/clear, focus, unmatched text,
+  world isolation and horizontal overflow. **12 axe audits, zero violations**;
+  no runtime/server errors; **25 settled font checks**. Desktop and phone
+  screenshots were inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**, existing repository
+  configuration and live Clerk publishable key; no deployment.
+- Pipeline tests: **670 passed** before local shared-note commit `83b0159`.
+- The first browser attempt queried the remove button by visible text using its
+  accessible label. Correcting only the runner selector produced the passing
+  twelve-case run; no application persistence or calculator patch was needed.
+- Published Merchants contains services/locations but no ingredient inventories.
+  The finder says shop availability is not listed. CALC-4 remains in progress for
+  buying locations from its usability recommendation; do not invent stock from
+  merchant service flags. No extraction, published-bundle/schema change, API,
+  migration, main merge or deployment is part of this branch work.
+
+Evidence under `A:/Cache`: `calc-4-claim-unit.log`, `calc-4-unit.log`,
+`calc-4-precommit-unit.log`, `calc-4-build.log`, `calc-4-pipeline.log` and
+`calc-4-browser-verified` (report, screenshots and audits).
+Shared coordination and roadmap notes describe the branch and the missing stock
+coverage; both repositories keep identical copies.
