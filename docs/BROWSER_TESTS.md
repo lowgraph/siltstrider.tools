@@ -253,3 +253,12 @@ Bitter Cup that changes only Personality/Willpower, and loaded saves at 35,
 fit inside the chart. The nine original QA-03/04 TODO cases are now enforced;
 `test/level-health-preservation.test.js` adds normalization, zero/fractional
 Health, level-boundary, repeated Cup and non-retroactive base checks.
+
+QA-05's `--suite qa --filter 'QA-05/'` follows a fresh premade through Builder
+edits to Female Breton / The Tower, Home and Level Simulator. It checks source
+titles and identity details in Vanilla/TR/TR + ARCE at 1366/375 px in both
+themes, including an ARCE premade, first-navigation hydration messages and
+heading overflow. Each case captures all three headings. The two original
+QA-05 TODO cases are enforced; `test/qa-hydrated-title.test.js` uses hydrateRoot
+with all three actual components, and `test/character-identity.test.js` covers
+custom names, unknown markers, edited choices, links/snapshots and ARCE labels.

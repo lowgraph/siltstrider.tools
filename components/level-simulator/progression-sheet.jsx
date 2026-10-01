@@ -3,6 +3,7 @@ import VitalsBar from "../character-builder/vitals-bar";
 import HealthGrowthChart from "./health-growth-chart";
 import SkillProgressionMatrix from "./skill-progression-matrix";
 import { ATTRS, ATTR_ABBR } from "../../lib/level-math.mjs";
+import { characterName } from "../../lib/character-name.mjs";
 
 export default function ProgressionSheet({
   character,
@@ -56,8 +57,8 @@ export default function ProgressionSheet({
       {/* Header Bar */}
       <div className="border-b border-line-11 pb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="font-serif text-lg sm:text-xl font-bold text-fg-2 tracking-wide flex items-center gap-2">
-            <span>{character?.name || className}</span>
+          <h3 className="font-serif text-lg sm:text-xl font-bold text-fg-2 tracking-wide flex flex-wrap items-center gap-2">
+            <span>{characterName(character || {race, className})}</span>
             <span className="text-xs px-2 py-0.5 bg-surface-11 border border-line-8 text-accent font-serif font-bold">
               Level {level}
             </span>

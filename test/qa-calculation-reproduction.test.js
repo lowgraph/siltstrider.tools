@@ -64,7 +64,7 @@ test('QA-04 Bitter Cup outside Strength/Endurance leaves one-step Health forecas
   const cup=calculateHealthGrowthCurve(base,2,catalogs,{bitterCup:true});
   assert.deepEqual(cup.optimalHealth,ordinary.optimalHealth);assert.deepEqual(cup.delayedHealth,ordinary.delayedHealth);
 });
-test('QA-05 Simulator sheet keeps configured race, gender and birthsign',todo('QA-05'),async()=>{
+test('QA-05 Simulator sheet keeps configured race, gender and birthsign',async()=>{
   const {catalogs,build}=await character();const {computeSheet}=await import('../lib/character-math.mjs');const {normalizeCharacterState}=await import('../lib/level-math.mjs');
   const n=normalizeCharacterState(computeSheet({...build,race:'Breton'},catalogs),catalogs);
   assert.deepEqual([n.race,n.gender,n.sign],['Breton','Female','The Tower']);

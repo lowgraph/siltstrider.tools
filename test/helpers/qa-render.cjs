@@ -5,6 +5,8 @@ export {default as Premades} from './components/character-builder/premade-browse
 export {default as Roster} from './components/journal-factions/faction-roster.jsx';
 export {default as Faction} from './components/journal-factions/faction-detail-view.jsx';
 export {default as Sheet} from './components/character-builder/character-sheet.jsx';
+export {default as HomeHero} from './components/home-hub/home-hero.jsx';
+export {default as ProgressionSheet} from './components/level-simulator/progression-sheet.jsx';
 export {default as AccountPage} from './components/account-page.jsx';
 export {default as Challenge} from './components/challenge-runs/challenge-runs-root.jsx';
 export {default as Travel} from './components/calculators/travel/travel-workstation.jsx';

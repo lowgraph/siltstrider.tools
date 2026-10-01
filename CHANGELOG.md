@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Builder, Home and Level Simulator show the same current race, gender and birthsign. After you edit a premade, its old title reads "Based on …" rather than describing the edited character; your own character names stay unchanged.
+
 - Level Simulator keeps fractional Health gains, following the OpenMW 0.51 source. Its chart starts from your character's Health and Endurance, including loaded saves; starting at 30 Endurance reaches 100 at level 15 with +5 each level. Bitter Cup changes future gains when it changes Endurance, without recalculating starting Health.
 
 - Enchanting counts every effect's running cost toward capacity, rounding each down. Two Constant Effects of 5 points now use 75 capacity points; a 5-point, 5-second Target effect fits a Common Ring at 1 point. Self-enchant chance uses the costs before rounding, and the base price uses the final running cost without an extra Constant multiplier, following the OpenMW 0.51 source.

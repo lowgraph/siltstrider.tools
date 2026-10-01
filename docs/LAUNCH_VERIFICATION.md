@@ -1570,3 +1570,44 @@ Evidence under `A:/Cache/`: `qa03-04-before-fix.log`, `qa03-04-unit-final.log`,
 `qa03-04-cloudflare-build-final.log`, `qa03-04-pipeline-tests.log`, and
 `qa03-04-browser-final-20261001/`. First command on another checkout: `npm test`,
 then BROWSER_TESTS' `--suite qa --filter '/level-health/'`.
+
+## 34. QA-05 character identity labels — 1 October 2026
+
+Claimed 19:50 UTC on `launch/character-preservation`; `da380f4` pushed before
+implementation (also publishing the preceding Health fix `4c89666`). Main,
+production, datasets, migrations and repository build configuration are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-05 | Fixed on branch; both original unmarked tests failed before the fix; 12/12 final Chrome flows | `CharacterProvider::updateField` retained a premade's name after edits; `CharacterSheet`, `characterSummary` and `ProgressionSheet` presented it as a current title. New premades carry optional `premadeSource`, and all three use `characterName`: an edited source reads "Based on …". `computeSheet` omitted gender and selected race/sign display names; staged catalog objects do not have the `name` normalization expected, so `normalizeCharacterState` defaulted to Male Dark Elf / The Lady. Retain identity/class choices and explicit raceName/signName in computed sheets; normalize those labels | `test/qa-hydrated-title.test.js`: hydrateRoot with actual Builder, Home and Simulator components; `test/qa-calculation-reproduction.test.js`: Female Breton / The Tower identity; `test/character-identity.test.js`: seven edited choices, custom/legacy names, invalid markers, build-link/cloud round trips and all-profile progression identities; Chrome `QA-05/title` |
+
+Fresh premades retain their original title until their creation choices change.
+New edits keep that title as an explicitly labeled source, with the current
+race, gender and birthsign displayed below. Choosing a new premade starts a
+new source; custom names remain names. The source marker is optional and
+validated against the premade pool, retained in share links, sanitizing and
+full build snapshots. Older builds without a marker retain their stored names:
+the site cannot infer whether a player entered a name matching a premade.
+No stored records were migrated or rewritten. The fixed server/first-client
+render remains unchanged; random starts still occur only after hydration.
+
+Chrome matrix: Vanilla/TR/TR + ARCE × 1366/375 px × Ashfall/Morrowind. Fresh
+Vanilla/TR starts use the Altmer Atronach Spellweaver, and TR + ARCE uses the
+Duadri female Mysticism/Acrobatics premade. Edit to Female Breton / The Tower,
+then use the actual header/phone navigation to Home and Level Simulator.
+All three headings agree on the source and current identity. Each case checks
+first-navigation console hydration messages and heading overflow and saves
+three screenshots. Desktop and phone screenshots reviewed; no clipped titles.
+Unit cases also keep the disambiguated **Khajiit (Cathay-raht)** label through
+sheet normalization and later progression, and preserve custom class choices.
+
+Verification: `npm test`: **1,058 tests; 1,042 passed, 16 existing TODO,
+0 failures**. `npm run build:cloudflare`: **24 pages, passed**. Chrome:
+**12/12**, zero runtime/server errors. Pipeline: **685 passed** after copying
+identical COORDINATION.md; only that document changed in the pipeline. Only an
+isolated local Worker and synthetic browser state were used; the server closed
+afterward. No account or production writes. QA-06 and other open items remain
+separate. Evidence under `A:/Cache/`: `qa05-before-fix.log`, `qa05-unit-final.log`,
+`qa05-cloudflare-build-final.log`, `qa05-pipeline-tests.log`, and
+`qa05-browser-20261001/`. First command: `npm test`, then BROWSER_TESTS'
+`--suite qa --filter 'QA-05/'`.

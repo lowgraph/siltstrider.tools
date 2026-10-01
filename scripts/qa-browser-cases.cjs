@@ -90,14 +90,32 @@ exports.qa = async c => {
         else {assert.match(actual.points,/75 \/ 15 Points/);assert.match(actual.chance,/54%/);assert.match(actual.gold,/50,050 g/);}
         return actual;
       });
-      await c.check(`QA-05/title/${width}/${theme}`,async()=>{
-        await c.navigate('builder');await readyBuilder(c);await c.builderTab('builder');
+      for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-05/title/${profile}/${width}/${theme}`,async()=>{
+        const errors=(c.report.console||[]).length;
+        const init=await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`if(location.origin===${JSON.stringify(c.base)}){Math.random=()=>${profile==='tr_arce'?0.999:0};localStorage.setItem('mw-world',${JSON.stringify(profile==='vanilla'?'vanilla':'tr')});localStorage.setItem('mw-arce',${JSON.stringify(profile==='tr_arce'?'1':'0')});}`});
+        try {
+        await c.navigate('builder',profile);await readyBuilder(c);await c.builderTab('builder');
+        const source=await c.evaluate(`document.querySelector('.character-sheet h3 > span').textContent`);assert.doesNotMatch(source,/Based on/,'Unedited premade keeps its title');
         await c.select('#builder-race','Breton');await c.select('#builder-sign','The Tower');await c.button('Female');
-        const configured=await body(c);
+        if(width<1024) await c.button('Sheet');
+        await c.until('document.querySelector(".character-sheet h3").textContent.includes("Female Breton")');
+        const configured=await c.evaluate(`document.querySelector('.character-sheet h3').textContent`);
+        assert.match(configured,/Female Breton.*The Tower/);assert.ok(configured.includes('Based on '+source));
+        await c.evaluate(`document.querySelector('.character-sheet h3').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-05-builder-${profile}-${width}-${theme}`);
+        assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Edited Builder heading fits');
         const nav=async route=>{const phone=await c.evaluate('innerWidth<900');if(phone){await c.evaluate(`(()=>{const e=[...document.querySelectorAll('.phone-tabs button')].find(e=>e.textContent.trim()===${JSON.stringify(route==='home'?'Home':'Level')});e.dataset.qaNav='yes'})()`);await c.click('[data-qa-nav=yes]');await c.evaluate(`document.querySelector('[data-qa-nav=yes]').removeAttribute('data-qa-nav')`);}else await c.click(route==='home'?'.brand-home':'#react-nav-leveler');await c.until(`location.pathname===${JSON.stringify(route==='home'?'/':'/'+route)}`);await c.idle();await c.pause(200);};
-        await nav('home');const home=await body(c);await nav('leveler');const simulator=await body(c);
-        await record(c,'QA-05',{width,theme,configured,home,simulator});
-        assert.doesNotMatch(simulator,/Male Dark Elf\s*·\s*The Lady/);return {configured,home,simulator};
+        await nav('home');const home=await c.evaluate(`({name:document.querySelector('#home-character-name').textContent,line:document.querySelector('.home-character-line').textContent})`);
+        assert.equal(home.name,'Based on '+source);assert.match(home.line,/Female Breton.*The Tower/);
+        await c.evaluate(`document.querySelector('.home-character').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-05-home-${profile}-${width}-${theme}`);
+        await nav('leveler');if(width<1024) await c.button('Leveled Character Sheet');
+        await c.until('document.querySelector(".progression-sheet h3")');
+        const simulator=await c.evaluate(`({name:document.querySelector('.progression-sheet h3 > span').textContent,line:document.querySelector('.progression-sheet h3').parentElement.querySelector('p').textContent})`);
+        assert.equal(simulator.name,home.name);assert.match(simulator.line,/Female Breton.*The Tower/);
+        await c.evaluate(`document.querySelector('.progression-sheet h3').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-05-leveler-${profile}-${width}-${theme}`);
+        assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Simulator heading fits');
+        assert.deepEqual((c.report.console||[]).slice(errors).filter(m=>m.type==='error'||/Hydration failed|did not match|Text content does not match|hydrated but some attributes/i.test(m.message)),[],'First-load hydration and navigation are clean');
+        return record(c,'QA-05',{profile,width,theme,source,configured,home,simulator});
+        } finally {await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:init.identifier});}
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-03-04/level-health/build/${profile}/${width}/${theme}`,async()=>{
         await c.openDocument(c.base+encodeShareUrl({view:'leveler',world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce',build:healthBuild}));await c.idle();await c.until('document.querySelector("main").textContent.includes("QA Health Test")');
