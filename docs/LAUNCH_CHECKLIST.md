@@ -270,28 +270,28 @@ usual tests (at least three edge cases for a logic change) and changelog.
 - [ ] **C** **QA-18** (not reproduced, see LAUNCH_VERIFICATION §27) Real touch emulation: hints, navigation, all Configure popovers, saved Travel options repeated twenty times, ingredient and effect pickers.
 - [ ] **C** **QA-19** (not reproduced, see LAUNCH_VERIFICATION §27) Signed-out account/settings/saves/entitlements API: 401, no account data or Set-Cookie; local PUT and live GET only.
 - [ ] **C** **QA-20** (not reproduced, see LAUNCH_VERIFICATION §27) Reverse-Alchemy Restore Health pairs and Vanilla guild rank requirements against the staged catalogs.
-- [ ] **C** **QA-21** (reproducing since 2026-10-01 16:16 UTC, Codex, on qa/reproduce) (High; F-1) "Load this build into Character Builder" in the Cloud Vault
+- [ ] **C** **QA-21** (reproduced, `test/qa-account-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High; F-1) "Load this build into Character Builder" in the Cloud Vault
       leaves a TR + ARCE build in the visitor's world: Vanilla, race shown as Argonian, the
       sheet stuck on "Calculating statistics…" (2 of 2). The Vault applies builds with the
       provider's plain `setBuild`, which ignores `build.world` and `build.arce`
       (`app-shell.jsx`, `character-context.jsx` `loadBuild`). Loading a build must set its
       world, as a shared link does (LINK-1).
-- [ ] **C** **QA-22** (reproducing since 2026-10-01 16:16 UTC, Codex, on qa/reproduce) (High; F-2, F-17) Share links carry the wrong character. An imported
+- [ ] **C** **QA-22** (reproduced, `test/qa-account-reproduction.test.js`; scope and limits in LAUNCH_VERIFICATION §27) (High; F-2, F-17) Share links carry the wrong character. An imported
       save's "Copy shareable permalink" writes raw ids (`className:"mage"`,
       `T_Els_Cathay-raht`), empty skill lists, the wrong gender and `world=vanilla` for a
       TR + ARCE save; it opens as a different or broken character (2 of 2 saves; Builder
       builds are fine). A challenge run's link took the visitor's current world (`world=tr`)
       for a run rolled in Vanilla. A link must describe its own character or run.
-- [ ] **C** **QA-23** (reproducing since 2026-10-01 16:16 UTC, Codex, on qa/reproduce) (High; F-3, F-9) Signing in switches to the account's Preferred world
+- [ ] **C** **QA-23** (reproduced, `test/qa-account-reproduction.test.js`; partial reproduction and limits in LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
       when the address has no `?world=` (3 of 3): an unsaved TR + ARCE character, or a loaded
       TR + ARCE save, comes back in Vanilla, the save re-read as plain Khajiit
       (`shell-context.jsx`). A new account has chosen nothing yet, but switching world or
       loading a save already auto-saves a Preferred world (F-9), which then wins. On sign-in
       the browser's world must win until the player chooses one on the account.
-- [ ] **C** **QA-24** (reproducing since 2026-10-01 16:16 UTC, Codex, on qa/reproduce) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
+- [ ] **C** **QA-24** (reproduced, `test/qa-account-reproduction.test.js`; partial reproduction and limits in LAUNCH_VERIFICATION §27) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
       Home afresh and the Builder shows a random premade (2 of 2). A loaded save survives.
       Keep the character through sign-out as through sign-in (`SIGN_IN_EVENT` hand-off).
-- [ ] **C** **QA-25** (reproducing since 2026-10-01 16:16 UTC, Codex, on qa/reproduce) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
+- [ ] **C** **QA-25** (reproduced, `test/qa-account-reproduction.test.js`; partial reproduction and limits in LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
       link's starting point is replaced by the save's position (`/travel?from=Balmora…` plans
       from Seyda Neen; the plan is kept). COORDINATION, Travel from the loaded save: a link
       wins over the save's starting point.

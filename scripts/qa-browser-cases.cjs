@@ -127,6 +127,14 @@ exports.qa = async c => {
       await c.check(`QA-15/about/${width}/${theme}`,async()=>{
         await c.navigate('about');const text=await body(c),links=await c.evaluate(`[...document.querySelectorAll('main a')].map(a=>a.href)`);await record(c,'QA-15',{width,theme,text,links});assert.match(text,/open source/i);assert.match(text,/AGPL-3.0/);assert.match(text,/LowGraph/);assert.ok(links.includes('https://github.com/lowgraph/siltstrider.tools'));return text;
       });
+      await c.check(`QA-22/challenge-permalink/${width}/${theme}`,async()=>{
+        const {formatRunSeed,generateSeededRun}=await import('../lib/challenge-engine.mjs'),{decodeShareUrl}=await import('../lib/permalink-codec.mjs');
+        const seed=formatRunSeed({code:'QA222',profile:'vanilla',allowedBands:{Easy:true},restrictionCount:1,objectiveCount:1}),run=generateSeededRun(seed,{world:'vanilla'}).run;
+        await c.openDocument(c.base+encodeShareUrl({view:'challenge',world:'vanilla',run}));await c.idle();await c.until('document.querySelector("#challenge-seed-input")?.value==='+JSON.stringify(seed));
+        if(width<600) await c.click('.hamburger');await c.click('#react-world-tr');await c.until('document.querySelector("#react-world-tr").getAttribute("aria-pressed")==="true"');
+        await c.evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>window.__qaCopied=value}})`);await c.click('button[title="Copy shareable challenge link"]');await c.until('window.__qaCopied');
+        const decoded=decodeShareUrl(await c.evaluate('window.__qaCopied'));await record(c,'QA-22',{width,theme,seed,decoded});assert.equal(decoded.run.seed,seed);assert.equal(decoded.world,'vanilla','run world wins over the current visitor world');return decoded;
+      });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-20/Restore-Health/${profile}/${width}/${theme}`,async()=>{
         await c.navigate('alchemy',profile);await c.until('document.querySelector("#reverse-alchemy-search")');
         await c.type('#reverse-alchemy-search','Restore Health');await c.until('document.querySelector("#reverse-alchemy-effects button")');await c.click('#reverse-alchemy-effects button');

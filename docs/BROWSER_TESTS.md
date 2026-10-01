@@ -172,6 +172,23 @@ node scripts/test-vault.cjs --axe-path 'A:\Cache\audit-tools\node_modules\axe-co
 
 `--no-build` reuses the last build, `--filter` runs matching cases, `--port` moves the Worker.
 
+`--qa-reproduction` runs only the signed-in QA-21 / imported-save QA-22 cases.
+It uses a synthetic “QA – Vault Reproduction” identity, creates two “QA – ”
+records in a fresh local database, and deletes both in `finally`. It verifies
+the selected theme through account settings before testing each width. Known
+behavior assertions intentionally fail until the application is fixed:
+
+```powershell
+node scripts/test-vault.cjs --qa-reproduction --port 8796 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa-vault'
+```
+
+The corresponding hydrated/hook expectations are in
+`test/qa-account-reproduction.test.js`, marked TODO. `--suite qa --filter QA-22`
+in the ordinary Chrome runner checks that a challenge's link retains its rolled
+world after a visitor changes world. Synthetic authentication does not verify
+Clerk's real email-code or redirect behavior; use an owner-prepared throwaway
+session for that final check.
+
 **Real Clerk, signed in once by the owner.** The Clerk development instance's keys in
 `.env.local` (`pk_test_`/`sk_test_`; the script refuses live keys) go to Wrangler with
 `--env-file`, so no copy is written. Build, then start (or the `site-1-local-stack` preview):

@@ -310,7 +310,8 @@ async function cases() {
   try {
     socket = await connect(profile);
     await open('/about');
-    await cases();
+    if (args.includes('--qa-reproduction')) await require('./qa-vault-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,evaluate,text,check,pause,screenshot});
+    else await cases();
   } finally {
     socket?.close(); chrome.kill(); worker.kill();
   }
