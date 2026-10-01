@@ -206,7 +206,7 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. Skip completed implementation items while retaining their
-merge/deploy status. QA-08/09, QA-16, QA-07/25, QA-06 and the QA-05 regression recheck are complete on this branch. QA-12 and QA-11 are complete; next authorized item is QA-15, with a push after each completed item.
+merge/deploy status. QA-08/09, QA-16, QA-07/25, QA-06 and the QA-05 regression recheck are complete on this branch. QA-12, QA-11 and QA-15 are complete on this branch, each committed and pushed separately. Freeze acceptance and release preparation remain the next step.
 Test portability, QA-21/23, QA-22, QA-01/02, QA-03/04, QA-10 and QA-05 are complete on this branch;
 QA-24 is merged to main. Final acceptance still waits for the remaining fixes.
 
@@ -363,7 +363,7 @@ commands in BROWSER_TESTS.md.
 
 #### 15. QA-15 — About attribution and licence
 
-- [ ] **C** **QA-15** (started 2026-10-01 22:58 UTC, Codex, on launch/character-preservation) (reproduced 4/4; `about-view.jsx`; `test/site-claims.test.js` already allows "open source" for the code; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
+- [x] **C** **QA-15** (started 2026-10-01 22:58 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §45; not merged or deployed) (reproduced 4/4; `about-view.jsx`; `test/site-claims.test.js` already allows "open source" for the code; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
       AGPL-3.0; not the game or mod data), links https://github.com/lowgraph/siltstrider.tools
       and says it is made by LowGraph. Keep `test/site-claims.test.js` and the licence
       wording rules (COORDINATION, Licences).

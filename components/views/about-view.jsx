@@ -91,8 +91,15 @@ export default function AboutView() {
             </p>
           </div>
 
-          <div className="border-t border-line-12 pt-3">
+          <div className="about-colophon border-t border-line-12 pt-3">
             <h3 className="text-base font-serif text-accent mb-1">Colophon</h3>
+            <p className="text-xs text-fg-7 mb-2">
+              Made by LowGraph. The site&apos;s code is open source under the GNU Affero General Public License (AGPL-3.0-or-later).{" "}
+              <a href="https://github.com/lowgraph/siltstrider.tools" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-fg-2">View the code on GitHub</a>.
+            </p>
+            <p className="text-xs text-fg-7 mb-2">
+              The code licence does not cover game or mod data: those rights remain with Bethesda Softworks and the Tamriel Rebuilt, Project Tamriel and ARCE teams. Pelagiad keeps its own font licence. The Silt Strider name, logo and social card image are not licensed for reuse.
+            </p>
             <p className="text-xs text-fg-7">
               The site&apos;s code was written with AI assistance. Builds and gear recommendations are checked by script against data read from the game files. Restrictions and objectives are human curated.
             </p>

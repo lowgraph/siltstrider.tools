@@ -302,7 +302,10 @@ exports.qa = async c => {
         return record(c,'QA-12',{width,theme,profile,modes});
       });
       await c.check(`QA-15/about/${width}/${theme}`,async()=>{
-        await c.navigate('about');const text=await body(c),links=await c.evaluate(`[...document.querySelectorAll('main a')].map(a=>a.href)`);await record(c,'QA-15',{width,theme,text,links});assert.match(text,/open source/i);assert.match(text,/AGPL-3.0/);assert.match(text,/LowGraph/);assert.ok(links.includes('https://github.com/lowgraph/siltstrider.tools'));return text;
+        await c.navigate('about');const state=await c.evaluate(`({text:document.querySelector('.about-colophon').textContent,links:[...document.querySelectorAll('.about-colophon a')].map(a=>({href:a.href,target:a.target,rel:a.rel})),overflow:document.documentElement.scrollWidth>innerWidth+1})`);
+        assert.match(state.text,/Made by LowGraph/);assert.match(state.text,/code is open source under the GNU Affero General Public License \(AGPL-3.0-or-later\)/);assert.match(state.text,/code licence does not cover game or mod data/);assert.match(state.text,/code was written with AI assistance/);assert.match(state.text,/name, logo and social card image are not licensed for reuse/);assert.equal(state.overflow,false);
+        const link=state.links.find(a=>a.href==='https://github.com/lowgraph/siltstrider.tools');assert.ok(link);assert.equal(link.target,'_blank');assert.match(link.rel,/noopener/);assert.match(link.rel,/noreferrer/);
+        await c.evaluate(`document.querySelector('.about-colophon').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(100);await c.screenshot(`qa15-about-${width}-${theme}`);return record(c,'QA-15',{width,theme,...state});
       });
       await c.check(`QA-22/challenge-permalink/${width}/${theme}`,async()=>{
         const {formatRunSeed,generateSeededRun}=await import('../lib/challenge-engine.mjs'),{decodeShareUrl}=await import('../lib/permalink-codec.mjs');

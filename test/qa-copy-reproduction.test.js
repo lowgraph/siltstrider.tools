@@ -1,14 +1,21 @@
 require('./helpers/pending-game-data.cjs');
 const {test}=require('node:test');const assert=require('node:assert/strict');const React=require('react');const {renderToString}=require('react-dom/server');
-const {loader,todo,staged}=require('./helpers/qa-staged-data.cjs');const {About,Premades,Roster,Faction}=require('./helpers/qa-render.cjs');
+const {loader,staged}=require('./helpers/qa-staged-data.cjs');const {About,Premades,Roster,Faction}=require('./helpers/qa-render.cjs');
 const text=html=>new (require('jsdom').JSDOM)(html).window.document.body.textContent;
 test('QA-12 premades describe playstyle, a trade-off, Major and Minor skills',{},()=>{
   const rendered=text(renderToString(React.createElement(Premades,{activeProfile:'vanilla',onSelectBuild:()=>{}})));
   assert.match(rendered,/plays like/i);assert.match(rendered,/trade.off/i);assert.doesNotMatch(rendered,/\bMaj:|\bMin:/);
 });
-test('QA-15 About attributes open-source code, AGPL and LowGraph with repository link',todo('QA-15'),()=>{
-  const html=renderToString(React.createElement(About)),rendered=text(html);
-  assert.match(rendered,/open source/i);assert.match(rendered,/AGPL-3.0/);assert.match(rendered,/LowGraph/);assert.match(html,/https:\/\/github.com\/lowgraph\/siltstrider.tools/);
+test('QA-15 About attributes open-source code, AGPL and LowGraph with repository link',()=>{
+  const html=renderToString(React.createElement(About)),dom=new (require('jsdom').JSDOM)(html);
+  try {
+    const colophon=dom.window.document.querySelector('.about-colophon'),rendered=colophon.textContent;
+    assert.match(rendered,/Made by LowGraph/);assert.match(rendered,/code is open source under the GNU Affero General Public License \(AGPL-3.0-or-later\)/);
+    assert.match(rendered,/code licence does not cover game or mod data/);assert.match(rendered,/Bethesda Softworks and the Tamriel Rebuilt, Project Tamriel and ARCE teams/);
+    assert.match(rendered,/name, logo and social card image are not licensed for reuse/);assert.match(rendered,/code was written with AI assistance/);
+    const link=colophon.querySelector('a');assert.equal(link.href,'https://github.com/lowgraph/siltstrider.tools');assert.equal(link.target,'_blank');assert.ok(link.relList.contains('noopener'));assert.ok(link.relList.contains('noreferrer'));
+    assert.match(dom.window.document.querySelector('.about-credits').textContent,/Pelagiad by Isak Larborn, used under the SIL Open Font License 1.1/);
+  } finally { dom.window.close(); }
 });
 test('QA-15 claim scan permits describing the code as open source',()=>{
   const source=require('fs').readFileSync(require('path').join(__dirname,'site-claims.test.js'),'utf8');

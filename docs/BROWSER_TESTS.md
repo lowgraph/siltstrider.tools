@@ -351,3 +351,12 @@ view (28 captures). The live badge uses uppercase CSS: read its textContent and
 wait for the expected count. Synthetic tests also cover malformed/frozen records,
 unknown IDs, unchanged relation values and retained saved memberships. Use the
 existing runner URL/axe/out arguments; bound the matrix to 60 seconds overall.
+
+QA-15's `--suite qa --filter 'QA-15/'` checks About in 1366/375 px and both themes
+(four cases), with a Colophon screenshot per case. Require LowGraph attribution,
+AGPL-3.0-or-later for the code, explicit game/mod-data and branding exclusions,
+AI-assistance disclosure and the repository link with noopener/noreferrer. The
+page must fit the viewport. `test/qa-copy-reproduction.test.js` enforces the copy
+and retained font credit; `test/license.test.js` includes the actual About view
+in its licence-file guard. Existing README/LICENSE wording stays untouched. Use
+the existing URL/axe/out arguments and a 60-second overall runner limit.

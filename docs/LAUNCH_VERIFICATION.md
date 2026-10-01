@@ -1955,3 +1955,29 @@ sync. Both player changelogs updated. Evidence: `A:/Cache/qa11-browser-verified/
 `qa11-phone-verified/`, `qa11-unit.log`, `qa11-build.log`, `qa11-pipeline.log`.
 No dataset, schema, migration, account or production change. Server 8794 remains
 available. Next authorized work: QA-15, after this item's push.
+
+## 45. QA-15 About attribution and licence — 1 October 2026
+
+Claimed 22:58 UTC on `launch/character-preservation`, claim `65fa0bf`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-15 | Fixed on branch; original unmarked test failed, final Chrome 4/4 pass | AboutView's Colophon omitted the author, code licence and repository link. Add LowGraph attribution, AGPL-3.0-or-later for the code and the GitHub link; distinguish game/mod-data, font and branding rights | Original About case enforced and strengthened in qa-copy-reproduction.test.js; license.test.js covers the actual view; unchanged site-claims tests; Chrome QA-15 |
+
+The AI-assistance paragraph and Pelagiad's SIL Open Font License 1.1 credit stay
+unchanged. The code licence does not cover Bethesda or community game/mod data;
+the name, logo and social card image remain unlicensed for reuse. The repository
+link opens with noopener/noreferrer. No README, LICENSE or package changes.
+Chrome: 1366/375 px × both themes, **4/4 passed**, four screenshots, zero runtime
+or server errors and no page overflow. Phone/desktop captures reviewed.
+
+Full site suite: **1,122 passed, 0 failures, 0 remaining TODO**. Focused copy,
+claim and licence checks: **12/12 passed**, including all three licence checks.
+Release build: **24 pages passed**, configuration unchanged. Pipeline: **685
+passed** after identical coordination sync. Both player changelogs updated.
+Evidence: `A:/Cache/qa15-browser-final/`, `qa15-before.log`, `qa15-unit.log`,
+`qa15-build.log`, `qa15-pipeline.log`. All authorized QA-12/11/15 items are
+complete on this branch, pushed separately. No merge, deployment, dataset,
+migration or account change. Server 8794 remains available. First command:
+`npm test`, then the documented QA browser filters; freeze acceptance and
+release preparation remain a separate step against the final build.

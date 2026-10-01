@@ -25,7 +25,7 @@ test('the licence section keeps out what is not ours to license', () => {
 });
 
 test('"open source" is only claimed while the licence file is there', () => {
-  const claims = [read('app/about/page.jsx'), read('lib/seo-breadcrumbs.mjs')].join('\n');
+  const claims = [read('app/about/page.jsx'), read('components/views/about-view.jsx'), read('lib/seo-breadcrumbs.mjs')].join('\n');
   if (/open[- ]source/i.test(claims)) {
     assert.ok(fs.existsSync(path.join(ROOT, 'LICENSE')), 'an open-source claim needs a licence');
   }
