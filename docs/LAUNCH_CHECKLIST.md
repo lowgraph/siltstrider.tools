@@ -363,7 +363,7 @@ commands in BROWSER_TESTS.md.
 
 #### 15. QA-15 — About attribution and licence
 
-- [ ] **C** **QA-15** (reproduced 4/4; `about-view.jsx`; `test/site-claims.test.js` already allows "open source" for the code; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
+- [ ] **C** **QA-15** (started 2026-10-01 22:58 UTC, Codex, on launch/character-preservation) (reproduced 4/4; `about-view.jsx`; `test/site-claims.test.js` already allows "open source" for the code; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
       AGPL-3.0; not the game or mod data), links https://github.com/lowgraph/siltstrider.tools
       and says it is made by LowGraph. Keep `test/site-claims.test.js` and the licence
       wording rules (COORDINATION, Licences).
