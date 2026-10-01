@@ -9,6 +9,10 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 ## 1. Production state at hand-off
 
+This table records the earlier Travel rollback hand-off. The current release is
+main `216cd90`, Worker `d523b9ba`, with migrations 0001–0007; see §16 for its
+verification and rollback target. Earlier release history remains below.
+
 | Item | Value |
 | --- | --- |
 | Live commit | `1e84b1a` (restored after the Travel release failed production acceptance; Travel remains on main) |
@@ -49,6 +53,8 @@ Deployment history since the last tagged release before this batch:
 | `24bd4ac1-e287-4c14-88d8-80bee20b42f9` | 09-30 16:04 | `1e84b1a` | tagged; no fading on a beast race's Boots slot (axe found it live on `4c464aa3` when the random start drew a Khajiit) or on a ticked Challenge objective; Travel rollback target |
 | `3ef09493-cb5a-42e2-96fd-ca54c168d3e2` | 09-30 20:32 | `2c113b8` | tagged; standalone Travel release: TRV-2, TRV-4/5, TRV-6, TRV-7 and TRV-8; unchanged bundle and D1 schema; rolled back after repeated mobile acceptance failure |
 | `24bd4ac1-e287-4c14-88d8-80bee20b42f9` (rollback) | 09-30 20:47 | `1e84b1a` | previous production version restored at 100%; current; no data or schema rollback |
+| `3ef09493-cb5a-42e2-96fd-ca54c168d3e2` (restored) | 09-30 21:30 | `2c113b8` | owner-authorized return to the Travel release for live reproduction; active version captured before the next release |
+| `d523b9ba-92b1-4fed-9056-89ee19916a49` | 10-01 00:11 | `216cd90` | tagged; current main, account settings and tool polish; 100% traffic; migration 0007 had already been applied separately |
 
 Rollback from the Travel release `3ef09493` to `24bd4ac1` removes the Travel batch
 and retains the earlier launch improvements. No schema or bundle change is involved.
@@ -687,3 +693,61 @@ bookmark/action metadata, schema/count snapshots, pending/apply logs, verificati
 JSON and before/after Worker deployment metadata). Never commit those private
 exports or restored files. The first read-only UNION count query exceeded D1's
 compound SELECT limit; separate SELECT statements succeeded before applying.
+
+## 16. Account settings and tool polish production release — 30 September locally
+
+The owner authorized deployment of clean main `216cd909dbf3768de4b4d6c1e4566d81f209c177`.
+Worker `d523b9ba-92b1-4fed-9056-89ee19916a49`, tagged `216cd90`, was created
+**2026-10-01 00:11:19 UTC**, and deployed at **00:11:21 UTC**, with **100% traffic**.
+This is 30 September in the owner's timezone. It releases the complete current
+main, including account settings and the Travel/Alchemy/Enchanting/navigation
+polish; it is not a separate Travel-only code release.
+
+- Pre-release `npm test`: **887 passed**, no failures/skips/todos.
+- Production `npm run build:cloudflare`: **passed, 24 static pages**, using the
+  configured live Clerk publishable key. Repository configuration and dependency
+  lockfile are unchanged. Flat `account.html` contains the live key; the first
+  pre-upload guard used the wrong nested filename and stopped before uploading.
+  Corrected the guard's path after checking the export, then deployed successfully.
+- Used project-local Wrangler 4.134.0 with `--keep-vars`, the commit tag and release
+  message. D1 and Clerk bindings match the captured previous version; dashboard
+  variables and secrets remain managed separately.
+- Live HTTP: all **11 public pages** returned 200, as did the sampled script,
+  bundle pointer and manifest. The `www` Builder response is 301 to the root
+  domain. Signed-out `/api/account` and `/api/settings` return 401. Public pages
+  retain `DENY` and `nosniff` security headers.
+- Live in-app browser, Modern UI, desktop and 375 px: Travel initially displays
+  neutral Loading messages, then the Seyda Neen → Balmora route and its Real Time
+  Approximation. Least real time selects successfully and produces a route;
+  its previous objective was restored. No horizontal phone overflow.
+- Alchemy's four apparatus lists exclude Secretmaster and descend by quality,
+  keeping the optional None choice. Enchanting accepts typed soul size **300**,
+  with Constant disabled below 400; restored the original input afterward.
+  All three calculators appear directly at 1440 px and in the phone menu.
+- An existing authenticated browser session loaded the profile and account
+  settings controls, including the empty-settings adoption prompt, without an
+  error. No settings/profile/cloud-save/payment write or sign-out was performed;
+  theme/world preferences were left unchanged. Cross-device settings writes and
+  real sign-in/out remain owner acceptance checks. Captured browser console
+  errors/warnings: **none**. These live smoke checks do not replace the full local
+  Chrome run in §14 (**153 cases, 232 axe audits, 439 settled font checks**).
+- Bundle remains `3da0320236da77ec085d105d`, snapshot
+  `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f`.
+  No extraction, additional migration or database restore ran during deployment.
+  Migrations 0001–0007 were already applied, with none pending. D1 UUID remains
+  `141a1409-3956-4267-a078-02483bbb2bf6`; §15 records preservation of every old row.
+- Immediate pre-release recovery bookmark:
+  `00000059-00000000-000050f7-69367513ae9acb9d9add96e963178727`.
+  Previous active Worker and code rollback target:
+  `3ef09493-cb5a-42e2-96fd-ca54c168d3e2`. Code rollback leaves the additive settings
+  table intact; it reverts this complete main release, not just the tool polish.
+
+Private release evidence: `A:/Cache/account-settings-release-20260930` contains
+unit/build/deployment logs, recovery metadata, before/after deployment history,
+version metadata and the read-only HTTP report. The phone screenshot contains
+only the public tool UI. No private account snapshot or SQL export is published.
+Release documentation is synchronized between the site and pipeline repositories;
+**887 site tests and 670 pipeline tests passed** before the documentation commits.
+Shared coordination and roadmap files match byte for byte, preserving all prior
+pipeline notes. Evidence: `documentation-unit.log`, `documentation-pipeline.log`
+and `browser.json` in the private release directory.

@@ -6,8 +6,9 @@ production 0007 was applied separately with owner authorization on 30 September.
 ACC-2 adds `/api/settings`, the account settings provider, and controls in Your
 account.
 ACC-1, ACC-2 and the tool polish are merged to main in `b45f686`.
-Production migration verification is in LAUNCH_VERIFICATION §15; the settings API
-and site changes have not been deployed.
+Production migration verification is in LAUNCH_VERIFICATION §15. The settings API
+and site changes are live from main `216cd90`, Worker `d523b9ba`; release checks
+and recovery information are in §16.
 
 ## Requested settings
 
@@ -280,7 +281,10 @@ The owner authorized merging the completed settings and tool-polish branch to ma
 in `b45f686`; current merge verification is in LAUNCH_VERIFICATION §14.
 Production 0007 was applied separately with owner authorization on 30 September;
 the recovery record and preservation checks are in LAUNCH_VERIFICATION §15.
-No deployment ran.
+The subsequent owner-authorized release deployed main `216cd90` as Worker
+`d523b9ba` on 1 October at 00:11 UTC (30 September locally), recorded in §16.
+Live authenticated settings reads passed; settings writes and cross-device
+acceptance remain separate owner checks.
 
 References: [D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 and [D1 JSON storage](https://developers.cloudflare.com/d1/sql-api/query-json/).

@@ -109,8 +109,8 @@ remain unavailable pending a release registry; the two future gear filters stay
 hidden pending row support. Migration application and deployment are separate
 owner steps.
 Production migration 0007 was applied with owner authorization on 30 September;
-the existing records are preserved (LAUNCH_VERIFICATION §15). Settings deployment
-has not run.
+the existing records are preserved (LAUNCH_VERIFICATION §15). Settings and tool
+polish are live from main `216cd90`, Worker `d523b9ba` (LAUNCH_VERIFICATION §16).
 
 ### B. Entitlements & Ko-fi Integration
 - **Free Tier**: 5 cloud save slots.
