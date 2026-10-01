@@ -308,7 +308,7 @@ commands in BROWSER_TESTS.md.
 
 #### 8. QA-16 — Ebonheart → Mournhold
 
-- [ ] **C** **QA-16** (reproduced 24/24, all worlds, walking on and off: High, a wrong answer; the Mournhold teleport is in every Teleports catalog, but `buildTransitStops`/`transitEndpointStops` (`lib/travel-stops.mjs`) do not expand the Mournhold city choice to its destination stop; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
+- [ ] **C** **QA-16** (started 2026-10-01 21:38 UTC, Codex, on launch/character-preservation) (reproduced 24/24, all worlds, walking on and off: High, a wrong answer; the Mournhold teleport is in every Teleports catalog, but `buildTransitStops`/`transitEndpointStops` (`lib/travel-stops.mjs`) do not expand the Mournhold city choice to its destination stop; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
       Mournhold showed No Route, though the Mournhold teleport from Ebonheart is everyday
       travel (Teleports policy). Check in Vanilla, TR and TR + ARCE with walking on and off;
       if it reproduces it is a wrong answer (High).
