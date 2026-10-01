@@ -301,7 +301,7 @@ commands in BROWSER_TESTS.md.
 
 #### 7. QA-10 — beast-race equipment eligibility
 
-- [ ] **C** **QA-10** (reproduced 12/12 (Argonian, Khajiit, ARCE Cathay-raht); `resolveBestInSlotPicks` named and fallback premade paths skip the beast check; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
+- [ ] **C** **QA-10** (started 2026-10-01 20:28 UTC, Codex, on launch/character-preservation) (reproduced 12/12 (Argonian, Khajiit, ARCE Cathay-raht); `resolveBestInSlotPicks` named and fallback premade paths skip the beast check; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
       wear in the Gear Advisor's runner-up picks (Masque of Clavicus Vile, Boots of Blinding
       Speed) under the advisor's own note that they are excluded. Seen once; check Argonian,
       Khajiit and an ARCE Khajiit form, every runner-up list.
