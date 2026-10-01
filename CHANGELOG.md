@@ -3,6 +3,7 @@
 ## Ingredient sources — 2026-10-01
 
 - **Where to get an ingredient:** each selected Alchemy ingredient now has a "Where to get it" button. See shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened; changing an ingredient closes its old sources. The effect finder also keeps its pair shortcut.
+- **More useful ingredient sources:** hidden test and holding rooms no longer appear as places to get ingredients. Creature drops leave out rare random loot, so the list focuses on drops you can reasonably gather.
 
 ## Easier journeys and first steps — 2026-09-30
 

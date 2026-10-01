@@ -913,3 +913,41 @@ Evidence under `A:/Cache`: `calc-4-sources-precommit-unit.log`,
 `calc-4-sources-pipeline.log`, `calc-4-selected-sources-build-final.log`, and
 `calc-4-selected-sources-browser-passed` (report, screenshots, audits and network
 trace). The dev preview remains available for the owner.
+
+## 20. Corrected ingredient sources staged locally — 1 October locally
+
+The owner authorized "stage pipeline fix" on `launch/calc-4-where-to-get` at
+`5965af7`. Rebuilt IngredientSources with pipeline `41da92c` using the existing
+world, acquisition and services databases, then packaged and validated the bundle
+before switching the local pointer. This supersedes §19's pending-rebuild note.
+
+- Bundle: **`a29adea046e6086c2c7ee654`**, replacing local pointer `27db1d54d3027e76ce07debf`.
+  The old immutable release remains available. Extraction snapshot
+  `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f` is unchanged.
+  Payload-hash comparison across every profile/catalog found **only
+  IngredientSources changed**; profile provenance and every other payload match.
+- Coverage: **126 vanilla, 921 TR and 921 TR + ARCE ingredients**. ARCE inherits
+  TR's identical sources. No truncated records, excluded test/holding-cell sources
+  or creature draws below the builder's dependable-drop threshold remain.
+  The cell check applies the real policy's 16 exact exclusions and `interior:tr_hold_`
+  prefix to 2,191 vanilla and 10,446 TR source-cell references. Staging verified
+  all file hashes, identities, record counts and inherited/delta catalogs.
+- Pipeline synthetic tests: **685 passed**, zero failures. Site `npm test`:
+  **911 passed**, zero failures/skips/todos.
+- Chrome Alchemy: **26/26 passed** using the new bundle on `127.0.0.1:8793`:
+  all three profiles, both themes, 1366/375 px, selected-ingredient and pair
+  lookup plus loading/failure/Retry. **26 axe audits, zero violations; 51 settled
+  font checks**; no runtime/server errors. Desktop and phone screenshots inspected;
+  Marshmerrow no longer suggests the old random creature-loot entries.
+- `npm run build:cloudflare`: **passed, 24 static pages**, repository configuration
+  unchanged. Both changelogs and the shared coordination/roadmap record the correction.
+  No new extraction, API/schema change, migration, parent/main merge, push or
+  deployment ran. CALC-4 remains open for integration and release.
+
+Evidence: `A:/Cache/calc-4-stage-fix-pipeline.log` and
+`A:/Cache/calc-4-stage-fix/` (`ingredient-build.log`, `bundle-build.log`,
+`comparison.json`, `previous-current.json`, `stage.log`, `site-unit.log`,
+`build.log`, and `browser/` reports, network trace, screenshots and audits).
+The site's `public/game-data` junction shares these local assets with the other
+worktrees. Both previews remain running; reload existing tabs to use the corrected
+bundle because the loader pins a release for each page lifetime.

@@ -11,9 +11,11 @@ Every cell is a Places key. No source is `{key, name}`. Theft, NPC inventories,
 random loot, scripts, quest rewards and holding/test cells are excluded by the
 builder. Chances follow OpenMW 0.51.0's pinned `getLevelledItem` at player level 1,
 or the explicit `fromLevel`. Never infer ingredient stock from merchant services.
-The locally staged bundle is `27db1d54d3027e76ce07debf`. Pipeline correction
-`41da92c` excludes TR test cells and random creature loot; the owner still needs
-to rebuild and stage it before release. No real-data rebuild ran in the site task.
+With owner authorization on 1 October, pipeline correction `41da92c` was rebuilt
+and staged locally as bundle `a29adea046e6086c2c7ee654`. Only IngredientSources
+changed; the extraction snapshot and every other catalog are unchanged. Records
+cover 126 vanilla and 921 TR ingredients; TR + ARCE inherits TR. Test/holding
+cells and rare random creature loot are absent. The old immutable bundle remains.
 Site branch `launch/calc-4-where-to-get` adds a "Where to get it" button to each
 filled Alchemy slot, plus the pair shortcut. Load the `ingredientSources` feature
 only when opened: Places required, IngredientSources optional for older bundles.
@@ -25,9 +27,9 @@ variants with different chances, quantities or levels. Catalog data stays frozen
 the finder; synthetic tests cover lazy loading, provenance/inheritance, malformed
 records, draw distinctions, old bundles, retry and selected-ingredient lifecycle.
 First command: `npm test` in `A:/Claude/mt-site-1`, then the `Alchemy` Chrome cases
-in `docs/BROWSER_TESTS.md`. Owner publication: `python build_ingredient_sources.py`,
-then `python build_app_bundle.py` in the pipeline, then stage (REBUILD.md, "Publish").
-No main merge, push, deployment, migration or extraction is part of this work.
+in `docs/BROWSER_TESTS.md`. The corrected bundle is available on 127.0.0.1:8793;
+reload existing tabs because the loader pins a release for each page lifetime.
+No main merge, push, deployment, migration or new extraction ran in this work.
 
 ## Travel city transfers — 30 September
 

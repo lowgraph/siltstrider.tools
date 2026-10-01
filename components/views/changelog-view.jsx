@@ -17,6 +17,7 @@ export default function ChangelogView() {
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Each selected Alchemy ingredient has a &ldquo;Where to get it&rdquo; button: shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened, and changing the ingredient closes its old sources. The effect finder keeps its pair shortcut.</li>
+            <li>Ingredient sources leave out hidden test and holding rooms. Creature drops leave out rare random loot, so the list focuses on drops you can reasonably gather.</li>
           </ul>
         </section>
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
