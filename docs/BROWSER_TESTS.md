@@ -172,6 +172,17 @@ node scripts/test-vault.cjs --axe-path 'A:\Cache\audit-tools\node_modules\axe-co
 
 `--no-build` reuses the last build, `--filter` runs matching cases, `--port` moves the Worker.
 
+`--signout-preservation` checks QA-24 at 1366/375 px in both themes: an edited
+Female Cathay-raht / The Tower survives the full sign-out navigation to Home,
+including its TR + ARCE profile, and a loaded synthetic save remains loaded.
+The return marker is consumed once; a later ordinary refresh starts afresh.
+The real local pages and Worker run with a synthetic Clerk sign-out redirect.
+This does not replace the owner's real development/production Clerk acceptance.
+
+```powershell
+node scripts/test-vault.cjs --signout-preservation --port 8797 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\signout-preservation'
+```
+
 `--qa-reproduction` runs only the signed-in QA-21 / imported-save QA-22 cases.
 It uses a synthetic “QA – Vault Reproduction” identity, creates two “QA – ”
 records in a fresh local database, and deletes both in `finally`. It verifies
