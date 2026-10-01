@@ -206,7 +206,7 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. Skip completed implementation items while retaining their
-merge/deploy status. QA-08 and QA-09 are complete on this branch. **Next target: QA-05 regression recheck**, as authorized by the owner.
+merge/deploy status. QA-08/09, QA-16, QA-07/25, QA-06 and the QA-05 regression recheck are complete on this branch. The authorized batch is complete; remaining findings retain their priority below.
 Test portability, QA-21/23, QA-22, QA-01/02, QA-03/04, QA-10 and QA-05 are complete on this branch;
 QA-24 is merged to main. Final acceptance still waits for the remaining fixes.
 
@@ -333,7 +333,7 @@ commands in BROWSER_TESTS.md.
 
 #### 11. QA-05 — stale character titles
 
-- [x] **C** **QA-05** (regression recheck started 2026-10-01 22:08 UTC, Codex, on launch/character-preservation) (started 2026-10-01 19:50 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §34; not merged or deployed) (partly reproduced: Builder title stale after hydration; Simulator identity stale on desktop, not on live phone; cause `updateField`, `character-sheet.jsx`, `normalizeCharacterState`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
+- [x] **C** **QA-05** (regression recheck started 2026-10-01 22:08 UTC, Codex, on launch/character-preservation; passed, LAUNCH_VERIFICATION §42) (started 2026-10-01 19:50 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §34; not merged or deployed) (partly reproduced: Builder title stale after hydration; Simulator identity stale on desktop, not on live phone; cause `updateField`, `character-sheet.jsx`, `normalizeCharacterState`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
       title goes stale after an edit: the Builder sheet ("Imperial Agent" over a Female
       Breton), Home's character card ("Argonian Marsh Monk" over a Nord), and the Level
       Simulator naming two characters ("Argonian male — Spear scout" beside "Male Dark Elf").

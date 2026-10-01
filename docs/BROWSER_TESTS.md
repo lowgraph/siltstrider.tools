@@ -323,3 +323,12 @@ three worlds, at 1366/375 px in both themes (12 cases / 48 lists) and captures
 screenshots. Every list must omit Secret Master's tools. Five synthetic adapter
 edge cases cover mod-prefixed keys, renamed tools, spaced/curly-apostrophe names,
 ordinary Master tools, ordering and frozen catalog provenance.
+
+QA-05's `--suite qa --filter 'QA-05/'` starts from a real random premade,
+waits for first-visit initialization, changes race/birthsign to different choices
+and selects Female. Builder, Home and Level Simulator must all show the same
+current identity and "Based on" source title. Twelve cases cover three worlds,
+1366/375 px and both themes, with three screenshots per case. Do not globally
+replace Math.random in Chrome: that can interfere with React's event handling.
+The case hides only `nextjs-portal`, whose dev toolbar overlaps the phone Home
+tab; production has no toolbar. Deterministic JSDOM hydrateRoot tests remain.

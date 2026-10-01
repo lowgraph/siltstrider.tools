@@ -1873,3 +1873,35 @@ session. Both changelogs updated. No data rebuild, schema, migration, account or
 production change. Existing server 8794 stays running. Evidence:
 `A:/Cache/qa06-browser-final/`, `qa06-unit.log`, `qa06-build.log`,
 `qa06-pipeline.log`. Next: QA-05 regression recheck (already fixed in §34).
+
+## 42. QA-05 identity regression recheck — 1 October 2026
+
+Recheck claimed 22:08 UTC on `launch/character-preservation`, claim `d041fe9`.
+Implementation already fixed in `fdb9c9c` (§34); no further application changes.
+
+| Item | Result / rate | Cause / runner change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-05 | Existing fix passes the current branch: Chrome 12/12, all three views in each case | Keep computeSheet identity fields and characterName's premade-source label from §34. The browser case now uses a real random start and always changes race/sign; it waits for first-visit initialization and excludes Next dev's toolbar | 33 identity, hydrateRoot and first-visit tests passed, plus the original Simulator identity case; Chrome QA-05 |
+
+Before correction, a global Math.random=0 override allowed the click to reach
+Configure but its React handler did not change the tab. Native randomness passed.
+The next phone setup clicked Next's dev indicator instead of Home; the captured
+screenshot showed its open menu covering the tab. Hide only nextjs-portal in
+this test, then the isolated phone case passed in six seconds. No production UI
+change. Interrupted long retrying runners and their isolated Chrome processes
+were stopped; the final matrix used an enforced **60-second overall timeout**.
+After the interrupted server stopped, restored dev port **8794** and reran.
+
+Final Chrome: **12/12 passed in 51 seconds** (three worlds × 1366/375 × both themes), **36
+screenshots**, zero runtime/server errors or hydration warnings. Edited race,
+gender and birthsign agree across Builder, Home and Simulator; titles retain
+"Based on" and headings do not overflow. Phone/desktop captures reviewed.
+Full suite before commit: **1,107 tests, 1,103 passed, 4 remaining TODO, 0 failures**.
+Release build remains §41's **24 pages passed**: no application/config change in
+this recheck. Pipeline: **685 passed** after syncing identical coordination.
+Both player changelogs already contain the QA-05 fix; no duplicate release entry.
+Evidence: `A:/Cache/qa05-recheck-final-verified/`, `qa05-phone-bounded/`,
+`qa05-recheck-hydration.log`, `qa05-recheck-unit-final.log`, and
+`qa05-recheck-pipeline.log`. All work in the authorized batch is complete locally;
+no push, merge, deployment, account write or dataset rebuild. Server 8794 stays
+available. First command: `npm test`, then BROWSER_TESTS' QA-05 filter.

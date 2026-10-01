@@ -149,29 +149,33 @@ exports.qa = async c => {
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-05/title/${profile}/${width}/${theme}`,async()=>{
         const errors=(c.report.console||[]).length;
-        const init=await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`if(location.origin===${JSON.stringify(c.base)}){Math.random=()=>${profile==='tr_arce'?0.999:0};localStorage.setItem('mw-world',${JSON.stringify(profile==='vanilla'?'vanilla':'tr')});localStorage.setItem('mw-arce',${JSON.stringify(profile==='tr_arce'?'1':'0')});}`});
+        const init=await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`if(location.origin===${JSON.stringify(c.base)}){localStorage.setItem('mw-world',${JSON.stringify(profile==='vanilla'?'vanilla':'tr')});localStorage.setItem('mw-arce',${JSON.stringify(profile==='tr_arce'?'1':'0')});}`});
         try {
-        await c.navigate('builder',profile);await readyBuilder(c);await c.builderTab('builder');
+        await c.navigate('builder',profile);await c.until('localStorage.getItem("siltstrider-builder-visited") === "1"');await readyBuilder(c);await c.builderTab('builder');
+        // Next dev's bottom-left toolbar overlaps the phone Home tab; production has no toolbar.
+        await c.evaluate(`document.querySelectorAll('nextjs-portal').forEach(e=>e.style.display='none')`);
         const source=await c.evaluate(`document.querySelector('.character-sheet h3 > span').textContent`);assert.doesNotMatch(source,/Based on/,'Unedited premade keeps its title');
-        await c.select('#builder-race','Breton');await c.select('#builder-sign','The Tower');await c.button('Female');
+        const initial=await c.evaluate(`({race:document.querySelector('#builder-race option:checked').textContent.trim(),sign:document.querySelector('#builder-sign option:checked').textContent.trim()})`);
+        const race=initial.race==='Breton'?'Nord':'Breton',sign=initial.sign==='The Tower'?'The Lady':'The Tower';
+        await c.select('#builder-race',race);await c.select('#builder-sign',sign);await c.button('Female');
         if(width<1024) await c.button('Sheet');
-        await c.until('document.querySelector(".character-sheet h3").textContent.includes("Female Breton")');
+        await c.until('document.querySelector(".character-sheet h3").textContent.includes('+JSON.stringify('Female '+race)+')');
         const configured=await c.evaluate(`document.querySelector('.character-sheet h3').textContent`);
-        assert.match(configured,/Female Breton.*The Tower/);assert.ok(configured.includes('Based on '+source));
+        assert.ok(configured.includes('Female '+race)&&configured.includes(sign));assert.ok(configured.includes('Based on '+source));
         await c.evaluate(`document.querySelector('.character-sheet h3').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-05-builder-${profile}-${width}-${theme}`);
         assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Edited Builder heading fits');
         const nav=async route=>{const phone=await c.evaluate('innerWidth<900');if(phone){await c.evaluate(`(()=>{const e=[...document.querySelectorAll('.phone-tabs button')].find(e=>e.textContent.trim()===${JSON.stringify(route==='home'?'Home':'Level')});e.dataset.qaNav='yes'})()`);await c.click('[data-qa-nav=yes]');await c.evaluate(`document.querySelector('[data-qa-nav=yes]').removeAttribute('data-qa-nav')`);}else await c.click(route==='home'?'.brand-home':'#react-nav-leveler');await c.until(`location.pathname===${JSON.stringify(route==='home'?'/':'/'+route)}`);await c.idle();await c.pause(200);};
         await nav('home');const home=await c.evaluate(`({name:document.querySelector('#home-character-name').textContent,line:document.querySelector('.home-character-line').textContent})`);
-        assert.equal(home.name,'Based on '+source);assert.match(home.line,/Female Breton.*The Tower/);
+        assert.equal(home.name,'Based on '+source);assert.ok(home.line.includes('Female '+race)&&home.line.includes(sign));
         await c.evaluate(`document.querySelector('.home-character').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-05-home-${profile}-${width}-${theme}`);
         await nav('leveler');if(width<1024) await c.button('Leveled Character Sheet');
         await c.until('document.querySelector(".progression-sheet h3")');
         const simulator=await c.evaluate(`({name:document.querySelector('.progression-sheet h3 > span').textContent,line:document.querySelector('.progression-sheet h3').parentElement.querySelector('p').textContent})`);
-        assert.equal(simulator.name,home.name);assert.match(simulator.line,/Female Breton.*The Tower/);
+        assert.equal(simulator.name,home.name);assert.ok(simulator.line.includes('Female '+race)&&simulator.line.includes(sign));
         await c.evaluate(`document.querySelector('.progression-sheet h3').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-05-leveler-${profile}-${width}-${theme}`);
         assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Simulator heading fits');
         assert.deepEqual((c.report.console||[]).slice(errors).filter(m=>m.type==='error'||/Hydration failed|did not match|Text content does not match|hydrated but some attributes/i.test(m.message)),[],'First-load hydration and navigation are clean');
-        return record(c,'QA-05',{profile,width,theme,source,configured,home,simulator});
+        return record(c,'QA-05',{profile,width,theme,source,initial,race,sign,configured,home,simulator});
         } finally {await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:init.identifier});}
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-03-04/level-health/build/${profile}/${width}/${theme}`,async()=>{
