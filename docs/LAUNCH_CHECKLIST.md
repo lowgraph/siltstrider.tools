@@ -171,7 +171,7 @@ for now (owner, 30 September); other agents skip them.
 
 **Features**
 - [ ] **C** **CALC-4** Reverse alchemy: pick the effects, get the ingredients.
-  - [ ] **C** **CALC-4 data** (started 2026-10-01 01:20 UTC, C) Where each ingredient comes from, per world: shops that stock
+  - [x] **C** **CALC-4 data** (started 2026-10-01 01:20 UTC, C; builder done `7be1365` in the pipeline, not pushed: vanilla 126 ingredients, shop 75, plant 44, creature 41, find 95, none 9 (quest and unique items), 31 KB gzipped; the real build and publish are the owner's step, then the effect finder shows it) Where each ingredient comes from, per world: shops that stock
         it (restocking or once), regrowing plants with the chance per harvest and counts by region
         and town, creatures that carry it and where they appear, and fixed finds such as ore
         deposits; sources that need theft left out (owner, 30 September). A pipeline catalog,
