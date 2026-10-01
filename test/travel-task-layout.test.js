@@ -18,15 +18,15 @@ function fixture() {
     profile: 'vanilla',
     catalogs: {
       Travel: [
-        { from: a, to: b, mode: 'silt_strider', provider: 'driver', price: 5, hours: 1 },
-        { from: b, to: a, mode: 'silt_strider', provider: 'driver', price: 5, hours: 1 }
+        { from: a, to: b, mode: 'silt_strider', provider: 'driver', price: 5, hours: 1, fromPos: [4096,4096], toPos: [69632,4096] },
+        { from: b, to: a, mode: 'silt_strider', provider: 'driver', price: 5, hours: 1, fromPos: [69632,4096], toPos: [4096,4096] }
       ],
       Places: [
         { key: a, name: 'Seyda Neen', interior: false, grid: [0, 0] },
         { key: b, name: 'Vivec', interior: false, grid: [8, 0] }
       ],
       Access: [], Intervention: [], GameSettings: [],
-      Teleports: [{ kind: 'propylon', from: [a], to: b, requires: ['test_index'] }]
+      Teleports: [{ kind: 'propylon', from: [a], to: b, requires: ['test_index'], fromPos:[[4096,4096]], toPos:[69632,4096] }]
     },
     metadata: {
       Travel: { nodes: { [a]: { key: a, name: 'Seyda Neen' }, [b]: { key: b, name: 'Vivec' } },
@@ -87,6 +87,57 @@ const button = text => [...document.querySelectorAll('button')].find(element => 
 const input = text => [...document.querySelectorAll('label')].find(element => element.textContent.trim().startsWith(text))?.querySelector('input');
 const summary = () => document.querySelector('#travel-options > summary').textContent;
 const route = () => document.getElementById('travel-results');
+
+test('ordinary journeys prefer restricted routes for every objective and expose no long-walk switch or warning', async () => {
+  const t = await mount({ search: '?from=Seyda%20Neen&to=Vivec' });
+  try {
+    assert.equal(input('Include long walks and swims'), undefined);
+    assert.equal(document.querySelector('.travel-long-journeys-note'), null);
+    for (const objective of ['Fewest legs', 'Cheapest', 'Fastest', 'Least real time']) {
+      await click(button(objective));
+      assert.match(route().textContent, /Take the Silt Strider/);
+      assert.match(route().textContent, /5 gold/);
+      assert.match(route().textContent, /no outdoor movement/);
+      assert.doesNotMatch(route().textContent, /sec swimming/);
+    }
+    assert.equal(new URLSearchParams(window.location.search).has('long'), false);
+  } finally { await t.cleanup(); }
+});
+
+function remoteIsland() {
+  const data = fixture();
+  data.catalogs.Places.push({ key: 'exterior:20,0', name: 'Far Island', interior: false, grid: [20, 0] });
+  return data;
+}
+
+test('an unreachable remote island automatically retries with long walks and swims, retaining walking-off', async () => {
+  const t = await mount({ data: remoteIsland(), search: '?from=Seyda%20Neen&to=place:exterior:20,0&long=0' });
+  try {
+    assert.match(route().textContent, /real movement.*walking.*swimming/s);
+    assert.doesNotMatch(route().textContent, /No Route|switch them off|unreachable/);
+    assert.equal(input('Include long walks and swims'), undefined);
+    assert.equal(new URLSearchParams(window.location.search).has('long'), false, 'obsolete opt-outs cannot suppress automatic fallback');
+    await click(input('Walk between places'));
+    assert.match(route().textContent, /No Route/);
+    await click(input('Walk between places'));
+    assert.doesNotMatch(route().textContent, /No Route/);
+    await click(button('Least real time'));
+    assert.match(route().textContent, /sec swimming/);
+  } finally { await t.cleanup(); }
+});
+
+test('the automatic fallback keeps Water Walking and overload constraints', async () => {
+  const t = await mount({ data: remoteIsland(), search: '?from=Seyda%20Neen&to=place:exterior:20,0' });
+  try {
+    assert.match(route().textContent, /sec swimming/);
+    await click(input('Constant Water Walking'));
+    assert.doesNotMatch(route().textContent, /sec swimming/);
+    assert.match(route().textContent, /walking on the water/);
+    await type(input('Carrying'), '1000000');
+    assert.match(route().textContent, /cannot move.*No Route/s);
+  } finally { await t.cleanup(); }
+});
+
 function before(a, b) {
   assert.ok(a.compareDocumentPosition(b) & window.Node.DOCUMENT_POSITION_FOLLOWING, 'reading and focus order must put the task before optional settings');
 }
@@ -116,7 +167,7 @@ test('route inputs and objective precede the answer, with options closed and rul
     assert.ok(fields[0].contains(input('Mages Guild member')));
     assert.ok(fields[0].contains(input('Carrying')));
     assert.ok(fields[0].contains(input('Test Propylon Index')));
-    assert.ok(fields[1].contains(input('Walk between nearby places')));
+    assert.ok(fields[1].contains(input('Walk between places')));
     assert.ok(fields[1].contains(input('Include quest teleports')));
   } finally { await t.cleanup(); }
 });
@@ -129,7 +180,7 @@ test('folded settings retain edits and refresh the summary and route fare', asyn
     await click(input('Mages Guild member'));
     await click(input('Divine Intervention'));
     await click(input('Test Propylon Index'));
-    await click(input('Walk between nearby places'));
+    await click(input('Walk between places'));
     await click(input('Include quest teleports'));
     await type(input('Followers'), '2');
     assert.match(summary(), /no Mages Guild/);
@@ -145,7 +196,7 @@ test('folded settings retain edits and refresh the summary and route fare', asyn
     options.open = true;
     assert.equal(input('Mages Guild member').checked, false);
     assert.equal(input('Followers').value, '2');
-    assert.equal(input('Walk between nearby places').checked, false);
+    assert.equal(input('Walk between places').checked, false);
     await click(button('Fastest'));
     assert.equal(button('Fastest').getAttribute('aria-pressed'), 'true');
     assert.equal(button('Fewest legs').getAttribute('aria-pressed'), 'false');
@@ -225,7 +276,7 @@ test('older unpriced and empty bundles do not show unsupported objectives or sta
   const t = await mount({ data });
   try {
     assert.equal(button('Cheapest'), undefined);
-    assert.equal(input('Walk between nearby places'), undefined);
+    assert.equal(input('Walk between places'), undefined);
     assert.equal(input('Divine Intervention'), undefined);
     assert.equal(input('Include quest teleports'), undefined);
     assert.match(summary(), /transport only/);
@@ -291,7 +342,7 @@ test('current edits and all shared-route defaults survive late account settings'
     t.state.preferences = { ready: true, owner: 'one', settings: { ...defaultAccountSettings(), toolDefaults: { travel: { mageGuild: true, objective: 'gold', walking: false, questTeleports: true } } } };
     await t.render();
     assert.equal(input('Mages Guild member').checked, false);
-    assert.equal(input('Walk between nearby places').checked, true);
+    assert.equal(input('Walk between places').checked, true);
     assert.equal(input('Include quest teleports').checked, false);
     assert.equal(button('Fewest legs').getAttribute('aria-pressed'), 'true');
   } finally { await t.cleanup(); }
@@ -358,7 +409,7 @@ test('TRV-6 isolates another save and profile, and late catalogs do not overwrit
 test('TRV-6 scroll routes show a finite use and recomputing does not spend the save inventory', async () => {
   const data = fixture(), cell = 'exterior:0,0';
   data.catalogs.Intervention = [{ key: cell, divine: 0 }];
-  data.metadata.Intervention.markers.divine = [{ town: 'Vivec', cell: 'exterior:8,0', name: 'Vivec, Shrine' }];
+  data.metadata.Intervention.markers.divine = [{ town: 'Vivec', cell: 'exterior:8,0', name: 'Vivec, Shrine', pos: [69632,4096] }];
   const activeSave = savedTraveller('Scroll traveller', [], [{ id: 'sc_divineintervention', count: 1 }]);
   const t = await mount({ data, activeSave });
   try {
@@ -438,7 +489,7 @@ test('TRV-7 unknown fares stay explicit and comparisons clear on endpoint change
 test('TRV-7 baseline comparison leaves selected single-use scroll routes intact', async () => {
   const data = fixture(), cell = 'exterior:0,0';
   data.catalogs.Intervention = [{ key: cell, divine: 0 }];
-  data.metadata.Intervention.markers.divine = [{ town: 'Vivec', cell: 'exterior:8,0', name: 'Vivec, Shrine' }];
+  data.metadata.Intervention.markers.divine = [{ town: 'Vivec', cell: 'exterior:8,0', name: 'Vivec, Shrine', pos: [69632,4096] }];
   const activeSave = savedTraveller('Scroll traveller', [], [{ id: 'sc_divineintervention', count: 1 }]);
   const t = await mount({ data, activeSave });
   try {

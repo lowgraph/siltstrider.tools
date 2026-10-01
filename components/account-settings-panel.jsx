@@ -8,7 +8,8 @@ import { DIFFICULTY_PRESETS } from '../lib/challenge-math.mjs';
 const WORLDS = [['vanilla', 'Morrowind'], ['tr', 'Tamriel Rebuilt'], ['tr_arce', 'Tamriel Rebuilt + ARCE']];
 const TRAVEL = [['mageGuild', 'Assume Mages Guild membership'], ['conjurer', 'Assume Conjurer rank or higher'],
   ['divine', 'Include Divine Intervention when available'], ['almsivi', 'Include Almsivi Intervention when available'],
-  ['waterWalking', 'Assume constant Water Walking'], ['walking', 'Walk between nearby places'], ['questTeleports', 'Include quest teleports']];
+  ['waterWalking', 'Assume constant Water Walking'], ['walking', 'Walk between places'],
+  ['questTeleports', 'Include quest teleports']];
 const GEAR = [['theft', 'Steal early gear'], ['endgame', 'Include endgame gear early'], ['nearStart', 'Prefer gear near the start'], ['darkBrotherhood', 'Include Dark Brotherhood armor']];
 const COUNTS = [['random', 'Random'], ...['1', '2', '3', '4', '5'].map(value => [value, value])];
 

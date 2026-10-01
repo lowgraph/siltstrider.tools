@@ -14,8 +14,18 @@ export default function ChangelogView() {
 
       <div className="space-y-6 text-sm text-fg-2">
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Travel first plans with nearby walks and short swims. If no route is available, it tries long walks and open-water swims, including routes to Ald Redaynia. Normal trips still use transport, and mixed legs show walking and swimming time separately.</li>
+            <li>Each selected Alchemy ingredient has a &ldquo;Where to get it&rdquo; button: shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened, and changing the ingredient closes its old sources. The effect finder keeps its pair shortcut.</li>
+            <li>Ingredient sources leave out hidden test and holding rooms. Creature drops leave out rare random loot, so the list focuses on drops you can reasonably gather.</li>
+          </ul>
+        </section>
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Cities remain one search choice. Search for a particular hall, service or provider to choose a precise stop. Journeys through a city include the outdoor walks between transport stops and show real movement time on each walk. Time spent indoors is still uncounted.</li>
+            <li>Choose the potion effects you want to find ingredient pairs, see their additional effects, and load a pair into the Alchemy calculator. Shop availability is not listed yet.</li>
             <li>Travel starts with Seyda Neen to Balmora without a save or shared route. Least real time favors less outdoor movement, then fewer transport or spell transitions; menus and loading remain uncounted. The route shows a loading message while its network arrives.</li>
             <li>Alchemy removes Secretmaster apparatus from its picks and orders tools from strongest to weakest.</li>
             <li>Enchanting lets you type the trapped soul&apos;s size, including 300 in a Grand Soul Gem. Constant Effect still needs at least 400.</li>

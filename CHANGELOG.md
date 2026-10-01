@@ -1,7 +1,15 @@
 # Changelog
 
+## Ingredient sources and remote journeys — 2026-10-01
+
+- **Try a longer journey when needed:** Travel first plans with nearby walks and short swims. If no route is available, it tries long walks and open-water swims, including routes to Ald Redaynia. Normal trips still use transport, and mixed legs show walking and swimming time separately.
+- **Where to get an ingredient:** each selected Alchemy ingredient now has a "Where to get it" button. See shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened; changing an ingredient closes its old sources. The effect finder also keeps its pair shortcut.
+- **More useful ingredient sources:** hidden test and holding rooms no longer appear as places to get ingredients. Creature drops leave out rare random loot, so the list focuses on drops you can reasonably gather.
+
 ## Easier journeys and first steps — 2026-09-30
 
+- **Walk between city stops:** cities remain one search choice. Search for a particular hall, service or provider to choose a precise stop. Journeys through a city include the outdoor walks between transport stops and show real movement time on each walk. Time spent indoors is still uncounted.
+- **Find a potion's ingredients:** choose the effects you want, see ingredient pairs and their additional effects, and load a pair into the Alchemy calculator. Shop availability is not listed yet.
 - **Travel starts with a useful trip:** without a save or shared route, start in Seyda Neen and head to Balmora. Least real time favors less outdoor movement, then fewer transport or spell transitions; menus and loading remain uncounted. While the network loads, the route shows a loading message.
 - **Alchemy tools you can obtain:** Secretmaster apparatus is removed from the picks, and tools run from strongest to weakest instead of alphabetically.
 - **Type the soul you trapped:** Enchanting accepts a custom soul size, including 300 in a Grand Soul Gem. Constant Effect still needs at least 400.

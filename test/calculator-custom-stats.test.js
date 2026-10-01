@@ -37,9 +37,10 @@ async function workstation(tool) {
     Apparatus: [{ key: 'apparatus_j_mortar_01', type: 'mortar_and_pestle', name: 'Mortar', quality: 1 }],
     GameSettings: [setting('fPotionStrengthMult', 0.5), setting('iAlchemyMod', 2), setting('fPotionT1MagMult', 1.5), setting('fPotionT1DurMult', 0.5)] } };
   const deps = {
+    './ingredient-sources': require('./helpers/ingredient-sources.cjs'),
     '../../character-context': { useActiveCharacter: () => ({ build: { race: 'Breton', className: 'Custom' }, sheet: SHEET }) },
     '../../shell-context': { useShell: () => ({ ...shell }) },
-    '../../active-character-link': require('./helpers/active-character-link.cjs'),'./ingredient-combobox': require('./helpers/ingredient-combobox.cjs'),
+    '../../active-character-link': require('./helpers/active-character-link.cjs'),'./reverse-alchemy': require('./helpers/reverse-alchemy.cjs'),'./ingredient-combobox': require('./helpers/ingredient-combobox.cjs'),
     '../../use-game-data': { useGameData: () => ({ status: 'ready', data }) },
     '../../use-search-intent': { useSearchIntent: () => null },
   };

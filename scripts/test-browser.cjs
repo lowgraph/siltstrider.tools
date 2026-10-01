@@ -29,6 +29,7 @@ const report = { base, suite, gitHead, bundle, started: new Date().toISOString()
 let socket, send, evaluate, current = 'setup', deliberateFailure = false, fetchMode = null;
 const heldRequests = [], requests = new Map();
 const networkTrace = [];
+const ingredientSourceRequests = [];
 const loadedDocuments = new Set();
 let activeLoaderId = null;
 function recordNetwork(method, params) {
@@ -96,12 +97,13 @@ async function screenshot(name) {
   fs.writeFileSync(path.join(output, `${name}.png`), Buffer.from(capture.data, 'base64'));
 }
 async function key(key, code, number, modifiers = 0) {
-  await send('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: number, modifiers });
+  const text = !modifiers && key === 'Enter' ? '\r' : !modifiers && key === ' ' ? ' ' : undefined;
+  await send('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: number, modifiers, ...(text ? { text } : {}) });
   await send('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: number, modifiers });
   await pause(80);
 }
 async function click(selector) {
-  await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});if(!el)throw Error('Missing control');el.scrollIntoView({block:'center'});})()`);
+  await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});if(!el)throw Error('Missing control: '+${JSON.stringify(selector)});el.scrollIntoView({block:'center'});})()`);
   const rect = await evaluate(`(()=>{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
   await send('Input.dispatchMouseEvent', { type: 'mousePressed', button: 'left', clickCount: 1, ...rect });
   await send('Input.dispatchMouseEvent', { type: 'mouseReleased', button: 'left', clickCount: 1, ...rect });
@@ -111,7 +113,23 @@ async function button(text) {
   const selector = await evaluate(`(()=>{const el=[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===${JSON.stringify(text)});if(!el)throw Error('Missing button '+${JSON.stringify(text)});el.dataset.browserButton='target';return '[data-browser-button="target"]'})()`);
   await click(selector); await evaluate(`document.querySelector('[data-browser-button="target"]')?.removeAttribute('data-browser-button')`);
 }
-async function type(selector, text) { await click(selector); await key('a', 'KeyA', 65, 2); await send('Input.insertText', { text }); await pause(150); }
+async function type(selector, text) {
+  const travelPicker = ['#travel-origin','#travel-destination'].includes(selector);
+  const state = () => evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});return {value:el.value,active:document.activeElement===el,expanded:el.getAttribute('aria-expanded'),start:el.selectionStart,end:el.selectionEnd}})()`);
+  const trace = async phase => {
+    if (travelPicker) (report.inputStates ||= []).push({case:current,selector,phase,...await state()});
+  };
+  await click(selector);
+  await trace('clicked');
+  if (travelPicker) await until(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});return document.activeElement===el&&el.getAttribute('aria-expanded')==='true'})()`);
+  await key('a', 'KeyA', 65, 2);
+  await trace('select-all');
+  if (travelPicker) await until(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});return document.activeElement===el&&el.selectionStart===0&&el.selectionEnd===el.value.length})()`);
+  await send('Input.insertText', { text });
+  await trace('inserted');
+  if (travelPicker) await until(`document.querySelector(${JSON.stringify(selector)}).value===${JSON.stringify(text)}`);
+  else await pause(150);
+}
 async function pick(selector, query, label) {
   await type(selector, query);
   await until('document.querySelector("[role=listbox] [role=option]")');
@@ -330,6 +348,117 @@ async function toolsRegression() {
   }
 }
 
+async function reverseAlchemyRegression() {
+  for (const profile of ['vanilla','tr','tr_arce']) for (const width of [1366,375]) for (const theme of ['ashfall','morrowind']) {
+    await check(`Alchemy effect finder/${profile}/${width}/${theme}`, async () => {
+      await viewport(width);
+      await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await navigate('alchemy', profile);
+      assert.equal(await evaluate('document.querySelectorAll(".reverse-alchemy-pair").length'), 0, 'No recipe before choosing an effect');
+      await choose('[aria-label="Crucible 3 ingredient"]', 'Wickwheat');
+      await choose('[aria-label="Crucible 4 ingredient"]', 'Marshmerrow');
+      await type('#reverse-alchemy-search', 'restore health');
+      await button('Restore Health');
+      await until('document.querySelector(".reverse-alchemy-pair")');
+      const pairNames = await evaluate(`document.querySelector('.reverse-alchemy-pair > p').textContent.split(' + ')`);
+      assert.equal(await evaluate('document.querySelector(".reverse-alchemy-sources").open'), false, 'Sources start folded');
+      const beforeSources = ingredientSourceRequests.filter(request => request.case === current).length;
+      assert.equal(beforeSources, 0, 'No ingredient source download before opening a pair');
+      await click('.reverse-alchemy-sources summary');
+      await until('document.querySelector(".reverse-alchemy-sources").textContent.includes("Sources exclude theft")');
+      assert.deepEqual(await evaluate('[...document.querySelectorAll(".reverse-alchemy-sources > div > div > p")].slice(0,2).map(el=>el.textContent)'), pairNames, 'Sources identify both ingredients');
+      assert.ok(await evaluate('/Buy from|Harvest:|Dropped by|Find:|No dependable source is listed/.test(document.querySelector(".reverse-alchemy-sources").textContent)'), 'Source descriptions or an explicit absence');
+      assert.equal(await evaluate('document.querySelector(".reverse-alchemy-sources [role=alert]")'), null);
+      await click('.reverse-alchemy-pair button');
+      assert.deepEqual(await evaluate(`[1,2,3,4].map(i=>document.querySelector('[aria-label="Crucible '+i+' ingredient"]').value)`), [...pairNames,'',''], 'Chosen pair replaces every slot');
+      assert.match(await evaluate('document.getElementById("potion-name-input").value'), /Restore Health/);
+      assert.equal(await evaluate('document.activeElement.id'), 'alchemy-potion-output', 'Chosen pair moves focus to the potion output');
+      await type('#reverse-alchemy-search', 'no-such-effect-xyz');
+      assert.ok(await evaluate('document.querySelector(".reverse-alchemy").textContent.includes("No matching effect")'));
+      await type('#reverse-alchemy-search', '');
+      await click('[aria-label="Remove Restore Health"]');
+      assert.equal(await evaluate('document.querySelectorAll(".reverse-alchemy-pair").length'), 0, 'Removing targets clears results');
+      await type('#reverse-alchemy-search', 'restore health'); await button('Restore Health');
+      await type('#reverse-alchemy-search', 'restore fatigue'); await button('Restore Fatigue');
+      assert.ok(await evaluate(`document.querySelectorAll('[aria-label="Desired potion effects"] li').length===2`), 'Multiple targets selected');
+      // Vanilla has no pair with both effects. Keep that real empty result, then
+      // return to a valid recipe before checking its expanded source layout.
+      if (!await evaluate('Boolean(document.querySelector(".reverse-alchemy-sources"))')) {
+        assert.ok(await evaluate('document.querySelector(".reverse-alchemy").textContent.includes("No ingredient pair")'));
+        await click('[aria-label="Remove Restore Fatigue"]');
+      }
+      if (!await evaluate('document.querySelector(".reverse-alchemy-sources").open')) await click('.reverse-alchemy-sources summary');
+      await until('document.querySelector(".reverse-alchemy-sources").textContent.includes("Sources exclude theft")');
+      assert.ok(await evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), 'No horizontal overflow');
+      assertAccessible(await audit(`reverse-alchemy-${profile}-${width}-${theme}`));
+      await screenshot(`reverse-alchemy-${profile}-${width}-${theme}`);
+      await navigate('alchemy', profile === 'vanilla' ? 'tr' : 'vanilla');
+      assert.equal(await evaluate('document.querySelectorAll(".reverse-alchemy-pair").length'), 0, 'World switch clears prior recipes');
+      return { searched: true, multipleEffects: true, filledPair: true, clearedOtherSlots: true, focus: true, worldIsolation: true, sources: { lazy: true, bothIngredients: true, profile, sourceRequests: ingredientSourceRequests.filter(request => request.case === current).length } };
+    });
+  }
+  for (const profile of ['vanilla','tr','tr_arce']) for (const width of [1366,375]) for (const theme of ['ashfall','morrowind']) {
+    await check(`Alchemy ingredient sources/${profile}/${width}/${theme}`, async () => {
+      await viewport(width);
+      await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await navigate('alchemy', profile);
+      assert.equal(await evaluate('document.querySelectorAll(".alchemy-ingredient-sources").length'), 0, 'No source buttons on empty slots');
+      await choose('[aria-label="Crucible 1 ingredient"]', 'Wickwheat');
+      assert.equal(await evaluate('document.querySelectorAll(".reverse-alchemy-pair").length'), 0, 'Individual sources need no effect-finder pair');
+      assert.equal(await evaluate('document.querySelector(".alchemy-ingredient-sources > button").textContent'), 'Where to get it');
+      assert.equal(ingredientSourceRequests.filter(request => request.case === current).length, 0, 'Selection alone does not download sources');
+      await evaluate('document.querySelector(".alchemy-ingredient-sources > button").focus()');
+      assert.ok(await evaluate('document.activeElement.matches(".alchemy-ingredient-sources > button")'), 'Source button receives keyboard focus');
+      await key('Enter', 'Enter', 13);
+      await until('document.querySelector(".alchemy-ingredient-sources").textContent.includes("Sources exclude theft")');
+      assert.equal(await evaluate('document.querySelector(".alchemy-ingredient-sources > button").getAttribute("aria-expanded")'), 'true');
+      assert.equal(await evaluate('document.querySelector(".alchemy-ingredient-sources > div > div > p").textContent'), 'Wickwheat');
+      await choose('[aria-label="Crucible 1 ingredient"]', 'Marshmerrow');
+      assert.equal(await evaluate('document.querySelector(".alchemy-ingredient-sources > button").getAttribute("aria-expanded")'), 'false', 'Replacing an ingredient closes old sources');
+      assert.equal(await evaluate('document.querySelector(".alchemy-ingredient-sources").textContent.includes("Wickwheat")'), false);
+      await click('.alchemy-ingredient-sources > button');
+      await until('document.querySelector(".alchemy-ingredient-sources > div > div > p")?.textContent==="Marshmerrow"');
+      assert.ok(await evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), 'No horizontal overflow with sources open');
+      assertAccessible(await audit(`alchemy-ingredient-sources-${profile}-${width}-${theme}`));
+      await screenshot(`alchemy-ingredient-sources-${profile}-${width}-${theme}`);
+      for (const [slot, ingredient] of [[2,'Ash Yam'],[3,'Saltrice'],[4,'Wickwheat']]) await choose(`[aria-label="Crucible ${slot} ingredient"]`, ingredient);
+      assert.equal(await evaluate('document.querySelectorAll(".alchemy-ingredient-sources > button").length'), 4, 'Every filled slot has its own source button');
+      await button('Clear All Ingredients');
+      assert.equal(await evaluate('document.querySelectorAll(".alchemy-ingredient-sources").length'), 0, 'Clearing selections removes all source buttons');
+      await choose('[aria-label="Crucible 1 ingredient"]', 'Wickwheat'); await click('.alchemy-ingredient-sources > button');
+      await navigate('alchemy', profile === 'vanilla' ? 'tr' : 'vanilla');
+      assert.equal(await evaluate('document.querySelectorAll(".alchemy-ingredient-sources").length'), 0, 'World changes discard selected ingredient sources');
+      return { selectedIngredient: true, lazy: true, keyboard: true, replacement: true, allSlots: true, clear: true, worldIsolation: true };
+    });
+  }
+  for (const width of [1366,375]) await check(`Alchemy sources loading/failure/retry/${width}`, async () => {
+    await viewport(width);
+    await evaluate('caches.delete("silt-game-data-v1")');
+    await navigate('alchemy', 'vanilla');
+    await choose('[aria-label="Crucible 1 ingredient"]', 'Wickwheat');
+    deliberateFailure = true; fetchMode = 'hold';
+    await send('Fetch.enable', { patterns: [{ urlPattern: '*game-data/*/IngredientSources.json*' }] });
+    try {
+      await click('.alchemy-ingredient-sources > button');
+      await until('document.querySelector(".alchemy-ingredient-sources [role=status]")?.textContent.includes("Loading ingredient sources")');
+      await pause(200);
+      assert.equal(await evaluate('document.querySelector(".alchemy-ingredient-sources [role=alert]")'), null, 'Pending data does not flash an error');
+      assert.ok(heldRequests.length, 'Source request was held before failure');
+      fetchMode = 'fail';
+      for (const requestId of heldRequests.splice(0)) await send('Fetch.failRequest', { requestId, errorReason: 'Failed' });
+      await until('document.querySelector(".alchemy-ingredient-sources [role=alert]")');
+      fetchMode = null; await send('Fetch.disable');
+      await click('.alchemy-ingredient-sources > div button');
+      await until('document.querySelector(".alchemy-ingredient-sources").textContent.includes("Sources exclude theft")');
+      assert.equal(await evaluate('document.querySelector(".alchemy-ingredient-sources [role=alert]")'), null, 'Retry recovers without resetting the selected ingredient');
+      assert.equal(await evaluate('document.querySelector(\'[aria-label="Crucible 1 ingredient"]\').value'), 'Wickwheat');
+      assertAccessible(await audit(`alchemy-sources-retry-${width}`));
+      await screenshot(`alchemy-sources-retry-${width}`);
+      return { lazy: true, loading: true, failure: true, retry: true, preservedIngredient: true };
+    } finally { fetchMode = null; await send('Fetch.disable'); deliberateFailure = false; }
+  });
+}
+
 async function factionAndLevelRegression() {
   for (const profile of ['vanilla','tr','tr_arce']) for (const width of [1366,375]) for (const theme of ['ashfall','morrowind']) {
     await check(`Faction and Level interactions/${profile}/${width}/${theme}`, async () => {
@@ -421,27 +550,122 @@ async function savedTravel() {
   });
 }
 
+async function longJourneyRegression() {
+  for (const profile of ['vanilla', 'tr', 'tr_arce']) for (const theme of ['ashfall', 'morrowind']) for (const width of [1366, 375]) {
+    await check(`Travel long walk fallback/${profile}/${theme}/${width}`, async () => {
+      await viewport(width); await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await navigate('travel', profile, '&from=Seyda%20Neen&to=Balmora');
+      await until('document.getElementById("travel-results").textContent.includes("Fares for your character:")');
+      const normal = await evaluate('document.getElementById("travel-results").textContent');
+      assert.match(normal, /1 Leg/);
+      assert.match(normal, /Take the Silt Strider/);
+      assert.match(normal, /no outdoor movement/);
+      assert.equal(await evaluate('Boolean(document.querySelector(".travel-long-journeys-note"))'), false);
+      assert.equal(await evaluate(`[...document.querySelectorAll('#travel-options label')].some(el=>el.textContent.includes('Include long walks and swims'))`), false);
+      await navigate('travel', profile, '&from=Balmora&to=place%3Aexterior%3A-4%2C21&plan=real');
+      await until('document.querySelector(".travel-real-time")?.textContent.includes("movement")');
+      const result = await evaluate('document.getElementById("travel-results").textContent');
+      assert.doesNotMatch(result, /No Route/);
+      assert.match(result, /Ald Redaynia/);
+      assert.match(result, /walking \+ ~.* swimming/);
+      const shared = await evaluate('location.href');
+      assert.equal(new URL(shared).searchParams.has('long'), false);
+      await openDocument(shared); await idle(); await waitForFonts();
+      assert.match(await evaluate('document.getElementById("travel-results").textContent'), /walking \+ ~.* swimming/);
+      await click('#travel-options > summary');
+      const control = await evaluate(`(()=>{const el=[...document.querySelectorAll('#travel-options label')].find(el=>el.textContent.includes('Walk between places')).querySelector('input');el.id='browser-walking';return '#browser-walking';})()`);
+      await click(control);
+      await until('document.getElementById("travel-results").textContent.includes("No Route") && new URLSearchParams(location.search).get("walk") === "0"');
+      await click(control);
+      await until('document.getElementById("travel-results").textContent.includes(" swimming)") && !new URLSearchParams(location.search).has("walk")');
+      assert.equal(await evaluate('document.documentElement.scrollWidth > innerWidth'), false);
+      await click('#travel-options > summary');
+      await evaluate('document.getElementById("travel-results").scrollIntoView({block:"start"})');
+      const shot = `long-swim-fallback-${profile}-${theme}-${width}`;
+      assertAccessible(await audit(shot)); await screenshot(shot);
+      return { normalJourney: 'Seyda Neen to Balmora by Silt Strider', fallback: 'Ald Redaynia', swimmingTime: true, noNewSwitch: true, noWarning: true, shared: true, walkingOff: true };
+    });
+  }
+}
+
+async function cityStopRegression() {
+  const data = JSON.parse(fs.readFileSync(path.join(repo,'public/game-data',bundle.bundleId,'vanilla','Travel.json'),'utf8'));
+  const driver = data.records.find(r => data.nodes[r.from]?.town==='Balmora' && r.mode==='silt_strider');
+  const platform = `stop:${driver.from}@${driver.fromPos.join(',')}`;
+  const hall = 'stop:interior:balmora, guild of mages';
+  for(const profile of ['vanilla','tr','tr_arce']) for(const theme of ['ashfall','morrowind']) for(const width of [1366,375]) {
+    await check(`Travel city transfer/${profile}/${theme}/${width}`,async()=>{
+      await viewport(width); await evaluate(`localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await navigate('travel',profile,`&from=${encodeURIComponent(platform)}&to=${encodeURIComponent(hall)}&plan=real`);
+      await until('document.querySelector(".travel-real-time")?.textContent.includes("movement")');
+      await until('document.getElementById("travel-results").textContent.includes("Fares for your character:")');
+      const result=await evaluate('document.getElementById("travel-results").textContent');
+      assert.match(result,/Silt Strider/); assert.match(result,/Guild of Mages/);
+      assert.match(result,/real movement/); assert.match(result,/Go in by the doors/);
+      assert.doesNotMatch(result,/no outdoor movement|No Route/);
+      const old=result;
+      await type('#travel-origin','Balmora');
+      const choices=await evaluate(`[...document.querySelectorAll('[role=listbox] [role=option] span > span:first-child')].map(el=>el.textContent.trim())`);
+      assert.deepEqual(choices,['Balmora'],'City-name search remains one merged choice');
+      await type('#travel-origin','Balmora Guild of Mages');
+      assert.match(await evaluate(`document.querySelector('[role=listbox] [role=option] span > span:first-child')?.textContent.trim()`),/^Balmora › Guild of Mages(?: \(.+\))?$/,'Specific halls remain searchable');
+      await type('#travel-origin','Selvil');
+      assert.match(await evaluate(`document.querySelector('[role=listbox] [role=option]')?.textContent`),/Silt Strider.*Selvil/,'Specific providers remain searchable');
+      await type('#travel-origin','Vivec');
+      assert.deepEqual(await evaluate(`[...document.querySelectorAll('[role=listbox] [role=option] span > span:first-child')].map(el=>el.textContent.trim())`),['Vivec'],'Cantons stay within the city choice');
+      assert.equal(await evaluate('document.getElementById("travel-results").textContent'),old,'Typing keeps the current route');
+      await key('Escape','Escape',27);
+      await button('Swap Origin and Destination');
+      assert.match(await evaluate('document.getElementById("travel-results").textContent'),/Leave by the doors/);
+      const shared=await evaluate('location.href');
+      assert.equal(new URL(shared).searchParams.get('from'),hall);
+      await openDocument(shared);await idle();await waitForFonts();
+      assert.match(await evaluate('document.getElementById("travel-results").textContent'),/real movement/);
+      assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false,'No page overflow');
+      const shot=`city-transfer-${profile}-${theme}-${width}`;
+      await evaluate('document.getElementById("travel-results").scrollIntoView({block:"start"})');
+      assertAccessible(await audit(shot));await screenshot(shot);
+      await navigate('travel',profile,`&from=${encodeURIComponent(platform)}&to=${encodeURIComponent(hall)}&walk=0`);
+      assert.match(await evaluate('document.getElementById("travel-results").textContent'),/No Route/,'No free transfer with walking disabled');
+      await navigate('travel',profile,'&from=Seyda%20Neen&to=Caldera&plan=real');
+      assert.equal(await evaluate('document.getElementById("travel-origin").value'),'Seyda Neen');
+      assert.equal(await evaluate('document.getElementById("travel-destination").value'),'Caldera');
+      const through=await evaluate('document.getElementById("travel-results").textContent');
+      assert.match(through,/Leg 1: Seyda Neen to/,'An unspecified starting city keeps its city label');
+      assert.match(through,/Take the Silt Strider/);assert.match(through,/Guild Guide/);
+      assert.match(through,/Leg 2: (Balmora|Vivec) · Silt Strider.*?to \1 › Guild of Mages/s,'Passing through a city includes its actual arrival and departure stops');
+      assert.match(through,/\d+ sec real movement/,'The intermediate platform-to-hall walk is timed');
+      await navigate('travel',profile,'&from=Balmora&to=Caldera&walk=0');
+      assert.match(await evaluate('document.getElementById("travel-results").textContent'),/Guild Guide/,'City boundaries can choose the appropriate platform');
+      return {transfer:true,doors:true,mergedCities:true,specificPlaces:true,throughCity:true,shared:true,walkingOff:true};
+    });
+  }
+}
+
 async function travel() {
   for (const width of [1366, 375]) {
     await check(`Travel keyboard/search/layout/${width}`, async () => {
-      await viewport(width); await navigate('travel', 'vanilla', '&from=Seyda%20Neen&to=Vivec');
+      await viewport(width); await navigate('travel', 'vanilla', '&from=Seyda%20Neen&to=Vivec&plan=real');
+      await until('document.getElementById("travel-results").textContent.includes("Fares for your character:")');
       await evaluate('document.documentElement.dataset.theme="ashfall"');
       const old = await evaluate('document.getElementById("travel-results").textContent');
       await type('#travel-origin', 'Pelagiad');
       assert.equal(await evaluate('document.getElementById("travel-results").textContent'), old, 'Typing must not change the route');
-      assert.equal(await evaluate(`[...document.querySelectorAll('[role=option] span > span:first-child')].filter(el=>el.textContent.trim()==='Pelagiad').length`), 1);
+      assert.equal(await evaluate(`[...document.querySelectorAll('[role=option] span > span:first-child')].filter(el=>el.textContent.trim()==='Pelagiad').length`),1);
       await key('Escape', 'Escape', 27);
-      assert.equal(await evaluate('document.getElementById("travel-origin").value'), 'Seyda Neen');
+      assert.match(await evaluate('document.getElementById("travel-origin").value'), /^Seyda Neen$/);
       await type('#travel-origin', 'Balmora'); await key('ArrowDown', 'ArrowDown', 40); await key('Enter', 'Enter', 13);
-      assert.equal(await evaluate('document.getElementById("travel-origin").value'), 'Balmora');
+      assert.match(await evaluate('document.getElementById("travel-origin").value'), /^Balmora/);
       await type('#travel-origin', 'zzzzzzzz-no-place'); await key('Tab', 'Tab', 9);
-      assert.equal(await evaluate('document.getElementById("travel-origin").value'), 'Balmora');
-      await pick('#travel-origin', 'Seyda Neen', 'Seyda Neen');
+      assert.match(await evaluate('document.getElementById("travel-origin").value'), /^Balmora/);
+      await type('#travel-origin','Seyda Neen');
+      const departure=await evaluate(`[...document.querySelectorAll('[role=listbox] [role=option]')].findIndex(el=>el.querySelector('span > span:first-child')?.textContent.trim()==='Seyda Neen')`);
+      assert.ok(departure>=0);await click(`[role=listbox] [role=option]:nth-child(${departure+1})`);
       await button('Swap Origin and Destination');
-      assert.equal(await evaluate('document.getElementById("travel-origin").value'), 'Vivec');
+      assert.match(await evaluate('document.getElementById("travel-origin").value'), /^Vivec/);
       await button('Swap Origin and Destination');
       await button('Cheapest');
-      assert.match(await evaluate('document.querySelector(".travel-tradeoff").textContent'), /Fewest legs.*gold/);
+      assert.match(await evaluate('document.querySelector(".travel-tradeoff").textContent'), /Fewest legs.*(?:gold|fare)/);
       assert.match(await evaluate('document.querySelector(".travel-real-time").textContent'), /Real Time Approximation/);
       assert.equal(await evaluate('document.querySelector(".travel-tradeoff").closest("details") !== null'), false);
       await send('Browser.grantPermissions', { origin: base, permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'] });
@@ -507,8 +731,8 @@ async function polishRegression() {
     for (const width of [375,1366]) {
       await check(`Polish Travel/${theme}/${width}`,async()=>{
         await viewport(width); await navigate('travel');
-        assert.equal(await evaluate('document.getElementById("travel-origin").value'),'Seyda Neen');
-        assert.equal(await evaluate('document.getElementById("travel-destination").value'),'Balmora');
+        assert.match(await evaluate('document.getElementById("travel-origin").value'),/^Seyda Neen$/);
+        assert.match(await evaluate('document.getElementById("travel-destination").value'),/^Balmora$/);
         await button('Least real time');
         assert.equal(await evaluate('new URLSearchParams(location.search).get("plan")'),'real');
         assert.match(await evaluate('document.getElementById("travel-results").textContent'),/Real Time Approximation/);
@@ -561,6 +785,7 @@ async function polishRegression() {
     if (msg.method === 'Page.frameNavigated' && !msg.params.frame.parentId) activeLoaderId = msg.params.frame.loaderId;
     if (msg.method === 'Runtime.exceptionThrown') report.runtimeErrors.push({ case: current, message: msg.params.exceptionDetails.exception?.description || msg.params.exceptionDetails.text });
     if (msg.method === 'Network.requestWillBeSent' && msg.params.request.url.startsWith(base) && msg.params.type !== 'WebSocket') {
+      if (msg.params.request.url.endsWith('/IngredientSources.json')) ingredientSourceRequests.push({ case: current, url: msg.params.request.url });
       requests.set(msg.params.requestId, {url:msg.params.request.url,type:msg.params.type,loaderId:msg.params.loaderId,frameId:msg.params.frameId});
       recordNetwork(msg.method, {requestId:msg.params.requestId,...requests.get(msg.params.requestId)});
     }
@@ -580,8 +805,8 @@ async function polishRegression() {
   // Focused interaction runs also need a same-origin document before using storage.
   await navigate('home');
   if (['all','matrix'].includes(suite)) await matrix();
-  if (['all','travel'].includes(suite)) await travel();
-  if (['all','tools'].includes(suite)) { await toolsRegression(); await factionAndLevelRegression(); await savedTravel(); }
+  if (['all','travel'].includes(suite)) { await cityStopRegression(); await longJourneyRegression(); await travel(); }
+  if (['all','tools'].includes(suite)) { await toolsRegression(); await reverseAlchemyRegression(); await factionAndLevelRegression(); await savedTravel(); }
   if (['all','settings'].includes(suite)) await settingsRegression();
   if (['all','polish'].includes(suite)) await polishRegression();
   await send('Browser.close').catch(() => {});

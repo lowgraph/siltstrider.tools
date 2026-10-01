@@ -21,7 +21,7 @@ function fixture(){
  const cacheStorage={async open(){return {async match(url){return cache.get(url)?.clone();},async put(url,r){cache.set(url,r.clone());},async delete(url){return cache.delete(url);}};}};
  const fetcher=async url=>{hits.push(url);return new Response(routes.get(url)||'missing',{status:routes.has(url)?200:404});};
  const options={baseUrl:root,fetcher,cacheStorage,crypto:webcrypto};
- return {m,root,routes,hits,cache,options,refresh};
+ return {m,root,routes,hits,cache,options,refresh,add};
 }
 test('loader is lazy, deduplicates requests and preserves profile provenance',async()=>{
  const {createBundleLoader}=await modulePromise,f=fixture(),loader=createBundleLoader(f.options);
@@ -72,4 +72,38 @@ test('feature groups load only their own catalogs and keep one snapshot',async()
  for(const name of f.m.catalogs){const body=JSON.stringify({schemaVersion:'1.0.0',snapshotId:'snapshot',profile:{id:p.id,world:p.world,version:p.version,arce:p.arce},catalog:name,kind:'full',records:[{id:name}]});p.files[name]={path:'vanilla/'+name+'.json',kind:'full',records:1,bytes:Buffer.byteLength(body),sha256:createHash('sha256').update(body).digest('hex')};f.routes.set(f.root+'abcdef/'+p.files[name].path,body);}
  f.refresh();const result=await createBundleLoader(f.options).loadFeature('vanilla','spells');
  assert.deepEqual(Object.keys(result.catalogs),['Spells','MagicEffects']);assert.equal(result.bundleId,'abcdef');assert.equal(f.hits.length,4);
+});
+
+function ingredientFixture(withSources=true){
+ const f=fixture();f.m.catalogs=withSources?['Places','IngredientSources']:['Places'];
+ for(const p of f.m.profiles){p.files={};p.inherits=p.base?[...f.m.catalogs]:[];}
+ for(const profile of ['vanilla','tr']){
+  f.add(profile,'Places',[{key:'interior:guild',name:profile+' guild'}]);
+  if(withSources)f.add(profile,'IngredientSources',[{key:'ingred_x',name:profile+' ingredient'}]);
+ }
+ f.refresh();return f;
+}
+test('ingredient source feature preserves world provenance and inherited ARCE evidence',async()=>{
+ const {createBundleLoader}=await modulePromise,f=ingredientFixture(),loader=createBundleLoader(f.options);
+ assert.equal(f.hits.length,0);
+ const vanilla=await loader.loadFeature('vanilla','ingredientSources');
+ const tr=await loader.loadFeature('tr','ingredientSources');
+ const arce=await loader.loadFeature('tr_arce','ingredientSources');
+ assert.equal(vanilla.catalogs.IngredientSources[0].name,'vanilla ingredient');
+ assert.equal(tr.catalogs.IngredientSources[0].name,'tr ingredient');
+ assert.equal(arce.profile,'tr_arce');assert.equal(arce.catalogs.IngredientSources,tr.catalogs.IngredientSources);
+ assert.equal(arce.catalogs.Places,tr.catalogs.Places);
+ assert.ok(!f.hits.some(url=>url.includes('tr_arce/')||url.endsWith('Races.json')));
+ assert.ok(Object.isFrozen(arce.catalogs.IngredientSources[0]));
+});
+test('older bundles omit ingredient sources; a failed source request retries independently',async()=>{
+ const {createBundleLoader}=await modulePromise,old=ingredientFixture(false);
+ const data=await createBundleLoader(old.options).loadFeature('vanilla','ingredientSources');
+ assert.deepEqual(Object.keys(data.catalogs),['Places']);
+ assert.ok(!old.hits.some(url=>url.endsWith('IngredientSources.json')));
+ const f=ingredientFixture(),loader=createBundleLoader(f.options),url=f.root+'abcdef/tr/IngredientSources.json',body=f.routes.get(url);
+ f.routes.delete(url);await assert.rejects(loader.loadFeature('tr','ingredientSources'),/HTTP 404/);
+ f.routes.set(url,body);const recovered=await loader.loadFeature('tr','ingredientSources');
+ assert.equal(recovered.catalogs.IngredientSources[0].name,'tr ingredient');
+ assert.equal(f.hits.filter(url=>url.endsWith('Places.json')).length,1);
 });

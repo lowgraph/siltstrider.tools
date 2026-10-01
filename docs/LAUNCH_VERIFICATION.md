@@ -20,7 +20,7 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0007 applied; none pending at the 00:11 release |
 | D1 Time Travel bookmark | `00000059-00000000-000050f7-69367513ae9acb9d9add96e963178727`, captured before the 2026-10-01 00:11 UTC release; private migration backup and preservation checks in §15 |
-| Pipeline repo | `master` at `129b2d1`; identical coordination record, synchronized in this session |
+| Pipeline repo | `master` at `83b0159` locally (`origin/master` at `129b2d1`); identical branch coordination record |
 
 Deployment history since the last tagged release before this batch:
 
@@ -830,3 +830,317 @@ Evidence under `A:/Cache`: `trv-housekeeping-unit.log`,
 `trv-housekeeping-pipeline.log`, `trv-housekeeping-ancestry.json`,
 `trv-housekeeping-browser-summary.json` and `trv-housekeeping-browser-1`/`-2`
 (reports, synthetic fixture, screenshots and request traces).
+
+## 18. CALC-4 ingredient-pair finder on its branch — 30 September locally
+
+`launch/calc-4-reverse-alchemy` starts at main `f5b1f56`; claim `73b75be` was
+committed after 887 passing tests. The implemented finder searches the current
+profile's potion effects, accepts up to four targets and lists distinct ingredient
+pairs that share every selected effect. Attribute/skill targets remain distinct;
+additional shared effects, including harmful ones, are shown. Pairs rank by fewer
+extras, then ingredient base value; this is not a vendor quote. Using a pair clears
+the other slots and moves focus to the existing potion output. Typed stats,
+apparatus choices and the forward calculator remain intact; world changes reset
+the finder through the existing workstation lifecycle.
+
+- Full unit suite: **895 passed**, zero failures/skips/todos. Eight new tests
+  cover target identity, multi-effect intersections, duplicate records/slots,
+  malformed/null input, harmful extras, missing prices, deterministic pagination,
+  frozen records, sparse effects and React search/use/remove behavior.
+- Focused Chrome cases: **12/12 passed**, all three profiles, both themes,
+  1366/375 px. Checks search, multiple targets, use/clear, focus, unmatched text,
+  world isolation and horizontal overflow. **12 axe audits, zero violations**;
+  no runtime/server errors; **25 settled font checks**. Desktop and phone
+  screenshots were inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**, existing repository
+  configuration and live Clerk publishable key; no deployment.
+- Pipeline tests: **670 passed** before local shared-note commit `83b0159`.
+- The first browser attempt queried the remove button by visible text using its
+  accessible label. Correcting only the runner selector produced the passing
+  twelve-case run; no application persistence or calculator patch was needed.
+- Published Merchants contains services/locations but no ingredient inventories.
+  The finder says shop availability is not listed. CALC-4 remains in progress for
+  buying locations from its usability recommendation; do not invent stock from
+  merchant service flags. No extraction, published-bundle/schema change, API,
+  migration, main merge or deployment is part of this branch work.
+
+Evidence under `A:/Cache`: `calc-4-claim-unit.log`, `calc-4-unit.log`,
+`calc-4-precommit-unit.log`, `calc-4-build.log`, `calc-4-pipeline.log` and
+`calc-4-browser-verified` (report, screenshots and audits).
+Shared coordination and roadmap notes describe the branch and the missing stock
+coverage; both repositories keep identical copies.
+
+## 19. Precise city transfers with merged city choices — 30 September locally
+
+`launch/travel-city-stop-walks` starts at CALC-4 `f3461cd`. Cities remain one
+search choice and keep their general names at unspecified journey boundaries.
+Searching a specific hall, district, service or provider reveals its precise
+location. Intermediate cities show the arrival/departure stops and the timed
+outdoor walk between them, including doors into and out of guild halls.
+
+The router retains published cell/position identities, including distinct
+arrivals, Intervention markers and usable scripted teleports. A merged city is
+only a choice of route boundary platforms, never a free intermediate node.
+Unknown exterior positions have separate placeholders; they cannot manufacture
+a transfer. Local indoor coordinates are not used as world coordinates, and
+indoor movement remains uncounted. Existing membership, quest, inventory,
+terrain, movement and spell/scroll resource constraints remain in effect.
+
+- `npm test`: **911 passed**, zero failures/skips/todos. Synthetic cases cover
+  exact transfers, distinct arrivals/providers, malformed/missing coordinates,
+  frozen data, city boundaries, resource budgets, old/specific links, grouped
+  city/canton search, and picker drafts during equivalent list recalculations.
+- Local Chrome Travel cases: **21/21 passed**, including the twelve city-transfer
+  cases across Vanilla/TR/TR+ARCE, both themes and 1366/375 px, plus keyboard,
+  loading/failure/retry, imported-save persistence/profile isolation and defaults.
+  **16 axe audits, zero violations; 91 settled font checks**; no runtime or
+  unexpected server errors. Desktop and phone screenshots were inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**, with the repository
+  configuration unchanged and its configured live Clerk publishable key.
+- Pipeline synthetic suite: **680 passed**, with no uncaught warnings. Shared
+  COORDINATION and UI_TRANSFORMATION copies remain byte-identical; concurrent
+  IngredientSources implementation work is preserved.
+- The owner removed the retired two-failure/boost rule from both AGENTS.md files.
+  The resumed browser expectations allow the published guide's provider name
+  and the optimizer's actual transfer city: Fewest legs can prefer Vivec over
+  Balmora. No application patch forces either city into a route.
+- No extraction, immutable bundle/schema change, API, D1 migration, merge,
+  push or deployment ran. The owner-requested dev server remains available at
+  `http://127.0.0.1:8792`; CALC-4 remains intact on the parent branch.
+
+Evidence under `A:/Cache`: `city-stop-final-unit.log`,
+`city-stop-final-pipeline.log`, `city-stop-final-build.log`, and
+`city-stop-final-browser-verified` (report, screenshots, audits and input traces).
+
+## 20. Automatic long-walk and swimming fallback — 1 October locally
+
+On `launch/travel-city-stop-walks`, plan against the restricted walking network
+first. Only if no route exists, add long endpoint/place walks and open-water
+swims and optimize again with the same objective and character/resource limits.
+Normal journeys retain their transport: Fewest legs must keep Seyda Neen →
+Balmora by Silt Strider. Remote Ald Redaynia gains a route after the restricted
+attempt fails. There is no extra toggle, warning or account setting. The existing
+walking-off choice disables both attempts; old experimental `long` parameters
+are ignored and removed from generated links.
+
+Mixed legs show walking and swimming time separately. Water Walking counts water
+at run speed. Overload, blocked terrain, missing exits, membership, quest and
+spell/scroll budgets remain enforced. Long searches are lazy and bounded, and
+city platforms never become free intermediate joins. The phone route summary
+uses a shorter leg label so the endpoint names retain readable widths.
+
+- `npm test`: **920 passed**, zero failures/skips/todos. Cases cover every normal
+  route objective, automatic island fallback, walking-off, overload, Water
+  Walking, long/short memo isolation, enclosed terrain, missing swim speed and
+  beyond-limit place reach, along with the existing city-transfer regressions.
+- Chrome Travel: **33/33 passed**, including twelve city-transfer and twelve
+  fallback cases across all profiles, both themes and 1366/375 px, keyboard,
+  loading/failure/retry, imported-save persistence and default journeys.
+  **28 axe audits, zero violations; 127 settled font checks**; no unexpected
+  runtime/server errors. Desktop and phone screenshots were inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**; repository config
+  unchanged, configured live Clerk publishable key, no deployment.
+- Pipeline synthetic suite: **685 passed**. Shared COORDINATION and
+  UI_TRANSFORMATION copies are byte-identical; no pipeline code changed here.
+- No extraction, immutable catalog modification, migration, commit, push, merge
+  or deployment. The restored dev server remains on `http://127.0.0.1:8792`.
+
+Evidence under `A:/Cache`: `travel-fallback-final-unit.log`,
+`travel-fallback-final-build.log`, `long-journeys-pipeline.log`, and
+`travel-fallback-browser-verified` (report, screenshots and axe audits).
+
+## 21. Travel integrated into its original CALC-4 parent — 1 October locally
+
+With owner approval, merge `launch/travel-city-stop-walks` at `f07425c` into
+`launch/calc-4-reverse-alchemy` at `f3461cd` with `--no-ff`. The merge has no
+conflicts. Application code matches the tested Travel source; shared handoff
+notes now describe the integration. The parent's effect finder remains intact.
+Buying-location wiring stays on the separate `launch/calc-4-where-to-get`
+branch at `85e6a5e`; none of its uncommitted implementation is included.
+
+- On the actual merged parent checkout, `npm test`: **920 passed**, zero
+  failures/skips/todos. Before the Travel source commit, the same suite also
+  passed all 920 tests.
+- Chrome Travel: **33/33 passed**, covering city transfers, restricted-first
+  long-walk/swimming fallback, keyboard/search, loading/failure/retry, saved
+  choices/profile isolation and defaults. All three profiles, both themes and
+  1366/375 px are covered. **28 axe audits, zero violations; 127 settled font
+  checks**; no unexpected runtime/server errors. Screenshots inspected.
+- Chrome Alchemy effect finder: **12/12 passed**, all three profiles, both
+  themes and 1366/375 px. **12 axe audits, zero violations; 25 settled font
+  checks**; no runtime/server errors. Phone layout inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**, with the repository
+  configuration unchanged and its configured live Clerk publishable key.
+- Pipeline synthetic suite: **685 passed** before the Travel source commit.
+  No pipeline code changed here. Shared COORDINATION and UI_TRANSFORMATION
+  copies match byte for byte; concurrent source-data work is preserved.
+- This is a local branch integration. No main merge, push, deployment,
+  extraction, published bundle/schema change or D1 migration. The owner's dev
+  server remains running at `http://127.0.0.1:8792` on the parent checkout.
+
+Evidence under `A:/Cache`: `travel-parent-precommit-unit.log`,
+`travel-parent-precommit-pipeline.log`, `travel-parent-merged-unit.log`,
+`travel-parent-merged-build.log`, `travel-parent-merged-browser` and
+`travel-parent-merged-alchemy` (reports, screenshots and axe audits).
+
+## 22. CALC-4 selected-ingredient source lookup — 1 October locally
+
+Resumed `launch/calc-4-where-to-get` at `85e6a5e`, preserving its draft wiring.
+Each filled Alchemy slot has a "Where to get it" button, independent of the
+effect finder; pairs retain their shortcut. Opening either loads Places and the
+optional IngredientSources catalog in the current world. Replacement, clearing
+and world changes discard old panels. Loading is neutral, failed requests have
+Retry, older bundles show an unavailable notice, and absent/truncated sources
+are explicit. Stock/restocking, locations, quantities and player-level qualifiers
+remain visible; only matching draws combine, without mutating frozen records.
+
+- `npm test`: **911 passed**, zero failures/skips/todos. Coverage includes
+  malformed/null/impossible sources, distinct draws and levels, frozen records,
+  concrete find locations, locked containers, optional-catalog absence, lazy
+  activation, selected-ingredient replacement and inherited TR/ARCE provenance.
+- Chrome Alchemy: **26/26 passed** on this checkout at `127.0.0.1:8793`:
+  twelve effect-finder cases, twelve selected-ingredient cases across all three
+  profiles, both themes and 1366/375 px, plus two held/failed-request Retry cases.
+  The selected-ingredient cases need no pair, check native keyboard activation,
+  all four slot buttons, replacement/clearing and world isolation. **26 axe
+  audits, zero violations; 51 settled font checks**; no unexpected runtime/server
+  errors. Desktop and phone screenshots inspected.
+- Final `npm run build:cloudflare`: **passed, 24 static pages**, configured
+  live Clerk publishable key and repository configuration unchanged.
+- Pipeline synthetic suite: **685 passed**. No pipeline code changed here.
+  COORDINATION and UI_TRANSFORMATION are synchronized, preserving the parent's
+  separate Travel handoff. No parent/main merge or push is part of this task.
+- The first preview attempt met an existing Next dev server lock; it was reused
+  on 8766. When that server stopped responding, a new preview was started on 8793.
+  Test-harness fixes mapped the new shared source component in calculator tests,
+  included native Enter text in CDP events, and used unambiguous ingredients for
+  the four-slot case. Vanilla's valid empty Health + Fatigue result remains intact.
+- The staged bundle remains `27db1d54d3027e76ce07debf`. It predates pipeline
+  correction `41da92c`: a read-only check still found 819 TR creature draws below
+  the builder's dependable-drop threshold. The owner must rebuild and stage the
+  correction (test cells and random creature loot) before release. CALC-4 stays
+  open for corrected data publication and integration. No extraction, immutable
+  bundle modification, API, migration, deployment or remote write ran here.
+
+Evidence under `A:/Cache`: `calc-4-sources-precommit-unit.log`,
+`calc-4-sources-pipeline.log`, `calc-4-selected-sources-build-final.log`, and
+`calc-4-selected-sources-browser-passed` (report, screenshots, audits and network
+trace). The dev preview remains available for the owner.
+
+## 23. Corrected ingredient sources staged locally — 1 October locally
+
+The owner authorized "stage pipeline fix" on `launch/calc-4-where-to-get` at
+`5965af7`. Rebuilt IngredientSources with pipeline `41da92c` using the existing
+world, acquisition and services databases, then packaged and validated the bundle
+before switching the local pointer. This supersedes §22's pending-rebuild note.
+
+- Bundle: **`a29adea046e6086c2c7ee654`**, replacing local pointer `27db1d54d3027e76ce07debf`.
+  The old immutable release remains available. Extraction snapshot
+  `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f` is unchanged.
+  Payload-hash comparison across every profile/catalog found **only
+  IngredientSources changed**; profile provenance and every other payload match.
+- Coverage: **126 vanilla, 921 TR and 921 TR + ARCE ingredients**. ARCE inherits
+  TR's identical sources. No truncated records, excluded test/holding-cell sources
+  or creature draws below the builder's dependable-drop threshold remain.
+  The cell check applies the real policy's 16 exact exclusions and `interior:tr_hold_`
+  prefix to 2,191 vanilla and 10,446 TR source-cell references. Staging verified
+  all file hashes, identities, record counts and inherited/delta catalogs.
+- Pipeline synthetic tests: **685 passed**, zero failures. Site `npm test`:
+  **911 passed**, zero failures/skips/todos.
+- Chrome Alchemy: **26/26 passed** using the new bundle on `127.0.0.1:8793`:
+  all three profiles, both themes, 1366/375 px, selected-ingredient and pair
+  lookup plus loading/failure/Retry. **26 axe audits, zero violations; 51 settled
+  font checks**; no runtime/server errors. Desktop and phone screenshots inspected;
+  Marshmerrow no longer suggests the old random creature-loot entries.
+- `npm run build:cloudflare`: **passed, 24 static pages**, repository configuration
+  unchanged. Both changelogs and the shared coordination/roadmap record the correction.
+  No new extraction, API/schema change, migration, parent/main merge, push or
+  deployment ran. CALC-4 remains open for integration and release.
+
+Evidence: `A:/Cache/calc-4-stage-fix-pipeline.log` and
+`A:/Cache/calc-4-stage-fix/` (`ingredient-build.log`, `bundle-build.log`,
+`comparison.json`, `previous-current.json`, `stage.log`, `site-unit.log`,
+`build.log`, and `browser/` reports, network trace, screenshots and audits).
+The site's `public/game-data` junction shares these local assets with the other
+worktrees. Both previews remain running; reload existing tabs to use the corrected
+bundle because the loader pins a release for each page lifetime.
+
+## 24. Ingredient sources integrated with Travel on the CALC-4 parent — 1 October locally
+
+With owner approval, merge `launch/calc-4-where-to-get` at `be29f68` into its
+original parent, `launch/calc-4-reverse-alchemy` at `e0704b9`, with `--no-ff`.
+The parent already contains Travel `f07425c`. Five conflicts are documentation
+only: both changelogs retain all October 1 entries in one day's list; shared
+coordination/roadmap retain both implementations and the corrected staged data;
+verification retains Travel §§19–21 and renumbers the source history to §§22–23.
+Application code and tests merge cleanly and match their tested source branches.
+
+- Actual merged checkout `npm test`: **936 passed**, zero failures/skips/todos,
+  before the merge commit. Pipeline synthetic suite: **685 passed**.
+- Chrome: **59/59 passed** on `127.0.0.1:8792`, using corrected bundle
+  `a29adea046e6086c2c7ee654`. Travel has 27 routing/loading cases, two saved-choice
+  cases and four default-journey cases; Alchemy has 26 finder, selected-ingredient
+  source and loading/failure/Retry cases. Both themes, 1366/375 px and all three
+  profiles are covered. **54 axe audits, zero violations; 180 settled font
+  checks**; no runtime/server errors. Desktop and phone screenshots inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**. Worker and Next.js
+  configuration are unchanged. COORDINATION and UI_TRANSFORMATION copies in
+  the pipeline are byte-identical to this parent checkout.
+- No main merge, push, deployment, data rebuild, new extraction or D1 migration
+  ran in this integration. The corrected local bundle is retained. Both dev
+  servers remain available; the combined branch is served on port 8792.
+
+Evidence: `A:/Cache/calc-4-integrated/` (`unit.log`, `pipeline.log`, `build.log`,
+`browser-summary.json` and the `browser-travel`, `browser-travel-save`,
+`browser-travel-defaults`, `browser-alchemy` reports, network traces,
+screenshots and audits). Browser reports identify the pre-commit parent tip
+because verification ran before committing the resolved merge.
+
+## 25. CALC-4 and Travel merged to updated main — 1 October locally
+
+With owner authorization, merge `launch/calc-4-reverse-alchemy` at `c2bf5d8`
+into clean main with `--no-ff`. The owner pushed checklist commit `55fd07e`
+while preparation was in progress; the uncommitted merge was aborted and
+recreated from that updated tip. Its QA findings, decisions and launch bar
+remain unchanged. Only CALC-4's completion records are updated; deployment
+remains pending, and QA-13 stays open for the owner's review.
+
+The sole conflict is `docs/BROWSER_TESTS.md`: retain main's signed-in Vault
+instructions and add the Travel city-transfer/fallback and Alchemy source cases.
+Application code merges cleanly. Main's Cloud Vault fixes and repository build
+configuration are unchanged; Travel and Alchemy match the integrated parent.
+Both changelogs retain the new player-facing entries and main's Vault entries.
+
+- Actual merged checkout `npm test`: **940 passed**, zero failures/skips/todos.
+  An earlier run failed the unchanged copied-Builder-link assertion while
+  builds ran concurrently (939 passed); the complete fresh run with builds
+  finished passed. Both logs are retained.
+- `npm run build:cloudflare`: **passed, 24 static pages**, using the repository's
+  configured production publishable key and unchanged configuration.
+- Full Chrome suite: **203/203 passed** on `127.0.0.1:8794` with corrected
+  bundle `a29adea046e6086c2c7ee654`. Covers the page matrix and Travel, Builder,
+  calculators, Challenge Runs, Alchemy finder/selected-ingredient sources,
+  Faction Journal, Level Simulator, saved Travel choices, settings and navigation.
+  All three worlds, both themes and 1366/375 px; navigation also checks
+  900/1024/1440/1920 px. **282 axe audits, zero violations; 585 settled font
+  checks**; no unexpected runtime/server errors. Representative desktop/phone
+  screenshots inspected, including city transfers, swimming, sources and Vault.
+- Local signed-in Vault: **10/10 passed**, synthetic identities and disposable
+  local D1 only. **12 axe audits, zero violations**; no unexpected runtime or
+  server errors. Includes owner/token checks, save/rename/reload/load/delete,
+  renewal after 401, damaged-save refusal, quotas, and both themes at 1366/375 px.
+- Pipeline synthetic suite: **685 passed**, zero failures. COORDINATION and
+  UI_TRANSFORMATION are synchronized byte-for-byte with the pipeline repository.
+- Initial setup rejected a dependency junction outside Turbopack's filesystem
+  root. Installing the unchanged lockfile locally resolved that setup failure.
+  The Vault build then ran after the production build to avoid Next's build lock.
+  No application or configuration change was needed for either setup issue.
+- Corrected local bundle `a29adea046e6086c2c7ee654` is retained. No extraction,
+  bundle rebuild, API/schema change, D1 migration or deployment ran. Production
+  remains `216cd90` / `d523b9ba`. The existing previews were left running;
+  this merged main has its own preview on `127.0.0.1:8794`.
+
+Evidence: `A:/Cache/calc-4-main-merge/` (`unit-updated-main.log`, `unit-final.log`,
+`build.log`, `pipeline.log`, `browser-summary.json`, and the `browser/` and
+`vault-verified/` reports, screenshots and audits). Browser reports identify
+main `55fd07e`, the pre-commit tip; all verification ran on the resolved merge.

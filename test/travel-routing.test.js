@@ -130,7 +130,7 @@ test("planRoute handles the edges of the question", async () => {
   assert.equal(planRoute("", "D", GRAPH).isValid, false);
   const stranded = planRoute("A", "Island", GRAPH);
   assert.equal(stranded.isValid, false);
-  assert.match(stranded.message, /No fast-travel transit route/);
+  assert.match(stranded.message, /No route available/);
   assert.equal(planRoute("A", "D", GRAPH, { objective: "nonsense" }).hops, 1, "an unknown objective means fewest legs");
 });
 

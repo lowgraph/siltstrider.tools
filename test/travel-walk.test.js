@@ -164,6 +164,67 @@ function drawGrid(rows) {
 }
 const at = (gx, gy) => [(gx + 0.5) * 2048, (gy + 0.5) * 2048];
 
+test("long journeys cross open sea and the memo never leaks them into short-only routes", async () => {
+  const { walkGrid, findWalk, MAX_SWIM } = await lib();
+  const grid = walkGrid(drawGrid(['.              .']));
+  const a = at(0, 0), b = at(15, 0);
+  assert.equal(findWalk(grid, a, b), null);
+  const swim = findWalk(grid, a, b, { longJourneys: true, swimCost: 2 });
+  assert.ok(swim && swim.water > MAX_SWIM);
+  assert.equal(swim.distance, swim.land + swim.water);
+  assert.equal(findWalk(grid, a, b), null, 'same grid and endpoints after a long swim');
+});
+
+test("long journeys never cross an enclosed terrain barrier or invent movement when overloaded", async () => {
+  const { walkGrid, findWalk, addJourneyWalks } = await lib();
+  const grid = walkGrid(drawGrid([
+    '#########.', '#########.', '#########.',
+    '###...###.', '###...###.', '###...###.',
+    '#########.', '#########.', '#########.']));
+  assert.equal(findWalk(grid, at(4, 4), at(9, 4), { longJourneys: true }), null);
+  const graph = { A: [], B: [] }, points = new Map([['A', [at(4, 4)]], ['B', [at(9, 4)]]]);
+  assert.deepEqual(addJourneyWalks(graph, 'A', 'B', { points, land: {}, speed: 0, swim: 100, grid }), graph);
+  assert.deepEqual(graph, { A: [], B: [] }, 'no mutation of the transport graph');
+});
+
+test("long endpoint walks exceed the short stop reach without introducing a virtual city transfer", async () => {
+  const { addJourneyWalks, STOP_WALK_LIMIT } = await lib();
+  const distance = 20 * 8192, graph = { A: [], B: [], C: [] };
+  const points = new Map([['A', [[0, 0]]], ['B', [[distance, 0]]], ['C', [[distance, 8192]]]]);
+  const land = Object.fromEntries(Array.from({ length: 21 }, (_, x) => ['exterior:' + x + ',0', 'ffffffffffffffff']));
+  const out = addJourneyWalks(graph, ['A'], ['B', 'C'], { points, land, speed: 300, swim: 100 });
+  assert.ok(out.A.find(edge => edge.to === 'B').distance > STOP_WALK_LIMIT);
+  assert.equal(out.B.some(edge => edge.to === 'C'), false, 'only real selected endpoint pairs are added');
+  assert.deepEqual(graph.A, []);
+});
+
+test("long mask-only swims use swimming time, need a positive swim speed, and Water Walking stays dry", async () => {
+  const { addJourneyWalks } = await lib();
+  const graph = { A: [], B: [] }, points = new Map([['A', [[0, 0]]], ['B', [[20000, 0]]]]);
+  const options = { points, land: {}, speed: 300, swim: 100 };
+  const edge = addJourneyWalks(graph, 'A', 'B', options).A[0];
+  assert.equal(edge.swimmingSeconds, 200);
+  assert.equal(edge.walkingSeconds, 0);
+  assert.equal(edge.movementSeconds, 200);
+  assert.equal(edge.terrain, false, 'a land mask is not the terrain grid');
+  assert.deepEqual(addJourneyWalks(graph, 'A', 'B', { ...options, swim: 0 }).A, []);
+  const waterWalk = addJourneyWalks(graph, 'A', 'B', { ...options, swim: 0, waterWalk: true }).A[0];
+  assert.equal(waterWalk.swimmingSeconds, 0);
+  assert.equal(waterWalk.walkingSeconds, 20000 / 300);
+});
+
+test("a remote place connects beyond the ten-cell reach only with long journeys enabled", async () => {
+  const { addPlaces, PLACE_WALK_LIMIT } = await lib();
+  const points = new Map([['Far', [[22 * 8192, 4096]]]]);
+  const land = Object.fromEntries(Array.from({ length: 23 }, (_, x) => ['exterior:' + x + ',0', 'ffffffffffffffff']));
+  assert.ok(22 * 8192 > PLACE_WALK_LIMIT);
+  const options = { points, land, speed: 300, swim: 100 };
+  assert.deepEqual(addPlaces({ Far: [] }, ['exterior:0,0'], options)['place:exterior:0,0'], []);
+  const walk = addPlaces({ Far: [] }, ['exterior:0,0'], { ...options, longJourneys: true })['place:exterior:0,0'][0];
+  assert.ok(walk.distance > PLACE_WALK_LIMIT);
+  assert.equal(walk.swimmingSeconds, 0);
+});
+
 test("the walkable grid decodes two bits a square, south-west first, and refuses what it cannot read", async () => {
   const { walkGrid, squareAt, SEA, LAND, BLOCKED, SWIM } = await lib();
   const grid = walkGrid(drawGrid(["~#..", "....", "....", ".#.."]));

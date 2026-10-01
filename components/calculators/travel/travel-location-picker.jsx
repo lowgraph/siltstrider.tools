@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { searchTravelOptions } from "../../../lib/travel-search.mjs";
 
 /** One editable search, one ranked list, and a separate committed route endpoint. */
-export default function TravelLocationPicker({ id, label, value, valueLabel, options, onChange, disabled = false }) {
+export default function TravelLocationPicker({ id, label, value, valueLabel, options, onChange, disabled = false, scopeKey = null }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -14,6 +14,9 @@ export default function TravelLocationPicker({ id, label, value, valueLabel, opt
   const results = useMemo(() => searchTravelOptions(options, query, { limit: 40 }), [options, query]);
   const active = activeIndex >= 0 && activeIndex < results.options.length ? activeIndex : -1;
   const expanded = open && !disabled;
+  // Movement/fare recalculation can recreate the same list while a player types.
+  // Only a changed location list or world supersedes that draft.
+  const optionKeys = useMemo(() => options.map(option => option.id).join('\u0000'), [options]);
 
   const close = () => { setOpen(false); setQuery(""); setActiveIndex(-1); };
   const startSearch = () => {
@@ -28,7 +31,7 @@ export default function TravelLocationPicker({ id, label, value, valueLabel, opt
     setOpen(false);
     setQuery("");
     setActiveIndex(-1);
-  }, [value, valueLabel, options, disabled]);
+  }, [value, valueLabel, optionKeys, scopeKey, disabled]);
 
   useEffect(() => {
     if (expanded && active >= 0) {
