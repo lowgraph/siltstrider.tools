@@ -20,7 +20,7 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 | Date | What |
 | --- | --- |
 | **By Monday 5 October** | Anything from the priority list not done by now moves after launch (see the cut line). |
-| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**); on a real phone (QA could only emulate one): no Ctrl K hint on touch, Travel options changed for a loaded save survive leaving Travel and coming back (the unexplained 30 September failure; 0 of 31 in the 1 October QA run), and a real `.omwsave` loads (**O**). |
+| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**); on a real phone (QA could only emulate one): no Ctrl K hint on touch, Travel options changed for a loaded save survive leaving Travel and coming back (the unexplained 30 September failure; 0 of 31 in the 1 October QA run), and a real `.omwsave` loads (**O**); Google and Discord sign-in with an unsaved TR + ARCE character, which must come back in TR + ARCE (the signed-in QA could test email only) (**O**). |
 | **Tuesday 6 October, 13:30 UTC: launch** | Post r/Morrowind (flair Showcase), r/OpenMW (unless refused), r/TamrielRebuilt, Morrowserver `#modding`, Morrowind Modding Community, OpenMW Discord if approved; stay a few hours for comments, ready for "was it made with AI?" (**O**). Watch Worker logs and error references, API requests, D1 and Clerk sign-ins; fix only breakage, deploy only on the owner's go-ahead (**C**). |
 | **Wednesday 7 October** | Show HN and the X thread (**O**). |
 | **From Thursday 8 October** | Creator outreach, one at a time, through business contacts (**O**). Feedback from the threads, and whatever the freeze left of sections 3 and 4, goes into a new after-launch list (**C**). |
@@ -266,6 +266,47 @@ usual tests (at least three edge cases for a logic change) and changelog.
       travel (Teleports policy). Check in Vanilla, TR and TR + ARCE with walking on and off;
       if it reproduces it is a wrong answer (High).
 
+Checks the live QA could not run (sent to Codex with the QA-01 to QA-16 reproduction,
+1 October); each becomes a finding if it fails:
+- [ ] **C** **QA-17** Hydration and console errors on first load: every route, fresh, with a
+      stored TR + ARCE world, a loaded save and each shared-link kind, 1366 and 375 px, both
+      themes; Home and Builder ten times fresh. Kept as `--suite hydration` in the runner.
+- [ ] **C** **QA-18** Real touch emulation (touch points, coarse pointer, no hover, tap
+      events): no Ctrl K hint, tab bar, menus and popovers by tap, Travel save options 20
+      times by tap, Alchemy pickers. Kept as `--touch` in the runner.
+- [ ] **C** **QA-19** The signed-out API: GET `/api/account`, `/api/settings`, `/api/saves`,
+      `/api/entitlements` and PUT `/api/settings` answer 401, with no data and no Set-Cookie.
+- [ ] **C** **QA-20** Game data QA could not source: reverse alchemy's Restore Health pairs and
+      the Vanilla Fighters and Mages Guild ranks, against the staged catalogs.
+
+From the signed-in QA (live, 1 October, three email-only QA accounts, cleaned up; report
+`siltstrider-account-qa-2026-10-01.md`, F-ids):
+- [ ] **C** **QA-21** (High; F-1) "Load this build into Character Builder" in the Cloud Vault
+      leaves a TR + ARCE build in the visitor's world: Vanilla, race shown as Argonian, the
+      sheet stuck on "Calculating statistics…" (2 of 2). The Vault applies builds with the
+      provider's plain `setBuild`, which ignores `build.world` and `build.arce`
+      (`app-shell.jsx`, `character-context.jsx` `loadBuild`). Loading a build must set its
+      world, as a shared link does (LINK-1).
+- [ ] **C** **QA-22** (High; F-2, F-17) Share links carry the wrong character. An imported
+      save's "Copy shareable permalink" writes raw ids (`className:"mage"`,
+      `T_Els_Cathay-raht`), empty skill lists, the wrong gender and `world=vanilla` for a
+      TR + ARCE save; it opens as a different or broken character (2 of 2 saves; Builder
+      builds are fine). A challenge run's link took the visitor's current world (`world=tr`)
+      for a run rolled in Vanilla. A link must describe its own character or run.
+- [ ] **C** **QA-23** (High; F-3, F-9) Signing in switches to the account's Preferred world
+      when the address has no `?world=` (3 of 3): an unsaved TR + ARCE character, or a loaded
+      TR + ARCE save, comes back in Vanilla, the save re-read as plain Khajiit
+      (`shell-context.jsx`). A new account has chosen nothing yet, but switching world or
+      loading a save already auto-saves a Preferred world (F-9), which then wins. On sign-in
+      the browser's world must win until the player chooses one on the account.
+- [ ] **C** **QA-24** (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
+      Home afresh and the Builder shows a random premade (2 of 2). A loaded save survives.
+      Keep the character through sign-out as through sign-in (`SIGN_IN_EVENT` hand-off).
+- [ ] **C** **QA-25** (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
+      link's starting point is replaced by the save's position (`/travel?from=Balmora…` plans
+      from Seyda Neen; the plan is kept). COORDINATION, Travel from the loaded save: a link
+      wins over the save's starting point.
+
 ### Cut line
 
 At the freeze, whatever is left of sections 3 and 4 moves after launch; note it in
@@ -314,6 +355,33 @@ Low:
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 - [ ] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding).
+
+From the signed-in QA (1 October):
+- [ ] **C** F-6 (Medium): email sign-in reloads the page (4 of 4). The character comes back
+      through the hand-off; the world was QA-23.
+- [ ] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body
+      and "Delete save?" is not announced; Confirm is 15 Tabs away. Focus the prompt.
+- [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
+      returns on every load until something is saved.
+- [ ] **C** F-10 (Low): "Reset all settings" has no confirmation or undo.
+- [ ] **C** F-11 (Low): the icon cannot be saved without a username, and the help text does not
+      say the username is required.
+- [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
+      ("Lvl 3 mage").
+- [ ] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate"
+      breaks mid-word.
+- [ ] **C** F-15 (Low): after "Open Save File…" there is no upload to the Cloud Vault; the save
+      must be chosen again in "Import save".
+- [ ] **C** F-16 (Low): Challenge Runs has no cloud save, though the Vault window has a Challenge
+      Runs tab and quota; /vault does not show that tab.
+- [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
+      allows 100 characters, the API 120.
+- [x] F-14: no change. The Guild Guide warning is for a save whose character is not a member;
+      when an account default turns membership off, Travel labels it "account default" and
+      says "no Mages Guild", which is enough.
+- [ ] **O** After launch, if wanted: delete the three QA accounts in Clerk, their
+      `account_settings` rows (revisions 26, 4, 2; values are the defaults) and account A's
+      Ko-fi support code (`SS-80dec…`).
 
 ## Done
 
