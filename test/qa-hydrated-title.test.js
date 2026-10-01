@@ -1,8 +1,8 @@
 require('./helpers/pending-game-data.cjs');
 const {test}=require('node:test');const assert=require('node:assert/strict');const React=require('react');
 const {renderToString}=require('react-dom/server');const {hydrateRoot}=require('react-dom/client');const {JSDOM}=require('jsdom');
-const {CharacterProvider,useActiveCharacter,ShellProvider,Sheet,HomeHero,ProgressionSheet}=require('./helpers/qa-render.cjs');const {loader}=require('./helpers/qa-staged-data.cjs');
-test('QA-05 hydrated random-premade sheet labels the old title as a source after race/sign edits',async()=>{
+const {CharacterProvider,useActiveCharacter,ShellProvider,Sheet,HomeHero,ProgressionSheet}=require('./helpers/qa-render.cjs');const {loader,staged}=require('./helpers/qa-staged-data.cjs');
+test('QA-05 hydrated random-premade sheet labels the old title as a source after race/sign edits',staged(),async()=>{
   const l=await loader(),{adaptCharacterCatalogs}=await import('../lib/character-catalogs.mjs'),{computeSheet}=await import('../lib/character-math.mjs');
   const catalogs=adaptCharacterCatalogs(await l.loadFeature('vanilla','character'),await l.loadCatalog('vanilla','Spells'));
   const {characterSummary}=await import('../lib/home-data.mjs');const {normalizeCharacterState}=await import('../lib/level-math.mjs');

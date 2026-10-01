@@ -1,6 +1,6 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {todo,loader} = require('./helpers/qa-staged-data.cjs');
+const {todo,loader,staged} = require('./helpers/qa-staged-data.cjs');
 const effect = (extra={}) => ({effect:{b:1,mag:1,dur:1},min:5,max:5,dur:5,area:0,range:'self',...extra});
 // Pinned OpenMW 0.51 getEffectCosts/getEnchantPoints: each cost is cumulative;
 // capacity adds each floor. Area has a minimum of one even for Self/Constant.
@@ -48,15 +48,15 @@ async function character() {
   const build={race:'Dark Elf',gender:'Female',sign:'The Tower',spec:'Magic',fav1:'Intelligence',fav2:'Willpower',maj:['Alchemy','Enchant','Destruction','Restoration','Mysticism'],min:['Athletics','Spear','Heavy Armor','Armorer','Long Blade']};
   return {catalogs,build,sheet:computeSheet(build,catalogs)};
 }
-for(const hp of [35,45,67.5]) test(`QA-04 chart starts at character Health ${hp}`,async()=>{
+for(const hp of [35,45,67.5]) test(`QA-04 chart starts at character Health ${hp}`,staged(),async()=>{
   const {catalogs,sheet}=await character();const {normalizeCharacterState,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const normalized=normalizeCharacterState({...sheet,health:hp},catalogs);const chart=calculateHealthGrowthCurve(normalized,20,catalogs);assert.equal(chart.optimalHealth[0],hp);
 });
-test('QA-04 Endurance 30 takes fourteen +5 steps to level 15',async()=>{
+test('QA-04 Endurance 30 takes fourteen +5 steps to level 15',staged(),async()=>{
   const {catalogs,sheet}=await character();const {normalizeCharacterState,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const chart=calculateHealthGrowthCurve(normalizeCharacterState(sheet,catalogs),20,catalogs);assert.equal(chart.optimalEndurance[0],30);assert.equal(chart.enduranceMaxLevel,15);
 });
-test('QA-04 Bitter Cup outside Strength/Endurance leaves one-step Health forecast alone',async()=>{
+test('QA-04 Bitter Cup outside Strength/Endurance leaves one-step Health forecast alone',staged(),async()=>{
   const {catalogs,sheet}=await character();const {normalizeCharacterState,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const raw={...sheet,attrs:{...sheet.attrs,Personality:{v:80},Willpower:{v:20}}};
   const base=normalizeCharacterState(raw,catalogs);
@@ -64,7 +64,7 @@ test('QA-04 Bitter Cup outside Strength/Endurance leaves one-step Health forecas
   const cup=calculateHealthGrowthCurve(base,2,catalogs,{bitterCup:true});
   assert.deepEqual(cup.optimalHealth,ordinary.optimalHealth);assert.deepEqual(cup.delayedHealth,ordinary.delayedHealth);
 });
-test('QA-05 Simulator sheet keeps configured race, gender and birthsign',async()=>{
+test('QA-05 Simulator sheet keeps configured race, gender and birthsign',staged(),async()=>{
   const {catalogs,build}=await character();const {computeSheet}=await import('../lib/character-math.mjs');const {normalizeCharacterState}=await import('../lib/level-math.mjs');
   const n=normalizeCharacterState(computeSheet({...build,race:'Breton'},catalogs),catalogs);
   assert.deepEqual([n.race,n.gender,n.sign],['Breton','Female','The Tower']);

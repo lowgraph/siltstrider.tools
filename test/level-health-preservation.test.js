@@ -1,6 +1,6 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {loader} = require('./helpers/qa-staged-data.cjs');
+const {loader,staged} = require('./helpers/qa-staged-data.cjs');
 const attrs = {Strength:40,Intelligence:40,Willpower:20,Agility:40,Speed:40,Endurance:30,Personality:80,Luck:40};
 const state = (extra={}) => ({level:1,attributes:{...attrs},skills:{Alchemy:35},health:35,magicka:67,fatigue:140,magMult:0.5,maj:[...build.maj],min:[...build.min],...extra});
 const build = {race:'Dark Elf',gender:'Female',sign:'The Tower',spec:'Magic',fav1:'Intelligence',fav2:'Willpower',maj:['Alchemy','Enchant','Destruction','Restoration','Mysticism'],min:['Athletics','Spear','Heavy Armor','Armorer','Long Blade']};
@@ -8,7 +8,7 @@ async function catalogs(profile='vanilla') {
   const l=await loader();const {adaptCharacterCatalogs}=await import('../lib/character-catalogs.mjs');
   return adaptCharacterCatalogs(await l.loadFeature(profile,'character'),await l.loadCatalog(profile,'Spells'));
 }
-for(const health of [0,35,67.5]) test(`QA-04 normalized state survives catalogs and repeat normalization at Health ${health}`,async()=>{
+for(const health of [0,35,67.5]) test(`QA-04 normalized state survives catalogs and repeat normalization at Health ${health}`,staged(),async()=>{
   const {normalizeCharacterState,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const c=await catalogs(),raw=state({level:12,health});
   const normalized=normalizeCharacterState(raw,c);
@@ -18,7 +18,7 @@ for(const health of [0,35,67.5]) test(`QA-04 normalized state survives catalogs 
   const curve=calculateHealthGrowthCurve(normalized,14,c);
   assert.equal(curve.levels[0],12);assert.equal(curve.optimalHealth[0],health);assert.equal(curve.delayedHealth[0],health);
 });
-test('QA-04 Bitter Cup is applied once and a complete unchanged one-step plan retains Health',async()=>{
+test('QA-04 Bitter Cup is applied once and a complete unchanged one-step plan retains Health',staged(),async()=>{
   const {normalizeCharacterState,simulateProgression,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const c=await catalogs(),base=normalizeCharacterState(state(),c);
   const cup=normalizeCharacterState(base,c,{bitterCup:true});
@@ -52,7 +52,7 @@ for(const [endurance,start,max] of [[30,1,15],[95,8,9],[100,3,3]]) test(`QA-04 E
   const curve=calculateHealthGrowthCurve(state({level:start,attributes:{...attrs,Endurance:endurance}}),20);
   assert.equal(curve.enduranceMaxLevel,max);assert.equal(curve.optimalEndurance[0],endurance);
 });
-for(const profile of ['vanilla','tr','tr_arce']) test(`QA-03 Bitter Cup keeps creation Health in ${profile}`,async()=>{
+for(const profile of ['vanilla','tr','tr_arce']) test(`QA-03 Bitter Cup keeps creation Health in ${profile}`,staged(),async()=>{
   const {computeSheet}=await import('../lib/character-math.mjs');const c=await catalogs(profile);
   const options={...build,sign:'The Lady',fav1:'Endurance',fav2:'Strength'};
   const ordinary=computeSheet(options,c),cup=computeSheet({...options,bitterCup:true},c);

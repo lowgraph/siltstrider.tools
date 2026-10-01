@@ -1,13 +1,13 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { loader, save } = require('./helpers/qa-staged-data.cjs');
+const { loader, save, staged } = require('./helpers/qa-staged-data.cjs');
 
 const modules = Promise.all([
   import('../lib/save-share-link.mjs'), import('../lib/permalink-codec.mjs'),
   import('../lib/challenge-engine.mjs')
 ]);
 
-test('QA-22 imported links resolve all three save profiles, independent of summary IDs', async () => {
+test('QA-22 imported links resolve all three save profiles, independent of summary IDs',staged(), async () => {
   const [{ generateSaveShareUrl }, { decodeShareUrl }] = await modules;
   const data = await loader();
   for (const profile of ['vanilla', 'tr', 'tr_arce']) {
@@ -31,7 +31,7 @@ test('QA-22 imported links resolve all three save profiles, independent of summa
   }
 });
 
-test('QA-22 a custom class link uses its saved skill groups and attributes', async () => {
+test('QA-22 a custom class link uses its saved skill groups and attributes',staged(), async () => {
   const [{ generateSaveShareUrl }, { decodeShareUrl }] = await modules;
   const raw = save();
   raw.identity.class = { custom: true, specialization: 'Stealth', favoredAttributes: ['Agility', 'Luck'] };
@@ -42,7 +42,7 @@ test('QA-22 a custom class link uses its saved skill groups and attributes', asy
   assert.deepEqual(decoded.build.min, ['Long Blade', 'Axe', 'Spear', 'Athletics', 'Enchant']);
 });
 
-test('QA-22 unresolved identities and incomplete custom classes cannot publish replacement defaults', async () => {
+test('QA-22 unresolved identities and incomplete custom classes cannot publish replacement defaults',staged(), async () => {
   const [{ generateSaveShareUrl }] = await modules;
   const data = await loader();
   for (const change of [
@@ -65,7 +65,7 @@ test('QA-22 malformed saves and unavailable catalogs fail without a permalink', 
   }), /QA offline/);
 });
 
-test('QA-22 duplicate custom skills and favored attributes cannot produce a broken recipient', async () => {
+test('QA-22 duplicate custom skills and favored attributes cannot produce a broken recipient',staged(), async () => {
   const [{ generateSaveShareUrl }] = await modules;
   const data = await loader();
   for (const duplicate of ['skills', 'attributes']) {

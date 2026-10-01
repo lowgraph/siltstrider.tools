@@ -1,5 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const {staged}=require('./helpers/qa-staged-data.cjs');
 const math = import('../lib/enchant-math.mjs');
 const row = (overrides = {}) => ({ effect: { b: 1, mag: 1, dur: 1 }, min: 5, max: 5, dur: 5, area: 0, range: 'self', ...overrides });
 const near = (actual, expected) => assert.ok(Math.abs(actual - expected) < 0.0001, `${actual} ≈ ${expected}`);
@@ -73,7 +74,7 @@ test('QA-02 fatigue, Constant multiplier and truncation affect the precise-point
   assert.equal(m.calcSelfEnchantChance(50, 40, 40, 1.9125, { typeMultiplier: 0.125 }), 76);
 });
 
-test('QA-01/02 each staged world supplies the relevant enchantment settings', async () => {
+test('QA-01/02 each staged world supplies the relevant enchantment settings',staged(), async () => {
   const m = await math, loader = await require('./helpers/qa-staged-data.cjs').loader();
   for (const profile of ['vanilla', 'tr', 'tr_arce']) {
     const settings = m.enchantingSettings(await loader.loadCatalog(profile, 'GameSettings'));

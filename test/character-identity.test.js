@@ -1,5 +1,5 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');
-const {loader}=require('./helpers/qa-staged-data.cjs');
+const {loader,staged}=require('./helpers/qa-staged-data.cjs');
 for(const field of ['race','gender','sign','spec','fav1','maj','bitterCup']) test(`QA-05 edited premade labels its source after ${field}`,async()=>{
   const {BUILDS,premadeToBuild}=await import('../lib/premade-data.mjs');const {characterName}=await import('../lib/character-name.mjs');
   const build=premadeToBuild(BUILDS[0]);assert.equal(characterName(build),build.name);
@@ -26,7 +26,7 @@ test('QA-05 malformed source markers and legacy player names stay names',async()
     assert.equal(Object.hasOwn(sanitizeBuild({...build,premadeSource}),'premadeSource'),false);
   }
 });
-for(const [profile,race,sign,gender] of [['vanilla','Breton','The Tower','Female'],['tr','Nord','The Mage','Male'],['tr_arce','Khajiit (Cathay-raht)','The Thief','Female']]) test(`QA-05 sheet identity survives normalization and progression in ${profile}`,async()=>{
+for(const [profile,race,sign,gender] of [['vanilla','Breton','The Tower','Female'],['tr','Nord','The Mage','Male'],['tr_arce','Khajiit (Cathay-raht)','The Thief','Female']]) test(`QA-05 sheet identity survives normalization and progression in ${profile}`,staged(),async()=>{
   const l=await loader();const {adaptCharacterCatalogs}=await import('../lib/character-catalogs.mjs');
   const catalogs=adaptCharacterCatalogs(await l.loadFeature(profile,'character'),await l.loadCatalog(profile,'Spells'));
   const {BUILDS,premadeToBuild}=await import('../lib/premade-data.mjs');const {computeSheet}=await import('../lib/character-math.mjs');

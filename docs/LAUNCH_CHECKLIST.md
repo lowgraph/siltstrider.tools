@@ -206,7 +206,7 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. Skip completed implementation items while retaining their
-merge/deploy status. **Next unfinished target: Test portability**, then **QA-10**.
+merge/deploy status. **Next unfinished target: QA-10**, then **QA-16**.
 QA-21/23, QA-22, QA-01/02, QA-03/04 and QA-05 are complete on this branch;
 QA-24 is merged to main. Final acceptance still waits for the remaining fixes.
 
@@ -238,9 +238,11 @@ commands in BROWSER_TESTS.md.
 
 #### 1. Test portability
 
-- [ ] **C** **Test portability** (started 2026-10-01 20:16 UTC, Codex, on launch/character-preservation) Three of these tests read the staged bundle and fail where none is staged (a
+- [x] **C** **Test portability** (started 2026-10-01 20:16 UTC, Codex, on launch/character-preservation; done on this branch, `test/qa-staged-data.test.js`, verified in LAUNCH_VERIFICATION §35; not merged or deployed) Three of these tests read the staged bundle and fail where none is staged (a
       fresh clone, a cloud session): `QA-11 published faction names…` and both `QA-20`
       catalog tests. Skip them without a bundle, as the other bundle tests do.
+      The same guard now covers later catalog-dependent regressions; pure and
+      synthetic checks still run. An incomplete or corrupt staged bundle fails.
 
 #### 2. QA-21 + QA-23 — world preservation
 

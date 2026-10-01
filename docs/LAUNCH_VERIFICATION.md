@@ -1611,3 +1611,51 @@ separate. Evidence under `A:/Cache/`: `qa05-before-fix.log`, `qa05-unit-final.lo
 `qa05-cloudflare-build-final.log`, `qa05-pipeline-tests.log`, and
 `qa05-browser-20261001/`. First command: `npm test`, then BROWSER_TESTS'
 `--suite qa --filter 'QA-05/'`.
+
+## 35. Test portability — 1 October 2026
+
+Claimed 20:16 UTC on `launch/character-preservation`; claim `16d27c6` was pushed
+before implementation, also publishing checklist priority reordering `9479261`.
+Only tests and handoff/verification documents change; no application code, data,
+build configuration, main merge or deployment.
+
+The checklist named three passing checks: QA-11's published faction names and
+both QA-20 catalog comparisons. Later enforced character/world, sharing,
+Enchanting, Health and hydrated-title regressions also read the staged bundle.
+An isolated copy of tracked files, with dependencies linked but no game-data
+folder, initially reported **37 failures**. Two came from incomplete BestInSlot
+fallback UI fixtures; a shared-link UI case passed in isolation and the final
+full no-bundle run without changing it. The other failures required catalogs.
+
+`test/helpers/qa-staged-data.cjs` now supplies `staged()` test options. Only a
+missing `current.json` skips a catalog-dependent case, with an explicit staging
+instruction. Existing TODO metadata remains intact. A present pointer does not
+skip malformed JSON, missing manifests/payloads, or corrupt data; other filesystem
+errors are rethrown. Pure calculations, synthetic saves, share codecs and
+catalog-independent hydration tests continue to run. BestInSlot's existing
+synthetic fallback now includes a one-handed weapon type, boots warnings and a
+second helmet recommendation, keeping its UI assertions meaningful without data.
+
+`test/qa-staged-data.test.js` adds **4 passing synthetic tests**: missing data
+folder/pointer with preserved options; malformed pointer; missing manifest;
+and a valid catalog followed by missing/corrupt payloads. Fixtures use the
+configured temporary directory and are removed after each test. The real staged
+bundle was neither moved nor modified.
+
+Verification:
+
+- **With staged data:** `npm test`: **1,062 tests; 1,046 passed, 16 existing TODO,
+  0 skipped, 0 failures**. All three requested catalog checks run and pass.
+- **Without staged data:** full `npm test` in `A:/Cache/test-portability-20261001`:
+  **1,062 tests; 1,006 passed, 51 skipped, 5 TODO, 0 failures**. These skips include
+  six existing skip cases and eleven catalog-dependent TODO cases; those TODOs
+  are still present and run when data is staged.
+- **Pipeline:** **685 passed**, after synchronizing the identical COORDINATION.md;
+  only that document changes in the pipeline. UI_TRANSFORMATION.md remains identical.
+
+No browser/build run is needed for these test-only changes. QA findings remain
+open independently; **QA-10** is the next unfinished priority, then **QA-16**.
+Evidence: `A:/Cache/test-portability-before.log`, `test-portability-helper.log`,
+`test-portability-without-bundle.log`, `test-portability-staged.log`, and
+`test-portability-pipeline.log`. First command on another checkout: `npm test`;
+run `npm run data:stage` when catalog acceptance is needed.
