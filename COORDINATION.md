@@ -1,22 +1,66 @@
 # Coordination
 
-## Ingredient sources (CALC-4 data) — 30 September
+## Ingredient sources (CALC-4) — 30 September; updated 1 October
 
-New pipeline catalog `IngredientSources` (`build_ingredient_sources.py`; contract
-`contracts/ingredient-source-types.ts`; docs/stages/INGREDIENT_SOURCES.md). Per profile,
-one record per ingredient key: `shops` (merchant key and name, the cell where they trade,
-stock per visit, `restocks`, `near` starting town), `plants` (organic containers that grow
-back: chance per harvest for a level 1 character, quantity, counts by region, starting
-town and interior), `creatures` (chance per kill, placed and spawn points, where) and
-`finds` (loose, or deposits and crates, grouped by holder). Absent fields are left out; an
-ingredient with no source is `{key, name}`. Every cell named is a Places key, checked by
-the bundler. Theft, anything only an NPC carries, random loot and holding cells are never
-sources. Chances follow OpenMW 0.51.0's `getLevelledItem`, pinned like the barter formula.
-This fills CALC-4's "no ingredient stock" gap: list sources from it rather than inferring
-sellers from service flags. Not in the published bundle until the owner runs the build;
-the bundler includes it once all three profiles exist.
-First command: `python build_ingredient_sources.py; python build_app_bundle.py` in the
-pipeline repository, then stage the bundle (REBUILD.md, "Publish").
+Pipeline catalog `IngredientSources` (`build_ingredient_sources.py`; contract
+`contracts/ingredient-source-types.ts`; docs/stages/INGREDIENT_SOURCES.md) has
+one record per ingredient and profile: shops with cell, stock and restocking;
+regrowing plants with harvest chance, quantity and spread; creature drops with
+level, chance and placement/spawn spread; loose/container finds with locations.
+Every cell is a Places key. No source is `{key, name}`. Theft, NPC inventories,
+random loot, scripts, quest rewards and holding/test cells are excluded by the
+builder. Chances follow OpenMW 0.51.0's pinned `getLevelledItem` at player level 1,
+or the explicit `fromLevel`. Never infer ingredient stock from merchant services.
+The locally staged bundle is `27db1d54d3027e76ce07debf`. Pipeline correction
+`41da92c` excludes TR test cells and random creature loot; the owner still needs
+to rebuild and stage it before release. No real-data rebuild ran in the site task.
+Site branch `launch/calc-4-where-to-get` adds a "Where to get it" button to each
+filled Alchemy slot, plus the pair shortcut. Load the `ingredientSources` feature
+only when opened: Places required, IngredientSources optional for older bundles.
+Keep loading neutral, error Retry available, and unavailable/unknown sources
+explicit. Replacing/clearing ingredients and changing worlds discard old panels.
+Keep stock/restocking, locations, locked finds and level qualifiers; never combine
+variants with different chances, quantities or levels. Catalog data stays frozen.
+`components/calculators/alchemy/ingredient-sources.jsx` shares source content with
+the finder; synthetic tests cover lazy loading, provenance/inheritance, malformed
+records, draw distinctions, old bundles, retry and selected-ingredient lifecycle.
+First command: `npm test` in `A:/Claude/mt-site-1`, then the `Alchemy` Chrome cases
+in `docs/BROWSER_TESTS.md`. Owner publication: `python build_ingredient_sources.py`,
+then `python build_app_bundle.py` in the pipeline, then stage (REBUILD.md, "Publish").
+No main merge, push, deployment, migration or extraction is part of this work.
+
+## Travel city transfers — 30 September
+
+`launch/travel-city-stop-walks` at `f07425c` is integrated into its original
+CALC-4 parent, `launch/calc-4-reverse-alchemy`, on 1 October with owner approval.
+Cities stay merged in search, links and unspecified journey endpoints. Specific
+hall, district, service or provider queries reveal precise locations. The router
+chooses city boundary platforms without phantom legs; cities must never become
+free intermediate connections. Journeys through cities show arrival/departure
+stops and timed outdoor transfer walks, including the doors into guild halls.
+Published Travel cells/positions, Access exits and teleport/Intervention markers
+already retain these distinctions; no extraction, bundle/schema or D1 change.
+Outdoor stop IDs use cell plus rounded positions; indoor IDs use cell plus Access
+exits, never local indoor coordinates as world positions. Missing positions or
+exits cannot imply a free transfer. Preserve terrain, membership, quest, inventory,
+Magicka and scroll limits. Indoor time and mesh obstacles remain uncounted.
+Old town links stay town choices; exact-stop links retain their selection.
+Picker drafts survive equivalent option lists recreated by late character data;
+changing worlds or endpoints cancels the draft. The effect finder stays intact.
+1 October: optimize the restricted walking network first. Only a failed route
+retries with long endpoint/place walks and open-water swimming, using the same
+objective, character, membership, quest, inventory and spell/scroll budgets.
+Valid normal journeys must not gain a one-leg walk for Fewest legs or Cheapest.
+There is no new toggle, warning or stored preference. Walking off still forbids
+both phases. Mixed legs time land at run speed and water at swim speed (run speed
+with Water Walking). Keep terrain barriers, sparse local transfers and bounded
+search work; missing exits cannot imply connections. The separate shops/sources
+branch `launch/calc-4-where-to-get` remains untouched; its wiring is not included.
+The owner retired the two-failure/boost rule in both AGENTS.md files.
+First command: `npm test` in `A:/Claude/mt-account-main-merge`, then the Travel
+Chrome cases in `docs/BROWSER_TESTS.md`. Keep the dev server on 127.0.0.1:8792
+running for the owner on the parent branch. No main merge, push, deployment or
+data rebuild is authorized by this integration.
 
 ## Reverse alchemy (CALC-4) — 30 September
 
@@ -27,8 +71,8 @@ shared effects, then rank by fewer extras and ingredient base value, never a
 merchant quote. Using a pair replaces all four slots and focuses potion output.
 Keep the existing calculator, obtainable apparatus, typed stats and world-reset
 behavior. No exported schema/bundle, extraction, API or migration changes.
-Published Merchants has services/locations but no ingredient stock: shop
-availability stays unlisted. Do not infer sellers from service flags or rebuild
+Published Merchants has no ingredient stock; the separate source branch now
+consumes IngredientSources, as described above. Do not infer sellers from service flags or rebuild
 real data. The branch is separate from main and the live release.
 First command: `npm test` on this branch in `A:/Claude/mt-account-main-merge`;
 then the `Alchemy effect finder` cases in `docs/BROWSER_TESTS.md`.
@@ -243,6 +287,7 @@ No game-data schema changes. Items from `docs/LAUNCH_CHECKLIST.md` (finding IDs 
 - **CALC-3: one searchable box per Alchemy slot.** `components/calculators/alchemy/ingredient-combobox.jsx` (ARIA combobox with a listbox popup: `aria-activedescendant`, arrows, Enter or a click chooses, Escape or blur restores, a polite match count) replaces each slot's `<select>` and "Search..." field; the workstation passes the slot's pool (other slots' ingredients and the Slot 1 filter already applied) and keeps no search state. Matching is `rankOptions` in `lib/option-search.mjs` (name start, then word start, then anywhere). Tests that load the workstation through an import map register `test/helpers/ingredient-combobox.cjs`, whose `pickIngredient` types a name and presses Enter. `test/ingredient-combobox.test.js`.
 - **CHL-2: one lock per rolled item.** The locks are only on the sheet, beside what they keep: `components/challenge-runs/lock-toggle.jsx` (`aria-pressed`, a fixed "Lock <item>" name) in the character card's race, class and birthsign rows (each with its Roll) and in the major objective, restrictions and minor objectives headers; a locked item's Roll is disabled. The configurator has no lock buttons: "Choose instead of rolling" pickers go through `chooseCharacterSlot` (`lib/challenge-choice.mjs`), which locks a choice and only unlocks on "Roll it"; a picker always lists the value its slot keeps. The race row shows the race alone (the race lock does not keep the gender). `test/challenge-locks.test.js` and app-shell's CHL-2 test.
 - **Cloud Vault: a save's hash is checked on load.** `handleGetSave` (`cloudflare/routes/saves.mjs`) hashes the stored `packed_payload` (SHA-256, the same `computeSha256Sync` that wrote `payload_hash`) and compares it with `payload_hash`, in any letter case, before unpacking. A mismatch, or a stored hash that is not 64 hex digits, answers 422 `INTEGRITY_ERROR` with a plain message and a reference (a 5xx would become "please try again", which cannot help), sends nothing of the save, and logs only `{ event: 'save_integrity_failed', requestId, route }`. Loading and exporting both go through it. Tests at the end of `test/cloud-save-api.test.js`.
+- **VAULT-TEST: signed-in Vault tests.** `scripts/local-stack.cjs` runs this checkout with `wrangler dev --local` from `wrangler.local.jsonc` (no routes, no account, a placeholder D1) and pages built into `.next-export-local` (Clerk development key from `.env.local`, passed with `--env-file`; live keys refused) or `.next-export-vault`; never deploy with that config or those folders. `scripts/test-vault.cjs` needs no Clerk: `CLERK_JWT_KEY` from a per-run key, a placeholder secret (Clerk's library wants one; with a JWT key it checks offline), and a `window.Clerk` stand-in installed before the site's scripts; `ensureClerk` returns any pre-set `window.Clerk` that is `loaded` or has `addListener` without `load`, so keep that. Its axe pass found the Vault card's Rename and Delete painted browser grey (plain buttons need `bg-transparent border-0`), an unnamed rename box, and an `h3` under the account page's `h1` (now an `h2`, sized by `.account-page .account-premium h2` so the settings panel's heading keeps `.account-page h2`). Commands: docs/BROWSER_TESTS.md, "Signed-in Cloud Vault". `test/local-stack.test.js`.
 
 First verification command: `npm test` in the site repository.
 

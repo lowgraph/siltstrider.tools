@@ -8,8 +8,10 @@ import { useSearchIntent } from "../../use-search-intent";
 import { clearSearchIntent } from "../../../lib/search-intent.mjs";
 import IngredientCombobox from "./ingredient-combobox";
 import ReverseAlchemy from "./reverse-alchemy";
+import IngredientSources from "./ingredient-sources";
 import ActiveCharacterLink from "../../active-character-link";
 import { adaptAlchemy } from "../../../lib/alchemy-catalogs.mjs";
+import { sourceIndex } from "../../../lib/ingredient-sources.mjs";
 import {
   sharesAlchemyEffect,
   formatEffectLabel,
@@ -67,6 +69,12 @@ export default function AlchemyWorkstation() {
   };
 
   const gameData = useGameData('alchemy', { enabled: true });
+  // Source data loads only when a selected ingredient or finder pair is opened.
+  const [wantSources, setWantSources] = useState(false);
+  const sourceData = useGameData('ingredientSources', { enabled: wantSources });
+  const sourceState = useMemo(() => sourceIndex(wantSources ? { status: sourceData.status, data: sourceData.data } : null),
+    [wantSources, sourceData.status, sourceData.data]);
+  const sources = { ...sourceState, retry: sourceData.retry };
 
   const adaptation = useMemo(() => {
     if(gameData.status!=='ready')return {data:null,error:null};
@@ -285,7 +293,7 @@ export default function AlchemyWorkstation() {
         )}
       </div>
 
-      <ReverseAlchemy ingredients={allIngredients} onUsePair={([first, second]) => {
+      <ReverseAlchemy ingredients={allIngredients} sources={sources} onWantSources={() => setWantSources(true)} onUsePair={([first, second]) => {
         setSlot1(first); setSlot2(second); setSlot3(null); setSlot4(null); setCustomPotionName("");
         document.getElementById("alchemy-potion-output")?.focus();
       }} />
@@ -428,6 +436,9 @@ export default function AlchemyWorkstation() {
                   </div>
 
                   <IngredientCombobox slot={slotIndex} value={current} options={pool} onSelect={setSlot} />
+
+                  {current && <IngredientSources key={current.id} ingredient={current} sources={sources}
+                    onWantSources={() => setWantSources(true)} />}
 
                   {current && (
                     <div className="pt-1 flex flex-wrap gap-1">

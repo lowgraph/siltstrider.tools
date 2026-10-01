@@ -1,5 +1,9 @@
 # Changelog
 
+## Ingredient sources — 2026-10-01
+
+- **Where to get an ingredient:** each selected Alchemy ingredient now has a "Where to get it" button. See shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened; changing an ingredient closes its old sources. The effect finder also keeps its pair shortcut.
+
 ## Easier journeys and first steps — 2026-09-30
 
 - **Find a potion's ingredients:** choose the effects you want, see ingredient pairs and their additional effects, and load a pair into the Alchemy calculator. Shop availability is not listed yet.

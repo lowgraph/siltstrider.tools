@@ -52,6 +52,7 @@ async function loadWorkstation(tool, character = { build: { race: 'Dark Elf', cl
   };
 
   const deps = {
+    './ingredient-sources': require('./helpers/ingredient-sources.cjs'),
     '../../character-context': { useActiveCharacter: () => character },
     '../../shell-context': { useShell: () => ({ profile: 'vanilla', world: 'vanilla' }) },
     '../../active-character-link': require('./helpers/active-character-link.cjs'),'./reverse-alchemy': require('./helpers/reverse-alchemy.cjs'),'./ingredient-combobox': require('./helpers/ingredient-combobox.cjs'),

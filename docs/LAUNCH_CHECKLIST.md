@@ -170,14 +170,14 @@ for now (owner, 30 September); other agents skip them.
       carry them.
 
 **Features**
-- [ ] **C** **CALC-4** (started 2026-10-01 00:43 UTC, Codex; branch `launch/calc-4-reverse-alchemy`; ingredient-pair finder implemented and locally verified; buying locations await published ingredient stock) Reverse alchemy: pick the effects, get the ingredients.
-  - [x] **C** **CALC-4 data** (started 2026-10-01 01:20 UTC, C; builder done `7be1365` in the pipeline, not pushed: vanilla 126 ingredients, shop 75, plant 44, creature 41, find 95, none 9 (quest and unique items), 31 KB gzipped; the real build and publish are the owner's step, then the effect finder shows it) Where each ingredient comes from, per world: shops that stock
+- [ ] **C** **CALC-4** (started 2026-10-01 00:43 UTC, Codex; parent `launch/calc-4-reverse-alchemy`; finder implemented; source UI locally verified on `launch/calc-4-where-to-get`; corrected data publication and integration remain) Reverse alchemy: pick the effects, get the ingredients.
+  - [x] **C** **CALC-4 data** (started 2026-10-01 01:20 UTC, C; builder done `7be1365`, pushed through `602253a`; bundle `27db1d54` staged locally; correction `41da92c` still needs the owner's rebuild and staging before release) Where each ingredient comes from, per world: shops that stock
         it (restocking or once), regrowing plants with the chance per harvest and counts by region
         and town, creatures that carry it and where they appear, and fixed finds such as ore
         deposits; sources that need theft left out (owner, 30 September). A pipeline catalog,
         `IngredientSources`, for the effect finder's results.
-  - [ ] **C** **CALC-4 where to get** (started 2026-10-01 02:28 UTC, C; branch `launch/calc-4-where-to-get` from `launch/calc-4-reverse-alchemy`) Each pair the effect finder shows says where to get its ingredients:
-        shops, plants, creatures and finds from `IngredientSources`, loaded only when asked for.
+  - [ ] **C** **CALC-4 where to get** (started 2026-10-01 02:28 UTC, C; resumed Codex, 1 October; branch `launch/calc-4-where-to-get`; implementation and local verification complete, corrected data publication and integration pending) Each selected Alchemy ingredient has a "Where to get it" button, with the pair shortcut retained:
+        shops, plants, creatures and finds from `IngredientSources`, loaded only when opened.
 
 ### Cut line
 

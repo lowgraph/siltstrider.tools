@@ -869,3 +869,47 @@ Evidence under `A:/Cache`: `calc-4-claim-unit.log`, `calc-4-unit.log`,
 `calc-4-browser-verified` (report, screenshots and audits).
 Shared coordination and roadmap notes describe the branch and the missing stock
 coverage; both repositories keep identical copies.
+
+## 19. CALC-4 selected-ingredient source lookup — 1 October locally
+
+Resumed `launch/calc-4-where-to-get` at `85e6a5e`, preserving its draft wiring.
+Each filled Alchemy slot has a "Where to get it" button, independent of the
+effect finder; pairs retain their shortcut. Opening either loads Places and the
+optional IngredientSources catalog in the current world. Replacement, clearing
+and world changes discard old panels. Loading is neutral, failed requests have
+Retry, older bundles show an unavailable notice, and absent/truncated sources
+are explicit. Stock/restocking, locations, quantities and player-level qualifiers
+remain visible; only matching draws combine, without mutating frozen records.
+
+- `npm test`: **911 passed**, zero failures/skips/todos. Coverage includes
+  malformed/null/impossible sources, distinct draws and levels, frozen records,
+  concrete find locations, locked containers, optional-catalog absence, lazy
+  activation, selected-ingredient replacement and inherited TR/ARCE provenance.
+- Chrome Alchemy: **26/26 passed** on this checkout at `127.0.0.1:8793`:
+  twelve effect-finder cases, twelve selected-ingredient cases across all three
+  profiles, both themes and 1366/375 px, plus two held/failed-request Retry cases.
+  The selected-ingredient cases need no pair, check native keyboard activation,
+  all four slot buttons, replacement/clearing and world isolation. **26 axe
+  audits, zero violations; 51 settled font checks**; no unexpected runtime/server
+  errors. Desktop and phone screenshots inspected.
+- Final `npm run build:cloudflare`: **passed, 24 static pages**, configured
+  live Clerk publishable key and repository configuration unchanged.
+- Pipeline synthetic suite: **685 passed**. No pipeline code changed here.
+  COORDINATION and UI_TRANSFORMATION are synchronized, preserving the parent's
+  separate Travel handoff. No parent/main merge or push is part of this task.
+- The first preview attempt met an existing Next dev server lock; it was reused
+  on 8766. When that server stopped responding, a new preview was started on 8793.
+  Test-harness fixes mapped the new shared source component in calculator tests,
+  included native Enter text in CDP events, and used unambiguous ingredients for
+  the four-slot case. Vanilla's valid empty Health + Fatigue result remains intact.
+- The staged bundle remains `27db1d54d3027e76ce07debf`. It predates pipeline
+  correction `41da92c`: a read-only check still found 819 TR creature draws below
+  the builder's dependable-drop threshold. The owner must rebuild and stage the
+  correction (test cells and random creature loot) before release. CALC-4 stays
+  open for corrected data publication and integration. No extraction, immutable
+  bundle modification, API, migration, deployment or remote write ran here.
+
+Evidence under `A:/Cache`: `calc-4-sources-precommit-unit.log`,
+`calc-4-sources-pipeline.log`, `calc-4-selected-sources-build-final.log`, and
+`calc-4-selected-sources-browser-passed` (report, screenshots, audits and network
+trace). The dev preview remains available for the owner.

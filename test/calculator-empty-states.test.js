@@ -12,6 +12,7 @@ const { JSDOM } = require('jsdom');
 
 async function workstation(tool, data) {
   const deps = {
+    './ingredient-sources': require('./helpers/ingredient-sources.cjs'),
     '../../character-context': { useActiveCharacter: () => ({ build: {}, sheet: {} }) },
     '../../shell-context': { useShell: () => ({ profile: 'vanilla', world: 'vanilla' }) },
     '../../active-character-link': require('./helpers/active-character-link.cjs'),'./reverse-alchemy': require('./helpers/reverse-alchemy.cjs'),'./ingredient-combobox': require('./helpers/ingredient-combobox.cjs'),

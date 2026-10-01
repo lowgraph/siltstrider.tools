@@ -14,6 +14,12 @@ export default function ChangelogView() {
 
       <div className="space-y-6 text-sm text-fg-2">
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Each selected Alchemy ingredient has a &ldquo;Where to get it&rdquo; button: shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened, and changing the ingredient closes its old sources. The effect finder keeps its pair shortcut.</li>
+          </ul>
+        </section>
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-09-30">September 30, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Choose the potion effects you want to find ingredient pairs, see their additional effects, and load a pair into the Alchemy calculator. Shop availability is not listed yet.</li>
