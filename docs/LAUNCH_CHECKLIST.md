@@ -326,7 +326,7 @@ commands in BROWSER_TESTS.md.
 
 #### 10. QA-06 — unobtainable Alchemy apparatus
 
-- [ ] **C** **QA-06** (reproduced 8/8; the missed keys are `tr_m7_apparatus_sm_alembic_02`, `_calcin_02`, `_retort_02`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
+- [ ] **C** **QA-06** (started 2026-10-01 22:04 UTC, Codex, on launch/character-preservation) (reproduced 8/8; the missed keys are `tr_m7_apparatus_sm_alembic_02`, `_calcin_02`, `_retort_02`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
       apparatus is still offered in TR and TR + ARCE Alchemy (Alembic, Calcinator, Retort),
       though the 30 September changelog says it is gone: the filter in
       `lib/alchemy-catalogs.mjs` matches only vanilla keys and names starting "Secretmaster".
