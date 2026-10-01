@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- On phones, Gear Advisor stacks each recommendation's slot, item and source so names stay readable. This applies to early-game equipment, the optimized endgame kit and its runner-ups; desktop tables keep their columns.
+
 - Gear Advisor keeps boots and closed helmets out of beast races' optimized kits and every runner-up list, including after changing weapon preference. Open helmets remain available; ARCE races that are not beasts keep their eligible footwear. Equipping recommendations uses the same race rules.
 
 - Builder, Home and Level Simulator show the same current race, gender and birthsign. After you edit a premade, its old title reads "Based on …" rather than describing the edited character; your own character names stay unchanged.

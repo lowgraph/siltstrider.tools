@@ -1,4 +1,4 @@
-/* Reproduction only. All storage and synthetic saves belong to the isolated Chrome profile. */
+/* QA reproduction and regression checks. Storage and synthetic saves stay in the isolated Chrome profile. */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -250,15 +250,75 @@ exports.qa = async c => {
     } finally {await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier}).catch(()=>{});}
   }
   if(c.filter && !['QA-08','QA-09'].some(id=>id.includes(c.filter)||c.filter.startsWith(id))) return;
-  for(const width of [375,390]) for(const theme of ['ashfall','morrowind']) {
+  if(!c.filter || 'QA-09'.includes(c.filter)||c.filter.startsWith('QA-09')) for(const width of [375,390]) for(const theme of ['ashfall','morrowind']) {
     await c.viewport(width);await c.evaluate(`localStorage.removeItem('silt-active-save');localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
     await c.navigate('builder');await readyBuilder(c);await c.builderTab('builder');
     for(let index=0;index<5;index++) await c.check(`QA-09/popover-${index+1}/${width}/${theme}`,async()=>{const d=await info(c,index);await record(c,'QA-09',{width,theme,index,...d});assertBox(d);return d;});
-    await c.builderTab('builder');await c.evaluate(`document.getElementById('gear-advisor').scrollIntoView({block:'start'})`);await c.idle();await c.button('Optimize Gear');await c.until('document.querySelector("#gear-advisor table tbody tr")');await c.idle();
-    for(const phase of ['Early','Late']) await c.check(`QA-08/${phase}/${width}/${theme}`,async()=>{
-      await c.until('document.querySelector("main table tbody tr")');
-      const d=await c.evaluate(`(()=>{const tables=[...document.querySelectorAll('#gear-advisor table')].filter(t=>${JSON.stringify(phase)}==='Early'?t.closest('details')?.querySelector('summary')?.textContent==='Early game':t.closest('.best-in-slot-recommendations'));return tables.map(t=>{const r=t.getBoundingClientRect(),bad=[];for(const td of t.querySelectorAll('td:last-child')){const walker=document.createTreeWalker(td,NodeFilter.SHOW_TEXT);while(walker.nextNode()){const n=walker.currentNode;for(const m of n.textContent.matchAll(/[A-Za-z]{4,}/g)){const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);const lines=[...range.getClientRects()].filter(r=>r.width>0);if(new Set(lines.map(r=>Math.round(r.y))).size>1)bad.push(m[0]);}}}return {heading:t.querySelector('thead').textContent,box:{x:r.x,right:r.right},width:innerWidth,brokenWords:bad};})})()`);
-      await record(c,'QA-08',{width,theme,phase,tables:d});assert.ok(d.length,'Gear tables exist');assert.ok(d.every(t=>t.box.x>=0&&t.box.right<=t.width+1&&t.brokenWords.length===0),'Gear stays inside viewport with whole words: '+JSON.stringify(d));return d;
+  }
+  if(c.filter && !('QA-08'.includes(c.filter)||c.filter.startsWith('QA-08'))) return;
+  for(const profile of ['vanilla','tr','tr_arce']) for(const width of [375,390,1366]) for(const theme of ['ashfall','morrowind']) {
+    await c.viewport(width);
+    await c.evaluate(`localStorage.removeItem('silt-active-save');localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    // A fixed build keeps long source names and the same ranked picks in every run.
+    await c.openDocument(c.base+encodeShareUrl({view:'builder',world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce',build:{...healthBuild,name:'QA Phone Gear'}}));
+    await c.idle();await c.waitForFonts();await readyBuilder(c);
+    await c.button('Optimize Gear');await c.until('document.querySelector("#gear-advisor table tbody tr")');await c.idle();
+    await c.until('document.querySelector(".best-in-slot-recommendations table tbody tr")');
+    const toggles=await c.evaluate(`(()=>{const buttons=[...document.querySelectorAll('.best-in-slot-recommendations button')].filter(b=>/View.*runner-up/.test(b.textContent));buttons.forEach((b,i)=>b.id='qa-gear-alt-'+i);return buttons.length})()`);
+    assert.ok(toggles>0,'Exercise real runner-up controls');
+    for(let i=0;i<toggles;i++) await c.click('#qa-gear-alt-'+i);
+    await c.idle();
+    for(const phase of ['Early','Late']) await c.check(`QA-08/${phase}/${profile}/${width}/${theme}`,async()=>{
+      const d=await c.evaluate(`(()=>{
+        const tables=[...document.querySelectorAll('#gear-advisor table')].filter(t=>${JSON.stringify(phase)}==='Early'?t.closest('details')?.querySelector('summary')?.textContent==='Early game':t.closest('.best-in-slot-recommendations'));
+        const box=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom}};
+        return tables.map(t=>{
+          const bad=[],overflow=[];
+          const cells=[...t.querySelectorAll('tbody td, tbody th, thead th')].filter(e=>!e.closest('thead')||innerWidth>640);
+          for(const td of cells){
+            const walker=document.createTreeWalker(td,NodeFilter.SHOW_TEXT);
+            while(walker.nextNode()){
+              const n=walker.currentNode;
+              for(const m of n.textContent.matchAll(/[\\p{L}]{4,}/gu)){
+                const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);
+                const lines=[...range.getClientRects()].filter(r=>r.width>0);
+                if(new Set(lines.map(r=>Math.round(r.y))).size>1)bad.push(m[0]);
+                if(lines.some(r=>r.x<box(t).x-1||r.right>box(t).right+1))overflow.push(m[0]);
+              }
+            }
+          }
+          const rows=[...t.querySelectorAll('tbody tr')].filter(r=>r.querySelector('td')).map(r=>{
+            const cells=[...r.querySelectorAll('td')].map(box);
+            const stacked=cells.length===3&&cells[0].bottom<=cells[1].y+1&&cells[1].bottom<=cells[2].y+1;
+            const columns=cells.length===3&&cells[0].right<=cells[1].x+1&&cells[1].right<=cells[2].x+1;
+            const source=r.querySelector('td:last-child');
+            return {cells,stacked,columns,sourceLabel:getComputedStyle(source,'::before').content,runnerUp:/Runner-up/.test(r.textContent)};
+          });
+          return {heading:t.querySelector('thead').textContent,name:t.getAttribute('aria-label'),box:box(t),width:innerWidth,brokenWords:bad,overflowWords:overflow,rows};
+        });
+      })()`);
+      const ax=await c.send('Accessibility.getFullAXTree');
+      const accessibleTables=ax.nodes.filter(n=>n.role?.value==='table').map(n=>n.name?.value);
+      await record(c,'QA-08',{width,theme,profile,phase,tables:d,accessibleTables});
+      assert.ok(d.length,'Gear tables exist');
+      for(const t of d){
+        assert.ok(t.box.x>=0&&t.box.right<=width+1,'Table within viewport');
+        assert.deepEqual(t.brokenWords,[],'Whole words: '+t.name);
+        assert.deepEqual(t.overflowWords,[],'Text fits the table: '+t.name);
+        assert.ok(t.rows.length,'Nonempty recommendations');
+        assert.ok(t.rows.every(r=>width<=640?r.stacked:r.columns),'Phone rows stack; desktop rows keep columns');
+        if(width<=640)assert.ok(t.rows.every(r=>r.sourceLabel.includes(phase==='Early'?'Where':'Acquisition & Location')),'Source labels visible');
+        assert.ok(accessibleTables.includes(t.name),'Native table remains in Chrome accessibility tree: '+t.name);
+      }
+      if(phase==='Late')assert.ok(d.some(t=>t.rows.some(r=>r.runnerUp)),'Expanded runner-up rows measured');
+      const selector=phase==='Early'?'#gear-advisor details table':'.best-in-slot-recommendations table';
+      await c.evaluate(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'start'});window.scrollBy(0,-100)`);
+      await c.screenshot(`qa08-${phase}-${profile}-${width}-${theme}`);
+      if(phase==='Late'){
+        await c.evaluate(`const row=[...document.querySelectorAll('.best-in-slot-recommendations tr')].find(r=>/Runner-up/.test(r.textContent));row.scrollIntoView({block:'start'});window.scrollBy(0,-100)`);
+        await c.screenshot(`qa08-runner-up-${profile}-${width}-${theme}`);
+      }
+      return {tables:d.length,rows:d.reduce((n,t)=>n+t.rows.length,0),accessibleTables};
     });
   }
 };

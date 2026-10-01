@@ -269,3 +269,17 @@ heading overflow. Each case captures all three headings. The two original
 QA-05 TODO cases are enforced; `test/qa-hydrated-title.test.js` uses hydrateRoot
 with all three actual components, and `test/character-identity.test.js` covers
 custom names, unknown markers, edited choices, links/snapshots and ARCE labels.
+
+QA-08's `--suite qa --filter 'QA-08'` checks the Early and Late gear tables in
+Vanilla/TR/TR + ARCE at 375, 390 and 1366 px in both themes (36 cases). It opens
+every runner-up control, checks whole words and text/viewport bounds in every
+cell, requires stacked phone rows and desktop columns, and confirms native
+tables remain in Chrome's accessibility tree. It captures Early/Late tables and
+expanded runner-up rows. The six browser-report assertions are enforced; QA-09's
+separate popover TODOs remain.
+
+```powershell
+node scripts/test-browser.cjs --suite qa --filter 'QA-08' --url http://127.0.0.1:8765 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa08-browser'
+$env:QA_BROWSER_REPORT='A:\Cache\qa08-browser\report.json'
+node --test --test-name-pattern='QA-08' test/qa-layout.browser.cjs
+```

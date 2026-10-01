@@ -1717,3 +1717,44 @@ unfinished priority, then **QA-07 + QA-25**. Evidence under `A:/Cache/`:
 `qa10-without-bundle.log`, `qa10-build-final.log`, `qa10-pipeline.log`, and
 `qa10-browser-verified/`. First command: `npm test`, then BROWSER_TESTS'
 `--suite qa --filter 'QA-10/'`.
+
+## 37. QA-08 phone gear tables — 1 October 2026
+
+Claimed 20:51 UTC on `launch/character-preservation`; claim `e3bade4` was pushed
+before implementation, after pushing QA-10 in both repositories. The owner
+requested QA-08 ahead of QA-16. Main and production are unchanged.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-08 | Fixed on branch; baseline reproduces 8/8, final matrix passes 36/36 | `gear-sources.jsx` `SourceRow`, `best-in-slot-view.jsx` `BisPickRow`, and `app/globals.css`: three narrow phone columns inherit mid-word wrapping. At up to 640 px, stack slot, item and source in each row, including alternatives; retain whole words and add a visible source label. Desktop retains columns; native table headings, column scopes and accessible names remain | Six enforced cases in `test/qa-layout.browser.cjs`, fed by Chrome `--suite qa --filter 'QA-08'` |
+
+The original four browser-report tests all failed with TODO marks removed before
+the fix. Names such as Dandera and Pelagiad broke across lines in both Early and
+Late tables at 375/390 px in both themes. The expanded checks now inspect every
+visible cell, including item names, group headings, acquisition notes and opened
+runner-ups; they check whole words, text bounds, table bounds and row layout.
+Source labels must appear on phones, and desktop rows must remain columns.
+Chrome's accessibility tree must retain each named native table.
+
+Final matrix: Early/Late × Vanilla/TR/TR + ARCE × 375/390/1366 px ×
+Ashfall/Morrowind. A fixed build keeps the comparisons reproducible; every real
+runner-up control is opened. **36/36 cases pass**, measuring **1,374 rows across
+the matrix**, with **0 runtime errors**, **0 server errors** and **54 screenshots**.
+Early/Late, runner-up and desktop captures were visually reviewed.
+
+Verification before committing:
+
+- `npm test`: **1,079 tests; 1,066 passed, 13 existing TODO, 0 failures**.
+- Browser-report assertions: **6 passed, 0 TODO, 0 failures**.
+- `npm run build:cloudflare`: **24 pages, passed**, with config unchanged.
+- Pipeline: **685 passed**; only COORDINATION.md changes there. Both copies of
+  COORDINATION.md and UI_TRANSFORMATION.md remain identical.
+
+Both player changelogs and BROWSER_TESTS are updated. No ranking, calculation,
+data, exported schema, account, migration or deployment change. **QA-09 popovers
+remain open**; next priority is **QA-16**, then **QA-07 + QA-25**, after owner
+go-ahead. The existing dev server at **http://127.0.0.1:8794** stays running.
+Evidence under `A:/Cache/`: `qa08-browser-before/`, `qa08-wrapper-before.log`,
+`qa08-browser-after/`, `qa08-wrapper-final.log`, `qa08-unit-final.log`,
+`qa08-build-final.log` and `qa08-pipeline.log`. First command: `npm test`, then
+BROWSER_TESTS' QA-08 runner and report-wrapper commands.

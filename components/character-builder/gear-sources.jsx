@@ -21,7 +21,7 @@ function SourceRow({row,pick,alternative=false,enchantMult=0.1,traits=null}){
         {pick.note&&' '+pick.note}
       </span>}
     </td>
-    <td>{pick?<><span className="where">{source.where}{source.who?` — ${source.who}`:''}</span>
+    <td data-label="Where">{pick?<><span className="where">{source.where}{source.who?` — ${source.who}`:''}</span>
       <span className="gear-note">{pick.acquisition}{pick.acquisition==='purchase'?` · Estimated value: ${pick.price ?? 'unknown'} gold`:''}{pick.theftRequired?' · Theft required':''} · {pick.acquisition==='ambush'?'Comes to you':pick.nearStart?'Near starting area':'Farther away'}</span>
     </>:<span>No eligible source found in the published evidence.</span>}</td>
   </tr>;
@@ -37,7 +37,7 @@ export function GearSourcesView({build,beast=false,result,toggles,ranking}){
     {(result.status==='idle'||result.status==='loading')&&<p role="status">Loading early-game equipment...</p>}
     {result.status==='error'&&<p role="alert">Early-game equipment could not be loaded. <button type="button" className="mw-btn" onClick={result.retry}>Retry</button></p>}
     {result.status==='ready'&&<>
-      <table><thead><tr><th>Slot</th><th>Item</th><th>Where</th></tr></thead><tbody>
+      <table className="gear-table" aria-label="Early-game equipment"><thead><tr><th scope="col">Slot</th><th scope="col">Item</th><th scope="col">Where</th></tr></thead><tbody>
         {groups.map(group=>{
           return group.rows.length?<Fragment key={group.label}><tr><th colSpan="3">{group.label}</th></tr>
             {group.rows.map(row=><Fragment key={row.key}><SourceRow row={row} pick={row.primary} enchantMult={enchantMult} traits={traits}/>{row.alternative&&<SourceRow row={row} pick={row.alternative} alternative enchantMult={enchantMult} traits={traits}/>}</Fragment>)}

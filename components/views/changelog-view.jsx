@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>On phones, Gear Advisor stacks each recommendation&apos;s slot, item and source so names stay readable. This applies to early-game equipment, the optimized endgame kit and its runner-ups; desktop tables keep their columns.</li>
             <li>Gear Advisor keeps boots and closed helmets out of beast races&apos; optimized kits and every runner-up list, including after changing weapon preference. Open helmets remain available; ARCE races that are not beasts keep their eligible footwear. Equipping recommendations uses the same race rules.</li>
             <li>Builder, Home and Level Simulator show the same current race, gender and birthsign. After you edit a premade, its old title reads &ldquo;Based on …&rdquo; rather than describing the edited character; your own character names stay unchanged.</li>
             <li>Level Simulator keeps fractional Health gains, following the OpenMW 0.51 source. Its chart starts from your character&apos;s Health and Endurance, including loaded saves; starting at 30 Endurance reaches 100 at level 15 with +5 each level. Bitter Cup changes future gains when it changes Endurance, without recalculating starting Health.</li>
