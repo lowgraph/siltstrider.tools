@@ -206,7 +206,7 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. Skip completed implementation items while retaining their
-merge/deploy status. QA-08 and QA-09 are complete on this branch. **Next target: QA-16**, then **QA-07 + QA-25**, **QA-06**, and the QA-05 regression recheck, as authorized by the owner.
+merge/deploy status. QA-08 and QA-09 are complete on this branch. **Next target: QA-07 + QA-25**, then **QA-06**, and the QA-05 regression recheck, as authorized by the owner.
 Test portability, QA-21/23, QA-22, QA-01/02, QA-03/04, QA-10 and QA-05 are complete on this branch;
 QA-24 is merged to main. Final acceptance still waits for the remaining fixes.
 
@@ -308,7 +308,7 @@ commands in BROWSER_TESTS.md.
 
 #### 8. QA-16 — Ebonheart → Mournhold
 
-- [ ] **C** **QA-16** (started 2026-10-01 21:38 UTC, Codex, on launch/character-preservation) (reproduced 24/24, all worlds, walking on and off: High, a wrong answer; the Mournhold teleport is in every Teleports catalog, but `buildTransitStops`/`transitEndpointStops` (`lib/travel-stops.mjs`) do not expand the Mournhold city choice to its destination stop; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
+- [x] **C** **QA-16** (started 2026-10-01 21:38 UTC, Codex, on launch/character-preservation; done on this branch, three catalog tests enforced and six stop-alias edge cases; 24/24 Chrome, LAUNCH_VERIFICATION §39; not merged or deployed) (reproduced 24/24, all worlds, walking on and off: High, a wrong answer; the Mournhold teleport is in every Teleports catalog, but `buildTransitStops`/`transitEndpointStops` (`lib/travel-stops.mjs`) do not expand the Mournhold city choice to its destination stop; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
       Mournhold showed No Route, though the Mournhold teleport from Ebonheart is everyday
       travel (Teleports policy). Check in Vanilla, TR and TR + ARCE with walking on and off;
       if it reproduces it is a wrong answer (High).

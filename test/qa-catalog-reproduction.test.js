@@ -20,7 +20,7 @@ for(const race of ['Argonian','Khajiit','Khajiit (Cathay-raht)']) test(`QA-10 pr
 test('QA-11 published faction names exist for all three reported raw IDs',staged(),async()=>{
   const l=await loader();for(const profile of ['tr','tr_arce']) {const factions=await l.loadCatalog(profile,'Factions');for(const [key,name] of [['t_cyr_fightersguild','Cyrodiil Fighters Guild'],['t_glb_archaeologicalsociety','Imperial Archaeological Society'],['t_mw_imperialnavy','East Navy']]) assert.equal(factions.find(f=>f.key===key)?.name,name);}
 });
-for(const profile of ['vanilla','tr','tr_arce']) test(`QA-16 Mournhold city choice expands to its everyday teleport stop: ${profile}`,staged(todo('QA-16')),async()=>{
+for(const profile of ['vanilla','tr','tr_arce']) test(`QA-16 Mournhold city choice expands to its everyday teleport stop: ${profile}`,staged(),async()=>{
   const l=await loader(),d=await l.loadFeature(profile,'travel');const {buildTransitStops,transitEndpointStops}=await import('../lib/travel-stops.mjs');const {usableTeleport,addTeleports}=await import('../lib/travel-teleports.mjs');
   const teleports=d.catalogs.Teleports.filter(t=>usableTeleport(t));const t=teleports.find(t=>t.source==='mhtransportscript');assert.ok(t);
   const network=buildTransitStops(d.catalogs.Travel,d.metadata.Travel.nodes,{providers:d.metadata.Travel.providers,access:{records:d.catalogs.Access},teleports});

@@ -285,7 +285,7 @@ exports.qa = async c => {
       });
       for(const profile of ['vanilla','tr','tr_arce']) for(const walk of [true,false]) await c.check(`QA-16/Mournhold/${profile}/${walk?'walking':'no-walking'}/${width}/${theme}`,async()=>{
         await c.navigate('travel',profile,`&from=Ebonheart&to=Mournhold${walk?'':'&walk=0'}`);await c.until('document.getElementById("travel-results").textContent.includes("No Route") || document.getElementById("travel-results").textContent.includes("Fares for your character:")');
-        const text=await body(c);await record(c,'QA-16',{width,theme,profile,walk,text});assert.doesNotMatch(text,/No Route/);assert.match(text,/Asciene Rane|transport to mournhold/i);return text;
+        const text=await body(c);await record(c,'QA-16',{width,theme,profile,walk,text});assert.doesNotMatch(text,/No Route/);assert.match(text,/Asciene Rane|transport to mournhold/i);await c.screenshot(`qa16-${profile}-${walk?'walking':'no-walking'}-${width}-${theme}`);return text;
       });
       // A loaded save isolates the Health chart from random premades.
       await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier});

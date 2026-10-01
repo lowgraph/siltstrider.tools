@@ -1798,3 +1798,33 @@ running. Evidence in `A:/Cache/`: `qa09-browser-before/`, `qa09-wrapper-before.l
 `qa09-pipeline.log`, `qa09-browser-verified/`, `qa09-touch-verified/`, and
 `qa09-wrapper-{mouse,touch}.log`. First command: `npm test`, then BROWSER_TESTS'
 QA-09 commands. Next authorized items: QA-16, QA-07/25, QA-06 and QA-05 recheck.
+
+## 39. QA-16 Ebonheart to Mournhold — 1 October 2026
+
+Claimed 21:38 UTC on `launch/character-preservation`, claim `d3f4dc3`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-16 | Fixed on branch; baseline 24/24 reproduced, final 24/24 pass | `travel-stops.mjs`, `buildTransitStops`/`transitEndpointStops`: the Teleports catalog contains the Royal Palace landing, but Travel metadata has no node for that room, so the Mournhold city choice cannot reach it. Missing interior metadata now uses the published Places name, with the cell-name fallback; its comma-separated town prefix supplies a case-insensitive boundary alias | Three original catalog cases enforced; six synthetic cases in `test/teleport-stop-aliases.test.js`; Chrome `--suite qa --filter 'QA-16'` |
+
+`mhtransportscript` is everyday dialogue from Ebonheart's Grand Council Chambers
+to Mournhold's Royal Palace Reception Area. `usableTeleport` and `addTeleports`
+already retained it; no teleport policy change. Keep full room labels and exact
+stop IDs. Explicit node metadata wins. Exterior positions remain separate and
+aliases create no free graph edges; quest and item restrictions still apply.
+No bundle rebuild or schema change; the workstation passes its existing Places
+catalog to the stop builder. All three original catalog cases failed unmarked
+before the fix. New tests cover four route objectives, absent/malformed/frozen
+Places, case, metadata priority, separate rooms and quest/held-item gates.
+
+Final matrix: three worlds × walking on/off × 1366/375 px × both themes:
+**24/24 passed**, with **24 screenshots**, **zero runtime/server errors**.
+Verification: `npm test` **1,093 tests, 1,083 passed, 10 remaining TODO, 0 failures**;
+release build **24 pages passed**, config unchanged; pipeline **685 passed**.
+Both changelogs and BROWSER_TESTS updated; shared coordination/roadmap copies
+remain identical. Main, production, migrations and account data are unchanged.
+The existing dev server at 8794 remains running. Evidence in `A:/Cache/`:
+`qa16-before-tests.log`, `qa16-browser-before/`, `qa16-targeted.log`,
+`qa16-unit-final.log`, `qa16-build-final.log`, `qa16-browser-verified/`,
+`qa16-pipeline.log`. First command: `npm test`, then the QA-16 Chrome case.
+Next authorized work is QA-07/25, QA-06 and the QA-05 regression recheck.

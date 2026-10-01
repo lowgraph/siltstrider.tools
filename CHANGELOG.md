@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Travel finds the everyday Ebonheart–Mournhold teleport in all three worlds, including with walking switched off. Named cities now include teleport-only rooms that were missing from the transport stop list.
+
 - Character Builder's Configure explanations stay inside the screen and above the phone tab bar. They open above their buttons when needed; long text scrolls inside the box. Tap again, tap outside or press Escape to close.
 
 - On phones, Gear Advisor stacks each recommendation's slot, item and source so names stay readable. This applies to early-game equipment, the optimized endgame kit and its runner-ups; desktop tables keep their columns.

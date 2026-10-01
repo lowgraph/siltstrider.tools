@@ -194,6 +194,7 @@ export default function TravelWorkstation() {
       const providers = gameData.data.metadata?.Travel?.providers || {};
       return buildTransitStops(records, nodes, { mageGuild, conjurer: isTr && conjurer, providers,
         access: { records: gameData.data.catalogs.Access || [] },
+        places: gameData.data.catalogs.Places || [],
         teleports: (gameData.data.catalogs.Teleports || []).filter(t => usableTeleport(t, held, questTeleports)),
         intervention: { records: gameData.data.catalogs.Intervention || [], markers: gameData.data.metadata?.Intervention?.markers || {} }
       });

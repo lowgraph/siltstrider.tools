@@ -303,3 +303,10 @@ node --test --test-name-pattern='QA-09' test/qa-layout.browser.cjs
 $env:QA_BROWSER_REPORT='A:\Cache\qa09-touch\report.json'
 node --test --test-name-pattern='QA-09' test/qa-layout.browser.cjs
 ```
+
+QA-16's `--suite qa --filter 'QA-16'` checks Ebonheart → Mournhold in all three
+worlds, with walking on/off, at 1366/375 px in both themes (24 cases). It requires
+the Asciene Rane dialogue route and captures every itinerary. Three original
+catalog cases are enforced; `test/teleport-stop-aliases.test.js` covers missing
+metadata/Places, authoritative names, case, exact room IDs, no free transfers,
+malformed frozen records and quest/held-item gates.
