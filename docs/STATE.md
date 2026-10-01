@@ -108,6 +108,9 @@ per-save edits survive account overrides. Modpack/releases and update notices
 remain unavailable pending a release registry; the two future gear filters stay
 hidden pending row support. Migration application and deployment are separate
 owner steps.
+Production migration 0007 was applied with owner authorization on 30 September;
+the existing records are preserved (LAUNCH_VERIFICATION §15). Settings deployment
+has not run.
 
 ### B. Entitlements & Ko-fi Integration
 - **Free Tier**: 5 cloud save slots.

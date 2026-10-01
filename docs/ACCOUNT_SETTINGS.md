@@ -2,10 +2,12 @@
 
 ACC-1 creates the table in `cloudflare/migrations/0007_account_settings.sql`
 before launch. It has been applied and checked on a fresh local D1 database;
-production apply is the owner's separate step. ACC-2 adds `/api/settings`, the
-account settings provider, and controls in Your account.
-ACC-1, ACC-2 and the tool polish are merged to main in `b45f686`. Production
-migration application and deployment have not run; both are separate owner steps.
+production 0007 was applied separately with owner authorization on 30 September.
+ACC-2 adds `/api/settings`, the account settings provider, and controls in Your
+account.
+ACC-1, ACC-2 and the tool polish are merged to main in `b45f686`.
+Production migration verification is in LAUNCH_VERIFICATION §15; the settings API
+and site changes have not been deployed.
 
 ## Requested settings
 
@@ -276,7 +278,9 @@ migration, tests and build passed after integration. The verification record
 above describes the original implementation; §12 also records the new-main checks.
 The owner authorized merging the completed settings and tool-polish branch to main
 in `b45f686`; current merge verification is in LAUNCH_VERIFICATION §14.
-Production migration application remains separate. No remote migration or deployment ran.
+Production 0007 was applied separately with owner authorization on 30 September;
+the recovery record and preservation checks are in LAUNCH_VERIFICATION §15.
+No deployment ran.
 
 References: [D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 and [D1 JSON storage](https://developers.cloudflare.com/d1/sql-api/query-json/).

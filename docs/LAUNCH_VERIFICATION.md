@@ -646,3 +646,44 @@ before committing. A following documentation commit records this result; it
 changes no application code. Real sign-in and cross-device account acceptance
 remain release checks. Capture a fresh D1 recovery bookmark and apply migration
 0007 separately before deploying the settings API.
+
+## 15. Production account settings migration — 30 September 2026
+
+The owner explicitly authorized production migration 0007. From clean main
+`254c76f` in `A:/Claude/mt-account-main-merge`, the configured account and returned
+D1 UUID matched `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name
+`siltstrider-characters-dev`; configured name `siltstrider-db`). Only
+`0007_account_settings.sql` was pending, with 0001–0006 already recorded.
+Application started **2026-09-30 23:56:48 UTC**; Wrangler 4.134.0 applied 0007
+successfully, and the post-check reported **No migrations to apply!**.
+
+- Immediate pre-apply Time Travel bookmark:
+  `00000058-00000000-000050f6-bb9b1481c9d6b08340cdb425cedbc8c1`.
+- Full pre-migration backup SHA-256:
+  `01b9a10b10e404567c641eda62648db8a1e252af7e43c1b5d3694f65ebf30110`.
+  The 40,424-byte export is private, outside Git/public assets, in a folder with
+  access restricted to the current Windows user, SYSTEM and administrators.
+- Restored the backup into an isolated local SQLite file. Integrity passed;
+  counts matched the remote preflight. Rehearsed 0007 on the restored data:
+  every historical record remained unchanged.
+- Production verification: `account_settings` exists with **zero rows**; all
+  **20 historical schema objects** (excluding SQLite/Cloudflare internals) are
+  identical and all **seven application table counts** match the preflight.
+- Exported a private post-migration snapshot, restored it locally, and compared
+  every historical application row: **all records exactly preserved**. The
+  original six migration records are unchanged; 0007 is the only added record.
+  Post-snapshot integrity passed. No original data was lost or modified.
+- Worker deployment history before/after is identical. No site deployment,
+  Worker upload, database restore, extraction or bundle change occurred.
+  The current Worker ignores the new table; the settings API awaits deployment.
+- Documentation verification before committing: **887 site tests** and
+  **670 pipeline tests** passed. Shared coordination/roadmap files are identical.
+- ACC-1 production is complete. Code rollback does not remove this additive
+  table; existing Workers remain compatible. Deployment remains a separate ask.
+
+Private recovery/evidence directory:
+`A:/Cache/account-settings-production-20260930` (exports, restored local checks,
+bookmark/action metadata, schema/count snapshots, pending/apply logs, verification
+JSON and before/after Worker deployment metadata). Never commit those private
+exports or restored files. The first read-only UNION count query exceeded D1's
+compound SELECT limit; separate SELECT statements succeeded before applying.

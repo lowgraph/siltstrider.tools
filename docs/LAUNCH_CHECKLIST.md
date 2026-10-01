@@ -99,7 +99,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       ACCOUNT_PROFILES; `npm test`; apply locally with `wrangler d1 migrations apply
       siltstrider-db --local` and check the saves tables are untouched; merge to `main`. No
       changelog entry: visitors see nothing.
-- [ ] **O** **ACC-1 (production)** After ACC-1 is on `main` and before the freeze: record a
+- [x] **O** **ACC-1 (production)** (owner authorized; applied 2026-09-30 23:56 UTC, Codex; verified in LAUNCH_VERIFICATION §15) After ACC-1 is on `main` and before the freeze: record a
       fresh D1 Time Travel bookmark, then apply with `wrangler d1 migrations apply
       siltstrider-db --remote` as its own step, separate from any site release; check
       `migrations list --remote` reports none pending; record the bookmark and result in
