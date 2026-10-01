@@ -211,11 +211,11 @@ usual tests (at least three edge cases for a logic change) and changelog.
       points, shown as 2, so it "does not fit" a Common Ring and its base price doubles.
       Afterwards re-check the self-enchant chance (16% vs the engine's 15%) and the base
       price (2,000 vs 1,500 g) from SUS-01.
-- [ ] **C** **QA-03** (reproduced 4/4 local and live; OpenMW 0.51 `levelUp` adds a float Endurance gain, and does not recompute the base half retroactively; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-02; confirmed in code) Level Simulator Health per level
+- [ ] **C** **QA-03** (started 2026-10-01 19:34 UTC, Codex, on launch/character-preservation) (reproduced 4/4 local and live; OpenMW 0.51 `levelUp` adds a float Endurance gain, and does not recompute the base half retroactively; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-02; confirmed in code) Level Simulator Health per level
       is floored (`floor(END / 10)`, `lib/level-math.mjs`); OpenMW keeps the fraction (10% of
       Endurance): END 35 to 55 gives 22.5 over five levels, the site 21. Confirm against
       OpenMW 0.51's `npcstats.cpp` first (the report cited 0.49); change the explanation too.
-- [ ] **C** **QA-04** (partly reproduced: all five chart expectations fail in unit tests, live chart starts at 50 for Health 35; cause `normalizeCharacterState`/`calculateHealthGrowthCurve` recompute the sheet; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
+- [ ] **C** **QA-04** (started 2026-10-01 19:34 UTC, Codex, on launch/character-preservation) (partly reproduced: all five chart expectations fail in unit tests, live chart starts at 50 for Health 35; cause `normalizeCharacterState`/`calculateHealthGrowthCurve` recompute the sheet; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
       starts at 50 whatever the character's Health (35, 45), says "Endurance 100 at Lv 6"
       when ten +5 steps are needed, and its forecast moves when Bitter Cup changes only
       Personality and Willpower. Check each symptom on its own; the Bitter Cup one may be
