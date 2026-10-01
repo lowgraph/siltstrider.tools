@@ -176,6 +176,8 @@ for now (owner, 30 September); other agents skip them.
         and town, creatures that carry it and where they appear, and fixed finds such as ore
         deposits; sources that need theft left out (owner, 30 September). A pipeline catalog,
         `IngredientSources`, for the effect finder's results.
+  - [ ] **C** **CALC-4 where to get** (started 2026-10-01 02:28 UTC, C; branch `launch/calc-4-where-to-get` from `launch/calc-4-reverse-alchemy`) Each pair the effect finder shows says where to get its ingredients:
+        shops, plants, creatures and finds from `IngredientSources`, loaded only when asked for.
 
 ### Cut line
 
