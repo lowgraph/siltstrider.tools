@@ -206,7 +206,7 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. Skip completed implementation items while retaining their
-merge/deploy status. QA-08 is complete on this branch. **Next unfinished target: QA-16**, then **QA-07 + QA-25**, after owner go-ahead.
+merge/deploy status. QA-08 is complete on this branch. **Current target: QA-09**, by owner request; after it, resume **QA-16**, then **QA-07 + QA-25**.
 Test portability, QA-21/23, QA-22, QA-01/02, QA-03/04, QA-10 and QA-05 are complete on this branch;
 QA-24 is merged to main. Final acceptance still waits for the remaining fixes.
 
@@ -345,7 +345,7 @@ commands in BROWSER_TESTS.md.
 - [x] **C** **QA-08** (started 2026-10-01 20:51 UTC, Codex, on launch/character-preservation; done on this branch, `test/qa-layout.browser.cjs` enforced, 36/36 Chrome, LAUNCH_VERIFICATION §37; not merged or deployed) (reproduced 8/8; `gear-sources.jsx` `SourceRow`, `best-in-slot-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
       breaks into fragments ("Ald- / ruhn — / sold by / Dander / a"). Stack slot, item and
       source at phone width; Early and Late game, 375 and 390 px.
-- [ ] **C** **QA-09** (partly reproduced: Birthsign, Specialization and both Favored Attribute overflow 16/16; Race stays inside; `configurator.jsx` `InfoTip` has no clamping; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
+- [ ] **C** **QA-09** (started 2026-10-01 21:10 UTC, Codex, on launch/character-preservation) (partly reproduced: Birthsign, Specialization and both Favored Attribute overflow 16/16; Race stays inside; `configurator.jsx` `InfoTip` has no clamping; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
       off-screen. Keep every info popover inside the viewport; check each info icon at 375 px.
 
 #### 13. QA-12 — premade explanations
