@@ -869,3 +869,116 @@ Evidence under `A:/Cache`: `calc-4-claim-unit.log`, `calc-4-unit.log`,
 `calc-4-browser-verified` (report, screenshots and audits).
 Shared coordination and roadmap notes describe the branch and the missing stock
 coverage; both repositories keep identical copies.
+
+## 19. Precise city transfers with merged city choices — 30 September locally
+
+`launch/travel-city-stop-walks` starts at CALC-4 `f3461cd`. Cities remain one
+search choice and keep their general names at unspecified journey boundaries.
+Searching a specific hall, district, service or provider reveals its precise
+location. Intermediate cities show the arrival/departure stops and the timed
+outdoor walk between them, including doors into and out of guild halls.
+
+The router retains published cell/position identities, including distinct
+arrivals, Intervention markers and usable scripted teleports. A merged city is
+only a choice of route boundary platforms, never a free intermediate node.
+Unknown exterior positions have separate placeholders; they cannot manufacture
+a transfer. Local indoor coordinates are not used as world coordinates, and
+indoor movement remains uncounted. Existing membership, quest, inventory,
+terrain, movement and spell/scroll resource constraints remain in effect.
+
+- `npm test`: **911 passed**, zero failures/skips/todos. Synthetic cases cover
+  exact transfers, distinct arrivals/providers, malformed/missing coordinates,
+  frozen data, city boundaries, resource budgets, old/specific links, grouped
+  city/canton search, and picker drafts during equivalent list recalculations.
+- Local Chrome Travel cases: **21/21 passed**, including the twelve city-transfer
+  cases across Vanilla/TR/TR+ARCE, both themes and 1366/375 px, plus keyboard,
+  loading/failure/retry, imported-save persistence/profile isolation and defaults.
+  **16 axe audits, zero violations; 91 settled font checks**; no runtime or
+  unexpected server errors. Desktop and phone screenshots were inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**, with the repository
+  configuration unchanged and its configured live Clerk publishable key.
+- Pipeline synthetic suite: **680 passed**, with no uncaught warnings. Shared
+  COORDINATION and UI_TRANSFORMATION copies remain byte-identical; concurrent
+  IngredientSources implementation work is preserved.
+- The owner removed the retired two-failure/boost rule from both AGENTS.md files.
+  The resumed browser expectations allow the published guide's provider name
+  and the optimizer's actual transfer city: Fewest legs can prefer Vivec over
+  Balmora. No application patch forces either city into a route.
+- No extraction, immutable bundle/schema change, API, D1 migration, merge,
+  push or deployment ran. The owner-requested dev server remains available at
+  `http://127.0.0.1:8792`; CALC-4 remains intact on the parent branch.
+
+Evidence under `A:/Cache`: `city-stop-final-unit.log`,
+`city-stop-final-pipeline.log`, `city-stop-final-build.log`, and
+`city-stop-final-browser-verified` (report, screenshots, audits and input traces).
+
+## 20. Automatic long-walk and swimming fallback — 1 October locally
+
+On `launch/travel-city-stop-walks`, plan against the restricted walking network
+first. Only if no route exists, add long endpoint/place walks and open-water
+swims and optimize again with the same objective and character/resource limits.
+Normal journeys retain their transport: Fewest legs must keep Seyda Neen →
+Balmora by Silt Strider. Remote Ald Redaynia gains a route after the restricted
+attempt fails. There is no extra toggle, warning or account setting. The existing
+walking-off choice disables both attempts; old experimental `long` parameters
+are ignored and removed from generated links.
+
+Mixed legs show walking and swimming time separately. Water Walking counts water
+at run speed. Overload, blocked terrain, missing exits, membership, quest and
+spell/scroll budgets remain enforced. Long searches are lazy and bounded, and
+city platforms never become free intermediate joins. The phone route summary
+uses a shorter leg label so the endpoint names retain readable widths.
+
+- `npm test`: **920 passed**, zero failures/skips/todos. Cases cover every normal
+  route objective, automatic island fallback, walking-off, overload, Water
+  Walking, long/short memo isolation, enclosed terrain, missing swim speed and
+  beyond-limit place reach, along with the existing city-transfer regressions.
+- Chrome Travel: **33/33 passed**, including twelve city-transfer and twelve
+  fallback cases across all profiles, both themes and 1366/375 px, keyboard,
+  loading/failure/retry, imported-save persistence and default journeys.
+  **28 axe audits, zero violations; 127 settled font checks**; no unexpected
+  runtime/server errors. Desktop and phone screenshots were inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**; repository config
+  unchanged, configured live Clerk publishable key, no deployment.
+- Pipeline synthetic suite: **685 passed**. Shared COORDINATION and
+  UI_TRANSFORMATION copies are byte-identical; no pipeline code changed here.
+- No extraction, immutable catalog modification, migration, commit, push, merge
+  or deployment. The restored dev server remains on `http://127.0.0.1:8792`.
+
+Evidence under `A:/Cache`: `travel-fallback-final-unit.log`,
+`travel-fallback-final-build.log`, `long-journeys-pipeline.log`, and
+`travel-fallback-browser-verified` (report, screenshots and axe audits).
+
+## 21. Travel integrated into its original CALC-4 parent — 1 October locally
+
+With owner approval, merge `launch/travel-city-stop-walks` at `f07425c` into
+`launch/calc-4-reverse-alchemy` at `f3461cd` with `--no-ff`. The merge has no
+conflicts. Application code matches the tested Travel source; shared handoff
+notes now describe the integration. The parent's effect finder remains intact.
+Buying-location wiring stays on the separate `launch/calc-4-where-to-get`
+branch at `85e6a5e`; none of its uncommitted implementation is included.
+
+- On the actual merged parent checkout, `npm test`: **920 passed**, zero
+  failures/skips/todos. Before the Travel source commit, the same suite also
+  passed all 920 tests.
+- Chrome Travel: **33/33 passed**, covering city transfers, restricted-first
+  long-walk/swimming fallback, keyboard/search, loading/failure/retry, saved
+  choices/profile isolation and defaults. All three profiles, both themes and
+  1366/375 px are covered. **28 axe audits, zero violations; 127 settled font
+  checks**; no unexpected runtime/server errors. Screenshots inspected.
+- Chrome Alchemy effect finder: **12/12 passed**, all three profiles, both
+  themes and 1366/375 px. **12 axe audits, zero violations; 25 settled font
+  checks**; no runtime/server errors. Phone layout inspected.
+- `npm run build:cloudflare`: **passed, 24 static pages**, with the repository
+  configuration unchanged and its configured live Clerk publishable key.
+- Pipeline synthetic suite: **685 passed** before the Travel source commit.
+  No pipeline code changed here. Shared COORDINATION and UI_TRANSFORMATION
+  copies match byte for byte; concurrent source-data work is preserved.
+- This is a local branch integration. No main merge, push, deployment,
+  extraction, published bundle/schema change or D1 migration. The owner's dev
+  server remains running at `http://127.0.0.1:8792` on the parent checkout.
+
+Evidence under `A:/Cache`: `travel-parent-precommit-unit.log`,
+`travel-parent-precommit-pipeline.log`, `travel-parent-merged-unit.log`,
+`travel-parent-merged-build.log`, `travel-parent-merged-browser` and
+`travel-parent-merged-alchemy` (reports, screenshots and axe audits).

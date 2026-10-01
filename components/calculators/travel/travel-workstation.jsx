@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { cheapestTradeoff } from "../../../lib/travel-tradeoff.mjs";
-import { realTimeText } from "../../../lib/travel-real-time.mjs";
+import { realTimeText, formatRealDuration } from "../../../lib/travel-real-time.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useAccountSettings } from '../../account-settings-context';
@@ -14,8 +14,6 @@ import {
   planRoute,
   journeyGold,
   travelDisposition,
-  adaptTravelGraph,
-  addInterventionEdges,
   saveMarks,
   interventionMarkText,
   guildFromSave,
@@ -23,10 +21,10 @@ import {
   INTERVENTION_KINDS,
   ROUTE_OBJECTIVES
 } from "../../../lib/travel-graph.mjs";
-import { resolveStopPositions, regionLabels, mapEdges, formatRegionName } from "../../../lib/travel-map.mjs";
+import { regionLabels, mapEdges, formatRegionName } from "../../../lib/travel-map.mjs";
 import {
-  stopPoints,
   addStopWalks,
+  addJourneyWalks,
   addPlaces,
   walkGrid,
   formatDuration,
@@ -38,7 +36,7 @@ import {
   PLACE_PREFIX,
   CELL
 } from "../../../lib/travel-walk.mjs";
-import { addTeleports, teleportItems, heldFromSave } from "../../../lib/travel-teleports.mjs";
+import { addTeleports, teleportItems, heldFromSave, usableTeleport } from "../../../lib/travel-teleports.mjs";
 import { readRouteLink, writeRouteLink } from "../../../lib/travel-link.mjs";
 import { movementFor, itemIndex, carriedWeight, constantEffects } from "../../../lib/travel-movement.mjs";
 import TransitMap from "./transit-map";
@@ -47,6 +45,8 @@ import TravelLocationPicker from "./travel-location-picker";
 import { buildTravelSearchOptions } from "../../../lib/travel-search.mjs";
 import { travelSaveKey, readTravelOverrides, writeTravelOverrides } from "../../../lib/travel-options.mjs";
 import { interventionAccess, withInterventionResources } from "../../../lib/travel-intervention-access.mjs";
+
+import { buildTransitStops, addTransitInterventions, resolveTransitEndpoint, transitEndpointStops, transitStopId } from "../../../lib/travel-stops.mjs";
 
 const POPULAR_HUBS = [
   { name: "Seyda Neen", desc: "Arrival Port", vanillaOnly: false },
@@ -187,15 +187,20 @@ export default function TravelWorkstation() {
     setOptionsRevision(value => value + 1);
   };
 
-  const liveNetworkGraph = useMemo(() => {
+  const transitNetwork = useMemo(() => {
     if (gameData.status === 'ready' && Array.isArray(gameData.data?.catalogs?.Travel)) {
       const records = gameData.data.catalogs.Travel;
       const nodes = gameData.data.metadata?.Travel?.nodes || {};
       const providers = gameData.data.metadata?.Travel?.providers || {};
-      return adaptTravelGraph(records, nodes, {mageGuild,conjurer:isTr && conjurer,providers});
+      return buildTransitStops(records, nodes, { mageGuild, conjurer: isTr && conjurer, providers,
+        access: { records: gameData.data.catalogs.Access || [] },
+        teleports: (gameData.data.catalogs.Teleports || []).filter(t => usableTeleport(t, held, questTeleports)),
+        intervention: { records: gameData.data.catalogs.Intervention || [], markers: gameData.data.metadata?.Intervention?.markers || {} }
+      });
     }
-    return {};
-  }, [gameData.status, gameData.data,mageGuild,conjurer,isTr]);
+    return buildTransitStops();
+  }, [gameData.status, gameData.data,mageGuild,conjurer,isTr,held,questTeleports]);
+  const liveNetworkGraph = transitNetwork.graph;
 
   // The haggle: this character's side of getBarterOffer, and the game settings it reads.
   const player = useMemo(() => ({
@@ -224,9 +229,9 @@ export default function TravelWorkstation() {
     const markers = gameData.data?.metadata?.Intervention?.markers;
     return Array.isArray(records) && markers ? { records, markers } : null;
   }, [gameData.data]);
-  const spellGraph = useMemo(() => addInterventionEdges(
-    liveNetworkGraph, intervention, gameData.data?.metadata?.Travel?.nodes || {}, spells
-  ), [liveNetworkGraph, intervention, gameData.data, spells]);
+  const spellGraph = useMemo(() => addTransitInterventions(
+    transitNetwork, intervention, spells
+  ), [transitNetwork, intervention, spells]);
 
   // Walking: between nearby stops, and to any place in the game, over the Access
   // catalog's walkable grid (around steep ground, the Ghostfence and open sea) where the
@@ -244,11 +249,8 @@ export default function TravelWorkstation() {
     carried, levitate, waterWalking, feather: fromSave?.feather || 0, burden: fromSave?.burden || 0
   }), [player, settings, carried, levitate, waterWalking, fromSave]);
   const speed = movement.run, swim = movement.swim, fly = movement.fly;
-  const points = useMemo(() => stopPoints({
-    records: gameData.data?.catalogs?.Travel || [],
-    nodes: gameData.data?.metadata?.Travel?.nodes || {},
-    access, intervention
-  }), [gameData.data, access, intervention]);
+  const points = transitNetwork.points;
+  const markerTarget = useCallback((kind, index) => transitNetwork.markerIds.get(`${kind}:${index}`), [transitNetwork]);
   const walkGraph = useMemo(
     () => (walking && access ? addStopWalks(spellGraph, points, access.land, speed, { grid, swim, fly, waterWalk: waterWalking }) : spellGraph),
     [walking, access, spellGraph, points, speed, grid, swim, fly, waterWalking]
@@ -264,11 +266,12 @@ export default function TravelWorkstation() {
   const routingGraph = useMemo(() => {
     if (!teleports) return walkGraph;
     return addTeleports(walkGraph, teleports, {
-      nodes: gameData.data?.metadata?.Travel?.nodes || {}, held, includeQuest: questTeleports,
+      nodes: transitNetwork.cellNodes, held, includeQuest: questTeleports,
+      endpointFor: transitStopId,
       walk: { points, access, land: walking ? access?.land : null, speed, swim, fly, waterWalk: waterWalking, grid,
-        intervention, spells, nodes: gameData.data?.metadata?.Travel?.nodes || {} }
+        intervention, spells, markerTarget, nodes: transitNetwork.cellNodes }
     }).graph;
-  }, [walkGraph, teleports, gameData.data, held, questTeleports, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells]);
+  }, [walkGraph, teleports, transitNetwork, markerTarget, gameData.data, held, questTeleports, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells]);
 
   // Every place in the game, for the pickers and for naming a place on the route.
   const places = useMemo(
@@ -318,30 +321,33 @@ export default function TravelWorkstation() {
   }, [saveOrigin, activeSave, startedFrom]);
 
   const labelOf = useCallback((id) => {
-    if (!isPlace(id)) return id;
+    if (!isPlace(id)) return transitNetwork.stops.get(id)?.label || id;
     const key = id.slice(PLACE_PREFIX.length);
     const record = places.get(key);
     if (record?.name) return record.name;
     const grid = /^exterior:(-?\d+),(-?\d+)$/.exec(key);
     const region = record?.region ? formatRegionName(record.region) : "Wilderness";
     return grid ? `${region} (${grid[1]}, ${grid[2]})` : key.replace(/^interior:/, "");
-  }, [places]);
+  }, [places, transitNetwork]);
 
   // Stop positions, network edges and region labels for the transit map (live bundle only).
   const mapData = useMemo(() => {
     if (!routingGraph) return null;
-    const { positions, unplaced } = resolveStopPositions(
-      gameData.data?.metadata?.Travel?.nodes || {},
-      gameData.data?.metadata?.Places?.settlements || []
-    );
-    // A landing spot no journey reaches (a fort, a courtyard) sits where its marker stands.
-    for (const kind of Object.keys(INTERVENTION_KINDS)) {
-      for (const m of intervention?.markers?.[kind] || []) {
-        const stop = m.town || (m.name ? m.name.split(",")[0].trim() : null);
-        if (stop && !positions[stop] && m.cell?.startsWith("exterior:") && Array.isArray(m.pos)) {
-          positions[stop] = [m.pos[0] / 8192, m.pos[1] / 8192];
-        }
-      }
+    const cityOf = id => transitNetwork.stops.get(id)?.town || id;
+    const groups = new Map();
+    for (const [id, p] of points) {
+      if (!p.length || !routingGraph[id]) continue;
+      const city = cityOf(id);
+      if (!groups.has(city)) groups.set(city, []);
+      groups.get(city).push(p[0]);
+    }
+    const positions = Object.fromEntries([...groups].map(([city, ps]) => [city,
+      [0, 1].map(axis => ps.reduce((sum, p) => sum + p[axis], 0) / ps.length / CELL)]));
+    const cityGraph = {};
+    for (const [id, edges] of Object.entries(liveNetworkGraph)) {
+      const city = cityOf(id);
+      cityGraph[city] ||= [];
+      for (const edge of edges) if (cityOf(edge.to) !== city) cityGraph[city].push({ ...edge, to: cityOf(edge.to) });
     }
     // A chosen place sits where you walk to or from it.
     for (const id of [origin, destination]) {
@@ -350,17 +356,16 @@ export default function TravelWorkstation() {
       if (point) positions[id] = [point[0] / CELL, point[1] / CELL];
     }
     // Only stops that are part of the network, so the map and the stop count agree.
-    const onNetwork = Object.fromEntries(Object.entries(positions).filter(([stop]) => routingGraph[stop] || isPlace(stop)));
+    const onNetwork = positions;
     if (!Object.keys(onNetwork).length) return null;
     return {
       positions: onNetwork,
-      unplaced: [...new Set([...unplaced, ...Object.keys(routingGraph).filter((stop) => !positions[stop])])]
-        .filter((stop) => routingGraph[stop]).sort().map(labelOf),
+      unplaced: [...new Set(Object.keys(routingGraph).map(cityOf).filter(city => !positions[city]))].sort().map(labelOf),
       // Spells reach everywhere; drawing them all would bury the network. The route draws its own.
-      edges: mapEdges(liveNetworkGraph),
+      edges: mapEdges(cityGraph),
       regions: regionLabels(gameData.data?.catalogs?.Places || [])
     };
-  }, [routingGraph, liveNetworkGraph, intervention, gameData.data, origin, destination, access, labelOf]);
+  }, [routingGraph, liveNetworkGraph, transitNetwork, points, gameData.data, origin, destination, access, labelOf]);
 
   const availableStops = useMemo(() => {
     // Places a teleport lands in are routed through, not listed as stops; search finds them.
@@ -370,31 +375,38 @@ export default function TravelWorkstation() {
 
   // Ensure selected stops exist in current world; a chosen place stays while the world has it.
   useEffect(() => {
+    if (!linkRead) return;
     if (availableStops.length > 0) {
-      const known = (id) => availableStops.includes(id) || (isPlace(id) && places.has(id.slice(PLACE_PREFIX.length)));
-      if (!known(origin)) {
-        setOrigin(availableStops[0]);
+      const known = (id) => transitNetwork.cities.has(id) || availableStops.includes(id) || (isPlace(id) && places.has(id.slice(PLACE_PREFIX.length)));
+      const resolvedOrigin = resolveTransitEndpoint(origin, transitNetwork);
+      const resolvedDestination = resolveTransitEndpoint(destination, transitNetwork);
+      if (resolvedOrigin !== origin) setOrigin(resolvedOrigin);
+      else if (!known(origin)) {
+        setOrigin(transitNetwork.stops.get(availableStops[0])?.town || availableStops[0]);
       }
-      if (!known(destination)) {
-        setDestination(availableStops[availableStops.length - 1] || availableStops[0]);
+      if (resolvedDestination !== destination) setDestination(resolvedDestination);
+      else if (!known(destination)) {
+        const fallback = availableStops[availableStops.length - 1] || availableStops[0];
+        setDestination(transitNetwork.stops.get(fallback)?.town || fallback);
       }
     }
-  }, [world, availableStops, origin, destination, places]);
+  }, [world, availableStops, origin, destination, places, transitNetwork, linkRead]);
 
-  const handleOriginChange = setOrigin;
-  const handleDestinationChange = setDestination;
+  const handleOriginChange = id => setOrigin(resolveTransitEndpoint(id, transitNetwork));
+  const handleDestinationChange = id => setDestination(resolveTransitEndpoint(id, transitNetwork));
 
   // "Plan a trip here" from site search: set the destination once the stop list has it.
   const intent = useSearchIntent("travel");
   useEffect(() => {
     if (!intent || intent.kind !== "destination") return;
-    if (availableStops.includes(intent.value)) {
+    const resolved = resolveTransitEndpoint(intent.value, transitNetwork);
+    if (transitNetwork.cities.has(resolved) || availableStops.includes(resolved)) {
       clearSearchIntent(intent);
       handleDestinationChange(intent.value);
     } else if (gameData.status === "ready" || gameData.status === "error") {
       clearSearchIntent(intent);
     }
-  }, [intent, availableStops, gameData.status]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [intent, availableStops, gameData.status, transitNetwork]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSwap = () => {
     const prevOrigin = origin;
@@ -432,45 +444,71 @@ export default function TravelWorkstation() {
     places,
     settlements: gameData.data?.metadata?.Places?.settlements || [],
     graph: routingGraph,
+    transitStops: transitNetwork.stops,
     includePlaces: Boolean(access)
   }).map((option) => option.record?.interior && !placePoints(option.record.key, access).length
     ? { ...option, badge: sealedWay(option.record.key) }
-    : option), [availableStops, places, gameData.data, routingGraph, access, sealedWay]);
+    : option), [availableStops, places, gameData.data, routingGraph, transitNetwork, access, sealedWay]);
   const locationLabels = useMemo(() => new Map(locationOptions.map((option) => [option.id, option.label])), [locationOptions]);
 
-  // Compute route: fewest legs, least gold for this character, or fewest in-game hours.
+  // Optimize the restricted network first. Long connections are only computed
+  // when it cannot offer a route, so Fewest legs still prefers normal transport.
   const planGraph = useMemo(() => {
-    const chosen = [origin, destination].filter(isPlace).map((id) => id.slice(PLACE_PREFIX.length));
-    if (!chosen.length) return routingGraph;
-    return addPlaces(routingGraph, chosen, {
+    const chosen = [origin, destination].filter(isPlace).map(id => id.slice(PLACE_PREFIX.length));
+    return chosen.length ? addPlaces(routingGraph, chosen, {
       points, access, land: walking ? access?.land : null, speed, swim, fly, waterWalk: waterWalking, grid, intervention, spells,
-      nodes: gameData.data?.metadata?.Travel?.nodes || {}
-    });
-  }, [origin, destination, routingGraph, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells, gameData.data]);
-  const usablePlan = useMemo(() => withInterventionResources(planGraph, spellAccess), [planGraph, spellAccess]);
+      markerTarget, nodes: transitNetwork.cellNodes
+    }) : routingGraph;
+  }, [origin, destination, routingGraph, transitNetwork, markerTarget, points, access, walking, speed, swim, fly, waterWalking, grid, intervention, spells]);
+  const restrictedPlan = useMemo(() => withInterventionResources(planGraph, spellAccess), [planGraph, spellAccess]);
   const routePending = gameData.status === 'idle' || gameData.status === 'loading';
+  const restrictedRoute = useMemo(() => planRoute(
+    transitEndpointStops(origin, transitNetwork), transitEndpointStops(destination, transitNetwork), restrictedPlan.graph, {
+      objective: priced ? objective : "hops", goldOf: edge => journeyGold(edge, player, settings), resources: restrictedPlan.resources
+    }), [origin, destination, transitNetwork, restrictedPlan, objective, priced, player, settings]);
+  const expandedPlan = useMemo(() => {
+    if (routePending || restrictedRoute.isValid || !walking || !access || !(speed > 0)) return null;
+    const walk = { points, access, land: access.land, speed, swim, fly, waterWalk: waterWalking,
+      longJourneys: true, grid, intervention, spells, markerTarget, nodes: transitNetwork.cellNodes };
+    const walked = addStopWalks(spellGraph, points, access.land, speed, walk);
+    const network = teleports ? addTeleports(walked, teleports, {
+      nodes: transitNetwork.cellNodes, held, includeQuest: questTeleports, endpointFor: transitStopId, walk
+    }).graph : walked;
+    const chosen = [origin, destination].filter(isPlace).map(id => id.slice(PLACE_PREFIX.length));
+    const placed = chosen.length ? addPlaces(network, chosen, walk) : network;
+    const extended = addJourneyWalks(placed, transitEndpointStops(origin, transitNetwork),
+      transitEndpointStops(destination, transitNetwork), walk);
+    return withInterventionResources(extended, spellAccess);
+  }, [routePending, restrictedRoute.isValid, walking, access, speed, swim, fly, waterWalking, points, grid,
+    intervention, spells, markerTarget, transitNetwork, spellGraph, teleports, held, questTeleports, origin, destination, spellAccess]);
+  const usablePlan = expandedPlan || restrictedPlan;
   const route = useMemo(() => {
-    const planned = planRoute(origin, destination, usablePlan.graph, {
-      objective: priced ? objective : "hops",
-      goldOf: (edge) => journeyGold(edge, player, settings),
-      resources: usablePlan.resources
-    });
+    const planned = expandedPlan ? planRoute(
+      transitEndpointStops(origin, transitNetwork), transitEndpointStops(destination, transitNetwork), usablePlan.graph, {
+        objective: priced ? objective : "hops", goldOf: edge => journeyGold(edge, player, settings), resources: usablePlan.resources
+      }) : restrictedRoute;
     if (planned.isValid) return planned;
-    const shut = [origin, destination].find((id) => isPlace(id) && !placePoints(id.slice(PLACE_PREFIX.length), access).length);
+    const shut = [origin, destination].find(id => isPlace(id) && !placePoints(id.slice(PLACE_PREFIX.length), access).length);
     if (shut) return { ...planned, message: `No door leads out of ${labelOf(shut)}. It is reached by a script or a spell, if at all.` };
     return planned;
-  }, [origin, destination, usablePlan, objective, priced, player, settings, access, labelOf]);
+  }, [expandedPlan, restrictedRoute, origin, destination, transitNetwork, usablePlan, objective, priced, player, settings, access, labelOf]);
   const tradeoff = useMemo(() => {
     if (!priced || objective !== "gold" || !route.isValid || route.hops === 0) return null;
-    const fewest = planRoute(origin, destination, usablePlan.graph, {
+    const fewest = planRoute(transitEndpointStops(origin, transitNetwork), transitEndpointStops(destination, transitNetwork), usablePlan.graph, {
       objective: "hops", goldOf: (edge) => journeyGold(edge, player, settings),
       resources: usablePlan.resources
     });
     return cheapestTradeoff(route, fewest);
-  }, [priced, objective, route, origin, destination, usablePlan, player, settings]);
+  }, [priced, objective, route, origin, destination, transitNetwork, usablePlan, player, settings]);
   const realTime = useMemo(() => realTimeText(route), [route]);
-  const routeSpellEdges = useMemo(() => (route.isValid ? route.steps : [])
-    .filter((step) => step.spell || step.walk || step.teleport)
+  // Keep unspecified boundary cities merged in the itinerary. Only specific
+  // selections and intermediate transfer points need the detailed stop label.
+  const routeLabelOf = useCallback(id => {
+    if (route.isValid && id === route.path[0] && transitNetwork.cities.has(origin)) return origin;
+    if (route.isValid && id === route.path[route.path.length - 1] && transitNetwork.cities.has(destination)) return destination;
+    return labelOf(id);
+  }, [route, transitNetwork, origin, destination, labelOf]);
+  const routeEdges = useMemo(() => (route.isValid ? route.steps : [])
     .map((step) => {
       const [a, b] = step.from < step.to ? [step.from, step.to] : [step.to, step.from];
       return { a, b, kind: step.kind };
@@ -480,12 +518,12 @@ export default function TravelWorkstation() {
     if (!mapData) return null;
     const out = { ...mapData.positions };
     for (const id of route.isValid ? route.path : []) {
-      if (!isPlace(id) || out[id]) continue;
-      const [point] = placePoints(id.slice(PLACE_PREFIX.length), access);
+      if (out[id]) continue;
+      const [point] = isPlace(id) ? placePoints(id.slice(PLACE_PREFIX.length), access) : points.get(id) || [];
       if (point) out[id] = [point[0] / CELL, point[1] / CELL];
     }
     return out;
-  }, [mapData, route, access]);
+  }, [mapData, route, access, points]);
   const firstSeller = useMemo(() => {
     for (const edges of Object.values(liveNetworkGraph)) {
       const found = edges.find((e) => e.barter && e.barter.haggles);
@@ -577,6 +615,7 @@ export default function TravelWorkstation() {
             value={origin}
             valueLabel={locationLabels.get(origin) || labelOf(origin)}
             options={locationOptions}
+            scopeKey={profile}
             onChange={handleOriginChange}
             disabled={gameData.status !== "ready"}
           />
@@ -586,6 +625,7 @@ export default function TravelWorkstation() {
             value={destination}
             valueLabel={locationLabels.get(destination) || labelOf(destination)}
             options={locationOptions}
+            scopeKey={profile}
             onChange={handleDestinationChange}
             disabled={gameData.status !== "ready"}
           />
@@ -666,15 +706,15 @@ export default function TravelWorkstation() {
 
         {/* Route Status Card */}
         <div className="p-4 bg-surface-5 border border-line-11 space-y-4">
-          <div className="flex items-center justify-between text-xs pb-2 border-b border-line-11">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-xs pb-2 border-b border-line-11">
             <div>
               <span className="text-fg-13 uppercase font-serif font-bold block text-[10px]">
                 Origin
               </span>
               <span className="text-sm font-serif font-bold text-fg-2">{labelOf(origin)}</span>
             </div>
-            <div className="text-center font-mono text-fg-13">
-              {route.hops > 0 ? `--> ${route.hops} transit legs -->` : "=="}
+            <div className="text-center font-mono text-fg-13 whitespace-nowrap">
+              {route.hops > 0 ? `${route.hops} ${route.hops === 1 ? "leg" : "legs"} →` : "="}
             </div>
             <div className="text-right">
               <span className="text-fg-13 uppercase font-serif font-bold block text-[10px]">
@@ -704,41 +744,42 @@ export default function TravelWorkstation() {
                   >
                     <div className="min-w-0 flex-1 space-y-0.5">
                       <div className="text-xs font-serif font-bold text-fg-2">
-                        Leg {step.stepNumber}: {labelOf(step.from)} to {labelOf(step.to)}
+                        Leg {step.stepNumber}: {routeLabelOf(step.from)} to {routeLabelOf(step.to)}
                       </div>
-                      {step.stepNumber === 1 && step.walk && isPlace(step.from) && doorChain(step.from.slice(PLACE_PREFIX.length), access).length > 0 && (
+                      {step.walk && doorChain(transitNetwork.stops.get(step.from)?.cell || (isPlace(step.from) ? step.from.slice(PLACE_PREFIX.length) : null), access).length > 0 && (
                         <div className="text-[11px] text-fg-9">
-                          Leave by the doors: {doorChain(step.from.slice(PLACE_PREFIX.length), access).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")} → outside
+                          Leave by the doors: {doorChain(transitNetwork.stops.get(step.from)?.cell || step.from.slice(PLACE_PREFIX.length), access).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")} → outside
                         </div>
                       )}
                       <div className="text-[11px] text-fg-13">
                         {step.indoors
                           ? `Go through the doors: ${(step.doors || []).map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}`
                           : step.walk && step.levitate
-                          ? `Levitate about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, straight over whatever is below`
+                          ? `Levitate about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${routeLabelOf(step.to)}, straight over whatever is below`
                           : step.walk
                           ? step.terrain
-                            ? `Walk about ${(step.distance / CELL).toFixed(1)} cells, heading ${step.direction}, to ${labelOf(step.to)}`
+                            ? `Walk about ${(step.distance / CELL).toFixed(1)} cells, heading ${step.direction}, to ${routeLabelOf(step.to)}`
                               + (step.straight && step.distance > step.straight * 1.15
                                 ? `, round high ground: ${(step.distance / step.straight).toFixed(1)}× the straight line`
                                 : "")
                               + (step.water ? `, ${step.waterWalk ? "walking on the water for" : "swimming"} about ${Math.max(0.1, step.water / CELL).toFixed(1)} cells of it` : "")
-                            : `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${labelOf(step.to)}, in a straight line`
+                            : `Walk about ${(step.distance / CELL).toFixed(1)} cells ${step.direction} to ${routeLabelOf(step.to)}, in a straight line`
+                              + (step.water ? `, ${step.waterWalk ? "walking on the water for" : "swimming"} about ${Math.max(0.1, step.water / CELL).toFixed(1)} cells of it` : "")
                           : step.teleport
-                          ? `${step.label} at ${labelOf(step.from)}${step.board ? `, ${step.board}` : ""}`
+                          ? `${step.label} at ${routeLabelOf(step.from)}${step.board ? `, ${step.board}` : ""}`
                           : <>
                               {step.scroll ? `Use a ${step.kind} scroll` : step.spell ? `Cast ${step.kind}` : `Take the ${step.kind}`}
-                              {step.providerName ? ` (${step.providerName})` : ""} from {labelOf(step.from)}
+                              {step.providerName ? ` (${step.providerName})` : ""} from {routeLabelOf(step.from)}
                               {step.board ? `, ${step.board}` : ""}
-                              {step.alight ? ` to ${labelOf(step.to)}, ${step.alight}` : ""}
+                              {step.alight ? ` to ${routeLabelOf(step.to)}, ${step.alight}` : ""}
                             </>}
                       </div>
                       {step.scroll && <p className="text-[11px] text-warning-2 m-0">Uses 1 scroll; {step.remaining} remaining for this journey.</p>}
                       {Number.isFinite(step.castChance) && <p className="text-[11px] text-warning-2 m-0">Estimated cast chance: {step.castChance}%. The route assumes success; a failed cast spends Magicka.</p>}
                       {step.resource === "magicka" && <p className="text-[11px] text-fg-9 m-0">Uses {step.uses} Magicka; {Math.round(step.remaining)} remaining for this journey.</p>}
-                      {step.stepNumber === route.steps.length && step.walk && isPlace(step.to) && doorChain(step.to.slice(PLACE_PREFIX.length), access).length > 0 && (
+                      {step.walk && doorChain(transitNetwork.stops.get(step.to)?.cell || (isPlace(step.to) ? step.to.slice(PLACE_PREFIX.length) : null), access).length > 0 && (
                         <div className="text-[11px] text-fg-9">
-                          Go in by the doors: outside → {doorChain(step.to.slice(PLACE_PREFIX.length), access).reverse().map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}
+                          Go in by the doors: outside → {doorChain(transitNetwork.stops.get(step.to)?.cell || step.to.slice(PLACE_PREFIX.length), access).reverse().map((key) => labelOf(PLACE_PREFIX + key)).join(" → ")}
                         </div>
                       )}
                       {step.questGated && (
@@ -757,6 +798,8 @@ export default function TravelWorkstation() {
                       {(Number.isFinite(step.gold) || Number.isFinite(step.hours)) && (
                         <div className="text-[11px] font-mono text-fg-9">
                           {Number.isFinite(step.gold) ? `${step.gold} gold` : "price unknown"}
+                          {step.walk && Number.isFinite(step.movementSeconds) ? ` · ~${formatRealDuration(step.movementSeconds)} real movement` : ""}
+                          {step.swimmingSeconds > 0 ? ` (~${formatRealDuration(step.walkingSeconds)} walking + ~${formatRealDuration(step.swimmingSeconds)} swimming)` : ""}
                           {step.indoors ? " · time indoors not counted"
                             : Number.isFinite(step.hours) ? ` · ${step.hours === 0 ? "no time passes in-game" : `${formatDuration(step.hours)} in-game`}` : ""}
                         </div>
@@ -809,7 +852,7 @@ export default function TravelWorkstation() {
                         : "text-fg-2"
                     }`}
                   >
-                    {labelOf(node)}
+                    {routeLabelOf(node)}
                   </span>
                   {i < route.path.length - 1 && (
                     <span className="text-fg-13 mx-1">→</span>
@@ -955,10 +998,9 @@ export default function TravelWorkstation() {
               )}
               {access && (
                 <label className="whitespace-nowrap">
-                  <input type="checkbox" checked={walking} onChange={(event) => { setWalking(event.target.checked); rememberChoice('walking', event.target.checked); }} /> Walk between nearby places
+                  <input type="checkbox" checked={walking} onChange={(event) => { setWalking(event.target.checked); rememberChoice('walking', event.target.checked); }} /> Walk between places
                 </label>
               )}
-
             </div>
           </fieldset>
         </div>
@@ -981,7 +1023,7 @@ export default function TravelWorkstation() {
             </button>
           )}
           {POPULAR_HUBS.filter((h) => !h.trOnly || isTr).map((hub) => {
-            const isSelected = origin === hub.name;
+            const isSelected = origin === resolveTransitEndpoint(hub.name, transitNetwork);
             return (
               <button
                 key={hub.name}
@@ -1002,14 +1044,14 @@ export default function TravelWorkstation() {
 
       {mapData && (
         <TransitMap
-          edges={[...mapData.edges, ...routeSpellEdges]}
+          edges={[...mapData.edges, ...routeEdges]}
           positions={routePositions}
           regions={mapData.regions}
           unplaced={mapData.unplaced}
           route={route}
-          labelOf={labelOf}
-          origin={origin}
-          destination={destination}
+          labelOf={routeLabelOf}
+          origin={route.isValid ? route.path[0] : origin}
+          destination={route.isValid ? route.path[route.path.length - 1] : destination}
           onSelectStop={handleDestinationChange}
         />
       )}
@@ -1022,7 +1064,7 @@ export default function TravelWorkstation() {
             <li>Before haggling, the fare is distance ÷ 4,000, at least 1 gold, multiplied by 1 + the number of followers. Guild Guides use a base fare of 10 gold and take no time; other transport takes distance ÷ 16,000 in-game hours. Distance uses the game&apos;s units.</li>
             <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
             <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. Scrolls start unticked and each route is limited to the number carried; replanning does not change the save. Known spells default on only at an estimated cast chance of at least 75% with enough current Magicka. This is a planner default, not a game rule: you can include a lower or unknown chance explicitly. Zero chance or insufficient Magicka excludes the spell. Estimates use Mysticism, Willpower, Luck, the spell&apos;s published cost and saved fatigue (full fatigue if unavailable); temporary effects such as Silence are not modeled. When cost and current Magicka are available, spell legs share that Magicka budget. Otherwise the budget cannot be checked. Routes assume successful casts and no recovery during the journey.</li>
-            <li>Walking uses your Speed, Athletics and carried weight. Routes avoid slopes steeper than 46°, pass through the Ghostgate and swim only near land. Constant Water Walking allows walking across water; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
+            <li>Cities remain one choice unless you search for a specific place inside them. Without a specific starting or ending place, the route chooses the appropriate transport stop in that city. When a journey passes through a city, transfers include the outdoor walk between arrival points, platforms and guild halls; each walk shows its real movement estimate. Indoor movement remains uncounted. Walking and swimming use your Speed, Athletics and carried weight. The planner first tries nearby stops and short swims near land. Only when no route is found does it try long walks and open-water swims, using the same character and route options. Routes avoid slopes steeper than 46° and pass through the Ghostgate. Constant Water Walking times water at walking speed; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
             <li>Real Time Approximation adds outdoor movement at your estimated run, swim or Levitate speed. Least real time minimizes that movement, then transport/spell transitions when movement times tie. Menus and loading times vary and are not counted, so this is an approximation. Combat, detours, pauses and movement indoors add time. Cheapest compares the fare and movement time with Fewest legs using the same options. Fastest still minimizes in-game time.</li>
             <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
             <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>

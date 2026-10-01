@@ -4,6 +4,16 @@ const assert = require("node:assert/strict");
 const lib = () => import("../lib/travel-link.mjs");
 const OBJECTIVES = { hops: {}, gold: {}, time: {} };
 
+test("obsolete long-walk switches are ignored and cleared without changing shared route choices", async () => {
+  const { readRouteLink, writeRouteLink } = await lib();
+  const old = '?world=tr&from=Balmora&to=Ald+Redaynia&long=0';
+  assert.equal(Object.hasOwn(readRouteLink(old, OBJECTIVES), 'long'), false);
+  const written = new URLSearchParams(writeRouteLink(old, { from: 'Balmora', to: 'Ald Redaynia' }));
+  assert.equal(written.has('long'), false);
+  assert.equal(written.get('world'), 'tr');
+  assert.equal(written.get('to'), 'Ald Redaynia');
+});
+
 test("a shared link opens the route it names", async () => {
   const { readRouteLink } = await lib();
   assert.deepEqual(readRouteLink("?world=tr&from=Balmora&to=place%3Ainterior%3Asamarys+ancestral+tomb&plan=gold&walk=0&quest=1", OBJECTIVES),
