@@ -64,6 +64,7 @@ async function setup(overrides = {}) {
         value: state[end],
         valueLabel: state[`${end}Label`] ?? state.options.find(option => option.id === state[end])?.label ?? '',
         options: state.options,
+        scopeKey: state.profile,
         disabled: state.disabled,
         onChange(id) {
           calls.push({ end, id });
@@ -267,6 +268,31 @@ test('changing the available profile options closes a draft and removes stale ma
     assert.equal(t.options().length, 0);
     await t.key('ArrowDown');
     await t.key('Enter');
+    assert.deepEqual(t.calls, []);
+  } finally { await t.cleanup(); }
+});
+
+test('recalculating the same location list preserves a typed draft and committed endpoint', async () => {
+  const t = await setup();
+  try {
+    await t.type('Council');
+    await t.patch({ options: OPTIONS.map(option => ({ ...option })) });
+    assert.equal(t.input().value, 'Council');
+    assert.equal(t.input().getAttribute('aria-expanded'), 'true');
+    assert.equal(t.options().length, 1);
+    assert.deepEqual(t.calls, [], 'late character/movement updates never choose an endpoint');
+    await t.key('ArrowDown');
+    await t.key('Enter');
+    assert.deepEqual(t.calls, [{ end: 'from', id: 'place:interior:balmora, council club' }]);
+  } finally { await t.cleanup(); }
+});
+
+test('switching worlds closes a draft even when the worlds inherit identical location IDs', async () => {
+  const t = await setup({ profile: 'tr' });
+  try {
+    await t.type('Council');
+    await t.patch({ profile: 'tr_arce', options: OPTIONS.map(option => ({ ...option })) });
+    assertClosed(t, 'Balmora');
     assert.deepEqual(t.calls, []);
   } finally { await t.cleanup(); }
 });

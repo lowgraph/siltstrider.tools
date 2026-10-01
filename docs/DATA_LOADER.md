@@ -135,3 +135,44 @@ https://raw.githubusercontent.com/OpenMW/openmw/openmw-0.51.0/apps/openmw/mwmech
 with the selected profile's four potion settings. Unknown rules block calculation;
 no-magnitude/no-duration effects omit those fields in the preview. Synthetic adapter,
 math, and native React checks live in `test/alchemy-live.test.js`.
+
+## Separate city stops in Travel
+
+The workstation's `lib/travel-stops.mjs` consumes the existing Travel cell keys,
+`fromPos`/`toPos`, provider metadata, Access exits, Intervention marker positions
+and Teleports positions. It creates routing IDs `stop:exterior:x,y@px,py` for each
+rounded outdoor position and `stop:interior:<cell name>` for an indoor stop.
+Arrival and departure points in one cell stay distinct unless the published
+rounded coordinates coincide. Indoor coordinates are local: only Access's
+outdoor exits are used for walking. `town` groups search choices and route
+boundaries, never intermediate nodes. Town links remain town choices. The router
+starts from any of that city's platforms or ends at any of its arrivals; these
+boundary choices create no phantom legs and cannot bypass a mid-route transfer.
+
+Cities and identically named exterior cells stay grouped in search. Platforms,
+guild halls, rooms and named districts appear when the query includes something
+more specific than the city name; a city-name query offers that city once. Guild
+halls already represented as a stop are not duplicated as places. Other places
+still use `place:<cell>`; exterior cell-centre choices remain approximations.
+Links retain either a merged city choice or a specific stop ID without changing
+save or account preference formats. Homepage/global search still link to towns.
+The map's background network is grouped by city; the selected route overlays
+actual stops. Itineraries name general origin/destination cities and show precise
+intermediate transfer points or explicitly selected places.
+
+No exported schema change or rebuild is required: the source catalogs already
+preserve these distinctions. Missing positions/exits cannot connect a transfer.
+Outdoor transfer legs use the existing terrain/speed/weight/swim/Levitate rules;
+indoor movement and mesh obstacles remain outside the estimate. Do not edit the
+published immutable bundle to remove town metadata or collapse routing IDs.
+
+Travel first optimizes the restricted walking network. Only when it cannot
+find a route does it add long endpoint/place walks and open-sea swims, then
+replan with the same objective and all character/resource restrictions. A valid
+normal journey never competes against these long connections. This automatic
+fallback has no settings or shared-link switch; the existing walking-off choice
+prevents both phases. Terrain barriers and the settlement work bound remain;
+selected city endpoints are physical platform alternatives, never intermediate
+city joins. Mixed legs expose walking and swimming seconds separately; Water
+Walking counts water at run speed. The land-mask fallback samples both portions
+and remains labeled a straight-line estimate. No published catalog change.

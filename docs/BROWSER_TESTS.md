@@ -72,3 +72,25 @@ To repeat just the saved-Travel case at 1366 and 375 px, use `--suite tools` and
 `--filter 'Travel imported save/persistence/profiles'` with the local server URL.
 Run twice with separate `--out` directories; each invocation checks both widths,
 including applied edits, stored choices, restoration, profile isolation and reset.
+
+The `travel` suite includes `Travel city transfer` cases for vanilla, TR and
+TR+ARCE, in both themes at 1366/375 px. They check Balmora's strider-to-guild walk,
+merged city-name search (including Vivec's cantons), specific hall/provider
+search, typing without replanning, reverse door
+instructions, exact-stop link restoration, and no free transfer when walking is
+disabled. To isolate them, add `--filter 'Travel city transfer'`; each case saves a
+screenshot and axe audit. They also check a city-to-city journey through an
+intermediate city: arrival and departure stops must have a timed walk between
+them. The chosen intermediate city depends on route objectives and fares; do not
+require Balmora when Vivec is the better route. Unspecified city boundaries can
+choose a suitable platform, without adding a free intermediate connection.
+
+The Travel suite also checks automatic long-journey fallback on all three
+profiles, both themes and 1366/375 px. Seyda Neen → Balmora must retain its
+one-leg Silt Strider route with Fewest legs. Balmora → Ald Redaynia must route
+only after restricted routing fails and show separate walking/swimming times.
+There is no added switch or warning. Reloading a shared route preserves the
+result; disabling the existing walking control prevents the fallback and
+reenabling it restores the route. Each case captures the dossier and checks
+accessibility and page overflow. City-transfer cases also verify physical stops
+on transport journeys and their intermediate timed walks.
