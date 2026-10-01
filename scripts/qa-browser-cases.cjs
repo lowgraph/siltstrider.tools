@@ -272,8 +272,18 @@ exports.qa = async c => {
         await c.navigate('factions',profile);await c.until('document.querySelectorAll(".faction-roster-root button").length>0 || document.querySelector("main").textContent.includes("<Deprecated>")');
         const text=await body(c);await record(c,'QA-11',{width,theme,profile,text});assert.doesNotMatch(text,/<Deprecated>/);return {text};
       });
-      await c.check(`QA-12/premade-copy/${width}/${theme}`,async()=>{
-        await c.navigate('builder');await readyBuilder(c);await c.builderTab('premade');await c.button('Expand All');const text=await body(c);await record(c,'QA-12',{width,theme,text});assert.match(text,/plays like/i);assert.match(text,/trade.off/i);assert.doesNotMatch(text,/\bMaj:|\bMin:/);return text;
+      for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-12/premade-copy/${profile}/${width}/${theme}`,async()=>{
+        await c.navigate('builder',profile);await readyBuilder(c);await c.builderTab('premade');
+        const modes=[];
+        for(const mode of ['By Playstyle','By Race']){
+          await c.button(mode);await c.button('Expand All');
+          const cards=await c.evaluate(`[...document.querySelectorAll('.premade-build-card')].map(e=>({text:e.textContent,plays:e.querySelector('.premade-plays').textContent,tradeoff:e.querySelector('.premade-tradeoff').textContent}))`);
+          assert.equal(cards.length,mode==='By Playstyle'?41:profile==='tr_arce'?62:20);
+          for(const card of cards){assert.match(card.plays,/Plays like: .+/);assert.match(card.tradeoff,/Trade-off: .+/);assert.match(card.text,/Major skills:/);assert.match(card.text,/Minor skills:/);assert.match(card.text,/Specialization:.*start higher and improve faster/);assert.doesNotMatch(card.text,/\bMaj:|\bMin:/);}
+          assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Premade copy fits the viewport');
+          await c.evaluate(`document.querySelector('.premade-build-card').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(100);await c.screenshot(`qa12-${profile}-${mode==='By Race'?'race':'playstyle'}-${width}-${theme}`);modes.push({mode,cards:cards.length});
+        }
+        return record(c,'QA-12',{width,theme,profile,modes});
       });
       await c.check(`QA-15/about/${width}/${theme}`,async()=>{
         await c.navigate('about');const text=await body(c),links=await c.evaluate(`[...document.querySelectorAll('main a')].map(a=>a.href)`);await record(c,'QA-15',{width,theme,text,links});assert.match(text,/open source/i);assert.match(text,/AGPL-3.0/);assert.match(text,/LowGraph/);assert.ok(links.includes('https://github.com/lowgraph/siltstrider.tools'));return text;

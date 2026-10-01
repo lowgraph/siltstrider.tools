@@ -1905,3 +1905,25 @@ Evidence: `A:/Cache/qa05-recheck-final-verified/`, `qa05-phone-bounded/`,
 `qa05-recheck-pipeline.log`. All work in the authorized batch is complete locally;
 no push, merge, deployment, account write or dataset rebuild. Server 8794 stays
 available. First command: `npm test`, then BROWSER_TESTS' QA-05 filter.
+
+## 43. QA-12 premade explanations — 1 October 2026
+
+Claimed 22:38 UTC on `launch/character-preservation`, claim `605501a`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-12 | Fixed on branch; original unmarked test failed, final Chrome 12/12 pass | PremadeBrowser had no playstyle/trade-off copy and abbreviated/clamped skill labels. Add concise copy per playstyle, race-mode copy using the first Major skill, full labels and specialization explanation | Original copy assertion enforced; nine new component/copy cases in premade-copy.test.js; Chrome QA-12 |
+
+This is presentation only: premade stats, pools, save/link fields and selection
+callbacks remain unchanged. All 41 playstyle builds, 20 base race builds and
+42 additional ARCE race builds have both explanations. Missing/unknown copy uses
+a generic fallback; frozen records stay unchanged. The browser matrix covers
+both grouping modes in three worlds at desktop/phone widths and both themes,
+**12/12 passed / 24 groups**, 24 screenshots, zero runtime/server errors.
+Phone and desktop captures reviewed. Full suite: **1,116 tests, 1,113 passed,
+3 remaining TODO, 0 failures**. Release build: **24 pages passed**, config
+unchanged. Pipeline: **685 passed** after identical coordination sync. Both
+player changelogs updated. Evidence: `A:/Cache/qa12-browser-verified/`,
+`qa12-phone-first/`, `qa12-unit.log`, `qa12-build.log`, `qa12-pipeline.log`.
+No dataset rebuild, migration, account write or deployment. Server 8794 remains
+available. Next authorized work: QA-11, then QA-15; push after each item.

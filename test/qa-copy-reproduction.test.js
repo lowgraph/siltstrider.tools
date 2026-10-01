@@ -2,7 +2,7 @@ require('./helpers/pending-game-data.cjs');
 const {test}=require('node:test');const assert=require('node:assert/strict');const React=require('react');const {renderToString}=require('react-dom/server');
 const {loader,todo,staged}=require('./helpers/qa-staged-data.cjs');const {About,Premades,Roster,Faction}=require('./helpers/qa-render.cjs');
 const text=html=>new (require('jsdom').JSDOM)(html).window.document.body.textContent;
-test('QA-12 premades describe playstyle, a trade-off, Major and Minor skills',todo('QA-12'),()=>{
+test('QA-12 premades describe playstyle, a trade-off, Major and Minor skills',{},()=>{
   const rendered=text(renderToString(React.createElement(Premades,{activeProfile:'vanilla',onSelectBuild:()=>{}})));
   assert.match(rendered,/plays like/i);assert.match(rendered,/trade.off/i);assert.doesNotMatch(rendered,/\bMaj:|\bMin:/);
 });

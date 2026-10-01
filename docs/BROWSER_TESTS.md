@@ -332,3 +332,12 @@ current identity and "Based on" source title. Twelve cases cover three worlds,
 replace Math.random in Chrome: that can interfere with React's event handling.
 The case hides only `nextjs-portal`, whose dev toolbar overlaps the phone Home
 tab; production has no toolbar. Deterministic JSDOM hydrateRoot tests remain.
+
+QA-12's `--suite qa --filter 'QA-12/'` checks expanded premade cards in both
+By Playstyle and By Race, including ARCE's additional race builds, across three
+worlds × 1366/375 px × both themes (12 cases / 24 groups). Each card needs Plays
+like, Trade-off, full Major/Minor labels and explained specialization; the page
+must fit the viewport. Nine component/copy cases enforce unchanged build loading,
+collapse/expand, all profiles/modes and missing/unknown/frozen inputs. Screenshots
+capture both groups. Use the existing runner URL/axe/out arguments; this item's
+acceptance run is bounded to 60 seconds overall.

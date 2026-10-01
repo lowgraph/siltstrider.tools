@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Premade cards explain how each build plays and its trade-off. Major and Minor skills are written out, and specialization explains which skills it helps; the explanations also appear when browsing by race.
+
 - Alchemy leaves Secret Master’s apparatus out of every world, including Tamriel Rebuilt’s renamed tools. Available tools remain ordered by effectiveness.
 
 - Travel accepts Ald’ruhn, Ald-ruhn and Aldruhn in place searches. While you edit a location, it asks you to choose a result instead of showing the previous trip; cancelling restores it. Shared journeys keep their starting point when a saved character loads.
