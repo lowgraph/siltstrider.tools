@@ -308,7 +308,7 @@ From the signed-in QA (live, 1 October, three email-only QA accounts, cleaned up
       (`shell-context.jsx`). A new account has chosen nothing yet, but switching world or
       loading a save already auto-saves a Preferred world (F-9), which then wins. On sign-in
       the browser's world must win until the player chooses one on the account.
-- [ ] **C** **QA-24** (reproduced, real session; `account-page.jsx` signs out with no hand-off and `takeCharacterAfterSignIn` refuses a signed-out return: needs its own signed-out return marker; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
+- [ ] **C** **QA-24** (started 2026-10-01 17:30 UTC, Codex, on launch/character-signout-preservation; reproduced, real session; `account-page.jsx` signs out with no hand-off and `takeCharacterAfterSignIn` refuses a signed-out return: needs its own signed-out return marker; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
       Home afresh and the Builder shows a random premade (2 of 2). A loaded save survives.
       Keep the character through sign-out as through sign-in (`SIGN_IN_EVENT` hand-off).
 - [ ] **C** **QA-25** (partly reproduced: unit assertion only (two DOM attempts stalled); `travel-workstation.jsx` lets the restored save's token override a link origin; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
