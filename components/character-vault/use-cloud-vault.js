@@ -4,6 +4,8 @@ import { createCloudSaveClient, SAVE_TYPES, QuotaExceededError, RevisionConflict
 import { parseOmwSave } from "../../lib/omwsave-parser.mjs";
 import { readSaveFile } from "../../lib/omwsave-import.mjs";
 import { duplicateCloudSave, generateBuildShareUrl, loadLocalCharacters } from "../../lib/character-vault.mjs";
+import { generateSaveShareUrl } from "../../lib/save-share-link.mjs";
+import { getGameDataLoader } from "../use-game-data";
 
 import { ensureClerk, ensureClerkIfSignedIn } from "../../lib/clerk-browser.mjs";
 import { SIGN_IN_EVENT } from "../../lib/sign-in-handoff.mjs";
@@ -563,21 +565,24 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
 
   const shareBuildLink = useCallback(
     async (save) => {
+      setActionBusy(true);
+      setErrorMessage(null);
+      setStatusMessage("Preparing share link…");
+      const epoch = accountEpoch.current;
       try {
-        let build = null;
-        if (save.save_type === SAVE_TYPES.CHARACTER_BUILD) {
-          const res = await clientRef.current.getSave(save.id);
-          const record = res?.save || res;
-          build = record?.data?.build || record?.data;
-        } else {
-          build = {
-            race: save.race || "Dark Elf",
-            className: save.class_name || "Custom",
-            sign: save.birthsign || "The Lady",
-          };
-        }
+        const res = await clientRef.current.getSave(save.id);
+        const record = res?.save || res;
+        if (!record?.data) throw new Error("Save data is unavailable.");
         const origin = typeof window !== "undefined" ? window.location.origin : "";
-        const url = generateBuildShareUrl(build, origin);
+        let url;
+        if (record.save_type === SAVE_TYPES.CHARACTER_BUILD) {
+          url = generateBuildShareUrl(record.data.build || record.data, origin);
+        } else if (record.save_type === SAVE_TYPES.OPENMW_SAVE) {
+          url = await generateSaveShareUrl(record.data, getGameDataLoader(), origin);
+        } else {
+          throw new Error("This record cannot be shared as a character build.");
+        }
+        if (epoch !== accountEpoch.current) return { success: false };
         if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
           await navigator.clipboard.writeText(url);
           setStatusMessage("Share link copied to clipboard!");
@@ -585,8 +590,13 @@ export function useCloudVault({ activeBuild, activeSave, onApplyBuild, onApplySa
         }
         return { success: true, url };
       } catch (err) {
-        setErrorMessage(err.message || "Failed to generate share link");
+        if (epoch === accountEpoch.current) {
+          setStatusMessage(null);
+          setErrorMessage(err.message || "Failed to generate share link");
+        }
         return { success: false };
+      } finally {
+        if (epoch === accountEpoch.current) setActionBusy(false);
       }
     },
     []

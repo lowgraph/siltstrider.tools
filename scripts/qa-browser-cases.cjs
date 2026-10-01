@@ -133,7 +133,14 @@ exports.qa = async c => {
         await c.openDocument(c.base+encodeShareUrl({view:'challenge',world:'vanilla',run}));await c.idle();await c.until('document.querySelector("#challenge-seed-input")?.value==='+JSON.stringify(seed));
         if(width<600) await c.click('.hamburger');await c.click('#react-world-tr');await c.until('document.querySelector("#react-world-tr").getAttribute("aria-pressed")==="true"');
         await c.evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>window.__qaCopied=value}})`);await c.click('button[title="Copy shareable challenge link"]');await c.until('window.__qaCopied');
-        const decoded=decodeShareUrl(await c.evaluate('window.__qaCopied'));await record(c,'QA-22',{width,theme,seed,decoded});assert.equal(decoded.run.seed,seed);assert.equal(decoded.world,'vanilla','run world wins over the current visitor world');return decoded;
+        const url=await c.evaluate('window.__qaCopied');const decoded=decodeShareUrl(url);
+        assert.equal(decoded.run.seed,seed);assert.equal(decoded.world,'vanilla','run world wins over the current visitor world');
+        assert.equal(decoded.arce,false);assert.equal(decoded.run.race,run.race);assert.deepEqual(decoded.run.rests,run.rests);assert.deepEqual(decoded.run.minors,run.minors);
+        await c.openDocument(url);await c.idle();await c.until('document.querySelector("#challenge-seed-input")?.value==='+JSON.stringify(seed));
+        const stored=await c.evaluate('JSON.parse(localStorage.getItem("silt-challenge-run"))');
+        assert.equal(stored.run.profile,'vanilla');assert.equal(stored.run.race,run.race);assert.deepEqual(stored.run.rests,run.rests);
+        await c.screenshot(`QA-22-challenge-recipient-${width}-${theme}`);
+        await record(c,'QA-22',{width,theme,seed,decoded,recipient:stored.run});return decoded;
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-20/Restore-Health/${profile}/${width}/${theme}`,async()=>{
         await c.navigate('alchemy',profile);await c.until('document.querySelector("#reverse-alchemy-search")');

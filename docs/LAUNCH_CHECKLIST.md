@@ -296,7 +296,7 @@ From the signed-in QA (live, 1 October, three email-only QA accounts, cleaned up
       provider's plain `setBuild`, which ignores `build.world` and `build.arce`
       (`app-shell.jsx`, `character-context.jsx` `loadBuild`). Loading a build must set its
       world, as a shared link does (LINK-1).
-- [ ] **C** **QA-22** (started 2026-10-01 18:50 UTC, Codex, on launch/character-preservation) (reproduced, local, live and real session; `shareBuildLink` (`use-cloud-vault.js`) uses only the save summary; `handleCopyPermalink` (`challenge-runs-root.jsx`) uses the shell's world; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-2, F-17) Share links carry the wrong character. An imported
+- [x] **C** **QA-22** (started 2026-10-01 18:50 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §31; not merged or deployed) (reproduced, local, live and real session; `shareBuildLink` (`use-cloud-vault.js`) uses only the save summary; `handleCopyPermalink` (`challenge-runs-root.jsx`) uses the shell's world; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-2, F-17) Share links carry the wrong character. An imported
       save's "Copy shareable permalink" writes raw ids (`className:"mage"`,
       `T_Els_Cathay-raht`), empty skill lists, the wrong gender and `world=vanilla` for a
       TR + ARCE save; it opens as a different or broken character (2 of 2 saves; Builder

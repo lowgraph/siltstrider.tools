@@ -1436,3 +1436,41 @@ Evidence under `A:/Cache/`: `character-preservation-unit-final.log`,
 `character-preservation-browser-visible-20261001/`,
 `character-preservation-signout-painted-20261001/`, and
 `character-preservation-vault-painted-20261001/`.
+
+## 31. QA-22 share the source character and run — 1 October 2026
+
+Claimed at 18:50 UTC on `launch/character-preservation`, claim `f17ae43` pushed
+before implementation. This push also published the completed QA-21/23 branch
+work (`1029357`); main and production are unchanged.
+
+Both original TODOs failed when unmarked before the fix: the imported save link
+contained raw IDs, empty skill groups, male gender and Vanilla; the Vanilla run
+link used the visitor's TR world. They are now enforced tests.
+
+| Item | Result / rate | Cause (file and function) / fix | Tests |
+| --- | --- | --- | --- |
+| QA-22, imported saves | Fixed on branch; 4/4 Chrome cases, 1366/375 px in both themes; copied links reopen the resolved character with a populated sheet | `use-cloud-vault.js`, `shareBuildLink`, used the list summary. Fetch the full owned record, then `save-share-link.mjs`, `generateSaveShareUrl`, resolves the save's content-file profile and its character catalogs through `buildFromSave`. Preserve gender, race/sign labels, class, favored attributes and major/minor choices; never apply the save or borrow active-character defaults. Unresolved identity, invalid class data and fetch failures return an error, without copying a substitute | `test/qa-account-reproduction.test.js`, imported link, full-record fetch without session changes, unresolved/unsupported rows and existing build links; `test/save-share-link.test.js`, all profiles, custom classes, missing identity, malformed save, duplicate skills/attributes, unavailable catalogs; Chrome `QA-22/save-permalink` |
+| QA-22, challenge runs | Fixed on branch; 4/4 Chrome cases, same widths/themes; change header to TR, copy a Vanilla run, reopen it in Vanilla with its character/restrictions/objectives intact | `challenge-runs-root.jsx`, `handleCopyPermalink`, encoded the shell's world. `challenge-engine.mjs`, `profileForRun`, uses retained run metadata, or its old seed; seeded generation and sanitizing retain profile. `challenge-run-context.jsx` captures the opening profile for seedless links before removing the query | Enforced hydrated challenge copy test; `test/save-share-link.test.js`, Vanilla/TR/ARCE, legacy seeds, seedless/invalid metadata; `test/share-link-world.test.js`, link capture with/without world; Chrome `QA-22/challenge-permalink` |
+
+Build permalinks still carry character creation choices, not the save's level,
+progression or inventory. Older seedless stored runs that never recorded a world
+cannot recover it; the existing visitor-world fallback remains for those records.
+No game-data/schema, D1 migration, account preference or production change.
+
+Final verification: `npm test`: **1,022 tests, 986 passed, 36 existing TODO,
+0 failures**. Cloudflare build with unchanged config: **24 pages, passed**.
+Chrome: **8/8** local Vault cases (4 QA-21 and 4 QA-22), plus **4/4** challenge
+recipient cases; zero runtime/server errors. All synthetic "QA – " records were
+deleted in `finally`, and isolated runner servers closed. No real Clerk or
+production writes. Main/deployment remain separate owner actions.
+
+The first recipient check used a nonexistent `.character-sheet-root` selector;
+the runner was corrected to the actual `.character-sheet` and active gender
+button, then the full matrix passed. The new catalog test also corrected its
+expectation: `Hara` resolves to **The Thief**, as published, rather than The Tower.
+Application resolution follows those catalogs without editing them.
+
+Evidence in `A:/Cache/`: `qa22-before-fix.log`, `qa22-unit-final.log`,
+`qa22-cloudflare-build-final.log`, `qa22-vault-verified-20261001/`, and
+`qa22-challenge-verified-20261001/`. QA-25 and the other open checklist items remain
+outside this task.

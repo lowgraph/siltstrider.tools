@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Share links from imported Cloud Vault saves carry the save's world, race, gender, birthsign and class choices. Challenge links keep the run's world after you switch worlds. A save with choices the site's data cannot resolve shows an error instead of sharing a different character.
+
 - Loading a character build from Cloud Vault selects its saved world before showing its statistics. Signing in keeps this browser's world until you choose a Preferred world in Your account; header changes and loaded saves do not replace that preference.
 
 - **Keep your character when signing out:** an unsaved Builder character survives the return to Home, including its world, race, birthsign, skill choices and equipment. Loaded saves continue to stay in this browser until cleared.

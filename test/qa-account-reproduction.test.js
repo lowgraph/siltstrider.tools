@@ -56,18 +56,19 @@ test('QA-21 Vault load applies the stored build world like a shared link',async(
   finally {await mounted.close();}
 });
 
-test('QA-22 imported-save permalink describes the resolved save, including world and gender',todo('QA-22'),async()=>{
+test('QA-22 imported-save permalink describes the resolved save, including world and gender',async()=>{
   const raw=save();raw.identity.name='QA – Imported Cathay-raht';raw.identity.race='T_Els_Cathay-raht';raw.identity.gender='Female';raw.identity.birthsign='Hara';raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm','ARCE - All Races and Classes Enabled.esp');
   const l=await loader(),{adaptCharacterCatalogs}=await import('../lib/character-catalogs.mjs'),{buildFromSave}=await import('../lib/omwsave-import.mjs'),{decodeShareUrl}=await import('../lib/permalink-codec.mjs');
   const catalogs=adaptCharacterCatalogs(await l.loadFeature('tr_arce','character'),await l.loadCatalog('tr_arce','Spells'));
   const resolved=buildFromSave(raw,catalogs,{profile:'tr_arce'}).build;let vault;
+  api=pathname=>pathname==='/api/saves/qa-save'?{save:{id:'qa-save',save_type:'openmw_save',data:raw}}:{};
   function Probe(){vault=ui.useCloudVault();return null;}
   const mounted=await mount(e(Probe));
   try {let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save',save_type:'openmw_save',race:raw.identity.race,class_name:'mage',birthsign:'Hara',data:raw});});assert.equal(result.success,true);const decoded=decodeShareUrl(result.url);assert.deepEqual({world:decoded.world,arce:decoded.arce,race:decoded.build.race,gender:decoded.build.gender,className:decoded.build.className,maj:decoded.build.maj,min:decoded.build.min},{world:'tr',arce:true,race:resolved.race,gender:'Female',className:resolved.className,maj:resolved.maj,min:resolved.min});}
   finally {await mounted.close();}
 });
 
-test('QA-22 challenge permalink keeps the rolled world after the visitor changes world',todo('QA-22'),async()=>{
+test('QA-22 challenge permalink keeps the rolled world after the visitor changes world',async()=>{
   const {formatRunSeed,generateSeededRun}=await import('../lib/challenge-engine.mjs'),{decodeShareUrl}=await import('../lib/permalink-codec.mjs');
   const seed=formatRunSeed({code:'QA222',profile:'vanilla',allowedBands:{Easy:true},restrictionCount:1,objectiveCount:1});
   const run=generateSeededRun(seed,{world:'vanilla'}).run;let challenge;
@@ -75,6 +76,48 @@ test('QA-22 challenge permalink keeps the rolled world after the visitor changes
   const mounted=await mount(e(ui.ChallengeRunProvider,null,e(Probe)),{url:'http://localhost/challenge',storage:{'mw-world':'tr'}});
   try {await React.act(async()=>challenge.setRun(run));const button=[...document.querySelectorAll('button')].find(b=>b.textContent.trim()==='Copy Permalink');assert.ok(button,'real copy control');await React.act(async()=>button.click());const decoded=decodeShareUrl(mounted.copied());assert.equal(decoded.run.seed,seed);assert.equal(decoded.world,'vanilla','run profile wins over visitor TR');}
   finally {await mounted.close();}
+});
+
+test('QA-22 sharing fetches the full save and leaves the active character and world unchanged',async()=>{
+  const raw=save();raw.identity.gender='Female';let character,shell,vault,fetches=0;
+  api=pathname=>{
+    if(pathname==='/api/saves/qa-save'){fetches++;return {save:{id:'qa-save',save_type:'openmw_save',data:raw}};}
+    return {};
+  };
+  function Probe(){character=ui.useActiveCharacter();shell=ui.useShell();vault=ui.useCloudVault();return null;}
+  const mounted=await mount(e(Probe),{signedIn:true,storage:{'mw-world':'tr','mw-arce':'1'}});
+  try {
+    await mounted.wait(()=>character.sheet&&shell.ready);const before=character.build;
+    let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save',save_type:'openmw_save',race:'wrong summary',data:{identity:{race:'wrong inline payload'}}});});
+    assert.equal(result.success,true);assert.equal(fetches,1);
+    const {decodeShareUrl}=await import('../lib/permalink-codec.mjs');const decoded=decodeShareUrl(result.url);
+    assert.equal(decoded.profile,'vanilla');assert.equal(decoded.build.race,'Breton');assert.equal(decoded.build.gender,'Female');
+    assert.deepEqual(character.build,before);assert.equal(character.activeSave,null);assert.equal(shell.profile,'tr_arce');assert.deepEqual(mounted.errors,[]);
+  } finally {await mounted.close();}
+});
+
+test('QA-22 unresolved and unsupported cloud records report failure without copying defaults',async()=>{
+  const raw=save();raw.identity.race='Unknown mod race';let vault,type='openmw_save';
+  api=pathname=>pathname==='/api/saves/qa-save'?{save:{save_type:type,data:raw}}:{};
+  function Probe(){vault=ui.useCloudVault();return null;}
+  const mounted=await mount(e(Probe),{signedIn:true});
+  try {
+    let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save'});});
+    assert.equal(result.success,false);assert.equal(mounted.copied(),'');assert.match(vault.errorMessage,/race could not be resolved/);assert.equal(vault.actionBusy,false);
+    type='challenge_run';await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-save'});});
+    assert.equal(result.success,false);assert.equal(mounted.copied(),'');assert.match(vault.errorMessage,/cannot be shared as a character build/);
+  } finally {await mounted.close();}
+});
+
+test('QA-22 sharing keeps existing character-build fields and world',async()=>{
+  let vault;api=pathname=>pathname==='/api/saves/qa-build'?{save:{save_type:'character_build',data:{build}}}:{};
+  function Probe(){vault=ui.useCloudVault();return null;}
+  const mounted=await mount(e(Probe),{signedIn:true});
+  try {
+    let result;await React.act(async()=>{result=await vault.shareBuildLink({id:'qa-build',save_type:'character_build'});});
+    const {decodeShareUrl}=await import('../lib/permalink-codec.mjs');const decoded=decodeShareUrl(result.url);
+    assert.equal(result.success,true);assert.equal(decoded.profile,'tr_arce');assert.equal(decoded.build.race,build.race);assert.deepEqual(decoded.build.maj,build.maj);
+  } finally {await mounted.close();}
 });
 
 test('QA-23 hydrated sign-in hand-off keeps browser world until an account chooses it',async()=>{

@@ -8,7 +8,7 @@ import { useShell } from "../shell-context";
 import { useActiveCharacter } from "../character-context";
 import { useChallengeRun } from "../challenge-run-context";
 import { DIFFICULTY_PRESETS, formatRunMarkdown } from "../../lib/challenge-math.mjs";
-import { formatRunSeed, generateSeededRun, newSeedCode, parseRunSeed, rollCardAspect } from "../../lib/challenge-engine.mjs";
+import { formatRunSeed, generateSeededRun, newSeedCode, parseRunSeed, profileForRun, rollCardAspect } from "../../lib/challenge-engine.mjs";
 import { encodeShareUrl } from "../../lib/permalink-codec.mjs";
 import { chooseCharacterSlot } from "../../lib/challenge-choice.mjs";
 
@@ -248,12 +248,12 @@ export default function ChallengeRunsRoot() {
   }, [run]);
 
   // Copy Permalink: a link that carries this exact run, locked cards and rerolls included,
-  // in this world. Where the clipboard is blocked, the link is shown to copy by hand.
+  // in the run's world. Where the clipboard is blocked, show the link to copy by hand.
   const [shareLink, setShareLink] = useState(null);
   const handleCopyPermalink = useCallback(async () => {
     if (typeof window === "undefined") return;
     const { restNote, ...linked } = run;
-    const hash = encodeShareUrl({ view: "challenge", world: shell.world, arce: shell.arce, profile: shell.profile, run: linked });
+    const hash = encodeShareUrl({ view: "challenge", ...profileForRun(run, shell), run: linked });
     const url = window.location.origin + hash;
     try {
       await navigator.clipboard.writeText(url);

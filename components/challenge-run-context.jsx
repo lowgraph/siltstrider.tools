@@ -1,10 +1,10 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { DIFFICULTY_PRESETS } from "../lib/challenge-math.mjs";
-import { createEmptyRun, sanitizeRun } from "../lib/challenge-engine.mjs";
+import { createEmptyRun, sanitizeRun, profileForRun } from "../lib/challenge-engine.mjs";
 import { decodeShareUrl } from "../lib/permalink-codec.mjs";
 import { useAccountSettings } from './account-settings-context';
-import { useShell } from './shell-context';
+import { useShell, readVisitorProfile } from './shell-context';
 import { resolveAccountToolDefaults, updateAccountToolSettings } from '../lib/account-settings.mjs';
 
 /**
@@ -130,7 +130,9 @@ function useChallengeRunState({ persist }) {
       if (!linked) return false;
       currentChoice.current = true;
       sharedChoice.current = true;
-      setRun(linked);
+      const query = new URL(raw, window.location.origin).searchParams;
+      const fallback = query.has('world') || query.has('arce') ? decodeShareUrl(raw) : readVisitorProfile();
+      setRun({ ...linked, profile: profileForRun(linked, fallback).profile });
       setLocks({ ...EMPTY_LOCKS });
       dropRunFromAddress();
       return true;

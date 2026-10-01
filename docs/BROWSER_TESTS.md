@@ -183,20 +183,21 @@ This does not replace the owner's real development/production Clerk acceptance.
 node scripts/test-vault.cjs --signout-preservation --port 8797 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\signout-preservation'
 ```
 
-`--qa-reproduction` runs only the signed-in QA-21 / imported-save QA-22 cases.
+`--qa-reproduction` runs the signed-in QA-21 / imported-save QA-22 regressions.
 It uses a synthetic “QA – Vault Reproduction” identity, creates two “QA – ”
 records in a fresh local database, and deletes both in `finally`. It verifies
 the selected theme through account settings before testing each width. Known
-behavior assertions intentionally fail until the application is fixed:
+behavior assertions are enforced on `launch/character-preservation`; QA-22 also
+opens each copied link and checks the recipient character and populated sheet:
 
 ```powershell
 node scripts/test-vault.cjs --qa-reproduction --port 8796 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa-vault'
 ```
 
 The corresponding hydrated/hook expectations are in
-`test/qa-account-reproduction.test.js`, marked TODO. `--suite qa --filter QA-22`
+`test/qa-account-reproduction.test.js`. `--suite qa --filter QA-22`
 in the ordinary Chrome runner checks that a challenge's link retains its rolled
-world after a visitor changes world. Synthetic authentication does not verify
+world after a visitor changes world, then opens the recipient link. Synthetic authentication does not verify
 Clerk's real email-code or redirect behavior; use an owner-prepared throwaway
 session for that final check.
 
@@ -231,6 +232,6 @@ QA-24 remains covered separately by `--signout-preservation`.
 node scripts/test-vault.cjs --character-preservation --port 8797 --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\character-preservation'
 ```
 
-The QA-21/23 reproduction tests are now enforced, including hydrated sign-in,
-version 1 compatibility and rejected Vault loads. QA-22 and QA-25 remain TODO;
-`--qa-reproduction` still includes the unfixed imported-save link finding.
+The QA-21/22/23 reproduction tests are now enforced, including hydrated sign-in,
+version 1 compatibility, rejected Vault loads and share links. QA-25 remains TODO.
+QA-22 edge cases and saved run profiles are in `test/save-share-link.test.js`.
