@@ -1,5 +1,6 @@
 "use client";
 import { useMemo } from "react";
+import { isDisplayFaction } from "../../lib/faction-display.mjs";
 import { joinableFactions, getMutualExclusionConflict, meetsRank, getHighestEligibleRank } from "../../lib/faction-math.mjs";
 
 const CATEGORIES = [
@@ -44,9 +45,12 @@ export default function FactionRoster({
   }, [joinedFactions]);
 
   const joinedKeys = useMemo(() => Array.from(joinedMap.keys()), [joinedMap]);
+  const visibleJoinedCount = useMemo(() => factions.filter(isDisplayFaction)
+    .filter(f => joinedMap.has(f.key.toLowerCase())).length, [factions, joinedMap]);
 
   const filteredFactions = useMemo(() => {
     return factions.filter(f => {
+      if (!isDisplayFaction(f)) return false;
       const k = f.key.toLowerCase();
       const name = (f.name || f.key).toLowerCase();
 
@@ -109,7 +113,7 @@ export default function FactionRoster({
       <div className="px-2 py-2 flex flex-wrap gap-1 border-b border-line-9 bg-surface-3 overflow-x-auto">
         {CATEGORIES.map(cat => {
           const isActive = activeCategory === cat.id;
-          const count = cat.id === "joined" ? joinedKeys.length : null;
+          const count = cat.id === "joined" ? visibleJoinedCount : null;
           return (
             <button
               key={cat.id}

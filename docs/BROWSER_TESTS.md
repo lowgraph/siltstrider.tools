@@ -341,3 +341,13 @@ must fit the viewport. Nine component/copy cases enforce unchanged build loading
 collapse/expand, all profiles/modes and missing/unknown/frozen inputs. Screenshots
 capture both groups. Use the existing runner URL/axe/out arguments; this item's
 acceptance run is bounded to 60 seconds overall.
+
+QA-11's `--suite qa --filter 'QA-11/'` checks the visible faction count, hidden
+deprecated rows and relation names against the staged Factions catalog in all
+three worlds, 1366/375 px and both themes (12 cases). TR/TR + ARCE explicitly
+check Cyrodiil Fighters Guild, Imperial Archaeological Society and East Navy;
+Vanilla checks Mages Guild. Screenshots scroll each expected relation label into
+view (28 captures). The live badge uses uppercase CSS: read its textContent and
+wait for the expected count. Synthetic tests also cover malformed/frozen records,
+unknown IDs, unchanged relation values and retained saved memberships. Use the
+existing runner URL/axe/out arguments; bound the matrix to 60 seconds overall.

@@ -268,9 +268,25 @@ exports.qa = async c => {
           await c.screenshot(`qa25-link-origin-${profile}-${width}-${theme}`);return record(c,'QA-25',{profile,width,theme,...state});
         }finally{await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier});}
       });
-      for(const profile of ['tr','tr_arce']) await c.check(`QA-11/factions/${profile}/${width}/${theme}`,async()=>{
-        await c.navigate('factions',profile);await c.until('document.querySelectorAll(".faction-roster-root button").length>0 || document.querySelector("main").textContent.includes("<Deprecated>")');
-        const text=await body(c);await record(c,'QA-11',{width,theme,profile,text});assert.doesNotMatch(text,/<Deprecated>/);return {text};
+      for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-11/factions/${profile}/${width}/${theme}`,async()=>{
+        await c.navigate('factions',profile);await c.until('document.querySelectorAll(".faction-roster-item").length>0');
+        const l=await fixture.loader(),catalog=await l.loadCatalog(profile,'Factions');const{isDisplayFaction}=await import('../lib/faction-display.mjs');
+        const visible=catalog.filter(isDisplayFaction);await c.until('document.querySelector(".journal-factions-root > div").textContent.includes('+JSON.stringify('Live: '+visible.length+' Factions')+')');
+        const text=await body(c);assert.doesNotMatch(text,/<Deprecated>/i);
+        assert.equal(await c.evaluate('document.querySelectorAll(".faction-roster-item").length'),visible.length);
+        const names=[];
+        for(const key of profile==='vanilla'?['mages guild']:['t_cyr_fightersguild','t_glb_archaeologicalsociety','t_mw_imperialnavy']){
+          const expected=catalog.find(f=>f.key.toLowerCase()===key).name;
+          const source=visible.find(f=>f.reactions?.some(r=>r.faction.toLowerCase()===key&&r.adjustment!==0));assert.ok(source);
+          await c.type('#faction-search-input',source.name);
+          await c.evaluate(`(()=>{const b=[...document.querySelectorAll('.faction-roster-item')].find(e=>e.querySelector('div > span').textContent.trim()===${JSON.stringify(source.name)});if(!b)throw Error('Faction search result missing');b.dataset.qaFaction='yes'})()`);await c.click('[data-qa-faction=yes]');
+          await c.until('document.querySelector(".faction-detail-pane h2").textContent.trim()==='+JSON.stringify(source.name));
+          const relations=await c.evaluate(`(()=>{const h=[...document.querySelectorAll('.faction-detail-pane h3')].find(e=>e.textContent.trim()==='Inter-Faction Relations');h.parentElement.dataset.qaRelations='yes';return h.parentElement.textContent})()`);
+          assert.ok(relations.includes(expected),expected);assert.doesNotMatch(relations,/\bT_(?:cyr|glb|mw|sky)_|<Deprecated>/i);
+          await c.evaluate(`(()=>{const chip=[...document.querySelectorAll('[data-qa-relations=yes] span')].find(e=>e.textContent.trim().startsWith(${JSON.stringify(expected+':')}));if(!chip)throw Error('Published relation label missing');chip.scrollIntoView({block:'center',behavior:'instant'})})()`);await c.pause(100);await c.screenshot(`qa11-${profile}-${key.replaceAll(' ','-')}-${width}-${theme}`);names.push(expected);
+          await c.evaluate(`document.querySelector('[data-qa-relations=yes]').removeAttribute('data-qa-relations')`);
+        }
+        return record(c,'QA-11',{width,theme,profile,visible:visible.length,hidden:catalog.length-visible.length,names});
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-12/premade-copy/${profile}/${width}/${theme}`,async()=>{
         await c.navigate('builder',profile);await readyBuilder(c);await c.builderTab('premade');

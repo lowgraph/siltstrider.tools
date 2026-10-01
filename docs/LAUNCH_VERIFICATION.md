@@ -1927,3 +1927,31 @@ player changelogs updated. Evidence: `A:/Cache/qa12-browser-verified/`,
 `qa12-phone-first/`, `qa12-unit.log`, `qa12-build.log`, `qa12-pipeline.log`.
 No dataset rebuild, migration, account write or deployment. Server 8794 remains
 available. Next authorized work: QA-11, then QA-15; push after each item.
+
+## 44. QA-11 faction names and deprecated entries — 1 October 2026
+
+Claimed 22:45 UTC on `launch/character-preservation`, claim `b778518`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-11 | Fixed on branch; both original unmarked tests failed, final Chrome 12/12 pass | FactionRoster and JournalFactionsRoot displayed all records; FactionDetailView title-cased raw reaction IDs. faction-display.mjs filters deprecated display records and resolves case-insensitive published names; the detail receives the full catalog | Both original cases enforced; six new display/integration cases in faction-display.test.js; Chrome QA-11 |
+
+The catalog already provides Cyrodiil Fighters Guild (`t_cyr_fightersguild`),
+Imperial Archaeological Society (`t_glb_archaeologicalsociety`) and East Navy
+(`t_mw_imperialnavy`). No pipeline request or rebuild is needed. Vanilla keeps
+29 displayed factions; TR and TR + ARCE show 91 of 103, hiding 12 deprecated
+records. Saved memberships, source records and numeric relations stay intact.
+The visible membership count excludes hidden records. Unknown internal IDs use
+Unknown faction; ordinary human-readable fallback names remain available.
+
+Chrome: three worlds × 1366/375 × both themes, **12/12 passed**, 28 screenshots,
+zero runtime/server errors. Each reported name is checked against the staged
+catalog and scrolled into view for its capture; phone and desktop reviewed.
+The initial phone assertion overlooked uppercase CSS in innerText; the runner
+now waits for the loaded badge and reads textContent. Full suite: **1,122 tests,
+1,121 passed, 1 remaining TODO, 0 failures**. Release build: **24 pages passed**,
+configuration unchanged. Pipeline: **685 passed** after identical coordination
+sync. Both player changelogs updated. Evidence: `A:/Cache/qa11-browser-verified/`,
+`qa11-phone-verified/`, `qa11-unit.log`, `qa11-build.log`, `qa11-pipeline.log`.
+No dataset, schema, migration, account or production change. Server 8794 remains
+available. Next authorized work: QA-15, after this item's push.

@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import { factionLabel } from "../../lib/faction-display.mjs";
 import {
   solvePromotionGaps,
   getHighestEligibleRank,
@@ -11,6 +12,7 @@ import {
 
 export default function FactionDetailView({
   faction,
+  factions = [],
   character,
   membership,
   joinedFactionKeys = [],
@@ -63,8 +65,10 @@ export default function FactionDetailView({
 
   // Diplomacy
   const { allies, hostile, neutral } = useMemo(() => {
-    return getFactionReactions(faction);
-  }, [faction]);
+    const reactions = (Array.isArray(faction.reactions) ? faction.reactions : [])
+      .map(r => ({ ...r, name: factionLabel(r?.faction, factions) })).filter(r => r.name);
+    return getFactionReactions({ ...faction, reactions });
+  }, [faction, factions]);
 
   // Mutual exclusion check
   const conflict = useMemo(() => {
@@ -403,7 +407,7 @@ export default function FactionDetailView({
               <div className="flex flex-wrap gap-1.5">
                 {allies.map((r, i) => (
                   <span key={i} className="px-2 py-1 text-xs font-serif bg-success-surface-2 border border-success-line-4 text-success-1">
-                    {r.faction.replace(/\b\w/g, c => c.toUpperCase())}: <strong className="text-success-4">+{r.adjustment}</strong>
+                    {r.name}: <strong className="text-success-4">+{r.adjustment}</strong>
                   </span>
                 ))}
               </div>
@@ -421,7 +425,7 @@ export default function FactionDetailView({
               <div className="flex flex-wrap gap-1.5">
                 {hostile.map((r, i) => (
                   <span key={i} className="px-2 py-1 text-xs font-serif bg-danger-surface-2 border border-danger-line-2 text-danger-2">
-                    {r.faction.replace(/\b\w/g, c => c.toUpperCase())}: <strong className="text-danger-7">{r.adjustment}</strong>
+                    {r.name}: <strong className="text-danger-7">{r.adjustment}</strong>
                   </span>
                 ))}
               </div>

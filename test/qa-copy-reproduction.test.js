@@ -15,11 +15,11 @@ test('QA-15 claim scan permits describing the code as open source',()=>{
   const patterns=source.match(/const REMOVED = \[([\s\S]*?)\];/)[1];
   assert.equal(Function('return ['+patterns+']')().some(p=>p.test('The code is open source under AGPL-3.0.')),false);
 });
-test('QA-11 roster omits deprecated TR factions',staged(todo('QA-11')),async()=>{
+test('QA-11 roster omits deprecated TR factions',staged(),async()=>{
   const l=await loader(),factions=await l.loadCatalog('tr','Factions');
   const html=renderToString(React.createElement(Roster,{factions,searchQuery:'',activeCategory:'all',character:{},joinedFactions:[]}));assert.doesNotMatch(text(html),/<Deprecated>/);
 });
-test('QA-11 relation display resolves IDs through published faction names',staged(todo('QA-11')),async()=>{
+test('QA-11 relation display resolves IDs through published faction names',staged(),async()=>{
   const l=await loader(),factions=await l.loadCatalog('tr','Factions');
   const faction=factions.find(f=>f.reactions?.some(r=>r.faction==='t_cyr_fightersguild'));
   assert.ok(faction,'actual published reaction record');
