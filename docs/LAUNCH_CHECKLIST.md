@@ -206,7 +206,7 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. Skip completed implementation items while retaining their
-merge/deploy status. QA-08 and QA-09 are complete on this branch. **Next target: QA-06**, then the QA-05 regression recheck, as authorized by the owner.
+merge/deploy status. QA-08 and QA-09 are complete on this branch. **Next target: QA-05 regression recheck**, as authorized by the owner.
 Test portability, QA-21/23, QA-22, QA-01/02, QA-03/04, QA-10 and QA-05 are complete on this branch;
 QA-24 is merged to main. Final acceptance still waits for the remaining fixes.
 
@@ -326,7 +326,7 @@ commands in BROWSER_TESTS.md.
 
 #### 10. QA-06 — unobtainable Alchemy apparatus
 
-- [ ] **C** **QA-06** (started 2026-10-01 22:04 UTC, Codex, on launch/character-preservation) (reproduced 8/8; the missed keys are `tr_m7_apparatus_sm_alembic_02`, `_calcin_02`, `_retort_02`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
+- [x] **C** **QA-06** (started 2026-10-01 22:04 UTC, Codex, on launch/character-preservation; done on this branch, verified in LAUNCH_VERIFICATION §41; not merged or deployed) (reproduced 8/8; the missed keys are `tr_m7_apparatus_sm_alembic_02`, `_calcin_02`, `_retort_02`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
       apparatus is still offered in TR and TR + ARCE Alchemy (Alembic, Calcinator, Retort),
       though the 30 September changelog says it is gone: the filter in
       `lib/alchemy-catalogs.mjs` matches only vanilla keys and names starting "Secretmaster".

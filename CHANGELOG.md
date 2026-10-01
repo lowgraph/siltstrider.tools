@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Alchemy leaves Secret Master’s apparatus out of every world, including Tamriel Rebuilt’s renamed tools. Available tools remain ordered by effectiveness.
+
 - Travel accepts Ald’ruhn, Ald-ruhn and Aldruhn in place searches. While you edit a location, it asks you to choose a result instead of showing the previous trip; cancelling restores it. Shared journeys keep their starting point when a saved character loads.
 
 - Travel finds the everyday Ebonheart–Mournhold teleport in all three worlds, including with walking switched off. Named cities now include teleport-only rooms that were missing from the transport stop list.

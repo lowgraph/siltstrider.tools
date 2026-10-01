@@ -54,3 +54,21 @@ test('adapter rejects invalid targets, slots and missing formula settings',async
   const f=fixture();change(f);assert.throws(()=>adaptAlchemy(f));
  }
 });
+
+for (const type of ['mortar_and_pestle','alembic','calcinator','retort']) test(`QA-06 prefixed keys and spaced names: ${type}`,async()=>{
+ const {adaptAlchemy}=await adapter,f=fixture();
+ const blocked=[{key:'tr_m7_apparatus_sm_'+type+'_02',name:'Renamed tool'},
+  {key:'renamed',name:"Secret Master's "+type}, {key:'curly',name:'Secret Master’s '+type},
+  {key:'capital',name:'SECRETMASTER '+type}].map(r=>Object.freeze({...r,type,quality:2}));
+ f.catalogs.Apparatus=Object.freeze([...blocked,Object.freeze({key:'normal',name:'Grandmaster tool',type,quality:1.5})]);
+ const before=JSON.stringify(f.catalogs.Apparatus),out=adaptAlchemy(f);
+ assert.deepEqual(Object.values(out.apparatus).flat().map(r=>r.id),['normal']);
+ assert.equal(JSON.stringify(f.catalogs.Apparatus),before,'published provenance remains unchanged');
+});
+test('QA-06 ordinary Master tools and incidental name fragments stay available and sorted',async()=>{
+ const {adaptAlchemy}=await adapter,f=fixture();
+ f.catalogs.Apparatus=[{key:'mod_apparatus_master',name:'Master’s Mortar',quality:1.2},
+  {key:'secretmastery',name:'Secret Mastery Mortar',quality:1.1},
+  {key:'notapparatus_sm_x',name:'Journeyman Mortar',quality:1}].map(r=>({...r,type:'mortar_and_pestle'}));
+ assert.deepEqual(adaptAlchemy(f).apparatus.mortar.map(r=>r.id),['mod_apparatus_master','secretmastery','notapparatus_sm_x']);
+});

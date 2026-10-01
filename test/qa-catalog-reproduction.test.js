@@ -1,7 +1,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {loader,todo,staged}=require('./helpers/qa-staged-data.cjs');
-for(const profile of ['tr','tr_arce']) test(`QA-06 obtainable apparatus only: ${profile}`,staged(todo('QA-06')),async()=>{
+for(const profile of ['tr','tr_arce']) test(`QA-06 obtainable apparatus only: ${profile}`,staged(),async()=>{
   const l=await loader();const {adaptAlchemy}=await import('../lib/alchemy-catalogs.mjs');const data=adaptAlchemy(await l.loadFeature(profile,'alchemy'));
   const leaked=Object.values(data.apparatus).flat().filter(r=>/secret\s*master/i.test(r.n)).map(r=>[r.id,r.n]);assert.deepEqual(leaked,[]);
 });

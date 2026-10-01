@@ -233,7 +233,7 @@ exports.qa = async c => {
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-06/apparatus/${profile}/${width}/${theme}`,async()=>{
         await c.navigate('alchemy',profile);await c.until('document.querySelector("#alc-mortar-select option")?.parentElement.options.length>1');
         const tools=await c.evaluate(`['mortar','alembic','calcinator','retort'].map(t=>({type:t,options:[...document.querySelector('#alc-'+t+'-select').options].map(o=>({key:o.value,name:o.textContent}))}))`);
-        await record(c,'QA-06',{width,theme,profile,tools});assert.ok(tools.every(g=>g.options.every(o=>!/secret\s*master/i.test(o.name))));return tools;
+        await record(c,'QA-06',{width,theme,profile,tools});assert.ok(tools.every(g=>g.options.every(o=>!/secret\s*master/i.test(o.name))));await c.screenshot(`qa06-apparatus-${profile}-${width}-${theme}`);return tools;
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-07/search/${profile}/${width}/${theme}`,async()=>{
         await c.navigate('travel',profile,'&from=Seyda%20Neen&to=Balmora');await c.until('document.querySelector("#travel-results").textContent.includes("Take the Silt Strider")');

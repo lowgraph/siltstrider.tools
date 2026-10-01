@@ -1848,3 +1848,28 @@ copying identical coordination. Both changelogs updated. Existing server 8794
 stays running. Evidence: `A:/Cache/qa07-browser-final/`, `qa25-browser-verified/`,
 `qa07-25-unit.log`, `qa07-25-build.log` and `qa07-25-pipeline.log`.
 Next authorized work: QA-06, then recheck completed QA-05.
+
+## 41. QA-06 obtainable Alchemy apparatus — 1 October 2026
+
+Claimed 22:04 UTC on `launch/character-preservation`, claim `cb15b35`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-06 | Fixed on branch; original staged tests 2/2 failed, final Chrome 12/12 pass (48 selectors) | `lib/alchemy-catalogs.mjs`, adaptAlchemy filtered only leading apparatus_sm_ keys and unspaced Secretmaster names. Match the key segment after a mod prefix and spaced names, including apostrophes, without matching incidental name fragments | Both original catalog cases enforced; five synthetic adapter edge cases; Chrome QA-06 |
+
+The staged TR and TR + ARCE leaks were `tr_m7_apparatus_sm_alembic_02`,
+`tr_m7_apparatus_sm_calcin_02` and `tr_m7_apparatus_sm_retort_02`, named Secret
+Master's Alembic/Calcinator/Retort (the UI adds 2x quality). No catalog edits:
+source records and provenance remain intact. Ordinary Master/Grandmaster tools
+remain, with effectiveness descending and stable name/ID ties. All four types,
+renamed tools and frozen inputs have synthetic coverage.
+
+Chrome: three worlds × 1366/375 × both themes, **12/12 passed**, 12 screenshots,
+zero runtime/server errors; desktop/phone reviewed. Full suite: **1,107 tests,
+1,103 passed, 4 remaining TODO, 0 failures**. Release build: **24 pages passed**,
+config unchanged. Pipeline: **685 passed** after identical coordination sync.
+Preserved the concurrent Morrowind theme coordination entry added by another
+session. Both changelogs updated. No data rebuild, schema, migration, account or
+production change. Existing server 8794 stays running. Evidence:
+`A:/Cache/qa06-browser-final/`, `qa06-unit.log`, `qa06-build.log`,
+`qa06-pipeline.log`. Next: QA-05 regression recheck (already fixed in §34).

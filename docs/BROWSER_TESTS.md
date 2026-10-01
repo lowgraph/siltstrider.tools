@@ -317,3 +317,9 @@ restoration. QA-25's `--filter 'QA-25'` restores a synthetic save in each profil
 and requires the explicit Balmora → Ald-ruhn origin/destination and `plan=time`.
 Each filter covers three worlds × 1366/375 px × both themes (12 cases), with
 screenshots. Use the same URL/axe/out arguments as the QA-16 runner above.
+
+QA-06's `--suite qa --filter 'QA-06'` inspects all four apparatus selectors in
+three worlds, at 1366/375 px in both themes (12 cases / 48 lists) and captures
+screenshots. Every list must omit Secret Master's tools. Five synthetic adapter
+edge cases cover mod-prefixed keys, renamed tools, spaced/curly-apostrophe names,
+ordinary Master tools, ordering and frozen catalog provenance.
