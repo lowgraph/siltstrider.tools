@@ -5,7 +5,7 @@ for(const profile of ['tr','tr_arce']) test(`QA-06 obtainable apparatus only: ${
   const l=await loader();const {adaptAlchemy}=await import('../lib/alchemy-catalogs.mjs');const data=adaptAlchemy(await l.loadFeature(profile,'alchemy'));
   const leaked=Object.values(data.apparatus).flat().filter(r=>/secret\s*master/i.test(r.n)).map(r=>[r.id,r.n]);assert.deepEqual(leaked,[]);
 });
-for(const spelling of ["Ald'ruhn",'Ald’ruhn','Aldruhn']) test(`QA-07 town punctuation: ${spelling}`,todo('QA-07'),async()=>{
+for(const spelling of ["Ald'ruhn",'Ald’ruhn','Aldruhn']) test(`QA-07 town punctuation: ${spelling}`,{},async()=>{
   const {buildTravelSearchOptions,searchTravelOptions}=await import('../lib/travel-search.mjs');const {matchPlaces}=await import('../lib/travel-walk.mjs');
   const options=buildTravelSearchOptions({stops:['Ald-ruhn'],includePlaces:false});assert.equal(searchTravelOptions(options,spelling).total,1);
   assert.equal(matchPlaces([{key:'exterior:-2,6',name:'Ald-ruhn',interior:false,grid:[-2,6]}],spelling).length,1);

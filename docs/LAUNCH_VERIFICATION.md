@@ -1828,3 +1828,23 @@ The existing dev server at 8794 remains running. Evidence in `A:/Cache/`:
 `qa16-unit-final.log`, `qa16-build-final.log`, `qa16-browser-verified/`,
 `qa16-pipeline.log`. First command: `npm test`, then the QA-16 Chrome case.
 Next authorized work is QA-07/25, QA-06 and the QA-05 regression recheck.
+
+## 40. QA-07/25 Travel search and link precedence — 1 October 2026
+
+Claimed 21:54 UTC on `launch/character-preservation`, claim `e8d72e2`.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-07 | Fixed on branch; original spelling tests 3/3 failed, final Chrome 12/12 pass | `travel-search.mjs` searchTravelOptions and `travel-walk.mjs` matchPlaces compared punctuation literally; shared search-only normalization preserves canonical IDs. TravelLocationPicker now reports draft state so TravelWorkstation hides the previous dossier/map until selection or cancellation | Three original tests enforced, three frozen/null/specific-room spelling cases and three draft lifecycle cases; Chrome QA-07 |
+| QA-25 | Fixed on branch; original hydrated save test failed, final Chrome 12/12 pass | TravelWorkstation save-origin effect replaced the link marker with the restored save's token. Capture the initial explicit from before the URL writer fills defaults and preserve it through that first restoration | Original hydrateRoot test enforced; missing-from, destination-only and plan-only controls; later imported save updates origin; Chrome QA-25 |
+
+Desktop/phone screenshots reviewed. Both browser matrices have zero runtime or
+server errors. The first QA-25 runner attempt used an unavailable readiness helper;
+replaced it with the network-status predicate, then all 12 passed. Synthetic saves
+match the selected profiles; no account writes, data rebuild or production changes.
+Full suite: **1,102 tests, 1,096 passed, 6 remaining TODO, 0 failures**. Release
+build: **24 pages passed**, config unchanged. Pipeline: **685 passed** after
+copying identical coordination. Both changelogs updated. Existing server 8794
+stays running. Evidence: `A:/Cache/qa07-browser-final/`, `qa25-browser-verified/`,
+`qa07-25-unit.log`, `qa07-25-build.log` and `qa07-25-pipeline.log`.
+Next authorized work: QA-06, then recheck completed QA-05.

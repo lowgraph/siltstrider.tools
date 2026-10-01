@@ -1,5 +1,16 @@
 # Coordination
 
+## Travel search and link origin (QA-07/25) — 1 October
+
+Normalize apostrophes/dashes only for search comparisons, never route IDs or
+catalog labels. City searches stay grouped; named rooms remain searchable.
+Uncommitted picker edits hide the old dossier and map; Escape/blur cancels and
+selection commits. Preserve the initial explicit link origin through the first
+async save restoration; without from, the save wins, and a later imported save
+can start a new journey. No dataset/schema change. First command: `npm test`,
+then Chrome QA-07 and QA-25 filters in BROWSER_TESTS. Verification: §40.
+Next authorized work: QA-06, then the completed QA-05 regression recheck.
+
 ## Teleport-only stop aliases (QA-16) — 1 October
 
 When Travel node metadata is absent, buildTransitStops uses a published Places

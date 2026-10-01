@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Travel accepts Ald’ruhn, Ald-ruhn and Aldruhn in place searches. While you edit a location, it asks you to choose a result instead of showing the previous trip; cancelling restores it. Shared journeys keep their starting point when a saved character loads.
+
 - Travel finds the everyday Ebonheart–Mournhold teleport in all three worlds, including with walking switched off. Named cities now include teleport-only rooms that were missing from the transport stop list.
 
 - Character Builder's Configure explanations stay inside the screen and above the phone tab bar. They open above their buttons when needed; long text scrolls inside the box. Tap again, tap outside or press Escape to close.

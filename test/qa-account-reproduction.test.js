@@ -238,11 +238,13 @@ test('QA-24 loaded saves skip the unsaved sign-out marker and remain restorable'
   } finally { await returned.close(); }
 });
 
-test('QA-25 loaded save cannot override an explicit Travel starting point',staged(todo('QA-25')),async()=>{
+test('QA-25 loaded save cannot override an explicit Travel starting point',staged(),async()=>{
   const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};const raw=save();raw.identity.name='QA – Route Traveller';await rememberSave(raw,{setItem:(key,value)=>storage[key]=value});
   api=()=>({});let character;function Probe(){character=ui.useActiveCharacter();return e(ui.Travel);}
   const mounted=await mount(e(Probe),{url:'http://localhost/travel?from=Balmora&to=Ald-ruhn&plan=time',storage});
-  try {await mounted.wait(()=>character.activeSave&&document.querySelector('#travel-origin')?.value&&document.querySelector('#travel-network-status')?.textContent.includes('stops'));await React.act(async()=>{await new Promise(resolve=>setTimeout(resolve,100));});assert.equal(new URL(window.location.href).searchParams.get('plan'),'time');assert.equal(document.querySelector('#travel-origin').value,'Balmora','explicit link wins after asynchronous save restoration');}
+  try {await mounted.wait(()=>character.activeSave&&document.querySelector('#travel-origin')?.value&&document.querySelector('#travel-network-status')?.textContent.includes('stops'));await React.act(async()=>{await new Promise(resolve=>setTimeout(resolve,100));});assert.equal(new URL(window.location.href).searchParams.get('plan'),'time');assert.equal(document.querySelector('#travel-origin').value,'Balmora','explicit link wins after asynchronous save restoration');
+    const next=save();next.identity.cell='Vivec';next.identity.name='QA – Later save';await React.act(async()=>character.loadSave(next));
+    await mounted.wait(()=>document.querySelector('#travel-origin').value==='Vivec');assert.deepEqual(mounted.errors,[]);}
   finally {await mounted.close();}
 });
 
@@ -285,3 +287,14 @@ test('QA-21 invalid world, unreadable build and missing race leave the loaded sa
 });
 
 test.after(()=>{global.fetch=originalFetch;});
+
+for(const query of ['', '?to=Ald-ruhn', '?plan=real']) test(`QA-25 save origin remains the default without explicit from: ${query}`,staged(),async()=>{
+  const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};const raw=save();raw.identity.cell='Balmora';
+  await rememberSave(raw,{setItem:(k,v)=>storage[k]=v});api=()=>({});let character;
+  function Probe(){character=ui.useActiveCharacter();return e(ui.Travel);}
+  const mounted=await mount(e(Probe),{url:'http://localhost/travel'+query,storage});
+  try {await mounted.wait(()=>character.activeSave&&document.querySelector('#travel-origin')?.value==='Balmora');
+    assert.equal(document.querySelector('#travel-origin').value,'Balmora');assert.deepEqual(mounted.errors,[]);
+    if(query.includes('plan'))assert.equal(new URL(window.location.href).searchParams.get('plan'),'real');
+  }finally{await mounted.close();}
+});

@@ -310,3 +310,10 @@ the Asciene Rane dialogue route and captures every itinerary. Three original
 catalog cases are enforced; `test/teleport-stop-aliases.test.js` covers missing
 metadata/Places, authoritative names, case, exact room IDs, no free transfers,
 malformed frozen records and quest/held-item gates.
+
+QA-07's `--suite qa --filter 'QA-07'` checks all three spelling variants,
+selecting a result, an impossible query with no stale dossier, and Escape
+restoration. QA-25's `--filter 'QA-25'` restores a synthetic save in each profile
+and requires the explicit Balmora → Ald-ruhn origin/destination and `plan=time`.
+Each filter covers three worlds × 1366/375 px × both themes (12 cases), with
+screenshots. Use the same URL/axe/out arguments as the QA-16 runner above.

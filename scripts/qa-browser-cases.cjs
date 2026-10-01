@@ -4,10 +4,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const fixture = require('../test/helpers/qa-staged-data.cjs');
 
-async function storedSave() {
+async function storedSave(profile = 'vanilla') {
   const {rememberSave} = await import('../lib/active-save-store.mjs');
   const storage = {};
-  assert.equal(await rememberSave(fixture.save(), {setItem:(k,v)=>storage[k]=v}),true);
+  const raw=fixture.save();
+  if(profile!=='vanilla') raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm');
+  if(profile==='tr_arce') raw.contentFiles.push('ARCE - All Races and Classes Enabled.esp');
+  assert.equal(await rememberSave(raw, {setItem:(k,v)=>storage[k]=v}),true);
   return storage;
 }
 async function seed(c,storage,theme) {
@@ -232,11 +235,34 @@ exports.qa = async c => {
         const tools=await c.evaluate(`['mortar','alembic','calcinator','retort'].map(t=>({type:t,options:[...document.querySelector('#alc-'+t+'-select').options].map(o=>({key:o.value,name:o.textContent}))}))`);
         await record(c,'QA-06',{width,theme,profile,tools});assert.ok(tools.every(g=>g.options.every(o=>!/secret\s*master/i.test(o.name))));return tools;
       });
-      await c.check(`QA-07/search/${width}/${theme}`,async()=>{
-        await c.navigate('travel','vanilla','&from=Seyda%20Neen&to=Balmora');await c.until('document.querySelector("#travel-results").textContent.includes("Take the Silt Strider")');
-        const before=await body(c);await c.type('#travel-destination',"Ald'ruhn");await c.pause(300);
-        const options=await c.evaluate(`[...document.querySelectorAll('[role=listbox] [role=option]')].map(e=>e.textContent)`),after=await body(c);
-        await record(c,'QA-07',{width,theme,options,stale:after.includes('Take the Silt Strider'),before,after});assert.ok(options.some(o=>/Ald.ruhn/i.test(o)),'Apostrophe search matches Ald-ruhn');return {options,after};
+      for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-07/search/${profile}/${width}/${theme}`,async()=>{
+        await c.navigate('travel',profile,'&from=Seyda%20Neen&to=Balmora');await c.until('document.querySelector("#travel-results").textContent.includes("Take the Silt Strider")');
+        for(const spelling of ["Ald'ruhn",'Ald’ruhn','Aldruhn']) {
+          await c.type('#travel-destination',spelling);await c.pause(200);
+          const options=await c.evaluate(`[...document.querySelectorAll('[role=listbox] [role=option]')].map(e=>e.textContent)`);
+          assert.ok(options.some(o=>/Ald.ruhn/i.test(o)),'Spelling matches Ald-ruhn');
+          assert.equal(await c.evaluate('document.querySelector("#travel-results").textContent.includes("Take the Silt Strider")'),false,'Draft hides stale itinerary');
+          await press(c,'Escape','Escape',27);
+        }
+        await c.type('#travel-destination','Aldruhn');await press(c,'ArrowDown','ArrowDown',40);await press(c,'Enter','Enter',13);
+        await c.until('document.querySelector("#travel-destination").value==="Ald-ruhn"');await c.idle();
+        await c.type('#travel-destination','QA no such place');await c.pause(200);
+        assert.equal(await c.evaluate('document.querySelectorAll("[role=listbox] [role=option]").length'),0);
+        assert.match(await c.evaluate('document.querySelector("#travel-results").textContent'),/Choose a search result/);
+        await c.screenshot(`qa07-failed-search-${profile}-${width}-${theme}`);await press(c,'Escape','Escape',27);
+        assert.equal(await c.evaluate('document.querySelector("#travel-destination").value'),'Ald-ruhn');
+        assert.doesNotMatch(await c.evaluate('document.querySelector("#travel-results").textContent'),/Choose a search result/);
+        return record(c,'QA-07',{profile,width,theme,spellings:3,stale:false,cancelled:true});
+      });
+      for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-25/link-origin/${profile}/${width}/${theme}`,async()=>{
+        const script=await seed(c,{...await storedSave(profile),'mw-world':profile==='vanilla'?'vanilla':'tr','mw-arce':profile==='tr_arce'?'1':'0'},theme);
+        try{
+          await c.navigate('travel',profile,'&from=Balmora&to=Ald-ruhn&plan=time');await c.idle();await c.until('document.querySelector("#travel-network-status")?.textContent.includes("stops")');await c.pause(300);
+          assert.match(await body(c),/QA Traveller/,'Synthetic save restored');
+          const state=await c.evaluate('({from:document.querySelector("#travel-origin").value,to:document.querySelector("#travel-destination").value,plan:new URL(location.href).searchParams.get("plan")})');
+          assert.deepEqual(state,{from:'Balmora',to:'Ald-ruhn',plan:'time'});
+          await c.screenshot(`qa25-link-origin-${profile}-${width}-${theme}`);return record(c,'QA-25',{profile,width,theme,...state});
+        }finally{await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier});}
       });
       for(const profile of ['tr','tr_arce']) await c.check(`QA-11/factions/${profile}/${width}/${theme}`,async()=>{
         await c.navigate('factions',profile);await c.until('document.querySelectorAll(".faction-roster-root button").length>0 || document.querySelector("main").textContent.includes("<Deprecated>")');
