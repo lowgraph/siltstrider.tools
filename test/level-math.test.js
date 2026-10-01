@@ -84,7 +84,7 @@ test("health gain stays finite for missing and malformed Endurance", async () =>
 
 test("health gain preserves numeric strings, fractional thresholds and uncapped finite values", async () => {
   const { calculateHealthGain } = await import("../lib/level-math.mjs");
-  for (const [value, expected] of [[" 85 ", 8], [89.9, 8], [90, 9], [125, 12]]) {
+  for (const [value, expected] of [[" 85 ", 8.5], [89.9, 8.99], [90, 9], [125, 12.5]]) {
     assert.equal(calculateHealthGain(value), expected);
   }
 });
@@ -92,15 +92,15 @@ test("health gain preserves numeric strings, fractional thresholds and uncapped 
 test("health gain is non-retroactive and calculated using the post-level-up Endurance", async () => {
   const { calculateHealthGain } = await import("../lib/level-math.mjs");
 
-  // Health gain = floor(newEndurance / 10)
+  // Health gain = newEndurance / 10, retaining fractions
   assert.equal(calculateHealthGain(30), 3);
-  assert.equal(calculateHealthGain(39), 3);
+  assert.equal(calculateHealthGain(39), 3.9);
   assert.equal(calculateHealthGain(40), 4);
-  assert.equal(calculateHealthGain(45), 4);
-  assert.equal(calculateHealthGain(49), 4);
+  assert.equal(calculateHealthGain(45), 4.5);
+  assert.equal(calculateHealthGain(49), 4.9);
   assert.equal(calculateHealthGain(50), 5);
-  assert.equal(calculateHealthGain(75), 7);
-  assert.equal(calculateHealthGain(95), 9);
+  assert.equal(calculateHealthGain(75), 7.5);
+  assert.equal(calculateHealthGain(95), 9.5);
   assert.equal(calculateHealthGain(100), 10);
 });
 
@@ -322,9 +322,9 @@ test("manual level step validator validates 10-point Major/Minor rules and multi
   assert.equal(nextState.attributes.Strength, 55);
   // Luck was 40 + 1 = 41
   assert.equal(nextState.attributes.Luck, 41);
-  // Health gain = floor(45 / 10) = 4
-  assert.equal(nextState.lastStep.healthGain, 4);
-  assert.equal(nextState.health, 45 + 4);
+  // Health gain = 45 / 10 = 4.5
+  assert.equal(nextState.lastStep.healthGain, 4.5);
+  assert.equal(nextState.health, 45 + 4.5);
   // Skills updated
   assert.equal(nextState.skills["Heavy Armor"], 39);
   assert.equal(nextState.skills["Long Blade"], 46);
@@ -428,8 +428,8 @@ test("automated 5x multiplier optimizer prescribes level-by-level miscellaneous 
   // By Level 13, Endurance is fully capped at 100!
   assert.equal(progression.finalState.attributes.Endurance, 100);
 
-  // Verify health gains are accumulated non-retroactively (45 start + 104 gained across 14 levels = 149)
-  assert.equal(progression.finalState.health, 149);
+  // Verify health gains are accumulated non-retroactively (45 start + 107 gained across 14 levels = 152)
+  assert.equal(progression.finalState.health, 152);
 });
 
 test("triple_5 and efficient_luck optimization strategies behave as specified", async () => {
@@ -680,7 +680,7 @@ test("level-math edge cases: all attributes maxed at 100, custom priority, and s
 
   const maxedProg = simulateProgression(maxedAttrsCharacter, { targetLevel: 3 });
   assert.equal(maxedProg.finalState.level, 3);
-  // Health gains floor(100 / 10) = 10 HP per level
+  // Health gains 100 / 10 = 10 HP per level
   assert.equal(maxedProg.finalState.health, 100 + 10 + 10);
   // Attributes stay at 100
   assert.equal(maxedProg.finalState.attributes.Endurance, 100);
@@ -1199,7 +1199,7 @@ test("bitter cup integration with simulateProgression and level-math", async () 
   const step2 = progBC.steps[1];
   const endBonus2 = step2.attributeBonuses.find((b) => b.attribute === "Endurance");
   assert.equal(endBonus2, undefined); // Endurance already capped!
-  // Health gain at level 2 is floor(100 / 10) = 10 HP
+  // Health gain at level 2 is 100 / 10 = 10 HP
   assert.equal(step1.healthGain, 10);
 });
 

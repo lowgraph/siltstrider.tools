@@ -99,9 +99,33 @@ exports.qa = async c => {
         await record(c,'QA-05',{width,theme,configured,home,simulator});
         assert.doesNotMatch(simulator,/Male Dark Elf\s*·\s*The Lady/);return {configured,home,simulator};
       });
-      await c.check(`QA-03/fractional-level-gain/${width}/${theme}`,async()=>{
-        await c.openDocument(c.base+encodeShareUrl({view:'leveler',world:'vanilla',build:healthBuild}));await c.idle();await c.until('document.querySelector("main").textContent.includes("QA Health Test")');
-        const text=await body(c);await record(c,'QA-03',{width,theme,text});assert.match(text,/\+3\.5 HP Gain/);return text;
+      for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-03-04/level-health/build/${profile}/${width}/${theme}`,async()=>{
+        await c.openDocument(c.base+encodeShareUrl({view:'leveler',world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce',build:healthBuild}));await c.idle();await c.until('document.querySelector("main").textContent.includes("QA Health Test")');
+        const text=await body(c);assert.match(text,/\+3\.5 HP Gain/);
+        if(width<1024) await c.button('Leveled Character Sheet');
+        await c.until('document.querySelector(".health-growth-chart-wrap svg")');
+        const chart=await c.evaluate(`(()=>{const e=document.querySelector('.health-growth-chart-wrap');e.scrollIntoView({block:'center',behavior:'instant'});return {first:[...e.querySelectorAll('tbody tr:first-child > *')].map(x=>x.textContent),text:e.textContent}})()`);
+        assert.deepEqual(chart.first,['1','35','35']);assert.match(chart.text,/Endurance 100 at Lv 15/);
+        const marker=await c.evaluate(`(()=>{const s=document.querySelector('.health-growth-chart-wrap svg'),e=[...s.querySelectorAll('text')].find(e=>e.textContent==='Endurance 100 at Lv 15'),r=e.getBoundingClientRect(),b=s.getBoundingClientRect();return {left:r.left,right:r.right,chartLeft:b.left,chartRight:b.right}})()`);
+        assert.ok(marker.left>=marker.chartLeft && marker.right<=marker.chartRight,'Endurance marker label stays inside the chart');
+        assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Chart fits the viewport');
+        await c.pause(150);await c.screenshot(`QA-03-04-build-${profile}-${width}-${theme}`);
+        return record(c,'QA-03-04',{profile,width,theme,chart});
+      });
+      await c.check(`QA-04/level-health/bitter-cup/${width}/${theme}`,async()=>{
+        const build={...healthBuild,race:'Imperial',gender:'Male',sign:'The Lady',fav1:'Personality',fav2:'Intelligence',name:'QA Cup Test'};
+        await c.openDocument(c.base+encodeShareUrl({view:'leveler',world:'vanilla',build}));await c.idle();await c.until('document.querySelector("main").textContent.includes("QA Cup Test")');
+        await c.click('#target-level-slider');await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Home',code:'Home',windowsVirtualKeyCode:36});await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Home',code:'Home',windowsVirtualKeyCode:36});await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowRight',code:'ArrowRight',windowsVirtualKeyCode:39});await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:'ArrowRight',code:'ArrowRight',windowsVirtualKeyCode:39});
+        if(width<1024) await c.button('Leveled Character Sheet');
+        const read=()=>c.evaluate(`(()=>{const e=document.querySelector('.health-growth-chart-wrap');return {rows:[...e.querySelectorAll('tbody tr')].map(r=>[...r.children].map(x=>x.textContent)),label:e.querySelector('svg').getAttribute('aria-label')}})()`);
+        await c.until('document.querySelector(".health-growth-chart-wrap").textContent.includes("Level 1 → 2")');const before=await read();
+        if(width<1024) await c.button('Leveling Optimizer & Stepper');
+        await c.click('.level-advanced > summary');await c.click('#level-bittercup');
+        await c.until('document.querySelector("main").textContent.includes("Personality / −20 Willpower")');
+        if(width<1024) await c.button('Leveled Character Sheet');
+        const after=await read();assert.deepEqual(after,before,'Unchanged Endurance/Strength keeps the complete one-step Health forecast');
+        await c.evaluate(`document.querySelector('.health-growth-chart-wrap').scrollIntoView({block:'center',behavior:'instant'})`);await c.pause(150);await c.screenshot(`QA-04-cup-${width}-${theme}`);
+        return record(c,'QA-04',{width,theme,before,after});
       });
       for(const race of ['Argonian','Khajiit','Khajiit (Cathay-raht)']) await c.check(`QA-10/endgame/${race}/${width}/${theme}`,async()=>{
         const arce=race.includes('(');await c.openDocument(c.base+encodeShareUrl({view:'builder',world:arce?'tr':'vanilla',arce,build:{...healthBuild,name:'Altmer Atronach Spellweaver',race}}));await c.idle();await readyBuilder(c);
@@ -174,7 +198,7 @@ exports.qa = async c => {
       });
       // A loaded save isolates the Health chart from random premades.
       await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier});
-      for(const health of [35,45]) await c.check(`QA-04/chart-start/${health}/${width}/${theme}`,async()=>{
+      for(const health of [35,45,67.5]) await c.check(`QA-04/level-health/save/${health}/${width}/${theme}`,async()=>{
         const s=fixture.save();s.vitals.health={current:health,max:health};const {rememberSave}=await import('../lib/active-save-store.mjs');const store={};await rememberSave(s,{setItem:(k,v)=>store[k]=v});
         await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(store)}))localStorage.setItem(k,v)`);
         await c.navigate('leveler');await c.until('document.querySelector("main").textContent.includes("QA Traveller")');await c.until('document.querySelector(".health-growth-chart-wrap svg")');
@@ -184,7 +208,7 @@ exports.qa = async c => {
         const point=await c.evaluate(`(()=>{const s=document.querySelector('[data-qa-chart=yes]'),r=s.getBoundingClientRect(),v=s.viewBox.baseVal;return {x:r.x+38*r.width/v.width,y:r.y+r.height/2}})()`);
         await c.send('Input.dispatchMouseEvent',{type:'mouseMoved',...point});await c.pause(200);
         const charts=await c.evaluate(`[...document.querySelectorAll('.health-growth-chart-wrap')].map(s=>({label:s.querySelector('svg').getAttribute('aria-label'),text:s.textContent,html:s.outerHTML}))`);
-        await record(c,'QA-04',{width,theme,health,charts});assert.ok(charts.some(s=>s.text.includes('Lv 3: '+health+' vs '+health+' HP')),'Chart preserves loaded Health');return charts;
+        await record(c,'QA-04',{width,theme,health,charts});assert.ok(charts.some(s=>s.text.includes('Lv 3: '+health+' vs '+health+' HP')),'Chart preserves loaded Health');await c.screenshot(`QA-04-save-${health}-${width}-${theme}`);return charts;
       });
     } finally {await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier}).catch(()=>{});}
   }

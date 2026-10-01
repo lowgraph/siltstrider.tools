@@ -1525,3 +1525,48 @@ checkout: `npm test`, then BROWSER_TESTS' `--suite qa --filter '/enchanting/'`.
 
 Evidence under `A:/Cache/`: `qa01-02-before-fix.log`, `qa01-02-unit-final.log`,
 `qa01-02-cloudflare-build-final.log` and `qa01-02-browser-final-20261001/`.
+
+## 33. QA-03/04 Level Health and chart — 1 October 2026
+
+Claimed 19:34 UTC on `launch/character-preservation`; `bb02f56` pushed before
+implementation (also publishing the preceding enchanting fix `df261d0`). Main,
+production, game data, migrations and repository build configuration are unchanged.
+
+Checked OpenMW **0.51.0** [npcstats.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/npcstats.cpp)
+(`levelUp`, `updateHealth`) and [mechanicsmanagerimp.cpp](https://github.com/OpenMW/openmw/blob/openmw-0.51.0/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp)
+(`buildPlayer`). `levelUp` adds the post-pick Endurance times
+`fLevelUpHealthEndMult` to existing Health as a float. All three staged profiles
+provide the float representation of 0.1; the site's default-rule calculation
+keeps fractions using Endurance / 10. `updateHealth` floors the creation base
+half; the level-up path does not recalculate it. Neither later Strength nor
+Bitter Cup changes can retroactively replace that starting Health. The simulator
+continues to use its default leveling rules, with the existing modded-save notice.
+
+| Item | Result / rate | Cause (file/function) and change | Enforced tests |
+| --- | --- | --- | --- |
+| QA-03 | Fixed on branch; all 12 build cases show +3.5 for Endurance 35 | `lib/level-math.mjs`, `calculateHealthGain`, floored each gain. Keep the fraction through steps and chart; five gains at 35/40/45/50/55 total 22.5. `lib/character-math.mjs`, `computeSheet`, now fixes creation Health before Bitter Cup. Simulator, About and FAQ explanations remove the floor | Original four QA-03 cases; `test/level-health-preservation.test.js`: five actual steps end at 57.5 from 35, Strength/Cup do not recalculate the base, and creation Health in all profiles; existing malformed/infinite/uncapped Endurance tests updated |
+| QA-04 | Fixed on branch; 28/28 Chrome cases overall: 12 build, four Cup, 12 loaded-save | `normalizeCharacterState` treated normalized `attributes`/`skills` as a raw build and recomputed with catalogs; `calculateHealthGrowthCurve` repeated it. Preserve existing values and applied Cup metadata; apply Cup only once. Chart starts from supplied Health/Endurance and marks level 15 from Endurance 30. Keep marker text within the phone chart | Original five QA-04 cases; new state round-trip tests at Health 0/35/67.5, level 12, Endurance 30/95/100 boundaries and unchanged one-step picks; `test/level-simulator-ui.test.js` renders with catalogs; Chrome `--filter '/level-health/'` |
+
+All **9/9** original unmarked QA-03/04 cases failed before the fixes and are now
+enforced. Independent Bitter Cup checks isolate a completed one-step forecast:
+Personality/Willpower change, picks remain unchanged, and Health is identical.
+The browser example stays at **40 → 47 rushed / 46.5 delayed** before and after;
+the unit example stays at **35 → 38.5**. If Cup changes Endurance, future gains
+change legitimately, while starting Health remains fixed. Three synthetic-save
+values (**35, 45, 67.5**) remain the first chart point at the save's level 3.
+The historical 58/57 report is not used as a new starting-Health assumption.
+
+Verification: `npm test`: **1,046 tests; 1,028 passed, 18 existing TODO,
+0 failures**. `npm run build:cloudflare`: **24 pages, passed**. Chrome:
+**28/28**, 1366/375 px, Ashfall/Morrowind themes; build checks in Vanilla/TR/
+TR + ARCE, no runtime/server errors. A first screenshot review caught the
+level-15 marker clipping on phone; after repositioning it, the full matrix
+was repeated with a label-bounds assertion. Screenshots reviewed. Pipeline:
+**685 passed** after copying the identical COORDINATION.md; no pipeline code
+changed. Only isolated local pages/Worker and synthetic browser state were used;
+the local server closed afterward. QA-05 and other open findings remain separate.
+
+Evidence under `A:/Cache/`: `qa03-04-before-fix.log`, `qa03-04-unit-final.log`,
+`qa03-04-cloudflare-build-final.log`, `qa03-04-pipeline-tests.log`, and
+`qa03-04-browser-final-20261001/`. First command on another checkout: `npm test`,
+then BROWSER_TESTS' `--suite qa --filter '/level-health/'`.

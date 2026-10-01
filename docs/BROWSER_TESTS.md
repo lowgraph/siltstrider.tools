@@ -244,3 +244,12 @@ Luck 40; the Common Ring Target case checks 1 capacity point, 1,912 base gold,
 `test/enchanting-costs.test.js` covers area, order, one/three effects, precise
 chance inputs, fatigue, float/truncation boundaries and profile GMST values.
 The original QA-01/02 reproduction tests are enforced rather than TODO.
+
+QA-03/04's `--suite qa --filter '/level-health/'` checks fractional gains and
+the chart's starting Health/Endurance in Vanilla, TR and TR + ARCE, at 1366/375
+px and both themes. It checks the complete one-step forecast before/after a
+Bitter Cup that changes only Personality/Willpower, and loaded saves at 35,
+45 and 67.5 Health. Each case saves a screenshot; the Endurance 100 label must
+fit inside the chart. The nine original QA-03/04 TODO cases are now enforced;
+`test/level-health-preservation.test.js` adds normalization, zero/fractional
+Health, level-boundary, repeated Cup and non-retroactive base checks.

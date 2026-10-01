@@ -51,7 +51,7 @@ export default function AboutView() {
                 <strong className="text-fg-2">Alchemy:</strong> Mortar and pestle quality sets base potion strength and duration; the Retort amplifies positive effects, the Alembic suppresses negative side-effects, and the Calcinator magnifies all effect magnitudes. Brew chance scales directly with Alchemy skill, Intelligence, and Luck.
               </li>
               <li>
-                <strong className="text-fg-2">Level Progression:</strong> Health gains on level-up are strictly non-retroactive, calculated as 10% of current Endurance (<span className="font-mono text-accent">⌊Endurance / 10⌋</span>). Governing skill increases generate 2× to 5× attribute multipliers (10 skill increases for a 5× multiplier) up to the 100 attribute cap.
+                <strong className="text-fg-2">Level Progression:</strong> Health gains on level-up are non-retroactive, calculated as 10% of the new Endurance with fractions kept (<span className="font-mono text-accent">Endurance / 10</span>). Starting Health stays unchanged. Governing skill increases generate 2× to 5× attribute multipliers (10 skill increases for a 5× multiplier) up to the 100 attribute cap.
               </li>
               <li>
                 <strong className="text-fg-2">Travel Routing:</strong> A shortest-path search finds the fewest legs, the cheapest fare or the fastest trip across silt striders, boats, river striders, and Guild Guides. Fares and travel hours follow OpenMW&apos;s travel window and your character&apos;s haggling, and the search accounts for Mages Guild membership and rank requirements.

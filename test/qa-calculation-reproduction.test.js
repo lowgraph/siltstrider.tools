@@ -35,10 +35,10 @@ test('QA-02 base price truncates the final running cost and has no Constant pric
   assert.equal(calcEnchantGoldCost(50.05,'const'),50050);
   assert.equal(calcEnchantGoldCost(1.5,'used'),1500);
 });
-for(const endurance of [35,45,55]) test(`QA-03 fractional Health: Endurance ${endurance}`,todo('QA-03'),async()=>{
+for(const endurance of [35,45,55]) test(`QA-03 fractional Health: Endurance ${endurance}`,async()=>{
   const {calculateHealthGain}=await import('../lib/level-math.mjs');assert.equal(calculateHealthGain(endurance),endurance/10);
 });
-test('QA-03 five level gains preserve 22.5 Health',todo('QA-03'),async()=>{
+test('QA-03 five level gains preserve 22.5 Health',async()=>{
   const {calculateHealthGain}=await import('../lib/level-math.mjs');assert.equal([35,40,45,50,55].reduce((sum,e)=>sum+calculateHealthGain(e),0),22.5);
 });
 async function character() {
@@ -48,15 +48,15 @@ async function character() {
   const build={race:'Dark Elf',gender:'Female',sign:'The Tower',spec:'Magic',fav1:'Intelligence',fav2:'Willpower',maj:['Alchemy','Enchant','Destruction','Restoration','Mysticism'],min:['Athletics','Spear','Heavy Armor','Armorer','Long Blade']};
   return {catalogs,build,sheet:computeSheet(build,catalogs)};
 }
-for(const hp of [35,45,67.5]) test(`QA-04 chart starts at character Health ${hp}`,todo('QA-04'),async()=>{
+for(const hp of [35,45,67.5]) test(`QA-04 chart starts at character Health ${hp}`,async()=>{
   const {catalogs,sheet}=await character();const {normalizeCharacterState,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const normalized=normalizeCharacterState({...sheet,health:hp},catalogs);const chart=calculateHealthGrowthCurve(normalized,20,catalogs);assert.equal(chart.optimalHealth[0],hp);
 });
-test('QA-04 Endurance 30 takes fourteen +5 steps to level 15',todo('QA-04'),async()=>{
+test('QA-04 Endurance 30 takes fourteen +5 steps to level 15',async()=>{
   const {catalogs,sheet}=await character();const {normalizeCharacterState,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const chart=calculateHealthGrowthCurve(normalizeCharacterState(sheet,catalogs),20,catalogs);assert.equal(chart.optimalEndurance[0],30);assert.equal(chart.enduranceMaxLevel,15);
 });
-test('QA-04 Bitter Cup outside Strength/Endurance leaves one-step Health forecast alone',todo('QA-04'),async()=>{
+test('QA-04 Bitter Cup outside Strength/Endurance leaves one-step Health forecast alone',async()=>{
   const {catalogs,sheet}=await character();const {normalizeCharacterState,calculateHealthGrowthCurve}=await import('../lib/level-math.mjs');
   const raw={...sheet,attrs:{...sheet.attrs,Personality:{v:80},Willpower:{v:20}}};
   const base=normalizeCharacterState(raw,catalogs);

@@ -76,10 +76,7 @@ export default function LevelSimulatorRoot() {
   // Run full simulation
   const simulation = useMemo(() => {
     if (!initialSheet) return null;
-    // simulateProgression normalizes its input again. A normalized state has lost the
-    // `attrs` block, so a second pass would rebuild level-1 values from the build and
-    // overwrite the save's; the save's own sheet survives that pass intact.
-    return simulateProgression(fromSave ? activeSave.sheet : sheet || build, {
+    return simulateProgression(initialSheet, {
       targetLevel,
       archetype: archetypeId !== "custom" ? archetypeId : undefined,
       priority: customPriority,
@@ -286,7 +283,7 @@ export default function LevelSimulatorRoot() {
         <div>
           <p>Each level requires 10 Major or Minor skill increases. When you level up, choose three attributes to raise.</p>
           <p>Raising skills governed by an attribute increases its level-up bonus. All skills count toward that bonus, including Miscellaneous skills: <span className="font-mono">1–4 = 2×</span>, <span className="font-mono">5–7 = 3×</span>, <span className="font-mono">8–9 = 4×</span>, and <span className="font-mono">10+ = 5×</span>. With no skill increases, the attribute gains 1 point. Luck always gains 1.</p>
-          <p>Each level adds one tenth of your new Endurance to Health, rounded down: <span className="font-mono">⌊Endurance / 10⌋</span>. Raising Endurance later does not give back Health missed at earlier levels.</p>
+          <p>Each level adds one tenth of your new Endurance to Health, keeping the fraction: <span className="font-mono">Endurance / 10</span>. Raising Endurance later does not give back Health missed at earlier levels or recalculate starting Health.</p>
         </div>
       </details>
 

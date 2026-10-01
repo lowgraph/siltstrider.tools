@@ -307,6 +307,24 @@ test("HealthGrowthChart renders SVG curves with positive HP advantage", async ()
   }
 });
 
+test("QA-04 HealthGrowthChart keeps normalized Health and Endurance with catalogs", async () => {
+  const dom = new JSDOM('<div id="root"></div>', {url:"http://localhost/"});
+  global.window=dom.window;global.document=dom.window.document;global.IS_REACT_ACT_ENVIRONMENT=true;
+  const HealthGrowthChart=component("components/level-simulator/health-growth-chart.jsx");
+  const root=createRoot(document.getElementById("root"));
+  const character={...mockBuild,level:1,attributes:{Strength:40,Intelligence:40,Willpower:20,Agility:40,Speed:40,Endurance:30,Personality:80,Luck:40},skills:{},health:35};
+  try {
+    const render=async options=>act(async()=>root.render(React.createElement(HealthGrowthChart,{character,targetLevel:20,catalogs:mockCatalogs,options})));
+    await render({});
+    assert.deepEqual([...document.querySelectorAll('tbody tr:first-child > *')].map(e=>e.textContent),['1','35','35']);
+    assert.match(document.body.textContent,/Endurance 100 at Lv 15/);
+    const label=document.querySelector('svg').getAttribute('aria-label');
+    await render({bitterCup:true});
+    assert.deepEqual([...document.querySelectorAll('tbody tr:first-child > *')].map(e=>e.textContent),['1','35','35']);
+    assert.equal(document.querySelector('svg').getAttribute('aria-label'),label);
+  } finally {await act(async()=>root.unmount());dom.window.close();}
+});
+
 test("SkillProgressionMatrix renders 27 skills and filters by specialization", async () => {
   const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
   global.window = dom.window;
