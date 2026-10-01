@@ -18,7 +18,7 @@ function StartStep({ ready, onNavigate }) {
     <div className="home-step home-start">
       <div className="home-step-head">
         <span className="home-step-icon"><PersonIcon /></span>
-        <div className="home-step-title">Start a character</div>
+        <div className="home-step-title mw-caption">Start a character</div>
       </div>
       <div className="home-step-note">
         Pick one of {BUILDS.length} premade builds or make your own class. Every tool works with it, and no account is
@@ -36,6 +36,9 @@ function StartStep({ ready, onNavigate }) {
 function CharacterCard({ character, fromSave, levelUp, profileLabel, ready, onNavigate }) {
   return (
     <aside className="home-character" aria-labelledby="home-character-name">
+      <div className="home-character-title-bar mw-caption" aria-hidden="true">
+        <span className="home-character-title-text">{character.name}</span>
+      </div>
       <div className="home-character-top">
         <span className="home-kicker">{fromSave ? "From your save" : "Current character"}</span>
         <span className="home-chip">{profileLabel}</span>
@@ -47,6 +50,12 @@ function CharacterCard({ character, fromSave, levelUp, profileLabel, ready, onNa
           <div className="home-character-line">Level {character.level} · {character.line}</div>
         </div>
       </div>
+      <div className="home-character-stats-grid" aria-hidden="true">
+        <div><span>Level</span><span>{character.level}</span></div>
+        <div><span>Race</span><span>{character.race}, {character.gender}</span></div>
+        <div><span>Class</span><span>{character.className}</span></div>
+        <div><span>Sign</span><span>{character.sign}</span></div>
+      </div>
 
       {character.ready ? (
         <>
@@ -56,20 +65,29 @@ function CharacterCard({ character, fromSave, levelUp, profileLabel, ready, onNa
                 <span className="home-vital-label">{v.label}</span>
                 <span className="home-vital-bar" aria-hidden="true">
                   <span className={`home-vital-fill home-vital-fill--${v.kind}`} />
+                  <span className="home-vital-bar-num">{v.value}/{v.value}</span>
                 </span>
                 <span className="home-vital-value">{v.value}</span>
               </div>
             ))}
           </div>
 
+          <div className="home-hr" aria-hidden="true" />
+
           <dl className="home-attributes" aria-label="Attributes">
             {character.attributes.map(a => (
               <div className="home-attribute" key={a.name} title={a.favoured ? `${a.name} (favoured)` : a.name}>
-                <dt>{a.abbr}{a.favoured && <span className="home-star" aria-label="favoured"> ★</span>}</dt>
+                <dt>
+                  <span className="attr-short">{a.abbr}</span>
+                  <span className="attr-full">{a.name}</span>
+                  {a.favoured && <span className="home-star" aria-label="favoured"> ★</span>}
+                </dt>
                 <dd>{a.value}</dd>
               </div>
             ))}
           </dl>
+
+          <div className="home-hr" aria-hidden="true" />
 
           <div className="home-majors">
             <span className="home-kicker">Major skills</span>
@@ -88,6 +106,8 @@ function CharacterCard({ character, fromSave, levelUp, profileLabel, ready, onNa
         <button type="button" className="mw-btn" disabled={!ready} onClick={() => onNavigate("builder")}>Resume build</button>
         <button type="button" className="mw-btn" disabled={!ready} onClick={() => onNavigate("leveler")}>Plan level-ups</button>
       </div>
+
+      <div className="home-hr" aria-hidden="true" />
 
       {levelUp && (
         <div className="home-levelup">

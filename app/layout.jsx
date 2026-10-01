@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, Instrument_Serif } from 'next/font/google';
 import { DEFAULT_THEME, THEME_INIT_SCRIPT } from '../lib/theme.mjs';
 import './globals.css';
+import './theme-morrowind.css';
 import './theme-ashfall.css';
 
 // Ashfall's type. The classic theme keeps Pelagiad (see globals.css).

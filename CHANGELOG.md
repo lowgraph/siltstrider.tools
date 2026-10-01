@@ -2,6 +2,7 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- **The Morrowind UI looks like the game:** black windows, tan text and the game's frames. Modern UI is unchanged.
 - **Keep your character when signing out:** an unsaved Builder character survives the return to Home, including its world, race, birthsign, skill choices and equipment. Loaded saves continue to stay in this browser until cleared.
 - **Try a longer journey when needed:** Travel first plans with nearby walks and short swims. If no route is available, it tries long walks and open-water swims, including routes to Ald Redaynia. Normal trips still use transport, and mixed legs show walking and swimming time separately.
 - **Where to get an ingredient:** each selected Alchemy ingredient now has a "Where to get it" button. See shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened; changing an ingredient closes its old sources. The effect finder also keeps its pair shortcut.
