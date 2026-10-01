@@ -184,13 +184,13 @@ for now (owner, 30 September); other agents skip them.
       carry them.
 
 **Features**
-- [x] **C** **CALC-4** (started 2026-10-01 00:43 UTC, Codex; done `c2bf5d8`, merged to main 1 October; corrected bundle staged locally; not deployed) Reverse alchemy: pick the effects, get the ingredients.
-  - [x] **C** **CALC-4 data** (started 2026-10-01 01:20 UTC, C; builder done `7be1365`, pushed through `602253a`; correction `41da92c` rebuilt and staged locally with owner authorization on 1 October as `a29adea046e6086c2c7ee654`) Where each ingredient comes from, per world: shops that stock
+- [x] **C** **CALC-4** (started 2026-10-01 00:43 UTC, Codex; done `c2bf5d8`, merged `ef67b3e`; live as `3879ce7b`) Reverse alchemy: pick the effects, get the ingredients.
+  - [x] **C** **CALC-4 data** (started 2026-10-01 01:20 UTC, C; builder done `7be1365`, pushed through `602253a`; correction `41da92c` rebuilt and staged with owner authorization on 1 October as `a29adea046e6086c2c7ee654`; live as `3879ce7b`) Where each ingredient comes from, per world: shops that stock
         it (restocking or once), regrowing plants with the chance per harvest and counts by region
         and town, creatures that carry it and where they appear, and fixed finds such as ore
         deposits; sources that need theft left out (owner, 30 September). A pipeline catalog,
         `IngredientSources`, for the effect finder's results.
-  - [x] **C** **CALC-4 where to get** (started 2026-10-01 02:28 UTC, C; resumed Codex, 1 October; done `5965af7`, corrected local data `be29f68`, merged to main through `c2bf5d8`; not deployed) Each selected Alchemy ingredient has a "Where to get it" button, with the pair shortcut retained:
+  - [x] **C** **CALC-4 where to get** (started 2026-10-01 02:28 UTC, C; resumed Codex, 1 October; done `5965af7`, corrected data `be29f68`, merged `ef67b3e` through `c2bf5d8`; live as `3879ce7b`) Each selected Alchemy ingredient has a "Where to get it" button, with the pair shortcut retained:
         shops, plants, creatures and finds from `IngredientSources`, loaded only when opened.
 
 ### 5. QA findings (1 October): fix before the freeze

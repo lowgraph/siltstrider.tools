@@ -11,16 +11,16 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `216cd90` (account settings and tool polish; release verification in §16) |
-| Live Worker version | `d523b9ba-92b1-4fed-9056-89ee19916a49`, tagged `216cd90`; deployed at 100% on 2026-10-01 00:11 UTC |
-| Security headers | `public/_headers`: nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'`, referrer policy, permissions policy, host-only HSTS; verified live after the 16:49 release (they took a minute or two to appear) |
+| Live commit | `ef67b3e` (CALC-4 ingredient finder and sources, Travel city transfers and swimming fallback, retaining main's Vault fixes; release verification in §26) |
+| Live Worker version | `3879ce7b-c397-4698-83c4-e9d185d9ed5c`, tagged `ef67b3e`; deployed at 100% on 2026-10-01 05:22 UTC |
+| Security headers | `public/_headers` retained; nosniff and `X-Frame-Options: DENY` verified live after the 05:22 release; existing CSP, referrer policy, permissions policy and host-only HSTS unchanged |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
-| Game bundle | `3da0320236da77ec085d105d`, snapshot `1613a1123ed9…` |
+| Game bundle | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9…`; corrected IngredientSources, existing extraction snapshot |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
-| D1 migrations | 0001–0007 applied; none pending at the 00:11 release |
-| D1 Time Travel bookmark | `00000059-00000000-000050f7-69367513ae9acb9d9add96e963178727`, captured before the 2026-10-01 00:11 UTC release; private migration backup and preservation checks in §15 |
-| Pipeline repo | `master` at `83b0159` locally (`origin/master` at `129b2d1`); identical branch coordination record |
+| D1 migrations | 0001–0007 applied; none pending at the 05:22 release; no migration ran |
+| D1 Time Travel bookmark | `0000005d-00000000-000050f7-7e6a447a113fd39c04e571109bfaee6c`, captured before the 2026-10-01 05:22 UTC release; private migration backup and preservation checks in §15 |
+| Pipeline repo | `master` / `origin/master` at `7e04885`; correction `41da92c` included and shared release records synchronized |
 
 Deployment history since the last tagged release before this batch:
 
@@ -51,8 +51,14 @@ Deployment history since the last tagged release before this batch:
 | `24bd4ac1-e287-4c14-88d8-80bee20b42f9` (rollback) | 09-30 20:47 | `1e84b1a` | previous production version restored at 100%; superseded by the later releases below; no data or schema rollback |
 | `3ef09493-cb5a-42e2-96fd-ca54c168d3e2` (restored) | 09-30 21:30 | `2c113b8` | owner-authorized return to the Travel release for live reproduction; active version captured before the next release |
 | `d523b9ba-92b1-4fed-9056-89ee19916a49` | 10-01 00:11 | `216cd90` | tagged; current main, account settings and tool polish; 100% traffic; migration 0007 had already been applied separately |
+| `3879ce7b-c397-4698-83c4-e9d185d9ed5c` | 10-01 05:22 | `ef67b3e` | tagged; CALC-4 finder and selected-ingredient sources, corrected bundle, Travel city transfers and swimming fallback, retaining main's Vault fixes; 100% traffic; no migration |
 
-For the current release, §16 records code rollback target `3ef09493`: this is
+For the current release, §26 records code rollback target `d523b9ba` / `216cd90`:
+the account-settings/tool-polish release immediately before CALC-4 and the new
+Travel behavior. Its assets restore the earlier bundle too. Rollback preserves
+the additive migration 0007 and all database writes.
+
+For the earlier account-settings release, §16 recorded target `3ef09493`: this is
 the Travel version that failed the 375 px saved-Travel check (§9). Later reruns
 passed (§10), but the cause of the original failure remains unconfirmed.
 `24bd4ac1` (`1e84b1a`, before Travel) is the last version that passed full
@@ -1144,3 +1150,58 @@ Evidence: `A:/Cache/calc-4-main-merge/` (`unit-updated-main.log`, `unit-final.lo
 `build.log`, `pipeline.log`, `browser-summary.json`, and the `browser/` and
 `vault-verified/` reports, screenshots and audits). Browser reports identify
 main `55fd07e`, the pre-commit tip; all verification ran on the resolved merge.
+
+## 26. CALC-4 and Travel released to production — 1 October locally
+
+The owner authorized "Stop test servers. Deploy" after merging and pushing main.
+Verified clean main and `origin/main` at **`ef67b3eae60360259435cc99181585c5d99e030d`**.
+Stopped the verified Next dev servers and their launchers on **8792, 8793 and
+8794**. No application code or repository configuration changed in this release.
+The owner's `55fd07e` QA checklist and open QA-13 remain intact.
+
+- Fresh release `npm test`: **940 passed**, zero failures/skips/todos.
+  `npm run build:cloudflare`: **passed, 24 static pages**, configured live Clerk
+  publishable key. Wrangler 4.134.0 `deploy --dry-run --keep-vars` passed.
+  The full pre-merge Chrome/Vault verification remains in §25.
+- Release-record pipeline tests: **685 passed**, zero failures. COORDINATION and
+  UI_TRANSFORMATION are byte-identical in both repositories, recording the live
+  version and the owner's request to stop the test servers.
+- Deployed with `--keep-vars --tag ef67b3e` and the full commit in the message.
+  Worker **`3879ce7b-c397-4698-83c4-e9d185d9ed5c`**, deployment
+  `9d1a4f0c-a737-446d-adfa-6595620c33e7`, created **2026-10-01 05:22:43 UTC**,
+  **100% traffic**, existing `plain-disk-78e6` and both configured domains.
+  Uploaded 73 changed assets; 1,675 assets were already uploaded.
+- Published corrected bundle **`a29adea046e6086c2c7ee654`**, extraction snapshot
+  `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f`.
+  No extraction or bundle rebuild. A fresh live pointer/manifest and vanilla/TR
+  IngredientSources fetch matched the built files by SHA-256, as did sampled
+  CSS/JavaScript. The historical immutable bundles remain available.
+- Live HTTP smoke: **15 checks passed**. Home, Travel, Alchemy, Builder, Faction
+  Journal, Level Simulator and changelog return 200; assets and data match the
+  build. `www/builder` returns 301 to the root domain; anonymous `/api/account`
+  returns 401. Nosniff and frame-denial headers are present.
+- Live signed-out Chrome: **38/38 passed**. Alchemy has 26 cases across all
+  three worlds, both themes and 1366/375 px, covering the finder and selected
+  ingredient sources, lazy loading, replacement/clearing and failure/Retry.
+  Vanilla city transfers and swimming fallback have four cases each across both
+  themes and widths. Saved-Travel edits, storage, navigation, profile isolation
+  and reset passed **twice at each width** with synthetic browser-only data.
+  **34 axe audits, zero violations; 131 settled font checks**; no unexpected
+  runtime/server errors. A cache-only wrapper limited checks to this production
+  host and blocked all account API requests; the repository's local-only runner
+  is unchanged, and the temporary wrapper was removed. This did not exercise
+  production sign-in or perform cloud saves/payments.
+- Existing D1 UUID `141a1409-3956-4267-a078-02483bbb2bf6`: **0001–0007 applied,
+  none pending**. The migration-name query wrote zero rows. Fresh pre-release
+  bookmark: `0000005d-00000000-000050f7-7e6a447a113fd39c04e571109bfaee6c`.
+  No migration, database restore or private-data export ran.
+- Code rollback: **`d523b9ba-92b1-4fed-9056-89ee19916a49` / `216cd90`**, the
+  previous active 100% deployment captured before this release. Its code and
+  assets restore account settings/tool polish before this batch; additive
+  migration 0007 and database writes remain intact.
+
+Recovery records and evidence are outside Git at
+`A:/Cache/deploy-ef67b3e-20261001/`: `recovery.json`, deployment history before
+and after, D1 info/bookmark/migration lists, release pointer/manifest, unit/build/
+dry-run/deploy logs, `live-http.json`, and `live-browser-summary.json` plus each
+live run's report, network trace, screenshots and audits.
