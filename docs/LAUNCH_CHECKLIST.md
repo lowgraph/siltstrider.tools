@@ -20,7 +20,7 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 | Date | What |
 | --- | --- |
 | **By Monday 5 October** | Anything from the priority list not done by now moves after launch (see the cut line). |
-| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**). |
+| **Monday 5 October: freeze** | No changes except fixes for breakage. Then, on the frozen build: regenerate the social card if tool names on it changed (`npm run social-card`) and deploy it; update LAUNCH_POSTS copy to the final names and re-check its claims table against the live site (**C**); take the post screenshots: Builder with the Gear Advisor, Travel map, Level Simulator, a loaded save (**O**); final acceptance pass, LAUNCH_OPERATIONS steps 1–3 and 5 (**C**; step 2 again, since section 4 changes the tools after the 30 September regression) and step 4 with disposable records (**O**); fresh D1 Time Travel bookmark, a full backup if saves have grown, and the rollback target noted (**O**); check the r/OpenMW reply (no answer means post), pick a House Role in Morrowserver `#house-roles`, find the Morrowind Modding Community's tools channel (**O**); on a real phone (QA could only emulate one): no Ctrl K hint on touch, Travel options changed for a loaded save survive leaving Travel and coming back (the unexplained 30 September failure; 0 of 31 in the 1 October QA run), and a real `.omwsave` loads (**O**). |
 | **Tuesday 6 October, 13:30 UTC: launch** | Post r/Morrowind (flair Showcase), r/OpenMW (unless refused), r/TamrielRebuilt, Morrowserver `#modding`, Morrowind Modding Community, OpenMW Discord if approved; stay a few hours for comments, ready for "was it made with AI?" (**O**). Watch Worker logs and error references, API requests, D1 and Clerk sign-ins; fix only breakage, deploy only on the owner's go-ahead (**C**). |
 | **Wednesday 7 October** | Show HN and the X thread (**O**). |
 | **From Thursday 8 October** | Creator outreach, one at a time, through business contacts (**O**). Feedback from the threads, and whatever the freeze left of sections 3 and 4, goes into a new after-launch list (**C**). |
@@ -38,6 +38,16 @@ tick it and add the commit or Worker version: `[x] … (started …, C; done 93b
 - **Account settings (30 September):** migration 0007, the settings API and account
   controls are merged and live as `d523b9ba`. Design and current behavior:
   [ACCOUNT_SETTINGS.md](ACCOUNT_SETTINGS.md) on `main`.
+- **QA triage (1 October):** five live-site QA reports (first impression, veteran, new
+  player, numbers, regression) merged into section 5 (before the freeze) and section 6
+  (after launch). Owner decisions on the open questions:
+  - The Level Simulator keeps opening on a plan to level 50 (U23, U26): leave as is.
+  - Loading a save replaces the signed-out Preferred world (SS-06): intended.
+  - "Kept in this browser" for a loaded save while Local Browser Saves lists 0 (SS-07):
+    change the wording (QA-14).
+  - About says the site is open source, links the repository and says it is made by
+    LowGraph (QA-15).
+  - Real-phone checks join the freeze day.
 
 ## Priority list
 
@@ -176,12 +186,114 @@ for now (owner, 30 September); other agents skip them.
 **Features**
 - [ ] **C** **CALC-4** Reverse alchemy: pick the effects, get the ingredients.
 
+### 5. QA findings (1 October): fix before the freeze
+
+From the triage of the five QA reports (live site, signed out, 1 October). Source IDs in
+brackets are the reports' own (F/U beginner audit, NUM/FLOW/UI veteran and numbers, SS
+first impression and regression). Personas: R Reddit first visit, V veteran, N new player,
+Q regression run. Each item: re-check the report's case first, fix, re-check after, plus the
+usual tests (at least three edge cases for a logic change) and changelog.
+
+- [ ] **C** **QA-01** (High, V; NUM-05; confirmed in code) Enchanting costs several effects
+      wrong: each effect's points are its own plus the running total before it, and the
+      item's total is the sum of those running costs (OpenMW 0.51 `enchanting.cpp`);
+      `calcEnchantmentTotalPoints` (`lib/enchant-math.mjs`) returns only the last running
+      cost. Two Constant Effects of 5/5 must read 75 points, not 50. Fix with QA-02.
+- [ ] **C** **QA-02** (High, V; NUM-04; confirmed in code) Enchanting rounds points to
+      nearest instead of flooring each effect: a 5/5, 5 s Target Fortify Attribute is 1.875
+      points, shown as 2, so it "does not fit" a Common Ring and its base price doubles.
+      Afterwards re-check the self-enchant chance (16% vs the engine's 15%) and the base
+      price (2,000 vs 1,500 g) from SUS-01.
+- [ ] **C** **QA-03** (High, V; NUM-02; confirmed in code) Level Simulator Health per level
+      is floored (`floor(END / 10)`, `lib/level-math.mjs`); OpenMW keeps the fraction (10% of
+      Endurance): END 35 to 55 gives 22.5 over five levels, the site 21. Confirm against
+      OpenMW 0.51's `npcstats.cpp` first (the report cited 0.49); change the explanation too.
+- [ ] **C** **QA-04** (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
+      starts at 50 whatever the character's Health (35, 45), says "Endurance 100 at Lv 6"
+      when ten +5 steps are needed, and its forecast moves when Bitter Cup changes only
+      Personality and Willpower. Check each symptom on its own; the Bitter Cup one may be
+      legitimate if the plan's later picks change.
+- [ ] **C** **QA-05** (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
+      title goes stale after an edit: the Builder sheet ("Imperial Agent" over a Female
+      Breton), Home's character card ("Argonian Marsh Monk" over a Nord), and the Level
+      Simulator naming two characters ("Argonian male — Spear scout" beside "Male Dark Elf").
+      One fresh character through Builder, edit race, Home, Level Simulator: every heading
+      must agree, or the premade's name must read as its source.
+- [ ] **C** **QA-06** (High, Q; SS-01 regression; confirmed in code) Secret Master's
+      apparatus is still offered in TR and TR + ARCE Alchemy (Alembic, Calcinator, Retort),
+      though the 30 September changelog says it is gone: the filter in
+      `lib/alchemy-catalogs.mjs` matches only vanilla keys and names starting "Secretmaster".
+- [ ] **C** **QA-07** (High, N; F01) Travel's place search finds nothing for "Ald'ruhn"; only
+      "Ald-ruhn" works, and the previous route stays on screen. Ignore apostrophes and
+      hyphens in matching; clear or mark a stale route when the search changes. Check Vos,
+      Sadrith Mora, Ebonheart and Mournhold too.
+- [ ] **C** **QA-08** (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
+      breaks into fragments ("Ald- / ruhn — / sold by / Dander / a"). Stack slot, item and
+      source at phone width; Early and Late game, 375 and 390 px.
+- [ ] **C** **QA-09** (High, N; F05) On a phone the Builder's Specialization help opens mostly
+      off-screen. Keep every info popover inside the viewport; check each info icon at 375 px.
+- [ ] **C** **QA-10** (High, V; FLOW-02) Beast races are offered helmets and boots they cannot
+      wear in the Gear Advisor's runner-up picks (Masque of Clavicus Vile, Boots of Blinding
+      Speed) under the advisor's own note that they are excluded. Seen once; check Argonian,
+      Khajiit and an ARCE Khajiit form, every runner-up list.
+- [ ] **C** **QA-11** (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
+      shows raw codes ("T_cyr_fightersguild", "T_mw_imperialnavy") in Inter-Faction Relations
+      and literal "<Deprecated>" factions in the list. Readable names (ask the pipeline if the
+      catalog lacks them); hide deprecated factions.
+- [ ] **C** **QA-12** (High, N; U04, F08) Premade build cards say nothing about how a build
+      plays, and "Maj:", "Min:" and "Magic Specialization" go unexplained. One "plays like"
+      line and one trade-off per playstyle; spell out Major and Minor skills. Copy only.
+- [ ] **C** **QA-13** (High, N; U20) A first potion needs ingredient names: searching
+      "Restore Health" in Alchemy finds nothing. CALC-4 answers it if it lands before the
+      freeze; otherwise a starter-recipe line (Marshmerrow with Saltrice or Wickwheat).
+- [ ] **C** **QA-14** (Medium, R; SS-07; owner: change the wording) A loaded save says it is
+      kept in this browser while the Vault's Local Browser Saves lists 0 and "No local
+      characters found". Say what each is: the open save stays until cleared; Local Browser
+      Saves are characters saved with "Save this character".
+- [ ] **C** **QA-15** (Low, R; owner decision) About says the site is open source (code under
+      AGPL-3.0; not the game or mod data), links https://github.com/lowgraph/siltstrider.tools
+      and says it is made by LowGraph. Keep `test/site-claims.test.js` and the licence
+      wording rules (COORDINATION, Licences).
+
 ### Cut line
 
 At the freeze, whatever is left of sections 3 and 4 moves after launch; note it in
 LAUNCH_VERIFICATION. An item is merged only when it is finished; a half-done one waits on its
-branch. Sections 1 and 2 are the launch bar: if one of them is not done, decide explicitly
+branch. Sections 1, 2 and 5 are the launch bar: if one of them is not done, decide explicitly
 whether to launch with it (and say so here).
+
+### 6. After launch (from the QA triage, 1 October)
+
+Medium, one persona:
+- [ ] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02.
+- [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
+- [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
+      Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
+      this is a wrong route; raise it to High and move it to section 5.
+- [ ] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align
+      or label the scopes.
+- [ ] **C** F04 / F11: "By Race" shows 20 of 41 premades without saying why, and its hint
+      still says "Pick a playstyle".
+- [ ] **C** Beginner clarity (N): first tool to use (U01); which world to pick and what ARCE
+      is (U02, F09); a manual route beside the unsupported `.ess` notice (U03); race and
+      birthsign effects before lore (U05); a legend for the Builder's numbers (U06); an
+      "enter this in the game" checklist (U08); Gear Advisor: findable from Home, one kit vs
+      alternatives, buy / pick up / steal, empty or capped slots (U10–U13); what save
+      differences mean (U14); "current position" vs "Silt Strider stop" (U16); a No Route
+      message that says what to change (U17); one-line Travel definitions (U19); Alchemy
+      jargon and recovery from a failed or zero brew (U21, U22); Level Simulator wording
+      (U24, U25, U27).
+
+Low:
+- [ ] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run.
+- [ ] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%.
+- [ ] **C** F10: "Emerald [ingred_…]" shows raw IDs; name the difference instead.
+- [ ] **C** SS-08: on a phone the selected faction is not visible beside its details.
+- [ ] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones.
+- [ ] **C** SS-10: "1 ranks" in search.
+- [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
+      phone save location (U15), gold left after a route (U18), Home card jargon (U29).
+- [ ] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding).
 
 ## Done
 
