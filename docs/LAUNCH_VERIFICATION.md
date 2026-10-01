@@ -1333,7 +1333,7 @@ checks ran. The local Worker uses its own synthetic database under that cache.
 
 ## 28. QA-24 character through sign-out — 1 October 2026
 
-Implemented on `launch/character-signout-preservation` from main `0c55696`.
+Implemented in `aebd6c0` on `launch/character-signout-preservation` from main `0c55696`.
 QA-21/23 belong to the other session's `launch/character-preservation`; its
 uncommitted edits were left intact. The account button announces sign-out before
 Clerk navigates. A separate tab marker restores the entire unsaved character,
