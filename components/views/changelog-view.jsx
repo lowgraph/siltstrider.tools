@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Signing out keeps your unsaved Builder character when you return to Home, including its world, race, birthsign, skill choices and equipment. Loaded saves continue to stay in this browser until cleared.</li>
             <li>Travel first plans with nearby walks and short swims. If no route is available, it tries long walks and open-water swims, including routes to Ald Redaynia. Normal trips still use transport, and mixed legs show walking and swimming time separately.</li>
             <li>Each selected Alchemy ingredient has a &ldquo;Where to get it&rdquo; button: shops and their stock/restocking, plants and harvest chances, creature drops, and loose finds or deposits with their locations. Sources load when opened, and changing the ingredient closes its old sources. The effect finder keeps its pair shortcut.</li>
             <li>Ingredient sources leave out hidden test and holding rooms. Creature drops leave out rare random loot, so the list focuses on drops you can reasonably gather.</li>

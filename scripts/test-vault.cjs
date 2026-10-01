@@ -41,7 +41,7 @@ const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 20
 const pem = publicKey.export({ type: 'spki', format: 'pem' }).replace(/\r?\n/g, '');
 // A placeholder instance and secret, as in test/worker-auth.test.js: Clerk's library wants a secret
 // key, but with CLERK_JWT_KEY it checks tokens locally and calls no Clerk instance.
-const placeholderKey = 'pk_test_' + Buffer.from('silt-local-test.clerk.accounts.dev$').toString('base64');
+const placeholderKey = 'pk_test_' + Buffer.from('silt-local-test.clerk.accounts.dev$').toString('base64url');
 const envFile = path.join(output, 'vault.env');
 fs.writeFileSync(envFile, `CLERK_JWT_KEY=${pem}\nCLERK_PUBLISHABLE_KEY=${placeholderKey}\nCLERK_SECRET_KEY=sk_test_placeholder_not_a_real_secret\n`);
 
@@ -141,11 +141,14 @@ const assertAccessible = (violations, where) => assert.deepEqual(violations.map(
 // The stand-in for Clerk's browser object, installed before the site's scripts on every
 // page load. The first token can be made to fail, to check the one retry with skipCache.
 let stubScript = null;
-async function signIn(user, { firstToken } = {}) {
+async function signIn(user, { firstToken, reloadOnSignOut = false } = {}) {
   await signOut();
+  if (reloadOnSignOut) await evaluate('sessionStorage.removeItem("silt-vault-test-signed-out")');
   const source = `(()=>{const user=${JSON.stringify(user)};const tokens={first:${JSON.stringify(firstToken || token(user))},fresh:${JSON.stringify(token(user))}};let calls=0;
-    const session={id:'sess_'+user.id,status:'active',async getToken(o){calls++;return o&&o.skipCache?tokens.fresh:tokens.first;}};const state={user,session};
-    window.Clerk={loaded:true,user,session,client:{sessions:[session]},addListener(l){l(state);return()=>{};},openSignIn(){},openSignUp(){},openUserProfile(){},async signOut(){}};
+    const session={id:'sess_'+user.id,status:'active',async getToken(o){calls++;return o&&o.skipCache?tokens.fresh:tokens.first;}};
+    const signedOut=${reloadOnSignOut}&&sessionStorage.getItem('silt-vault-test-signed-out')==='1';
+    const state=signedOut?{user:null,session:null}:{user,session};
+    window.Clerk={loaded:true,user:state.user,session:state.session,client:{sessions:state.session?[session]:[]},addListener(l){l(state);return()=>{};},openSignIn(){},openSignUp(){},openUserProfile(){},async signOut(){if(${reloadOnSignOut}){sessionStorage.setItem('silt-vault-test-signed-out','1');document.cookie='__client_uat=0;path=/';window.location.assign('/');}}};
     window.__vaultTest={tokenCalls:()=>calls};})();`;
   stubScript = (await send('Page.addScriptToEvaluateOnNewDocument', { source })).identifier;
   // Clerk's own marker of a signed-in browser, which the site checks before loading Clerk.
@@ -310,7 +313,8 @@ async function cases() {
   try {
     socket = await connect(profile);
     await open('/about');
-    if (args.includes('--qa-reproduction')) await require('./qa-vault-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,evaluate,text,check,pause,screenshot});
+    if (args.includes('--signout-preservation')) await require('./signout-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,button,click,evaluate,check,screenshot});
+    else if (args.includes('--qa-reproduction')) await require('./qa-vault-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,evaluate,text,check,pause,screenshot});
     else await cases();
   } finally {
     socket?.close(); chrome.kill(); worker.kill();

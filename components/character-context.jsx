@@ -13,7 +13,8 @@ import { decodeShareUrl } from "../lib/permalink-codec.mjs";
 import { sanitizeBuild } from "../lib/character-vault.mjs";
 import { rememberSave, recallSave, forgetSave } from "../lib/active-save-store.mjs";
 import { hasClerkSession } from "../lib/clerk-browser.mjs";
-import { SIGN_IN_EVENT, keepCharacterForSignIn, takeCharacterAfterSignIn } from "../lib/sign-in-handoff.mjs";
+import { SIGN_IN_EVENT, SIGN_OUT_EVENT, keepCharacterForSignIn, takeCharacterAfterSignIn,
+  keepCharacterForSignOut, takeCharacterAfterSignOut, forgetCharacterForSignOut } from "../lib/sign-in-handoff.mjs";
 import {
   buildFromSave,
   loadoutFromSave,
@@ -280,8 +281,8 @@ export function CharacterProvider({ children, initialBuild = null }) {
     return () => window.removeEventListener("popstate", openLink);
   }, [shell, service]);
 
-  // Signing in with Google or Discord leaves the page and comes back (sign-in-handoff.mjs).
-  // The sign-in buttons announce it; a plain character is kept for that round trip and
+  // Signing in/out may reload the page (sign-in-handoff.mjs).
+  // The account buttons announce it; a plain character is kept for that round trip and
   // put back on the return. A loaded save needs nothing: it already survives a reload,
   // and it is what the Vault saves. A shared build link opened with the page still wins.
   const activeSaveRef = useRef(activeSave);
@@ -291,13 +292,32 @@ export function CharacterProvider({ children, initialBuild = null }) {
   const openedAt = useRef(typeof window === "undefined" ? "" : window.location.href || "");
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
-    const kept = takeCharacterAfterSignIn({ signedIn: hasClerkSession(window.document) });
-    if (kept && !sanitizeBuild(decodeShareUrl(openedAt.current).build)) {
+    const signedIn = hasClerkSession(window.document);
+    const signedOutCharacter = takeCharacterAfterSignOut({ signedIn });
+    const kept = takeCharacterAfterSignIn({ signedIn });
+    const linked = sanitizeBuild(decodeShareUrl(openedAt.current).build);
+    if (signedOutCharacter && !linked) {
+      // Signed-in header choices need not be the browser's guest world. Restore
+      // this character's profile too, before an ARCE race can be normalized away.
+      const profile = signedOutCharacter.world === 'tr'
+        ? (signedOutCharacter.arce ? 'tr_arce' : 'tr') : 'vanilla';
+      shell.setProfile?.(profile);
+      setBuild(signedOutCharacter);
+    }
+    if (kept && !linked) {
       setBuild((prev) => ({ ...kept, world: prev.world, arce: prev.arce }));
     }
     const keep = () => { if (!activeSaveRef.current) keepCharacterForSignIn(buildRef.current); };
+    const keepSignOut = () => {
+      forgetCharacterForSignOut();
+      if (!activeSaveRef.current) keepCharacterForSignOut(buildRef.current);
+    };
     window.addEventListener(SIGN_IN_EVENT, keep);
-    return () => window.removeEventListener(SIGN_IN_EVENT, keep);
+    window.addEventListener(SIGN_OUT_EVENT, keepSignOut);
+    return () => {
+      window.removeEventListener(SIGN_IN_EVENT, keep);
+      window.removeEventListener(SIGN_OUT_EVENT, keepSignOut);
+    };
   }, [setBuild]);
 
   const value = useMemo(

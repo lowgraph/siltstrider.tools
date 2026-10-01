@@ -67,12 +67,94 @@ test('QA-23 hydrated sign-in hand-off keeps browser world until an account choos
   finally {await mounted.close();}
 });
 
-test('QA-24 sign-out preserves an unsaved character before Clerk navigation',todo('QA-24'),async()=>{
-  const {HANDOFF_KEY}=await import('../lib/sign-in-handoff.mjs'),{defaultAccountSettings}=await import('../lib/account-settings.mjs');
+test('QA-24 sign-out preserves an unsaved character before Clerk navigation',async()=>{
+  const {SIGN_OUT_HANDOFF_KEY}=await import('../lib/sign-in-handoff.mjs'),{defaultAccountSettings}=await import('../lib/account-settings.mjs');
   api=pathname=>pathname==='/api/settings'?{settings:defaultAccountSettings(),revision:0}:{username:'QA_Reproduction',iconId:0};
   const mounted=await mount(e(ui.AccountPage),{url:'http://localhost/account',account:true,signedIn:true,initialBuild:{...build,world:'vanilla',arce:false,race:'Breton'}});
-  try {await mounted.wait(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Sign out'));let kept;window.Clerk.signOut=async()=>{kept=JSON.parse(window.sessionStorage.getItem(HANDOFF_KEY)||'null');};await React.act(async()=>[...document.querySelectorAll('button')].find(b=>b.textContent==='Sign out').click());assert.equal(kept?.build?.name,build.name,'unsaved character is kept before the redirect');}
+  try {await mounted.wait(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Sign out'));let kept;window.Clerk.signOut=async()=>{kept=JSON.parse(window.sessionStorage.getItem(SIGN_OUT_HANDOFF_KEY)||'null');};await React.act(async()=>[...document.querySelectorAll('button')].find(b=>b.textContent==='Sign out').click());assert.equal(kept?.build?.name,build.name,'unsaved character is kept before the redirect');}
   finally {await mounted.close();}
+});
+
+test('QA-24 hydrated sign-out return preserves ARCE identity and loadouts over a Vanilla guest world', async () => {
+  const { SIGN_OUT_HANDOFF_KEY, keepCharacterForSignOut } = await import('../lib/sign-in-handoff.mjs');
+  const kept = { ...build, loadouts: [{ name: 'QA – Equipped', slots: { cuirass: 'QA_cuirass' } }] };
+  const values = {};
+  keepCharacterForSignOut(kept, { storage: { setItem: (key, value) => { values[key] = value; } } });
+  let character, shell;
+  function Probe() { character = ui.useActiveCharacter(); shell = ui.useShell(); return e('p', null, character.build.race); }
+  const mounted = await mount(e(Probe), { url: 'http://localhost/', sessionStorage: values });
+  try {
+    await mounted.wait(() => shell.ready && shell.profile === 'tr_arce');
+    assert.deepEqual(mounted.errors, [], 'server and first render still agree');
+    assert.equal(character.build.name, kept.name);
+    assert.equal(character.build.race, kept.race);
+    assert.equal(character.build.gender, 'Female');
+    assert.equal(character.build.sign, 'The Tower');
+    assert.deepEqual(character.build.maj, kept.maj);
+    assert.deepEqual(character.build.loadouts, kept.loadouts);
+    assert.equal(window.sessionStorage.getItem(SIGN_OUT_HANDOFF_KEY), null);
+  } finally { await mounted.close(); }
+  const fresh = await mount(e(Probe), { url: 'http://localhost/' });
+  try { assert.notEqual(character.build.name, kept.name, 'a later ordinary reload does not restore it again'); }
+  finally { await fresh.close(); }
+});
+
+test('QA-24 shared build links win over a sign-out return marker', async () => {
+  const { SIGN_OUT_HANDOFF_KEY } = await import('../lib/sign-in-handoff.mjs');
+  const { encodeShareUrl } = await import('../lib/permalink-codec.mjs');
+  const shared = { ...build, name: 'QA – Shared Nord', race: 'Nord', world: 'vanilla', arce: false };
+  let character, shell;
+  function Probe() { character = ui.useActiveCharacter(); shell = ui.useShell(); return null; }
+  const mounted = await mount(e(Probe), { url: new URL(encodeShareUrl({ view: 'builder', world: 'vanilla', build: shared }), 'http://localhost').href,
+    sessionStorage: { [SIGN_OUT_HANDOFF_KEY]: JSON.stringify({ at: Date.now(), build }) } });
+  try {
+    await mounted.wait(() => shell.ready);
+    assert.equal(character.build.name, shared.name);
+    assert.equal(character.build.race, 'Nord');
+    assert.equal(shell.profile, 'vanilla');
+    assert.equal(window.sessionStorage.getItem(SIGN_OUT_HANDOFF_KEY), null);
+    assert.deepEqual(mounted.errors, []);
+  } finally { await mounted.close(); }
+});
+
+test('QA-24 a failed Clerk sign-out removes the marker and keeps the current character', async () => {
+  const { SIGN_OUT_HANDOFF_KEY } = await import('../lib/sign-in-handoff.mjs');
+  const { defaultAccountSettings } = await import('../lib/account-settings.mjs');
+  api = pathname => pathname === '/api/settings' ? { settings: defaultAccountSettings(), revision: 0 } : { username: 'QA_Reproduction', iconId: 0 };
+  const mounted = await mount(e(ui.AccountPage), { url: 'http://localhost/account', account: true, signedIn: true,
+    initialBuild: { ...build, world: 'vanilla', arce: false, race: 'Breton' } });
+  try {
+    await mounted.wait(() => [...document.querySelectorAll('button')].some(button => button.textContent === 'Sign out'));
+    window.Clerk.signOut = async () => { throw Error('QA sign-out failed'); };
+    await React.act(async () => [...document.querySelectorAll('button')].find(button => button.textContent === 'Sign out').click());
+    assert.equal(window.sessionStorage.getItem(SIGN_OUT_HANDOFF_KEY), null);
+    assert.ok(document.body.textContent.includes('QA sign-out failed'));
+    assert.deepEqual(mounted.errors, []);
+  } finally { await mounted.close(); }
+});
+
+test('QA-24 loaded saves skip the unsaved sign-out marker and remain restorable', async () => {
+  const { SIGN_OUT_EVENT, SIGN_OUT_HANDOFF_KEY } = await import('../lib/sign-in-handoff.mjs');
+  const { rememberSave } = await import('../lib/active-save-store.mjs');
+  let character;
+  function Probe() { character = ui.useActiveCharacter(); return null; }
+  const mounted = await mount(e(Probe));
+  const raw = save(); raw.identity.name = 'QA – Loaded sign-out control';
+  let values;
+  try {
+    await React.act(async () => { await character.loadSave(raw); });
+    await rememberSave(raw);
+    await React.act(async () => window.dispatchEvent(new Event(SIGN_OUT_EVENT)));
+    assert.equal(window.sessionStorage.getItem(SIGN_OUT_HANDOFF_KEY), null);
+    values = Object.fromEntries(Object.keys(window.localStorage).map(key => [key, window.localStorage.getItem(key)]));
+  } finally { await mounted.close(); }
+  const returned = await mount(e(Probe), { storage: values });
+  try {
+    await returned.wait(() => character.activeSave);
+    assert.equal(character.activeSave.save.identity.name, raw.identity.name);
+    assert.equal(character.build.name, raw.identity.name);
+    assert.deepEqual(returned.errors, []);
+  } finally { await returned.close(); }
 });
 
 test('QA-25 loaded save cannot override an explicit Travel starting point',todo('QA-25'),async()=>{
