@@ -282,13 +282,13 @@ usual tests (at least three edge cases for a logic change) and changelog.
       TR + ARCE save; it opens as a different or broken character (2 of 2 saves; Builder
       builds are fine). A challenge run's link took the visitor's current world (`world=tr`)
       for a run rolled in Vanilla. A link must describe its own character or run.
-- [ ] **C** **QA-23** (reproduced, `test/qa-account-reproduction.test.js`; partial reproduction and limits in LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
+- [ ] **C** **QA-23** (reproduced, `test/qa-account-reproduction.test.js`; real development session and scope in LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
       when the address has no `?world=` (3 of 3): an unsaved TR + ARCE character, or a loaded
       TR + ARCE save, comes back in Vanilla, the save re-read as plain Khajiit
       (`shell-context.jsx`). A new account has chosen nothing yet, but switching world or
       loading a save already auto-saves a Preferred world (F-9), which then wins. On sign-in
       the browser's world must win until the player chooses one on the account.
-- [ ] **C** **QA-24** (reproduced, `test/qa-account-reproduction.test.js`; partial reproduction and limits in LAUNCH_VERIFICATION §27) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
+- [ ] **C** **QA-24** (reproduced, `test/qa-account-reproduction.test.js`; real development session and scope in LAUNCH_VERIFICATION §27) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
       Home afresh and the Builder shows a random premade (2 of 2). A loaded save survives.
       Keep the character through sign-out as through sign-in (`SIGN_IN_EVENT` hand-off).
 - [ ] **C** **QA-25** (reproduced, `test/qa-account-reproduction.test.js`; partial reproduction and limits in LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
