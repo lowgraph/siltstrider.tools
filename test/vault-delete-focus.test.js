@@ -24,10 +24,15 @@ test('failed deletion stays announced and retryable, with focus kept in the conf
 test('successful deletion focuses a remaining save or the save-name field after removing the last card',async()=>{
  const Card=await card();for(const last of [false,true]){
  function Vault(){const [saves,setSaves]=React.useState(last?[save]:[save,{...save,id:'b',name:'QA – Remaining'}]);return React.createElement('main',null,React.createElement('input',{placeholder:'Name (e.g. QA)'}),saves.map(s=>React.createElement(Card,{key:s.id,save:s,onLoad:()=>{},onExport:()=>{},onDelete:async id=>{setSaves(v=>v.filter(s=>s.id!==id));return {success:true};}})));}
- global.requestAnimationFrame=cb=>setTimeout(cb,0);
- try{await mount(Vault,async()=>{await click(document.querySelector('[data-vault-delete]'));await click(b('Confirm'));await React.act(async()=>new Promise(r=>setTimeout(r,25)));
+ const frames=[];global.requestAnimationFrame=cb=>frames.push(cb);
+ try{await mount(Vault,async()=>{await click(document.querySelector('[data-vault-delete]'));await click(b('Confirm'));while(frames.length)await React.act(async()=>frames.shift()());
  assert.equal(document.querySelector('[role=alertdialog]'),null);assert.notEqual(document.activeElement,document.body);
  assert.equal(document.activeElement,last?document.querySelector('input'):document.querySelector('[data-vault-delete]'));
  });}finally{delete global.requestAnimationFrame;}
  }
+});
+test('deferred deletion focus does nothing after the Vault is detached',async()=>{
+ const Card=await card(),frames=[];global.requestAnimationFrame=cb=>frames.push(cb);
+ function Vault(){return React.createElement('main',null,React.createElement(Card,{save,onLoad:()=>{},onExport:()=>{},onDelete:async()=>({success:true})}));}
+ try{await mount(Vault,async root=>{await click(document.querySelector('[data-vault-delete]'));await click(b('Confirm'));await React.act(async()=>root.render(null));while(frames.length)await React.act(async()=>frames.shift()());assert.equal(document.querySelector('main'),null);});}finally{delete global.requestAnimationFrame;}
 });

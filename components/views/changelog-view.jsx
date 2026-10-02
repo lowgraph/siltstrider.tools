@@ -18,7 +18,7 @@ export default function ChangelogView() {
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Vault controls stay readable and reachable on small screens, including Close and Duplicate.</li>
             <li>Reset all settings now asks for confirmation before restoring the defaults.</li>
-            <li>Deleting a cloud save now opens a keyboard-accessible confirmation and restores focus afterward.</li>
+            <li>Deleting a cloud save now opens a keyboard-accessible confirmation and restores focus afterward, including when the Vault refreshes or closes.</li>
             <li>Travel now explains why rounded in-game leg estimates can differ slightly from the total.</li>
             <li>Search now uses singular and plural faction rank labels correctly.</li>
             <li>Level Simulator keeps Prev, Next and training skill names readable on phones. Navigation gets its own row and training details wrap at whole words.</li>

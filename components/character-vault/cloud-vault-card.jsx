@@ -76,9 +76,10 @@ export default function CloudVaultCard({
       // Refresh removes this card and its opener. Focus a remaining save, or
       // the save-name field when this was the last one, after busy controls enable.
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        const nextCard = scope?.isConnected && [...scope.querySelectorAll('.vault-card')].find(card => card.dataset.vaultSaveId === neighborId);
+        if (!scope?.isConnected) return;
+        const nextCard = [...scope.querySelectorAll('.vault-card')].find(card => card.dataset.vaultSaveId === neighborId);
         const next = nextCard?.querySelector('[data-vault-delete]:not([disabled])');
-        const fallback = scope?.isConnected && (scope.querySelector('input[placeholder^="Name (e.g."]:not([disabled])') || scope.querySelector('button:not([disabled])'));
+        const fallback = scope.querySelector('input[placeholder^="Name (e.g."]:not([disabled])') || scope.querySelector('button:not([disabled])');
         (next || fallback)?.focus();
       }));
     } catch (error) { setDeleteError(error.message || 'The save could not be deleted. Try again.'); }
