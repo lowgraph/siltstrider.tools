@@ -20,7 +20,7 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0007 applied; none pending at the 04:47 release; no migration ran |
 | D1 Time Travel bookmark | `00000073-00000000-000050f8-07bcfcc5cabac281c64e4bebf751ce41`, captured before the 2026-10-02 04:47 UTC release; recovery record in §58, private migration backup and preservation checks in §15 |
-| Code rollback for the next release | Owner-selected `e29663d3-68eb-45ff-bbef-13447c3b0cbf` / `6fab4c5` (§57); Worker version switch only, database writes and migrations retained |
+| Code rollback for the next release | Owner-selected `73df6e58-912e-48db-9786-5866ce793efd` / `250b1b5` (§67); Worker version switch only, database writes and migrations retained |
 | Pipeline repo | `master` / `origin/master` at `6372e65`; correction `41da92c` included and shared release records synchronized |
 
 Deployment history since the last tagged release before this batch:
@@ -3321,3 +3321,37 @@ COORDINATION and UI_TRANSFORMATION remain byte-identical across repositories.
 Only the task's verified dev server was closed. Disposable local data is cleared;
 cache evidence remains. No production write, dataset rebuild, migration or
 deployment; production and rollback records are unchanged.
+
+## 67. Recovery record before deploying `672c0d3` — 2 October 2026
+
+The owner authorized deploying **`672c0d353414f078e499e199c44ca54c739b68be`**
+and selected **`73df6e58-912e-48db-9786-5866ce793efd`** as the code rollback target.
+This recovery record was written before publishing the release.
+
+| Recovery fact | Checked value |
+| --- | --- |
+| Selected rollback Worker | `73df6e58-912e-48db-9786-5866ce793efd`, tagged `250b1b5` |
+| Rollback code | `250b1b5425dbc514bbd2f97dbec8c7841f3edd22`; deployed 2026-10-02 04:47:09 UTC and still at 100% before this release |
+| Release source | Clean `main` and `origin/main` at `672c0d353414f078e499e199c44ca54c739b68be` after fetch |
+| Bundle retained | `a29adea046e6086c2c7ee654` |
+| Extraction snapshot | `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f` |
+| Production D1 | UUID `141a1409-3956-4267-a078-02483bbb2bf6`, existing `DB` binding |
+| Fresh D1 bookmark | `00000074-00000000-000050f8-6b7a252ad77140777ca900210cc70b77`, captured 2026-10-02 23:42:41 UTC (20:42:41 in São Paulo) |
+| Migration state | 0001–0007 applied; Wrangler confirms no pending migrations |
+| Release validation | 1,270 site tests passed, zero failures/skips/TODOs; production Cloudflare build generated 24 static pages |
+
+The bookmark and migration names were obtained through read-only Cloudflare API
+requests. No database export, restore, migration or account change was made.
+The pre-release build ran at the exact requested source commit with the existing
+staged catalogs, production Clerk live key and unchanged repository configuration.
+Any subsequent recovery/release-record commits change documentation only; deploy
+the already-built assets tagged `672c0d3`, without rebuilding from a documentation commit.
+
+A code regression can be rolled back by switching the Worker to the selected
+version. Its assets/code are restored while D1 writes, migrations and Clerk
+accounts remain. The fresh bookmark is a separate database-incident recovery
+point, not an instruction to restore the database during a code rollback.
+Historical recovery records in §§57–58 remain unchanged.
+
+Evidence: `A:/Cache/release-672c0d3/`: `recovery.json`, `pending-migrations.log`,
+`build-source.txt`, `preflight-hashes.json`, `build.log` and `unit-preflight.log`.
