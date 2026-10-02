@@ -26,7 +26,7 @@ const chrome = spawn(chromePath, ['--headless=new', '--disable-gpu', '--no-first
   '--remote-debugging-port=0', `--user-data-dir=${chromeProfile}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const repo = path.join(__dirname, '..');
-const gitHead = spawnSync('git', ['rev-parse','HEAD'], {cwd:repo,encoding:'utf8',windowsHide:true}).stdout?.trim();
+const gitHead = spawnSync('git', ['-c',`safe.directory=${repo}`,'rev-parse','HEAD'], {cwd:repo,encoding:'utf8',windowsHide:true}).stdout?.trim();
 const bundle = JSON.parse(fs.readFileSync(path.join(repo,'public/game-data/current.json'),'utf8'));
 const report = { base, suite, gitHead, bundle, started: new Date().toISOString(), cases: [], runtimeErrors: [], serverErrors: [], fontStates: [] };
 let socket, send, evaluate, current = 'setup', deliberateFailure = false, fetchMode = null;

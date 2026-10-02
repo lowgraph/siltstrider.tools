@@ -293,6 +293,7 @@ export default function AlchemyWorkstation() {
         )}
       </div>
 
+      <p className="ingredient-label-note text-xs text-fg-9">Variants use catalog weight, value, effects and origin. A &ldquo;scripted variant&rdquo; has an attached script whose behavior the ingredient catalog does not describe. Identical labels remain separate ingredients with their own sources.</p>
       <ReverseAlchemy ingredients={allIngredients} sources={sources} onWantSources={() => setWantSources(true)} onUsePair={([first, second]) => {
         setSlot1(first); setSlot2(second); setSlot3(null); setSlot4(null); setCustomPotionName("");
         document.getElementById("alchemy-potion-output")?.focus();

@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Alchemy names ingredient variants with catalog weight, value, effects and origin instead of raw record IDs.
+
 - Vault controls stay readable and reachable on small screens, including Close and Duplicate.
 
 - Reset all settings now asks for confirmation before restoring the defaults.

@@ -12,6 +12,42 @@ module.exports = async c => {
     while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const r=document.createRange();r.setStart(n,m.index);r.setEnd(n,m.index+m[0].length);const ys=[...r.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.top));if(new Set(ys).size>1)broken.push(m[0]);}}
     return broken;
   })()`);
+  for(const profile of ['vanilla','tr','tr_arce'])for(const theme of ['ashfall','morrowind'])for(const width of [1366,375])await c.check(`ingredient-labels/${profile}/${theme}/${width}`,async()=>{
+    const data=await (await require('../test/helpers/qa-staged-data.cjs').loader()).loadFeature(profile,'alchemy');
+    const adapted=(await import('../lib/alchemy-catalogs.mjs')).adaptAlchemy(data);
+    const ordinary=adapted.ingredients.find(i=>i.id==='ingred_emerald_01'),scripted=adapted.ingredients.find(i=>i.id==='ingred_dae_cursed_emerald_01');
+    await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);await c.viewport(width);await c.navigate('alchemy',profile);
+    const slot='[aria-label="Crucible 1 ingredient"]';await c.until(`document.querySelector(${JSON.stringify(slot)})?.disabled===false`);
+    await c.type(slot,'Emerald');await c.until(`document.querySelector('[role=listbox] [role=option]')?.textContent.includes('Emerald')`);
+    const names=await read(`[...document.querySelectorAll('[role=listbox] [role=option]')].map(o=>o.textContent.trim())`);
+    assert.ok(names.every(n=>!n.includes('ingred_')&&!n.includes('[tr_')&&!n.includes('[t_')),'Autocomplete has readable labels');
+    assert.deepEqual([...names].sort(),adapted.ingredients.filter(i=>i.source.name==='Emerald').map(i=>i.n).sort());
+    await finish(`ingredient-labels-${profile}-${theme}-${width}-autocomplete`);await c.key('Escape','Escape',27);
+    await c.choose(slot,ordinary.n);await c.choose('[aria-label="Crucible 2 ingredient"]',scripted.n);
+    await c.click('.alchemy-ingredient-sources > button');await c.until('document.querySelector(".alchemy-ingredient-sources").textContent.includes("Sources exclude theft")');
+    assert.equal(await read('document.querySelector(".alchemy-ingredient-sources > div > div > p").textContent'),ordinary.n);
+    await finish(`ingredient-labels-${profile}-${theme}-${width}-selected-sources`);
+    for(const effect of ['Fortify Magicka','Restore Health','Drain Agility','Drain Endurance']){await c.type('#reverse-alchemy-search',effect);await c.button(effect,'.reverse-alchemy');}
+    await c.until('document.querySelector(".reverse-alchemy-pair")');
+    const pair=await read('document.querySelector(".reverse-alchemy-pair > p").textContent');assert.match(pair,/Emerald/);assert.doesNotMatch(pair,/ingred_|\[tr_|\[t_/);
+    await c.click('.reverse-alchemy-sources > summary');await c.until('document.querySelector(".reverse-alchemy-sources").textContent.includes("Sources exclude theft")');
+    await finish(`ingredient-labels-${profile}-${theme}-${width}-reverse`);
+    await c.click('.reverse-alchemy-pair button[aria-label^="Use "]');assert.equal(await read('document.activeElement.id'),'alchemy-potion-output');
+    if(profile!=='vanilla'){
+      await c.type(slot,'Braided Bread');const breadNames=await read(`[...document.querySelectorAll('[role=listbox] [role=option]')].map(o=>o.textContent.trim())`);
+      assert.deepEqual(breadNames.sort(),['Braided Bread (0.1 weight)','Braided Bread (0.2 weight)','Braided Bread (0.4 weight)','Braided Bread (0.8 weight)']);
+      await c.key('Escape','Escape',27);await c.choose(slot,'Braided Bread (0.2 weight)');await finish(`ingredient-labels-${profile}-${theme}-${width}-bread`);
+    }
+    await c.click('.search-trigger');await c.type('.search-dialog input','Emerald');await c.button('Ingredients','.search-dialog');await c.until(`document.querySelector('.search-dialog [role=option]')?.textContent.includes('Emerald')`);
+    const searchLabels=await read(`[...document.querySelectorAll('.search-dialog [role=option]')].map(el=>el.textContent).join(' ')`);
+    assert.doesNotMatch(searchLabels,/ingred_|\[tr_|\[t_/);
+    const command=await read('document.querySelector(".search-dialog code")?.textContent');
+    const commandId=/player->additem "([^"]+)" 1/.exec(command)?.[1];
+    const previewIngredient=adapted.ingredients.find(i=>i.id===commandId?.toLowerCase());assert.ok(previewIngredient,'Console command preserves a real catalog ID');
+    assert.equal(await read('document.querySelector(".search-card-title").textContent'),previewIngredient.n);
+    await finish(`ingredient-labels-${profile}-${theme}-${width}-global-search`);
+    await c.key('Escape','Escape',27);return {names,pair,sources:true,internalIdsPreserved:true};
+  });
   for(const theme of ['ashfall','morrowind'])for(const width of [1366,375,390]){
     await c.check(`SS-09/${theme}/${width}`,async()=>{
       await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
