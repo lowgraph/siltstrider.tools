@@ -2211,3 +2211,10 @@ the release cut.
 Branch: `polish/flow-01`. Reproduced locally: Common Ring enabled On Strike (before report). Cause: all three buttons were offered independently of the selected item. Cast-style eligibility now follows OpenMW 0.51 enchanting.cpp nextCastStyle, including weapon classes, books and soul thresholds; the rendered selection is normalized immediately and retained state follows it. Custom item kind is explicit. QA-01/02 cost, chance and price functions are unchanged. npm test: 1,133 passed, zero failures/skips/TODO. Chrome: 4/4 passing at 1366/375 in both themes, zero axe blockers, overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/flow-01-final and flow-01-unit.log. The first sandbox CDP session timed out; unsandboxed Chrome works. Two early capture-harness selector/serialization mistakes were corrected before the passing run.
 
 Completed on this branch only. No push, merge, deployment, migration or data rebuild.
+
+
+## UI-03 — local launch polish
+
+Branch: `polish/ui-03`. Reproduced locally with an invalid seed followed by Generate Run. Cause: generation never cleared seedError; valid loading already did. Successful rollFromSeed now clears feedback only after generating the run. Three active component cases cover generation, same-world loading, repeated invalid input and cross-world valid loading. npm test: 1,136 passed, zero failures/skips/TODO. Chrome: 4/4 passed at 1366/375 in both themes, with screenshots, accessibility and overflow checks; no runtime/server errors. Evidence: A:/Cache/launch-polish/ui-03-before, ui-03-final, ui-03-unit-final.log. Initial unit fixtures incorrectly started with null instead of the provider empty run; corrected fixture, no application workaround.
+
+Completed on this branch only. No push, merge, deployment, migration or data rebuild.

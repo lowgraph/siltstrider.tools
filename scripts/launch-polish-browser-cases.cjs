@@ -8,6 +8,20 @@ module.exports = async c => {
     await c.screenshot(name);
   };
   for (const theme of ['ashfall','morrowind']) for (const width of [1366,375]) {
+    await c.check(`UI-03/${theme}/${width}`,async()=>{
+      await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await c.viewport(width);await c.navigate('challenge');
+      await c.type('#challenge-seed-input','NOT-A-VALID-SEED');await c.button('Load');
+      assert.match(await read('document.querySelector("#challenge-seed-note").textContent'),/not a Silt Strider seed/);
+      await c.button('Generate Run');
+      assert.doesNotMatch(await read('document.querySelector("#challenge-seed-note").textContent'),/not a Silt Strider seed/);
+      const seed=await read('document.querySelector("#challenge-seed-input").value');
+      await c.type('#challenge-seed-input','garbage');await c.button('Load');
+      assert.match(await read('document.querySelector("#challenge-seed-note").textContent'),/not a Silt Strider seed/);
+      await c.type('#challenge-seed-input',seed);await c.button('Load');
+      assert.doesNotMatch(await read('document.querySelector("#challenge-seed-note").textContent'),/not a Silt Strider seed/);
+      await finish(`UI-03-${theme}-${width}`);return {generateClears:true,validLoadClears:true,invalidStillReported:true};
+    });
     const name=`FLOW-01/${theme}/${width}`;
     await c.check(name,async()=>{
       await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);

@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Challenge Runs clears an invalid-seed message after generating or loading a valid run.
+
 - Enchanting offers cast styles that suit the item. Switching to armor or clothing clears On Strike; custom items let you choose their kind.
 
 - About credits LowGraph and links to the project’s open source code under AGPL-3.0-or-later. It distinguishes the code licence from game and mod data, font and branding rights.

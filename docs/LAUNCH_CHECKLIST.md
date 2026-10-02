@@ -438,7 +438,7 @@ Medium, one persona:
       (U24, U25, U27).
 
 Low:
-- [ ] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run. (started 2026-10-02 00:53 UTC, Codex, on polish/ui-03)
+- [x] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run. (started 2026-10-02 00:53 UTC, Codex, on polish/ui-03) (completed on branch with this commit; not merged or live)
 - [ ] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%.
 - [ ] **C** F10, CALC-4-01: raw ingredient IDs on screen ("Emerald [ingred_emerald_01]",
       "Braided Bread [t_ingfood_breadkeptu_02]") in Alchemy, its effect finder and the
