@@ -2086,3 +2086,49 @@ README, licence, package/config files, bundle and migrations are unchanged.
 No deployment, production write, real-account change or data rebuild. Freeze-day
 acceptance remains separate. First command: `npm test`, then BROWSER_TESTS.md's
 Chrome matrix, QA-08/09 and local Vault suites against the final release checkout.
+
+## 48. Recovery record before the QA/theme release — 1 October locally
+
+Owner authorized recording recovery information, then deploying **`6fab4c5`**.
+This record is written before deployment. Recovery information was captured on
+**2026-10-02 00:08 UTC** (1 October, 21:08 in São Paulo).
+
+| Item | Pre-release value |
+| --- | --- |
+| Release source | `6fab4c54af827965387ce336885907664deeff14`, clean detached checkout `A:/Claude/mt-release-6fab4c5` |
+| Active Worker / selected code rollback | **`3879ce7b-c397-4698-83c4-e9d185d9ed5c`**, 100% traffic, tagged `ef67b3e` |
+| Rollback source commit | **`ef67b3eae60360259435cc99181585c5d99e030d`**, confirmed by the version's release message |
+| Active deployment | `9d1a4f0c-a737-446d-adfa-6595620c33e7`, created 2026-10-01 05:22:43 UTC |
+| Worker / account | `plain-disk-78e6` / `4653c1ab885ae65ebea83b3804643010` |
+| D1 | `141a1409-3956-4267-a078-02483bbb2bf6`, production backend, nine tables, 155,648 bytes |
+| Applied migrations | **0001–0007**, names read directly; none pending; query wrote zero rows |
+| Fresh database recovery bookmark | **`0000006d-00000000-000050f8-1d7bc74cdeb236e19f0c9943a3fe9824`** |
+| Bundle retained by both releases | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f` |
+
+**Code-only rollback:** switch the Worker to the selected version above. This
+restores the preceding code and assets, dropping this QA/theme release while
+retaining CALC-4 and the earlier Travel work. No migration is part of this release;
+there is no database restore or schema rollback in the code-recovery procedure.
+Existing database writes, migrations and Clerk accounts remain intact. The D1
+bookmark is recovery information for a separate data incident, not an instruction
+to restore the database. No full private-data SQL export was needed for this release.
+
+Reviewed incident command, **not executed**:
+
+```powershell
+node node_modules/wrangler/bin/wrangler.js rollback 3879ce7b-c397-4698-83c4-e9d185d9ed5c --message 'Rollback QA/theme release to ef67b3e'
+```
+
+Fresh tests from the pinned checkout: **1,130 passed, no failures/skips/TODO**.
+Production build: **24 pages**, existing live Clerk publishable key; no test key.
+Wrangler 4.134.0 `deploy --dry-run --keep-vars` passed with the unchanged D1 binding,
+routes and configuration. The isolated checkout initially used a dependency
+junction that Turbopack rejected; replaced only that ignored link with a copy of
+the existing dependencies. The successful build changes no tracked file.
+
+Wrangler's D1 metadata/bookmark reads returned authentication error 10000; the
+authenticated Cloudflare connector retrieved and verified the same production
+UUID and fresh bookmark. Wrangler's migration list and read-only migration-name
+query succeeded. Saved recovery metadata, current pointer/manifest and release
+logs under `A:/Cache/deploy-6fab4c5-20261001/`, outside Git/public assets. This
+record does not claim a deployment; the completed release is recorded separately.
