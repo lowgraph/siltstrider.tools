@@ -3219,3 +3219,24 @@ and Telvanni; leaving allows Redoran; Mages Guild remains compatible; Hlaalu the
 shows Redoran as its conflict. Scoped axe/overflow checks pass; zero runtime/server
 errors; phone screenshot reviewed. Evidence:
 `A:/Cache/clarity-batch/flow03-unit.log` and `flow03-{vanilla,tr,tr_arce}/`.
+
+
+### F-12 — recorded Vault locations; preset class labels deferred
+
+The API and cloud-save codec provide `cell`, but CloudVaultCard read only
+`cell_name` and substituted Vvardenfell. Cards now use the recorded API location,
+retain the legacy alias and say Not recorded for missing or malformed locations.
+Recorded class names already render correctly. Preset OpenMW saves can contain
+only a class ID (`mage`) and no name: that remaining catalog-resolution work
+moves after launch under section 4's explicit condition, rather than inventing
+a name or loading more data in this bounded fix.
+
+52 relevant Vault/codec/API tests passed. All four new tests failed before the
+fix; they cover three actual codec/API location records and API/legacy precedence,
+empty, null, whitespace and malformed values. Four signed-in local Worker Chrome
+cases pass in both themes at 1366/375 px: recorded Old Ebonheart and a saved custom
+class name display, and a build with no location says Not recorded. The API
+metadata is retained; scoped axe/overflow checks pass; zero runtime/server errors;
+phone screenshot reviewed. Only `user_qa_clarity` was used and its disposable
+records were removed after every case. Evidence:
+`A:/Cache/clarity-batch/f12-before.log`, `f12-unit.log` and `f12-browser/`.

@@ -1,6 +1,21 @@
 const assert=require('node:assert/strict');
 module.exports=async c=>{
   const user={id:'user_qa_clarity',fullName:'QA – Clarity',firstName:'QA',username:'qa_clarity'};
+  for(const theme of ['ashfall','morrowind'])for(const width of [1366,375])await c.check(`Clarity-F12/${theme}/${width}`,async()=>{
+    await c.open('/about');await c.cleanup();await c.signIn(user);await c.viewport(width);await c.theme(theme);
+    try{
+      const raw=require('../test/helpers/qa-staged-data.cjs').save();raw.identity.name='QA – Recorded Place';raw.identity.cell='Old Ebonheart';raw.identity.class={id:'qa-class',name:'QA – Saved Mage',custom:true};
+      assert.equal((await c.request('POST','/api/saves',{user,body:{saveType:'openmw_save',name:raw.identity.name,data:raw}})).status,201);
+      assert.equal((await c.request('POST','/api/saves',{user,body:{saveType:'character_build',name:'QA – No Location',data:{version:1,name:'QA – No Location',race:'Nord',gender:'Male',className:'Warrior',sign:'The Warrior',maj:[],min:[]}}})).status,201);
+      await c.open('/vault');await c.until(c.card(raw.identity.name));
+      const card=await c.evaluate(`${c.card(raw.identity.name)}.textContent`);assert.match(card,/Lvl 3 QA – Saved Mage/);assert.match(card,/Old Ebonheart/);assert.doesNotMatch(card,/Vvardenfell/);
+      assert.match(await c.evaluate(`${c.card('QA – No Location')}.textContent`),/Not recorded/);
+      const saved=(await c.request('GET','/api/saves',{user})).body.saves.find(s=>s.name===raw.identity.name);assert.equal(saved.cell,raw.identity.cell);assert.equal(saved.class_name,raw.identity.class.name);
+      assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);
+      c.assertAccessible(await c.audit(`location-${theme}-${width}`));await c.screenshot(`location-${theme}-${width}`);
+      return {recordedLocation:true,recordedClassName:true,noInventedLocation:true};
+    }finally{await c.open('/about');await c.cleanup();}
+  });
   for(const theme of ['ashfall','morrowind'])for(const width of [1366,375])await c.check(`Clarity-F17/${theme}/${width}`,async()=>{
     await c.open('/about');await c.cleanup();await c.signIn(user);await c.viewport(width);await c.theme(theme);
     try{

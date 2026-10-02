@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Cloud Vault cards show the location recorded by the save instead of always saying Vvardenfell; a character with no recorded location says Not recorded.
+
 - Faction Journal blocks new rival Great House joins, explains which membership conflicts, and keeps leaving and imported memberships available.
 
 - Travel keeps specific Propylon chamber links while your save and its carried indices load, and shows No Route for an unavailable chamber instead of switching to other towns.

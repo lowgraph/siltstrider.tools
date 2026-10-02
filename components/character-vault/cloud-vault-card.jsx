@@ -44,6 +44,7 @@ export default function CloudVaultCard({
     : isChallenge
     ? "Challenge Run"
     : "Custom";
+  const location=[save.cell,save.cell_name].find(value=>typeof value==='string'&&value.trim())?.trim() || 'Not recorded';
 
   const handleSaveRename = (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -188,8 +189,8 @@ export default function CloudVaultCard({
 
         <div className="bg-surface-1 p-2 border border-line-12">
           <span className="text-fg-14 block text-[10px] uppercase tracking-wider">Location / Cell</span>
-          <span className="text-fg-2 font-bold truncate block" title={save.cell_name || "Vvardenfell"}>
-            {save.cell_name || "Vvardenfell"}
+          <span className="text-fg-2 font-bold truncate block" title={location}>
+            {location}
           </span>
         </div>
 

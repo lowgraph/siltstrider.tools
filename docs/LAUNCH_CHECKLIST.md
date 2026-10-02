@@ -257,10 +257,13 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       this is a wrong route; raise it to High and move it to section 5 (launch bar).
       Re-check: no direct link exists; the Master Index goes through Caldera. Fixed a
       separate first-load reset of valid chamber links before carried indices were restored (LAUNCH_VERIFICATION §65).
-- [x] **C** FLOW-03 (started 2026-10-02 21:54 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): both rival Great Houses can be joined in the Faction Journal.
-- [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
+- [x] **C** FLOW-03 (started 2026-10-02 21:54 UTC, Codex; done `b26b6b7`, on `polish/beginner-clarity-batch`): both rival Great Houses can be joined in the Faction Journal.
+- [x] **C** F-12 (started 2026-10-02 21:59 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`) (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage"). Fix only if the save already carries the location and class name;
       otherwise it goes back after launch.
+      Recorded locations now display correctly; missing locations say Not recorded.
+      Saved class names already display correctly. Preset saves containing only an ID
+      have no class name to display; that remaining part moves to section 6 (LAUNCH_VERIFICATION §65).
 
 ### 5. QA findings (1 October): fix before the freeze
 
@@ -573,6 +576,10 @@ Low:
 - [x] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02; done `cc5e394`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
 
 From the signed-in QA (1 October):
+- [ ] **C** F-12, remaining preset class labels (Low; deferred under the section 4 scope):
+      an OpenMW save can carry only a class ID such as `mage`, without a class name.
+      Resolve those IDs against the correct world's catalog after launch; preserve
+      recorded class names and do not guess them from the currently selected world.
 - [x] F-6: no change (owner, 2 October: desired behaviour). Email sign-in reloads the page;
       the character and world survive it (QA-23 fixed).
 - [x] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body (started 2026-10-02 01:27 UTC, Codex, on polish/f-7; done `2ec4a78`, correction `5af5bba`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
