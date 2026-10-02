@@ -236,6 +236,7 @@ acceptance and release preparation remain separate checks against the final rele
 | 14 | **QA-11 — faction names and deprecated entries** | The catalog already has the names, so this is a contained presentation fix. |
 | 15 | **QA-15 — About attribution and licence** | Low risk, straightforward, and explicitly requested. |
 | 16 | **Freeze acceptance and release preparation** | Run against the final build after the fixes, then prepare the release and rollback records. |
+| 17 | **Live retest (2 October): QA-26** | An edited premade's endgame kit is the premade's, not the player's (wrong answer). Cheap Lows QA-27–30 if time allows. |
 
 Reproduction (Codex, 1 October, `qa/reproduce`, LAUNCH_VERIFICATION §27): the
 original suite had 41 tests marked `{ todo: '<QA-id> not fixed yet' }` in `test/qa-*`.
@@ -399,6 +400,47 @@ Completed reproduction baselines; rerun them on the final build:
       real-phone, social sign-in and owner checks in Fixed dates. Merge, push and
       deployment remain separate authorized steps.
 
+#### 17. Live retest (2 October) — before the freeze
+
+The signed-out retest of `6fab4c5` / `e29663d3` (LAUNCH_VERIFICATION §51) passed QA-01–03,
+06–09, 11–16, 19 and 25. QA-04 and QA-05 passed with the leftovers below; QA-10 "failed"
+on Helm of Oreyn Bearclaw, an open helmet beast races can wear (not a bug). Merge by
+Sunday 4 October, then retest.
+
+- [ ] **C** **QA-26** (High, V, R, N; confirmed in code; QA-05 retest) An edited premade's
+      Optimized endgame kit is still the premade's own kit. An edited premade keeps
+      `build.name` (shown "Based on …"), so `resolveBestInSlotPicks` (`lib/best-in-slot.mjs`)
+      finds the premade's BestInSlot record by name, and with a weapon setup (the default
+      one-handed) restores that record's armor, clothing and jewelry; only weapon and shield
+      are scored for the edited build. The view then says the kit is "ranked specifically for
+      your build … (Argonian female — Marsh mage)" for a Female High Elf. Use the named record
+      only while the build still equals its premade (`sameCharacter`, as `characterName`
+      does); otherwise score dynamically. Name the build as `characterName` does. At least
+      three edge cases: unedited premade keeps its record, edited race and edited skills
+      re-rank, a custom build with a premade-like name.
+- [x] **QA-10 re-check**: not a bug (owner, 2 October). The retest saw "Helm of Oreyn
+      Bearclaw" in a Vanilla Argonian's endgame kit and read it as a closed helmet; it is an
+      open helmet that beast races can wear (UESP; flagged open in the game files), and the
+      final gate (`beastWearable`, no head body part, as OpenMW's `Armor::canBeEquipped`)
+      kept it correctly. QA-10 stays done.
+
+Cheap leftovers. Low, so after launch by the usual rule, but each is a few lines and
+three are regressions of this week's release; take them before Sunday if there is time:
+- [ ] **C** QA-27 (Low; regression from QA-03) Health shows floating-point noise: "Delayed
+      Endurance: 208.00000000003 HP" (target 55, Rush Endurance, Bitter Cup). Format Health
+      totals (`health-growth-chart.jsx` legend and aria-label) to at most one decimal.
+- [ ] **C** QA-28 (Low; QA-04 retest) The "Endurance 100 at Lv N" marker is hidden when N is
+      the target level (`showMarker` uses `< endLevel`; target 16 shows "at Lv 15").
+- [ ] **C** QA-29 (Low; regression from the Morrowind theme) In Morrowind UI at 375 px the
+      Builder's premade categories break mid-word ("ALCHEMI / ST", "BATTLEMA / GE"); counts and
+      Expand wrap too. Modern UI is fine. Same family as SS-09.
+- [ ] **C** QA-30 (Low, both themes) At 375 px Alchemy's selected apparatus is clipped
+      ("Journeyman's (" for "Journeyman's (1x)"); the open list is fine.
+
+No action: Modern UI "unchanged beyond the toggle" could not be judged live without a
+baseline; the screenshot comparison against `main` (LAUNCH_VERIFICATION §47) covers it.
+The raw ingredient IDs in TR pair names are F10 / CALC-4-01 (section 6).
+
 #### Already resolved by other work
 
 - [x] **C** **QA-13** (done by CALC-4, merged `ef67b3e`, live as `3879ce7b`; retest 1 October: Restore Health found and its first pair carried into the calculator in all three worlds, desktop and 375 px) (High, N; U20) A first potion needs ingredient names: searching
@@ -476,6 +518,9 @@ From the signed-in QA (1 October):
       must be chosen again in "Import save".
 - [ ] **C** F-16 (Low): Challenge Runs has no cloud save, though the Vault window has a Challenge
       Runs tab and quota; /vault does not show that tab.
+- [ ] **C** Gear note (Low; from the 2 October retest): the beast-race note says closed helmets
+      are excluded but not that open ones (such as Helm of Oreyn Bearclaw) are kept, so a
+      correct pick reads as a bug. Say so in the note.
 - [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
 - [x] F-18: not a bug. One sign-in in the 2 October retest ended on `/account`; the owner had

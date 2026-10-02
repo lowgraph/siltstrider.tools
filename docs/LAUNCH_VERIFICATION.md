@@ -2237,3 +2237,38 @@ Cleanup: qa1's four QA saves deleted (0/5), settings unchanged at revision 26; q
 saved nothing and its settings were never written. Both profiles signed out and
 verified after reload. Evidence: `A:\Cache\qa-retest`; browser profiles
 `A:\Cache\qa-retest-browserA` and `A:\Cache\qa-retest-browserB`.
+
+## 51. Signed-out live retest of the QA fixes — 2 October 2026
+
+A live-URL QA agent retested the release in §49 (`6fab4c5` / Worker `e29663d3`),
+signed out, with a supplied save (Pe.omwsave), in Vanilla, TR and TR + ARCE where
+relevant, at 1366, 390 and 375 px, and in both themes on Home, Builder, Travel, Alchemy
+and the Vault (20 page/theme/width combinations). 29 focused cases.
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| QA-01 | Pass | Two Constant magnitude-5 Fortify Attribute: 75 / 120 points in all three worlds |
+| QA-02 | Pass | 5/5, 5 s Target Fortify Attribute: 1 / 1 points, fits a Common Ring, base value 1,912 g; self-enchant 11% (Enchant 5, INT 30, Luck 40) |
+| QA-03 | Pass | Endurance 35→55 over five levels: gains 3.5, 4, 4.5, 5, 5.5 = 22.5; Health 57.5 |
+| QA-04 | Partial | Chart starts at 35 and 45; END 30→100 in 14 steps (Lv 15); Bitter Cup change explained. The END 100 marker is hidden when it falls on the target level (QA-28) |
+| QA-05 | Partial | Titles agree through Builder, Home and Level Simulator ("Based on Imperial Knight of Stendarr"). The endgame kit still names and uses the premade (QA-26) |
+| QA-06 | Pass | No Secret Master's apparatus in any world or selector |
+| QA-07 | Pass | "Ald'ruhn", "Ald-ruhn" and "Aldruhn" find Ald-ruhn; Vos, Sadrith Mora, Ebonheart, Mournhold found; stale route replaced by a prompt |
+| QA-08 | Pass | Where/Acquisition text intact at 375 and 390 px |
+| QA-09 | Pass | All five Configure popovers on screen at 375 px and dismissible |
+| QA-10 | Pass | No boots or closed helmets for beast races. The reported Helm of Oreyn Bearclaw in a Vanilla Argonian's kit is an open helmet beast races can wear (owner check against UESP and the game files): not a bug |
+| QA-11 | Pass | 91 + 91 relation panels, no codes, no "<Deprecated>" |
+| QA-12 | Pass | 41/41 cards have Plays like, Trade-off, Major and Minor skills |
+| QA-13 | Pass | Restore Health: 55 pairs Vanilla, 2,850 TR / TR + ARCE |
+| QA-14 | Pass | Open save and Local Browser Saves (0) described separately |
+| QA-15 | Pass | "Made by LowGraph", AGPL-3.0-or-later for the code, data excluded, repository link loads |
+| QA-16 | Pass | Ebonheart→Mournhold: 1 leg, Dialogue Teleport, all worlds, walking on and off |
+| QA-19 | Pass | Five signed-out requests: 401, error body only, no Set-Cookie, `no-store` |
+| QA-25 | Pass | With the save loaded, `/travel?from=Balmora&to=Vivec` plans from Balmora |
+
+Themes: Home, Travel and the Vault pass at both widths in both themes. Builder fails in
+Morrowind UI at 375 px (premade categories break mid-word, QA-29); Alchemy clips the
+selected apparatus at 375 px in both themes (QA-30). Also found: Health floating-point
+noise, "208.00000000003 HP" (QA-27). Triage and causes are in the checklist, section 5,
+item 17. Unconfirmed first impressions (stale Home character, open helmets in early game,
+varying fresh default builds, Vault category scrolling) were not reported as bugs.
