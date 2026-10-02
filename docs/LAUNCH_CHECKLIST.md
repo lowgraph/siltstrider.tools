@@ -469,7 +469,7 @@ From the signed-in QA (1 October):
       say the username is required.
 - [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage").
-- [ ] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate"
+- [ ] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate" (started 2026-10-02 01:48 UTC, Codex, on polish/f-13)
       breaks mid-word.
 - [ ] **C** F-15 (Low): after "Open Save File…" there is no upload to the Cloud Vault; the save
       must be chosen again in "Import save".
