@@ -172,7 +172,7 @@ test("BLD-4: Clicking Load calls applyBuild callback with character data", async
   }
 });
 
-test("BLD-4: Clicking delete removes character from localStorage and list", async () => {
+test("BLD-4: Confirming delete removes character from localStorage and list", async () => {
   const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost/" });
   global.window = dom.window;
   global.document = dom.window.document;
@@ -211,6 +211,11 @@ test("BLD-4: Clicking delete removes character from localStorage and list", asyn
 
     await act(async () => {
       deleteBtn.click();
+    });
+
+    assert.equal(eventCount, 0, "Opening confirmation must not delete the character");
+    await act(async () => {
+      [...document.querySelectorAll('[role=alertdialog] button')].find(button => button.textContent === 'Delete character').click();
     });
 
     assert.equal(eventCount, 1, "Event must be fired on delete");

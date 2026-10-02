@@ -520,12 +520,12 @@ title is QA-05's intended wording. Its "FAIL" on F-7 and QA-07 tested other surf
 gave the two items below. Merge by Sunday 4 October, then retest. Verify each with `npm test`
 and the groups `npm run test:browser:plan` prints, plus the item's own new cases.
 
-- [ ] **C** **QA-31** (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
+- [x] **C** **QA-31** (started 2026-10-02 17:41 UTC, Codex; done `2af6d1d`; merged locally into main, LAUNCH_VERIFICATION §§60, 62; not deployed) (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
       saved with "Save this character" (the Builder's list, `local-characters-panel.jsx`
       `handleDelete`) removes it at once: no confirmation, no undo, and focus drops to the
       page. This is a signed-out player's only save. Reuse F-7's `ConfirmationDialog` and
       focus recovery from the cloud Vault card (`cloud-vault-card.jsx`).
-- [ ] **C** **QA-32** (Medium, R, N; confirmed in code; QA-07 on another surface) The global
+- [x] **C** **QA-32** (started 2026-10-02 17:41 UTC, Codex; done `c5eb0ab`; merged locally into main, LAUNCH_VERIFICATION §§61–62; not deployed) (Medium, R, N; confirmed in code; QA-07 on another surface) The global
       search (header / Ctrl K, `lib/site-search.mjs` `normalizeText`) finds nothing for
       "Ald'ruhn" in every world: apostrophes are dropped ("aldruhn") but hyphens become spaces
       ("ald ruhn"). Match the same way as Travel's QA-07 fix (ignore apostrophes, hyphens and

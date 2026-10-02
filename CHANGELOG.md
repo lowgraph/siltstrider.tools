@@ -2,6 +2,10 @@
 
 ## Launch polish — 2026-10-02
 
+- Global search finds Ald'ruhn, Ald-ruhn and Aldruhn as the same place. Results keep the place's original name and open the correct Travel destination.
+
+- Deleting a character saved in this browser asks for confirmation. Cancel keeps it, and focus returns to the saved-character list after deletion.
+
 - Alchemy apparatus choices show their full selected names and quality multipliers on phones in both themes.
 
 - Premade category names, build counts and Expand/Collapse labels stay readable on phones in both themes.

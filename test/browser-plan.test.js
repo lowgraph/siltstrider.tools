@@ -65,14 +65,17 @@ test('files outside the app are listed for a manual check', async () => {
   assert.deepEqual(plan.unmatched, ['tools/notes.txt']);
 });
 
-test('QA-31 and QA-32 files reach the Vault suite and the search note', async () => {
+test('QA-31 and QA-32 files reach their dedicated cases and existing integration groups', async () => {
   const { planBrowserRuns } = await load();
   const local = planBrowserRuns(['components/character-builder/local-characters-panel.jsx']);
   assert.ok(commands(local).includes('vault'));
+  assert.ok(commands(local).includes('qa:QA-31/'));
   assert.ok(commands(local).includes('qa:QA-05/'));
   const search = planBrowserRuns(['lib/site-search.mjs']);
   assert.equal(search.full, false);
-  assert.match(search.notes.join(' '), /QA-32/);
+  assert.ok(commands(search).includes('qa:QA-32/'));
+  assert.ok(commands(search).includes('launch:SS-10/'));
+  assert.deepEqual(search.notes, []);
 });
 
 test('every planned filter names cases that exist in the browser runners', async () => {
