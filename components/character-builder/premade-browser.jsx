@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { BUILDS, RACE_BUILDS, ARCE_BUILDS } from "../../lib/premade-data.mjs";
 import { premadeCopy, SPECIALIZATION_COPY } from "../../lib/premade-copy.mjs";
 
@@ -8,6 +8,7 @@ import { premadeCopy, SPECIALIZATION_COPY } from "../../lib/premade-copy.mjs";
 export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla", onBuildOwn = null }) {
   const [groupBy, setGroupBy] = useState("cat"); // "cat" (Playstyle) or "race"
   const [filter, setFilter] = useState("");
+  const searchRef = useRef(null);
   const [openCategories, setOpenCategories] = useState(() => new Set()); // Collapsed by default
 
   const builds = useMemo(() => {
@@ -98,10 +99,17 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
         </div>
       </div>
 
+      <p className="premade-collection-note text-xs text-fg-7" role="status">
+        Showing {filteredBuilds.length} of {builds.length} {groupBy === 'race' ? 'race-themed' : 'playstyle'} builds in this collection.
+        {groupBy === 'race'
+          ? ` By Race is a separate collection, not a filter of the ${BUILDS.length} By Playstyle builds. ${activeProfile === 'tr_arce' ? 'It includes ARCE races for this world.' : 'ARCE race builds appear only in TR + ARCE.'}`
+          : ' By Race has a separate set of builds focused on each race; switch groups to browse those.'}
+      </p>
+
       {onBuildOwn && (
         <div className="premade-welcome flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-2 border border-line-11 px-3.5 py-3">
           <p className="text-sm text-fg-4 m-0">
-            <strong className="text-fg-2">New here?</strong> Pick a playstyle, then a build to start
+            <strong className="text-fg-2">New here?</strong> Pick {groupBy === 'race' ? 'a race' : 'a playstyle'}, then a build to start
             from. You can change anything once it is loaded.
           </p>
           <button
@@ -119,6 +127,7 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
         <input
           type="text"
           placeholder="Filter by name, race, sign, or skill..."
+          ref={searchRef}
           aria-label="Filter premade classes"
           className="flex-1 h-10 bg-surface-2 text-fg-2 border-4 border-transparent px-3.5 py-2 text-sm focus:outline-none transition-colors"
           style={{
@@ -127,7 +136,9 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button type="button" className="mw-btn px-3 py-1.5 text-xs font-serif"
+            onClick={() => { setFilter(""); searchRef.current?.focus(); }}>Clear search</button>
           <button
             type="button"
             className="mw-btn px-3 py-1.5 text-xs font-serif"

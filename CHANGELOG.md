@@ -2,6 +2,26 @@
 
 ## Launch polish — 2026-10-02
 
+- Cloud Vault cards show the location recorded by the save instead of always saying Vvardenfell; a character with no recorded location says Not recorded.
+
+- Faction Journal blocks new rival Great House joins, explains which membership conflicts, and keeps leaving and imported memberships available.
+
+- Travel keeps specific Propylon chamber links while your save and its carried indices load, and shows No Route for an unavailable chamber instead of switching to other towns.
+
+- Builder explains how to customize a preset and can clear premade searches; save help explains content files and phone file selection; Travel shows saved gold remaining or needed, and Home uses plainer tool descriptions.
+
+- Settings label version selection as not available yet, and Cloud Vault rename accepts up to 120 characters, matching the existing save limit.
+
+- Account profile help says a username is required to save the profile, including the chosen icon.
+
+- Gear Advisor explains that beast races can wear compatible open helmets, including Helm of Oreyn Bearclaw, while closed helmets and boots remain excluded.
+
+- Alchemy explains that the effect finder suggests pairs only, extra ingredients belong in the calculator, and changing worlds clears the recipe while keeping typed stats on the open page.
+
+- Premades explain the separate By Playstyle and By Race collections, show filtered counts, and give the right first-visit hint for each group.
+
+- New-player guidance explains where to start, world choices, Builder numbers and game-entry steps, gear alternatives, save differences, Travel options, potion recovery and leveling terms.
+
 - Gear Advisor describes the endgame kit as ranked for the current character, without calling an edited premade its class archetype.
 
 - Faction Journal uses 1 rank for factions such as Twin Lamps.

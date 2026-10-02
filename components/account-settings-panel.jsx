@@ -97,8 +97,8 @@ export default function AccountSettingsPanel() {
       </div></details>
       <details className="p-3 border border-line-9"><summary className="font-serif text-accent">Future datasets</summary><div className="space-y-3 pt-3">
         <label className="settings-choice">Modpack<select disabled><option>Not available yet</option></select></label>
-        <label className="settings-choice">Mod version<select disabled><option>Current published data</option></select></label>
-        <p className="text-sm text-fg-9">Modpacks and older releases become selectable when their datasets are available. Supported versions will stay selected until you choose an upgrade.</p>
+        <label className="settings-choice">Mod version<select disabled><option>Not available yet</option></select></label>
+        <p className="text-sm text-fg-9">Tools currently use the published dataset. Choosing a modpack or an older version is not available yet; these controls become selectable when their datasets are available. Supported versions will stay selected until you choose an upgrade.</p>
         <label className="flex gap-2 items-start"><input type="checkbox" disabled checked={settings.versionUpdates.notify} readOnly />Dataset update notices (not available yet)</label>
       </div></details>
       <button type="button" onClick={() => setConfirmReset(true)}>Reset all settings</button>

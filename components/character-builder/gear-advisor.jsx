@@ -203,6 +203,16 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
         </div>
       </div>
 
+      <p className="gear-beginner-help text-xs text-fg-7">
+        Build one wearable kit: choose one armor set and one weapon setup. Rows marked “or” and
+        runner-up picks are alternatives, not extra pieces to wear together. Equip recommendations
+        copies a plan to Loadouts; it does not give your character items in the game.
+        Purchase means buy from the listed merchant; a find tells you where to pick up or loot an item.
+        Ownership still matters: theft-required picks appear only when you allow stealing.
+        An empty slot means no eligible pick was found with these settings, not that no item exists.
+        A capped source search is incomplete, so other sources may exist.
+      </p>
+
       {/* Rendered Gear Recommendations */}
       <div role="group" aria-label="Weapon setup" className="flex flex-wrap gap-2">
         {[['one-handed', 'One-handed + shield'], ['two-handed', 'Two-handed']].map(([value, label]) => (

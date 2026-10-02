@@ -78,6 +78,23 @@ test('QA-31 and QA-32 files reach their dedicated cases and existing integration
   assert.deepEqual(search.notes, []);
 });
 
+test('beginner clarity and contained fixes reach their dedicated browser groups', async () => {
+  const { planBrowserRuns } = await load();
+  for (const [file, filters] of [
+    ['lib/choice-help.mjs', ['Clarity-Beginner/', 'Clarity-F04-F11/', 'Clarity-Copy/']],
+    ['lib/travel-budget.mjs', ['Clarity-Copy/', 'Clarity-FLOW04/']],
+    ['components/calculators/alchemy/reverse-alchemy.jsx', ['Clarity-CALC4/']],
+    ['lib/faction-memberships.mjs', ['Clarity-FLOW03/']],
+  ]) {
+    const plan = planBrowserRuns([file]);
+    assert.equal(plan.full, false, file);
+    for (const filter of filters) assert.ok(commands(plan).includes(`qa:${filter}`), `${file}: ${filter}`);
+  }
+  const account = planBrowserRuns(['components/character-vault/cloud-vault-card.jsx']);
+  assert.ok(commands(account).includes('vault'));
+  assert.ok(account.notes.some(note => note.includes('test:vault -- --clarity')));
+});
+
 test('every planned filter names cases that exist in the browser runners', async () => {
   const { planBrowserRuns, commandFor } = await load();
   const source = fs.readdirSync(path.join(__dirname, '..', 'scripts'))

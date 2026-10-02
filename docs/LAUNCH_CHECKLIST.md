@@ -207,7 +207,7 @@ per day; per item run `npm test` and only the browser groups `npm run test:brows
 sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 
 *Saturday: wording and display (QA-27–30 in section 5 first)*
-- [ ] **C** Beginner clarity (N): first tool to use (U01); which world to pick and what ARCE
+- [x] **C** Beginner clarity (started 2026-10-02 20:09 UTC, Codex; done `c1f6b25`, merged with this commit from `polish/beginner-clarity-batch`) (N): first tool to use (U01); which world to pick and what ARCE
       is (U02, F09); a manual route beside the unsupported `.ess` notice (U03); race and
       birthsign effects before lore (U05); a legend for the Builder's numbers (U06); an
       "enter this in the game" checklist (U08); Gear Advisor: findable from Home, one kit vs
@@ -216,19 +216,19 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       message that says what to change (U17); one-line Travel definitions (U19); Alchemy
       jargon and recovery from a failed or zero brew (U21, U22); Level Simulator wording
       (U24, U25, U27). If time is short, the first-visit ones first: U01, U02, U17, U19.
-- [ ] **C** F04 / F11: "By Race" shows 20 of 41 premades without saying why, and its hint
+- [x] **C** F04 / F11 (started 2026-10-02 20:26 UTC, Codex; done `69647b1`, merged with this commit from `polish/beginner-clarity-batch`): "By Race" shows 20 of 41 premades without saying why, and its hint
       still says "Pick a playstyle".
-- [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
+- [x] **C** CALC-4 (started 2026-10-02 20:32 UTC, Codex; done `f66816b`, merged with this commit from `polish/beginner-clarity-batch`): the effect finder suggests pairs only (3 and 4 ingredients only in the
       calculator), and a world switch clears the chosen effects and ingredients. Both
       deliberate for now; say so on the page.
-- [ ] **C** Gear note (Low; from the 2 October retest): the beast-race note says closed helmets
+- [x] **C** Gear note (started 2026-10-02 20:36 UTC, Codex; done `833aedb`, merged with this commit from `polish/beginner-clarity-batch`) (Low; from the 2 October retest): the beast-race note says closed helmets
       are excluded but not that open ones (such as Helm of Oreyn Bearclaw) are kept, so a
       correct pick reads as a bug. Say so in the note.
-- [ ] **C** F-11 (Low): the icon cannot be saved without a username, and the help text does not
+- [x] **C** F-11 (started 2026-10-02 20:40 UTC, Codex; done `622b09e`, merged with this commit from `polish/beginner-clarity-batch`) (Low): the icon cannot be saved without a username, and the help text does not
       say the username is required.
-- [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
+- [x] **C** F-17 (started 2026-10-02 20:45 UTC, Codex; done `213fa59`, merged with this commit from `polish/beginner-clarity-batch`) (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
-- [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
+- [x] **C** Copy (started 2026-10-02 20:48 UTC, Codex; done `692e8bb`, merged with this commit from `polish/beginner-clarity-batch`): preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 
 *From the live retest of `250b1b5` (2 October; LAUNCH_VERIFICATION §59)*
@@ -252,13 +252,18 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       ranked for this character, without naming the source as its archetype.
 
 *Sunday: check first, fix only if contained*
-- [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
+- [x] **C** FLOW-04 (started 2026-10-02 21:44 UTC, Codex; done `3dfafb9`, merged with this commit from `polish/beginner-clarity-batch`): a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
       this is a wrong route; raise it to High and move it to section 5 (launch bar).
-- [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
-- [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
+      Re-check: no direct link exists; the Master Index goes through Caldera. Fixed a
+      separate first-load reset of valid chamber links before carried indices were restored (LAUNCH_VERIFICATION §65).
+- [x] **C** FLOW-03 (started 2026-10-02 21:54 UTC, Codex; done `b26b6b7`, merged with this commit from `polish/beginner-clarity-batch`): both rival Great Houses can be joined in the Faction Journal.
+- [x] **C** F-12 (started 2026-10-02 21:59 UTC, Codex; done `d1bbad9`, merged with this commit from `polish/beginner-clarity-batch`) (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage"). Fix only if the save already carries the location and class name;
       otherwise it goes back after launch.
+      Recorded locations now display correctly; missing locations say Not recorded.
+      Saved class names already display correctly. Preset saves containing only an ID
+      have no class name to display; that remaining part moves to section 6 (LAUNCH_VERIFICATION §65).
 
 ### 5. QA findings (1 October): fix before the freeze
 
@@ -571,6 +576,10 @@ Low:
 - [x] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02; done `cc5e394`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
 
 From the signed-in QA (1 October):
+- [ ] **C** F-12, remaining preset class labels (Low; deferred under the section 4 scope):
+      an OpenMW save can carry only a class ID such as `mage`, without a class name.
+      Resolve those IDs against the correct world's catalog after launch; preserve
+      recorded class names and do not guess them from the currently selected world.
 - [x] F-6: no change (owner, 2 October: desired behaviour). Email sign-in reloads the page;
       the character and world survive it (QA-23 fixed).
 - [x] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body (started 2026-10-02 01:27 UTC, Codex, on polish/f-7; done `2ec4a78`, correction `5af5bba`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)

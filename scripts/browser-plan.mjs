@@ -35,29 +35,33 @@ const IGNORE = [
 const AREAS = [
   { area: 'Alchemy', match: /alchemy|ingredient|apparatus/i, runs: [
     run('tools', 'Alchemy'), run('qa', 'QA-06/'), run('qa', 'QA-20/Restore-Health'), run('qa', 'QA-30/'),
-    run('launch', 'UI-04'), run('launch', 'ingredient-labels'), run('polish', 'Polish Alchemy'), run('qa', 'QA-34/')] },
+    run('launch', 'UI-04'), run('launch', 'ingredient-labels'), run('polish', 'Polish Alchemy'), run('qa', 'QA-34/'),
+    run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-CALC4/')] },
   { area: 'Enchanting', match: /enchant/i, runs: [
     run('qa', '/enchanting/'), run('launch', 'FLOW-01'), run('polish', 'Polish Enchanting')] },
   { area: 'Spellmaking', match: /spellmak/i, runs: [run('tools', 'Tool inputs')] },
   { area: 'Travel', match: /travel/i, runs: [
     run('travel'), run('tools', 'Travel imported save'), run('qa', 'QA-07/'), run('qa', 'QA-16/'), run('qa', 'QA-25/'),
-    run('launch', 'UI-05'), run('launch', 'SUS-02/'), run('polish', 'Polish Travel'), run('touch', 'QA-18/saved-Travel', '--touch'), run('qa', 'QA-36/')] },
+    run('launch', 'UI-05'), run('launch', 'SUS-02/'), run('polish', 'Polish Travel'), run('touch', 'QA-18/saved-Travel', '--touch'), run('qa', 'QA-36/'),
+    run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-Copy/'), run('qa', 'Clarity-FLOW04/')] },
   { area: 'Level Simulator', match: /level-simulator|level-math|leveler|health/i, runs: [
     run('qa', '/level-health/'), run('qa', 'QA-27/'), run('qa', 'QA-28/'), run('launch', 'SS-09/'),
-    run('tools', 'Faction and Level interactions'), run('qa', 'QA-37/')] },
+    run('tools', 'Faction and Level interactions'), run('qa', 'QA-37/'), run('qa', 'Clarity-Beginner/')] },
   { area: 'Gear Advisor', match: /best-in-slot|gear-|equipment/i, runs: [
     run('qa', 'QA-08/'), run('qa', 'QA-10/'), run('qa', 'QA-26/'), run('qa', 'QA-33/'), run('qa', 'QA-35/'), run('qa', 'QA-39/')] },
-  { area: 'Builder and character', match: /character-builder|character-(context|name|math|sheet)|premade|configurator|class-|birthsign|race-/i, runs: [
-    run('qa', 'QA-05/'), run('qa', 'QA-09/'), run('qa', 'QA-12/'), run('qa', 'QA-29/'), run('touch', 'QA-18/tap-popover', '--touch'), run('qa', 'QA-35/')] },
+  { area: 'Builder and character', match: /character-builder|character-(context|name|math|sheet)|premade|configurator|choice-help|class-|birthsign|race-/i, runs: [
+    run('qa', 'QA-05/'), run('qa', 'QA-09/'), run('qa', 'QA-12/'), run('qa', 'QA-29/'), run('touch', 'QA-18/tap-popover', '--touch'), run('qa', 'QA-35/'),
+    run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-F04-F11/'), run('qa', 'Clarity-Copy/')] },
   { area: 'Faction Journal', match: /faction|journal/i, runs: [
     run('qa', 'QA-11/'), run('qa', 'QA-20/ranks'), run('launch', 'SS-08/'), run('launch', 'SS-10/'),
-    run('tools', 'Faction and Level interactions'), run('qa', 'QA-38/')] },
+    run('tools', 'Faction and Level interactions'), run('qa', 'QA-38/'), run('qa', 'Clarity-FLOW03/')] },
   { area: 'Challenge Runs', match: /challenge/i, runs: [run('launch', 'UI-03'), vault()] },
   { area: 'About', match: /about-view|seo-breadcrumbs/i, runs: [run('qa', 'QA-15/')] },
   { area: 'Search', match: /search/i, runs: [run('qa', 'QA-32/'), run('launch', 'SS-10/'), run('launch', 'ingredient-labels')] },
-  { area: 'Home', match: /home-hub|home-data/i, runs: [run('matrix'), run('hydration', 'QA-17/home'), run('qa', 'QA-35/')] },
+  { area: 'Home', match: /home-hub|home-data/i, runs: [run('matrix'), run('hydration', 'QA-17/home'), run('qa', 'QA-35/'), run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-Copy/')] },
   { area: 'Vault, account and settings', match: /character-vault|cloud-|account|settings|sign-?in|sign-?out|local-characters|confirmation-dialog|^cloudflare\//i, runs: [
-    run('qa', 'QA-31/'), run('settings'), vault()] },
+    run('qa', 'QA-31/'), run('settings'), run('qa', 'Clarity-Copy/'), vault()],
+    note: 'Vault/account changes also need npm run test:vault -- --clarity (F-11, F-17, F-12).' },
 ];
 
 const FULL_PLAN = [run('all'), run('qa'), run('launch'), run('hydration'), run('touch', '', '--touch'), vault()];

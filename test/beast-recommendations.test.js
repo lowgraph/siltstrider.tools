@@ -69,6 +69,9 @@ test('QA-10 catalog beast flags govern real kits and equipped transfers in every
   const l=await loader();const {raceDisplayName}=await import('../lib/character-catalogs.mjs');
   for(const profile of ['vanilla','tr','tr_arce']) {
     const data=await l.loadFeature(profile,'bestInSlot'),races=await l.loadCatalog(profile,'Races');
+    const bearclaw=Object.values(data.metadata.BestInSlot.items).find(i=>i.name==='Helm of Oreyn Bearclaw');
+    assert.ok(bearclaw, 'The open-helmet example exists in this world');
+    assert.equal(bearclaw.beastWearable,true,'The named open helmet remains eligible');
     for(const key of ['argonian','khajiit',...(profile==='tr_arce'?['t_els_cathay-raht','t_bkm_naga','t_els_suthay']:[])]) {
       const source=races.find(r=>r.key===key);assert.ok(source);
       const build={name:'Altmer Atronach Spellweaver',race:raceDisplayName(source),maj:['Long Blade'],min:['Heavy Armor']};

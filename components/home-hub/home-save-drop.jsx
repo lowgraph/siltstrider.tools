@@ -93,7 +93,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
           Every tool now works with this character.
           {issues > 0 && ` ${issues} thing${issues === 1 ? "" : "s"} from the save's mods could not be matched; the Character Builder lists them.`}
         </div>
-        <CompatibilityNotice />
+        <CompatibilityNotice onConfigure={() => onNavigate("builder")} />
         <div className="home-save-actions">
           <button type="button" className="mw-btn home-cta home-cta--primary" onClick={() => onNavigate("builder")}>Open the character</button>
           <button type="button" className="mw-btn home-cta" onClick={() => onNavigate("leveler")}>Plan level-ups</button>
@@ -131,6 +131,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
       <span className="home-save-hint">
         <kbd>.omwsave</kbd> files are in <span>Documents › My Games › OpenMW › saves</span> on Windows
       </span>
+      <p className="phone-save-help home-step-note">On a phone, copy your .omwsave from the device running OpenMW to a folder you can open in Files, such as Downloads. Then choose that file here.</p>
       <div className="home-step-row">
         <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!enabled || Boolean(busy)} onClick={() => input.current?.click()}>
           Choose a save file

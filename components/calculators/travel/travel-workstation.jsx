@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { cheapestTradeoff } from "../../../lib/travel-tradeoff.mjs";
+import { routeGoldBalance } from "../../../lib/travel-budget.mjs";
 import { realTimeText, formatRealDuration } from "../../../lib/travel-real-time.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
@@ -327,7 +328,8 @@ export default function TravelWorkstation() {
   }, [saveOrigin, activeSave, startedFrom]);
 
   const labelOf = useCallback((id) => {
-    if (!isPlace(id)) return transitNetwork.stops.get(id)?.label || id;
+    if (!isPlace(id)) return transitNetwork.stops.get(id)?.label
+      || (typeof id === 'string' && id.startsWith('stop:interior:') ? places.get(id.slice(5))?.name : null) || id;
     const key = id.slice(PLACE_PREFIX.length);
     const record = places.get(key);
     if (record?.name) return record.name;
@@ -381,9 +383,13 @@ export default function TravelWorkstation() {
 
   // Ensure selected stops exist in current world; a chosen place stays while the world has it.
   useEffect(() => {
-    if (!linkRead) return;
+    if (!linkRead || gameData.status !== 'ready') return;
     if (availableStops.length > 0) {
-      const known = (id) => transitNetwork.cities.has(id) || availableStops.includes(id) || (isPlace(id) && places.has(id.slice(PLACE_PREFIX.length)));
+      // A published room remains a valid boundary when its index/quest is not usable
+      // yet. Report No Route rather than silently planning a trip between other towns.
+      const known = (id) => transitNetwork.cities.has(id) || availableStops.includes(id)
+        || (isPlace(id) && places.has(id.slice(PLACE_PREFIX.length)))
+        || (typeof id === 'string' && id.startsWith('stop:interior:') && places.has(id.slice(5)));
       const resolvedOrigin = resolveTransitEndpoint(origin, transitNetwork);
       const resolvedDestination = resolveTransitEndpoint(destination, transitNetwork);
       if (resolvedOrigin !== origin) setOrigin(resolvedOrigin);
@@ -396,7 +402,7 @@ export default function TravelWorkstation() {
         setDestination(transitNetwork.stops.get(fallback)?.town || fallback);
       }
     }
-  }, [world, availableStops, origin, destination, places, transitNetwork, linkRead]);
+  }, [world, availableStops, origin, destination, places, transitNetwork, linkRead, gameData.status]);
 
   const handleOriginChange = id => setOrigin(resolveTransitEndpoint(id, transitNetwork));
   const handleDestinationChange = id => setDestination(resolveTransitEndpoint(id, transitNetwork));
@@ -538,6 +544,7 @@ export default function TravelWorkstation() {
     return null;
   }, [liveNetworkGraph]);
 
+  const goldBalance = routeGoldBalance(route, activeSave?.save?.vitals?.gold);
   // Service color helper (gold / wood / dark themes, NO rainbows)
   const getServiceBadge = (kind) => {
     switch (kind) {
@@ -607,6 +614,13 @@ export default function TravelWorkstation() {
       </div>
 
       <section aria-label="Plan a journey" className="space-y-3">
+        <p className="travel-beginner-help text-xs text-fg-7">
+          A leg is one ride, spell or movement step. Fewest legs uses the fewest steps;
+          Cheapest compares fares; Fastest compares in-game time; Least real time compares
+          estimated outdoor movement and breaks ties with transport or spell transitions.
+          Guild Guides teleport between Mages Guild halls. Intervention spells take you to a
+          shrine or temple; Recall returns to your Mark. Enable only spells and items you have.
+        </p>
         <p id="travel-network-status" role={gameData.status === "error" ? "alert" : "status"} className="m-0 text-xs text-fg-9">
           Network: {isTr ? profile === "tr_arce" ? "Tamriel Rebuilt + ARCE" : "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"} · {gameData.status === "ready"
             ? `${availableStops.length} routing ${availableStops.length === 1 ? "stop" : "stops"}`
@@ -832,11 +846,24 @@ export default function TravelWorkstation() {
             )
           ) : (
             <div className="p-4 text-center text-sm font-serif text-danger-7 bg-danger-surface-2 border border-danger-line-3">
-              {gameData.status === 'error' ? "Travel network unavailable. Use Retry above to load it again." : route.message || "No fast-travel route found between these locations."}
+              {gameData.status === 'error' ? "Travel network unavailable. Use Retry above to load it again." : <>
+                {route.message || "No fast-travel route found between these locations."}
+                <p className="travel-no-route-help mt-2 mb-0 text-xs">
+                  Try a nearby town or a named transport stop, and check that the selected world matches your game.
+                  Open Your character &amp; route options to check Guild membership, spells and remaining item uses.
+                  {!walking && ' Enable walking to connect places without direct transport.'}
+                  {walking && ' If walking is on, check carried weight and movement restrictions; some destinations may still be unreachable.'}
+                </p>
+              </>}
             </div>
           )}
         </div>
 
+        {goldBalance && <p className="travel-gold-balance text-xs text-fg-7 m-0">
+          {goldBalance.remaining >= 0
+            ? `After this route: ${goldBalance.remaining} gold remaining from your save’s balance.`
+            : `You need ${-goldBalance.remaining} more gold for this route.`}
+        </p>}
         {route.isValid && route.totals?.goldKnown && Number.isFinite(activeSave?.save?.vitals?.gold)
           && route.totals.gold > activeSave.save.vitals.gold && (
           <p role="alert" className="text-[11px] text-warning-2 font-serif m-0">
@@ -1023,6 +1050,11 @@ export default function TravelWorkstation() {
 
       <details className="p-3 bg-surface-5 border border-line-11 space-y-2">
         <summary className="min-h-11 text-xs font-serif font-bold text-fg-7 cursor-pointer">Quick starting places</summary>
+        <p className="travel-position-help text-xs text-fg-7">
+          Your save’s current position is where the character was standing, not the nearest Silt Strider stop.
+          A town starts or ends the journey at a suitable arrival point; select a named stop or building
+          to include movement to that specific place.
+        </p>
         <div className="flex flex-wrap items-center gap-2">
           {saveOrigin && (
             <button

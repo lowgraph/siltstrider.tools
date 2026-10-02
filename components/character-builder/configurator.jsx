@@ -3,6 +3,7 @@ import { useMemo, useEffect, useState, useId, useRef, useLayoutEffect } from "re
 import { createPortal } from "react-dom";
 import { ATTRS, ATTR_TIP, SKILL_GOV, ATTR_ABBR } from "../../lib/character-math.mjs";
 import SkillAttributeSummary from "./skill-picker/skill-attribute-summary";
+import { choiceHelp } from "../../lib/choice-help.mjs";
 
 function InfoTip({ text }) {
   const [open, setOpen] = useState(false);
@@ -197,7 +198,7 @@ export default function Configurator({
         <div>
           <label htmlFor="builder-race" className="block text-sm font-serif font-bold text-accent mb-2">
             <span>Race</span>
-            <InfoTip text={activeRace?.tip || "Each race provides distinct attribute ratings, skill bonuses, and unique innate spells or powers."} />
+            <InfoTip text={choiceHelp('race', activeRace, build.gender)} />
           </label>
           <select id="builder-race"
             className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
@@ -260,7 +261,7 @@ export default function Configurator({
         <div>
           <label htmlFor="builder-sign" className="flex items-center justify-between text-sm font-serif font-bold text-accent mb-2">
             <span>Birthsign</span>
-            {activeSign?.tip && <InfoTip text={activeSign.tip} />}
+            <InfoTip text={choiceHelp('sign', activeSign)} />
           </label>
           <select id="builder-sign"
             className="mw-select w-full h-10 px-3 py-2 text-sm focus:outline-none"
@@ -353,9 +354,10 @@ export default function Configurator({
 
       {/* Preset Class Customization Quick-Action Banner */}
       {build.className !== "Custom" && (
-        <div className="flex items-center justify-between p-2.5 bg-surface-5 border border-line-9 text-xs">
+        <div className="preset-custom-help flex flex-wrap items-center justify-between gap-2 p-2.5 bg-surface-5 border border-line-9 text-xs">
           <span className="text-fg-7">
-            Preset Class: <strong className="text-fg-2">{build.className}</strong> (Locked)
+            Preset Class: <strong className="text-fg-2">{build.className}</strong>. Specialization, favored attributes and skills use this preset.
+            Customize Skills switches to Custom Class, keeping your current choices so you can edit them.
           </span>
           <button
             type="button"

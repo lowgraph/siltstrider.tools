@@ -92,6 +92,9 @@ test('account preferences hydrate without writes, apply world/theme/tools and ne
   assert.equal(ui.observe().preferences.revision, 1);
   assert.equal(ui.calls.filter(call => call.method === 'PUT').length, 0);
   assert.ok(document.querySelector('#settings-heading'));
+  const version=[...document.querySelectorAll('label')].find(el=>el.textContent.startsWith('Mod version')).querySelector('select');
+  assert.equal(version.disabled,true);assert.equal(version.textContent,'Not available yet');
+  assert.match(document.querySelector('.account-settings-panel').textContent,/Tools currently use the published dataset/);
   assert.equal(errors.length, 0, 'no hydration or React warnings');
 });
 

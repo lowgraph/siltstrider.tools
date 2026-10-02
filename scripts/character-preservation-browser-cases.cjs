@@ -34,8 +34,10 @@ module.exports = async c => {
         await c.until(c.card(build.name));
         // Move focus to the control before scrolling the nested dialog body;
         // this also exercises the modal's keyboard focus boundary.
-        await c.until(`document.querySelector('[role="dialog"] .vault-card button[title="Load this build into Character Builder"]')?.disabled===false`);
-        await c.evaluate(`document.querySelector('[role="dialog"] .vault-card button[title="Load this build into Character Builder"]').focus()`);
+        // Opening refreshes a prefetched list. Check and focus the same node,
+        // then verify it survives paint; separate CDP reads can span that refresh.
+        const focused = await c.evaluate(`(async()=>{const deadline=performance.now()+5000;while(performance.now()<deadline){const b=document.querySelector('[role="dialog"] .vault-card button[title="Load this build into Character Builder"]');if(b&&!b.disabled){b.focus();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));if(b.isConnected&&!b.disabled&&document.activeElement===b)return true;}await new Promise(r=>setTimeout(r,50));}return false;})()`);
+        assert.equal(focused,true,'The enabled modal load control holds focus after refresh');
         await c.pause(150);
         await c.click('[role="dialog"] .vault-card button[title="Load this build into Character Builder"]');
         await c.until(`document.querySelector('#builder-race')?.value===${JSON.stringify(build.race)}&&document.querySelector('.character-sheet h3')`);

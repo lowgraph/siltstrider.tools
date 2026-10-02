@@ -126,20 +126,24 @@ test("HOME_TOOLS descriptions are enriched, complete, and contain no undefined p
   assert.match(builder.description, /early-game gear and late-game equipment/);
   
   const leveler = tools.find(t => t.view === "leveler");
-  assert.match(leveler.description, /Efficient leveling progression/);
-  assert.match(leveler.description, /×5 attribute multipliers/);
+  assert.match(leveler.description, /train.*attributes/);
+  assert.match(leveler.description, /Endurance.*Health/);
+  assert.match(leveler.description, /skill increases limit/);
   
   const alchemy = tools.find(t => t.view === "alchemy");
-  assert.match(alchemy.description, /mortar, alembic, calcinator, retort/);
+  assert.match(alchemy.description, /ingredients.*effect/);
+  assert.match(alchemy.description, /strength, duration and brewing chance/);
+  assert.match(alchemy.description, /follow the OpenMW 0\.51 source/);
   
   const travel = tools.find(t => t.view === "travel");
   assert.match(travel.description, /river strider and Guild Guide/);
   
   const enchanting = tools.find(t => t.view === "enchanting");
-  assert.match(enchanting.description, /constant effect enchantment costs/);
+  assert.match(enchanting.description, /soul gem, item and magical effects/);
+  assert.match(enchanting.description, /enchantment cost.*chance/);
   
   const spellmaking = tools.find(t => t.view === "spellmaking");
-  assert.match(spellmaking.description, /six schools of magic/);
+  assert.match(spellmaking.description, /Magicka cost.*chance.*gold price/);
   
   const factions = tools.find(t => t.view === "factions");
   assert.match(factions.description, /Great House memberships/);

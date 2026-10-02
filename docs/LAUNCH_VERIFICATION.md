@@ -3028,3 +3028,296 @@ The checklist marks all seven items merged with this commit. COORDINATION and
 UI_TRANSFORMATION remain byte-identical in both repositories. No migration,
 dataset rebuild, production write or deployment; production's existing release
 and rollback records are unchanged.
+
+## 65. Beginner clarity and copy batch — 2 October 2026
+
+Branch `polish/beginner-clarity-batch`, from freshly fetched main `d3e33ea`.
+The owner requested one branch, seven ordered item commits with relevant tests
+only between items, then full merge preparation. The owner subsequently added FLOW-04, FLOW-03 and
+F-12 after Copy, deferring the full suites until those are complete.
+No data rebuild, schema, migration or production changes.
+
+### Beginner clarity
+
+| Finding | What the player now sees |
+|---|---|
+| U01 / U02 / F09 | Start with Builder; choose installed content; Vanilla is the unsure/new-player choice; ARCE is All Races and Classes Enabled. |
+| U03 | The unsupported `.ess` notice explains manual entry, with a Builder button beside save-opening flows. |
+| U05 | Configure help puts loaded race attributes for the selected sex, skill bonuses and birthsign bonuses/powers before lore. Missing facts get a generic explanation, not invented numbers. |
+| U06 / U08 | Sheet numbers explain included bonuses and vitals; a game-entry checklist carries the chosen race, class, specialization, favored attributes, skills and birthsign. It says the site does not edit the game or save. |
+| U10–U13 | Home names the Gear Advisor path; its guide distinguishes one wearable kit from alternatives, plan transfer from in-game acquisition, purchase/find/theft, and absent/capped evidence. |
+| U14 | Import differences explain site fallbacks, extra mods, selected world and possible changed results, while the original save file is untouched. |
+| U16 / U17 / U19 | Current save position differs from a named stop; legs/objectives/spells are defined; No Route offers world, stop, options and movement checks, including enabling walking when it is off. |
+| U21 / U22 | Alchemy defines tools, quality, magnitude and duration, and explains recovery from no shared effect, zero chance and zero-strength output. Apparatus does not change brew chance. |
+| U24 / U25 / U27 | Leveling explains the ten class-skill increases, Miscellaneous skills, +5 attribute points, step order, Endurance and the practical skill-cap difference between views. |
+
+163 relevant unit tests passed, including six new cases for frozen catalog facts,
+sex-specific help, no-bonus/missing/nonnumeric records, actual game-entry choices,
+manual navigation and save differences. The 60 new Chrome guidance cases pass
+across all worlds, both themes and 1366/375 px. Initial Home wording differed in
+capitalization from the retained first-step check; its existing wording is kept.
+One initial Builder axe audit sampled still-loading disabled gear controls; the
+runner now waits for both gear tables and the complete 12-case rerun passes.
+Screenshots of phone Home and No Route recovery reviewed. Evidence:
+`A:/Cache/clarity-batch/beginner-unit-final.log`, `beginner-home`,
+`beginner-builder-final`, `beginner-travel`, `beginner-alchemy`, `beginner-leveler`.
+The retained 12 identity and 30 phone/desktop popover cases also passed:
+102 complete browser cases accepted, zero runtime/server errors.
+
+
+### F04 / F11 — separate premade collections
+
+By Race now names its separate race-themed collection and reports shown/total
+counts, including ARCE entries only in TR + ARCE. By Playstyle retains its own
+41 builds; switching to By Race changes the first-visit hint to “Pick a race”.
+No builds, selection behavior or ordering changed.
+
+36 relevant unit tests passed, including three world-specific collection cases.
+12 new Chrome collection cases passed across all worlds, both themes and
+1366/375 px, including an empty search and switching back to By Playstyle.
+The retained QA-12 explanation cases (12) and QA-29 phone grouping cases (18)
+also passed: 42 complete cases, zero runtime/server errors. Evidence:
+`A:/Cache/clarity-batch/collections-unit.log`, `collections`,
+`collections-explanations` and `collections-phone`.
+
+
+### CALC-4 note — pairs and world changes
+
+The finder explains its two-ingredient limit, adding a third/fourth ingredient
+in the calculator, and deliberate recipe clearing on a world switch. It also
+states the narrower typed-stat behavior: values remain while the page is open,
+until Reset to character sheet. No recipe or persistence logic changed.
+
+30 relevant Alchemy/stat/claim unit tests passed. 12 new Chrome cases passed
+across all worlds, both themes and 1366/375 px: choose Restore Health, use a pair,
+type Alchemy 60, switch worlds without reloading, check empty effect/ingredient
+choices and retained 60, then reset to the sheet. Scoped axe/overflow checks pass,
+with zero runtime/server errors; phone screenshot reviewed. Evidence:
+`A:/Cache/clarity-batch/calc4-unit.log` and `calc4/`.
+
+
+### Gear note — open helmets for beast races
+
+Both Early game and Optimized endgame kit notes name the closed-helmet/boot
+exclusion and explicitly keep compatible open helmets, with Helm of Oreyn
+Bearclaw as the example. Body-part eligibility, scoring and picks are unchanged.
+The staged BestInSlot metadata marks that named helmet wearable in every world.
+
+64 relevant gear unit tests passed. 20 retained QA-10 Chrome cases passed across
+both themes and 1366/375 px: Argonian in Vanilla/TR, Khajiit, ARCE Cathay-raht and
+High Elf as a non-beast control. They check both notes (absent for the control),
+both weapon setups, all runner-ups and equipped transfers. Zero runtime/server
+errors. Evidence: `A:/Cache/clarity-batch/gear-unit.log`, `gear-argonian`,
+`gear-khajiit`, `gear-arce` and `gear-control`.
+
+
+### F-11 — required username for profile icons
+
+Account help explicitly requires a username to save the profile, including its
+icon. Profile validation and account/preference behavior are unchanged.
+
+22 relevant account/profile/preference unit tests passed, with empty, invalid
+and valid username cases. Initial component stubs had incorrect default exports
+and unstable mock profile identity; those test fixtures are corrected. Four
+signed-in local Worker Chrome cases passed in both themes at 1366/375 px: choose
+an icon with an empty username, confirm native required-field blocking and an
+unchanged API profile, enter a valid username, save and read back icon 4. The
+initial browser assertion expected null instead of the API's empty string;
+the final cases compare the whole profile before/after the blocked save.
+Scoped axe/overflow checks pass; zero runtime/server errors; phone screenshot
+reviewed. Only `user_qa_clarity` was used, with its local saves, settings, profile
+and tier removed after every case. Evidence:
+`A:/Cache/clarity-batch/profile-unit-final.log` and `profile-browser-final/`.
+
+
+### F-17 — unavailable versions and rename limit
+
+Disabled Mod version selection now says “Not available yet”, with a note that
+tools currently consume the published dataset. Vault rename accepts 120
+characters, matching the unchanged API and database limit.
+
+55 relevant settings/Vault/API unit tests passed, including 100/101/120-character
+rename cases with revision preservation. The initial invocation omitted the
+repository's `--experimental-sqlite` flag; its corrected rerun passes. Four local
+signed-in Chrome cases pass in both themes at 1366/375 px: unavailable selection,
+native typing limited to 120, successful stored rename, explicit API rejection
+at 121 and the stored name unchanged after rejection. Scoped axe/overflow checks
+pass; zero runtime/server errors; phone screenshot reviewed. The same disposable
+`user_qa_clarity` records are removed after every case. Evidence:
+`A:/Cache/clarity-batch/f17-unit-final.log` and `f17-browser/`.
+
+
+### Copy — U07 / U09 / U15 / U18 / U29
+
+Preset help explains switching to Custom while keeping current choices. Clear
+search restores the selected premade collection and focuses its input without
+loading a character. Save help defines content files as game/expansion/mod files
+and explains copying an OpenMW save to a phone-accessible folder. Travel shows
+remaining saved gold or the shortfall only when both balance and fare are known;
+fare calculation and affordability warnings are unchanged. Home's descriptions
+use plainer words, retaining the OpenMW 0.51 calculation-source claim.
+
+95 relevant unit tests passed, including four balance boundaries, invalid/unknown
+money, collection clearing in three worlds and full/compact content-file notices.
+48 new Chrome cases passed across all worlds, both themes and 1366/375 px:
+preset-to-custom choice preservation, clear-search focus, Home wording, Vault
+content-file/phone help and saved-gold captions compared with the route's displayed
+fare. The initial Travel test looked for Vault-only content help; that check now
+runs on Vault. Its first fare parser also lost a regex escape; the final smaller
+world groups use explicit numeric matching. Only complete passing reports are
+accepted; zero runtime/server errors; scoped axe/overflow checks and phone Travel
+screenshot reviewed. Evidence: `A:/Cache/clarity-batch/copy-unit.log`, `copy-builder`,
+`copy-home`, `copy-vault-final` and `copy-travel-{vanilla,tr,tr_arce}`.
+
+
+### FLOW-04 — Propylon re-check and chamber-link preservation
+
+No published profile directly connects Rotheran to Andasreth. Ordinary Andasreth
+Index (`index_andra`, `warp_andra|1`) works from Berandas/Hlormaren; Rotheran's
+ordinary branches lead to Indoranyon/Valenvaryon. The Master Index diverts through
+Caldera and Folms Mirel to Andasreth. Carrying one ordinary index does not imply
+an arbitrary direct Propylon journey, so the report's direct-link condition is
+not met and no direct edge is invented.
+
+A separate wrong-endpoint failure was reproduced: on first load with a saved
+index, valid chamber links could be replaced with fallback towns before carried
+items were restored. `TravelWorkstation`'s selected-stop validation now waits for
+ready catalogs and recognizes published interior cells even while their teleport
+is unavailable. Such a link remains selected with No Route rather than becoming
+a different trip. Its label uses the published room name. Teleport eligibility,
+connections and route scoring are unchanged.
+
+88 relevant Travel tests passed. Before the fix, the controlled save-late and
+index-absent chamber tests failed; catalog-late is also retained. Twelve staged
+cases cover missing/wrong indices, direct neighboring chambers and Master
+Index diversion across all worlds. Twelve Chrome cases pass across all worlds,
+both themes and 1366/375 px: loaded ordinary index gives one Berandas → Andasreth
+leg; loaded Master Index gives two Rotheran → Caldera → Andasreth legs. Zero
+runtime/server errors; scoped axe/overflow checks pass. The initial aggregate
+browser report timed out after reproducing the endpoint reset; it is excluded.
+Evidence: `A:/Cache/clarity-batch/flow04-before.log`, `flow04-unit-final.log` and
+`flow04-{vanilla,tr,tr_arce}-final/`.
+
+
+### FLOW-03 — enforce existing faction exclusions
+
+The Journal warned about a rival but its Join action unconditionally appended a
+membership. `toggleMembership` and `updateMembership` now enforce the existing
+`getMutualExclusionConflict` rules for new joins. The button is disabled with an
+associated explanation naming the current faction. Leaving remains available;
+compatible guilds coexist; an expelled membership still counts; ordinary
+unjoined mentions do not. Existing conflicting imported memberships are retained
+and remain editable/removable, rather than silently rewriting the save.
+
+This applies the existing Hlaalu/Redoran/Telvanni and vampire-clan groups; it does
+not infer additional TR quest or membership rules from faction names alone.
+53 relevant faction/import tests passed, including each Great House against both
+rivals, direct rank-update bypasses, case-insensitive keys, blank keys, malformed
+mentions, leaving, unrelated guilds and conflicting imported saves. Twelve Chrome
+cases pass across all worlds, both themes and 1366/375 px: Hlaalu blocks Redoran
+and Telvanni; leaving allows Redoran; Mages Guild remains compatible; Hlaalu then
+shows Redoran as its conflict. Scoped axe/overflow checks pass; zero runtime/server
+errors; phone screenshot reviewed. Evidence:
+`A:/Cache/clarity-batch/flow03-unit.log` and `flow03-{vanilla,tr,tr_arce}/`.
+
+
+### F-12 — recorded Vault locations; preset class labels deferred
+
+The API and cloud-save codec provide `cell`, but CloudVaultCard read only
+`cell_name` and substituted Vvardenfell. Cards now use the recorded API location,
+retain the legacy alias and say Not recorded for missing or malformed locations.
+Recorded class names already render correctly. Preset OpenMW saves can contain
+only a class ID (`mage`) and no name: that remaining catalog-resolution work
+moves after launch under section 4's explicit condition, rather than inventing
+a name or loading more data in this bounded fix.
+
+52 relevant Vault/codec/API tests passed. All four new tests failed before the
+fix; they cover three actual codec/API location records and API/legacy precedence,
+empty, null, whitespace and malformed values. Four signed-in local Worker Chrome
+cases pass in both themes at 1366/375 px: recorded Old Ebonheart and a saved custom
+class name display, and a build with no location says Not recorded. The API
+metadata is retained; scoped axe/overflow checks pass; zero runtime/server errors;
+phone screenshot reviewed. Only `user_qa_clarity` was used and its disposable
+records were removed after every case. Evidence:
+`A:/Cache/clarity-batch/f12-before.log`, `f12-unit.log` and `f12-browser/`.
+
+
+### Full preparation after all ten items
+
+Ordered item commits: Beginner clarity `c1f6b25`, F04/F11 `69647b1`, CALC-4 note
+`f66816b`, Gear note `833aedb`, F-11 `622b09e`, F-17 `213fa59`, Copy `692e8bb`,
+FLOW-04 `3dfafb9`, FLOW-03 `b26b6b7` and F-12 `d1bbad9`. The completed application
+was checked at `d1bbad9` with staged bundle `a29adea046e6086c2c7ee654`; the final
+preparation changes only documentation, runner readiness/captures and tests.
+Repository build configuration and published data are unchanged.
+
+| Check | Result |
+|---|---|
+| Site `npm test -- --test-concurrency=4` | 1,270 passed; zero failed, skipped or TODO. Repeated after the final runner edits. |
+| Cache-isolated pipeline synthetic tests | 685 passed; no uncaught warnings. Pipeline source is unchanged. |
+| `npm run build:cloudflare` | Passed; 24 static pages. |
+| General browser matrix and tools | 203 passed across all worlds, including every route, calculators, Builder, Travel, Journal, Simulator and settings. |
+| QA regressions | 598 passed: 442 retained cases plus 156 new public batch cases. Both themes and 1366/375 px; retained phone checks also cover 390 px. |
+| Launch polish | 68 passed. |
+| First-navigation hydration | 432 passed across all 15 real routes, both themes and widths, fresh/stored-world/save/build-link/challenge-link states. Home and Builder retain ten fresh repetitions per width/theme. |
+| Real mobile touch | 31 passed, including all 20 saved-Travel repetitions, plus 30 touch-popover regressions. Device capability assertions pass before interactions. |
+| Signed-in local Worker/Vault | 78 passed: base, launch, character/world preservation, sign-out, sharing and twelve new F-11/F-17/F-12 cases. Synthetic identities and disposable databases only. |
+
+Total: 1,440 passing case executions in complete accepted Chrome reports, all
+with zero runtime/server errors. Reports retain commit/bundle metadata, screenshots,
+loaded fonts, overflow and scoped axe checks where supported. The final F-12 phone
+capture centers the changed card and visibly shows Old Ebonheart, the recorded
+class name and Not recorded for a missing location.
+
+The first full unit pass found a stale Home-description assertion. Its required
+feature coverage now follows the plainer copy, retaining all nine tools, description
+bounds and the OpenMW 0.51 source claim. The browser planner maps the new case
+groups and lists the additional `test:vault -- --clarity` mode.
+
+One initial local character-preservation report had three modal focus failures:
+opening the dialog refreshes its prefetched list, so the runner's separate ready
+and focus reads could span a loading replacement. The runner now checks and
+focuses the same enabled node and verifies it survives paint. The complete
+sixteen-case rerun passes; the failed report is excluded. No application patch
+was needed for that runner race; every other full group completed within its bound.
+
+The strict missing-page report separately records 24 intended HTTP 404 console
+errors with no other errors, hydration warnings or exceptions, under the checklist's
+explicit exemption. Its raw report is not called green. The CDP touchscreen-laptop
+control separately fails its capability assertion (touch=5, fine=false, coarse=true);
+a physical touch-plus-fine-pointer check remains for the owner's freeze acceptance.
+Neither report is included in the 1,440 passing cases. F-12's ID-only preset class
+labels remain explicitly after launch, as recorded above.
+
+Evidence: `A:/Cache/clarity-batch/full-browser/`, `acceptance-summary.json`,
+`unit-final.log`, `pipeline-full.log`, `build-full.log` and `synthetic-cleanup.json`.
+All thirteen disposable local databases contain zero saves, settings, profiles
+or tiers after removing only the known synthetic users. Test servers are closed
+after verification; cache evidence is retained and temporary helper scripts removed.
+COORDINATION and UI_TRANSFORMATION are byte-identical across repositories;
+pipeline changes are a docs-only `handoff/beginner-clarity-batch` branch.
+Freshly fetched site main remains `d3e33ea` and pipeline master `d4867b3`;
+the site merge-tree preview is conflict-free. Prepared branches only: no merge,
+push, production write, data rebuild, migration or deployment.
+
+## 66. Beginner clarity batch main integration — 2 October 2026
+
+The owner authorized merging and pushing the prepared batch. Freshly fetched
+site main remains `d3e33ea` and pipeline master `d4867b3`. Non-fast-forward merges
+integrate site `polish/beginner-clarity-batch` (`133b7ef`) and pipeline's docs-only
+`handoff/beginner-clarity-batch` (`a601a8a`) without conflicts. The checklist marks
+the ten bounded items merged; F-12's ID-only preset labels remain after launch.
+
+The merged application, data, configuration and runners match the fully verified
+branch; integration changes only completion/coordination records. Merged-checkout
+unit verification: 1,270 site tests and 685 pipeline tests passed, with zero
+failures. Evidence is recorded in `A:/Cache/clarity-batch/unit-merged.log` and
+`pipeline-merged.log`. The unchanged application retains §65's successful
+24-page Cloudflare build and 1,440 accepted Chrome case executions, with the
+expected-404 report and physical touchscreen-laptop check recorded separately.
+No failed or incomplete report is accepted.
+
+COORDINATION and UI_TRANSFORMATION remain byte-identical across repositories.
+Only the task's verified dev server was closed. Disposable local data is cleared;
+cache evidence remains. No production write, dataset rebuild, migration or
+deployment; production and rollback records are unchanged.

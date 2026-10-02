@@ -21,14 +21,18 @@ function StartStep({ ready, onNavigate }) {
         <div className="home-step-title mw-caption">Start a character</div>
       </div>
       <div className="home-step-note">
-        Pick one of {BUILDS.length} premade builds or make your own class. Every tool works with it, and no account is
+        New to Morrowind? Start here: Pick one of {BUILDS.length} premade builds or make your own class. Every tool works with it, and no account is
         needed.
       </div>
       <div className="home-step-row">
         <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!ready} onClick={() => onNavigate("builder")}>
           Open the Character Builder
         </button>
+        <button type="button" className="mw-btn home-cta" disabled={!ready} onClick={() => onNavigate("builder")}>
+          Find gear in the Builder
+        </button>
       </div>
+      <p className="home-step-note">Choose a character, then use Early gear for this build to open the Gear Advisor.</p>
     </div>
   );
 }
@@ -160,7 +164,7 @@ export default function HomeHero({
             ready={ready}
           />
         </div>
-        {!save?.activeSave && <CompatibilityNotice />}
+        {!save?.activeSave && <CompatibilityNotice onConfigure={() => onNavigate("builder")} />}
         <HomeWorlds profile={profile} ready={ready} onSelect={onSelectWorld} />
       </div>
       <CharacterCard

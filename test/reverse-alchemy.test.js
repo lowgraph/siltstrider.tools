@@ -74,6 +74,8 @@ test('finder searches effects, shows harmful extras, fills a pair and clears its
   try {
     await React.act(async () => root.render(React.createElement(Finder, { ingredients: data, onUsePair: pair => selected.push(pair) })));
     const input = document.getElementById('reverse-alchemy-search');
+    assert.equal(input.getAttribute('aria-describedby'), 'reverse-alchemy-help');
+    assert.match(document.getElementById('reverse-alchemy-help').textContent, /two-ingredient pairs only.*three or four.*Changing worlds clears.*typed Alchemy/s);
     await React.act(async () => {
       Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set.call(input, 'RESTORE');
       input.dispatchEvent(new window.Event('input', { bubbles: true }));

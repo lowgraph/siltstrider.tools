@@ -20,7 +20,7 @@ export default function ReverseAlchemy({ ingredients, onUsePair, sources = { sta
 
   return <section aria-labelledby="reverse-alchemy-heading" className="reverse-alchemy bg-surface-5 border border-line-11 p-3 space-y-3">
     <h3 id="reverse-alchemy-heading" className="text-sm font-serif font-bold text-accent m-0">Find ingredients by effect</h3>
-    <p id="reverse-alchemy-help" className="text-xs text-fg-7 m-0">Choose up to four effects. Find ingredient pairs that make all of them, then use a pair in the calculator.</p>
+    <p id="reverse-alchemy-help" className="text-xs text-fg-7 m-0">Choose up to four effects. This finder suggests two-ingredient pairs only. For recipes with three or four ingredients, add the extra ingredients in the calculator. Changing worlds clears the chosen effects and ingredients. Your typed Alchemy, Intelligence and Luck values stay until Reset to character sheet while this page is open.</p>
     <label htmlFor="reverse-alchemy-search" className="block text-xs font-serif text-fg-7">Search potion effects</label>
     <input ref={search} id="reverse-alchemy-search" type="search" autoComplete="off" value={query}
       onChange={event => setQuery(event.target.value)} aria-describedby="reverse-alchemy-help" aria-controls="reverse-alchemy-effects"

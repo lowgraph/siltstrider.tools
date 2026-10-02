@@ -10,6 +10,11 @@ export default function HomeWorlds({ profile, ready, onSelect }) {
   return (
     <div className="home-worlds" role="group" aria-labelledby="home-worlds-label">
       <span className="home-kicker" id="home-worlds-label">Your Morrowind</span>
+      <p className="home-world-help text-sm text-fg-7">
+        Pick the content installed in your game. Use Vanilla for Morrowind with its official expansions,
+        Tamriel Rebuilt for the mainland mod, and TR + ARCE only if you also use All Races and Classes Enabled,
+        which adds playable races and classes. Not sure? Start with Vanilla; a loaded save selects its matching world.
+      </p>
       <div className="home-world-options">
         {WORLD_PROFILES.map(world => (
           <button
