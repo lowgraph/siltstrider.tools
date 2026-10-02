@@ -2256,7 +2256,7 @@ and the Vault (20 page/theme/width combinations). 29 focused cases.
 | QA-07 | Pass | "Ald'ruhn", "Ald-ruhn" and "Aldruhn" find Ald-ruhn; Vos, Sadrith Mora, Ebonheart, Mournhold found; stale route replaced by a prompt |
 | QA-08 | Pass | Where/Acquisition text intact at 375 and 390 px |
 | QA-09 | Pass | All five Configure popovers on screen at 375 px and dismissible |
-| QA-10 | Re-check | No boots for beast races; the optimized kit offered Helm of Oreyn Bearclaw to a Vanilla Argonian, which the catalog may correctly mark wearable (checklist "QA-10 re-check") |
+| QA-10 | Pass | No boots or closed helmets for beast races. The reported Helm of Oreyn Bearclaw in a Vanilla Argonian's kit is an open helmet beast races can wear (owner check against UESP and the game files): not a bug |
 | QA-11 | Pass | 91 + 91 relation panels, no codes, no "<Deprecated>" |
 | QA-12 | Pass | 41/41 cards have Plays like, Trade-off, Major and Minor skills |
 | QA-13 | Pass | Restore Health: 55 pairs Vanilla, 2,850 TR / TR + ARCE |

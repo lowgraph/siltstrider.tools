@@ -236,7 +236,7 @@ acceptance and release preparation remain separate checks against the final rele
 | 14 | **QA-11 — faction names and deprecated entries** | The catalog already has the names, so this is a contained presentation fix. |
 | 15 | **QA-15 — About attribution and licence** | Low risk, straightforward, and explicitly requested. |
 | 16 | **Freeze acceptance and release preparation** | Run against the final build after the fixes, then prepare the release and rollback records. |
-| 17 | **Live retest (2 October): QA-26, QA-10 re-check** | An edited premade's endgame kit is the premade's, not the player's (wrong answer). Cheap Lows QA-27–30 if time allows. |
+| 17 | **Live retest (2 October): QA-26** | An edited premade's endgame kit is the premade's, not the player's (wrong answer). Cheap Lows QA-27–30 if time allows. |
 
 Reproduction (Codex, 1 October, `qa/reproduce`, LAUNCH_VERIFICATION §27): the
 original suite had 41 tests marked `{ todo: '<QA-id> not fixed yet' }` in `test/qa-*`.
@@ -404,7 +404,8 @@ Completed reproduction baselines; rerun them on the final build:
 
 The signed-out retest of `6fab4c5` / `e29663d3` (LAUNCH_VERIFICATION §51) passed QA-01–03,
 06–09, 11–16, 19 and 25. QA-04 and QA-05 passed with the leftovers below; QA-10 "failed"
-on a helmet the catalog probably allows. Merge by Sunday 4 October, then retest.
+on Helm of Oreyn Bearclaw, an open helmet beast races can wear (not a bug). Merge by
+Sunday 4 October, then retest.
 
 - [ ] **C** **QA-26** (High, V, R, N; confirmed in code; QA-05 retest) An edited premade's
       Optimized endgame kit is still the premade's own kit. An edited premade keeps
@@ -417,13 +418,11 @@ on a helmet the catalog probably allows. Merge by Sunday 4 October, then retest.
       does); otherwise score dynamically. Name the build as `characterName` does. At least
       three edge cases: unedited premade keeps its record, edited race and edited skills
       re-rank, a custom build with a premade-like name.
-- [ ] **C** **QA-10 re-check** (verify only; Medium if confirmed) The retest saw "Helm of
-      Oreyn Bearclaw" in a Vanilla Argonian's endgame kit and read it as a closed helmet.
-      The final gate needs `beastWearable` and no head body part, as OpenMW's
-      `Armor::canBeEquipped` does. Check the record's `bodyParts` in the staged catalog: with
-      no head part (0) it is wearable and correct. Then make the advisor's note say open
-      helmets are kept, so a correct pick doesn't read as a bug. With a head part, fix the
-      catalog flag (pipeline) or the gate and reopen QA-10.
+- [x] **QA-10 re-check**: not a bug (owner, 2 October). The retest saw "Helm of Oreyn
+      Bearclaw" in a Vanilla Argonian's endgame kit and read it as a closed helmet; it is an
+      open helmet that beast races can wear (UESP; flagged open in the game files), and the
+      final gate (`beastWearable`, no head body part, as OpenMW's `Armor::canBeEquipped`)
+      kept it correctly. QA-10 stays done.
 
 Cheap leftovers. Low, so after launch by the usual rule, but each is a few lines and
 three are regressions of this week's release; take them before Sunday if there is time:
@@ -519,6 +518,9 @@ From the signed-in QA (1 October):
       must be chosen again in "Import save".
 - [ ] **C** F-16 (Low): Challenge Runs has no cloud save, though the Vault window has a Challenge
       Runs tab and quota; /vault does not show that tab.
+- [ ] **C** Gear note (Low; from the 2 October retest): the beast-race note says closed helmets
+      are excluded but not that open ones (such as Helm of Oreyn Bearclaw) are kept, so a
+      correct pick reads as a bug. Say so in the note.
 - [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
 - [x] F-18: not a bug. One sign-in in the 2 October retest ended on `/account`; the owner had
