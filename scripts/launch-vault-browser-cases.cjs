@@ -5,6 +5,23 @@ module.exports=async c=>{
  const cleanup=async()=>{const res=await c.request('GET','/api/saves',{user});for(const s of res.body?.saves||[])assert.equal((await c.request('DELETE',`/api/saves/${s.id}?revision=${s.revision}`,{user})).status,200);};
  const focus=()=>c.evaluate('document.activeElement?.textContent.trim()');
  const finish=async name=>{assert.ok(await c.evaluate('document.documentElement.scrollWidth<=innerWidth+1'));c.assertAccessible(await c.audit(name),name);await c.screenshot(name);};
+ for(const theme of ['ashfall','morrowind'])for(const width of [1366,375,390])for(const surface of ['page','dialog'])await c.check(`F-13/${theme}/${width}/${surface}`,async()=>{
+   await c.open('/about');await cleanup();await c.signIn(user);await c.viewport(width);await c.theme(theme);
+   const created=await c.request('POST','/api/saves',{user,body:seed('QA – Layout')});assert.equal(created.status,201);
+   try{
+    await c.open(surface==='page'?'/vault':'/builder');if(surface==='dialog')await c.evaluate('window.dispatchEvent(new CustomEvent("silt-open-vault"))');
+    await c.until(c.card('QA – Layout'));await c.pause(400);await c.until(c.card('QA – Layout'));
+    await c.until(`document.documentElement.dataset.theme===${JSON.stringify(theme)}`);
+    const broken=await c.evaluate(`(()=>{const broken=[];for(const el of document.querySelectorAll('.vault-card button,[aria-label="Close Cloud Vault"]')){if(!el.getClientRects().length)continue;const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);while(w.nextNode()){const n=w.currentNode;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const r=document.createRange();r.setStart(n,m.index);r.setEnd(n,m.index+m[0].length);const boxes=[...r.getClientRects()].filter(b=>b.width);if(new Set(boxes.map(b=>Math.round(b.top))).size>1)broken.push(m[0]);}}const p=el.closest('.vault-card')||el.closest('[role=dialog]');const a=el.getBoundingClientRect(),b=p.getBoundingClientRect();if(a.left<b.left-1||a.right>b.right+1)broken.push('outside '+el.textContent.trim());}return broken;})()`);
+    assert.deepEqual(broken,[],'Vault control words stay whole and within their container');
+    await c.evaluate(`${c.card('QA – Layout')}.scrollIntoView({block:'center'})`);await finish(`F-13-${theme}-${width}-${surface}-controls`);
+    await c.evaluate(`${c.card('QA – Layout')}.querySelector('[title^="Duplicate"]').focus()`);await c.key('Enter','Enter',13);
+    await c.until('document.querySelectorAll(".vault-card").length===2');
+    const saves=(await c.request('GET','/api/saves',{user})).body.saves;assert.equal(saves.length,2);assert.equal(new Set(saves.map(s=>s.id)).size,2);
+    if(surface==='dialog'){await c.click('[aria-label="Close Cloud Vault"]');assert.equal(await c.evaluate('Boolean(document.querySelector("[role=dialog]"))'),false);}
+    return {wholeLabels:true,duplicateByKeyboard:true,reachable:true};
+   }finally{await c.open('/about');await cleanup();await c.cleanupSettings();}
+ });
  for(const theme of ['ashfall','morrowind'])for(const width of [1366,375])await c.check(`F-10/${theme}/${width}`,async()=>{
    const defaults=(await import('../lib/account-settings.mjs')).defaultAccountSettings();
    const custom={...defaults,world:'tr_arce',worldChosen:true,theme,overrideSaveToggles:true,toolDefaults:{travel:{objective:'gold',walking:false},gear:{theft:true},challenge:{preset:'cursed'}}};
@@ -38,6 +55,7 @@ module.exports=async c=>{
     if(surface==='dialog')await c.evaluate('window.dispatchEvent(new CustomEvent("silt-open-vault"))');
     await c.until(`${c.card('QA – Delete A')} && document.querySelectorAll('.vault-card').length===2 && !document.querySelector('[data-vault-delete]').disabled`);
     await c.pause(400);await c.until(`${c.card('QA – Delete A')} && document.querySelectorAll('.vault-card').length===2`);
+    await c.until(`document.documentElement.dataset.theme===${JSON.stringify(theme)}`);
     const parent=surface==='dialog'?'[role=dialog]':'main';
     await c.inCard('QA – Delete A','Delete');await c.until('document.querySelector("[role=alertdialog]")');
     assert.equal(await focus(),'Cancel');
@@ -59,6 +77,6 @@ module.exports=async c=>{
     await c.inCard('QA – Delete B','Delete');await c.button('Confirm','[role=alertdialog]');
     await c.until(`!${c.card('QA – Delete B')} && document.activeElement?.matches('input[placeholder^="Name (e.g."]')`);
     await finish(`F-7-${theme}-${width}-${surface}-empty`);return {announcement:true,keyboard:true,cancel:true,conflict:true,delete:true,focusRestored:true};
-   }finally{await cleanup();}
+   }finally{await c.open('/about');await cleanup();await c.cleanupSettings();}
  });
 };

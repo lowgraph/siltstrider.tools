@@ -163,7 +163,16 @@ async function signOut() {
   stubScript = null;
   await send('Network.deleteCookies', { name: '__client_uat', url: origin });
 }
-async function theme(name) { await evaluate(`localStorage.setItem('silt-theme', ${JSON.stringify(name)})`); }
+async function theme(name) {
+  await evaluate(`localStorage.setItem('silt-theme', ${JSON.stringify(name)})`);
+  // Signed-in settings outrank browser storage. Exercise the requested theme
+  // through the local synthetic account as well, then verify it after navigation.
+  const id = await evaluate('window.Clerk?.user?.id');
+  if (id) {
+    const current = await request('GET', '/api/settings', { user: { id } });
+    assert.equal((await request('PUT', '/api/settings', { user: { id }, body: { settings: { ...current.body.settings, theme: name }, revision: current.body.revision } })).status, 200);
+  }
+}
 
 let current = 'setup', worker, workerLog = '';
 async function check(name, run) {

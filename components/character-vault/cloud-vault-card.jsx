@@ -203,10 +203,10 @@ export default function CloudVaultCard({
 
       {/* Action Footer */}
       <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-line-12">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
           <button
             type="button"
-            className="mw-btn px-3 py-1.5 text-xs font-serif font-bold text-fg-2 hover:text-accent shadow-sm"
+            className="mw-btn min-h-11 px-3 py-1.5 text-xs font-serif font-bold text-fg-2 hover:text-accent shadow-sm whitespace-nowrap shrink-0"
             onClick={() => onLoad(save.id)}
             disabled={isBusy}
             title="Load this build into Character Builder"
@@ -216,7 +216,7 @@ export default function CloudVaultCard({
           {onDuplicate && (
             <button
               type="button"
-              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
+              className="mw-btn min-h-11 px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2 whitespace-nowrap shrink-0"
               onClick={() => onDuplicate(save.id)}
               disabled={isBusy}
               title="Duplicate this build as an independent save"
@@ -227,7 +227,7 @@ export default function CloudVaultCard({
           {onShare && (
             <button
               type="button"
-              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
+              className="mw-btn min-h-11 px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2 whitespace-nowrap shrink-0"
               onClick={async () => {
                 const res = await onShare(save);
                 if (res?.success) {
@@ -243,7 +243,7 @@ export default function CloudVaultCard({
           )}
           <button
             type="button"
-            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
+            className="mw-btn min-h-11 px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2 whitespace-nowrap shrink-0"
             onClick={() => onExport(save.id, save.name)}
             disabled={isBusy}
             title="Download full save data as structured JSON"

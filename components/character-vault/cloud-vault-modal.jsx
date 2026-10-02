@@ -91,8 +91,8 @@ export default function CloudVaultModal({
         }}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-line-11 bg-surface-3">
-          <div>
+        <div className="flex flex-wrap items-start justify-between gap-3 p-4 sm:p-5 border-b border-line-11 bg-surface-3">
+          <div className="flex-1 min-w-[180px]">
             <h2 id="cloud-vault-title" className="text-xl font-serif font-bold text-accent tracking-wide">
               Cloud Vault
             </h2>
@@ -101,7 +101,7 @@ export default function CloudVaultModal({
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             {vault.signedIn ? (
               // max-sm:hidden: with a bare `hidden` plus sm:block, the legacy `.hidden { display:
               // none !important }` in globals.css wins at every width, and the line never showed.
@@ -120,7 +120,7 @@ export default function CloudVaultModal({
 
             <button
               type="button"
-              className="mw-btn px-3 py-1.5 text-xs font-serif font-bold"
+              className="mw-btn min-h-11 px-3 py-1.5 text-xs font-serif font-bold whitespace-nowrap shrink-0"
               onClick={onClose}
               aria-label="Close Cloud Vault"
             >
