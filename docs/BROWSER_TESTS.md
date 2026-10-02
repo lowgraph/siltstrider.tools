@@ -367,3 +367,65 @@ page must fit the viewport. `test/qa-copy-reproduction.test.js` enforces the cop
 and retained font credit; `test/license.test.js` includes the actual About view
 in its licence-file guard. Existing README/LICENSE wording stays untouched. Use
 the existing URL/axe/out arguments and a 60-second overall runner limit.
+
+## Twelve-item launch polish regression
+
+`--suite launch` runs the public launch fixes. Run separate filters for FLOW-01,
+UI-03, UI-04, SS-08, SS-09, SS-10 and SUS-02. Split UI-05 and ingredient-labels
+by `vanilla/`, `tr/` and `tr_arce/`, for example:
+
+```powershell
+npm test -- --test-concurrency=4
+node scripts/test-browser.cjs --suite launch --filter 'FLOW-01' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\launch-flow-01'
+node scripts/test-browser.cjs --suite launch --filter 'UI-05/tr/' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\launch-tr-counts'
+node scripts/test-browser.cjs --suite launch --filter 'ingredient-labels/tr_arce/' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\launch-arce-ingredients'
+```
+
+Use a 120-second outer process bound for each group and a separate output folder.
+Discard incomplete groups from the acceptance aggregate; diagnose their logs and
+rerun smaller filters. `Tool inputs/sharing/navigation/<profile>/` needs one world
+per group because it visits several tools, restores links and uses the equipment
+dialog. Other relevant `tools` filters are `Alchemy effect finder`, `Alchemy
+ingredient sources`, `Alchemy sources loading/failure/retry`, and `Faction and
+Level interactions`, and `Travel imported save/persistence/profiles`. Run `travel`
+filters `Travel keyboard/search/layout` and `Travel network loading/failure/retry`,
+and `qa` filters `QA-01/` and `QA-02/` to retain
+the corrected enchanting calculations. Hydration can be bounded by route, using
+`--suite hydration --filter 'QA-17/<route>/'`; split Home and Builder further by
+scenario if their ten-repeat fresh-start groups exceed the bound.
+
+Every launch group covers 1366/375 px and both themes. SS-08/09 include 390 px;
+SS-09 measures words in both itinerary modes, including Acrobatics. UI-05 covers
+manual and synthetic-save routing scopes and save-dependent guild options.
+Ingredient cases cover autocomplete, selected slots, reverse pairs and use/focus,
+the canonical IDs behind source requests, and ingredient search/command previews.
+Screenshots, scoped axe results, overflow, runtime errors, fonts, commit and bundle
+metadata are saved with the report. SS-08 separately checks active identity after
+an empty search; the existing empty roster listbox has an unrelated axe
+`aria-required-children` failure, recorded in LAUNCH_VERIFICATION.
+
+Use the built Worker and fresh local D1 via `scripts/local-stack.cjs` for F-7,
+F-10 and F-13. The dedicated launch group sets the synthetic account theme and
+asserts the actual document theme, because account preferences override storage:
+
+```powershell
+npm run test:vault -- --launch --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\launch-vault'
+npm run test:vault -- --no-build --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\launch-vault-existing'
+```
+
+Bound each signed-in group to 150 seconds after building (use `--no-build` only
+with a current `.next-export-vault`). Launch cases cover named confirmation and
+initial focus, Tab/Shift+Tab, Enter/Escape, cancellation, real revision conflicts,
+success and restored focus, exact reset defaults, and whole Vault labels at
+1366/375/390 px in both themes. Users are synthetic, records start with `QA – `,
+and the runners clean up records and settings in their disposable database.
+The ordinary Vault suite also removes its synthetic tier overrides. No real
+Clerk session or remote API write is part of these suites.
+
+The Vault runner waits for enabled shell controls after document load before
+dispatching modal events. Theme setup uses the synthetic identity installed for
+the next navigation, rather than the user on the departing page. An isolated
+`--launch --filter 'F-7/morrowind/375/dialog'` therefore tests the same account
+theme as the complete group. On a timed-out wait, the report records the current
+URL, theme, user, shell readiness and Vault/card state, with HTML and a screenshot
+captured before the case's cleanup navigation.

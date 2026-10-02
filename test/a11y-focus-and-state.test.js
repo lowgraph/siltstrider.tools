@@ -129,6 +129,11 @@ test('the enchantment type buttons announce which one is chosen, and only one is
     const pressed = () => buttons.filter(b => b.getAttribute('aria-pressed') === 'true').map(b => b.textContent.trim());
     assert.equal(pressed().length, 1);
     const strike = buttons.find(b => b.textContent.trim() === 'On Strike');
+    assert.equal(strike.disabled, true, 'apparel cannot use On Strike');
+    await React.act(async () => {
+      const item = document.querySelector('#enchant-item-select');
+      item.value = 'Ebony Staff'; item.dispatchEvent(new window.Event('change', {bubbles:true}));
+    });
     await React.act(async () => strike.click());
     assert.deepEqual(pressed(), ['On Strike']);
     const constant = buttons.find(b => b.textContent.trim() === 'Constant');

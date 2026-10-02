@@ -293,6 +293,7 @@ export default function AlchemyWorkstation() {
         )}
       </div>
 
+      <p className="ingredient-label-note text-xs text-fg-9">Variants use catalog weight, value, effects and origin. A &ldquo;scripted variant&rdquo; has an attached script whose behavior the ingredient catalog does not describe. Identical labels remain separate ingredients with their own sources.</p>
       <ReverseAlchemy ingredients={allIngredients} sources={sources} onWantSources={() => setWantSources(true)} onUsePair={([first, second]) => {
         setSlot1(first); setSlot2(second); setSlot3(null); setSlot4(null); setCustomPotionName("");
         document.getElementById("alchemy-potion-output")?.focus();
@@ -489,7 +490,7 @@ export default function AlchemyWorkstation() {
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-2.5 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Brew Success Chance</span>
-                <span className={`text-xl font-bold font-mono ${potion.isValid ? "text-accent" : "text-fg-11"}`}>{potion.isValid ? `${potion.brewChance}%` : NO_RESULT}</span>
+                <span className={`text-xl font-bold font-mono ${potion.isCalculated ? "text-accent" : "text-fg-11"}`}>{potion.isCalculated ? `${potion.brewChance}%` : NO_RESULT}</span>
               </div>
 
               <div className="p-2.5 bg-surface-3 border border-line-11">

@@ -41,7 +41,7 @@ function fixture(){
 }
 test('adapter preserves canonical identity, duplicate names, effect slots, targets and source values',async()=>{
  const {adaptAlchemy}=await adapter,f=fixture(),a=adaptAlchemy(f);
- assert.equal(a.ingredients[0].id,'a');assert.equal(a.ingredients[0].n,'Same [a]');
+ assert.equal(a.ingredients[0].id,'a');assert.equal(a.ingredients[0].n,'Same (0.2 weight; Fortify Strength, Restore Health)');
  assert.equal(a.ingredients[0].effects[1],null);assert.equal(a.ingredients[0].effects[3].id,'1');
  assert.equal(a.ingredients[0].effects[0].arg,'Strength');assert.equal(a.ingredients[0].v,3);
  assert.equal(a.apparatus.mortar[0].q,1);assert.equal(a.settings.fPotionT1MagMult,1.5);

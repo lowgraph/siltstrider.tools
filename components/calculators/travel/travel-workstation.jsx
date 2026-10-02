@@ -361,7 +361,7 @@ export default function TravelWorkstation() {
       const [point] = placePoints(id.slice(PLACE_PREFIX.length), access);
       if (point) positions[id] = [point[0] / CELL, point[1] / CELL];
     }
-    // Only stops that are part of the network, so the map and the stop count agree.
+    // Town-grouped map locations, plus chosen places; routing stops have a different scope.
     const onNetwork = positions;
     if (!Object.keys(onNetwork).length) return null;
     return {
@@ -609,7 +609,7 @@ export default function TravelWorkstation() {
       <section aria-label="Plan a journey" className="space-y-3">
         <p id="travel-network-status" role={gameData.status === "error" ? "alert" : "status"} className="m-0 text-xs text-fg-9">
           Network: {isTr ? profile === "tr_arce" ? "Tamriel Rebuilt + ARCE" : "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"} · {gameData.status === "ready"
-            ? `${availableStops.length} ${availableStops.length === 1 ? "stop" : "stops"}`
+            ? `${availableStops.length} routing ${availableStops.length === 1 ? "stop" : "stops"}`
             : gameData.status === "error"
             ? <>Travel network unavailable. <button type="button" className="mw-btn" onClick={gameData.retry}>Retry</button></>
             : "Loading travel network..."}
@@ -705,6 +705,11 @@ export default function TravelWorkstation() {
           </span>
         </div>
 
+        {route.isValid && route.hops > 0 && priced && route.totals?.hoursKnown && (
+          <p role="note" className="travel-time-rounding text-[11px] text-fg-9 m-0">
+            In-game estimates are rounded independently to the nearest minute. The total uses unrounded leg times, so the displayed legs may add up to a slightly different time.
+          </p>
+        )}
         {realTime && route.hops > 0 && (
           <div className="space-y-1 text-xs text-fg-7">
             <p className="travel-real-time m-0">{realTime}</p>

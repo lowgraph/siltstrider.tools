@@ -508,17 +508,17 @@ test('TRV-8 names each network once and keeps empty ready catalogs distinct from
     const status = () => document.getElementById('travel-network-status');
     const oneStatus = () => assert.equal(document.querySelectorAll('#travel-network-status').length, 1);
     oneStatus();
-    assert.match(status().textContent, /Network: Vvardenfell \(Vanilla\) · 2 stops/);
+    assert.match(status().textContent, /Network: Vvardenfell \(Vanilla\) · 2 routing stops/);
     assert.doesNotMatch(document.querySelector('.travel-workstation').textContent, /Live:/);
     t.state.world = 'tr'; t.state.profile = 'tr';
     await t.render(); oneStatus();
-    assert.match(status().textContent, /Network: Tamriel Rebuilt · 2 stops/);
+    assert.match(status().textContent, /Network: Tamriel Rebuilt · 2 routing stops/);
     t.state.profile = 'tr_arce';
     await t.render(); oneStatus();
-    assert.match(status().textContent, /Network: Tamriel Rebuilt \+ ARCE · 2 stops/);
+    assert.match(status().textContent, /Network: Tamriel Rebuilt \+ ARCE · 2 routing stops/);
     t.state.data = { catalogs: { Travel: [] }, metadata: {} };
     await t.render(); oneStatus();
-    assert.match(status().textContent, /0 stops/);
+    assert.match(status().textContent, /0 routing stops/);
     assert.equal(status().getAttribute('role'), 'status');
     assert.equal(button('Retry'), undefined);
   } finally { await t.cleanup(); }
@@ -551,7 +551,7 @@ test('TRV-8 keeps Retry in its single failure alert and replaces it when recover
     t.state.status = 'ready'; t.state.data = fixture();
     await t.render();
     assert.equal(document.querySelectorAll('#travel-network-status').length, 1);
-    assert.match(status().textContent, /2 stops/);
+    assert.match(status().textContent, /2 routing stops/);
     assert.equal(status().getAttribute('role'), 'status');
     assert.equal(button('Retry'), undefined);
   } finally { await t.cleanup(); }

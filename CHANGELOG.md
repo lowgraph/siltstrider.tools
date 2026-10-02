@@ -4,6 +4,30 @@
 
 - After you edit a premade character, Gear Advisor ranks the whole endgame kit for your current choices, including armour, clothing and jewellery. The kit uses the same character name as Builder and Home; unchanged premades keep their published picks.
 
+- Alchemy names ingredient variants with catalog weight, value, effects and origin instead of raw record IDs.
+
+- Vault controls stay readable and reachable on small screens, including Close and Duplicate.
+
+- Reset all settings now asks for confirmation before restoring the defaults.
+
+- Deleting a cloud save now opens a keyboard-accessible confirmation and restores focus afterward, including when the Vault refreshes or closes.
+
+- Travel now explains why rounded in-game leg estimates can differ slightly from the total.
+
+- Search now uses singular and plural faction rank labels correctly.
+
+- Level Simulator keeps Prev, Next and training skill names readable on phones. Navigation gets its own row and training details wrap at whole words.
+
+- Faction Journal keeps the active faction name visible above its details, even when search or scrolling hides the selected list entry.
+
+- Travel distinguishes routing stops from mapped locations. Map dots group nearby stops by town and include positioned points along the chosen journey.
+
+- Alchemy shows a calculated 0% brew chance when shared effects round to zero, while incomplete recipes keep the empty-result dash.
+
+- Challenge Runs clears an invalid-seed message after generating or loading a valid run.
+
+- Enchanting offers cast styles that suit the item. Switching to armor or clothing clears On Strike; custom items let you choose their kind.
+
 - About credits LowGraph and links to the project’s open source code under AGPL-3.0-or-later. It distinguishes the code licence from game and mod data, font and branding rights.
 
 - Faction Journal uses published faction names in friendly and hostile relations and leaves deprecated entries out of its roster. Saved memberships stay intact.

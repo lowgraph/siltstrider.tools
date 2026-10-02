@@ -91,7 +91,7 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
                 key={skill}
                 className="text-xs px-2 py-1 bg-surface-6 border border-line-9 text-fg-2 font-serif flex items-center gap-1.5"
               >
-                <span>{skill}:</span>
+                <span className="whitespace-nowrap">{skill}:</span>
                 <strong className="font-mono text-accent">+{pts}</strong>
               </span>
             ))}
@@ -118,9 +118,9 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
                   key={`${m.skill}-${idx}`}
                   className="flex flex-wrap items-center justify-between gap-2 p-1.5 bg-surface-5 border border-line-10 text-xs"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="level-training-details flex flex-wrap items-center gap-2 min-w-0">
                     <span className="text-accent font-mono font-bold">•</span>
-                    <span className="font-serif font-bold text-fg-2">{m.skill}</span>
+                    <span className="level-training-skill whitespace-nowrap font-serif font-bold text-fg-2">{m.skill}</span>
                     <span className="text-[10px] font-mono text-fg-11">({m.startValue} → {m.endValue})</span>
                     <span className="text-[10px] px-1.5 py-0.2 bg-surface-6 border border-line-9 text-fg-8 font-serif">
                       Gov: {m.attribute} (5x bonus)

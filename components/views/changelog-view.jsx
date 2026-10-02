@@ -17,6 +17,18 @@ export default function ChangelogView() {
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>After you edit a premade character, Gear Advisor ranks the whole endgame kit for your current choices, including armour, clothing and jewellery. The kit uses the same character name as Builder and Home; unchanged premades keep their published picks.</li>
+            <li>Alchemy names ingredient variants with catalog weight, value, effects and origin instead of raw record IDs.</li>
+            <li>Vault controls stay readable and reachable on small screens, including Close and Duplicate.</li>
+            <li>Reset all settings now asks for confirmation before restoring the defaults.</li>
+            <li>Deleting a cloud save now opens a keyboard-accessible confirmation and restores focus afterward, including when the Vault refreshes or closes.</li>
+            <li>Travel now explains why rounded in-game leg estimates can differ slightly from the total.</li>
+            <li>Search now uses singular and plural faction rank labels correctly.</li>
+            <li>Level Simulator keeps Prev, Next and training skill names readable on phones. Navigation gets its own row and training details wrap at whole words.</li>
+            <li>Faction Journal keeps the active faction name visible above its details, even when search or scrolling hides the selected list entry.</li>
+            <li>Travel distinguishes routing stops from mapped locations. Map dots group nearby stops by town and include positioned points along the chosen journey.</li>
+            <li>Alchemy shows a calculated 0% brew chance when shared effects round to zero, while incomplete recipes keep the empty-result dash.</li>
+            <li>Challenge Runs clears an invalid-seed message after generating or loading a valid run.</li>
+            <li>Enchanting offers cast styles that suit the item. Switching to armor or clothing clears On Strike; custom items let you choose their kind.</li>
             <li>About credits LowGraph and links to the project’s open source code under AGPL-3.0-or-later. It distinguishes the code licence from game and mod data, font and branding rights.</li>
             <li>Faction Journal uses published faction names in friendly and hostile relations and leaves deprecated entries out of its roster. Saved memberships stay intact.</li>
             <li>Premade cards explain how each build plays and its trade-off. Major and Minor skills are written out, and specialization explains which skills it helps; the explanations also appear when browsing by race.</li>
