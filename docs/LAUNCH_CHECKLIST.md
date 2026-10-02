@@ -423,7 +423,7 @@ Medium, one persona:
 - [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
       this is a wrong route; raise it to High and move it to section 5.
-- [ ] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align
+- [ ] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align (started 2026-10-02 01:00 UTC, Codex, on polish/ui-05)
       or label the scopes.
 - [ ] **C** F04 / F11: "By Race" shows 20 of 41 premades without saying why, and its hint
       still says "Pick a playstyle".
