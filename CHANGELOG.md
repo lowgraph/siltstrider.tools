@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Settings label version selection as not available yet, and Cloud Vault rename accepts up to 120 characters, matching the existing save limit.
+
 - Account profile help says a username is required to save the profile, including the chosen icon.
 
 - Gear Advisor explains that beast races can wear compatible open helmets, including Helm of Oreyn Bearclaw, while closed helmets and boots remain excluded.

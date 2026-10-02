@@ -3127,3 +3127,20 @@ Scoped axe/overflow checks pass; zero runtime/server errors; phone screenshot
 reviewed. Only `user_qa_clarity` was used, with its local saves, settings, profile
 and tier removed after every case. Evidence:
 `A:/Cache/clarity-batch/profile-unit-final.log` and `profile-browser-final/`.
+
+
+### F-17 — unavailable versions and rename limit
+
+Disabled Mod version selection now says “Not available yet”, with a note that
+tools currently consume the published dataset. Vault rename accepts 120
+characters, matching the unchanged API and database limit.
+
+55 relevant settings/Vault/API unit tests passed, including 100/101/120-character
+rename cases with revision preservation. The initial invocation omitted the
+repository's `--experimental-sqlite` flag; its corrected rerun passes. Four local
+signed-in Chrome cases pass in both themes at 1366/375 px: unavailable selection,
+native typing limited to 120, successful stored rename, explicit API rejection
+at 121 and the stored name unchanged after rejection. Scoped axe/overflow checks
+pass; zero runtime/server errors; phone screenshot reviewed. The same disposable
+`user_qa_clarity` records are removed after every case. Evidence:
+`A:/Cache/clarity-batch/f17-unit-final.log` and `f17-browser/`.

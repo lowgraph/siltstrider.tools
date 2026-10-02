@@ -117,7 +117,7 @@ export default function CloudVaultCard({
                 value={nameVal}
                 onChange={(e) => setNameVal(e.target.value)}
                 onInput={(e) => setNameVal(e.target.value)}
-                maxLength={100}
+                maxLength={120}
                 disabled={isBusy}
               />
               <button

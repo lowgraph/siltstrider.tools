@@ -224,9 +224,9 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 - [x] **C** Gear note (started 2026-10-02 20:36 UTC, Codex; done `833aedb`, on `polish/beginner-clarity-batch`) (Low; from the 2 October retest): the beast-race note says closed helmets
       are excluded but not that open ones (such as Helm of Oreyn Bearclaw) are kept, so a
       correct pick reads as a bug. Say so in the note.
-- [x] **C** F-11 (started 2026-10-02 20:40 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`) (Low): the icon cannot be saved without a username, and the help text does not
+- [x] **C** F-11 (started 2026-10-02 20:40 UTC, Codex; done `622b09e`, on `polish/beginner-clarity-batch`) (Low): the icon cannot be saved without a username, and the help text does not
       say the username is required.
-- [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
+- [x] **C** F-17 (started 2026-10-02 20:45 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`) (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
