@@ -2804,3 +2804,37 @@ cases: `scripts/qa-local-save-search-browser-cases.cjs`, via `--suite qa --filte
 `A:/Cache/qa31-32/qa31-browser/`, `qa31-touch/` and `qa31-unit.log`.
 The 375 px Morrowind confirmation screenshot was reviewed. Both player changelogs
 record the behavior. No exported data/schema, migration, rebuild, merge or deployment.
+
+## 61. QA-32 — global place-search spelling — 2 October 2026
+
+Branch: `fix/qa-31-32-local-delete-search`, after QA-31 `2af6d1d`. The new
+apostrophe regression failed before the fix: "Ald'ruhn" returned no place hit.
+`lib/site-search.mjs` now compares joined normalized place names in `scoreEntry`
+for exact/prefix matches; the existing word, keyword and typo paths remain.
+`highlightRanges` maps joined matches back to the original characters. Displayed
+labels and canonical stop IDs stay unchanged: selecting Ald'ruhn opens Travel
+with Ald-ruhn as the destination. No data change or rebuild is needed.
+
+| Verification | Result |
+| --- | --- |
+| Full site suite | **1,200 passed, 0 failed, 0 skipped, 0 TODO** |
+| Targeted search tests | **19 passed**, including nine new QA-32 cases |
+| Synthetic pipeline suite | **685 passed** |
+| Chrome QA-32 | **12 passed**, Vanilla/TR/TR + ARCE, Modern/Morrowind, 1366/375 px |
+| Real-touch Chrome QA-32 | **2 passed**, Vanilla, both themes, 375 px |
+| Search/navigation/accessibility | All/Places search, Ctrl K on desktop, canonical labels/highlights and Travel handoff passed; no page overflow, critical/serious axe findings, console or runtime errors |
+
+Regression file: `test/site-search-place-names.test.js`. It covers ASCII/curly
+apostrophes, Unicode hyphens, joined/repeated spaces, Sadrith Mora and Vos,
+partial/reversed words, accented original offsets, rank/typo controls, blank and
+unknown queries, and the staged Travel catalogs in all three worlds. Browser
+cases in `scripts/qa-local-save-search-browser-cases.cjs` clear previous results
+before each spelling, so deferred stale results cannot pass the next assertion.
+The first Chrome attempt exposed a test selector error (group headings precede
+options); it was corrected before the full successful matrix.
+
+Commands: BROWSER_TESTS `--suite qa --filter 'QA-32/'`, with `--touch --filter
+'QA-32/vanilla/375/'` for phone taps. Evidence: `A:/Cache/qa31-32/qa32-browser/`,
+`qa32-touch/`, `qa32-unit.log` and `qa32-pipeline.log`. The Modern and Morrowind
+375 px search screenshots were reviewed. Both player changelogs and the shared
+COORDINATION handoff are updated. No schema, migration, merge or deployment.

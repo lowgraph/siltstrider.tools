@@ -45,4 +45,48 @@ module.exports = async c => {
       return {dialog, touch: c.touch};
     });
   }
+  for (const profile of ['vanilla', 'tr', 'tr_arce']) for (const width of [1366, 375]) for (const theme of ['ashfall', 'morrowind']) {
+    await c.check(`QA-32/${profile}/${width}/${theme}`, async () => {
+      await c.viewport(width);
+      await c.evaluate(`localStorage.clear(); sessionStorage.clear(); localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await c.navigate('home', profile);
+      await c.click('.search-trigger');
+      const input = '.search-dialog input[role=combobox]';
+      const first = '#search-listbox .search-option .search-option-title';
+      await c.until(`document.querySelector(${JSON.stringify(input)})`);
+      const find = async (query, title) => {
+        // Clear the previous deferred result before asserting an equivalent
+        // spelling, so a stale result cannot make the next query pass.
+        await c.type(input, 'zzzzzzzz');
+        await c.until('document.querySelector(".search-empty")?.textContent.includes("zzzzzzzz")');
+        await c.type(input, query);
+        await c.until(`document.querySelector(${JSON.stringify(first)})?.textContent===${JSON.stringify(title)}`);
+        assert.equal(await c.evaluate(`document.querySelector(${JSON.stringify(first)}).querySelector('mark')?.textContent`), title, `${query}: original label highlighted`);
+        assert.equal(await c.evaluate(`document.querySelector(${JSON.stringify(input)}).value`), query);
+      };
+      await find("Ald'ruhn", 'Ald-ruhn'); // Default All group, from header search.
+      await c.button('Places');
+      const spellings = ["Ald'ruhn", 'Ald-ruhn', 'Aldruhn', 'Ald’ruhn', 'Ald ruhn'];
+      for (const query of spellings) await find(query, 'Ald-ruhn');
+      await c.screenshot(`QA-32-${profile}-${width}-${theme}-apostrophe`);
+      c.assertAccessible(await c.audit(`QA-32-${profile}-${width}-${theme}-search`));
+      await find('Sadrith Mora', 'Sadrith Mora');
+      await find('SadrithMora', 'Sadrith Mora');
+      await find('Vos', 'Vos');
+      assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'), false, 'Search has no page overflow');
+      await c.key('Escape', 'Escape', 27);
+      await c.until('!document.querySelector(".search-dialog")');
+      if (width === 1366 && !c.touch) await c.key('k', 'KeyK', 75, 2);
+      else await c.click('.search-trigger');
+      await c.until(`document.querySelector(${JSON.stringify(input)})`);
+      await find("Ald'ruhn", 'Ald-ruhn');
+      if (c.touch) await c.click('#search-listbox .search-option');
+      else await c.key('Enter', 'Enter', 13);
+      await c.until('document.querySelector("#travel-destination")?.value==="Ald-ruhn"');
+      assert.equal(await c.evaluate('location.pathname'), '/travel', 'Result opens the Travel Planner');
+      assert.equal(await c.evaluate('document.querySelector("#travel-destination").value'), 'Ald-ruhn', 'Travel receives the canonical destination');
+      await c.screenshot(`QA-32-${profile}-${width}-${theme}-travel`);
+      return {spellings, multiword: ['Sadrith Mora', 'SadrithMora'], shortName: 'Vos', keyboardShortcut: width === 1366 && !c.touch, touch: c.touch};
+    });
+  }
 };

@@ -40,6 +40,12 @@ in all three worlds, both themes and 1366/375 px. Opening, Cancel and Escape kee
 storage intact; confirmation removes only the selected character, then focuses
 the next character or Save this character. Screenshots and axe checks cover the
 named confirmation. Add `--touch --filter 'QA-31/vanilla/375/'` for real tap events.
+`--suite qa --filter 'QA-32/'` checks header search in all three worlds, both
+themes and 1366/375 px: Ald'ruhn/Ald-ruhn/Aldruhn, curly apostrophes, spaced
+spellings, Sadrith Mora (including joined words) and Vos. Each query first clears
+the previous result; labels/highlights stay canonical, and selecting Ald'ruhn
+opens Travel with Ald-ruhn as its destination. Desktop also exercises Ctrl K.
+Add `--touch --filter 'QA-32/vanilla/375/'` for real tap navigation.
 `--suite qa --filter 'QA-26/'` checks the reported Argonian Marsh mage premade,
 then edits race and skills through Configure and tests a custom namesake. Across
 three worlds, both themes and 1366/375 px, it checks both weapon preferences,

@@ -518,12 +518,12 @@ QA-26 passes: the kit re-ranks after edits (cuirass and TR rings change); the "B
 title is QA-05's intended wording. Its "FAIL" on F-7 and QA-07 tested other surfaces, which
 gave the two items below. Merge by Sunday 4 October, then retest.
 
-- [x] **C** **QA-31** (started 2026-10-02 17:41 UTC, Codex; done locally on `fix/qa-31-32-local-delete-search`, LAUNCH_VERIFICATION §60; not deployed) (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
+- [x] **C** **QA-31** (started 2026-10-02 17:41 UTC, Codex; done `2af6d1d` on `fix/qa-31-32-local-delete-search`, LAUNCH_VERIFICATION §60; not deployed) (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
       saved with "Save this character" (the Builder's list, `local-characters-panel.jsx`
       `handleDelete`) removes it at once: no confirmation, no undo, and focus drops to the
       page. This is a signed-out player's only save. Reuse F-7's `ConfirmationDialog` and
       focus recovery from the cloud Vault card (`cloud-vault-card.jsx`).
-- [ ] **C** **QA-32** (started 2026-10-02 17:41 UTC, Codex, on `fix/qa-31-32-local-delete-search`) (Medium, R, N; confirmed in code; QA-07 on another surface) The global
+- [x] **C** **QA-32** (started 2026-10-02 17:41 UTC, Codex; done locally on `fix/qa-31-32-local-delete-search`, LAUNCH_VERIFICATION §61; not deployed) (Medium, R, N; confirmed in code; QA-07 on another surface) The global
       search (header / Ctrl K, `lib/site-search.mjs` `normalizeText`) finds nothing for
       "Ald'ruhn" in every world: apostrophes are dropped ("aldruhn") but hyphens become spaces
       ("ald ruhn"). Match the same way as Travel's QA-07 fix (ignore apostrophes, hyphens and
