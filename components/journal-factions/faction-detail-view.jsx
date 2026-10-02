@@ -93,7 +93,7 @@ export default function FactionDetailView({
                   <span>•</span>
                 </>
               )}
-              <span>{hasRanks ? `${faction.ranks.length} ranks` : "Non-Joinable"}</span>
+              <span>{hasRanks ? `${faction.ranks.length} ${faction.ranks.length === 1 ? 'rank' : 'ranks'}` : "Non-Joinable"}</span>
               {faction.hidden && (
                 <>
                   <span>•</span>

@@ -2941,3 +2941,13 @@ signed value itself. Precision and progression calculations are unchanged.
 zero at level 55, a short zero-loss forecast and a nonzero fractional-start case.
 Four Chrome cases with an Endurance-100 synthetic save passed at desktop/phone
 widths in both themes. Evidence: A:/Cache/qa33-39/qa37-final/.
+
+### QA-38
+
+Cause: FactionDetailView always appended ranks for any nonempty rank list.
+Its caption now uses rank for one and ranks for multiple; non-joinable factions
+remain unchanged. 24 relevant Journal/faction tests passed, including explicit
+zero/one/ten-rank component cases on frozen records. Twelve Chrome cases passed
+for Twin Lamps in all worlds, both themes and desktop/phone widths. The runner
+checks the exact caption node, avoiding concatenated neighbouring text.
+Evidence: A:/Cache/qa33-39/qa38-accepted/.
