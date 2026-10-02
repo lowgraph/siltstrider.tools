@@ -624,8 +624,9 @@ async function cityStopRegression() {
       assert.match(await evaluate(`document.querySelector('[role=listbox] [role=option]')?.textContent`),/Silt Strider.*Selvil/,'Specific providers remain searchable');
       await type('#travel-origin','Vivec');
       assert.deepEqual(await evaluate(`[...document.querySelectorAll('[role=listbox] [role=option] span > span:first-child')].map(el=>el.textContent.trim())`),['Vivec'],'Cantons stay within the city choice');
-      assert.equal(await evaluate('document.getElementById("travel-results").textContent'),old,'Typing keeps the current route');
+      assert.match(await evaluate('document.getElementById("travel-results").textContent'),/Choose a search result/,'Draft hides the previous itinerary (QA-07)');
       await key('Escape','Escape',27);
+      assert.equal(await evaluate('document.getElementById("travel-results").textContent'),old,'Cancel restores the previous route');
       await button('Swap Origin and Destination');
       assert.match(await evaluate('document.getElementById("travel-results").textContent'),/Leave by the doors/);
       const shared=await evaluate('location.href');
@@ -661,10 +662,11 @@ async function travel() {
       await evaluate('document.documentElement.dataset.theme="ashfall"');
       const old = await evaluate('document.getElementById("travel-results").textContent');
       await type('#travel-origin', 'Pelagiad');
-      assert.equal(await evaluate('document.getElementById("travel-results").textContent'), old, 'Typing must not change the route');
+      assert.match(await evaluate('document.getElementById("travel-results").textContent'), /Choose a search result/, 'Draft hides the previous itinerary (QA-07)');
       assert.equal(await evaluate(`[...document.querySelectorAll('[role=option] span > span:first-child')].filter(el=>el.textContent.trim()==='Pelagiad').length`),1);
       await key('Escape', 'Escape', 27);
       assert.match(await evaluate('document.getElementById("travel-origin").value'), /^Seyda Neen$/);
+      assert.equal(await evaluate('document.getElementById("travel-results").textContent'), old, 'Cancel restores the previous route');
       await type('#travel-origin', 'Balmora'); await key('ArrowDown', 'ArrowDown', 40); await key('Enter', 'Enter', 13);
       assert.match(await evaluate('document.getElementById("travel-origin").value'), /^Balmora/);
       await type('#travel-origin', 'zzzzzzzz-no-place'); await key('Tab', 'Tab', 9);
@@ -705,7 +707,7 @@ async function travel() {
     await openDocument(`${base}/travel?world=vanilla`);
     await until('document.getElementById("travel-network-status")?.textContent.includes("Loading travel network")');
     assert.equal(await evaluate('document.querySelectorAll("#travel-network-status").length'), 1);
-    assert.equal(await evaluate('/0 stops/.test(document.getElementById("travel-network-status").textContent)'), false);
+    assert.equal(await evaluate('/0 routing stops/.test(document.getElementById("travel-network-status").textContent)'), false);
     assert.equal(await evaluate('/No Route|not in the active network/.test(document.getElementById("travel-results").textContent)'), false);
     assert.equal(await evaluate('document.querySelector("#travel-results .text-danger-7")'), null);
     fetchMode = 'fail';
@@ -713,7 +715,7 @@ async function travel() {
     await until('document.getElementById("travel-network-status")?.getAttribute("role")==="alert"');
     assert.equal(await evaluate('document.querySelectorAll("#travel-network-status").length'), 1);
     fetchMode = null; await send('Fetch.disable'); await button('Retry');
-    await until('document.getElementById("travel-network-status")?.textContent.match(/\\d+ stops/)&&!document.getElementById("travel-origin").disabled');
+    await until('document.getElementById("travel-network-status")?.textContent.match(/\\d+ routing stops/)&&!document.getElementById("travel-origin").disabled');
     deliberateFailure = false;
     return { recovered: true };
   });

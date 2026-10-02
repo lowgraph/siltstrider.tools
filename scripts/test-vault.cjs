@@ -14,7 +14,7 @@
  */
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawn } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
 const { generateKeyPairSync, sign } = require('node:crypto');
 const assert = require('node:assert/strict');
 const stack = require('./local-stack.cjs');
@@ -34,7 +34,10 @@ fs.mkdirSync(output, { recursive: true });
 const state = path.join(output, 'state');
 fs.rmSync(state, { recursive: true, force: true });
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const report = { started: new Date().toISOString(), cases: [], runtimeErrors: [], serverErrors: [] };
+const report = { started: new Date().toISOString(),
+  gitHead: spawnSync('git', ['-c', `safe.directory=${stack.repo}`, 'rev-parse', 'HEAD'], { cwd: stack.repo, encoding: 'utf8', windowsHide: true }).stdout?.trim(),
+  bundle: JSON.parse(fs.readFileSync(path.join(stack.repo, 'public/game-data/current.json'), 'utf8')),
+  cases: [], runtimeErrors: [], serverErrors: [] };
 
 // The key pair for this run. Clerk reads a one-line PEM (its loader strips the line breaks).
 const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
@@ -197,11 +200,11 @@ async function cases() {
   });
 
   await check('the API: owners only, valid tokens only', async () => {
-    const created = await request('POST', '/api/saves', { user: ALICE, body: seedBuild('Alice Seeded Nord') });
+    const created = await request('POST', '/api/saves', { user: ALICE, body: seedBuild('QA – Alice Seeded Nord') });
     assert.equal(created.status, 201, JSON.stringify(created.body));
     const id = created.body.save?.id || created.body.id;
     assert.ok(id, 'the new save has an id');
-    assert.deepEqual((await request('GET', '/api/saves', { user: ALICE })).body.saves.map((s) => s.name), ['Alice Seeded Nord']);
+    assert.deepEqual((await request('GET', '/api/saves', { user: ALICE })).body.saves.map((s) => s.name), ['QA – Alice Seeded Nord']);
     assert.deepEqual((await request('GET', '/api/saves', { user: BOB })).body.saves, [], "Bob does not see Alice's save");
     assert.equal((await request('GET', `/api/saves/${id}`, { user: BOB })).status, 404, "Bob cannot open it");
     assert.equal((await request('DELETE', `/api/saves/${id}?revision=1`, { user: BOB })).status, 404, 'or delete it');
@@ -215,45 +218,45 @@ async function cases() {
     await signIn(ALICE); await viewport(1366); await open('/vault');
     await until('document.querySelector("main").textContent.includes("1 / 5 Saves Used")');
     assert.ok(await evaluate('window.__vaultTest.tokenCalls() > 0'), 'the page asked the stand-in for a token');
-    await type('main input[placeholder^="Name (e.g."]', 'Vault Test One');
+    await type('main input[placeholder^="Name (e.g."]', 'QA – Vault Test One');
     await button('Save Character to Cloud', 'main');
-    await until(`${card('Vault Test One')} && document.querySelector("main").textContent.includes("2 / 5 Saves Used")`);
-    await inCard('Vault Test One', 'Rename');
-    await type('main .vault-card form input', 'Vault Test Renamed');
+    await until(`${card('QA – Vault Test One')} && document.querySelector("main").textContent.includes("2 / 5 Saves Used")`);
+    await inCard('QA – Vault Test One', 'Rename');
+    await type('main .vault-card form input', 'QA – Vault Test Renamed');
     await button('Save', 'main .vault-card form');
-    await until(card('Vault Test Renamed'));
+    await until(card('QA – Vault Test Renamed'));
     await open('/vault');
-    await until(card('Vault Test Renamed'));
-    assert.match(await evaluate(`${card('Vault Test Renamed')}.textContent`), /Revision 2/, 'the rename is a new revision');
-    await inCard('Alice Seeded Nord', 'Load Build →');
-    await until('document.querySelector("main").textContent.includes("Loaded \\"Alice Seeded Nord\\"")');
+    await until(card('QA – Vault Test Renamed'));
+    assert.match(await evaluate(`${card('QA – Vault Test Renamed')}.textContent`), /Revision 2/, 'the rename is a new revision');
+    await inCard('QA – Alice Seeded Nord', 'Load Build →');
+    await until('document.querySelector("main").textContent.includes("Loaded \\"QA – Alice Seeded Nord\\"")');
     await button('← Character Builder', 'main');
     await until('document.getElementById("builder-race")');
     assert.equal(await evaluate('document.getElementById("builder-race").value'), 'Nord', 'the loaded build is the active character');
     assert.equal(await evaluate('document.getElementById("builder-className").value'), 'Warrior');
-    await open('/vault'); await until(card('Vault Test Renamed'));
-    await inCard('Vault Test Renamed', 'Delete');
-    await button('Confirm', 'main');
-    await until(`!${card('Vault Test Renamed')} && document.querySelector("main").textContent.includes("1 / 5 Saves Used")`);
-    assert.deepEqual((await request('GET', '/api/saves', { user: ALICE })).body.saves.map((s) => s.name), ['Alice Seeded Nord']);
+    await open('/vault'); await until(card('QA – Vault Test Renamed'));
+    await inCard('QA – Vault Test Renamed', 'Delete');
+    await button('Confirm', '[role=alertdialog]');
+    await until(`!${card('QA – Vault Test Renamed')} && document.querySelector("main").textContent.includes("1 / 5 Saves Used")`);
+    assert.deepEqual((await request('GET', '/api/saves', { user: ALICE })).body.saves.map((s) => s.name), ['QA – Alice Seeded Nord']);
   });
 
   await check('an expired token is renewed once, and the Vault still loads', async () => {
     await signIn(ALICE, { firstToken: token(ALICE, { exp: Math.floor(Date.now() / 1000) - 120 }) });
     await open('/vault');
-    await until(card('Alice Seeded Nord'));
+    await until(card('QA – Alice Seeded Nord'));
     assert.ok(await evaluate('window.__vaultTest.tokenCalls() >= 2'), 'asked again with skipCache after the 401');
     assert.doesNotMatch(await text(), /session could not be renewed/);
   });
 
   await check('a damaged save is refused with a reference, and nothing of it loads', async () => {
-    await signIn(ALICE); await open('/vault'); await until(card('Alice Seeded Nord'));
-    const [{ results: [row] }] = stack.sql(state, "SELECT id FROM cloud_saves WHERE clerk_user_id = 'user_vault_alice' AND name = 'Alice Seeded Nord'");
+    await signIn(ALICE); await open('/vault'); await until(card('QA – Alice Seeded Nord'));
+    const [{ results: [row] }] = stack.sql(state, "SELECT id FROM cloud_saves WHERE clerk_user_id = 'user_vault_alice' AND name = 'QA – Alice Seeded Nord'");
     stack.sql(state, `UPDATE cloud_saves SET payload_hash = '${'0'.repeat(64)}' WHERE id = '${row.id}'`);
-    await inCard('Alice Seeded Nord', 'Load Build →');
+    await inCard('QA – Alice Seeded Nord', 'Load Build →');
     await until('document.querySelector("main").textContent.includes("no longer matches the checksum")');
     assert.match(await text(), /Reference: [0-9a-f-]{36}/, 'a reference to quote');
-    assert.doesNotMatch(await text(), /Loaded "Alice Seeded Nord"/);
+    assert.doesNotMatch(await text(), /Loaded "QA – Alice Seeded Nord"/);
     const api = await request('GET', `/api/saves/${row.id}`, { user: ALICE });
     assert.equal(api.status, 422);
     assert.equal(api.body.error, 'INTEGRITY_ERROR');
@@ -263,8 +266,8 @@ async function cases() {
   });
 
   await check('a full free quota blocks a new save; a supporter gets 25 slots', async () => {
-    for (let i = 1; i <= 5; i++) assert.equal((await request('POST', '/api/saves', { user: BOB, body: seedBuild(`Bob ${i}`) })).status, 201);
-    const sixth = await request('POST', '/api/saves', { user: BOB, body: seedBuild('Bob 6') });
+    for (let i = 1; i <= 5; i++) assert.equal((await request('POST', '/api/saves', { user: BOB, body: seedBuild(`QA – Bob ${i}`) })).status, 201);
+    const sixth = await request('POST', '/api/saves', { user: BOB, body: seedBuild('QA – Bob 6') });
     assert.equal(sixth.status, 409); assert.equal(sixth.body.error, 'QUOTA_EXCEEDED');
     await signIn(BOB); await open('/vault');
     await until('document.querySelector("main").textContent.includes("5 / 5 Saves Used")');
@@ -275,15 +278,15 @@ async function cases() {
     await until('document.querySelector("main").textContent.includes("5 / 25 Saves Used")');
     assert.match(await text(), /Supporter Tier: 25/);
     assert.doesNotMatch(await text(), /Capacity reached/);
-    assert.equal((await request('POST', '/api/saves', { user: BOB, body: seedBuild('Bob 6') })).status, 201, 'the sixth save fits now');
+    assert.equal((await request('POST', '/api/saves', { user: BOB, body: seedBuild('QA – Bob 6') })).status, 201, 'the sixth save fits now');
   });
 
   for (const name of ['morrowind', 'ashfall']) {
     for (const width of [1366, 375]) {
       await check(`signed-in pages and the Vault window, axe/${name}/${width}`, async () => {
         await signIn(ALICE); await viewport(width); await theme(name);
-        await open('/vault'); await until(card('Alice Seeded Nord'));
-        await inCard('Alice Seeded Nord', 'Rename'); await until('document.querySelector("main .vault-card form input")');
+        await open('/vault'); await until(card('QA – Alice Seeded Nord'));
+        await inCard('QA – Alice Seeded Nord', 'Rename'); await until('document.querySelector("main .vault-card form input")');
         assertAccessible(await audit(`vault-${name}-${width}`), `/vault with a card being renamed`);
         await screenshot(`vault-${name}-${width}`);
         await open('/builder');
@@ -293,7 +296,7 @@ async function cases() {
         const line = await evaluate(`(()=>{const el=document.querySelector('[role=dialog] .cloud-vault-account');return {shown:getComputedStyle(el).display!=='none',text:el.textContent.replace(/\\s+/g,' ').trim()}})()`);
         assert.equal(line.shown, width >= 640, `the account line ${width >= 640 ? 'shows' : 'is hidden'} at ${width} px`);
         assert.match(line.text, /Alice Tester.*Free Tier · 1 \/ 5 Saves/);
-        await until(`[...document.querySelectorAll('[role=dialog] h4')].some(h=>h.textContent.includes('Alice Seeded Nord'))`);
+        await until(`[...document.querySelectorAll('[role=dialog] h4')].some(h=>h.textContent.includes('QA – Alice Seeded Nord'))`);
         assertAccessible(await audit(`vault-window-${name}-${width}`), 'the Vault window');
         await screenshot(`vault-window-${name}-${width}`);
         await open('/account');
@@ -330,7 +333,19 @@ async function cases() {
     else if (args.includes('--signout-preservation')) await require('./signout-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,button,click,evaluate,check,screenshot});
     else if (args.includes('--qa-reproduction')) await require('./qa-vault-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,evaluate,text,check,pause,screenshot});
     else if (args.includes('--launch')) await require('./launch-vault-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,key,evaluate,text,check,pause,screenshot,audit,assertAccessible,cleanupSettings:()=>stack.sql(state,"DELETE FROM account_settings WHERE clerk_user_id = 'user_launch_polish'")});
-    else await cases();
+    else {
+      try { await cases(); }
+      finally {
+        // Disposable users and QA records only, in this run's fresh local D1.
+        await open('/about');
+        for (const user of [ALICE, BOB]) {
+          const records = await request('GET', '/api/saves', { user });
+          for (const record of records.body?.saves || []) assert.equal((await request('DELETE', `/api/saves/${record.id}?revision=${record.revision}`, { user })).status, 200);
+        }
+        stack.sql(state, "DELETE FROM account_settings WHERE clerk_user_id IN ('user_vault_alice','user_vault_bob'); DELETE FROM user_tiers WHERE clerk_user_id IN ('user_vault_alice','user_vault_bob')");
+        report.cleanedSyntheticRecords = true;
+      }
+    }
   } finally {
     socket?.close(); chrome.kill(); worker.kill();
   }

@@ -2292,3 +2292,92 @@ On the cumulative polish/ingredient-labels branch, the loaded full suite exposed
 Branch: `polish/ingredient-labels`. Cause: duplicate catalog names were suffixed with their raw record key; global search could also collapse distinct records or append IDs. Added shared labels using only catalog weight, value, ordered effects/targets, origin and attached-script presence. Braided Bread uses its actual weights; Emerald uses actual origin/script qualifiers, with an explanation that script behavior is unavailable. No curse, size or quest behavior is inferred from IDs. Identical facts deliberately retain identical readable labels and distinct keys. Selection, potion calculations, reverse-pair identity, source lookup and console commands retain canonical IDs. Six active regressions cover catalog differences, scripts/origins, identical/missing/frozen facts and every staged world, plus updated adapter coverage. ingredient-reproduced captures raw autocomplete IDs. Chrome passes 12/12 cases: ingredient-vanilla-verified, ingredient-tr-complete and ingredient-arce-complete, both themes at 1366/375, covering autocomplete, selected slots, reverse pairs/use focus, Braided Bread, source disclosures, global ingredient category, canonical preview command, axe, overflow and screenshots. npm test -- --test-concurrency=4: 1,164 passed with no failures/skips/TODOs (final-f7-correction-unit.log). The unrelated deferred F-7 regression has its own correction commit. Evidence: A:/Cache/launch-polish.
 
 Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+## Cumulative twelve-item launch polish verification — 2 October 2026 UTC
+
+All twelve assigned items are implemented and committed in order on the requested
+stack, ending at `polish/ingredient-labels`. The final implementation commit is
+`308443edee795b3ebdae0902bd8876b41cf80e9c`; the later verification commit changes
+documentation and test runners only. Every preceding item branch is an ancestor
+of the cumulative branch. The clean worktree began at fetched main `2968fa3`;
+other sessions later advanced `origin/main` to `b2e8d94` with retest documentation.
+No active site checkout was switched, and this batch did not merge, rebase, push
+or deploy. The earlier fixes and their histories remain in the stack.
+
+Each implementation commit contains its regression tests, completed checklist
+entry, cause/fix/results record and entries in both player changelogs. All logic
+items have at least three active edge cases; no assigned fix is left as a TODO.
+
+| Item | Branch | Implementation commit | Resulting behavior | Final focused Chrome result |
+| --- | --- | --- | --- | --- |
+| FLOW-01 | `polish/flow-01` | `70b8022` | OpenMW cast-style eligibility; switching items and explicit custom kinds stay valid | 4/4; QA-01/02 additionally 24/24 |
+| UI-03 | `polish/ui-03` | `4a2d3e2` | Successful generation/loading clears stale seed errors; invalid input still errors | 4/4 |
+| UI-04 | `polish/ui-04` | `523c203` | A completed zero chance displays 0%; incomplete/unavailable results remain distinct | 4/4 |
+| UI-05 | `polish/ui-05` | `27691e6` | Routing stops and mapped locations are explicitly labelled and explained | 24/24, three worlds and save-dependent options |
+| SS-08 | `polish/ss-08` | `469e526` | Persistent active faction identity beside the details follows load, search and selection | 6/6, including 390 px |
+| SS-09 / U28 | `polish/ss-09` | `65a052c` | Whole navigation and skill words in both itinerary modes | 6/6, 12 mode states, including 390 px |
+| SS-10 | `polish/ss-10` | `8e1215f` | Zero/multiple ranks and singular rank are correctly labelled | 4/4 |
+| SUS-02 | `polish/sus-02` | `cc5e394` | Visible explanation of independently rounded in-game estimates; precise routing retained | 4/4 |
+| F-7 | `polish/f-7` | `2ec4a78`, correction `5af5bba` | Named deletion confirmation, focus trap, cancellation/error recovery and deletion focus restoration | 8/8, page and dialog |
+| F-10 | `polish/f-10` | `1aaa486` | Accessible reset confirmation; cancellation preserves settings, confirm uses exact defaults, sync failure recovers focus | 4/4 |
+| F-13 | `polish/f-13` | `692b67b` | Whole Close/Duplicate/action labels with reachable controls | 12/12, page/dialog at 1366/375/390 |
+| F10 / CALC-4-01 | `polish/ingredient-labels` | `308443e` | Readable catalog qualifiers across every ingredient label; separate canonical records and sources retained | 12/12, all three worlds |
+
+Final checks:
+
+| Check | Result | Evidence under `A:/Cache/launch-polish` |
+| --- | --- | --- |
+| Full unit suite | **1,164/1,164 passed**, zero failures/skips/TODOs; final rerun after runner changes also passed | `final-unit.log`, `final-docs-unit.log` |
+| Cloudflare build | **Passed**, optimized static export; no deployment | `final-cloudflare-build.log` |
+| Public focused launch checks | **68/68 passed** | `final-browser/launch-*` |
+| Existing tool interactions | **52/52 passed**, including saved Travel options, share links, equipment focus, reverse alchemy and ingredient sources | `final-browser/tools-*`, `final-browser-recovery`, `final-travel-recovery` |
+| Existing Travel interactions | **15/15 passed**, keyboard search/cancellation, network retry and actual city transfers in all worlds | `final-travel-recovery`, `final-city-regression` |
+| Corrected Enchanting calculations | **24/24 passed**, QA-01 and QA-02 in every world | `final-browser/qa-QA-01-*`, `qa-QA-02-*` |
+| First-navigation hydration | **288/288 passed** on Home, Builder, Travel, Alchemy, Enchanting, Factions, Challenge, Vault and Account | `final-browser/hydration-*` |
+| Synthetic signed-in launch suite | **24/24 passed**, actual account themes, keyboard, focus, failure and phone layout | `final-vault-launch/report.json` |
+| Existing synthetic Vault suite | **10/10 passed**, ownership/auth, CRUD, token renewal, integrity, quota and both-theme accessibility | `final-vault-full-verified/report.json` |
+| Pipeline | **685/685 passed**, cache-isolated TEMP/TMP, no uncaught warnings | `final-pipeline-tests.log` |
+
+The accepted aggregate contains **481 unique passing Chrome cases**, with zero
+assertion, runtime or server failures. Both themes at 1366/375 px are covered for
+every UI fix; phone layout findings include 390 px. Screenshot review confirms
+whole labels and readable qualifiers. Checks include keyboard focus/escape,
+dialog accessibility, text ranges, overflow, fonts, lazy source requests and
+canonical ID preservation. Hydration covers fresh starts (Home/Builder repeated
+ten times per width/theme), stored TR + ARCE, loaded saves, build links with/without
+world and challenge links. This is the relevant nine-route matrix, not a claim
+that the separate full freeze/404/device acceptance matrix is complete.
+
+All groups used external bounds (120 seconds for public groups, 150 for the built
+signed-in suites) and saved logs/reports. One all-world tools group reached its
+bound after nine passes; three smaller world groups completed. The saved-Travel
+filter was initially sent to the wrong suite (zero cases). Older Travel runner
+assertions expected the itinerary to remain visible during draft search, contrary
+to the already-fixed QA-07; they now assert its prompt and Escape restoration.
+Those three public runs are excluded from `final-summary.json`, which verifies
+unique case names and expected counts. The existing Vault runner also needed its
+Confirm selector updated for the portal alertdialog; its complete corrected rerun
+is accepted. No Travel routing behavior changed to satisfy these runner repairs.
+
+The signed-in tests used `scripts/local-stack.cjs`, a built local Worker, fresh
+local D1, synthetic users and `QA – ` records. Real 409 conflicts exercised failed
+requests. Created records, settings and tier overrides were removed; the ordinary
+Vault report records `cleanedSyntheticRecords: true`. The launch signed-in report
+predates added commit metadata, but uses the same unchanged built implementation.
+No ordinary account, real Clerk session or production API write was used. No
+production migration, data rebuild, dependency or licence change was made.
+
+Acceptance limits: SS-08's empty-search identity is verified, but the existing
+empty faction roster listbox still has an unrelated axe `aria-required-children`
+issue. SUS-02's exact old itinerary is not reconstructible from the earlier
+report/current network; its 4 h 22 min / 4 h 23 min arithmetic is reproduced in
+active tests and the staged route's precise durations are recorded above. Physical
+phones and actual screen-reader announcements were not manually exercised; Chrome
+viewport/keyboard/ARIA checks and synthetic authentication establish this batch's
+local acceptance. No assigned item is marked blocked or claimed merged/live.
+
+COORDINATION is synchronized byte-for-byte with the pipeline repository, committed
+there locally as `d497aaf42ef3a824748249738ed0039d5a5ba039`; UI_TRANSFORMATION is
+unchanged and byte-identical. First command for the next agent, from this worktree:
+`npm test -- --test-concurrency=4`, followed by the bounded groups in BROWSER_TESTS.
+Temporary orchestration/capture runners are removed; reports and screenshots remain.
