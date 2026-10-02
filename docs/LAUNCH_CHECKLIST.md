@@ -202,7 +202,8 @@ for now (owner, 30 September); other agents skip them.
 **Moved from after launch by the owner on 2 October (QA triage)**
 
 Can slip like the rest of section 4: merge by Sunday 4 October, one batch, deploy and retest
-per day; anything unfinished waits on its branch. Wording and display first; account,
+per day; per item run `npm test` and only the browser groups `npm run test:browser:plan` prints
+(BROWSER_TESTS.md, "Targeted runs"), and the full set only for freeze acceptance; anything unfinished waits on its branch. Wording and display first; account,
 sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 
 *Saturday: wording and display (QA-27–30 in section 5 first)*
@@ -516,7 +517,8 @@ The signed-out retest of `250b1b5` / `73df6e58` (LAUNCH_VERIFICATION §59) passe
 SS-08/09/10, UI-03/04/05, SUS-02, FLOW-01, F10 labels, and the QA-01/09/16 spot checks.
 QA-26 passes: the kit re-ranks after edits (cuirass and TR rings change); the "Based on …"
 title is QA-05's intended wording. Its "FAIL" on F-7 and QA-07 tested other surfaces, which
-gave the two items below. Merge by Sunday 4 October, then retest.
+gave the two items below. Merge by Sunday 4 October, then retest. Verify each with `npm test`
+and the groups `npm run test:browser:plan` prints, plus the item's own new cases.
 
 - [ ] **C** **QA-31** (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
       saved with "Save this character" (the Builder's list, `local-characters-panel.jsx`
