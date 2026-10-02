@@ -705,6 +705,11 @@ export default function TravelWorkstation() {
           </span>
         </div>
 
+        {route.isValid && route.hops > 0 && priced && route.totals?.hoursKnown && (
+          <p role="note" className="travel-time-rounding text-[11px] text-fg-9 m-0">
+            In-game estimates are rounded independently to the nearest minute. The total uses unrounded leg times, so the displayed legs may add up to a slightly different time.
+          </p>
+        )}
         {realTime && route.hops > 0 && (
           <div className="space-y-1 text-xs text-fg-7">
             <p className="travel-real-time m-0">{realTime}</p>

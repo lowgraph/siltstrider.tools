@@ -2253,3 +2253,10 @@ Completed on this branch only. No push, merge, deployment, migration or data reb
 Branch: `polish/ss-10`. Cause: faction search always used the plural word and suppressed zero counts. Fixed catalog and fallback counts, including invalid fallback values. Three active regression tests cover zero, one and multiple ranks. The staged Twin Lamps result reproduced “1 ranks” in ss-10-reproduced; ss-10-verified passes 4/4 Chrome cases across both themes at 1366 and 375 px, with Escape dismissal, overflow and axe checks. The initial browser selector was corrected to the existing search-dialog class before capturing the actual baseline. npm test: 1,148 passed, no failures, skips or TODOs (ss-10-unit-final.log). Evidence: A:/Cache/launch-polish.
 
 Completed on this branch only. No push, merge, deployment, migration or data rebuild.
+
+
+## SUS-02 — local launch polish
+
+Branch: `polish/sus-02`. Cause: each leg and the precise aggregate are independently rounded by formatDuration; routing costs are unchanged. Added a visible rounding explanation next to valid in-game totals, separately from Real Time Approximation. Three active tests cover the exact 4 h 22 min / 4 h 23 min arithmetic, precision preservation, minute boundaries, zero and unavailable estimates, and a real staged Old Ebonheart journey. Current staged precise hours: total 6.182688219202264, legs [2, 0.18268821920226358, 4] (sus-02-precision.log). The earlier report lacks enough character/origin choices to reproduce its exact itinerary on the current routing network; its rounding discrepancy is reproduced numerically. sus-02-before captures the missing explanation; sus-02-final passes 4/4 Chrome theme/1366/375 cases with axe, overflow and screenshots. npm test: 1,151 passed, no failures/skips/TODOs (sus-02-unit.log). Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, migration or data rebuild.

@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Travel now explains why rounded in-game leg estimates can differ slightly from the total.
+
 - Search now uses singular and plural faction rank labels correctly.
 
 - Level Simulator keeps Prev, Next and training skill names readable on phones. Navigation gets its own row and training details wrap at whole words.

@@ -83,6 +83,16 @@ module.exports = async c => {
     });
   }
   for (const theme of ['ashfall','morrowind']) for (const width of [1366,375]) {
+    await c.check(`SUS-02/${theme}/${width}`,async()=>{
+      await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await c.viewport(width);await c.navigate('travel','tr','&from=Seyda%20Neen&to=Old%20Ebonheart&plan=gold');
+      await c.until('document.querySelector("#travel-results")?.textContent.includes("Turn-By-Turn")');
+      const dossier=await read('document.querySelector("#travel-results").textContent');
+      assert.match(dossier,/in-game/);assert.match(dossier,/real movement/);
+      assert.match(await read('document.querySelector(".travel-time-rounding")?.textContent || ""'),/rounded independently to the nearest minute/);
+      await read('document.querySelector(".travel-time-rounding").scrollIntoView({block:"center"})');
+      await finish(`SUS-02-${theme}-${width}`);return {dossier};
+    });
     await c.check(`SS-10/${theme}/${width}`,async()=>{
       await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
       await c.viewport(width);await c.navigate('home');await c.click('.search-trigger');

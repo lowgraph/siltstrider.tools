@@ -455,7 +455,7 @@ Low:
 - [x] **C** SS-10: "1 ranks" in search. (started 2026-10-02 01:14 UTC, Codex, on polish/ss-10) (completed on branch with this commit; not merged or live)
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
-- [ ] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02)
+- [x] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02) (completed on branch with this commit; not merged or live)
 
 From the signed-in QA (1 October):
 - [ ] **C** F-6 (Medium): email sign-in reloads the page (4 of 4). The character comes back
