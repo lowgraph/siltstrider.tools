@@ -9,6 +9,24 @@ async function finish(c,name){
   c.assertAccessible(await c.audit(name));await c.screenshot(name);
 }
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-FLOW03/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,'factions',profile,width,theme);await c.until('document.querySelectorAll(".faction-roster-item").length>0');
+    const select=async name=>{
+      await c.type('#faction-search-input',name);
+      await c.evaluate(`(()=>{const e=[...document.querySelectorAll('.faction-roster-item')].find(e=>e.textContent.includes(${JSON.stringify(name)}));if(!e)throw Error('Missing faction');e.dataset.clarityFaction='yes'})()`);
+      await c.click('[data-clarity-faction=yes]');await c.until(`document.querySelector('.faction-detail-pane h2').textContent.includes(${JSON.stringify(name)})`);
+    };
+    await select('Hlaalu');await c.button('+ Join Faction');await c.until('document.querySelector(".faction-detail-pane").textContent.includes("Member")');
+    for(const rival of ['Redoran','Telvanni']){
+      await select(rival);
+      assert.equal(await c.evaluate(`[...document.querySelectorAll('.journal-factions-root button')].find(b=>b.textContent.trim()==='+ Join Faction').disabled`),true);
+      assert.match(await c.evaluate('document.querySelector("#faction-join-conflict").textContent'),/Great House Hlaalu.*one Great House/s);
+    }
+    await select('Hlaalu');await c.button('Leave Faction');await select('Redoran');await c.button('+ Join Faction');
+    await select('Mages Guild');await c.button('+ Join Faction');await c.until('document.querySelector(".faction-detail-pane").textContent.includes("Member")');
+    await select('Hlaalu');assert.match(await c.evaluate('document.querySelector("#faction-join-conflict").textContent'),/Great House Redoran/);
+    await finish(c,`houses-${profile}-${width}-${theme}`);return {rivalsBlocked:true,leaveAvailable:true,guildCompatible:true};
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-FLOW04/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'travel',profile,width,theme);
     const {rememberSave}=await import('../lib/active-save-store.mjs');const raw=require('../test/helpers/qa-staged-data.cjs').save();

@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Faction Journal blocks new rival Great House joins, explains which membership conflicts, and keeps leaving and imported memberships available.
+
 - Travel keeps specific Propylon chamber links while your save and its carried indices load, and shows No Route for an unavailable chamber instead of switching to other towns.
 
 - Builder explains how to customize a preset and can clear premade searches; save help explains content files and phone file selection; Travel shows saved gold remaining or needed, and Home uses plainer tool descriptions.

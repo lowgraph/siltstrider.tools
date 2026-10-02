@@ -6,7 +6,7 @@ import { useSearchIntent } from "../use-search-intent";
 import { clearSearchIntent } from "../../lib/search-intent.mjs";
 import { useActiveCharacter } from "../character-context";
 import { useShell } from "../shell-context";
-import {updateMembership} from "../../lib/faction-memberships.mjs";
+import {updateMembership,toggleMembership,membershipConflict} from "../../lib/faction-memberships.mjs";
 import FactionRoster from "./faction-roster";
 import FactionDetailView from "./faction-detail-view";
 import { isDisplayFaction } from "../../lib/faction-display.mjs";
@@ -220,6 +220,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   const currentMembership = useMemo(() => {
     return joinedFactions.find(j => j.id.toLowerCase() === selectedFactionKey.toLowerCase()) || null;
   }, [joinedFactions, selectedFactionKey]);
+  const joinConflict = currentMembership ? null : membershipConflict(selectedFactionKey, joinedFactions);
+  const rivalName = factionsList.find(f=>f.key.toLowerCase()===joinConflict?.rival)?.name || joinConflict?.rival;
 
   // Quests for the selected faction
   const factionQuests = useMemo(() => {
@@ -254,14 +256,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   };
 
   const handleToggleJoin = (factionKey) => {
-    setJoinedFactions(prev => {
-      const norm = factionKey.toLowerCase();
-      const existing = prev.find(j => j.id.toLowerCase() === norm);
-      if (existing) {
-        return prev.filter(j => j.id.toLowerCase() !== norm);
-      }
-      return [...prev, { id: norm, rank: 0, reputation: 0, expelled: false }];
-    });
+    setJoinedFactions(prev => toggleMembership(prev, factionKey));
   };
 
   return (
@@ -299,6 +294,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
             <button
               type="button"
               onClick={() => handleToggleJoin(selectedFaction.key)}
+              disabled={Boolean(joinConflict)}
+              aria-describedby={joinConflict?'faction-join-conflict':undefined}
               className={`px-3 py-1.5 text-xs font-serif uppercase tracking-wider font-bold transition-all border ${
                 currentMembership
                   ? "bg-danger-surface-3 text-danger-2 border-danger-line-1 hover:bg-danger-surface-3"
@@ -310,6 +307,11 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
           )}
         </div>
       </div>
+
+      {joinConflict && <p id="faction-join-conflict" role="status" className="text-xs text-fg-7 px-4 py-2 m-0">
+        Already joined: {rivalName}. This planner allows one {joinConflict.category} at a time.
+        Leave the current faction in the planner before choosing a rival; this does not change your game or original save.
+      </p>}
 
       {/* Main Split-Pane Workspace */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">

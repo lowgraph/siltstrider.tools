@@ -252,12 +252,12 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       ranked for this character, without naming the source as its archetype.
 
 *Sunday: check first, fix only if contained*
-- [x] **C** FLOW-04 (started 2026-10-02 21:44 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): a carried Propylon index is not used in TR (Rotheran to Andasreth went by
+- [x] **C** FLOW-04 (started 2026-10-02 21:44 UTC, Codex; done `3dfafb9`, on `polish/beginner-clarity-batch`): a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
       this is a wrong route; raise it to High and move it to section 5 (launch bar).
       Re-check: no direct link exists; the Master Index goes through Caldera. Fixed a
       separate first-load reset of valid chamber links before carried indices were restored (LAUNCH_VERIFICATION §65).
-- [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
+- [x] **C** FLOW-03 (started 2026-10-02 21:54 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): both rival Great Houses can be joined in the Faction Journal.
 - [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage"). Fix only if the save already carries the location and class name;
       otherwise it goes back after launch.

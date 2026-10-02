@@ -3197,3 +3197,25 @@ runtime/server errors; scoped axe/overflow checks pass. The initial aggregate
 browser report timed out after reproducing the endpoint reset; it is excluded.
 Evidence: `A:/Cache/clarity-batch/flow04-before.log`, `flow04-unit-final.log` and
 `flow04-{vanilla,tr,tr_arce}-final/`.
+
+
+### FLOW-03 — enforce existing faction exclusions
+
+The Journal warned about a rival but its Join action unconditionally appended a
+membership. `toggleMembership` and `updateMembership` now enforce the existing
+`getMutualExclusionConflict` rules for new joins. The button is disabled with an
+associated explanation naming the current faction. Leaving remains available;
+compatible guilds coexist; an expelled membership still counts; ordinary
+unjoined mentions do not. Existing conflicting imported memberships are retained
+and remain editable/removable, rather than silently rewriting the save.
+
+This applies the existing Hlaalu/Redoran/Telvanni and vampire-clan groups; it does
+not infer additional TR quest or membership rules from faction names alone.
+53 relevant faction/import tests passed, including each Great House against both
+rivals, direct rank-update bypasses, case-insensitive keys, blank keys, malformed
+mentions, leaving, unrelated guilds and conflicting imported saves. Twelve Chrome
+cases pass across all worlds, both themes and 1366/375 px: Hlaalu blocks Redoran
+and Telvanni; leaving allows Redoran; Mages Guild remains compatible; Hlaalu then
+shows Redoran as its conflict. Scoped axe/overflow checks pass; zero runtime/server
+errors; phone screenshot reviewed. Evidence:
+`A:/Cache/clarity-batch/flow03-unit.log` and `flow03-{vanilla,tr,tr_arce}/`.
