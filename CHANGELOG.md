@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Travel distinguishes routing stops from mapped locations. Map dots group nearby stops by town and include positioned points along the chosen journey.
+
 - Alchemy shows a calculated 0% brew chance when shared effects round to zero, while incomplete recipes keep the empty-result dash.
 
 - Challenge Runs clears an invalid-seed message after generating or loading a valid run.

@@ -2225,3 +2225,10 @@ Completed on this branch only. No push, merge, deployment, migration or data reb
 Branch: `polish/ui-04`. Reproduced with zero Alchemy, Intelligence and Luck plus Saltrice and Marshmerrow. Cause: the chance used potion.isValid, which also rejects fully calculated effects rounding to zero. calculatePotion now marks completed calculations separately; the chance reads that flag. Potion validity, strength, price and formulas are unchanged. Three regression tests cover zero and positive results, incomplete/unmatched/duplicate recipes, unavailable rules/settings and invalid stats. npm test: 1,139 passed, zero failures/skips/TODO. Chrome: 4/4 passed at 1366/375 in both themes; zero axe blockers, overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/ui-04-before, ui-04-final, ui-04-unit.log.
 
 Completed on this branch only. No push, merge, deployment, migration or data rebuild.
+
+
+## UI-05 — local launch polish
+
+Branch: `polish/ui-05`. The original labels implied the same scope. availableStops counts graph nodes excluding named-place endpoints; mapData groups physical platforms by town, excludes unplaced positions, and routePositions adds route points. Staged TR with a synthetic outsider save has 490 routing stops and 101 mapped locations, unlike the older QA bundle. Both scopes are now explicit with a map explanation; no counts are hard-coded and routing is unchanged. Three map-scope edge cases cover singular, route points/unplaced locations and an empty map. npm test: 1,142 passed, zero failures/skips/TODO. Chrome: 24/24 passed across Vanilla/TR/TR + ARCE, manual/synthetic save, both themes and 1366/375; saved cases toggle guild access and restore save defaults. Zero axe blockers, page overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/ui-05-options, ui-05-unit.log and the before report.
+
+Completed on this branch only. No push, merge, deployment, migration or data rebuild.

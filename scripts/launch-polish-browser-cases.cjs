@@ -7,6 +7,38 @@ module.exports = async c => {
     c.assertAccessible(await c.audit(name));
     await c.screenshot(name);
   };
+  for(const profile of ['vanilla','tr','tr_arce'])for(const saved of [false,true])for(const theme of ['ashfall','morrowind'])for(const width of [1366,375]){
+    await c.check(`UI-05/${profile}/${saved?'save':'manual'}/${theme}/${width}`,async()=>{
+      const storage={'silt-theme':theme};
+      if(saved){
+        const raw=require('../test/helpers/qa-staged-data.cjs').save();
+        raw.progress.factions=[];
+        if(profile!=='vanilla')raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm');
+        if(profile==='tr_arce')raw.contentFiles.push('ARCE - All Races and Classes Enabled.esp');
+        await (await import('../lib/active-save-store.mjs')).rememberSave(raw,{setItem:(k,v)=>storage[k]=v});
+      }
+      const script=await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`localStorage.clear();for(const [k,v]of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v);`});
+      try{
+        await c.viewport(width);await c.navigate('travel',profile);await c.until('document.querySelector(".transit-map-count")');
+        const status=await read('document.querySelector("#travel-network-status").textContent');
+        const map=await read('document.querySelector(".transit-map-count").textContent');
+        assert.match(status,/\d+ routing stops?/);assert.match(map,/\d+ mapped locations?/);
+        assert.match(await read('document.querySelector(".transit-map-scope").textContent'),/group stops in the same town/);
+        if(saved){
+          await c.click('#travel-options > summary');
+          await read(`(()=>{const l=[...document.querySelectorAll('#travel-options label')].find(l=>l.textContent.includes('Mages Guild member'));l.querySelector('input').dataset.launchGuild='true';})()`);
+          await c.click('[data-launch-guild]');await c.pause(200);
+          assert.match(await read('document.querySelector("#travel-network-status").textContent'),/\d+ routing stops?/);
+          assert.match(await read('document.querySelector(".transit-map-count").textContent'),/\d+ mapped locations?/);
+          await c.button('Use save defaults');await c.click('#travel-options > summary');
+        }
+        await c.screenshot(`UI-05-${profile}-${saved}-${theme}-${width}-status`);
+        await read('document.querySelector(".transit-map-count").scrollIntoView({block:"center"})');
+        await finish(`UI-05-${profile}-${saved}-${theme}-${width}`);
+        return {status,map,saved};
+      }finally{await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier});}
+    });
+  }
   for (const theme of ['ashfall','morrowind']) for (const width of [1366,375]) {
     await c.check(`UI-04/${theme}/${width}`,async()=>{
       await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
@@ -21,6 +53,7 @@ module.exports = async c => {
       await c.click('[title="Clear Slot 2"]');
       assert.match(await chance(),/not calculated yet/);
       await c.choose('[aria-label="Crucible 2 ingredient"]','Marshmerrow');
+      await read('document.querySelector("#alchemy-potion-output").scrollIntoView({block:"center"})');
       await finish(`UI-04-${theme}-${width}`);return {zeroVisible:true,incompleteEmpty:true};
     });
     await c.check(`UI-03/${theme}/${width}`,async()=>{
