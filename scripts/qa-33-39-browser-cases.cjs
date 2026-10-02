@@ -5,7 +5,20 @@ async function setup(c,route,profile,width,theme,build){
   else await c.navigate(route,profile);
 }
 async function finish(c,name){assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Page fits the viewport');c.assertAccessible(await c.audit(name));await c.screenshot(name);}
+async function wholeWords(c,selector){return c.evaluate(`(()=>{const root=document.querySelector(${JSON.stringify(selector)}),walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),broken=[];while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);const boxes=[...range.getClientRects()].filter(r=>r.width>0);if(new Set(boxes.map(r=>Math.round(r.top))).size>1)broken.push(m[0]);}}return broken})()`);}
 module.exports=async c=>{
+  for(const width of [375,390,1366])for(const theme of ['ashfall','morrowind'])await c.check(`QA-35/vanilla/${width}/${theme}`,async()=>{
+    await setup(c,'home','vanilla',width,theme);
+    assert.deepEqual(await wholeWords(c,'.home-character-stats-grid'),[],'Home identity labels stay whole');
+    await c.evaluate('document.querySelector(".home-character").scrollIntoView({block:"center"})');await finish(c,`QA-35-home-${width}-${theme}`);
+    await c.navigate('builder');await c.builderTab('equipment');
+    assert.deepEqual(await wholeWords(c,'.loadout-actions'),[],'Loadout actions stay whole');
+    await c.evaluate('document.querySelector(".loadout-actions").scrollIntoView({block:"center"})');await finish(c,`QA-35-actions-${width}-${theme}`);
+    await c.button('Rename');assert.ok(await c.evaluate('Boolean(document.querySelector(".loadout-tabs-bar input"))'),'Rename still opens');
+    await c.builderTab('premade');await c.button('Expand All');
+    assert.deepEqual(await wholeWords(c,'.premade-footer'),[],'Specialization descriptions wrap at words');
+    await c.evaluate('document.querySelector(".premade-footer").scrollIntoView({block:"center"})');await finish(c,`QA-35-premade-${width}-${theme}`);return {wholeWords:true};
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-34/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'alchemy',profile,width,theme);
     await c.until('document.querySelector("#reverse-alchemy-search")');

@@ -212,7 +212,7 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
                         </div>
                       </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-line-12 flex items-center justify-between">
+                      <div className="premade-footer mt-3 pt-2.5 border-t border-line-12 flex flex-wrap gap-2 items-center justify-between">
                         <span className="text-xs text-fg-9 mr-2">Specialization: {b.spec}. {SPECIALIZATION_COPY[b.spec]}</span>
                         <button
                           type="button"

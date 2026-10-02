@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Home identity labels, loadout actions and premade Specialization descriptions stay whole on phones.
+
 - Alchemy keeps Show more pairs visibly separate from the scrollable ingredient list, including after showing more results.
 
 - Gear Advisor starts with two hands for Spear and Marksman builds, and one hand plus shield for other weapons. Your chosen setup takes priority.

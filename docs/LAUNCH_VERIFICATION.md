@@ -2909,3 +2909,13 @@ viewport, not covered by an overlapping button. Explicit grid spacing now puts
 both themes and 1366/375 px. All 24 measured list/button states retain at least
 8 px separation; last-pair selection and output focus pass. Screenshots reviewed.
 Evidence: `A:/Cache/qa33-39/qa34-before/` and `qa34-final/`.
+
+### QA-35
+
+Cause: body-wide anywhere wrapping plus shrinking action rows broke short labels.
+Home keeps identity labels intact; loadout actions wrap as whole buttons; premade
+Specialization footers wrap at spaces and move Load Build below when necessary.
+44 relevant Home/premade/equipment tests and six Chrome cases passed at 375/390/
+1366 px in both themes. The first browser assertion also inspected unrelated
+premade titles; the accepted case checks the requested footer and labels.
+Evidence: A:/Cache/qa33-39/qa35-accepted/. No behavior or data change.
