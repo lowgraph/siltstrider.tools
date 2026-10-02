@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Search now uses singular and plural faction rank labels correctly.
+
 - Level Simulator keeps Prev, Next and training skill names readable on phones. Navigation gets its own row and training details wrap at whole words.
 
 - Faction Journal keeps the active faction name visible above its details, even when search or scrolling hides the selected list entry.

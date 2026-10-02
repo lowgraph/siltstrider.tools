@@ -2246,3 +2246,10 @@ Completed on this branch only. No push, merge, deployment, migration or data reb
 Branch: `polish/ss-09`. Reproduced broken Prev and Next words using text Range line boxes at 375 px. Cause: the itinerary heading squeezed an unwrapped navigation row, and misc-training name, numbers and governing-attribute chip shared another unwrapped row. Navigation now moves below the heading on phones; its buttons cannot shrink or wrap inside words. Training details wrap between fields and keep skill names whole. Browser regression measures every itinerary word, uses an actual Acrobatics training plan, exercises both modes and Next/Previous, and checks axe plus page overflow. npm test: 1,145 passed, zero failures/skips/TODO. Chrome: 6/6 passed at 1366/375/390 in both themes (12 mode states/screenshots), zero runtime/server errors. Evidence: A:/Cache/launch-polish/ss-09-before, ss-09-final and ss-09-unit.log. Screenshots reviewed for visible names and controls; no calculation, character or saved-state changes.
 
 Completed on this branch only. No push, merge, deployment, migration or data rebuild.
+
+
+## SS-10 — local launch polish
+
+Branch: `polish/ss-10`. Cause: faction search always used the plural word and suppressed zero counts. Fixed catalog and fallback counts, including invalid fallback values. Three active regression tests cover zero, one and multiple ranks. The staged Twin Lamps result reproduced “1 ranks” in ss-10-reproduced; ss-10-verified passes 4/4 Chrome cases across both themes at 1366 and 375 px, with Escape dismissal, overflow and axe checks. The initial browser selector was corrected to the existing search-dialog class before capturing the actual baseline. npm test: 1,148 passed, no failures, skips or TODOs (ss-10-unit-final.log). Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, migration or data rebuild.

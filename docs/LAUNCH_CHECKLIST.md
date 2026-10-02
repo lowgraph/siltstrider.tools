@@ -452,7 +452,7 @@ Low:
       deliberate for now; say so on the page.
 - [x] **C** SS-08: on a phone the selected faction is not visible beside its details. (started 2026-10-02 01:07 UTC, Codex, on polish/ss-08) (completed on branch with this commit; not merged or live)
 - [x] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones. (started 2026-10-02 01:11 UTC, Codex, on polish/ss-09) (completed on branch with this commit; not merged or live)
-- [ ] **C** SS-10: "1 ranks" in search. (started 2026-10-02 01:14 UTC, Codex, on polish/ss-10)
+- [x] **C** SS-10: "1 ranks" in search. (started 2026-10-02 01:14 UTC, Codex, on polish/ss-10) (completed on branch with this commit; not merged or live)
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 - [ ] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding).

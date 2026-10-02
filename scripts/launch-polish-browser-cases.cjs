@@ -83,6 +83,18 @@ module.exports = async c => {
     });
   }
   for (const theme of ['ashfall','morrowind']) for (const width of [1366,375]) {
+    await c.check(`SS-10/${theme}/${width}`,async()=>{
+      await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await c.viewport(width);await c.navigate('home');await c.click('.search-trigger');
+      await c.until('document.querySelector(".search-dialog input")');
+      await c.type('.search-dialog input','Twin Lamps');
+      await c.until(`document.querySelector('.search-dialog [role="option"]')?.textContent.includes('Twin Lamps')`);
+      const result=await read(`document.querySelector('.search-dialog [role="option"]').textContent`);
+      assert.match(result,/1 rank\b/);assert.doesNotMatch(result,/1 ranks/);
+      await finish(`SS-10-${theme}-${width}`);
+      await c.key('Escape','Escape',27);assert.equal(await read('Boolean(document.querySelector(".search-dialog"))'),false);
+      return {result,keyboardDismiss:true};
+    });
     await c.check(`UI-04/${theme}/${width}`,async()=>{
       await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
       await c.viewport(width);await c.navigate('alchemy');
