@@ -17,6 +17,31 @@ events beside the report. Timeout messages retain the pending request URLs or
 CDP expression, and the report includes the font states used for navigation.
 Keep output under the configured cache, outside the checkout.
 
+## Targeted runs (until the freeze)
+
+For a fix or polish item, run `npm test` plus only the browser groups the change
+touches. Print them with:
+
+```powershell
+npm run test:browser:plan                    # this branch against origin/main, plus uncommitted
+npm run test:browser:plan -- --base main
+npm run test:browser:plan -- --files 'lib/enchant-math.mjs,app/globals.css'
+```
+
+`scripts/browser-plan.mjs` maps changed paths to the existing `--suite`/`--filter`
+groups (Alchemy, Enchanting, Spellmaking, Travel, Level Simulator, Gear Advisor,
+Builder, Faction Journal, Challenge Runs, About, search, Home, and Vault/account,
+which also lists `npm run test:vault`). It only prints commands. Shared foundations
+(global or theme CSS, the layout, the shell, the data loader, `package.json`, build
+scripts) and any app file it cannot place give the full set. Docs, tests and the
+changelog view need no browser run; other unmapped paths are listed for a manual
+check. Also run the cases added for the fix itself (`--filter <its ID>`).
+
+Freeze acceptance and any release candidate still run every suite (all, qa,
+launch, hydration, touch and the signed-in Vault). When a new area or case file is
+added, add its filter to `AREAS` in the script; `test/browser-plan.test.js` fails if
+a planned filter no longer names an existing case.
+
 QA reproduction (1 October): `--suite hydration` enables `Runtime.consoleAPICalled`,
 `Runtime.exceptionThrown` and `Log.entryAdded` before the first `Page.navigate`.
 It checks 16 routes, including a 404, six storage/link scenarios, 1366/375 px and
