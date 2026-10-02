@@ -11,16 +11,17 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `ef67b3e` (CALC-4 ingredient finder and sources, Travel city transfers and swimming fallback, retaining main's Vault fixes; release verification in §26) |
-| Live Worker version | `3879ce7b-c397-4698-83c4-e9d185d9ed5c`, tagged `ef67b3e`; deployed at 100% on 2026-10-01 05:22 UTC |
-| Security headers | `public/_headers` retained; nosniff and `X-Frame-Options: DENY` verified live after the 05:22 release; existing CSP, referrer policy, permissions policy and host-only HSTS unchanged |
+| Live commit | `6fab4c5` (character/world, calculation, Travel, equipment, phone-layout and copy QA fixes plus the Morrowind game theme; release verification in §49) |
+| Live Worker version | `e29663d3-68eb-45ff-bbef-13447c3b0cbf`, tagged `6fab4c5`; deployed at 100% on 2026-10-02 00:13 UTC (1 October in São Paulo) |
+| Security headers | `public/_headers` retained; nosniff and `X-Frame-Options: DENY` verified live after the 00:13 release; existing CSP, referrer policy, permissions policy and host-only HSTS unchanged |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9…`; corrected IngredientSources, existing extraction snapshot |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
-| D1 migrations | 0001–0007 applied; none pending at the 05:22 release; no migration ran |
-| D1 Time Travel bookmark | `0000005d-00000000-000050f7-7e6a447a113fd39c04e571109bfaee6c`, captured before the 2026-10-01 05:22 UTC release; private migration backup and preservation checks in §15 |
-| Pipeline repo | `master` / `origin/master` at `7e04885`; correction `41da92c` included and shared release records synchronized |
+| D1 migrations | 0001–0007 applied; none pending at the 00:13 release; no migration ran |
+| D1 Time Travel bookmark | `0000006d-00000000-000050f8-1d7bc74cdeb236e19f0c9943a3fe9824`, captured before the 2026-10-02 00:13 UTC release; recovery record in §48, private migration backup and preservation checks in §15 |
+| Code rollback | `3879ce7b-c397-4698-83c4-e9d185d9ed5c` / `ef67b3e`; Worker version switch only, no database restore or migration |
+| Pipeline repo | `master` / `origin/master` at `6372e65`; correction `41da92c` included and shared release records synchronized |
 
 Deployment history since the last tagged release before this batch:
 
@@ -52,8 +53,13 @@ Deployment history since the last tagged release before this batch:
 | `3ef09493-cb5a-42e2-96fd-ca54c168d3e2` (restored) | 09-30 21:30 | `2c113b8` | owner-authorized return to the Travel release for live reproduction; active version captured before the next release |
 | `d523b9ba-92b1-4fed-9056-89ee19916a49` | 10-01 00:11 | `216cd90` | tagged; current main, account settings and tool polish; 100% traffic; migration 0007 had already been applied separately |
 | `3879ce7b-c397-4698-83c4-e9d185d9ed5c` | 10-01 05:22 | `ef67b3e` | tagged; CALC-4 finder and selected-ingredient sources, corrected bundle, Travel city transfers and swimming fallback, retaining main's Vault fixes; 100% traffic; no migration |
+| `e29663d3-68eb-45ff-bbef-13447c3b0cbf` | 10-02 00:13 | `6fab4c5` | tagged; all implemented QA fixes and Morrowind game theme, 100% traffic; same bundle and database schema; recovery recorded before deployment (§48), live verification in §49 |
 
-For the current release, §26 records code rollback target `d523b9ba` / `216cd90`:
+For the current QA/theme release, §48 records code rollback target `3879ce7b` /
+`ef67b3e`: switch the Worker version only. No database restore or migration is
+part of this rollback.
+
+For the earlier CALC-4 release, §26 records code rollback target `d523b9ba` / `216cd90`:
 the account-settings/tool-polish release immediately before CALC-4 and the new
 Travel behavior. Its assets restore the earlier bundle too. Rollback preserves
 the additive migration 0007 and all database writes.
@@ -2132,3 +2138,69 @@ UUID and fresh bookmark. Wrangler's migration list and read-only migration-name
 query succeeded. Saved recovery metadata, current pointer/manifest and release
 logs under `A:/Cache/deploy-6fab4c5-20261001/`, outside Git/public assets. This
 record does not claim a deployment; the completed release is recorded separately.
+
+## 49. QA fixes and Morrowind theme deployed — 1 October locally
+
+Owner-authorized release **`6fab4c54af827965387ce336885907664deeff14`** is live
+as Worker **`e29663d3-68eb-45ff-bbef-13447c3b0cbf`**, tagged `6fab4c5`, at
+**100% traffic**. Deployment `609140d4-fc59-45e4-a357-d3e15d92041b` was created
+**2026-10-02 00:13:37 UTC** (1 October, 21:13 in São Paulo). This publishes the
+QA implementation batch and the Morrowind theme from the merged main checkout.
+
+Recovery information in §48 was committed and pushed as **`7c08d3f` before
+deployment**. Selected code rollback is **`3879ce7b` / `ef67b3e`**; the fresh D1
+bookmark is **`0000006d-00000000-000050f8-1d7bc74cdeb236e19f0c9943a3fe9824`**.
+Rolling back this release means switching the Worker version. No migration,
+database restore or Clerk-account change is involved.
+
+Built and deployed the clean detached `6fab4c5` checkout, with the existing staged
+bundle, production Clerk publishable key and unchanged repository configuration.
+Wrangler used `--keep-vars`; existing bindings and domains remain. Uploaded 70
+changed assets; 1,681 were already uploaded. Deployment history and the version's
+source message confirm the released commit. Final documentation is recorded on
+main separately and does not trigger another deployment.
+
+| Check | Result |
+| --- | --- |
+| Pinned release `npm test` | **1,130 passed, 0 failed, 0 skipped, 0 TODO** |
+| Final main documentation `npm test` | **1,130 passed, 0 failed, 0 skipped, 0 TODO**, including licence and site-claim checks |
+| `npm run build:cloudflare` | **24 pages generated**, unchanged configuration; production Clerk key |
+| Wrangler dry run | Passed before publishing; version 4.134.0, existing D1 binding and routes |
+| Live HTTP checks | **30/30 passed**: 15 pages, security headers, four signed-out API GETs, the www redirect with world query, built CSS/JS, bundle/manifest, theme textures and IngredientSources hashes |
+| Live Chrome QA regression suite | **270/270 passed**: Enchanting, Health, character titles, apparatus, Travel search/link precedence, Mournhold, faction/premade/About copy, share links, catalog checks, phone tables/popovers and beast-race gear |
+| Live touch checks | **31/31 passed** at 375 px with actual CDP touch input and confirmed coarse pointer: shortcut hints, navigation/search, five popovers, ingredient/reverse picker and **20 saved-Travel edit/store/navigate/restore repetitions** |
+| Live first-navigation hydration | **120/120 passed** on Home and Builder: fresh starts repeated ten times per route/width/theme, stored TR + ARCE, loaded save, build links with/without world and challenge links; console capture enabled before navigation |
+| Pipeline | **685 tests passed** before pushing `6372e65`; shared COORDINATION and UI_TRANSFORMATION are byte-identical in both repositories |
+
+The **421 completed live browser cases are unique**, with **zero assertion,
+runtime or server failures**. QA and hydration cases cover both themes at 1366
+and 375 px; the gear tables and Configure popovers also cover 390 px. Hydration
+checks captured no React mismatch warning or uncaught exception. Fresh Chrome
+profiles are signed out; synthetic saves stay in browser localStorage. Production
+browser requests are guarded against API writes. The four signed-out API GETs
+returned **401**, without account data or Set-Cookie.
+
+The initial 20-repeat Travel touch group reached its 90-second bound after 15
+passes, with no assertion failure. Excluded that incomplete group and reran all
+20 repetitions in smaller bounded groups using the unchanged runner. All completed;
+the aggregate checks reject duplicate cases and verify the expected counts.
+
+No production API write, real-account test, private-data export, extraction or
+catalog rebuild was performed. Bundle `a29adea046e6086c2c7ee654` and migrations
+0001–0007 are unchanged; none is pending. The synthetic signed-in Worker/Vault
+suite had already passed **10/10** against the merged build (§47); this release's
+live checks do not claim a new real Clerk sign-in test.
+
+Freeze acceptance remains open. Its full all-route hydration matrix, expected-404
+policy, physical-phone/touchscreen-laptop checks and real provider session checks
+remain separate. CDP's mobile touch setup does not establish a device with touch
+and a fine pointer. No monitoring automation or later deployment was scheduled.
+
+Evidence: `A:/Cache/deploy-6fab4c5-20261001/`: recovery metadata and selected bundle,
+`unit.log`, `final-docs-unit.log`, `build-final.log`, `dry-run.log`, `deploy.log`,
+deployment/version records, `live-http.json`, `live-browser-summary.json`, both
+browser batch reports, per-case reports/screenshots and `pipeline.log`. Temporary
+capture/orchestration scripts are removed; evidence and recovery records remain.
+First command for the next agent: `npm test`, then BROWSER_TESTS.md's read-only
+browser checks against `https://siltstrider.tools`; use the full freeze matrix at
+the release cut.

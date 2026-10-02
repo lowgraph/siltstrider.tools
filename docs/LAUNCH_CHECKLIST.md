@@ -85,7 +85,7 @@ post-deploy checks and a line in LAUNCH_VERIFICATION. Push and deploy are separa
       link, a link without a world.
 - [x] **O** (done, owner, reported 2026-09-29 20:33 UTC: the old save deleted and the character saved again; works across browsers) Real sign-in test on production (LAUNCH_VERIFICATION §5 item 6), and delete the
       10:54 save and save the Khajiit again, if not done already.
-- [x] **C** **VAULT-TEST** (started 2026-09-30 22:12 UTC, C; done `a7bd0a4`, merged `c8e4aea` (the Premium heading scoped to its section, since ACC-2's settings heading shares `.account-page h2`), not deployed: `scripts/local-stack.cjs` and `scripts/test-vault.cjs`, 10 of 10 cases; the owner's real Clerk sign-in checked on the local site; its axe pass fixed the Vault card's grey Rename and Delete, an unnamed rename box and the account page's heading order) Signed-in Cloud Vault tests before the next deploy (owner, 30
+- [x] **C** **VAULT-TEST** (started 2026-09-30 22:12 UTC, C; done `a7bd0a4`, merged `c8e4aea` (the Premium heading scoped to its section, since ACC-2's settings heading shares `.account-page h2`), live as `e29663d3`: `scripts/local-stack.cjs` and `scripts/test-vault.cjs`, 10 of 10 cases; the owner's real Clerk sign-in checked on the local site; its axe pass fixed the Vault card's grey Rename and Delete, an unnamed rename box and the account page's heading order) Signed-in Cloud Vault tests before the next deploy (owner, 30
       September): a local copy of the site with the Worker and a local database, signed in once by
       the owner with a Clerk development test account; and an automated signed-in suite that signs
       its own tokens (no Clerk), with axe on the signed-in pages.
@@ -194,10 +194,10 @@ for now (owner, 30 September); other agents skip them.
         shops, plants, creatures and finds from `IngredientSources`, loaded only when opened.
 
 - [x] **C** **DESIGN — Morrowind game theme** (implemented `84d8d56`, QA `d85a931`;
-      integration authorized 1 October, Codex; merged with this commit, not deployed)
+      integration authorized 1 October, Codex; merged `6fab4c5`, live as `e29663d3`)
       Black windows, tan text, procedural frames and the Home stats window. Modern
       UI retains its layout, apart from the theme-toggle preview. Merged-checkout
-      verification: LAUNCH_VERIFICATION §47; spec: MORROWIND_GAME_THEME.md.
+      verification: LAUNCH_VERIFICATION §§47–49; spec: MORROWIND_GAME_THEME.md.
 
 ### 5. QA findings (1 October): fix before the freeze
 
@@ -212,9 +212,10 @@ accounts, since cleaned up: `siltstrider-account-qa-2026-10-01.md` (F-ids).
 
 Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. The implementation items below are integrated into main by
-this merge, retaining QA-24's earlier merge. They are not deployed. Branch and
-merged-checkout verification are in LAUNCH_VERIFICATION §§30–46. Freeze acceptance
-and release preparation remain the next step against the final release build.
+`c3e740b`, retaining QA-24's earlier merge, and live with the theme in `6fab4c5` /
+`e29663d3`. Branch, merged-checkout and release verification are in
+LAUNCH_VERIFICATION §§30–49. Freeze acceptance and release preparation remain
+separate checks against the final release build.
 
 | Order | Target | Why |
 | --- | --- | --- |
@@ -244,7 +245,7 @@ commands in BROWSER_TESTS.md.
 
 #### 1. Test portability
 
-- [x] **C** **Test portability** (started 2026-10-01 20:16 UTC, Codex, on launch/character-preservation; done `44ddd82`, `test/qa-staged-data.test.js`, verified in LAUNCH_VERIFICATION §35; merged with this commit; not deployed) Three of these tests read the staged bundle and fail where none is staged (a
+- [x] **C** **Test portability** (started 2026-10-01 20:16 UTC, Codex, on launch/character-preservation; done `44ddd82`, `test/qa-staged-data.test.js`, verified in LAUNCH_VERIFICATION §35; merged `c3e740b`; live as `e29663d3`) Three of these tests read the staged bundle and fail where none is staged (a
       fresh clone, a cloud session): `QA-11 published faction names…` and both `QA-20`
       catalog tests. Skip them without a bundle, as the other bundle tests do.
       The same guard now covers later catalog-dependent regressions; pure and
@@ -252,13 +253,13 @@ commands in BROWSER_TESTS.md.
 
 #### 2. QA-21 + QA-23 — world preservation
 
-- [x] **C** **QA-21** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation; done `1029357`, verified in LAUNCH_VERIFICATION §30; merged with this commit; not deployed) (reproduced 4/4 and in a real Clerk session; `AppShell` passes `setBuild` as `onApplyBuild`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-1) "Load this build into Character Builder" in the Cloud Vault
+- [x] **C** **QA-21** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation; done `1029357`, verified in LAUNCH_VERIFICATION §30; merged `c3e740b`; live as `e29663d3`) (reproduced 4/4 and in a real Clerk session; `AppShell` passes `setBuild` as `onApplyBuild`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-1) "Load this build into Character Builder" in the Cloud Vault
       leaves a TR + ARCE build in the visitor's world: Vanilla, race shown as Argonian, the
       sheet stuck on "Calculating statistics…" (2 of 2). The Vault applies builds with the
       provider's plain `setBuild`, which ignores `build.world` and `build.arce`
       (`app-shell.jsx`, `character-context.jsx` `loadBuild`). Loading a build must set its
       world, as a shared link does (LINK-1).
-- [x] **C** **QA-23** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation; done `1029357`, verified in LAUNCH_VERIFICATION §30; merged with this commit; not deployed) (reproduced, hydrated test and real session; `ShellProvider` takes `preferences.settings.world` whenever ready, and `setProfile` saves every header world change, so an explicit account choice cannot be told apart: record whether the Preferred world was chosen on the account; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
+- [x] **C** **QA-23** (started 2026-10-01 17:23 UTC; taken over 2026-10-01 18:14 UTC, Codex, on launch/character-preservation; done `1029357`, verified in LAUNCH_VERIFICATION §30; merged `c3e740b`; live as `e29663d3`) (reproduced, hydrated test and real session; `ShellProvider` takes `preferences.settings.world` whenever ready, and `setProfile` saves every header world change, so an explicit account choice cannot be told apart: record whether the Preferred world was chosen on the account; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-3, F-9) Signing in switches to the account's Preferred world
       when the address has no `?world=` (3 of 3): an unsaved TR + ARCE character, or a loaded
       TR + ARCE save, comes back in Vanilla, the save re-read as plain Khajiit
       (`shell-context.jsx`). A new account has chosen nothing yet, but switching world or
@@ -267,13 +268,13 @@ commands in BROWSER_TESTS.md.
 
 #### 3. QA-24 — preserve unsaved characters on sign-out
 
-- [x] **C** **QA-24** (started 2026-10-01 17:30 UTC, Codex, on launch/character-signout-preservation; done `aebd6c0`, merged to main in this commit, verified in LAUNCH_VERIFICATION §§28–29; not deployed) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
+- [x] **C** **QA-24** (started 2026-10-01 17:30 UTC, Codex, on launch/character-signout-preservation; done `aebd6c0`, merged `339c198`, verified in LAUNCH_VERIFICATION §§28–29; live as `e29663d3`) (High; F-4) Signing out loses an unsaved Builder character: sign-out loads
       Home afresh and the Builder shows a random premade (2 of 2). A loaded save survives.
       Keep the character through sign-out as through sign-in (`SIGN_IN_EVENT` hand-off).
 
 #### 4. QA-22 — correct share links
 
-- [x] **C** **QA-22** (started 2026-10-01 18:50 UTC, Codex, on launch/character-preservation; done `c169031`, verified in LAUNCH_VERIFICATION §31; merged with this commit; not deployed) (reproduced, local, live and real session; `shareBuildLink` (`use-cloud-vault.js`) uses only the save summary; `handleCopyPermalink` (`challenge-runs-root.jsx`) uses the shell's world; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-2, F-17) Share links carry the wrong character. An imported
+- [x] **C** **QA-22** (started 2026-10-01 18:50 UTC, Codex, on launch/character-preservation; done `c169031`, verified in LAUNCH_VERIFICATION §31; merged `c3e740b`; live as `e29663d3`) (reproduced, local, live and real session; `shareBuildLink` (`use-cloud-vault.js`) uses only the save summary; `handleCopyPermalink` (`challenge-runs-root.jsx`) uses the shell's world; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High; F-2, F-17) Share links carry the wrong character. An imported
       save's "Copy shareable permalink" writes raw ids (`className:"mage"`,
       `T_Els_Cathay-raht`), empty skill lists, the wrong gender and `world=vanilla` for a
       TR + ARCE save; it opens as a different or broken character (2 of 2 saves; Builder
@@ -282,12 +283,12 @@ commands in BROWSER_TESTS.md.
 
 #### 5. QA-01 + QA-02 — Enchanting calculations
 
-- [x] **C** **QA-01** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation; done `df261d0`, verified in LAUNCH_VERIFICATION §32; merged with this commit; not deployed) (reproduced 4/4 local and live; cause `calcEffectCost`/`calcEnchantmentTotalPoints`; OpenMW 0.51: running costs 25.025 and 50.05, capacity 75, base price 50,050 (site 50 and 250,000); test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-05; confirmed in code) Enchanting costs several effects
+- [x] **C** **QA-01** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation; done `df261d0`, verified in LAUNCH_VERIFICATION §32; merged `c3e740b`; live as `e29663d3`) (reproduced 4/4 local and live; cause `calcEffectCost`/`calcEnchantmentTotalPoints`; OpenMW 0.51: running costs 25.025 and 50.05, capacity 75, base price 50,050 (site 50 and 250,000); test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-05; confirmed in code) Enchanting costs several effects
       wrong: each effect's points are its own plus the running total before it, and the
       item's total is the sum of those running costs (OpenMW 0.51 `enchanting.cpp`);
       `calcEnchantmentTotalPoints` (`lib/enchant-math.mjs`) returns only the last running
       cost. Two Constant Effects of 5/5 must read 75 points, not 50. Fix with QA-02.
-- [x] **C** **QA-02** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation; done `df261d0`, verified in LAUNCH_VERIFICATION §32; merged with this commit; not deployed) (partly reproduced: floor, chance and price tests fail; the Common Ring UI case not; OpenMW 0.51: 1.9125 points, capacity 1, base price 1,912 (price from the precise cost, so fix with QA-01); the engine's chance uses precise points, fatigue, item count and a Constant multiplier; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-04; confirmed in code) Enchanting rounds points to
+- [x] **C** **QA-02** (started 2026-10-01 19:11 UTC, Codex, on launch/character-preservation; done `df261d0`, verified in LAUNCH_VERIFICATION §32; merged `c3e740b`; live as `e29663d3`) (partly reproduced: floor, chance and price tests fail; the Common Ring UI case not; OpenMW 0.51: 1.9125 points, capacity 1, base price 1,912 (price from the precise cost, so fix with QA-01); the engine's chance uses precise points, fatigue, item count and a Constant multiplier; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-04; confirmed in code) Enchanting rounds points to
       nearest instead of flooring each effect: a 5/5, 5 s Target Fortify Attribute is 1.875
       points, shown as 2, so it "does not fit" a Common Ring and its base price doubles.
       Afterwards re-check the self-enchant chance (16% vs the engine's 15%) and the base
@@ -295,11 +296,11 @@ commands in BROWSER_TESTS.md.
 
 #### 6. QA-03 + QA-04 — Health progression and chart
 
-- [x] **C** **QA-03** (started 2026-10-01 19:34 UTC, Codex, on launch/character-preservation; done `4c89666`, verified in LAUNCH_VERIFICATION §33; merged with this commit; not deployed) (reproduced 4/4 local and live; OpenMW 0.51 `levelUp` adds a float Endurance gain, and does not recompute the base half retroactively; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-02; confirmed in code) Level Simulator Health per level
+- [x] **C** **QA-03** (started 2026-10-01 19:34 UTC, Codex, on launch/character-preservation; done `4c89666`, verified in LAUNCH_VERIFICATION §33; merged `c3e740b`; live as `e29663d3`) (reproduced 4/4 local and live; OpenMW 0.51 `levelUp` adds a float Endurance gain, and does not recompute the base half retroactively; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; NUM-02; confirmed in code) Level Simulator Health per level
       is floored (`floor(END / 10)`, `lib/level-math.mjs`); OpenMW keeps the fraction (10% of
       Endurance): END 35 to 55 gives 22.5 over five levels, the site 21. Confirm against
       OpenMW 0.51's `npcstats.cpp` first (the report cited 0.49); change the explanation too.
-- [x] **C** **QA-04** (started 2026-10-01 19:34 UTC, Codex, on launch/character-preservation; done `4c89666`, verified in LAUNCH_VERIFICATION §33; merged with this commit; not deployed) (partly reproduced: all five chart expectations fail in unit tests, live chart starts at 50 for Health 35; cause `normalizeCharacterState`/`calculateHealthGrowthCurve` recompute the sheet; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
+- [x] **C** **QA-04** (started 2026-10-01 19:34 UTC, Codex, on launch/character-preservation; done `4c89666`, verified in LAUNCH_VERIFICATION §33; merged `c3e740b`; live as `e29663d3`) (partly reproduced: all five chart expectations fail in unit tests, live chart starts at 50 for Health 35; cause `normalizeCharacterState`/`calculateHealthGrowthCurve` recompute the sheet; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V, N; NUM-01, F07, NUM-03) The Level Simulator's Health chart
       starts at 50 whatever the character's Health (35, 45), says "Endurance 100 at Lv 6"
       when ten +5 steps are needed, and its forecast moves when Bitter Cup changes only
       Personality and Willpower. Check each symptom on its own; the Bitter Cup one may be
@@ -307,39 +308,39 @@ commands in BROWSER_TESTS.md.
 
 #### 7. QA-10 — beast-race equipment eligibility
 
-- [x] **C** **QA-10** (started 2026-10-01 20:28 UTC, Codex, on launch/character-preservation; done `ebebd98`, original three tests enforced plus `test/beast-recommendations.test.js` and inspector tests; 28/28 Chrome, LAUNCH_VERIFICATION §36; merged with this commit; not deployed) (reproduced 12/12 (Argonian, Khajiit, ARCE Cathay-raht); `resolveBestInSlotPicks` named and fallback premade paths skip the beast check; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
+- [x] **C** **QA-10** (started 2026-10-01 20:28 UTC, Codex, on launch/character-preservation; done `ebebd98`, original three tests enforced plus `test/beast-recommendations.test.js` and inspector tests; 28/28 Chrome, LAUNCH_VERIFICATION §36; merged `c3e740b`; live as `e29663d3`) (reproduced 12/12 (Argonian, Khajiit, ARCE Cathay-raht); `resolveBestInSlotPicks` named and fallback premade paths skip the beast check; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, V; FLOW-02; retest 1 October: Early game now omits boots for Argonian and Khajiit, but the optimized endgame kit and runner-ups still offer Boots of Blinding Speed and, for an Argonian, the Masque of Clavicus Vile) Beast races are offered helmets and boots they cannot
       wear in the Gear Advisor's runner-up picks (Masque of Clavicus Vile, Boots of Blinding
       Speed) under the advisor's own note that they are excluded. Seen once; check Argonian,
       Khajiit and an ARCE Khajiit form, every runner-up list.
 
 #### 8. QA-16 — Ebonheart → Mournhold
 
-- [x] **C** **QA-16** (started 2026-10-01 21:38 UTC, Codex, on launch/character-preservation; done `5fbbd59`, three catalog tests enforced and six stop-alias edge cases; 24/24 Chrome, LAUNCH_VERIFICATION §39; merged with this commit; not deployed) (reproduced 24/24, all worlds, walking on and off: High, a wrong answer; the Mournhold teleport is in every Teleports catalog, but `buildTransitStops`/`transitEndpointStops` (`lib/travel-stops.mjs`) do not expand the Mournhold city choice to its destination stop; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
+- [x] **C** **QA-16** (started 2026-10-01 21:38 UTC, Codex, on launch/character-preservation; done `5fbbd59`, three catalog tests enforced and six stop-alias edge cases; 24/24 Chrome, LAUNCH_VERIFICATION §39; merged `c3e740b`; live as `e29663d3`) (reproduced 24/24, all worlds, walking on and off: High, a wrong answer; the Mournhold teleport is in every Teleports catalog, but `buildTransitStops`/`transitEndpointStops` (`lib/travel-stops.mjs`) do not expand the Mournhold city choice to its destination stop; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (found in the 1 October retest; re-check first) Travel: Ebonheart to
       Mournhold showed No Route, though the Mournhold teleport from Ebonheart is everyday
       travel (Teleports policy). Check in Vanilla, TR and TR + ARCE with walking on and off;
       if it reproduces it is a wrong answer (High).
 
 #### 9. QA-07 + QA-25 — Travel search and link precedence
 
-- [x] **C** **QA-07** (started 2026-10-01 21:54 UTC, Codex, on launch/character-preservation; done `e9e1389`, verified in LAUNCH_VERIFICATION §40; merged with this commit; not deployed) (reproduced 4/4; cause `searchTravelOptions` normalization and `matchPlaces`; the rejected query leaves the committed route; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
+- [x] **C** **QA-07** (started 2026-10-01 21:54 UTC, Codex, on launch/character-preservation; done `e9e1389`, verified in LAUNCH_VERIFICATION §40; merged `c3e740b`; live as `e29663d3`) (reproduced 4/4; cause `searchTravelOptions` normalization and `matchPlaces`; the rejected query leaves the committed route; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F01; retest 1 October: Vos, Sadrith Mora, Ebonheart and Mournhold found, "Ald'ruhn" still not, stale route still shown) Travel's place search finds nothing for "Ald'ruhn"; only
       "Ald-ruhn" works, and the previous route stays on screen. Ignore apostrophes and
       hyphens in matching; clear or mark a stale route when the search changes. Check Vos,
       Sadrith Mora, Ebonheart and Mournhold too.
-- [x] **C** **QA-25** (started 2026-10-01 21:54 UTC, Codex, on launch/character-preservation; done `e9e1389`, verified in LAUNCH_VERIFICATION §40; merged with this commit; not deployed) (partly reproduced: unit assertion only (two DOM attempts stalled); `travel-workstation.jsx` lets the restored save's token override a link origin; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
+- [x] **C** **QA-25** (started 2026-10-01 21:54 UTC, Codex, on launch/character-preservation; done `e9e1389`, verified in LAUNCH_VERIFICATION §40; merged `c3e740b`; live as `e29663d3`) (partly reproduced: unit assertion only (two DOM attempts stalled); `travel-workstation.jsx` lets the restored save's token override a link origin; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, against a recorded invariant; F-5) With a save loaded, a Travel
       link's starting point is replaced by the save's position (`/travel?from=Balmora…` plans
       from Seyda Neen; the plan is kept). COORDINATION, Travel from the loaded save: a link
       wins over the save's starting point.
 
 #### 10. QA-06 — unobtainable Alchemy apparatus
 
-- [x] **C** **QA-06** (started 2026-10-01 22:04 UTC, Codex, on launch/character-preservation; done `ebaf9ae`, verified in LAUNCH_VERIFICATION §41; merged with this commit; not deployed) (reproduced 8/8; the missed keys are `tr_m7_apparatus_sm_alembic_02`, `_calcin_02`, `_retort_02`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
+- [x] **C** **QA-06** (started 2026-10-01 22:04 UTC, Codex, on launch/character-preservation; done `ebaf9ae`, verified in LAUNCH_VERIFICATION §41; merged `c3e740b`; live as `e29663d3`) (reproduced 8/8; the missed keys are `tr_m7_apparatus_sm_alembic_02`, `_calcin_02`, `_retort_02`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, Q; SS-01 regression; confirmed in code; retest 1 October: Vanilla and every Mortar list pass, TR and TR + ARCE Alembic, Calcinator and Retort still offer "Secret Master's (2x)") Secret Master's
       apparatus is still offered in TR and TR + ARCE Alchemy (Alembic, Calcinator, Retort),
       though the 30 September changelog says it is gone: the filter in
       `lib/alchemy-catalogs.mjs` matches only vanilla keys and names starting "Secretmaster".
 
 #### 11. QA-05 — stale character titles
 
-- [x] **C** **QA-05** (regression recheck started 2026-10-01 22:08 UTC, Codex, on launch/character-preservation; passed, LAUNCH_VERIFICATION §42) (started 2026-10-01 19:50 UTC, Codex, on launch/character-preservation; done `fdb9c9c`, verified in LAUNCH_VERIFICATION §34; merged with this commit; not deployed) (partly reproduced: Builder title stale after hydration; Simulator identity stale on desktop, not on live phone; cause `updateField`, `character-sheet.jsx`, `normalizeCharacterState`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
+- [x] **C** **QA-05** (regression recheck started 2026-10-01 22:08 UTC, Codex, on launch/character-preservation; passed, LAUNCH_VERIFICATION §42) (started 2026-10-01 19:50 UTC, Codex, on launch/character-preservation; done `fdb9c9c`, verified in LAUNCH_VERIFICATION §34; merged `c3e740b`; live as `e29663d3`) (partly reproduced: Builder title stale after hydration; Simulator identity stale on desktop, not on live phone; cause `updateField`, `character-sheet.jsx`, `normalizeCharacterState`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, V, N; F02, F03, UI-01, SS-02, SS-04, SS-05) The character's
       title goes stale after an edit: the Builder sheet ("Imperial Agent" over a Female
       Breton), Home's character card ("Argonian Marsh Monk" over a Nord), and the Level
       Simulator naming two characters ("Argonian male — Spear scout" beside "Male Dark Elf").
@@ -348,28 +349,28 @@ commands in BROWSER_TESTS.md.
 
 #### 12. QA-08 + QA-09 — phone tables and popovers
 
-- [x] **C** **QA-08** (started 2026-10-01 20:51 UTC, Codex, on launch/character-preservation; done `ae47496`, `test/qa-layout.browser.cjs` enforced, 36/36 Chrome, LAUNCH_VERIFICATION §37; merged with this commit; not deployed) (reproduced 8/8; `gear-sources.jsx` `SourceRow`, `best-in-slot-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
+- [x] **C** **QA-08** (started 2026-10-01 20:51 UTC, Codex, on launch/character-preservation; done `ae47496`, `test/qa-layout.browser.cjs` enforced, 36/36 Chrome, LAUNCH_VERIFICATION §37; merged `c3e740b`; live as `e29663d3`) (reproduced 8/8; `gear-sources.jsx` `SourceRow`, `best-in-slot-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, R, N; F06, SS-01) On a phone the Gear Advisor's Where column
       breaks into fragments ("Ald- / ruhn — / sold by / Dander / a"). Stack slot, item and
       source at phone width; Early and Late game, 375 and 390 px.
-- [x] **C** **QA-09** (started 2026-10-01 21:10 UTC, Codex, on launch/character-preservation; done `915ce1f`, eight component edge cases and five enforced browser-report tests; 30/30 mouse and 30/30 touch, LAUNCH_VERIFICATION §38; merged with this commit; not deployed) (partly reproduced: Birthsign, Specialization and both Favored Attribute overflow 16/16; Race stays inside; `configurator.jsx` `InfoTip` has no clamping; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
+- [x] **C** **QA-09** (started 2026-10-01 21:10 UTC, Codex, on launch/character-preservation; done `915ce1f`, eight component edge cases and five enforced browser-report tests; 30/30 mouse and 30/30 touch, LAUNCH_VERIFICATION §38; merged `c3e740b`; live as `e29663d3`) (partly reproduced: Birthsign, Specialization and both Favored Attribute overflow 16/16; Race stays inside; `configurator.jsx` `InfoTip` has no clamping; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; F05; retest 1 October at 375 px: all five Configure popovers fail; Race runs below the screen behind the tab bar, Birthsign, Specialization and both Favored Attribute run off the right edge) On a phone the Builder's Specialization help opens mostly
       off-screen. Keep every info popover inside the viewport; check each info icon at 375 px.
 
 #### 13. QA-12 — premade explanations
 
-- [x] **C** **QA-12** (started 2026-10-01 22:38 UTC, Codex, on launch/character-preservation; done `730a13e`, verified in LAUNCH_VERIFICATION §43; merged with this commit; not deployed) (reproduced 4/4; `premade-browser.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; U04, F08) Premade build cards say nothing about how a build
+- [x] **C** **QA-12** (started 2026-10-01 22:38 UTC, Codex, on launch/character-preservation; done `730a13e`, verified in LAUNCH_VERIFICATION §43; merged `c3e740b`; live as `e29663d3`) (reproduced 4/4; `premade-browser.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (High, N; U04, F08) Premade build cards say nothing about how a build
       plays, and "Maj:", "Min:" and "Magic Specialization" go unexplained. One "plays like"
       line and one trade-off per playstyle; spell out Major and Minor skills. Copy only.
 
 #### 14. QA-11 — faction names and deprecated entries
 
-- [x] **C** **QA-11** (started 2026-10-01 22:45 UTC, Codex, on launch/character-preservation; done `aa99c81`, verified in LAUNCH_VERIFICATION §44; merged with this commit; not deployed) (reproduced 8/8; the names are in the published catalog (no pipeline request needed): filter deprecated rows in `faction-roster.jsx`, look relation IDs up in `faction-detail-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
+- [x] **C** **QA-11** (started 2026-10-01 22:45 UTC, Codex, on launch/character-preservation; done `aa99c81`, verified in LAUNCH_VERIFICATION §44; merged `c3e740b`; live as `e29663d3`) (reproduced 8/8; the names are in the published catalog (no pipeline request needed): filter deprecated rows in `faction-roster.jsx`, look relation IDs up in `faction-detail-view.jsx`; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Medium, V, Q; UI-02, SS-02, SS-03) The TR and TR + ARCE Faction Journal
       shows raw codes ("T_cyr_fightersguild", "T_mw_imperialnavy") in Inter-Faction Relations
       and literal "<Deprecated>" factions in the list. Readable names (ask the pipeline if the
       catalog lacks them); hide deprecated factions.
 
 #### 15. QA-15 — About attribution and licence
 
-- [x] **C** **QA-15** (started 2026-10-01 22:58 UTC, Codex, on launch/character-preservation; done `c065581`, verified in LAUNCH_VERIFICATION §45; merged with this commit; not deployed) (reproduced 4/4; `about-view.jsx`; `test/site-claims.test.js` already allows "open source" for the code; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
+- [x] **C** **QA-15** (started 2026-10-01 22:58 UTC, Codex, on launch/character-preservation; done `c065581`, verified in LAUNCH_VERIFICATION §45; merged `c3e740b`; live as `e29663d3`) (reproduced 4/4; `about-view.jsx`; `test/site-claims.test.js` already allows "open source" for the code; test in `test/qa-*`, LAUNCH_VERIFICATION §27) (Low, R; owner decision) About says the site is open source (code under
       AGPL-3.0; not the game or mod data), links https://github.com/lowgraph/siltstrider.tools
       and says it is made by LowGraph. Keep `test/site-claims.test.js` and the licence
       wording rules (COORDINATION, Licences).
