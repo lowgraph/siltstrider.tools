@@ -831,6 +831,7 @@ async function polishRegression() {
   else await navigate('home');
   if (suite === 'qa') await require('./qa-browser-cases.cjs').qa(qaContext);
   if (suite === 'launch') await require('./launch-polish-browser-cases.cjs')(qaContext);
+  if (suite === 'qa') await require('./qa-polish-browser-cases.cjs')(qaContext);
   if (suite === 'touch') await require('./qa-browser-cases.cjs').touch(qaContext);
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) { await cityStopRegression(); await longJourneyRegression(); await travel(); }

@@ -2620,3 +2620,74 @@ Production remains `6fab4c5` / Worker `e29663d3`. SS-08's existing empty-roster
 accessibility limit and physical-device/freeze acceptance remain as recorded
 above. First command: `npm test -- --test-concurrency=4`, then BROWSER_TESTS.md's
 bounded launch and synthetic Vault groups.
+
+## QA-27 — local launch polish
+
+Branch: `polish/qa-27`. Reproduced 208.00000000000003 HP at target 55 from starting Health 35 and Endurance 10. The chart interpolated precise arithmetic directly into visible and accessible text. A display-only formatter now covers its legend, endpoints, advantage, hover readout, aria summary and accessible table. Narrow hover readouts wrap between complete values. Four active edge tests cover integer noise and zero, fractional gains and display rounding, unavailable values and actual chart rendering with unchanged precise curves. Chrome covers all three worlds at 1366 and 375 px in both themes, keyboard target selection, hover formatting and chart containment. Full npm test: 1146 passed, no failures/skips/TODOs. Chrome: 12/12 passed with both themes, screenshots, overflow and scoped axe checks; no runtime/server errors. Evidence: A:/Cache/qa27-30/qa27-unit-final.log and qa27-browser-final. Completed on this branch only; not merged into main or live. No deployment, production write, data rebuild or migration.
+
+
+## QA-28 — local launch polish
+
+Branch: `polish/qa-28`. Reproduced with starting Endurance 30: target 15 hid the milestone while target 16 showed Lv 15. A strict endpoint comparison excluded a valid final-level achievement. The marker now includes the target endpoint, retaining its existing exclusion of an already-maxed starting level. Four active chart-rendering tests cover target 14, exact target 15, later target 16, starting Endurance 100 and a one-level forecast. Chrome checks these boundaries in all three worlds, both themes and 1366/375 px, with keyboard range interaction and measured marker-label containment. Full npm test: 1150 passed, no failures/skips/TODOs. Chrome: 12/12 passed with both themes, screenshots, overflow and scoped axe checks; no runtime/server errors. Evidence: A:/Cache/qa27-30/qa28-unit-final.log and qa28-browser-final. Completed on this branch only; not merged into main or live. No deployment, production write, data rebuild or migration.
+
+
+## QA-29 — local launch polish
+
+Branch: `polish/qa-29`. Reproduced Alchemist and other categories splitting mid-word at 375 px in Morrowind UI. The category, count and action competed for one narrow flex row while inherited emergency word wrapping split the title. Phone headers now stack the action beneath a wrapping category/count group, keep counts and actions whole, and wrap category names at word boundaries. Desktop retains its horizontal layout. Eighteen active Chrome cases cover all three worlds, both grouping modes and 1366/375/390 px in both themes. DOM text-range measurements reject split words and clipped labels; Enter and Space expand/collapse the categories while retaining focus. Existing premade unit coverage verifies all catalog counts, descriptions and unchanged build selection. Full npm test: 1150 passed, no failures/skips/TODOs. Chrome: 18/18 passed with both themes, screenshots, overflow and scoped axe checks; no runtime/server errors. Evidence: A:/Cache/qa27-30/qa29-unit-final.log and qa29-browser-final. Completed on this branch only; not merged into main or live. No deployment, production write, data rebuild or migration.
+
+
+## QA-30 — local launch polish
+
+Branch: `polish/qa-30`. Reproduced clipping in the original two-column phone rack: the selected Grandmaster label needed 127.3 px but had 86 px after padding. Phone controls now use a full-width column and wider layouts use two columns, keeping native selects and every existing option, ID and quality. Eighteen active Chrome cases cover all three worlds, 1366/375/390 px and both themes. Each available option is selected by canonical ID, including distinct records sharing a readable label; font measurements check its full text fits. Home/End/Escape selection retains focus. No apparatus eligibility, ingredient selection or potion calculation changed. The initial all-world group hit its 120-second bound and was discarded; three complete world groups of six cases supply the acceptance aggregate. The existing label-based test helper was replaced here with explicit ID selection so duplicate labels are correctly exercised. Full npm test: 1150 passed, no failures/skips/TODOs. Chrome: 18/18 passed with both themes, screenshots, overflow and scoped axe checks; no runtime/server errors. Evidence: A:/Cache/qa27-30/qa30-unit-final.log and qa30-browser-final. Completed on this branch only; not merged into main or live. No deployment, production write, data rebuild or migration.
+
+
+## 55. QA-27–30 cumulative preparation — 2 October 2026
+
+Each item was claimed, reproduced with staged bundle a29adea046e6086c2c7ee654, fixed, tested and committed separately before its successor branch started. The stack starts at main c9052a9. Preparation branch polish/qa-27-30-batch combines the completed stack with freshly fetched main ab3a21a, which already includes the earlier twelve launch fixes. Merge 2093b62 retains both verification histories and both sets of browser checks. Its application/test source is the source verified below.
+
+| Item | Branch | Implementation | Focused Chrome | Unit tests before item commit |
+| --- | --- | --- | --- | --- |
+| QA-27 | polish/qa-27 | 7e5b278 | 12/12 | 1,146 passed |
+| QA-28 | polish/qa-28 | 4d9c1e0 | 12/12 | 1,150 passed |
+| QA-29 | polish/qa-29 | cd91229 | 18/18 | 1,150 passed |
+| QA-30 | polish/qa-30 | bfc074f | 18/18 | 1,150 passed |
+
+Cumulative npm test: **1,184 passed, 0 failed/skipped/TODO**. The Cloudflare build passed (24 pages); the separate synthetic Vault build also passed. Pipeline: **685 passed**, with cache-isolated TEMP/TMP. Both shared documents are byte-identical in the isolated pipeline handoff at A:/Claude/qa27-30-pipeline; other active checkouts are preserved.
+
+**418 unique Chrome cases passed**: 60 new-fix cases, 64 existing QA cases (saved starting Health/fractional gains, Bitter Cup, premades, apparatus eligibility and edited kits), 68 earlier public launch cases, 192 hydration cases and 34 synthetic signed-in Vault cases. Worlds are Vanilla, TR and TR + ARCE; both themes use 1366/375 px, with 390 for phone-label cases. Reports include screenshots, loaded-font state, keyboard/focus, text/overflow measurements and scoped axe checks; accepted reports have zero runtime/server errors. Hydration covers fresh, stored-world, synthetic loaded-save and shared-link states across Home, Builder, Level Simulator, Alchemy and Changelog.
+
+Evidence: A:/Cache/qa27-30/acceptance-summary.json lists the exact accepted reports; accepted-cases.json records every case. integration-unit.log, integration-build.log and pipeline-unit.log record the suites. final-vault-launch and final-vault-existing use local-stack.cjs and fresh local D1 with synthetic users and QA-prefixed records. cleanup-summary.json confirms **zero saves, settings and tier overrides** remain in both databases.
+
+Incomplete all-world QA-30 and QA-26 groups reached their 120-second outer bounds and are excluded. Smaller complete world groups replaced them without extending limits or removing assertions. Public groups use 120-second bounds; signed-in checks use 150 seconds after the build (the initial build plus launch run used 180 seconds). No tests are accepted from partial output.
+
+Remaining acceptance limits: Chrome emulation does not replace physical-device or assistive-technology speech checks; synthetic JWT/Clerk stubs do not exercise the live Clerk provider. The existing empty-faction-roster axe limit remains as recorded above and is outside these assigned items. No production API write, data rebuild, dataset/schema change, migration, dependency/licence change or deployment occurred. The owner subsequently authorized main merge and push conditional on all required checks passing; the final main integration record follows.
+
+## 56. QA-27–30 main integration — 2 October 2026
+
+The owner authorized main merge and push conditional on all required checks passing.
+Freshly fetched main b8eeb50 includes the later launch-checklist owner records;
+those records are preserved. Integration candidate integration/qa-27-30-main
+merges polish/qa-27-30-batch (0b36c72) without conflicts. All four individual
+branches/commits and the earlier twelve fixes remain in main history. Other
+agents' active checkouts are preserved; the remote main update uses this isolated
+candidate, with no force push.
+
+Application and test files are identical to the verified 2093b62 source tree.
+All 418 accepted Chrome cases in section 55 therefore cover the exact candidate
+application. Fresh full npm test and Cloudflare build are run on this candidate
+before its merge commit and push; evidence is main-unit.log and main-build.log
+under A:/Cache/qa27-30. Shared handoff documents are byte-identical in the isolated
+pipeline branch polish/qa-27-30-coordination, whose 685 cache-isolated tests pass
+before its local commit. No production API write, data/schema change, migration,
+rebuild, dependency/licence change or deployment. Physical-device/provider and
+existing empty-roster accessibility limits remain as recorded in section 55.
+
+Final candidate results: **1,184/1,184 unit tests passed**, with zero failures,
+skips or TODOs; the **Cloudflare build passed (24 pages)**. Both fresh commands
+completed inside their 120-second bounds. The application/test diff against
+2093b62 is empty, so all **418/418** accepted browser cases verify this candidate.
+The pipeline handoff is committed locally as f730ac3 after **685/685** passing
+tests. Both shared file hashes match exactly. Main integration retains the
+owner's newer checklist triage without changing any unassigned item's status.
+The owner-authorized push publishes this verified merge and preparation branch;
+production deployment remains separate.

@@ -1,5 +1,17 @@
 # UI Transformation Blueprint: Silt Strider
 
+QA-27–30 are implemented on `polish/qa-27-30-batch` in four separate stacked
+branches, prepared for the owner-authorized merge and push onto main `b8eeb50`
+after all required checks passed; no deployment. Health
+forecast labels and accessible values use at most one decimal, including Bitter
+Cup plans, while the calculation retains full precision. The Endurance 100 marker
+includes the final forecast level. Phone premade categories wrap between complete
+labels; apparatus selections show complete names and quality multipliers in wider
+native controls. Preserve original catalog IDs/qualities, fractional Health gains,
+saved starting values, character/world/account precedence and earlier QA fixes.
+No exported schema, bundle, extraction, migration or licence change. Verification:
+the site's QA-27–30 LAUNCH_VERIFICATION records and bounded groups in BROWSER_TESTS.
+
 The twelve-item launch polish (`8c7b98e`) is merged into main with owner approval:
 cast-style eligibility, cleared seed feedback, calculated-zero Alchemy chance,
 Travel count/rounding explanations, persistent faction identity, whole phone

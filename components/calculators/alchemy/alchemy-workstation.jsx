@@ -308,7 +308,7 @@ export default function AlchemyWorkstation() {
           </h3>
 
           {/* Apparatus Selectors */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <label htmlFor="alc-mortar-select" className="text-[11px] uppercase font-serif font-bold text-fg-7 block mb-1">
                 Mortar &amp; Pestle
