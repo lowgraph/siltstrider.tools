@@ -7,6 +7,30 @@ module.exports = async c => {
     c.assertAccessible(await c.audit(name));
     await c.screenshot(name);
   };
+  const wholeWords=async selector=>read(`(()=>{
+    const broken=[],root=document.querySelector(${JSON.stringify(selector)}),walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const r=document.createRange();r.setStart(n,m.index);r.setEnd(n,m.index+m[0].length);const ys=[...r.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.top));if(new Set(ys).size>1)broken.push(m[0]);}}
+    return broken;
+  })()`);
+  for(const theme of ['ashfall','morrowind'])for(const width of [1366,375,390]){
+    await c.check(`SS-09/${theme}/${width}`,async()=>{
+      await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      const build={race:'Nord',gender:'Male',sign:'The Warrior',className:'Custom',name:'QA – Training',spec:'Combat',fav1:'Strength',fav2:'Endurance',maj:['Heavy Armor','Medium Armor','Spear','Alchemy','Enchant'],min:['Destruction','Conjuration','Mysticism','Alteration','Illusion']};
+      const url=new URL((await import('../lib/permalink-codec.mjs')).encodeShareUrl({view:'leveler',world:'vanilla',build}),c.base);
+      await c.viewport(width);await c.navigate('leveler','vanilla','&build='+encodeURIComponent(url.searchParams.get('build')));await c.until('document.querySelector(".level-itinerary-card")');
+      for(const mode of ['Stats Only','Stats & Skills']){
+        await c.button(mode);await c.pause(150);
+        if(mode==='Stats & Skills')assert.match(await read('document.querySelector(".misc-training-block").textContent'),/Acrobatics/);
+        assert.deepEqual(await wholeWords('.step-stepper-section'),[],'Itinerary words stay whole');
+        await c.click('[aria-label="Next level step"]');
+        assert.ok(await read(`!document.querySelector('[aria-label="Previous level step"]').disabled`));
+        await c.click('[aria-label="Previous level step"]');
+        await read('document.querySelector(".step-stepper-section").scrollIntoView({block:"start"})');
+        await finish(`SS-09-${theme}-${width}-${mode.replaceAll(' ','-')}`);
+      }
+      return {wholeWords:true,navigation:true,modes:2};
+    });
+  }
   for(const theme of ['ashfall','morrowind'])for(const width of [1366,375,390]){
     await c.check(`SS-08/${theme}/${width}`,async()=>{
       await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);

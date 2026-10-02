@@ -451,7 +451,7 @@ Low:
       calculator), and a world switch clears the chosen effects and ingredients. Both
       deliberate for now; say so on the page.
 - [x] **C** SS-08: on a phone the selected faction is not visible beside its details. (started 2026-10-02 01:07 UTC, Codex, on polish/ss-08) (completed on branch with this commit; not merged or live)
-- [ ] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones. (started 2026-10-02 01:11 UTC, Codex, on polish/ss-09)
+- [x] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones. (started 2026-10-02 01:11 UTC, Codex, on polish/ss-09) (completed on branch with this commit; not merged or live)
 - [ ] **C** SS-10: "1 ranks" in search.
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).

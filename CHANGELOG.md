@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Level Simulator keeps Prev, Next and training skill names readable on phones. Navigation gets its own row and training details wrap at whole words.
+
 - Faction Journal keeps the active faction name visible above its details, even when search or scrolling hides the selected list entry.
 
 - Travel distinguishes routing stops from mapped locations. Map dots group nearby stops by town and include positioned points along the chosen journey.

@@ -179,14 +179,14 @@ export default function LevelStepEditor({
 
       {/* Step Stepper & Itinerary */}
       <div className="step-stepper-section space-y-3">
-        <div className="flex items-center justify-between gap-2 border-b border-line-11 pb-2">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-2 border-b border-line-11 pb-2">
           <h3 className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
             Level-by-Level Training Itinerary
           </h3>
-          <div className="flex items-center gap-1">
+          <div className="level-step-navigation flex flex-wrap items-center gap-1">
             <button
               type="button"
-              className="mw-btn py-1 px-2 text-xs font-serif font-bold disabled:opacity-30"
+              className="mw-btn shrink-0 whitespace-nowrap py-1 px-2 text-xs font-serif font-bold disabled:opacity-30"
               onClick={() => onStepIndexChange(Math.max(0, stepIndex - 1))}
               disabled={stepIndex <= 0}
               aria-label="Previous level step"
@@ -198,7 +198,7 @@ export default function LevelStepEditor({
             </span>
             <button
               type="button"
-              className="mw-btn py-1 px-2 text-xs font-serif font-bold disabled:opacity-30"
+              className="mw-btn shrink-0 whitespace-nowrap py-1 px-2 text-xs font-serif font-bold disabled:opacity-30"
               onClick={() => onStepIndexChange(Math.min(steps.length, stepIndex + 1))}
               disabled={stepIndex >= steps.length}
               aria-label="Next level step"

@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Level Simulator keeps Prev, Next and training skill names readable on phones. Navigation gets its own row and training details wrap at whole words.</li>
             <li>Faction Journal keeps the active faction name visible above its details, even when search or scrolling hides the selected list entry.</li>
             <li>Travel distinguishes routing stops from mapped locations. Map dots group nearby stops by town and include positioned points along the chosen journey.</li>
             <li>Alchemy shows a calculated 0% brew chance when shared effects round to zero, while incomplete recipes keep the empty-result dash.</li>
