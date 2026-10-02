@@ -13,7 +13,7 @@ if (!['localhost', '127.0.0.1'].includes(new URL(base).hostname) && !(production
 const suite = option('--suite', 'all');
 const filter = option('--filter', '');
 const failFast = args.includes('--fail-fast');
-if (!['all', 'matrix', 'travel', 'tools', 'settings', 'polish', 'hydration', 'qa', 'touch'].includes(suite)) throw Error('Unknown browser suite.');
+if (!['all', 'matrix', 'travel', 'tools', 'settings', 'polish', 'hydration', 'qa', 'touch', 'launch'].includes(suite)) throw Error('Unknown browser suite.');
 if (productionReadOnly && !['hydration','qa','touch'].includes(suite)) throw Error('Production QA permits only hydration, qa and touch suites.');
 const output = path.resolve(option('--out', `A:/Cache/travel-branch-browser-${Date.now()}`));
 const chromePath = option('--chrome', 'C:/Program Files/Google/Chrome/Application/chrome.exe');
@@ -824,10 +824,11 @@ async function polishRegression() {
   }
   await send('Page.setLifecycleEventsEnabled', {enabled:true});
   // Focused interaction runs also need a same-origin document before using storage.
-  const qaContext = {base,report,output,send,evaluate,check,until,idle,viewport,navigate,openDocument,pause,click,button,type,select,choose,builderTab,screenshot,waitForFonts,touch,filter};
+  const qaContext = {base,report,output,send,evaluate,check,until,idle,viewport,navigate,openDocument,pause,click,button,type,select,choose,builderTab,screenshot,waitForFonts,touch,filter,key,audit,assertAccessible};
   if (suite === 'hydration') await require('./qa-browser-cases.cjs').hydration(qaContext);
   else await navigate('home');
   if (suite === 'qa') await require('./qa-browser-cases.cjs').qa(qaContext);
+  if (suite === 'launch') await require('./launch-polish-browser-cases.cjs')(qaContext);
   if (suite === 'touch') await require('./qa-browser-cases.cjs').touch(qaContext);
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) { await cityStopRegression(); await longJourneyRegression(); await travel(); }

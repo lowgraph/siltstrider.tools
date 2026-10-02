@@ -418,7 +418,7 @@ whether to launch with it (and say so here).
 ### 6. After launch (from the QA triage, 1 October)
 
 Medium, one persona:
-- [ ] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02. (started 2026-10-02 00:48 UTC, Codex, on polish/flow-01)
+- [x] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02. (started 2026-10-02 00:48 UTC, Codex, on polish/flow-01) (completed on branch with this commit; not merged or live)
 - [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
 - [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
