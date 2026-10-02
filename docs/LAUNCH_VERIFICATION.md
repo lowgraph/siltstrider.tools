@@ -2749,3 +2749,32 @@ Evidence: `A:/Cache/deploy-250b1b5-20261002/`: recovery metadata (`recovery.json
 deployed version inspect (`release-version.json`), rollback version inspect
 (`rollback-version.json`), deployment list (`deployments.json`), and live endpoint
 audit (`live-http.json`).
+
+## 59. Signed-out live retest of `250b1b5` — 2 October 2026
+
+A live-URL QA agent retested the release in §58 (`250b1b5` / Worker `73df6e58`),
+signed out, in all three worlds, at 1366 and 375 px (SS-09 also 390), both themes for
+layout checks. Local Vault fixtures were made with "Save this character".
+
+| ID | Agent's verdict | Triage |
+| --- | --- | --- |
+| QA-26 | Fail | **Pass.** Edited Spear scout → Nord, Long Blade, Heavy Armor: the cuirass changes in every world (Vanilla Ebony Mail → Soscean's Cuirass; TR/ARCE St. Nerevar → War Cuirass of Pasoroth) and TR rings change; the unedited kit keeps its own. "Based on …" is QA-05's intended title. Copy follow-up QA-39 |
+| QA-27 | Partial | Pass for the noise (498.5 / 208 / −290.5 HP); new "-0 HP" for a zero difference (QA-37) |
+| QA-28 | Pass | "Endurance 100 at Lv 15" shown at the endpoint |
+| QA-29, QA-30 | Pass | Category names and "Journeyman's (1x)" whole at 375 px, both themes |
+| SS-08, SS-09 | Pass | "Viewing Mages Guild"; Prev, Next, Acrobatics whole at 375/390 |
+| SS-10 | Pass | Search says "1 rank"; Faction Journal details still say "1 ranks" (QA-38) |
+| UI-03, UI-04, UI-05 | Pass | Seed error cleared; 0% chances; TR counts labelled (490 stops / 101 mapped / 201 connections) |
+| SUS-02 | Pass | Totals equal the leg sums; rounding explained |
+| FLOW-01 | Pass | On Strike disabled on rings and shirts, enabled on a weapon |
+| F10 | Partial | No raw IDs; TR reverse-pair list overlaps its "Show more pairs" area at 1366 (QA-34) |
+| F-13 | Partial | Close and Load whole at 375; Duplicate exists only on cloud cards (covered by the signed-in suite, §54) |
+| F-7 | Fail | Tested the Builder's local list, not the cloud card F-7 fixed: deleting a local character is immediate, with no confirmation and lost focus (**QA-31**) |
+| QA-07 | Fail | Tested the global search, not Travel: "Ald'ruhn" finds nothing there in any world (**QA-32**) |
+| QA-01, QA-09, QA-16 | Pass | 75 / 120 points; all ten popovers on screen; Ebonheart→Mournhold by Dialogue Teleport |
+| Layout | Partial | 1366 readable; at 375 px mid-word breaks on Home and Builder (QA-35) and a cramped Morrowind Travel map heading (QA-36) |
+
+Also found: an unedited Spear scout starts with One-handed + shield and is offered a short
+blade and shield (QA-33). An unconfirmed collapse-all anomaly and a Vanilla Bread-source
+question were not reported as bugs. Triage: checklist section 5 item 18 (QA-31, QA-32,
+before the freeze) and section 4 (QA-33 to QA-39).
