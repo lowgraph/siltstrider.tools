@@ -1,5 +1,19 @@
 # Coordination
 
+## Main branch live in production — 2 October
+
+Owner-authorized `250b1b5` is live as Worker `73df6e58-912e-48db-9786-5866ce793efd`
+at 100%, 2 October 04:47 UTC (01:47 in São Paulo). This release publishes QA-26
+(edited premade endgame kits dynamic scoring), the twelve-item launch polish
+batch, and QA-27 through QA-30 (Health display formatting without floating-point
+noise, END 100 target milestone marker, phone premade category wrapping, and
+selected Alchemy apparatus label widening). Bundle `a29adea046e6086c2c7ee654`
+and migrations 0001–0007 are unchanged; no data rebuild or migration. Code
+rollback target: `e29663d3` / `6fab4c5`; fresh database recovery bookmark
+`00000073-00000000-000050f8-07bcfcc5cabac281c64e4bebf751ce41`; release verification:
+site's LAUNCH_VERIFICATION §58. First command: `npm test`, then read-only browser
+verification against `https://siltstrider.tools`.
+
 ## QA-27–30 main integration — 2 October locally
 
 Four separate stacked implementation branches are combined on

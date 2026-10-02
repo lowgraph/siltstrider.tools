@@ -11,15 +11,15 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `6fab4c5` (character/world, calculation, Travel, equipment, phone-layout and copy QA fixes plus the Morrowind game theme; release verification in §49) |
-| Live Worker version | `e29663d3-68eb-45ff-bbef-13447c3b0cbf`, tagged `6fab4c5`; deployed at 100% on 2026-10-02 00:13 UTC (1 October in São Paulo) |
-| Security headers | `public/_headers` retained; nosniff and `X-Frame-Options: DENY` verified live after the 00:13 release; existing CSP, referrer policy, permissions policy and host-only HSTS unchanged |
+| Live commit | `250b1b5` (QA-26 edited endgame kits, twelve-item launch polish batch, QA-27 through QA-30; release verification in §58) |
+| Live Worker version | `73df6e58-912e-48db-9786-5866ce793efd`, tagged `250b1b5`; deployed at 100% on 2026-10-02 04:47 UTC (01:47 in São Paulo) |
+| Security headers | `public/_headers` retained; nosniff, `X-Frame-Options: DENY`, and `frame-ancestors 'none'` verified live after the 04:47 release; existing CSP, referrer policy, permissions policy and host-only HSTS unchanged |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9…`; corrected IngredientSources, existing extraction snapshot |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
-| D1 migrations | 0001–0007 applied; none pending at the 00:13 release; no migration ran |
-| D1 Time Travel bookmark | `0000006d-00000000-000050f8-1d7bc74cdeb236e19f0c9943a3fe9824`, captured before the 2026-10-02 00:13 UTC release; recovery record in §48, private migration backup and preservation checks in §15 |
+| D1 migrations | 0001–0007 applied; none pending at the 04:47 release; no migration ran |
+| D1 Time Travel bookmark | `00000073-00000000-000050f8-07bcfcc5cabac281c64e4bebf751ce41`, captured before the 2026-10-02 04:47 UTC release; recovery record in §58, private migration backup and preservation checks in §15 |
 | Code rollback for the next release | Owner-selected `e29663d3-68eb-45ff-bbef-13447c3b0cbf` / `6fab4c5` (§57); Worker version switch only, database writes and migrations retained |
 | Pipeline repo | `master` / `origin/master` at `6372e65`; correction `41da92c` included and shared release records synchronized |
 
@@ -54,9 +54,10 @@ Deployment history since the last tagged release before this batch:
 | `d523b9ba-92b1-4fed-9056-89ee19916a49` | 10-01 00:11 | `216cd90` | tagged; current main, account settings and tool polish; 100% traffic; migration 0007 had already been applied separately |
 | `3879ce7b-c397-4698-83c4-e9d185d9ed5c` | 10-01 05:22 | `ef67b3e` | tagged; CALC-4 finder and selected-ingredient sources, corrected bundle, Travel city transfers and swimming fallback, retaining main's Vault fixes; 100% traffic; no migration |
 | `e29663d3-68eb-45ff-bbef-13447c3b0cbf` | 10-02 00:13 | `6fab4c5` | tagged; all implemented QA fixes and Morrowind game theme, 100% traffic; same bundle and database schema; recovery recorded before deployment (§48), live verification in §49 |
+| `73df6e58-912e-48db-9786-5866ce793efd` | 10-02 04:47 | `250b1b5` | tagged; QA-26, twelve checklist polish fixes, QA-27 through QA-30 (Health display formatting, END 100 milestone target, phone premade category wrapping, Alchemy apparatus label width); 100% traffic; same bundle and D1 schema; live verification in §58 |
 
-For the current QA/theme release, §48 records code rollback target `3879ce7b` /
-`ef67b3e`: switch the Worker version only. No database restore or migration is
+For the current release, §57 records code rollback target `e29663d3` /
+`6fab4c5`: switch the Worker version only. No database restore or migration is
 part of this rollback.
 
 For the earlier CALC-4 release, §26 records code rollback target `d523b9ba` / `216cd90`:
@@ -2713,3 +2714,38 @@ writes, migrations and Clerk accounts remain intact; database recovery is a
 separate operation. Preserve §§48–49 as the earlier release's historical recovery
 record. This entry records the selected target only; no rollback or deployment
 was executed. Capture a fresh D1 bookmark when preparing the next deployment.
+
+## 58. Main branch release deployed to production — 2 October 2026
+
+Owner-authorized release **`250b1b5425dbc514bbd2f97dbec8c7841f3edd22`** is live
+as Worker **`73df6e58-912e-48db-9786-5866ce793efd`**, tagged `250b1b5`, at
+**100% traffic**. Deployment was completed **2026-10-02 04:47:09 UTC** (01:47 in São Paulo).
+This publishes QA-26 (edited premade endgame kits dynamic scoring), the twelve-item
+launch polish batch, and QA-27 through QA-30 (Health forecast formatting without floating-point
+noise, END 100 target milestone marker, phone premade category wrapping, and selected Alchemy
+apparatus label widening).
+
+Selected code rollback target is **`e29663d3-68eb-45ff-bbef-13447c3b0cbf` / `6fab4c5`** (§57);
+fresh D1 recovery bookmark is **`00000073-00000000-000050f8-07bcfcc5cabac281c64e4bebf751ce41`**.
+Rolling back this release means switching the Worker version. No migration, database
+restore or Clerk-account change is involved.
+
+Built and deployed the clean `main` checkout, with the existing staged bundle,
+production Clerk publishable key (`pk_live_...`) and unchanged repository configuration.
+Wrangler used `--keep-vars`; existing bindings and custom domains remain. Uploaded 66
+changed assets; 1,685 were already uploaded. Deployment history and version annotations
+confirm the released commit.
+
+| Check | Result |
+| --- | --- |
+| Pinned release `npm test` | **1,184 passed, 0 failed, 0 skipped, 0 TODO** |
+| `npm run build:cloudflare` | **24 pages generated**, production Clerk live key |
+| Wrangler dry run | Passed before publishing; version 4.134.0, existing D1 binding and routes |
+| Live HTTP checks | **9/9 verified**: homepage (200), builder (200), alchemy (200), leveler (200), travel (200), current.json bundle pointer (200), www redirect to apex (301), unauthenticated /api/account (401), unauthenticated /api/saves (401) |
+| Security headers | Live responses verify `nosniff`, `X-Frame-Options: DENY`, `frame-ancestors 'none'`, and HSTS |
+| Pipeline | **685 tests passed** cleanly |
+
+Evidence: `A:/Cache/deploy-250b1b5-20261002/`: recovery metadata (`recovery.json`),
+deployed version inspect (`release-version.json`), rollback version inspect
+(`rollback-version.json`), deployment list (`deployments.json`), and live endpoint
+audit (`live-http.json`).

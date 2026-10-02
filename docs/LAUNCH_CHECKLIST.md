@@ -447,7 +447,7 @@ The signed-out retest of `6fab4c5` / `e29663d3` (LAUNCH_VERIFICATION §51) passe
 on Helm of Oreyn Bearclaw, an open helmet beast races can wear (not a bug). Merge by
 Sunday 4 October, then retest.
 
-- [x] **C** **QA-26** (started 2026-10-02 02:05 UTC, Codex, on launch/qa-26-edited-endgame-kit; done `2b86443`, merged with this commit, verified in LAUNCH_VERIFICATION §§52–53; not deployed) (High, V, R, N; confirmed in code; QA-05 retest) An edited premade's
+- [x] **C** **QA-26** (started 2026-10-02 02:05 UTC, Codex, on launch/qa-26-edited-endgame-kit; done `2b86443`, merged with this commit, verified in LAUNCH_VERIFICATION §§52–53; live as `73df6e58` / `250b1b5`) (High, V, R, N; confirmed in code; QA-05 retest) An edited premade's
       Optimized endgame kit is still the premade's own kit. An edited premade keeps
       `build.name` (shown "Based on …"), so `resolveBestInSlotPicks` (`lib/best-in-slot.mjs`)
       finds the premade's BestInSlot record by name, and with a weapon setup (the default
@@ -470,20 +470,20 @@ three are regressions of this week's release; take them before Sunday if there i
       Endurance: 208.00000000003 HP" (target 55, Rush Endurance, Bitter Cup). Format Health
       totals (`health-growth-chart.jsx` legend and aria-label) to at most one decimal.
       (started 2026-10-02 03:20:20 UTC, Codex, on polish/qa-27)
-      (completed on polish/qa-27 at 7e5b278; included in owner-authorized main integration; not deployed)
+      (completed on polish/qa-27 at 7e5b278; included in owner-authorized main integration; live as `73df6e58` / `250b1b5`)
 - [x] **C** QA-28 (Low; QA-04 retest) The "Endurance 100 at Lv N" marker is hidden when N is
       the target level (`showMarker` uses `< endLevel`; target 16 shows "at Lv 15").
       (started 2026-10-02 03:51:01 UTC, Codex, on polish/qa-28)
-      (completed on polish/qa-28 at 4d9c1e0; included in owner-authorized main integration; not deployed)
+      (completed on polish/qa-28 at 4d9c1e0; included in owner-authorized main integration; live as `73df6e58` / `250b1b5`)
 - [x] **C** QA-29 (Low; regression from the Morrowind theme) In Morrowind UI at 375 px the
       Builder's premade categories break mid-word ("ALCHEMI / ST", "BATTLEMA / GE"); counts and
       Expand wrap too. Modern UI is fine. Same family as SS-09.
       (started 2026-10-02 03:53:47 UTC, Codex, on polish/qa-29)
-      (completed on polish/qa-29 at cd91229; included in owner-authorized main integration; not deployed)
+      (completed on polish/qa-29 at cd91229; included in owner-authorized main integration; live as `73df6e58` / `250b1b5`)
 - [x] **C** QA-30 (Low, both themes) At 375 px Alchemy's selected apparatus is clipped
       ("Journeyman's (" for "Journeyman's (1x)"); the open list is fine.
       (started 2026-10-02 03:58:05 UTC, Codex, on polish/qa-30)
-      (completed on polish/qa-30 at bfc074f; included in owner-authorized main integration; not deployed)
+      (completed on polish/qa-30 at bfc074f; included in owner-authorized main integration; live as `73df6e58` / `250b1b5`)
 
 No action: Modern UI "unchanged beyond the toggle" could not be judged live without a
 baseline; the screenshot comparison against `main` (LAUNCH_VERIFICATION §47) covers it.
@@ -509,34 +509,34 @@ whether to launch with it (and say so here).
 ### 6. After launch (from the QA triage, 1 October)
 
 Medium, one persona:
-- [x] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02. (started 2026-10-02 00:48 UTC, Codex, on polish/flow-01; done `70b8022`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [x] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align (started 2026-10-02 01:00 UTC, Codex, on polish/ui-05; done `27691e6`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
+- [x] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02. (started 2026-10-02 00:48 UTC, Codex, on polish/flow-01; done `70b8022`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
+- [x] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align (started 2026-10-02 01:00 UTC, Codex, on polish/ui-05; done `27691e6`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
       or label the scopes.
 
 Low:
-- [x] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run. (started 2026-10-02 00:53 UTC, Codex, on polish/ui-03; done `4a2d3e2`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [x] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%. (started 2026-10-02 00:57 UTC, Codex, on polish/ui-04; done `523c203`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
+- [x] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run. (started 2026-10-02 00:53 UTC, Codex, on polish/ui-03; done `4a2d3e2`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
+- [x] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%. (started 2026-10-02 00:57 UTC, Codex, on polish/ui-04; done `523c203`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
 - [x] **C** F10, CALC-4-01: raw ingredient IDs on screen ("Emerald [ingred_emerald_01]",
       "Braided Bread [t_ingfood_breadkeptu_02]") in Alchemy, its effect finder and the
-      calculator slots; name the difference instead. (started 2026-10-02 01:54 UTC, Codex, on polish/ingredient-labels; done `308443e`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
+      calculator slots; name the difference instead. (started 2026-10-02 01:54 UTC, Codex, on polish/ingredient-labels; done `308443e`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
 - [ ] **C** REG-01 (retest 1 October, 375 px, 10 of 10): Travel's Followers count and "Include
       quest teleports" reset on reload while the save's options stay. They are journey
       choices kept only in the route link, not save options; decide whether a signed-out
       visitor's choice should stick, as account settings do for signed-in players.
-- [x] **C** SS-08: on a phone the selected faction is not visible beside its details. (started 2026-10-02 01:07 UTC, Codex, on polish/ss-08; done `469e526`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [x] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones. (started 2026-10-02 01:11 UTC, Codex, on polish/ss-09; done `65a052c`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [x] **C** SS-10: "1 ranks" in search. (started 2026-10-02 01:14 UTC, Codex, on polish/ss-10; done `8e1215f`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [x] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02; done `cc5e394`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
+- [x] **C** SS-08: on a phone the selected faction is not visible beside its details. (started 2026-10-02 01:07 UTC, Codex, on polish/ss-08; done `469e526`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
+- [x] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones. (started 2026-10-02 01:11 UTC, Codex, on polish/ss-09; done `65a052c`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
+- [x] **C** SS-10: "1 ranks" in search. (started 2026-10-02 01:14 UTC, Codex, on polish/ss-10; done `8e1215f`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
+- [x] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02; done `cc5e394`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
 
 From the signed-in QA (1 October):
 - [x] F-6: no change (owner, 2 October: desired behaviour). Email sign-in reloads the page;
       the character and world survive it (QA-23 fixed).
-- [x] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body (started 2026-10-02 01:27 UTC, Codex, on polish/f-7; done `2ec4a78`, correction `5af5bba`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
+- [x] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body (started 2026-10-02 01:27 UTC, Codex, on polish/f-7; done `2ec4a78`, correction `5af5bba`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
       and "Delete save?" is not announced; Confirm is 15 Tabs away. Focus the prompt.
 - [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
       returns on every load until something is saved.
-- [x] **C** F-10 (Low): "Reset all settings" has no confirmation or undo. (started 2026-10-02 01:39 UTC, Codex, on polish/f-10; done `1aaa486`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [x] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate" (started 2026-10-02 01:48 UTC, Codex, on polish/f-13; done `692b67b`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
+- [x] **C** F-10 (Low): "Reset all settings" has no confirmation or undo. (started 2026-10-02 01:39 UTC, Codex, on polish/f-10; done `1aaa486`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
+- [x] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate" (started 2026-10-02 01:48 UTC, Codex, on polish/f-13; done `692b67b`, merged with this commit; verified in LAUNCH_VERIFICATION §54; live as `73df6e58` / `250b1b5`)
       breaks mid-word.
 - [ ] **C** F-15 (Low): after "Open Save File…" there is no upload to the Cloud Vault; the save
       must be chosen again in "Import save".
