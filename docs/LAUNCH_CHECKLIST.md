@@ -216,9 +216,9 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       message that says what to change (U17); one-line Travel definitions (U19); Alchemy
       jargon and recovery from a failed or zero brew (U21, U22); Level Simulator wording
       (U24, U25, U27). If time is short, the first-visit ones first: U01, U02, U17, U19.
-- [x] **C** F04 / F11 (started 2026-10-02 20:26 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): "By Race" shows 20 of 41 premades without saying why, and its hint
+- [x] **C** F04 / F11 (started 2026-10-02 20:26 UTC, Codex; done `69647b1`, on `polish/beginner-clarity-batch`): "By Race" shows 20 of 41 premades without saying why, and its hint
       still says "Pick a playstyle".
-- [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
+- [x] **C** CALC-4 (started 2026-10-02 20:32 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): the effect finder suggests pairs only (3 and 4 ingredients only in the
       calculator), and a world switch clears the chosen effects and ingredients. Both
       deliberate for now; say so on the page.
 - [ ] **C** Gear note (Low; from the 2 October retest): the beast-race note says closed helmets

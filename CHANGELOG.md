@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Alchemy explains that the effect finder suggests pairs only, extra ingredients belong in the calculator, and changing worlds clears the recipe while keeping typed stats on the open page.
+
 - Premades explain the separate By Playstyle and By Race collections, show filtered counts, and give the right first-visit hint for each group.
 
 - New-player guidance explains where to start, world choices, Builder numbers and game-entry steps, gear alternatives, save differences, Travel options, potion recovery and leveling terms.

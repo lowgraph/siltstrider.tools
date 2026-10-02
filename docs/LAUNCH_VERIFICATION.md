@@ -3078,3 +3078,18 @@ The retained QA-12 explanation cases (12) and QA-29 phone grouping cases (18)
 also passed: 42 complete cases, zero runtime/server errors. Evidence:
 `A:/Cache/clarity-batch/collections-unit.log`, `collections`,
 `collections-explanations` and `collections-phone`.
+
+
+### CALC-4 note — pairs and world changes
+
+The finder explains its two-ingredient limit, adding a third/fourth ingredient
+in the calculator, and deliberate recipe clearing on a world switch. It also
+states the narrower typed-stat behavior: values remain while the page is open,
+until Reset to character sheet. No recipe or persistence logic changed.
+
+30 relevant Alchemy/stat/claim unit tests passed. 12 new Chrome cases passed
+across all worlds, both themes and 1366/375 px: choose Restore Health, use a pair,
+type Alchemy 60, switch worlds without reloading, check empty effect/ingredient
+choices and retained 60, then reset to the sheet. Scoped axe/overflow checks pass,
+with zero runtime/server errors; phone screenshot reviewed. Evidence:
+`A:/Cache/clarity-batch/calc4-unit.log` and `calc4/`.

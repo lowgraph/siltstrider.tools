@@ -9,6 +9,25 @@ async function finish(c,name){
   c.assertAccessible(await c.audit(name));await c.screenshot(name);
 }
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-CALC4/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,'alchemy',profile,width,theme);await c.until('document.querySelector("#reverse-alchemy-search")');
+    assert.match(await c.evaluate('document.querySelector("#reverse-alchemy-help").textContent'),/two-ingredient pairs only.*three or four.*Changing worlds clears.*typed Alchemy/s);
+    await c.click('#alc-toggle-custom-stats');await c.type('#alc-skill-input','60');
+    await c.type('#reverse-alchemy-search','Restore Health');await c.until('document.querySelector("#reverse-alchemy-effects button")');await c.click('#reverse-alchemy-effects button');
+    await c.until('document.querySelector(".reverse-alchemy-pair")');await c.click('.reverse-alchemy-pair button[aria-label^="Use "]');
+    await c.until(`document.querySelector('[aria-label="Crucible 1 ingredient"]').value!==""`);
+    assert.equal(await c.evaluate(`document.querySelector('[aria-label="Crucible 3 ingredient"]').value`),'');
+    const target=profile==='vanilla'?'tr':'vanilla';if(width<600)await c.click('.hamburger');await c.click('#react-world-'+target);
+    await c.until(`document.querySelector('#react-world-${target}').getAttribute('aria-pressed')==='true'`);await c.idle();
+    await c.until('document.querySelector("#reverse-alchemy-search")');
+    assert.equal(await c.evaluate(`document.querySelector('[aria-label="Desired potion effects"]')`),null);
+    assert.deepEqual(await c.evaluate(`[...document.querySelectorAll('[aria-label^="Crucible "][aria-label$=" ingredient"]')].map(e=>e.value)`),['','','','']);
+    if(!await c.evaluate('Boolean(document.querySelector("#alc-skill-input"))'))await c.click('#alc-toggle-custom-stats');
+    assert.equal(await c.evaluate('document.querySelector("#alc-skill-input").value'),'60');
+    await c.button('Reset to character sheet');assert.notEqual(await c.evaluate('document.querySelector("#alc-skill-input").value'),'60');
+    await c.evaluate('document.querySelector("#reverse-alchemy-help").scrollIntoView({block:"center"})');
+    await finish(c,`calc4-${profile}-${width}-${theme}`);return {pairsOnly:true,recipeCleared:true,typedStatsPreserved:true};
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-F04-F11/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'builder',profile,width,theme);await c.builderTab('premade');
     await c.until('document.querySelector(".premade-collection-note")');
