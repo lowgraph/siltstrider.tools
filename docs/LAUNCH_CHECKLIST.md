@@ -440,7 +440,7 @@ Medium, one persona:
 Low:
 - [x] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run. (started 2026-10-02 00:53 UTC, Codex, on polish/ui-03) (completed on branch with this commit; not merged or live)
 - [x] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%. (started 2026-10-02 00:57 UTC, Codex, on polish/ui-04) (completed on branch with this commit; not merged or live)
-- [ ] **C** F10, CALC-4-01: raw ingredient IDs on screen ("Emerald [ingred_emerald_01]",
+- [ ] **C** F10, CALC-4-01: raw ingredient IDs on screen ("Emerald [ingred_emerald_01]", (started 2026-10-02 01:54 UTC, Codex, on polish/ingredient-labels)
       "Braided Bread [t_ingfood_breadkeptu_02]") in Alchemy, its effect finder and the
       calculator slots; name the difference instead.
 - [ ] **C** REG-01 (retest 1 October, 375 px, 10 of 10): Travel's Followers count and "Include
