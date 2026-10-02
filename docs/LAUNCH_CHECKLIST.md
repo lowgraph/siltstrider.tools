@@ -450,7 +450,7 @@ Low:
 - [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
       calculator), and a world switch clears the chosen effects and ingredients. Both
       deliberate for now; say so on the page.
-- [ ] **C** SS-08: on a phone the selected faction is not visible beside its details.
+- [ ] **C** SS-08: on a phone the selected faction is not visible beside its details. (started 2026-10-02 01:07 UTC, Codex, on polish/ss-08)
 - [ ] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones.
 - [ ] **C** SS-10: "1 ranks" in search.
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
