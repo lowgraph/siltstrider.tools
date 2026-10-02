@@ -20,7 +20,7 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
 | D1 migrations | 0001–0007 applied; none pending at the 00:13 release; no migration ran |
 | D1 Time Travel bookmark | `0000006d-00000000-000050f8-1d7bc74cdeb236e19f0c9943a3fe9824`, captured before the 2026-10-02 00:13 UTC release; recovery record in §48, private migration backup and preservation checks in §15 |
-| Code rollback | `3879ce7b-c397-4698-83c4-e9d185d9ed5c` / `ef67b3e`; Worker version switch only, no database restore or migration |
+| Code rollback for the next release | Owner-selected `e29663d3-68eb-45ff-bbef-13447c3b0cbf` / `6fab4c5` (§57); Worker version switch only, database writes and migrations retained |
 | Pipeline repo | `master` / `origin/master` at `6372e65`; correction `41da92c` included and shared release records synchronized |
 
 Deployment history since the last tagged release before this batch:
@@ -2691,3 +2691,25 @@ tests. Both shared file hashes match exactly. Main integration retains the
 owner's newer checklist triage without changing any unassigned item's status.
 The owner-authorized push publishes this verified merge and preparation branch;
 production deployment remains separate.
+
+## 57. Selected rollback target for the next release — 2 October 2026
+
+The owner selected **`e29663d3`** as the next release's rollback target.
+
+| Item | Selected value |
+| --- | --- |
+| Worker version | **`e29663d3-68eb-45ff-bbef-13447c3b0cbf`**, tagged `6fab4c5` |
+| Source commit | **`6fab4c54af827965387ce336885907664deeff14`**; version/source mapping recorded in §49 |
+| Baseline deployment | `609140d4-fc59-45e4-a357-d3e15d92041b`, deployed 2026-10-02 00:13:37 UTC (§49) |
+| Prepared main | `1a5224f`: QA-26, the twelve-item polish batch and QA-27–30 are integrated but not deployed |
+| Bundle retained | `a29adea046e6086c2c7ee654` |
+| Schema compatibility | Migrations **0001–0007**; no migration-file changes between `6fab4c5` and prepared main |
+| Last recorded D1 recovery bookmark | `0000006d-00000000-000050f8-1d7bc74cdeb236e19f0c9943a3fe9824`, captured 2026-10-02 00:08 UTC before the baseline release (§48); historical recovery evidence |
+
+After a subsequent release, rollback means switching the Worker to this version.
+It restores the previous code/assets, retaining the earlier QA fixes and Morrowind
+theme while dropping QA-26, the twelve-item polish batch and QA-27–30. Database
+writes, migrations and Clerk accounts remain intact; database recovery is a
+separate operation. Preserve §§48–49 as the earlier release's historical recovery
+record. This entry records the selected target only; no rollback or deployment
+was executed. Capture a fresh D1 bookmark when preparing the next deployment.
