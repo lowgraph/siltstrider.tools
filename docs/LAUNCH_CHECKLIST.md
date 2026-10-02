@@ -426,10 +426,11 @@ Sunday 4 October, then retest.
 
 Cheap leftovers. Low, so after launch by the usual rule, but each is a few lines and
 three are regressions of this week's release; take them before Sunday if there is time:
-- [ ] **C** QA-27 (Low; regression from QA-03) Health shows floating-point noise: "Delayed
+- [x] **C** QA-27 (Low; regression from QA-03) Health shows floating-point noise: "Delayed
       Endurance: 208.00000000003 HP" (target 55, Rush Endurance, Bitter Cup). Format Health
       totals (`health-growth-chart.jsx` legend and aria-label) to at most one decimal.
       (started 2026-10-02 03:20:20 UTC, Codex, on polish/qa-27)
+      (completed on polish/qa-27; not merged into main or live)
 - [ ] **C** QA-28 (Low; QA-04 retest) The "Endurance 100 at Lv N" marker is hidden when N is
       the target level (`showMarker` uses `< endLevel`; target 16 shows "at Lv 15").
 - [ ] **C** QA-29 (Low; regression from the Morrowind theme) In Morrowind UI at 375 px the

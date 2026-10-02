@@ -2364,3 +2364,8 @@ Only QA-26 and its matching handoff are integrated. No extraction, dataset/schem
 change, migration or production write. Production remains `6fab4c5` / Worker
 `e29663d3`; **not deployed**. QA-27–30 remain open. First command: `npm test`;
 the reusable Chrome check is documented in BROWSER_TESTS.md under QA-26.
+
+
+## QA-27 — local launch polish
+
+Branch: `polish/qa-27`. Reproduced 208.00000000000003 HP at target 55 from starting Health 35 and Endurance 10. The chart interpolated precise arithmetic directly into visible and accessible text. A display-only formatter now covers its legend, endpoints, advantage, hover readout, aria summary and accessible table. Narrow hover readouts wrap between complete values. Four active edge tests cover integer noise and zero, fractional gains and display rounding, unavailable values and actual chart rendering with unchanged precise curves. Chrome covers all three worlds at 1366 and 375 px in both themes, keyboard target selection, hover formatting and chart containment. Full npm test: 1146 passed, no failures/skips/TODOs. Chrome: 12/12 passed with both themes, screenshots, overflow and scoped axe checks; no runtime/server errors. Evidence: A:/Cache/qa27-30/qa27-unit-final.log and qa27-browser-final. Completed on this branch only; not merged into main or live. No deployment, production write, data rebuild or migration.

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { calculateHealthGrowthCurve } from "../../lib/level-math.mjs";
-import { niceTicks, levelTicks } from "../../lib/chart-scale.mjs";
+import { niceTicks, levelTicks, formatHealth } from "../../lib/chart-scale.mjs";
 
 const TEXT = 11; // px: the chart sizes itself to its column, so text keeps this size
 const PAD = { top: 14, right: 46, bottom: 24, left: 38 };
@@ -82,9 +82,13 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
   };
   const h = hover != null && hover < levels.length ? hover : null;
   const hx = h != null ? getX(levels[h]) : 0;
-  const readout = h != null ? `Lv ${levels[h]}: ${optimalHealth[h]} vs ${delayedHealth[h]} HP (+${Math.max(0, optimalHealth[h] - delayedHealth[h])})` : "";
-  const readoutW = readout.length * TEXT * 0.62 + 12;
-  const readoutX = Math.min(Math.max(hx - readoutW / 2, PAD.left), width - PAD.right - readoutW);
+  const readout = h != null ? `Lv ${levels[h]}: ${formatHealth(optimalHealth[h])} vs ${formatHealth(delayedHealth[h])} HP (+${formatHealth(Math.max(0, optimalHealth[h] - delayedHealth[h]))})` : "";
+  const readoutLines = readout.length * TEXT * 0.62 + 12 > plotW && h != null
+    ? [`Lv ${levels[h]}: ${formatHealth(optimalHealth[h])} vs ${formatHealth(delayedHealth[h])} HP`, `+${formatHealth(Math.max(0, optimalHealth[h] - delayedHealth[h]))} HP advantage`]
+    : [readout];
+  const readoutW = Math.max(...readoutLines.map((line) => line.length)) * TEXT * 0.62 + 12;
+  const readoutH = readoutLines.length * (TEXT + 3) + 6;
+  const readoutX = Math.max(PAD.left, Math.min(hx - readoutW / 2, width - PAD.right - readoutW));
 
   return (
     <div className="health-growth-chart-wrap space-y-3 bg-surface-2 p-4 border border-line-11 mw-groove-panel">
@@ -96,7 +100,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           </span>
         </h4>
         <div className="text-xs font-mono font-bold text-accent flex items-center gap-1">
-          <span>+{finalDiff} HP Advantage</span>
+          <span>+{formatHealth(finalDiff)} HP Advantage</span>
         </div>
       </div>
 
@@ -107,7 +111,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           viewBox={`0 0 ${width} ${height}`}
           className="block"
           role="img"
-          aria-label={`Health by level, ${startLevel} to ${endLevel}: ${finalOptimal} with Endurance rushed, ${finalDelayed} with Endurance delayed, a difference of ${finalDiff}.`}
+          aria-label={`Health by level, ${startLevel} to ${endLevel}: ${formatHealth(finalOptimal)} with Endurance rushed, ${formatHealth(finalDelayed)} with Endurance delayed, a difference of ${formatHealth(finalDiff)}.`}
           onPointerMove={pick}
           onPointerDown={pick}
           onPointerLeave={() => setHover(null)}
@@ -177,10 +181,10 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           <circle cx={getX(endLevel)} cy={getY(finalOptimal)} r="4" style={{ fill: "var(--color-accent)", stroke: "var(--color-surface-1)" }} strokeWidth="1.5" />
           <circle cx={getX(endLevel)} cy={getY(finalDelayed)} r="4" style={{ fill: "var(--color-line-1)", stroke: "var(--color-surface-1)" }} strokeWidth="1.5" />
           <text x={getX(endLevel) + 8} y={yOpt} fontSize={TEXT} fontFamily="monospace" fontWeight="700" style={{ fill: "var(--color-accent)" }}>
-            {finalOptimal}
+            {formatHealth(finalOptimal)}
           </text>
           <text x={getX(endLevel) + 8} y={yDel} fontSize={TEXT} fontFamily="monospace" style={{ fill: "var(--color-fg-11)" }}>
-            {finalDelayed}
+            {formatHealth(finalDelayed)}
           </text>
 
           {/* Hover / tap readout */}
@@ -189,10 +193,12 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
               <line x1={hx} y1={PAD.top} x2={hx} y2={PAD.top + plotH} style={{ stroke: "var(--color-fg-13)" }} />
               <circle cx={hx} cy={getY(optimalHealth[h])} r="3.5" style={{ fill: "var(--color-accent)" }} />
               <circle cx={hx} cy={getY(delayedHealth[h])} r="3" style={{ fill: "var(--color-line-1)" }} />
-              <rect x={readoutX} y={PAD.top + plotH - TEXT - 14} width={readoutW} height={TEXT + 10} style={{ fill: "var(--color-surface-4)", stroke: "var(--color-line-7)" }} />
-              <text x={readoutX + 6} y={PAD.top + plotH - 10} fontSize={TEXT} fontFamily="monospace" style={{ fill: "var(--color-fg-2)" }}>
-                {readout}
-              </text>
+              <rect x={readoutX} y={PAD.top + plotH - readoutH} width={readoutW} height={readoutH} style={{ fill: "var(--color-surface-4)", stroke: "var(--color-line-7)" }} />
+              {readoutLines.map((line, i) => (
+                <text key={i} x={readoutX + 6} y={PAD.top + plotH - readoutH + TEXT + 3 + i * (TEXT + 3)} fontSize={TEXT} fontFamily="monospace" style={{ fill: "var(--color-fg-2)" }}>
+                  {line}
+                </text>
+              ))}
             </g>
           )}
         </svg>
@@ -208,7 +214,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           {xTicks.map((lvl) => {
             const i = levels.indexOf(lvl);
             return i < 0 ? null : (
-              <tr key={lvl}><th scope="row">{lvl}</th><td>{optimalHealth[i]}</td><td>{delayedHealth[i]}</td></tr>
+              <tr key={lvl}><th scope="row">{lvl}</th><td>{formatHealth(optimalHealth[i])}</td><td>{formatHealth(delayedHealth[i])}</td></tr>
             );
           })}
         </tbody>
@@ -220,18 +226,18 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           <div className="flex items-center gap-1.5" title="Endurance raised first, with 5x multipliers, until it reaches 100">
             <span className="w-3 h-1 bg-accent inline-block rounded-none"></span>
             <span className="text-fg-2 font-serif font-semibold">
-              Rushed Endurance: <strong className="font-mono text-accent">{finalOptimal} HP</strong>
+              Rushed Endurance: <strong className="font-mono text-accent">{formatHealth(finalOptimal)} HP</strong>
             </span>
           </div>
           <div className="flex items-center gap-1.5" title="Endurance left flat until level 20, then raised by 2 a level">
             <span className="w-3 h-1 bg-surface-24 inline-block border-t border-dashed border-line-1"></span>
             <span className="text-fg-11 font-serif font-semibold">
-              Delayed Endurance: <strong className="font-mono text-fg-11">{finalDelayed} HP</strong>
+              Delayed Endurance: <strong className="font-mono text-fg-11">{formatHealth(finalDelayed)} HP</strong>
             </span>
           </div>
         </div>
         <div className="text-[11px] text-fg-11 font-sans">
-          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-fg-2">-{finalDiff} HP</strong>
+          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-fg-2">-{formatHealth(finalDiff)} HP</strong>
         </div>
       </div>
       <div className="text-[11px] text-fg-13 font-sans">
