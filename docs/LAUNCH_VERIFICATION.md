@@ -2919,3 +2919,15 @@ Specialization footers wrap at spaces and move Load Build below when necessary.
 1366 px in both themes. The first browser assertion also inspected unrelated
 premade titles; the accepted case checks the requested footer and labels.
 Evidence: A:/Cache/qa33-39/qa35-accepted/. No behavior or data change.
+
+### QA-36
+
+Cause: a fixed 280 px minimum scaled SVG text down inside narrower panels; region
+width estimates omitted tracking; heading/counts could crowd one row. TransitMap
+now measures its real panel width, wraps a spaced header, uses 12 px region and
+13 px stop labels, and includes tracking/clamping in region placement. Legend
+and region copy use stronger readable text tokens. Routing and map positions
+are unchanged. 38 relevant map/layout tests and 18 Chrome cases passed across
+all worlds, both themes, 375/390/1366 px. Three new edge tests cover resizing,
+region edges, empty/singular maps. Browser waits for measured SVG sizing before
+checking containment and font size. Evidence: A:/Cache/qa33-39/qa36-accepted/.

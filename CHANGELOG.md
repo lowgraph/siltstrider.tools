@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Travel maps keep their heading and counts separate, with larger, clearer region labels and legends on phones.
+
 - Home identity labels, loadout actions and premade Specialization descriptions stay whole on phones.
 
 - Alchemy keeps Show more pairs visibly separate from the scrollable ingredient list, including after showing more results.

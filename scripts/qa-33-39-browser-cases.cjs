@@ -7,6 +7,15 @@ async function setup(c,route,profile,width,theme,build){
 async function finish(c,name){assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Page fits the viewport');c.assertAccessible(await c.audit(name));await c.screenshot(name);}
 async function wholeWords(c,selector){return c.evaluate(`(()=>{const root=document.querySelector(${JSON.stringify(selector)}),walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),broken=[];while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);const boxes=[...range.getClientRects()].filter(r=>r.width>0);if(new Set(boxes.map(r=>Math.round(r.top))).size>1)broken.push(m[0]);}}return broken})()`);}
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [375,390,1366])for(const theme of ['ashfall','morrowind'])await c.check(`QA-36/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,'travel',profile,width,theme);await c.until('document.querySelector(".transit-map svg[role=img]")');
+    await c.until(`(()=>{const s=document.querySelector('.transit-map svg[role=img]');return Math.abs(s.viewBox.baseVal.width-s.getBoundingClientRect().width)<3})()`);
+    await c.evaluate('document.querySelector(".transit-map").scrollIntoView({block:"center"})');
+    const state=await c.evaluate(`(()=>{const root=document.querySelector('.transit-map'),head=root.querySelector('.transit-map-heading'),title=head.firstElementChild.getBoundingClientRect(),count=head.lastElementChild.getBoundingClientRect(),svg=root.querySelector('svg[role=img]'),box=svg.getBoundingClientRect();return {separated:count.top>=title.bottom-1||count.left>=title.right+5,legendSize:parseFloat(getComputedStyle(root.querySelector('.transit-map-legend')).fontSize),labels:[...svg.querySelectorAll('text[letter-spacing]')].map(t=>{const b=t.getBoundingClientRect();return {text:t.textContent,inside:b.left>=box.left-1&&b.right<=box.right+1,size:parseFloat(getComputedStyle(t).fontSize)*box.width/svg.viewBox.baseVal.width}})}})()`);
+    assert.equal(state.separated,true,'Map heading and counts remain separated');assert.ok(state.legendSize>=12);
+    for(const label of state.labels){assert.equal(label.inside,true,`${label.text} stays inside SVG`);assert.ok(label.size>=11.5,`Region labels retain readable size: ${JSON.stringify(label)}`);}
+    assert.deepEqual(await wholeWords(c,'.transit-map-heading'),[]);await finish(c,`QA-36-${profile}-${width}-${theme}`);return state;
+  });
   for(const width of [375,390,1366])for(const theme of ['ashfall','morrowind'])await c.check(`QA-35/vanilla/${width}/${theme}`,async()=>{
     await setup(c,'home','vanilla',width,theme);
     assert.deepEqual(await wholeWords(c,'.home-character-stats-grid'),[],'Home identity labels stay whole');

@@ -240,7 +240,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       pairs" area overlaps the third pair (also after Showing 12 â†’ 24); scrolling reveals it.
 - [x] **C** QA-35 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low, both themes, 375 px) Labels break mid-word: Home "Rac/e"; Builder
       "Renam/e", "Cop/y", "Clea/r" and "Specializatio/n: Magic". Same family as SS-09/QA-29.
-- [ ] **C** QA-36 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
+- [x] **C** QA-36 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
       ("TRANSIT MAP28 mapped locations"), "Azura's Coast" is clipped, and the region and legend
       text is tiny and low-contrast.
 - [ ] **C** QA-37 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
