@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Alchemy shows a calculated 0% brew chance when shared effects round to zero, while incomplete recipes keep the empty-result dash.
+
 - Challenge Runs clears an invalid-seed message after generating or loading a valid run.
 
 - Enchanting offers cast styles that suit the item. Switching to armor or clothing clears On Strike; custom items let you choose their kind.

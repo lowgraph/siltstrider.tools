@@ -8,6 +8,21 @@ module.exports = async c => {
     await c.screenshot(name);
   };
   for (const theme of ['ashfall','morrowind']) for (const width of [1366,375]) {
+    await c.check(`UI-04/${theme}/${width}`,async()=>{
+      await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await c.viewport(width);await c.navigate('alchemy');
+      await c.until(`document.querySelector('[aria-label="Crucible 1 ingredient"]:not([disabled])')`);
+      await c.click('#alc-toggle-custom-stats');
+      for(const stat of ['skill','int','luck'])await c.type('#alc-'+stat+'-input','0');
+      await c.choose('[aria-label="Crucible 1 ingredient"]','Saltrice');await c.choose('[aria-label="Crucible 2 ingredient"]','Marshmerrow');
+      const chance=()=>read(`[...document.querySelectorAll('span')].find(s=>s.textContent==='Brew Success Chance').nextElementSibling.textContent`);
+      assert.equal(await chance(),'0%');
+      assert.match(await read('document.querySelector(".alchemy-workstation").textContent'),/All shared effects round to zero/);
+      await c.click('[title="Clear Slot 2"]');
+      assert.match(await chance(),/not calculated yet/);
+      await c.choose('[aria-label="Crucible 2 ingredient"]','Marshmerrow');
+      await finish(`UI-04-${theme}-${width}`);return {zeroVisible:true,incompleteEmpty:true};
+    });
     await c.check(`UI-03/${theme}/${width}`,async()=>{
       await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
       await c.viewport(width);await c.navigate('challenge');

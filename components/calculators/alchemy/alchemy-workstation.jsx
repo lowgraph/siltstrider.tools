@@ -489,7 +489,7 @@ export default function AlchemyWorkstation() {
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-2.5 bg-surface-3 border border-line-11">
                 <span className="text-[10px] uppercase text-fg-13 block font-serif">Brew Success Chance</span>
-                <span className={`text-xl font-bold font-mono ${potion.isValid ? "text-accent" : "text-fg-11"}`}>{potion.isValid ? `${potion.brewChance}%` : NO_RESULT}</span>
+                <span className={`text-xl font-bold font-mono ${potion.isCalculated ? "text-accent" : "text-fg-11"}`}>{potion.isCalculated ? `${potion.brewChance}%` : NO_RESULT}</span>
               </div>
 
               <div className="p-2.5 bg-surface-3 border border-line-11">

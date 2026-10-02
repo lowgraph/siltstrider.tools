@@ -2218,3 +2218,10 @@ Completed on this branch only. No push, merge, deployment, migration or data reb
 Branch: `polish/ui-03`. Reproduced locally with an invalid seed followed by Generate Run. Cause: generation never cleared seedError; valid loading already did. Successful rollFromSeed now clears feedback only after generating the run. Three active component cases cover generation, same-world loading, repeated invalid input and cross-world valid loading. npm test: 1,136 passed, zero failures/skips/TODO. Chrome: 4/4 passed at 1366/375 in both themes, with screenshots, accessibility and overflow checks; no runtime/server errors. Evidence: A:/Cache/launch-polish/ui-03-before, ui-03-final, ui-03-unit-final.log. Initial unit fixtures incorrectly started with null instead of the provider empty run; corrected fixture, no application workaround.
 
 Completed on this branch only. No push, merge, deployment, migration or data rebuild.
+
+
+## UI-04 — local launch polish
+
+Branch: `polish/ui-04`. Reproduced with zero Alchemy, Intelligence and Luck plus Saltrice and Marshmerrow. Cause: the chance used potion.isValid, which also rejects fully calculated effects rounding to zero. calculatePotion now marks completed calculations separately; the chance reads that flag. Potion validity, strength, price and formulas are unchanged. Three regression tests cover zero and positive results, incomplete/unmatched/duplicate recipes, unavailable rules/settings and invalid stats. npm test: 1,139 passed, zero failures/skips/TODO. Chrome: 4/4 passed at 1366/375 in both themes; zero axe blockers, overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/ui-04-before, ui-04-final, ui-04-unit.log.
+
+Completed on this branch only. No push, merge, deployment, migration or data rebuild.
