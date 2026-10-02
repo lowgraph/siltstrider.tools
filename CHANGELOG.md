@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Gear Advisor starts with two hands for Spear and Marksman builds, and one hand plus shield for other weapons. Your chosen setup takes priority.
+
 - Global search finds Ald'ruhn, Ald-ruhn and Aldruhn as the same place. Results keep the place's original name and open the correct Travel destination.
 
 - Deleting a character saved in this browser asks for confirmation. Cancel keeps it, and focus returns to the saved-character list after deletion.

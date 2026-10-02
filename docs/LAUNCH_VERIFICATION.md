@@ -2881,3 +2881,20 @@ Synthetic Clerk sessions do not replace the live provider or physical-device
 check. Both player changelogs retain the fixes. Production release history,
 bundle `a29adea046e6086c2c7ee654`, migrations and rollback choice are unchanged.
 No data rebuild, production write or deployment.
+
+## 63. QA-33–39 ordered polish — 2 October 2026
+
+One branch: `fix/qa-33-39`, from freshly fetched main `39a82db`. Each item is
+committed after its relevant tests; full validation follows the seventh item.
+No data, schema, migration or production changes.
+
+### QA-33 — weapon setup
+
+Cause: GearAdvisorView initialized a permanent one-handed default. The default
+now uses gearRanking’s primary weapon, including restored/edited builds, until
+the player chooses. Spear/Marksman use two hands; other/missing weapons use one.
+54 relevant tests passed, including three new edge/component cases in
+`test/gear-weapon-default.test.js`; 12 Chrome QA-33 cases passed across three
+worlds, both themes and 1366/375 px, with screenshots/axe and manual overrides.
+Nine planner tests passed. An initial selector quotation error was corrected.
+Evidence: `A:/Cache/qa33-39/qa33-final/`. No merge or deployment.

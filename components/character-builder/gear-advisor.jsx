@@ -6,7 +6,7 @@ import { resolveAccountToolDefaults } from '../../lib/account-settings.mjs';
 import {useGameData} from '../use-game-data';
 import {GearSourcesView} from './gear-sources';
 import {BestInSlotView} from './best-in-slot-view';
-import { buildGearGroups, gearRanking, DEFAULT_GEAR_TOGGLES } from '../../lib/gear-rows.mjs';
+import { buildGearGroups, gearRanking, defaultWeaponSetup, DEFAULT_GEAR_TOGGLES } from '../../lib/gear-rows.mjs';
 import { buildTraits } from '../../lib/build-traits.mjs';
 import { resolveBestInSlotPicks } from '../../lib/best-in-slot.mjs';
 import { recommendedLoadouts } from '../../lib/recommended-loadout.mjs';
@@ -45,7 +45,11 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const gearToggles = {theft:stealEarly,endgame:endgameEarly,nearStart,darkBrotherhood};
   const [optimizing, setOptimizing] = useState(false);
   const [hasRun, setHasRun] = useState(false);
-  const [weaponSetup, setWeaponSetup] = useState('one-handed');
+  // Follow the ranked weapon until the player explicitly chooses a setup. Derive
+  // the default on each render so a restored/edited build does not keep mount's
+  // random premade choice, and server/client first renders stay deterministic.
+  const [weaponChoice, setWeaponSetup] = useState(null);
+  const weaponSetup = weaponChoice ?? defaultWeaponSetup(build);
   const displayedRanking = ranking && { ...ranking, weaponSetup, twoHand: weaponSetup === 'two-handed', shield: weaponSetup === 'one-handed' ? 'recommended' : 'none' };
 
   const traits = buildTraits(build);

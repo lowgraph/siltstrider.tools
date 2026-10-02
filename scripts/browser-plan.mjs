@@ -46,7 +46,7 @@ const AREAS = [
     run('qa', '/level-health/'), run('qa', 'QA-27/'), run('qa', 'QA-28/'), run('launch', 'SS-09/'),
     run('tools', 'Faction and Level interactions')] },
   { area: 'Gear Advisor', match: /best-in-slot|gear-|equipment/i, runs: [
-    run('qa', 'QA-08/'), run('qa', 'QA-10/'), run('qa', 'QA-26/')] },
+    run('qa', 'QA-08/'), run('qa', 'QA-10/'), run('qa', 'QA-26/'), run('qa', 'QA-33/')] },
   { area: 'Builder and character', match: /character-builder|character-(context|name|math|sheet)|premade|configurator|class-|birthsign|race-/i, runs: [
     run('qa', 'QA-05/'), run('qa', 'QA-09/'), run('qa', 'QA-12/'), run('qa', 'QA-29/'), run('touch', 'QA-18/tap-popover', '--touch')] },
   { area: 'Faction Journal', match: /faction|journal/i, runs: [

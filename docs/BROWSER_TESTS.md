@@ -499,3 +499,10 @@ the next navigation, rather than the user on the departing page. An isolated
 theme as the complete group. On a timed-out wait, the report records the current
 URL, theme, user, shell readiness and Vault/card state, with HTML and a screenshot
 captured before the case's cleanup navigation.
+
+## QA-33–39 ordered polish
+
+New cases run through `--suite qa --filter QA-33/` (substitute the item ID).
+Use the installed axe path and separate cache outputs as above, with a 120-second
+outer bound. QA-33 covers all worlds, both themes and 1366/375 px: Spear Scout
+starts two-handed, excludes Keening/Darksun Shield and permits manual overrides.
