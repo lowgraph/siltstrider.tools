@@ -464,7 +464,7 @@ From the signed-in QA (1 October):
       and "Delete save?" is not announced; Confirm is 15 Tabs away. Focus the prompt.
 - [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
       returns on every load until something is saved.
-- [ ] **C** F-10 (Low): "Reset all settings" has no confirmation or undo. (started 2026-10-02 01:39 UTC, Codex, on polish/f-10)
+- [x] **C** F-10 (Low): "Reset all settings" has no confirmation or undo. (started 2026-10-02 01:39 UTC, Codex, on polish/f-10) (completed on branch with this commit; not merged or live)
 - [ ] **C** F-11 (Low): the icon cannot be saved without a username, and the help text does not
       say the username is required.
 - [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids

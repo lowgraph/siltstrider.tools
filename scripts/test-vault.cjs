@@ -320,7 +320,7 @@ async function cases() {
     if (args.includes('--character-preservation')) await require('./character-preservation-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,click,evaluate,check,pause,screenshot});
     else if (args.includes('--signout-preservation')) await require('./signout-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,button,click,evaluate,check,screenshot});
     else if (args.includes('--qa-reproduction')) await require('./qa-vault-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,evaluate,text,check,pause,screenshot});
-    else if (args.includes('--launch')) await require('./launch-vault-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,key,evaluate,text,check,pause,screenshot,audit,assertAccessible});
+    else if (args.includes('--launch')) await require('./launch-vault-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,key,evaluate,text,check,pause,screenshot,audit,assertAccessible,cleanupSettings:()=>stack.sql(state,"DELETE FROM account_settings WHERE clerk_user_id = 'user_launch_polish'")});
     else await cases();
   } finally {
     socket?.close(); chrome.kill(); worker.kill();

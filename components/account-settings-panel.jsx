@@ -1,5 +1,6 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import ConfirmationDialog from './confirmation-dialog';
 import { useAccountSettings } from './account-settings-context';
 import { useShell } from './shell-context';
 import { resetAccountSettings, resetAccountToolSettings, updateAccountToolSettings } from '../lib/account-settings.mjs';
@@ -24,6 +25,14 @@ export default function AccountSettingsPanel() {
   const preferences = useAccountSettings();
   const shell = useShell();
   const [editWorld, setEditWorld] = useState(null);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const errorRef = useRef(null);
+  useEffect(() => { setConfirmReset(false); }, [preferences?.owner]);
+  useEffect(() => {
+    if (preferences?.error && document.activeElement === document.body) {
+      (errorRef.current?.querySelector('button') || errorRef.current)?.focus();
+    }
+  }, [preferences?.error, preferences?.conflict]);
   if (!preferences) return null;
   const { settings, owner, ready, dirty, saving, error, conflict } = preferences;
   const selectedWorld = editWorld || shell.profile || settings.world;
@@ -32,12 +41,16 @@ export default function AccountSettingsPanel() {
   const tools = scoped ? settings.datasetOverrides.find(entry => entry.world === selectedWorld && entry.modpackId === null && entry.modVersionId === null)?.toolDefaults || { travel: {}, gear: {}, challenge: {} } : settings.toolDefaults;
   const change = patch => preferences.update(document => ({ ...document, ...patch }));
   const changeTool = (tool, patch) => preferences.update(document => updateAccountToolSettings(document, tool, patch, selection));
-  const resetAll = () => { shell.setProfile('vanilla'); preferences.update(resetAccountSettings); };
+  const resetAll = () => {
+    if (!ready || conflict) return;
+    shell.setProfile('vanilla'); preferences.update(resetAccountSettings);
+    setEditWorld(null); setConfirmReset(false);
+  };
   const status = !ready ? 'Loading preferences…' : saving ? 'Saving preferences…' : dirty ? 'Preferences have not synced yet.' : owner ? preferences.revision === 0 ? 'Using account defaults. Changes save automatically.' : 'Preferences are saved to your account.' : 'Preferences are kept in this browser. Sign in to save them across devices.';
   return <section className="account-settings-panel space-y-4 mt-6 border-t border-line-9 pt-5" aria-labelledby="settings-heading">
     <h2 id="settings-heading" className="text-xl font-serif text-accent">Your settings</h2>
     <p role="status" aria-live="polite">{status}</p>
-    {error && <div role="alert"><p>{error}</p>
+    {error && <div role="alert" ref={errorRef} tabIndex={-1}><p>{error}</p>
       {owner && (conflict ? <button type="button" onClick={preferences.reload}>Discard unsaved preferences and reload saved settings</button> : <button type="button" onClick={preferences.retry}>Retry sync</button>)}
     </div>}
     {preferences.adoptable && <div className="p-3 border border-line-9 space-y-2">
@@ -88,7 +101,10 @@ export default function AccountSettingsPanel() {
         <p className="text-sm text-fg-9">Modpacks and older releases become selectable when their datasets are available. Supported versions will stay selected until you choose an upgrade.</p>
         <label className="flex gap-2 items-start"><input type="checkbox" disabled checked={settings.versionUpdates.notify} readOnly />Dataset update notices (not available yet)</label>
       </div></details>
-      <button type="button" onClick={resetAll}>Reset all settings</button>
+      <button type="button" onClick={() => setConfirmReset(true)}>Reset all settings</button>
     </fieldset>
+    <ConfirmationDialog open={confirmReset} title="Reset all settings?"
+      description="This restores Modern UI, Morrowind and tool defaults, and clears your world-specific defaults and save-toggle overrides."
+      confirmLabel="Reset settings" onConfirm={resetAll} onCancel={() => setConfirmReset(false)} />
   </section>;
 }

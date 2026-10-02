@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Reset all settings now asks for confirmation before restoring the defaults.
+
 - Deleting a cloud save now opens a keyboard-accessible confirmation and restores focus afterward.
 
 - Travel now explains why rounded in-game leg estimates can differ slightly from the total.

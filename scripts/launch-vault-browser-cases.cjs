@@ -5,6 +5,31 @@ module.exports=async c=>{
  const cleanup=async()=>{const res=await c.request('GET','/api/saves',{user});for(const s of res.body?.saves||[])assert.equal((await c.request('DELETE',`/api/saves/${s.id}?revision=${s.revision}`,{user})).status,200);};
  const focus=()=>c.evaluate('document.activeElement?.textContent.trim()');
  const finish=async name=>{assert.ok(await c.evaluate('document.documentElement.scrollWidth<=innerWidth+1'));c.assertAccessible(await c.audit(name),name);await c.screenshot(name);};
+ for(const theme of ['ashfall','morrowind'])for(const width of [1366,375])await c.check(`F-10/${theme}/${width}`,async()=>{
+   const defaults=(await import('../lib/account-settings.mjs')).defaultAccountSettings();
+   const custom={...defaults,world:'tr_arce',worldChosen:true,theme,overrideSaveToggles:true,toolDefaults:{travel:{objective:'gold',walking:false},gear:{theft:true},challenge:{preset:'cursed'}}};
+   const write=async settings=>{const before=(await c.request('GET','/api/settings',{user})).body;const r=await c.request('PUT','/api/settings',{user,body:{settings,revision:before.revision}});assert.equal(r.status,200);return r.body;};
+   await c.open('/about');await write(custom);await c.signIn(user);await c.viewport(width);await c.open('/account');
+   try{
+    await c.until(`document.querySelector('.account-settings-panel select')?.value==='tr_arce'`);
+    const before=(await c.request('GET','/api/settings',{user})).body;
+    await c.button('Reset all settings','.account-settings-panel');await c.until('document.querySelector("[role=alertdialog]")');
+    assert.equal(await focus(),'Cancel');assert.match(await c.text('[role=alertdialog]'),/Modern UI.*Morrowind.*tool defaults/);
+    await finish(`F-10-${theme}-${width}-confirmation`);
+    await c.key('Escape','Escape',27);assert.equal(await focus(),'Reset all settings');
+    assert.deepEqual((await c.request('GET','/api/settings',{user})).body,before,'cancel preserves every stored field and revision');
+    await c.button('Reset all settings','.account-settings-panel');await c.key('Tab','Tab',9);assert.equal(await focus(),'Reset settings');await c.key('Enter','Enter',13);
+    await c.until(`document.querySelector('.account-settings-panel [role=status]')?.textContent.includes('saved to your account') && document.querySelector('.account-settings-panel select').value==='browser'`);
+    assert.deepEqual((await c.request('GET','/api/settings',{user})).body.settings,defaults);assert.equal(await focus(),'Reset all settings');
+    await write(custom);await c.open('/account');await c.until(`document.querySelector('.account-settings-panel select')?.value==='tr_arce'`);
+    await c.button('Reset all settings','.account-settings-panel');await write({...custom,toolDefaults:{...custom.toolDefaults,travel:{objective:'time'}}});
+    await c.button('Reset settings','[role=alertdialog]');await c.until('document.querySelector(".account-settings-panel [role=alert]")');
+    assert.match(await c.text('.account-settings-panel [role=alert]'),/reload saved settings/);
+    assert.equal(await c.evaluate('document.activeElement===document.body'),false);
+    assert.equal((await c.request('GET','/api/settings',{user})).body.settings.toolDefaults.travel.objective,'time','failed reset did not overwrite the server');
+    await finish(`F-10-${theme}-${width}-conflict`);return {cancelPreserved:true,defaultsSaved:true,keyboard:true,conflictAnnounced:true};
+   }finally{await c.open('/about');await c.cleanupSettings();}
+ });
  for(const theme of ['ashfall','morrowind'])for(const width of [1366,375])for(const surface of ['page','dialog'])await c.check(`F-7/${theme}/${width}/${surface}`,async()=>{
    await c.open('/about');await cleanup();await c.signIn(user);await c.viewport(width);await c.theme(theme);
    for(const name of ['QA – Delete A','QA – Delete B'])assert.equal((await c.request('POST','/api/saves',{user,body:seed(name)})).status,201);
