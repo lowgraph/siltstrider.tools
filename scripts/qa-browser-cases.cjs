@@ -124,6 +124,9 @@ async function info(c,index,{bottom=false,keyboard=false,outside=false,capture}=
 function assertBox(detail) {const v=detail.visible||{left:0,top:0,right:detail.width,bottom:Math.min(detail.height,detail.barTop??detail.height)};assert.ok(detail.box && detail.box.x>=v.left && detail.box.y>=v.top && detail.box.right<=v.right+1 && detail.box.bottom<=v.bottom,'Popover stays in the visible viewport: '+JSON.stringify(detail));}
 exports.qa = async c => {
   const {encodeShareUrl}=await import('../lib/permalink-codec.mjs');
+  const {getPremadeBuildPool,premadeToBuild}=await import('../lib/premade-data.mjs');
+  const {characterName}=await import('../lib/character-name.mjs');
+  const {resolveBestInSlotPicks,picksForBuild}=await import('../lib/best-in-slot.mjs');
   const healthBuild={race:'Dark Elf',gender:'Female',sign:'The Tower',name:'QA Health Test',spec:'Magic',fav1:'Intelligence',fav2:'Willpower',maj:['Alchemy','Enchant','Destruction','Restoration','Mysticism'],min:['Athletics','Spear','Heavy Armor','Armorer','Long Blade']};
   for(const width of [1366,375]) for(const theme of ['ashfall','morrowind']) {
     await c.viewport(width);
@@ -177,6 +180,54 @@ exports.qa = async c => {
         assert.deepEqual((c.report.console||[]).slice(errors).filter(m=>m.type==='error'||/Hydration failed|did not match|Text content does not match|hydrated but some attributes/i.test(m.message)),[],'First-load hydration and navigation are clean');
         return record(c,'QA-05',{profile,width,theme,source,initial,race,sign,configured,home,simulator});
         } finally {await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:init.identifier});}
+      });
+      for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-26/endgame/${profile}/${width}/${theme}`,async()=>{
+        const original=premadeToBuild(getPremadeBuildPool().find(b=>b.name==='Argonian female — Marsh mage'),{world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce'});
+        assert.ok(original,'The reported premade exists');
+        const l=await fixture.loader(),data=await l.loadFeature(profile,'bestInSlot'),phases=[];
+        const compare=async(build,unchanged=false)=>{
+          const modes=[];
+          for(const [mode,weaponSetup] of [['One-handed + shield','one-handed'],['Two-handed','two-handed']]) {
+            await c.button(mode);
+            // Renaming the edited character independently bypasses the old name-only lookup.
+            const expected=resolveBestInSlotPicks(data,unchanged?build:{...build,name:'QA Dynamic Reference',premadeSource:undefined},{beast:build.race==='Argonian',weaponSetup});
+            const wanted=expected.groups.flatMap(g=>g.rows.map(r=>({slot:r.slotLabel,name:r.picks[0].item.name,score:r.picks[0].pick.score})));
+            await c.until('document.querySelector(".best-in-slot-recommendations table")');
+            const read=()=>c.evaluate(`(()=>{const e=document.querySelector('.best-in-slot-recommendations');return {title:e.querySelector('.leading-relaxed').textContent,rows:[...e.querySelectorAll('tbody tr')].filter(r=>r.querySelector('td:nth-child(2) .font-bold')).map(r=>({slot:r.querySelector('td').textContent.trim(),name:r.querySelector('td:nth-child(2) .font-bold').textContent.trim(),score:Number(r.querySelector('td:nth-child(2) .font-mono').textContent.replace('Score:','').trim())}))}})()`);
+            await c.until(`document.querySelector('.best-in-slot-recommendations .leading-relaxed').textContent.includes(${JSON.stringify(characterName(build))})`);
+            const actual=await read();assert.deepEqual(actual.rows,wanted,'Displayed whole kit agrees with the current character');
+            assert.ok(actual.title.includes('('+characterName(build)+')'),'Endgame title agrees with Builder');
+            if(unchanged){const record=picksForBuild(data.catalogs.BestInSlot,build.name);for(const row of expected.groups.flatMap(g=>g.rows).filter(r=>!['weapon','shield'].includes(r.slotKey))){const slot=row.slotKey.startsWith('ring_')?'ring':row.slotKey,index=row.slotKey==='ring_2'?1:0;assert.equal(row.picks[0].item.key,record.slots[slot][index].item,'Original premade retains its published kit');}}
+            const buttons=await c.evaluate(`[...document.querySelectorAll('.best-in-slot-recommendations button')].filter(b=>/^View .*runner-up/.test(b.textContent)).map((b,i)=>{b.dataset.qa26Alt=i;return '[data-qa26-alt="'+i+'"]'})`);
+            for(const button of buttons)await c.click(button);
+            if(build.race==='Argonian'){const text=await c.evaluate('document.querySelector(".best-in-slot-recommendations").innerText');assert.deepEqual(Object.values(data.metadata.BestInSlot.items).filter(i=>i.beastWearable===false&&text.includes(i.name)).map(i=>i.name),[],'Beast restrictions remain intact');}
+            assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Kit fits the viewport');
+            modes.push({mode,...actual});
+          }
+          return modes;
+        };
+        await c.openDocument(c.base+encodeShareUrl({view:'builder',world:original.world,arce:original.arce,build:original}));await c.idle();await readyBuilder(c);
+        await c.evaluate(`document.querySelectorAll('nextjs-portal').forEach(e=>e.style.display='none');document.getElementById('gear-advisor').scrollIntoView({block:'start'})`);await c.button('Optimize Gear');
+        phases.push({phase:'original',modes:await compare(original,true)});
+        await c.builderTab('builder');await c.select('#builder-race','High Elf');
+        const raceEdited={...original,race:'High Elf'};
+        phases.push({phase:'race-edited',modes:await compare(raceEdited)});
+        await c.builderTab('builder');
+        const replacement=await c.evaluate(`[...document.querySelector('#builder-maj-0').options].find(o=>o.value==='Light Armor')?.textContent.trim()`);assert.ok(replacement);
+        await c.select('#builder-maj-0',replacement);
+        const skills=await c.evaluate(`({maj:[...document.querySelectorAll('[id^="builder-maj-"]')].map(e=>e.value),min:[...document.querySelectorAll('[id^="builder-min-"]')].map(e=>e.value)})`);
+        const skillEdited={...raceEdited,...skills};phases.push({phase:'skills-edited',modes:await compare(skillEdited)});
+        await c.evaluate(`document.querySelector('.best-in-slot-recommendations').scrollIntoView({block:'start',behavior:'instant'})`);await c.screenshot(`qa26-edited-${profile}-${width}-${theme}`);
+        await c.button('Equip late-game recommendations →');await c.until('document.querySelector(".equipment-studio-root")?.textContent.includes("Recommended late-game gear")');
+        const equipped=await c.evaluate('document.querySelector(".equipment-studio-root").innerText');
+        const expected=resolveBestInSlotPicks(data,{...skillEdited,name:'QA Dynamic Reference',premadeSource:undefined},{beast:false,weaponSetup:'two-handed'});
+        for(const row of expected.groups.flatMap(g=>g.rows))assert.ok(equipped.includes(row.picks[0].item.name),'Equipped kit uses current choices: '+row.slotLabel);
+        await c.evaluate(`document.querySelector('.equipment-studio-root').scrollIntoView({block:'start',behavior:'instant'})`);await c.screenshot(`qa26-equipped-${profile}-${width}-${theme}`);
+        const {premadeSource,...custom}=original;
+        const namesake={...custom,race:'High Elf',maj:['Light Armor','Long Blade','Block','Armorer','Athletics'],min:['Heavy Armor','Spear','Restoration','Alchemy','Enchant']};
+        await c.openDocument(c.base+encodeShareUrl({view:'builder',world:original.world,arce:original.arce,build:namesake}));await c.idle();await readyBuilder(c);await c.evaluate(`document.getElementById('gear-advisor').scrollIntoView({block:'start'})`);await c.button('Optimize Gear');
+        phases.push({phase:'custom-namesake',modes:await compare(namesake)});
+        return record(c,'QA-26',{profile,width,theme,phases,equipped});
       });
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-03-04/level-health/build/${profile}/${width}/${theme}`,async()=>{
         await c.openDocument(c.base+encodeShareUrl({view:'leveler',world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce',build:healthBuild}));await c.idle();await c.until('document.querySelector("main").textContent.includes("QA Health Test")');

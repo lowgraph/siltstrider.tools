@@ -1,6 +1,7 @@
 "use client";
 import { useState, Fragment } from "react";
 import { resolveBestInSlotPicks } from "../../lib/best-in-slot.mjs";
+import { characterName } from "../../lib/character-name.mjs";
 
 function formatQuestGrant(grant) {
   if (typeof grant !== "string") return String(grant);
@@ -196,7 +197,7 @@ export function BestInSlotView({
       <div className="mt-3 space-y-4">
         <p className="text-sm text-fg-8 leading-relaxed">
           Constant-effect endgame equipment ranked specifically for your build&apos;s attributes,
-          skills, and class archetype ({resolved.matchedBuild || build?.name || "Custom"}).
+          skills, and class archetype ({characterName(build)}).
           Drawbacks that ruin a character disqualify an item; acceptable drawbacks display warnings
           and recommended mitigations.
         </p>
