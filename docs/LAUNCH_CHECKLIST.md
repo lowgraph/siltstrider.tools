@@ -232,11 +232,11 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 
 *From the live retest of `250b1b5` (2 October; LAUNCH_VERIFICATION Â§59)*
-- [x] **C** QA-33 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Medium, V) Gear Advisor: the weapon setup always starts One-handed + shield
+- [x] **C** QA-33 (done `43cd17c`; started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Medium, V) Gear Advisor: the weapon setup always starts One-handed + shield
       (`gear-advisor.jsx` `useState('one-handed')`), so an unedited Spear scout is offered
       Keening (short blade) and Darksun Shield. Start from the build's own weapon (Spear and
       Marksman two-handed; others one-handed); the player's choice still wins.
-- [ ] **C** QA-34 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Medium) Alchemy, TR reverse pairs at 1366 in Morrowind UI: the "Show more
+- [x] **C** QA-34 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Medium) Alchemy, TR reverse pairs at 1366 in Morrowind UI: the "Show more
       pairs" area overlaps the third pair (also after Showing 12 â†’ 24); scrolling reveals it.
 - [ ] **C** QA-35 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low, both themes, 375 px) Labels break mid-word: Home "Rac/e"; Builder
       "Renam/e", "Cop/y", "Clea/r" and "Specializatio/n: Magic". Same family as SS-09/QA-29.

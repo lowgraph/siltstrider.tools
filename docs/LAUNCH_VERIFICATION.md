@@ -2898,3 +2898,14 @@ the player chooses. Spear/Marksman use two hands; other/missing weapons use one.
 worlds, both themes and 1366/375 px, with screenshots/axe and manual overrides.
 Nine planner tests passed. An initial selector quotation error was corrected.
 Evidence: `A:/Cache/qa33-39/qa33-final/`. No merge or deployment.
+
+### QA-34 — reverse-pair pagination
+
+The TR/Morrowind 1366 px reproduction found the footer touching the 320 px
+scroll viewport exactly; the third partially visible card is clipped by that
+viewport, not covered by an overlapping button. Explicit grid spacing now puts
+12 px between list and pagination and keeps the button at its natural width.
+28 reverse-Alchemy/live/source tests and 12 Chrome cases passed in three worlds,
+both themes and 1366/375 px. All 24 measured list/button states retain at least
+8 px separation; last-pair selection and output focus pass. Screenshots reviewed.
+Evidence: `A:/Cache/qa33-39/qa34-before/` and `qa34-final/`.

@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-02">October 2, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Alchemy keeps Show more pairs visibly separate from the scrollable ingredient list, including after showing more results.</li>
             <li>Gear Advisor starts with two hands for Spear and Marksman builds, and one hand plus shield for other weapons. Your chosen setup takes priority.</li>
             <li>Global search finds Ald'ruhn, Ald-ruhn and Aldruhn as the same place. Results keep the place's original name and open the correct Travel destination.</li>
             <li>Deleting a character saved in this browser asks for confirmation. Cancel keeps it, and focus returns to the saved-character list after deletion.</li>

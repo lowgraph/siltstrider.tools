@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Alchemy keeps Show more pairs visibly separate from the scrollable ingredient list, including after showing more results.
+
 - Gear Advisor starts with two hands for Spear and Marksman builds, and one hand plus shield for other weapons. Your chosen setup takes priority.
 
 - Global search finds Ald'ruhn, Ald-ruhn and Aldruhn as the same place. Results keep the place's original name and open the correct Travel destination.
