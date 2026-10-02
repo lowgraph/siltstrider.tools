@@ -199,6 +199,46 @@ for now (owner, 30 September); other agents skip them.
       UI retains its layout, apart from the theme-toggle preview. Merged-checkout
       verification: LAUNCH_VERIFICATION §§47–49; spec: MORROWIND_GAME_THEME.md.
 
+**Moved from after launch by the owner on 2 October (QA triage)**
+
+Can slip like the rest of section 4: merge by Sunday 4 October, one batch, deploy and retest
+per day; anything unfinished waits on its branch. Wording and display first; account,
+sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
+
+*Saturday: wording and display (QA-27–30 in section 5 first)*
+- [ ] **C** Beginner clarity (N): first tool to use (U01); which world to pick and what ARCE
+      is (U02, F09); a manual route beside the unsupported `.ess` notice (U03); race and
+      birthsign effects before lore (U05); a legend for the Builder's numbers (U06); an
+      "enter this in the game" checklist (U08); Gear Advisor: findable from Home, one kit vs
+      alternatives, buy / pick up / steal, empty or capped slots (U10–U13); what save
+      differences mean (U14); "current position" vs "Silt Strider stop" (U16); a No Route
+      message that says what to change (U17); one-line Travel definitions (U19); Alchemy
+      jargon and recovery from a failed or zero brew (U21, U22); Level Simulator wording
+      (U24, U25, U27). If time is short, the first-visit ones first: U01, U02, U17, U19.
+- [ ] **C** F04 / F11: "By Race" shows 20 of 41 premades without saying why, and its hint
+      still says "Pick a playstyle".
+- [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
+      calculator), and a world switch clears the chosen effects and ingredients. Both
+      deliberate for now; say so on the page.
+- [ ] **C** Gear note (Low; from the 2 October retest): the beast-race note says closed helmets
+      are excluded but not that open ones (such as Helm of Oreyn Bearclaw) are kept, so a
+      correct pick reads as a bug. Say so in the note.
+- [ ] **C** F-11 (Low): the icon cannot be saved without a username, and the help text does not
+      say the username is required.
+- [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
+      allows 100 characters, the API 120.
+- [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
+      phone save location (U15), gold left after a route (U18), Home card jargon (U29).
+
+*Sunday: check first, fix only if contained*
+- [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
+      Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
+      this is a wrong route; raise it to High and move it to section 5 (launch bar).
+- [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
+- [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
+      ("Lvl 3 mage"). Fix only if the save already carries the location and class name;
+      otherwise it goes back after launch.
+
 ### 5. QA findings (1 October): fix before the freeze
 
 From the triage of the five QA reports (live site, signed out, 1 October). Source IDs in
@@ -462,23 +502,8 @@ whether to launch with it (and say so here).
 
 Medium, one persona:
 - [x] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02. (started 2026-10-02 00:48 UTC, Codex, on polish/flow-01; done `70b8022`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
-- [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
-      Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
-      this is a wrong route; raise it to High and move it to section 5.
 - [x] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align (started 2026-10-02 01:00 UTC, Codex, on polish/ui-05; done `27691e6`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
       or label the scopes.
-- [ ] **C** F04 / F11: "By Race" shows 20 of 41 premades without saying why, and its hint
-      still says "Pick a playstyle".
-- [ ] **C** Beginner clarity (N): first tool to use (U01); which world to pick and what ARCE
-      is (U02, F09); a manual route beside the unsupported `.ess` notice (U03); race and
-      birthsign effects before lore (U05); a legend for the Builder's numbers (U06); an
-      "enter this in the game" checklist (U08); Gear Advisor: findable from Home, one kit vs
-      alternatives, buy / pick up / steal, empty or capped slots (U10–U13); what save
-      differences mean (U14); "current position" vs "Silt Strider stop" (U16); a No Route
-      message that says what to change (U17); one-line Travel definitions (U19); Alchemy
-      jargon and recovery from a failed or zero brew (U21, U22); Level Simulator wording
-      (U24, U25, U27).
 
 Low:
 - [x] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run. (started 2026-10-02 00:53 UTC, Codex, on polish/ui-03; done `4a2d3e2`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
@@ -490,14 +515,9 @@ Low:
       quest teleports" reset on reload while the save's options stay. They are journey
       choices kept only in the route link, not save options; decide whether a signed-out
       visitor's choice should stick, as account settings do for signed-in players.
-- [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
-      calculator), and a world switch clears the chosen effects and ingredients. Both
-      deliberate for now; say so on the page.
 - [x] **C** SS-08: on a phone the selected faction is not visible beside its details. (started 2026-10-02 01:07 UTC, Codex, on polish/ss-08; done `469e526`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
 - [x] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones. (started 2026-10-02 01:11 UTC, Codex, on polish/ss-09; done `65a052c`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
 - [x] **C** SS-10: "1 ranks" in search. (started 2026-10-02 01:14 UTC, Codex, on polish/ss-10; done `8e1215f`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
-      phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 - [x] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02; done `cc5e394`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
 
 From the signed-in QA (1 October):
@@ -508,21 +528,12 @@ From the signed-in QA (1 October):
 - [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
       returns on every load until something is saved.
 - [x] **C** F-10 (Low): "Reset all settings" has no confirmation or undo. (started 2026-10-02 01:39 UTC, Codex, on polish/f-10; done `1aaa486`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
-- [ ] **C** F-11 (Low): the icon cannot be saved without a username, and the help text does not
-      say the username is required.
-- [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
-      ("Lvl 3 mage").
 - [x] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate" (started 2026-10-02 01:48 UTC, Codex, on polish/f-13; done `692b67b`, merged with this commit; verified in LAUNCH_VERIFICATION §54; not deployed)
       breaks mid-word.
 - [ ] **C** F-15 (Low): after "Open Save File…" there is no upload to the Cloud Vault; the save
       must be chosen again in "Import save".
 - [ ] **C** F-16 (Low): Challenge Runs has no cloud save, though the Vault window has a Challenge
       Runs tab and quota; /vault does not show that tab.
-- [ ] **C** Gear note (Low; from the 2 October retest): the beast-race note says closed helmets
-      are excluded but not that open ones (such as Helm of Oreyn Bearclaw) are kept, so a
-      correct pick reads as a bug. Say so in the note.
-- [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
-      allows 100 characters, the API 120.
 - [x] F-18: not a bug. One sign-in in the 2 October retest ended on `/account`; the owner had
       switched windows by accident.
 - [ ] **C** F-19 (Low; owner decision 2 October: offer to save it): a world switched in the
