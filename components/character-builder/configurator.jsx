@@ -354,9 +354,10 @@ export default function Configurator({
 
       {/* Preset Class Customization Quick-Action Banner */}
       {build.className !== "Custom" && (
-        <div className="flex items-center justify-between p-2.5 bg-surface-5 border border-line-9 text-xs">
+        <div className="preset-custom-help flex flex-wrap items-center justify-between gap-2 p-2.5 bg-surface-5 border border-line-9 text-xs">
           <span className="text-fg-7">
-            Preset Class: <strong className="text-fg-2">{build.className}</strong> (Locked)
+            Preset Class: <strong className="text-fg-2">{build.className}</strong>. Specialization, favored attributes and skills use this preset.
+            Customize Skills switches to Custom Class, keeping your current choices so you can edit them.
           </span>
           <button
             type="button"

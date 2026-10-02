@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Builder explains how to customize a preset and can clear premade searches; save help explains content files and phone file selection; Travel shows saved gold remaining or needed, and Home uses plainer tool descriptions.
+
 - Settings label version selection as not available yet, and Cloud Vault rename accepts up to 120 characters, matching the existing save limit.
 
 - Account profile help says a username is required to save the profile, including the chosen icon.

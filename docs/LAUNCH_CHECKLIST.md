@@ -226,9 +226,9 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       correct pick reads as a bug. Say so in the note.
 - [x] **C** F-11 (started 2026-10-02 20:40 UTC, Codex; done `622b09e`, on `polish/beginner-clarity-batch`) (Low): the icon cannot be saved without a username, and the help text does not
       say the username is required.
-- [x] **C** F-17 (started 2026-10-02 20:45 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`) (Low): Mod version says "Current published data" while disabled; the rename box
+- [x] **C** F-17 (started 2026-10-02 20:45 UTC, Codex; done `213fa59`, on `polish/beginner-clarity-batch`) (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
-- [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
+- [x] **C** Copy (started 2026-10-02 20:48 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 
 *From the live retest of `250b1b5` (2 October; LAUNCH_VERIFICATION §59)*

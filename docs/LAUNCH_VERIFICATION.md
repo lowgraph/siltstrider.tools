@@ -3033,7 +3033,8 @@ and rollback records are unchanged.
 
 Branch `polish/beginner-clarity-batch`, from freshly fetched main `d3e33ea`.
 The owner requested one branch, seven ordered item commits with relevant tests
-only between items, then full merge preparation after the final Copy item.
+only between items, then full merge preparation. The owner subsequently added FLOW-04, FLOW-03 and
+F-12 after Copy, deferring the full suites until those are complete.
 No data rebuild, schema, migration or production changes.
 
 ### Beginner clarity
@@ -3144,3 +3145,26 @@ at 121 and the stored name unchanged after rejection. Scoped axe/overflow checks
 pass; zero runtime/server errors; phone screenshot reviewed. The same disposable
 `user_qa_clarity` records are removed after every case. Evidence:
 `A:/Cache/clarity-batch/f17-unit-final.log` and `f17-browser/`.
+
+
+### Copy — U07 / U09 / U15 / U18 / U29
+
+Preset help explains switching to Custom while keeping current choices. Clear
+search restores the selected premade collection and focuses its input without
+loading a character. Save help defines content files as game/expansion/mod files
+and explains copying an OpenMW save to a phone-accessible folder. Travel shows
+remaining saved gold or the shortfall only when both balance and fare are known;
+fare calculation and affordability warnings are unchanged. Home's descriptions
+use plainer words, retaining the OpenMW 0.51 calculation-source claim.
+
+95 relevant unit tests passed, including four balance boundaries, invalid/unknown
+money, collection clearing in three worlds and full/compact content-file notices.
+48 new Chrome cases passed across all worlds, both themes and 1366/375 px:
+preset-to-custom choice preservation, clear-search focus, Home wording, Vault
+content-file/phone help and saved-gold captions compared with the route's displayed
+fare. The initial Travel test looked for Vault-only content help; that check now
+runs on Vault. Its first fare parser also lost a regex escape; the final smaller
+world groups use explicit numeric matching. Only complete passing reports are
+accepted; zero runtime/server errors; scoped axe/overflow checks and phone Travel
+screenshot reviewed. Evidence: `A:/Cache/clarity-batch/copy-unit.log`, `copy-builder`,
+`copy-home`, `copy-vault-final` and `copy-travel-{vanilla,tr,tr_arce}`.

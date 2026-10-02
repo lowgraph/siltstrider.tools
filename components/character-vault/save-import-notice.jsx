@@ -34,6 +34,9 @@ export default function SaveImportNotice({ compact = false }) {
           Clear save
         </button>
       </div>
+      {activeSave.contentFileCount > 0 && <p className="content-files-help mt-2 text-fg-7">
+        Content files are the game, expansion and mod files recorded by this save, not extra save files to upload.
+      </p>}
       {!compact && issues > 0 && <p className="save-difference-help mt-2 text-fg-7">
         These are differences between your save and the site’s published data, not damage to your save.
         The site uses the kept values below or its own rules where something cannot be matched;

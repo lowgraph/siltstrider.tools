@@ -30,6 +30,7 @@ export default function OpenSavePanel({ vault }) {
           Loads an OpenMW .omwsave into the Character Builder, Level Simulator, Equipped Loadouts
           and Journal. It stays in this browser; nothing is uploaded and no account is needed.
         </p>
+        <p className="phone-save-help text-xs text-fg-7">On a phone, copy your .omwsave from the device running OpenMW to a folder you can open in Files, such as Downloads. Then use Open Save File.</p>
         <CompatibilityNotice onConfigure={() => shell.navigate?.("builder")} />
       </div>
       <input

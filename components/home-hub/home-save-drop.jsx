@@ -131,6 +131,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
       <span className="home-save-hint">
         <kbd>.omwsave</kbd> files are in <span>Documents › My Games › OpenMW › saves</span> on Windows
       </span>
+      <p className="phone-save-help home-step-note">On a phone, copy your .omwsave from the device running OpenMW to a folder you can open in Files, such as Downloads. Then choose that file here.</p>
       <div className="home-step-row">
         <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!enabled || Boolean(busy)} onClick={() => input.current?.click()}>
           Choose a save file

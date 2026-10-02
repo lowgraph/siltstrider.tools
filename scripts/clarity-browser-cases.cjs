@@ -9,6 +9,44 @@ async function finish(c,name){
   c.assertAccessible(await c.audit(name));await c.screenshot(name);
 }
 module.exports=async c=>{
+  for(const route of ['builder','home','travel','vault'])for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-Copy/${route}/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,route,profile,width,theme);
+    if(route==='builder'){
+      await c.builderTab('builder');await c.select('#builder-className','Mage');await c.until('document.querySelector(".preset-custom-help")');
+      assert.match(await c.evaluate('document.querySelector(".preset-custom-help").textContent'),/keeping your current choices/);
+      const read=`[...document.querySelectorAll('.configurator select')].filter(e=>e.id!=='builder-className').map(e=>[e.id,e.value])`;
+      const before=await c.evaluate(read);await c.button('✎ Customize Skills');
+      await c.until('document.querySelector("#builder-className").value==="Custom"');assert.deepEqual(await c.evaluate(read),before);
+      await c.builderTab('premade');await c.button('By Race');await c.type('[aria-label="Filter premade classes"]','NoSuchQABuild');
+      await c.button('Clear search');assert.equal(await c.evaluate('document.activeElement.getAttribute("aria-label")'),'Filter premade classes');
+      assert.match(await c.evaluate('document.querySelector(".premade-collection-note").textContent'),/race-themed/);
+      await c.button('Expand All');await c.until('document.querySelector(".premade-build-card")');
+    }else if(route==='home'){
+      assert.match(await c.evaluate('document.querySelector(".phone-save-help").textContent'),/copy your .omwsave.*Files.*Downloads/);
+      assert.doesNotMatch(await c.evaluate('document.querySelector(".home-tools").textContent'),/non-retroactive|formulaic/);
+    }else{
+      const {rememberSave}=await import('../lib/active-save-store.mjs');const fixture=require('../test/helpers/qa-staged-data.cjs');const raw=fixture.save();
+      if(profile!=='vanilla')raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm');if(profile==='tr_arce')raw.contentFiles.push('ARCE - All Races and Classes Enabled.esp');
+      if(route==='vault'){
+        const store={};await rememberSave(raw,{setItem:(k,v)=>store[k]=v});
+        await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(store)}))localStorage.setItem(k,v)`);await c.navigate('vault',profile);
+        await c.until('document.querySelector(".content-files-help")');assert.match(await c.evaluate('document.querySelector(".content-files-help").textContent'),/not extra save files to upload/);
+        assert.match(await c.evaluate('document.querySelector(".phone-save-help").textContent'),/Files.*Downloads/);
+        await finish(c,`copy-vault-${profile}-${width}-${theme}`);return {phoneSaveHelp:true,contentFilesExplained:true};
+      }
+      for(const gold of [50,0]){
+        raw.vitals.gold=gold;const store={};await rememberSave(raw,{setItem:(k,v)=>store[k]=v});
+        await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(store)}))localStorage.setItem(k,v)`);
+        await c.openDocument(c.base+`/travel?world=${profile==='vanilla'?'vanilla':'tr'}&arce=${profile==='tr_arce'?'1':'0'}&from=Seyda%20Neen&to=Balmora&plan=hops`);await c.idle();
+        await c.until('document.querySelector(".travel-gold-balance")');
+        const text=await c.evaluate('document.querySelector(".travel-gold-balance").textContent');
+        const fare=await c.evaluate(`Number([...document.querySelectorAll('#travel-results h3')].find(e=>e.textContent.trim()==='Route Dossier').parentElement.querySelector('span').textContent.match(/([0-9]+) gold/)[1])`);
+        assert.equal(text.trim(),gold===50?`After this route: ${gold-fare} gold remaining from your save’s balance.`:`You need ${fare} more gold for this route.`);
+      }
+      await c.evaluate('document.querySelector(".travel-gold-balance").scrollIntoView({block:"center"})');
+    }
+    await finish(c,`copy-${route}-${profile}-${width}-${theme}`);return {route,profile,width,theme};
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-CALC4/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'alchemy',profile,width,theme);await c.until('document.querySelector("#reverse-alchemy-search")');
     assert.match(await c.evaluate('document.querySelector("#reverse-alchemy-help").textContent'),/two-ingredient pairs only.*three or four.*Changing worlds clears.*typed Alchemy/s);

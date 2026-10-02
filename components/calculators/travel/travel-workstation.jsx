@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { cheapestTradeoff } from "../../../lib/travel-tradeoff.mjs";
+import { routeGoldBalance } from "../../../lib/travel-budget.mjs";
 import { realTimeText, formatRealDuration } from "../../../lib/travel-real-time.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
@@ -538,6 +539,7 @@ export default function TravelWorkstation() {
     return null;
   }, [liveNetworkGraph]);
 
+  const goldBalance = routeGoldBalance(route, activeSave?.save?.vitals?.gold);
   // Service color helper (gold / wood / dark themes, NO rainbows)
   const getServiceBadge = (kind) => {
     switch (kind) {
@@ -852,6 +854,11 @@ export default function TravelWorkstation() {
           )}
         </div>
 
+        {goldBalance && <p className="travel-gold-balance text-xs text-fg-7 m-0">
+          {goldBalance.remaining >= 0
+            ? `After this route: ${goldBalance.remaining} gold remaining from your save’s balance.`
+            : `You need ${-goldBalance.remaining} more gold for this route.`}
+        </p>}
         {route.isValid && route.totals?.goldKnown && Number.isFinite(activeSave?.save?.vitals?.gold)
           && route.totals.gold > activeSave.save.vitals.gold && (
           <p role="alert" className="text-[11px] text-warning-2 font-serif m-0">
