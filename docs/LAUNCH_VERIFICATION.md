@@ -2204,3 +2204,35 @@ capture/orchestration scripts are removed; evidence and recovery records remain.
 First command for the next agent: `npm test`, then BROWSER_TESTS.md's read-only
 browser checks against `https://siltstrider.tools`; use the full freeze matrix at
 the release cut.
+
+## 50. Signed-in live retest of QA-21 to QA-24 — 2 October 2026
+
+A Claude QA agent retested the four signed-in fixes on the live release from §49
+(`6fab4c5` / Worker `e29663d3`) with real Clerk email sign-in, using one existing
+throwaway account (qa1) and one new account (qa4). Each case ran twice in two
+separate browser profiles. This is the real-account check §49 did not claim.
+
+| ID | Result | Case and evidence |
+| --- | --- | --- |
+| QA-21 | **Pass 2/2** | TR + ARCE build saved to the Vault, site switched to Vanilla, "Load this build into Character Builder": back to `?world=tr&arce=1`, race correct (Argonian; Khajiit (Ohmes) restored from the plain Khajiit the Vanilla switch showed), sheet finished calculating |
+| QA-23 (unsaved character) | **Pass 2/2** | New account, no `?world=` in the address, TR + ARCE character, sign-in: TR + ARCE kept, all 16 Builder fields identical; account stayed revision 0, `worldChosen: false` |
+| QA-23 (opened save) | **Pass 2/2** | Ba'Ta save opened as TR + ARCE, sign-in: still TR + ARCE, Khajiit (Cathay-raht), class "Cat", The Thief; not re-read as Vanilla |
+| QA-23 (which world wins) | As designed | A signed-in header switch to TR is session-only; after sign-out and sign-in the browser's TR + ARCE wins, since the account never chose a world |
+| QA-24 | **Pass 2/2** | Unsaved TR + ARCE characters (Tsaesci, Naga) unchanged after sign-out; a loaded save also survived sign-out twice |
+| QA-22 (imported save) | **Pass 2/2** | Permalink carries `world=tr&arce=1`, sex, race, custom class, sign and all ten skills; opened identically in a fresh signed-out profile |
+| QA-22 (challenge run) | **Pass 2/2** | Rolled in Vanilla, site switched to TR, link carries `world=vanilla&arce=0` and reopens the same seed and character in Vanilla |
+| QA-22 (Builder link) | **Pass 2/2** | TR + ARCE Khajiit (Suthay) link reopened field for field |
+
+No errors, lost data or wrong worlds. New or remaining observations, recorded in the
+checklist's section 6:
+
+- Once in four logged qa4 sign-ins the tab ended on `/account` instead of `/builder`
+  (character and world intact); not reproduced in the next two logged sign-ins.
+- A signed-in world switch is session-only; only Your account's Preferred world is
+  stored. Intended, but some players may expect the last switch to persist.
+- F-6 remains: email sign-in reloads the page; the character and world now survive it.
+
+Cleanup: qa1's four QA saves deleted (0/5), settings unchanged at revision 26; qa4
+saved nothing and its settings were never written. Both profiles signed out and
+verified after reload. Evidence: `A:\Cache\qa-retest`; browser profiles
+`A:\Cache\qa-retest-browserA` and `A:\Cache\qa-retest-browserB`.

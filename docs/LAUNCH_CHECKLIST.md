@@ -214,8 +214,9 @@ Execution order confirmed by the owner. QA IDs identify findings; their numbers
 do not set priority. The implementation items below are integrated into main by
 `c3e740b`, retaining QA-24's earlier merge, and live with the theme in `6fab4c5` /
 `e29663d3`. Branch, merged-checkout and release verification are in
-LAUNCH_VERIFICATION §§30–49. Freeze acceptance and release preparation remain
-separate checks against the final release build.
+LAUNCH_VERIFICATION §§30–49. The signed-in fixes (QA-21 to QA-24) passed a real
+Clerk retest on the live release, each case twice (LAUNCH_VERIFICATION §50). Freeze
+acceptance and release preparation remain separate checks against the final release build.
 
 | Order | Target | Why |
 | --- | --- | --- |
@@ -458,8 +459,8 @@ Low:
 - [ ] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding).
 
 From the signed-in QA (1 October):
-- [ ] **C** F-6 (Medium): email sign-in reloads the page (4 of 4). The character comes back
-      through the hand-off; the world was QA-23.
+- [ ] **C** F-6 (Medium): email sign-in reloads the page (4 of 4; still so in the 2 October
+      retest). The character and world now survive it (QA-23 fixed).
 - [ ] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body
       and "Delete save?" is not announced; Confirm is 15 Tabs away. Focus the prompt.
 - [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
@@ -477,10 +478,18 @@ From the signed-in QA (1 October):
       Runs tab and quota; /vault does not show that tab.
 - [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
+- [ ] **C** F-18 (Low, seen once): in the 2 October signed-in retest, one of four logged email
+      sign-ins ended on `/account` instead of the page signed in from (`/builder`); character
+      and world intact. Not reproduced in the next two logged sign-ins. Watch for it.
+- [ ] **O** F-19 (decision): a world switched in the header while signed in lasts only for that
+      session; after signing in again the browser's world (or the account's Preferred world,
+      once chosen) wins. Intended, but some players may expect the last switch to stick.
+      Keep it, or explain it beside the world switch, or offer to save it as Preferred.
 - [x] F-14: no change. The Guild Guide warning is for a save whose character is not a member;
       when an account default turns membership off, Travel labels it "account default" and
       says "no Mages Guild", which is enough.
-- [ ] **O** After launch, if wanted: delete the three QA accounts in Clerk, their
+- [ ] **O** After launch, if wanted: delete the QA accounts in Clerk (the three from 1 October
+      plus qa4 from the 2 October retest, which wrote no settings or saves), their
       `account_settings` rows (revisions 26, 4, 2; values are the defaults) and account A's
       Ko-fi support code (`SS-80dec…`).
 
