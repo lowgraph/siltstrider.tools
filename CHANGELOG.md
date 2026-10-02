@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Premades explain the separate By Playstyle and By Race collections, show filtered counts, and give the right first-visit hint for each group.
+
 - New-player guidance explains where to start, world choices, Builder numbers and game-entry steps, gear alternatives, save differences, Travel options, potion recovery and leveling terms.
 
 - Gear Advisor describes the endgame kit as ranked for the current character, without calling an edited premade its class archetype.

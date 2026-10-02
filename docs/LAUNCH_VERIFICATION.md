@@ -3062,3 +3062,19 @@ Screenshots of phone Home and No Route recovery reviewed. Evidence:
 `beginner-builder-final`, `beginner-travel`, `beginner-alchemy`, `beginner-leveler`.
 The retained 12 identity and 30 phone/desktop popover cases also passed:
 102 complete browser cases accepted, zero runtime/server errors.
+
+
+### F04 / F11 — separate premade collections
+
+By Race now names its separate race-themed collection and reports shown/total
+counts, including ARCE entries only in TR + ARCE. By Playstyle retains its own
+41 builds; switching to By Race changes the first-visit hint to “Pick a race”.
+No builds, selection behavior or ordering changed.
+
+36 relevant unit tests passed, including three world-specific collection cases.
+12 new Chrome collection cases passed across all worlds, both themes and
+1366/375 px, including an empty search and switching back to By Playstyle.
+The retained QA-12 explanation cases (12) and QA-29 phone grouping cases (18)
+also passed: 42 complete cases, zero runtime/server errors. Evidence:
+`A:/Cache/clarity-batch/collections-unit.log`, `collections`,
+`collections-explanations` and `collections-phone`.

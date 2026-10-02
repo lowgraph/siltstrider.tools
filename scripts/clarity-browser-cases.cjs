@@ -9,6 +9,22 @@ async function finish(c,name){
   c.assertAccessible(await c.audit(name));await c.screenshot(name);
 }
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-F04-F11/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,'builder',profile,width,theme);await c.builderTab('premade');
+    await c.until('document.querySelector(".premade-collection-note")');
+    const {BUILDS,RACE_BUILDS,ARCE_BUILDS}=await import('../lib/premade-data.mjs');
+    await c.button('By Race');const pool=profile==='tr_arce'?[...RACE_BUILDS,...ARCE_BUILDS]:RACE_BUILDS;
+    assert.match(await c.evaluate('document.querySelector(".premade-collection-note").textContent'),new RegExp(`Showing ${pool.length} of ${pool.length} race-themed`));
+    assert.match(await c.evaluate('document.querySelector(".premade-welcome").textContent'),/Pick a race/);
+    await c.type('[aria-label="Filter premade classes"]','NoSuchQACollection');
+    assert.match(await c.evaluate('document.querySelector(".premade-collection-note").textContent'),new RegExp(`Showing 0 of ${pool.length}`));
+    await c.type('[aria-label="Filter premade classes"]','');await c.button('Expand All');
+    assert.equal(await c.evaluate('document.querySelectorAll(".premade-build-card").length'),pool.length);
+    await c.button('Collapse All');await c.button('By Playstyle');
+    assert.match(await c.evaluate('document.querySelector(".premade-collection-note").textContent'),new RegExp(`Showing ${BUILDS.length} of ${BUILDS.length} playstyle`));
+    assert.match(await c.evaluate('document.querySelector(".premade-welcome").textContent'),/Pick a playstyle/);
+    await finish(c,`collections-${profile}-${width}-${theme}`);return {raceBuilds:pool.length,playstyleBuilds:BUILDS.length};
+  });
   for(const route of ['home','builder','travel','alchemy','leveler'])for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind']){
     await c.check(`Clarity-Beginner/${route}/${profile}/${width}/${theme}`,async()=>{
       await setup(c,route,profile,width,theme);

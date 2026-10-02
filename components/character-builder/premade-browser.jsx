@@ -98,10 +98,17 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
         </div>
       </div>
 
+      <p className="premade-collection-note text-xs text-fg-7" role="status">
+        Showing {filteredBuilds.length} of {builds.length} {groupBy === 'race' ? 'race-themed' : 'playstyle'} builds in this collection.
+        {groupBy === 'race'
+          ? ` By Race is a separate collection, not a filter of the ${BUILDS.length} By Playstyle builds. ${activeProfile === 'tr_arce' ? 'It includes ARCE races for this world.' : 'ARCE race builds appear only in TR + ARCE.'}`
+          : ' By Race has a separate set of builds focused on each race; switch groups to browse those.'}
+      </p>
+
       {onBuildOwn && (
         <div className="premade-welcome flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-2 border border-line-11 px-3.5 py-3">
           <p className="text-sm text-fg-4 m-0">
-            <strong className="text-fg-2">New here?</strong> Pick a playstyle, then a build to start
+            <strong className="text-fg-2">New here?</strong> Pick {groupBy === 'race' ? 'a race' : 'a playstyle'}, then a build to start
             from. You can change anything once it is loaded.
           </p>
           <button

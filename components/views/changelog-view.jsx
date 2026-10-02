@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-02">October 2, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Premades explain the separate By Playstyle and By Race collections, show filtered counts, and give the right first-visit hint for each group.</li>
             <li>New-player guidance explains where to start, world choices, Builder numbers and game-entry steps, gear alternatives, save differences, Travel options, potion recovery and leveling terms.</li>
             <li>Gear Advisor describes the endgame kit as ranked for the current character, without calling an edited premade its class archetype.</li>
             <li>Faction Journal uses 1 rank for factions such as Twin Lamps.</li>

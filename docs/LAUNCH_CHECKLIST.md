@@ -207,7 +207,7 @@ per day; per item run `npm test` and only the browser groups `npm run test:brows
 sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 
 *Saturday: wording and display (QA-27–30 in section 5 first)*
-- [x] **C** Beginner clarity (started 2026-10-02 20:09 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`) (N): first tool to use (U01); which world to pick and what ARCE
+- [x] **C** Beginner clarity (started 2026-10-02 20:09 UTC, Codex; done `c1f6b25`, on `polish/beginner-clarity-batch`) (N): first tool to use (U01); which world to pick and what ARCE
       is (U02, F09); a manual route beside the unsupported `.ess` notice (U03); race and
       birthsign effects before lore (U05); a legend for the Builder's numbers (U06); an
       "enter this in the game" checklist (U08); Gear Advisor: findable from Home, one kit vs
@@ -216,7 +216,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       message that says what to change (U17); one-line Travel definitions (U19); Alchemy
       jargon and recovery from a failed or zero brew (U21, U22); Level Simulator wording
       (U24, U25, U27). If time is short, the first-visit ones first: U01, U02, U17, U19.
-- [ ] **C** F04 / F11: "By Race" shows 20 of 41 premades without saying why, and its hint
+- [x] **C** F04 / F11 (started 2026-10-02 20:26 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): "By Race" shows 20 of 41 premades without saying why, and its hint
       still says "Pick a playstyle".
 - [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
       calculator), and a world switch clears the chosen effects and ingredients. Both
