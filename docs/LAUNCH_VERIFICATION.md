@@ -3168,3 +3168,32 @@ world groups use explicit numeric matching. Only complete passing reports are
 accepted; zero runtime/server errors; scoped axe/overflow checks and phone Travel
 screenshot reviewed. Evidence: `A:/Cache/clarity-batch/copy-unit.log`, `copy-builder`,
 `copy-home`, `copy-vault-final` and `copy-travel-{vanilla,tr,tr_arce}`.
+
+
+### FLOW-04 — Propylon re-check and chamber-link preservation
+
+No published profile directly connects Rotheran to Andasreth. Ordinary Andasreth
+Index (`index_andra`, `warp_andra|1`) works from Berandas/Hlormaren; Rotheran's
+ordinary branches lead to Indoranyon/Valenvaryon. The Master Index diverts through
+Caldera and Folms Mirel to Andasreth. Carrying one ordinary index does not imply
+an arbitrary direct Propylon journey, so the report's direct-link condition is
+not met and no direct edge is invented.
+
+A separate wrong-endpoint failure was reproduced: on first load with a saved
+index, valid chamber links could be replaced with fallback towns before carried
+items were restored. `TravelWorkstation`'s selected-stop validation now waits for
+ready catalogs and recognizes published interior cells even while their teleport
+is unavailable. Such a link remains selected with No Route rather than becoming
+a different trip. Its label uses the published room name. Teleport eligibility,
+connections and route scoring are unchanged.
+
+88 relevant Travel tests passed. Before the fix, the controlled save-late and
+index-absent chamber tests failed; catalog-late is also retained. Twelve staged
+cases cover missing/wrong indices, direct neighboring chambers and Master
+Index diversion across all worlds. Twelve Chrome cases pass across all worlds,
+both themes and 1366/375 px: loaded ordinary index gives one Berandas → Andasreth
+leg; loaded Master Index gives two Rotheran → Caldera → Andasreth legs. Zero
+runtime/server errors; scoped axe/overflow checks pass. The initial aggregate
+browser report timed out after reproducing the endpoint reset; it is excluded.
+Evidence: `A:/Cache/clarity-batch/flow04-before.log`, `flow04-unit-final.log` and
+`flow04-{vanilla,tr,tr_arce}-final/`.

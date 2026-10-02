@@ -88,6 +88,22 @@ const input = text => [...document.querySelectorAll('label')].find(element => el
 const summary = () => document.querySelector('#travel-options > summary').textContent;
 const route = () => document.getElementById('travel-results');
 
+for(const scenario of ['catalog-late','save-late','index-absent'])test(`FLOW-04: ${scenario} keeps exact chamber links until prerequisites settle`,async()=>{
+  const data=fixture(),a='interior:berandas, propylon chamber',b='interior:andasreth, propylon chamber';
+  data.catalogs.Places.push({key:a,name:'Berandas, Propylon Chamber',interior:true},{key:b,name:'Andasreth, Propylon Chamber',interior:true});
+  data.catalogs.Teleports=[{kind:'propylon',from:[a],to:b,requires:['index_andra'],objectName:'Andasreth Propylon',fromPos:[[0,0]],toPos:[0,0]}];
+  data.metadata.Teleports.items={index_andra:'Andasreth Propylon Index'};
+  const save={token:'qa-index',save:{identity:{name:'QA – Traveller'},stuff:{inventory:scenario==='index-absent'?[]:[{id:'index_andra',count:1}]}}};
+  const from='stop:'+a,to='stop:'+b;
+  const t=await mount({data:scenario==='catalog-late'?null:data,status:scenario==='catalog-late'?'loading':'ready',activeSave:scenario==='save-late'?null:save,search:'?'+new URLSearchParams({from,to,walk:'0'})});
+  try{
+    t.state.data=data;t.state.status='ready';t.state.activeSave=save;await t.render();
+    const query=new URLSearchParams(window.location.search);assert.equal(query.get('from'),from);assert.equal(query.get('to'),to);
+    if(scenario==='index-absent'){assert.match(route().textContent,/No Route/);assert.doesNotMatch(route().textContent,/Moonmoth|Seyda Neen|Vivec/);}
+    else assert.match(route().textContent,/Use the Andasreth Propylon/);
+  }finally{await t.cleanup();}
+});
+
 test('ordinary journeys prefer restricted routes for every objective and expose no long-walk switch or warning', async () => {
   const t = await mount({ search: '?from=Seyda%20Neen&to=Vivec' });
   try {

@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Travel keeps specific Propylon chamber links while your save and its carried indices load, and shows No Route for an unavailable chamber instead of switching to other towns.
+
 - Builder explains how to customize a preset and can clear premade searches; save help explains content files and phone file selection; Travel shows saved gold remaining or needed, and Home uses plainer tool descriptions.
 
 - Settings label version selection as not available yet, and Cloud Vault rename accepts up to 120 characters, matching the existing save limit.

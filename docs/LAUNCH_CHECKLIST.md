@@ -228,7 +228,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       say the username is required.
 - [x] **C** F-17 (started 2026-10-02 20:45 UTC, Codex; done `213fa59`, on `polish/beginner-clarity-batch`) (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
-- [x] **C** Copy (started 2026-10-02 20:48 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): preset-to-custom wording (U07), a Clear search button (U09), content files and
+- [x] **C** Copy (started 2026-10-02 20:48 UTC, Codex; done `692e8bb`, on `polish/beginner-clarity-batch`): preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 
 *From the live retest of `250b1b5` (2 October; LAUNCH_VERIFICATION §59)*
@@ -252,9 +252,11 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       ranked for this character, without naming the source as its archetype.
 
 *Sunday: check first, fix only if contained*
-- [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
+- [x] **C** FLOW-04 (started 2026-10-02 21:44 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`): a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
       this is a wrong route; raise it to High and move it to section 5 (launch bar).
+      Re-check: no direct link exists; the Master Index goes through Caldera. Fixed a
+      separate first-load reset of valid chamber links before carried indices were restored (LAUNCH_VERIFICATION §65).
 - [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
 - [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage"). Fix only if the save already carries the location and class name;

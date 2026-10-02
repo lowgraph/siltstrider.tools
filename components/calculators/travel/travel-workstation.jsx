@@ -328,7 +328,8 @@ export default function TravelWorkstation() {
   }, [saveOrigin, activeSave, startedFrom]);
 
   const labelOf = useCallback((id) => {
-    if (!isPlace(id)) return transitNetwork.stops.get(id)?.label || id;
+    if (!isPlace(id)) return transitNetwork.stops.get(id)?.label
+      || (typeof id === 'string' && id.startsWith('stop:interior:') ? places.get(id.slice(5))?.name : null) || id;
     const key = id.slice(PLACE_PREFIX.length);
     const record = places.get(key);
     if (record?.name) return record.name;
@@ -382,9 +383,13 @@ export default function TravelWorkstation() {
 
   // Ensure selected stops exist in current world; a chosen place stays while the world has it.
   useEffect(() => {
-    if (!linkRead) return;
+    if (!linkRead || gameData.status !== 'ready') return;
     if (availableStops.length > 0) {
-      const known = (id) => transitNetwork.cities.has(id) || availableStops.includes(id) || (isPlace(id) && places.has(id.slice(PLACE_PREFIX.length)));
+      // A published room remains a valid boundary when its index/quest is not usable
+      // yet. Report No Route rather than silently planning a trip between other towns.
+      const known = (id) => transitNetwork.cities.has(id) || availableStops.includes(id)
+        || (isPlace(id) && places.has(id.slice(PLACE_PREFIX.length)))
+        || (typeof id === 'string' && id.startsWith('stop:interior:') && places.has(id.slice(5)));
       const resolvedOrigin = resolveTransitEndpoint(origin, transitNetwork);
       const resolvedDestination = resolveTransitEndpoint(destination, transitNetwork);
       if (resolvedOrigin !== origin) setOrigin(resolvedOrigin);
@@ -397,7 +402,7 @@ export default function TravelWorkstation() {
         setDestination(transitNetwork.stops.get(fallback)?.town || fallback);
       }
     }
-  }, [world, availableStops, origin, destination, places, transitNetwork, linkRead]);
+  }, [world, availableStops, origin, destination, places, transitNetwork, linkRead, gameData.status]);
 
   const handleOriginChange = id => setOrigin(resolveTransitEndpoint(id, transitNetwork));
   const handleDestinationChange = id => setDestination(resolveTransitEndpoint(id, transitNetwork));

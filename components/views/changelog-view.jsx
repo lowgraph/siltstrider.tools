@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-02">October 2, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Travel keeps specific Propylon chamber links while your save and its carried indices load, and shows No Route for an unavailable chamber instead of switching to other towns.</li>
             <li>Builder explains how to customize a preset and can clear premade searches; save help explains content files and phone file selection; Travel shows saved gold remaining or needed, and Home uses plainer tool descriptions.</li>
             <li>Settings label version selection as not available yet, and Cloud Vault rename accepts up to 120 characters, matching the existing save limit.</li>
             <li>Account profile help says a username is required to save the profile, including the chosen icon.</li>

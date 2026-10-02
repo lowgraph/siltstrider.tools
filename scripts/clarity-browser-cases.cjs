@@ -9,6 +9,25 @@ async function finish(c,name){
   c.assertAccessible(await c.audit(name));await c.screenshot(name);
 }
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-FLOW04/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,'travel',profile,width,theme);
+    const {rememberSave}=await import('../lib/active-save-store.mjs');const raw=require('../test/helpers/qa-staged-data.cjs').save();
+    if(profile!=='vanilla')raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm');if(profile==='tr_arce')raw.contentFiles.push('ARCE - All Races and Classes Enabled.esp');
+    const journeys=[];
+    for(const index of ['index_andra','index_master']){
+      raw.stuff.inventory=[{id:index,count:1}];const store={};await rememberSave(raw,{setItem:(k,v)=>store[k]=v});
+      await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(store)}))localStorage.setItem(k,v)`);
+      const from=index==='index_andra'?'berandas':'rotheran';
+      const link=`/travel?world=${profile==='vanilla'?'vanilla':'tr'}&arce=${profile==='tr_arce'?'1':'0'}&from=${encodeURIComponent('stop:interior:'+from+', propylon chamber')}&to=${encodeURIComponent('stop:interior:andasreth, propylon chamber')}&plan=hops&walk=0`;
+      await c.openDocument(c.base+link);await c.idle();
+      await c.until('document.querySelector("#travel-results").textContent.includes("Use the ") && document.querySelector("#travel-results").textContent.includes("Propylon")');
+      const steps=await c.evaluate(`[...document.querySelectorAll('#travel-results div')].filter(e=>e.children.length===0&&/^Leg [0-9]+:/.test(e.textContent.trim())).map(e=>e.parentElement.parentElement.textContent)`);
+      assert.equal(steps.length,index==='index_andra'?1:2);for(const step of steps)assert.match(step,/Propylon/);
+      if(index==='index_master')assert.match(steps.join(' '),/Caldera.*Folms Mirel/s);
+      journeys.push({index,steps});await c.evaluate('document.querySelector("#travel-results").scrollIntoView({block:"start"})');await c.screenshot(`propylon-${index}-${profile}-${width}-${theme}`);
+    }
+    await finish(c,`propylon-${profile}-${width}-${theme}`);return {directRotheranAndasreth:false,journeys};
+  });
   for(const route of ['builder','home','travel','vault'])for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`Clarity-Copy/${route}/${profile}/${width}/${theme}`,async()=>{
     await setup(c,route,profile,width,theme);
     if(route==='builder'){
