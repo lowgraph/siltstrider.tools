@@ -33,7 +33,7 @@ export function GearSourcesView({build,beast=false,result,toggles,ranking}){
   const traits=buildTraits(build);
   return <details open><summary>Early game</summary>
     <p className="muted">Equipment for your major and minor skills, within the published early-game acquisition rules. Choose one armor set and one weapon. Enchanted clothing and jewelry are ranked for this build; the two rings are different rings, since a second copy is not assumed. Broken equipment must be repaired before use. Purchase values are condition-scaled estimates, not merchant quotes.</p>
-    {beast&&<p className="muted">Equipment covering the head or feet is excluded for this race. Open helmets are checked against item body parts.</p>}
+    {beast&&<p className="beast-equipping-note muted">Closed helmets and boots are excluded for beast races. Compatible open helmets, such as Helm of Oreyn Bearclaw, remain eligible; the item’s body parts determine whether it fits.</p>}
     {(result.status==='idle'||result.status==='loading')&&<p role="status">Loading early-game equipment...</p>}
     {result.status==='error'&&<p role="alert">Early-game equipment could not be loaded. <button type="button" className="mw-btn" onClick={result.retry}>Retry</button></p>}
     {result.status==='ready'&&<>

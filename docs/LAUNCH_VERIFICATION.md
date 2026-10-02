@@ -3093,3 +3093,18 @@ type Alchemy 60, switch worlds without reloading, check empty effect/ingredient
 choices and retained 60, then reset to the sheet. Scoped axe/overflow checks pass,
 with zero runtime/server errors; phone screenshot reviewed. Evidence:
 `A:/Cache/clarity-batch/calc4-unit.log` and `calc4/`.
+
+
+### Gear note — open helmets for beast races
+
+Both Early game and Optimized endgame kit notes name the closed-helmet/boot
+exclusion and explicitly keep compatible open helmets, with Helm of Oreyn
+Bearclaw as the example. Body-part eligibility, scoring and picks are unchanged.
+The staged BestInSlot metadata marks that named helmet wearable in every world.
+
+64 relevant gear unit tests passed. 20 retained QA-10 Chrome cases passed across
+both themes and 1366/375 px: Argonian in Vanilla/TR, Khajiit, ARCE Cathay-raht and
+High Elf as a non-beast control. They check both notes (absent for the control),
+both weapon setups, all runner-ups and equipped transfers. Zero runtime/server
+errors. Evidence: `A:/Cache/clarity-batch/gear-unit.log`, `gear-argonian`,
+`gear-khajiit`, `gear-arce` and `gear-control`.

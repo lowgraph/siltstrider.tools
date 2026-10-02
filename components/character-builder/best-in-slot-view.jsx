@@ -201,9 +201,9 @@ export function BestInSlotView({
         </p>
 
         {beast && (
-          <p className="text-xs text-accent-3 italic">
-            Equipping note: Headgear and boots covering the full head or feet are automatically excluded
-            for beast races.
+          <p className="beast-equipping-note text-xs text-accent-3 italic">
+            Equipping note: Closed helmets and boots are excluded for beast races. Compatible open helmets,
+            such as Helm of Oreyn Bearclaw, remain eligible; the item’s body parts determine whether it fits.
           </p>
         )}
 

@@ -266,6 +266,9 @@ exports.qa = async c => {
       ]) await c.check(`QA-10/endgame/${race}/${profile}/${width}/${theme}`,async()=>{
         const arce=profile==='tr_arce';await c.openDocument(c.base+encodeShareUrl({view:'builder',world:profile==='vanilla'?'vanilla':'tr',arce,build:{...healthBuild,name:'Altmer Atronach Spellweaver',race}}));await c.idle();await readyBuilder(c);
         await c.evaluate(`document.getElementById('gear-advisor').scrollIntoView({block:'start'})`);await c.idle();await c.button('Optimize Gear');await c.until('document.querySelector(".best-in-slot-recommendations table")');
+        const notes=await c.evaluate(`[...document.querySelectorAll('.beast-equipping-note')].map(e=>e.textContent)`);
+        assert.equal(notes.length,beast?2:0);
+        for(const note of notes)assert.match(note,/Closed helmets and boots.*open helmets.*Helm of Oreyn Bearclaw.*remain eligible/s);
         const l=await fixture.loader(),data=await l.loadFeature(profile,'bestInSlot');const modes=[];
         for(const mode of ['One-handed + shield','Two-handed']) {
           await c.button(mode);

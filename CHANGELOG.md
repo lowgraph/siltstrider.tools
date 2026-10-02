@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Gear Advisor explains that beast races can wear compatible open helmets, including Helm of Oreyn Bearclaw, while closed helmets and boots remain excluded.
+
 - Alchemy explains that the effect finder suggests pairs only, extra ingredients belong in the calculator, and changing worlds clears the recipe while keeping typed stats on the open page.
 
 - Premades explain the separate By Playstyle and By Race collections, show filtered counts, and give the right first-visit hint for each group.
