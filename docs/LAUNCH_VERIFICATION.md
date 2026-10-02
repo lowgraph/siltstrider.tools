@@ -2272,3 +2272,65 @@ selected apparatus at 375 px in both themes (QA-30). Also found: Health floating
 noise, "208.00000000003 HP" (QA-27). Triage and causes are in the checklist, section 5,
 item 17. Unconfirmed first impressions (stale Home character, open helmets in early game,
 varying fresh default builds, Vault category scrolling) were not reported as bugs.
+
+## 52. Edited premade endgame kits (QA-26) — 1 October locally
+
+Owner requested QA-26 on a new branch. Fetched `origin/main` at `b2e8d94` and
+claimed it at **2026-10-02 02:05 UTC** (1 October, 23:05 in São Paulo) on
+**`launch/qa-26-edited-endgame-kit`**, isolated checkout `A:/Claude/mt-qa-26`.
+
+Cause: `resolveBestInSlotPicks` (`lib/best-in-slot.mjs`) selected a published
+record by retained build name alone. With the default weapon preference it
+scored weapons/shields, then restored that record's other slots. Race, skill,
+birthsign and other edits consequently left the old armour/clothing/jewellery
+in place. `BestInSlotView` also used the record name rather than `characterName`.
+
+Named records now require `isUnchangedPremade`, a comparison against the full
+known premade using `sameCharacter`, shared with the title rule. Edited and custom
+namesakes use the bundle scoring model for every slot. Weapon preference restores
+non-weapon published picks only for unchanged premades; reverting the character
+restores eligibility. The explanation uses `characterName`, including "Based on …"
+and player-entered names. Existing beast gates, runner-ups, source toggles and equip
+transfer remain. No model, game-data record, schema, dependency or configuration change.
+
+| Check | Result |
+| --- | --- |
+| Before-fix regressions | **9 failures / 12 tests** in `test/edited-premade-gear.test.js`; three unchanged-premade controls passed |
+| Focused fix verification | **38/38 passed**, new regressions plus existing endgame and character-identity tests |
+| Full `npm test` | **1,142 passed, 0 failed, 0 skipped, 0 TODO**, including licence/site claims |
+| `npm run build:cloudflare` | **24 pages generated**, repository configuration unchanged; no deployment |
+| Chrome QA-26 | **12/12 completed cases**, Vanilla/TR/TR + ARCE × 1366/375 × both themes; **48 character configurations, 96 weapon-preference configurations, 12 equip transfers** |
+| Pipeline | **685 tests passed**, unchanged pipeline code; shared-doc handoff on `handoff/qa-26-edited-endgame-kit` |
+
+Active synthetic tests pin unchanged published picks under both source toggles,
+race-only edits, skill-driven changes to armour/clothing/jewellery, custom premade
+namesakes, both weapon preferences, no preference, other identity edits, reverting,
+catalog immutability and the rendered title. Existing tests that called partial
+characters "unchanged premades" now use their complete original choices.
+
+The browser case uses the reported **Argonian female — Marsh mage**, edits its
+race to High Elf through Configure, then changes a Major skill to Light Armor.
+It compares every displayed primary item and score with dynamic ranking of the
+same choices under a neutral name, opens runner-ups and retains beast exclusions.
+The unchanged control is checked against its published non-weapon picks. Both
+weapon preferences are checked before equipping the edited two-handed kit; every
+recommended item appears in the loadout. A separately linked custom namesake also
+ranks dynamically. Screenshots and overflow assertions cover both layouts; inspected
+the phone Morrowind and desktop Modern captures. Completed reports have **zero
+runtime/server errors or captured React hydration warnings**.
+
+The first capture harness looked only in the playstyle premade list; corrected it
+to use the full pool containing the reported race-based premade. Two initial TR
+cases missed their Configure edits while the concurrent build refreshed the dev
+server. After the build, reran TR and TR + ARCE in bounded groups: all passed.
+Failed attempts remain in the evidence and are excluded from the final case count.
+The requested port 8765 was occupied, so verification used isolated server **8801**.
+
+Evidence: `A:/Cache/qa26-red.log`, `qa26-focused-final.log`, and `A:/Cache/qa26/`
+(`unit.log`, `unit-final.log`, `build.log`, `pipeline.log`, `matrix-summary.json`,
+batch reports, per-case reports and screenshots). Temporary orchestration scripts
+are removed after verification. The shared records are byte-identical in the site
+branch and isolated pipeline handoff checkout `A:/Claude/omw-qa-26`; other agents'
+checkouts remain unchanged. No production/account write, extraction, migration,
+push, merge or deployment. QA-27–30 remain open. First command: `npm test`, then
+BROWSER_TESTS.md's QA-26 browser filter, split by profile/width for bounded runs.

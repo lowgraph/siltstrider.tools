@@ -325,12 +325,8 @@ test('scoreItem enforces beast race footwear and closed helmet exclusion', async
 
 test('resolveBestInSlotPicks generates grouped slots with picks and item metadata', async () => {
   const { resolveBestInSlotPicks } = await modulePromise;
-  const build = {
-    name: 'Altmer Atronach Spellweaver',
-    race: 'High Elf',
-    maj: ['Destruction', 'Alteration', 'Mysticism'],
-    min: ['Illusion', 'Restoration']
-  };
+  const { BUILDS, premadeToBuild } = await import('../lib/premade-data.mjs');
+  const build = premadeToBuild(BUILDS[0]);
 
   const resolved = resolveBestInSlotPicks(featureData, build, { allowFormidableSources: false });
   assert.ok(resolved);
@@ -406,12 +402,8 @@ test('BestInSlotView renders complete late-game gear tables with scores and warn
   const BestInSlotView = component('components/character-builder/best-in-slot-view.jsx', 'BestInSlotView');
   const root = createRoot(document.getElementById('root'));
 
-  const build = {
-    name: 'Altmer Atronach Spellweaver',
-    race: 'High Elf',
-    maj: ['Destruction', 'Alteration', 'Mysticism'],
-    min: ['Illusion', 'Restoration']
-  };
+  const { BUILDS, premadeToBuild } = await import('../lib/premade-data.mjs');
+  const build = premadeToBuild(BUILDS[0]);
 
   try {
     await act(async () => {
@@ -461,12 +453,8 @@ test('GearAdvisorView wires BestInSlotView and shows loading instead of stale le
   const Gear = component('components/character-builder/gear-advisor.jsx', 'GearAdvisorView');
   const root = createRoot(document.getElementById('root'));
 
-  const build = {
-    name: 'Altmer Atronach Spellweaver',
-    race: 'High Elf',
-    maj: ['Destruction', 'Alteration', 'Mysticism'],
-    min: ['Illusion', 'Restoration']
-  };
+  const { BUILDS, premadeToBuild } = await import('../lib/premade-data.mjs');
+  const build = premadeToBuild(BUILDS[0]);
 
   try {
     // 1. When bisResult is ready, Optimize Gear renders BestInSlotView
@@ -605,9 +593,11 @@ test('Adversarial QA 3: Empty custom character produces valid fallbacks without 
 
 for (const setup of ['one-handed','two-handed']) test('endgame weapon setup filters exact premade picks: '+setup,async()=>{
  const {resolveBestInSlotPicks}=await modulePromise;
+ const {BUILDS,premadeToBuild}=await import('../lib/premade-data.mjs');
+ const build=premadeToBuild(BUILDS[0]);
  const items={one:{key:'one',name:'Sword',slot:'weapon',type:'LB1H'},two:{key:'two',name:'Spear',slot:'weapon',type:'SP2H'},unknown:{key:'unknown',slot:'weapon'},shield:{key:'shield',slot:'shield'}};
- const data={catalogs:{BestInSlot:[{build:'Fixture',toggles:{allowFormidableSources:false},slots:{weapon:[{item:'two'},{item:'unknown'},{item:'one'}],shield:[{item:'shield'}]}}]},metadata:{BestInSlot:{items}}};
- const result=resolveBestInSlotPicks(data,{name:'Fixture'},{weaponSetup:setup});
+ const data={catalogs:{BestInSlot:[{build:build.name,toggles:{allowFormidableSources:false},slots:{weapon:[{item:'two'},{item:'unknown'},{item:'one'}],shield:[{item:'shield'}]}}]},metadata:{BestInSlot:{items}}};
+ const result=resolveBestInSlotPicks(data,build,{weaponSetup:setup});
  const rows=result.groups.flatMap(g=>g.rows);
  assert.deepEqual(rows.find(r=>r.slotKey==='weapon').picks.map(p=>p.item.key),[setup==='one-handed'?'one':'two']);
  assert.equal(rows.some(r=>r.slotKey==='shield'),setup==='one-handed');

@@ -35,6 +35,12 @@ fine pointer. Chrome on this host retains coarse pointer when touch is enabled;
 that control needs physical-device acceptance rather than fabricated capabilities.
 
 `--suite qa` retains failing expectation checks and screenshots for open findings.
+`--suite qa --filter 'QA-26/'` checks the reported Argonian Marsh mage premade,
+then edits race and skills through Configure and tests a custom namesake. Across
+three worlds, both themes and 1366/375 px, it checks both weapon preferences,
+published unchanged picks, all dynamically ranked slots, runner-ups, shared titles
+and equipping the edited kit. Split by profile/width for bounded runs, for example
+`--filter 'QA-26/endgame/vanilla/375/'` (two theme cases).
 Use `--filter QA-08`, for example, for a single item. Its popover measurements also
 reserve the phone tab bar; Gear checks use text Range boxes to detect broken words.
 `--suite qa --filter 'QA-10/'` now enforces 28 kit/transfer cases at 1366/375 px

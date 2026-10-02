@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-01">October 1, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>After you edit a premade character, Gear Advisor ranks the whole endgame kit for your current choices, including armour, clothing and jewellery. The kit uses the same character name as Builder and Home; unchanged premades keep their published picks.</li>
             <li>About credits LowGraph and links to the project’s open source code under AGPL-3.0-or-later. It distinguishes the code licence from game and mod data, font and branding rights.</li>
             <li>Faction Journal uses published faction names in friendly and hostile relations and leaves deprecated entries out of its roster. Saved memberships stay intact.</li>
             <li>Premade cards explain how each build plays and its trade-off. Major and Minor skills are written out, and specialization explains which skills it helps; the explanations also appear when browsing by race.</li>

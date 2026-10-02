@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- After you edit a premade character, Gear Advisor ranks the whole endgame kit for your current choices, including armour, clothing and jewellery. The kit uses the same character name as Builder and Home; unchanged premades keep their published picks.
+
 - About credits LowGraph and links to the project’s open source code under AGPL-3.0-or-later. It distinguishes the code licence from game and mod data, font and branding rights.
 
 - Faction Journal uses published faction names in friendly and hostile relations and leaves deprecated entries out of its roster. Saved memberships stay intact.

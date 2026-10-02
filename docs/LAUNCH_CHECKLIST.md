@@ -407,7 +407,7 @@ The signed-out retest of `6fab4c5` / `e29663d3` (LAUNCH_VERIFICATION §51) passe
 on Helm of Oreyn Bearclaw, an open helmet beast races can wear (not a bug). Merge by
 Sunday 4 October, then retest.
 
-- [ ] **C** **QA-26** (High, V, R, N; confirmed in code; QA-05 retest) An edited premade's
+- [x] **C** **QA-26** (started 2026-10-02 02:05 UTC, Codex, on launch/qa-26-edited-endgame-kit; done with this commit, verified in LAUNCH_VERIFICATION §52; not merged or deployed) (High, V, R, N; confirmed in code; QA-05 retest) An edited premade's
       Optimized endgame kit is still the premade's own kit. An edited premade keeps
       `build.name` (shown "Based on …"), so `resolveBestInSlotPicks` (`lib/best-in-slot.mjs`)
       finds the premade's BestInSlot record by name, and with a weapon setup (the default
