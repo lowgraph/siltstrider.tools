@@ -2778,3 +2778,29 @@ Also found: an unedited Spear scout starts with One-handed + shield and is offer
 blade and shield (QA-33). An unconfirmed collapse-all anomaly and a Vanilla Bread-source
 question were not reported as bugs. Triage: checklist section 5 item 18 (QA-31, QA-32,
 before the freeze) and section 4 (QA-33 to QA-39).
+
+## 60. QA-31 — confirm deletion of local characters — 2 October 2026
+
+Branch: `fix/qa-31-32-local-delete-search`, from main `ae5520d`. The new opening
+regression failed on unchanged main: clicking Delete immediately removed the
+selected record from browser storage. The Builder now reuses ConfirmationDialog:
+Cancel is focused first, Tab stays inside, Escape/Cancel preserve storage and
+restore the opener. Confirmation removes the selected ID only, announces storage
+failure inside the dialog, and focuses the next/previous saved character or
+Save this character after the list updates. Missing IDs cannot request deletion;
+an entry removed in another tab does not delete another character.
+
+| Verification | Result |
+| --- | --- |
+| Full site suite | **1,191 passed, 0 failed, 0 TODO** |
+| Targeted local-save and cloud-delete tests | **25 passed** |
+| Chrome QA-31 | **12 passed**, Vanilla/TR/TR + ARCE, Modern/Morrowind, 1366/375 px |
+| Real-touch Chrome QA-31 | **2 passed**, Vanilla, both themes, 375 px |
+| Modal/focus/accessibility | Confirmation fits; selected data stays intact until confirmed; remaining/empty focus works; no critical/serious axe findings |
+
+Seven regression cases: `test/local-delete-confirmation.test.js`. Reusable browser
+cases: `scripts/qa-local-save-search-browser-cases.cjs`, via `--suite qa --filter
+'QA-31/'`; commands are in BROWSER_TESTS. Screenshots/logs/reports:
+`A:/Cache/qa31-32/qa31-browser/`, `qa31-touch/` and `qa31-unit.log`.
+The 375 px Morrowind confirmation screenshot was reviewed. Both player changelogs
+record the behavior. No exported data/schema, migration, rebuild, merge or deployment.

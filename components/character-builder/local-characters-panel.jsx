@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import ConfirmationDialog from "../confirmation-dialog";
 import { DEFAULT_BUILD, useActiveCharacter } from "../character-context";
 import {
   loadLocalCharacters,
@@ -30,6 +31,22 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
   const [savedCharacters, setSavedCharacters] = useState([]);
   const [feedback, setFeedback] = useState(null);
   const [error, setError] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
+  const panelRef = useRef(null);
+  const focusAfterDelete = useRef(null);
+
+  useEffect(() => {
+    if (!focusAfterDelete.current || pendingDelete) return;
+    const { neighborId } = focusAfterDelete.current;
+    focusAfterDelete.current = null;
+    const panel = panelRef.current;
+    if (!panel?.isConnected) return;
+    const neighbor = [...panel.querySelectorAll('[data-local-character-id]')]
+      .find(row => row.dataset.localCharacterId === neighborId);
+    (neighbor?.querySelector('[data-local-delete]:not([disabled])') ||
+      panel.querySelector('#btn-save-local-character'))?.focus();
+  }, [savedCharacters, pendingDelete]);
 
   const refreshList = useCallback(() => {
     const storage = browserStorage();
@@ -120,25 +137,38 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
     }
   };
 
-  const handleDelete = (id, name) => {
+  const handleDelete = () => {
+    if (!pendingDelete) return;
+    setDeleteError(null);
     const storage = browserStorage();
-    if (!storage) return;
+    if (!storage) {
+      setDeleteError("This browser is not letting the site change saved characters. Cancel and check your site data settings.");
+      return;
+    }
     try {
-      deleteLocalCharacter(id, storage);
+      const rows = [...panelRef.current.querySelectorAll('[data-local-character-id]')];
+      const index = rows.findIndex(row => row.dataset.localCharacterId === pendingDelete.id);
+      const neighborId = (rows[index + 1] || rows[index - 1])?.dataset.localCharacterId;
+      if (!deleteLocalCharacter(pendingDelete.id, storage)) {
+        setDeleteError("This character is no longer saved in this browser.");
+        refreshList();
+        return;
+      }
+      focusAfterDelete.current = { neighborId };
       refreshList();
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("silt-local-saves-changed"));
       }
-      setFeedback(`Deleted "${name}".`);
+      setPendingDelete(null);
+      setFeedback(`Deleted "${pendingDelete.name}".`);
       setTimeout(() => setFeedback(null), 2500);
     } catch (err) {
-      setError(err.message || "Failed to delete character.");
-      setTimeout(() => setError(null), 3000);
+      setDeleteError(err.message || "Failed to delete character. Try again.");
     }
   };
 
   return (
-    <div className="local-characters-container mt-7 space-y-3" id="saved-characters-panel">
+    <div ref={panelRef} className="local-characters-container mt-7 space-y-3" id="saved-characters-panel">
       <div className="flex items-center justify-between border-b border-line-11 pb-2">
         <span className="text-xs uppercase tracking-widest text-accent font-serif font-bold">
           Saved Characters
@@ -189,6 +219,7 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
               return (
                 <div
                   key={typeof rec.id === "string" ? rec.id : `saved-${index}`}
+                  data-local-character-id={typeof rec.id === "string" ? rec.id : undefined}
                   className="p-2 bg-surface-2 border border-line-9 flex items-center justify-between gap-2 text-xs"
                 >
                   <div className="min-w-0 flex-1">
@@ -211,7 +242,9 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
                     <button
                       type="button"
                       className="mw-btn px-1.5 py-0.5 text-[11px] font-serif text-fg-14 hover:text-danger-3"
-                      onClick={() => handleDelete(rec.id, displayName)}
+                      data-local-delete
+                      disabled={typeof rec.id !== "string" || !rec.id.trim()}
+                      onClick={() => { setDeleteError(null); setPendingDelete({ id: rec.id, name: displayName }); }}
                       title={`Delete "${displayName}" from browser storage`}
                       aria-label={`Delete ${displayName}`}
                     >
@@ -224,6 +257,10 @@ export default function LocalCharactersPanel({ build: propBuild, onApplyBuild } 
           </div>
         )}
       </div>
+      <ConfirmationDialog open={Boolean(pendingDelete)} title="Delete character?"
+        description={`Delete “${pendingDelete?.name || 'Custom Character'}” from this browser's saved characters? This cannot be undone.`}
+        confirmLabel="Delete character" onCancel={() => setPendingDelete(null)}
+        onConfirm={handleDelete} error={deleteError} />
     </div>
   );
 }
