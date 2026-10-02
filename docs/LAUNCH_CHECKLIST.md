@@ -440,9 +440,10 @@ three are regressions of this week's release; take them before Sunday if there i
       Expand wrap too. Modern UI is fine. Same family as SS-09.
       (started 2026-10-02 03:53:47 UTC, Codex, on polish/qa-29)
       (completed on polish/qa-29; not merged into main or live)
-- [ ] **C** QA-30 (Low, both themes) At 375 px Alchemy's selected apparatus is clipped
+- [x] **C** QA-30 (Low, both themes) At 375 px Alchemy's selected apparatus is clipped
       ("Journeyman's (" for "Journeyman's (1x)"); the open list is fine.
       (started 2026-10-02 03:58:05 UTC, Codex, on polish/qa-30)
+      (completed on polish/qa-30; not merged into main or live)
 
 No action: Modern UI "unchanged beyond the toggle" could not be judged live without a
 baseline; the screenshot comparison against `main` (LAUNCH_VERIFICATION §47) covers it.

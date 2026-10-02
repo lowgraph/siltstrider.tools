@@ -19,6 +19,7 @@ export default function ChangelogView() {
             <li>Health forecasts show clean totals with at most one decimal, including Bitter Cup plans. Fractional level-up gains remain intact.</li>
             <li>The Health chart marks the level where Endurance reaches 100 even when it is the final level in your forecast.</li>
             <li>Premade category names, build counts and Expand/Collapse labels stay readable on phones in both themes.</li>
+            <li>Alchemy apparatus choices show their full selected names and quality multipliers on phones in both themes.</li>
           </ul>
         </section>
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
