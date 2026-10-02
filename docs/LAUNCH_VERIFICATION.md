@@ -2951,3 +2951,15 @@ zero/one/ten-rank component cases on frozen records. Twelve Chrome cases passed
 for Twin Lamps in all worlds, both themes and desktop/phone widths. The runner
 checks the exact caption node, avoiding concatenated neighbouring text.
 Evidence: A:/Cache/qa33-39/qa38-accepted/.
+
+### QA-39
+
+Cause: BestInSlotView described the premade source title as a class archetype.
+The explanation now says the kit is ranked for this character’s current attributes
+and skills. Edited/custom names no longer appear as archetypes. Ranking, source
+identity labels elsewhere, unchanged-premade picks and equipment eligibility are
+preserved. 42 relevant kit/loadout/identity tests and 12 Chrome cases passed;
+each browser case checks unchanged, edited and custom characters in all worlds,
+both themes and desktop/phone widths. Existing QA-26 checks retain full-kit
+comparisons and current Builder identity while enforcing the updated copy.
+Evidence: A:/Cache/qa33-39/qa39-final/. No merge or deployment.

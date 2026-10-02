@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-02">October 2, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Gear Advisor describes the endgame kit as ranked for the current character, without calling an edited premade its class archetype.</li>
             <li>Faction Journal uses 1 rank for factions such as Twin Lamps.</li>
             <li>Level Simulator shows 0 HP, rather than -0 HP, when delaying Endurance loses no Health.</li>
             <li>Travel maps keep their heading and counts separate, with larger, clearer region labels and legends on phones.</li>

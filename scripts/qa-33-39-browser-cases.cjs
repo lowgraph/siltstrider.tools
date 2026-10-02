@@ -7,6 +7,16 @@ async function setup(c,route,profile,width,theme,build){
 async function finish(c,name){assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Page fits the viewport');c.assertAccessible(await c.audit(name));await c.screenshot(name);}
 async function wholeWords(c,selector){return c.evaluate(`(()=>{const root=document.querySelector(${JSON.stringify(selector)}),walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),broken=[];while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);const boxes=[...range.getClientRects()].filter(r=>r.width>0);if(new Set(boxes.map(r=>Math.round(r.top))).size>1)broken.push(m[0]);}}return broken})()`);}
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-39/${profile}/${width}/${theme}`,async()=>{
+    const {BUILDS,premadeToBuild}=await import('../lib/premade-data.mjs');const original=premadeToBuild(BUILDS.find(b=>/Spear scout/i.test(b.name)));const captions=[];
+    for(const build of [original,{...original,race:'Breton'},{...original,race:'Breton',name:'QA Current Character',premadeSource:undefined}]){
+      await setup(c,'builder',profile,width,theme,build);await c.evaluate('document.querySelector("#gear-advisor").scrollIntoView({block:"start"})');
+      await c.until('document.querySelector(".best-in-slot-recommendations table")');
+      const text=await c.evaluate('document.querySelector(".best-in-slot-recommendations .leading-relaxed").textContent');
+      assert.match(text,/ranked for this character's current attributes and skills/);assert.doesNotMatch(text,/class archetype|Based on /);captions.push(text);
+    }
+    await c.evaluate('document.querySelector(".best-in-slot-recommendations").scrollIntoView({block:"start"})');await finish(c,`QA-39-${profile}-${width}-${theme}`);return captions;
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-38/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'factions',profile,width,theme);await c.until('document.querySelector(".faction-roster-item")');
     await c.type('#faction-search-input','Twin Lamps');await c.until('document.querySelector(".faction-roster-item")?.textContent.includes("Twin Lamps")');

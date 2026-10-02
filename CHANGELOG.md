@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Gear Advisor describes the endgame kit as ranked for the current character, without calling an edited premade its class archetype.
+
 - Faction Journal uses 1 rank for factions such as Twin Lamps.
 
 - Level Simulator shows 0 HP, rather than -0 HP, when delaying Endurance loses no Health.
