@@ -433,6 +433,7 @@ three are regressions of this week's release; take them before Sunday if there i
       (completed on polish/qa-27; not merged into main or live)
 - [ ] **C** QA-28 (Low; QA-04 retest) The "Endurance 100 at Lv N" marker is hidden when N is
       the target level (`showMarker` uses `< endLevel`; target 16 shows "at Lv 15").
+      (started 2026-10-02 03:51:01 UTC, Codex, on polish/qa-28)
 - [ ] **C** QA-29 (Low; regression from the Morrowind theme) In Morrowind UI at 375 px the
       Builder's premade categories break mid-word ("ALCHEMI / ST", "BATTLEMA / GE"); counts and
       Expand wrap too. Modern UI is fine. Same family as SS-09.
