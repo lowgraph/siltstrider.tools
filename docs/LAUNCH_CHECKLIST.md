@@ -461,12 +461,12 @@ whether to launch with it (and say so here).
 ### 6. After launch (from the QA triage, 1 October)
 
 Medium, one persona:
-- [ ] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02.
+- [x] **C** FLOW-01: On Strike is accepted on a ring (weapon-only); cheap, can ride with QA-01/02. (started 2026-10-02 00:48 UTC, Codex, on polish/flow-01) (completed on branch with this commit; not merged or live)
 - [ ] **C** FLOW-03: both rival Great Houses can be joined in the Faction Journal.
 - [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
       this is a wrong route; raise it to High and move it to section 5.
-- [ ] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align
+- [x] **C** UI-05: TR stop counts differ (91 in the status line, 92 in the map legend); align (started 2026-10-02 01:00 UTC, Codex, on polish/ui-05) (completed on branch with this commit; not merged or live)
       or label the scopes.
 - [ ] **C** F04 / F11: "By Race" shows 20 of 41 premades without saying why, and its hint
       still says "Pick a playstyle".
@@ -481,9 +481,9 @@ Medium, one persona:
       (U24, U25, U27).
 
 Low:
-- [ ] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run.
-- [ ] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%.
-- [ ] **C** F10, CALC-4-01: raw ingredient IDs on screen ("Emerald [ingred_emerald_01]",
+- [x] **C** UI-03: a stale "That is not a Silt Strider seed" stays under a valid run. (started 2026-10-02 00:53 UTC, Codex, on polish/ui-03) (completed on branch with this commit; not merged or live)
+- [x] **C** UI-04: Alchemy with zero stats shows a dash instead of 0%. (started 2026-10-02 00:57 UTC, Codex, on polish/ui-04) (completed on branch with this commit; not merged or live)
+- [x] **C** F10, CALC-4-01: raw ingredient IDs on screen ("Emerald [ingred_emerald_01]", (started 2026-10-02 01:54 UTC, Codex, on polish/ingredient-labels) (completed on branch with this commit; not merged or live)
       "Braided Bread [t_ingfood_breadkeptu_02]") in Alchemy, its effect finder and the
       calculator slots; name the difference instead.
 - [ ] **C** REG-01 (retest 1 October, 375 px, 10 of 10): Travel's Followers count and "Include
@@ -493,26 +493,26 @@ Low:
 - [ ] **C** CALC-4: the effect finder suggests pairs only (3 and 4 ingredients only in the
       calculator), and a world switch clears the chosen effects and ingredients. Both
       deliberate for now; say so on the page.
-- [ ] **C** SS-08: on a phone the selected faction is not visible beside its details.
-- [ ] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones.
-- [ ] **C** SS-10: "1 ranks" in search.
+- [x] **C** SS-08: on a phone the selected faction is not visible beside its details. (started 2026-10-02 01:07 UTC, Codex, on polish/ss-08) (completed on branch with this commit; not merged or live)
+- [x] **C** SS-09, U28: "Pre/v", "Nex/t" and "Acrobati/cs" break mid-word on phones. (started 2026-10-02 01:11 UTC, Codex, on polish/ss-09) (completed on branch with this commit; not merged or live)
+- [x] **C** SS-10: "1 ranks" in search. (started 2026-10-02 01:14 UTC, Codex, on polish/ss-10) (completed on branch with this commit; not merged or live)
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
-- [ ] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding).
+- [x] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding). (started 2026-10-02 01:23 UTC, Codex, on polish/sus-02) (completed on branch with this commit; not merged or live)
 
 From the signed-in QA (1 October):
 - [x] F-6: no change (owner, 2 October: desired behaviour). Email sign-in reloads the page;
       the character and world survive it (QA-23 fixed).
-- [ ] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body
+- [x] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body (started 2026-10-02 01:27 UTC, Codex, on polish/f-7) (completed on branch with this commit; not merged or live)
       and "Delete save?" is not announced; Confirm is 15 Tabs away. Focus the prompt.
 - [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
       returns on every load until something is saved.
-- [ ] **C** F-10 (Low): "Reset all settings" has no confirmation or undo.
+- [x] **C** F-10 (Low): "Reset all settings" has no confirmation or undo. (started 2026-10-02 01:39 UTC, Codex, on polish/f-10) (completed on branch with this commit; not merged or live)
 - [ ] **C** F-11 (Low): the icon cannot be saved without a username, and the help text does not
       say the username is required.
 - [ ] **C** F-12 (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage").
-- [ ] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate"
+- [x] **C** F-13 (Low): at 375 px the Vault's Close wraps letter by letter and "Duplicate" (started 2026-10-02 01:48 UTC, Codex, on polish/f-13) (completed on branch with this commit; not merged or live)
       breaks mid-word.
 - [ ] **C** F-15 (Low): after "Open Save File…" there is no upload to the Cloud Vault; the save
       must be chosen again in "Import save".

@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import ConfirmationDialog from '../confirmation-dialog';
 import {getGameDataLoader} from '../use-game-data';
 import {loadVaultIdentityLabels} from '../../lib/vault-identity.mjs';
 
@@ -16,6 +17,9 @@ export default function CloudVaultCard({
   const [editing, setEditing] = useState(false);
   const [nameVal, setNameVal] = useState(save.name || "");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const cardRef = useRef(null);
   const [shareCopied, setShareCopied] = useState(false);
 
   const isOmwSave = save.save_type === "openmw_save";
@@ -54,6 +58,34 @@ export default function CloudVaultCard({
     setEditing(false);
   };
 
+  const handleDelete = async () => {
+    const scope = cardRef.current?.closest('[role="dialog"]') || cardRef.current?.closest('main');
+    const cards = scope ? [...scope.querySelectorAll('.vault-card')] : [];
+    const index = cards.indexOf(cardRef.current);
+    const neighbor = cards[index + 1] || cards[index - 1];
+    const neighborId = neighbor?.dataset.vaultSaveId;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const result = await onDelete(save.id, save.revision);
+      if (!result?.success) {
+        setDeleteError(result?.error || 'The save could not be deleted. Try again.');
+        return;
+      }
+      setConfirmDelete(false);
+      // Refresh removes this card and its opener. Focus a remaining save, or
+      // the save-name field when this was the last one, after busy controls enable.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (!scope?.isConnected) return;
+        const nextCard = [...scope.querySelectorAll('.vault-card')].find(card => card.dataset.vaultSaveId === neighborId);
+        const next = nextCard?.querySelector('[data-vault-delete]:not([disabled])');
+        const fallback = scope.querySelector('input[placeholder^="Name (e.g."]:not([disabled])') || scope.querySelector('button:not([disabled])');
+        (next || fallback)?.focus();
+      }));
+    } catch (error) { setDeleteError(error.message || 'The save could not be deleted. Try again.'); }
+    finally { setDeleting(false); }
+  };
+
   const formattedDate = save.updated_at
     ? new Date(save.updated_at).toLocaleDateString(undefined, {
         month: "short",
@@ -66,6 +98,8 @@ export default function CloudVaultCard({
 
   return (
     <div
+      ref={cardRef}
+      data-vault-save-id={save.id}
       className="vault-card p-4 space-y-3 bg-surface-2 border border-line-9 hover:border-line-4 transition-colors relative"
       style={{
         boxShadow: "inset 0 0 8px 1px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.4)",
@@ -170,10 +204,10 @@ export default function CloudVaultCard({
 
       {/* Action Footer */}
       <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-line-12">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
           <button
             type="button"
-            className="mw-btn px-3 py-1.5 text-xs font-serif font-bold text-fg-2 hover:text-accent shadow-sm"
+            className="mw-btn min-h-11 px-3 py-1.5 text-xs font-serif font-bold text-fg-2 hover:text-accent shadow-sm whitespace-nowrap shrink-0"
             onClick={() => onLoad(save.id)}
             disabled={isBusy}
             title="Load this build into Character Builder"
@@ -183,7 +217,7 @@ export default function CloudVaultCard({
           {onDuplicate && (
             <button
               type="button"
-              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
+              className="mw-btn min-h-11 px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2 whitespace-nowrap shrink-0"
               onClick={() => onDuplicate(save.id)}
               disabled={isBusy}
               title="Duplicate this build as an independent save"
@@ -194,7 +228,7 @@ export default function CloudVaultCard({
           {onShare && (
             <button
               type="button"
-              className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
+              className="mw-btn min-h-11 px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2 whitespace-nowrap shrink-0"
               onClick={async () => {
                 const res = await onShare(save);
                 if (res?.success) {
@@ -210,7 +244,7 @@ export default function CloudVaultCard({
           )}
           <button
             type="button"
-            className="mw-btn px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2"
+            className="mw-btn min-h-11 px-2.5 py-1.5 text-xs font-serif text-fg-5 hover:text-fg-2 whitespace-nowrap shrink-0"
             onClick={() => onExport(save.id, save.name)}
             disabled={isBusy}
             title="Download full save data as structured JSON"
@@ -220,41 +254,19 @@ export default function CloudVaultCard({
         </div>
 
         <div>
-          {confirmDelete ? (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-warning-3 font-serif font-semibold">Delete save?</span>
-              <button
-                type="button"
-                className="mw-btn px-2.5 py-1 text-xs font-serif font-bold text-danger-7 border-danger-line-2 hover:bg-danger-surface-3"
-                onClick={() => {
-                  setConfirmDelete(false);
-                  onDelete(save.id, save.revision);
-                }}
-                disabled={isBusy}
-              >
-                Confirm
-              </button>
-              <button
-                type="button"
-                className="mw-btn px-2 py-1 text-xs font-serif text-fg-9"
-                onClick={() => setConfirmDelete(false)}
-                disabled={isBusy}
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
             <button
               type="button"
+              data-vault-delete
               className="text-xs text-fg-12 hover:text-danger-7 underline font-serif bg-transparent border-0"
-              onClick={() => setConfirmDelete(true)}
+              onClick={() => { setDeleteError(null); setConfirmDelete(true); }}
               disabled={isBusy}
             >
               Delete
             </button>
-          )}
         </div>
       </div>
+      <ConfirmationDialog open={confirmDelete} title="Delete save?" description={`Delete “${save.name || 'Unnamed Character'}” from your cloud Vault? This cannot be undone.`}
+        onCancel={() => setConfirmDelete(false)} onConfirm={handleDelete} busy={deleting} error={deleteError} />
     </div>
   );
 }

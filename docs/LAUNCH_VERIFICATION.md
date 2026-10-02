@@ -2272,3 +2272,202 @@ selected apparatus at 375 px in both themes (QA-30). Also found: Health floating
 noise, "208.00000000003 HP" (QA-27). Triage and causes are in the checklist, section 5,
 item 17. Unconfirmed first impressions (stale Home character, open helmets in early game,
 varying fresh default builds, Vault category scrolling) were not reported as bugs.
+
+## FLOW-01 — local launch polish
+
+Branch: `polish/flow-01`. Reproduced locally: Common Ring enabled On Strike (before report). Cause: all three buttons were offered independently of the selected item. Cast-style eligibility now follows OpenMW 0.51 enchanting.cpp nextCastStyle, including weapon classes, books and soul thresholds; the rendered selection is normalized immediately and retained state follows it. Custom item kind is explicit. QA-01/02 cost, chance and price functions are unchanged. npm test: 1,133 passed, zero failures/skips/TODO. Chrome: 4/4 passing at 1366/375 in both themes, zero axe blockers, overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/flow-01-final and flow-01-unit.log. The first sandbox CDP session timed out; unsandboxed Chrome works. Two early capture-harness selector/serialization mistakes were corrected before the passing run.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## UI-03 — local launch polish
+
+Branch: `polish/ui-03`. Reproduced locally with an invalid seed followed by Generate Run. Cause: generation never cleared seedError; valid loading already did. Successful rollFromSeed now clears feedback only after generating the run. Three active component cases cover generation, same-world loading, repeated invalid input and cross-world valid loading. npm test: 1,136 passed, zero failures/skips/TODO. Chrome: 4/4 passed at 1366/375 in both themes, with screenshots, accessibility and overflow checks; no runtime/server errors. Evidence: A:/Cache/launch-polish/ui-03-before, ui-03-final, ui-03-unit-final.log. Initial unit fixtures incorrectly started with null instead of the provider empty run; corrected fixture, no application workaround.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## UI-04 — local launch polish
+
+Branch: `polish/ui-04`. Reproduced with zero Alchemy, Intelligence and Luck plus Saltrice and Marshmerrow. Cause: the chance used potion.isValid, which also rejects fully calculated effects rounding to zero. calculatePotion now marks completed calculations separately; the chance reads that flag. Potion validity, strength, price and formulas are unchanged. Three regression tests cover zero and positive results, incomplete/unmatched/duplicate recipes, unavailable rules/settings and invalid stats. npm test: 1,139 passed, zero failures/skips/TODO. Chrome: 4/4 passed at 1366/375 in both themes; zero axe blockers, overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/ui-04-before, ui-04-final, ui-04-unit.log.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## UI-05 — local launch polish
+
+Branch: `polish/ui-05`. The original labels implied the same scope. availableStops counts graph nodes excluding named-place endpoints; mapData groups physical platforms by town, excludes unplaced positions, and routePositions adds route points. Staged TR with a synthetic outsider save has 490 routing stops and 101 mapped locations, unlike the older QA bundle. Both scopes are now explicit with a map explanation; no counts are hard-coded and routing is unchanged. Three map-scope edge cases cover singular, route points/unplaced locations and an empty map. npm test: 1,142 passed, zero failures/skips/TODO. Chrome: 24/24 passed across Vanilla/TR/TR + ARCE, manual/synthetic save, both themes and 1366/375; saved cases toggle guild access and restore save defaults. Zero axe blockers, page overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/ui-05-options, ui-05-unit.log and the before report.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## SS-08 — local launch polish
+
+Branch: `polish/ss-08`. Cause: the roster and detail heading scroll independently, so the visible list card does not identify the detail selection. A persistent, polite live Viewing label now sits above the scrolling detail pane and follows the same selectedFaction as the details. Initial load, refreshed catalog, empty roster, search and selection have three active component tests. npm test: 1,145 passed, zero failures/skips/TODO. Chrome: 6/6 passed at 1366/375/390 in both themes, including initial load, refresh, searches hiding selection and scrolled details; screenshots reviewed, no page overflow or runtime/server errors. Evidence: A:/Cache/launch-polish/ss-08-verified and ss-08-unit.log. The empty-search state correctly retains its label but exposes a pre-existing aria-required-children issue in the empty roster listbox (ss-08-final axe reports); nonempty filtered and refreshed states have clean scoped axe checks. This unrelated roster issue remains an acceptance limitation.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## SS-09, U28 — local launch polish
+
+Branch: `polish/ss-09`. Reproduced broken Prev and Next words using text Range line boxes at 375 px. Cause: the itinerary heading squeezed an unwrapped navigation row, and misc-training name, numbers and governing-attribute chip shared another unwrapped row. Navigation now moves below the heading on phones; its buttons cannot shrink or wrap inside words. Training details wrap between fields and keep skill names whole. Browser regression measures every itinerary word, uses an actual Acrobatics training plan, exercises both modes and Next/Previous, and checks axe plus page overflow. npm test: 1,145 passed, zero failures/skips/TODO. Chrome: 6/6 passed at 1366/375/390 in both themes (12 mode states/screenshots), zero runtime/server errors. Evidence: A:/Cache/launch-polish/ss-09-before, ss-09-final and ss-09-unit.log. Screenshots reviewed for visible names and controls; no calculation, character or saved-state changes.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## SS-10 — local launch polish
+
+Branch: `polish/ss-10`. Cause: faction search always used the plural word and suppressed zero counts. Fixed catalog and fallback counts, including invalid fallback values. Three active regression tests cover zero, one and multiple ranks. The staged Twin Lamps result reproduced “1 ranks” in ss-10-reproduced; ss-10-verified passes 4/4 Chrome cases across both themes at 1366 and 375 px, with Escape dismissal, overflow and axe checks. The initial browser selector was corrected to the existing search-dialog class before capturing the actual baseline. npm test: 1,148 passed, no failures, skips or TODOs (ss-10-unit-final.log). Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## SUS-02 — local launch polish
+
+Branch: `polish/sus-02`. Cause: each leg and the precise aggregate are independently rounded by formatDuration; routing costs are unchanged. Added a visible rounding explanation next to valid in-game totals, separately from Real Time Approximation. Three active tests cover the exact 4 h 22 min / 4 h 23 min arithmetic, precision preservation, minute boundaries, zero and unavailable estimates, and a real staged Old Ebonheart journey. Current staged precise hours: total 6.182688219202264, legs [2, 0.18268821920226358, 4] (sus-02-precision.log). The earlier report lacks enough character/origin choices to reproduce its exact itinerary on the current routing network; its rounding discrepancy is reproduced numerically. sus-02-before captures the missing explanation; sus-02-final passes 4/4 Chrome theme/1366/375 cases with axe, overflow and screenshots. npm test: 1,151 passed, no failures/skips/TODOs (sus-02-unit.log). Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## F-7 — local launch polish
+
+Branch: `polish/f-7`. Cause: the inline confirmation removed the focused Delete button, had no dialog name/focus handling, and successful refresh replaced the remaining cards. Added a portal alertdialog labelled Delete save?, initial Cancel focus, Tab/Shift+Tab trap, Escape/cancel restoration, announced request failures and stable-record focus restoration after deletion, including the last record. Three active component tests cover cancellation, returned/thrown failure, and remaining/last-save deletion. f-7-before captures the original missing alertdialog; f-7-complete passes all 8 synthetic signed-in page/dialog Chrome cases, both themes at 1366/375, including real 409 conflicts, Enter confirmation, axe, overflow and screenshots. Chrome key events were corrected to use the Shift bit and Enter character event; the test uses PUT for revision changes and waits for initial Vault refreshes. npm test: 1,154 passed, no failures/skips/TODOs (f-7-unit-complete.log). All QA – records were deleted from the disposable local Worker; no real Clerk account or production write. Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## F-10 — local launch polish
+
+Branch: `polish/f-10`. Cause: Reset all settings directly changed world and preferences. Added an accessible, named confirmation using the tested dialog contract; Cancel/Escape preserve every field and revision, and confirmation restores the exact documented default document. Account changes dismiss a pending confirmation. Failed sync remains announced through existing retry/conflict controls; a disabled fieldset now restores body-lost focus to its recovery action. Three active component tests plus the existing provider/run-preservation test cover cancellation, defaults/scoped overrides, failure and owner changes. f-10-before captures immediate reset; f-10-verified passes 4/4 signed-in Chrome theme/1366/375 cases, keyboard Enter, stored-default comparison, a real 409 conflict, axe, overflow and screenshots. The synthetic settings rows were removed from local D1. npm test: 1,157 passed, no failures/skips/TODOs (f-10-unit-complete.log). Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+
+## F-13 — local launch polish
+
+Branch: `polish/f-13`. Cause: the header squeezed Close and the nonwrapping action row compressed labels below word width. Header/action groups now wrap between controls; labels stay whole with adequate hit areas. f-13-before reproduces Duplicate on /vault and Close/Duplicate in the dialog at 375 px. f-13-theme-verified passes 12/12 local signed-in Chrome cases across page/dialog, both actual themes at 1366/375/390, with word-range and bounds checks, Enter duplication, Close reachability, axe and screenshots. The test harness now sets the synthetic account theme because account preferences outrank browser storage, and asserts data-theme; final regression will repeat F-7 under those actual themes. All QA – saves and settings rows were cleaned up. npm test: 1,157 passed (f-13-unit-accepted.log); an earlier existing Copy Build Link timing failure passed isolated and in the full rerun after Chrome finished. No site behavior changed for that unrelated test. Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+## F-7 — deferred-focus regression correction
+
+On the cumulative polish/ingredient-labels branch, the loaded full suite exposed a delayed focus callback after its Vault scope was detached. A boolean short circuit reached optional querySelector and threw. The callback now exits when its scope is gone. Four active card tests include deterministic animation-frame queues and an explicit detached-Vault case, removing the old 25 ms timer assumption. npm test -- --test-concurrency=4: 1,164 passed, no failures/skips/TODOs (A:/Cache/launch-polish/final-f7-correction-unit.log). The separate correction commit preserves the one-finding-per-implementation-commit rule. The cumulative signed-in launch suite is being repeated with actual account-theme assertions; its results are recorded in the final batch verification.
+
+
+## F10, CALC-4-01 — local launch polish
+
+Branch: `polish/ingredient-labels`. Cause: duplicate catalog names were suffixed with their raw record key; global search could also collapse distinct records or append IDs. Added shared labels using only catalog weight, value, ordered effects/targets, origin and attached-script presence. Braided Bread uses its actual weights; Emerald uses actual origin/script qualifiers, with an explanation that script behavior is unavailable. No curse, size or quest behavior is inferred from IDs. Identical facts deliberately retain identical readable labels and distinct keys. Selection, potion calculations, reverse-pair identity, source lookup and console commands retain canonical IDs. Six active regressions cover catalog differences, scripts/origins, identical/missing/frozen facts and every staged world, plus updated adapter coverage. ingredient-reproduced captures raw autocomplete IDs. Chrome passes 12/12 cases: ingredient-vanilla-verified, ingredient-tr-complete and ingredient-arce-complete, both themes at 1366/375, covering autocomplete, selected slots, reverse pairs/use focus, Braided Bread, source disclosures, global ingredient category, canonical preview command, axe, overflow and screenshots. npm test -- --test-concurrency=4: 1,164 passed with no failures/skips/TODOs (final-f7-correction-unit.log). The unrelated deferred F-7 regression has its own correction commit. Evidence: A:/Cache/launch-polish.
+
+Completed on this branch only. No push, merge, deployment, production migration or data rebuild.
+
+## Cumulative twelve-item launch polish verification — 2 October 2026 UTC
+
+All twelve assigned items are implemented and committed in order on the requested
+stack, ending at `polish/ingredient-labels`. The final implementation commit is
+`308443edee795b3ebdae0902bd8876b41cf80e9c`; the later verification commit changes
+documentation and test runners only. Every preceding item branch is an ancestor
+of the cumulative branch. The clean worktree began at fetched main `2968fa3`;
+other sessions later advanced `origin/main` to `b2e8d94` with retest documentation.
+No active site checkout was switched, and this batch did not merge, rebase, push
+or deploy. The earlier fixes and their histories remain in the stack.
+
+Each implementation commit contains its regression tests, completed checklist
+entry, cause/fix/results record and entries in both player changelogs. All logic
+items have at least three active edge cases; no assigned fix is left as a TODO.
+
+| Item | Branch | Implementation commit | Resulting behavior | Final focused Chrome result |
+| --- | --- | --- | --- | --- |
+| FLOW-01 | `polish/flow-01` | `70b8022` | OpenMW cast-style eligibility; switching items and explicit custom kinds stay valid | 4/4; QA-01/02 additionally 24/24 |
+| UI-03 | `polish/ui-03` | `4a2d3e2` | Successful generation/loading clears stale seed errors; invalid input still errors | 4/4 |
+| UI-04 | `polish/ui-04` | `523c203` | A completed zero chance displays 0%; incomplete/unavailable results remain distinct | 4/4 |
+| UI-05 | `polish/ui-05` | `27691e6` | Routing stops and mapped locations are explicitly labelled and explained | 24/24, three worlds and save-dependent options |
+| SS-08 | `polish/ss-08` | `469e526` | Persistent active faction identity beside the details follows load, search and selection | 6/6, including 390 px |
+| SS-09 / U28 | `polish/ss-09` | `65a052c` | Whole navigation and skill words in both itinerary modes | 6/6, 12 mode states, including 390 px |
+| SS-10 | `polish/ss-10` | `8e1215f` | Zero/multiple ranks and singular rank are correctly labelled | 4/4 |
+| SUS-02 | `polish/sus-02` | `cc5e394` | Visible explanation of independently rounded in-game estimates; precise routing retained | 4/4 |
+| F-7 | `polish/f-7` | `2ec4a78`, correction `5af5bba` | Named deletion confirmation, focus trap, cancellation/error recovery and deletion focus restoration | 8/8, page and dialog |
+| F-10 | `polish/f-10` | `1aaa486` | Accessible reset confirmation; cancellation preserves settings, confirm uses exact defaults, sync failure recovers focus | 4/4 |
+| F-13 | `polish/f-13` | `692b67b` | Whole Close/Duplicate/action labels with reachable controls | 12/12, page/dialog at 1366/375/390 |
+| F10 / CALC-4-01 | `polish/ingredient-labels` | `308443e` | Readable catalog qualifiers across every ingredient label; separate canonical records and sources retained | 12/12, all three worlds |
+
+Final checks:
+
+| Check | Result | Evidence under `A:/Cache/launch-polish` |
+| --- | --- | --- |
+| Full unit suite | **1,164/1,164 passed**, zero failures/skips/TODOs; final rerun after runner changes also passed | `final-unit.log`, `final-docs-unit.log` |
+| Cloudflare build | **Passed**, optimized static export; no deployment | `final-cloudflare-build.log` |
+| Public focused launch checks | **68/68 passed** | `final-browser/launch-*` |
+| Existing tool interactions | **52/52 passed**, including saved Travel options, share links, equipment focus, reverse alchemy and ingredient sources | `final-browser/tools-*`, `final-browser-recovery`, `final-travel-recovery` |
+| Existing Travel interactions | **15/15 passed**, keyboard search/cancellation, network retry and actual city transfers in all worlds | `final-travel-recovery`, `final-city-regression` |
+| Corrected Enchanting calculations | **24/24 passed**, QA-01 and QA-02 in every world | `final-browser/qa-QA-01-*`, `qa-QA-02-*` |
+| First-navigation hydration | **288/288 passed** on Home, Builder, Travel, Alchemy, Enchanting, Factions, Challenge, Vault and Account | `final-browser/hydration-*` |
+| Synthetic signed-in launch suite | **24/24 passed**, actual account themes, keyboard, focus, failure and phone layout | `final-vault-launch/report.json` |
+| Existing synthetic Vault suite | **10/10 passed**, ownership/auth, CRUD, token renewal, integrity, quota and both-theme accessibility | `final-vault-full-verified/report.json` |
+| Pipeline | **685/685 passed**, cache-isolated TEMP/TMP, no uncaught warnings | `final-pipeline-tests.log` |
+
+The accepted aggregate contains **481 unique passing Chrome cases**, with zero
+assertion, runtime or server failures. Both themes at 1366/375 px are covered for
+every UI fix; phone layout findings include 390 px. Screenshot review confirms
+whole labels and readable qualifiers. Checks include keyboard focus/escape,
+dialog accessibility, text ranges, overflow, fonts, lazy source requests and
+canonical ID preservation. Hydration covers fresh starts (Home/Builder repeated
+ten times per width/theme), stored TR + ARCE, loaded saves, build links with/without
+world and challenge links. This is the relevant nine-route matrix, not a claim
+that the separate full freeze/404/device acceptance matrix is complete.
+
+All groups used external bounds (120 seconds for public groups, 150 for the built
+signed-in suites) and saved logs/reports. One all-world tools group reached its
+bound after nine passes; three smaller world groups completed. The saved-Travel
+filter was initially sent to the wrong suite (zero cases). Older Travel runner
+assertions expected the itinerary to remain visible during draft search, contrary
+to the already-fixed QA-07; they now assert its prompt and Escape restoration.
+Those three public runs are excluded from `final-summary.json`, which verifies
+unique case names and expected counts. The existing Vault runner also needed its
+Confirm selector updated for the portal alertdialog; its complete corrected rerun
+is accepted. No Travel routing behavior changed to satisfy these runner repairs.
+
+The signed-in tests used `scripts/local-stack.cjs`, a built local Worker, fresh
+local D1, synthetic users and `QA – ` records. Real 409 conflicts exercised failed
+requests. Created records, settings and tier overrides were removed; the ordinary
+Vault report records `cleanedSyntheticRecords: true`. The launch signed-in report
+predates added commit metadata, but uses the same unchanged built implementation.
+No ordinary account, real Clerk session or production API write was used. No
+production migration, data rebuild, dependency or licence change was made.
+
+Acceptance limits: SS-08's empty-search identity is verified, but the existing
+empty faction roster listbox still has an unrelated axe `aria-required-children`
+issue. SUS-02's exact old itinerary is not reconstructible from the earlier
+report/current network; its 4 h 22 min / 4 h 23 min arithmetic is reproduced in
+active tests and the staged route's precise durations are recorded above. Physical
+phones and actual screen-reader announcements were not manually exercised; Chrome
+viewport/keyboard/ARIA checks and synthetic authentication establish this batch's
+local acceptance. No assigned item is marked blocked or claimed merged/live.
+
+COORDINATION is synchronized byte-for-byte with the pipeline repository, committed
+there locally as `d497aaf42ef3a824748249738ed0039d5a5ba039`; UI_TRANSFORMATION is
+unchanged and byte-identical. First command for the next agent, from this worktree:
+`npm test -- --test-concurrency=4`, followed by the bounded groups in BROWSER_TESTS.
+Temporary orchestration/capture runners are removed; reports and screenshots remain.
+
+## Integration branch preparation — 1 October 2026
+
+The owner authorized combining this batch and pushing it, in preparation for a
+later main merge. `polish/launch-checklist-batch` starts at fetched `origin/main`
+`b2e8d942d48d06e5947c34afa84b532db46c5236` and merges the complete twelve-branch
+stack at `690cd742a7b74f245e6a2db84d619e64248d81bf`. Every individual branch and
+implementation commit is retained in its history. Main and the other agents'
+active checkouts are unchanged by this preparation; no deployment is authorized.
+
+Conflicts were documentation only: retain main's F-6 owner decision alongside
+F-7's completed claim, and retain both newer live retest records (§§50–51) before
+the launch-polish records. QA-26–30 and all other unassigned findings remain as
+recorded by their owners. Shared COORDINATION/UI_TRANSFORMATION are unchanged and
+still byte-identical with the pipeline repository.
+
+Before committing the merge, the full unit suite passed **1,164/1,164**, with no
+failures, skips or TODOs, and the Cloudflare build passed. Both checks used
+120-second external bounds. Evidence: `A:/Cache/launch-polish/integration-unit.log`
+and `integration-build.log`. The only differences from the previously verified
+`690cd74` tree are these two documentation files, so the **481 passing Chrome
+cases** above still verify the combined branch's application code. No additional
+implementation or catalog change was introduced by integration.

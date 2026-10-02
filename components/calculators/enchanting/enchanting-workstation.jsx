@@ -6,6 +6,7 @@ import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
 import { useGameData } from "../../use-game-data";
 import ActiveCharacterLink from "../../active-character-link";
+import { CUSTOM_ENCHANT_KINDS, enchantItemKind, eligibleEnchantTypes, validEnchantType } from "../../../lib/enchant-eligibility.mjs";
 import {
   SOUL_GEMS,
   ENCHANT_BASE_ITEMS,
@@ -64,7 +65,8 @@ export default function EnchantingWorkstation() {
   const [selectedBaseItem, setSelectedBaseItem] = useState(DEFAULT_ENCHANT_ITEM);
   const [capacity, setCapacity] = useState(() => ENCHANT_BASE_ITEMS.find((b) => b.name === DEFAULT_ENCHANT_ITEM).capacity);
   const [soul, setSoul] = useState(() => SOUL_GEMS.find((g) => g.name === DEFAULT_SOUL_GEM).soul);
-  const [enchantType, setEnchantType] = useState("used"); // "used" | "strike" | "const"
+  const [requestedType, setEnchantType] = useState("used");
+  const [customKind, setCustomKind] = useState('apparel');
 
   // Effects list
   const [effectsList, setEffectsList] = useState(() => [{ ...NEW_EFFECT_ROW }]);
@@ -73,6 +75,13 @@ export default function EnchantingWorkstation() {
   const [vendorSearch, setVendorSearch] = useState("");
 
   const gameData = useGameData('enchanting', { enabled: true });
+  const mathSettings = useMemo(() => enchantingSettings(gameData.data?.catalogs?.GameSettings), [gameData.data]);
+  const baseItem = ENCHANT_BASE_ITEMS.find(item => item.name === selectedBaseItem);
+  const itemKind = enchantItemKind(baseItem, customKind);
+  const allowedTypes = eligibleEnchantTypes(itemKind, soul, mathSettings.iSoulAmountForConstantEffect);
+  // Derive a valid choice during the render too, before the state update settles.
+  const enchantType = validEnchantType(requestedType, allowedTypes);
+  useEffect(() => { if (requestedType !== enchantType) setEnchantType(enchantType); }, [requestedType, enchantType]);
 
   // Available effects from game data / runtime
   const availableEffects = useMemo(() => {
@@ -152,7 +161,6 @@ export default function EnchantingWorkstation() {
     });
   }, [effectsList, availableEffects, gameData.data, enchantType]);
 
-  const mathSettings = useMemo(() => enchantingSettings(gameData.data?.catalogs?.GameSettings), [gameData.data]);
   const costs = useMemo(() => calcEnchantmentCosts(calculatedEffects, enchantType, mathSettings), [calculatedEffects, enchantType, mathSettings]);
   const totalPoints = costs.capacityPoints;
 
@@ -199,7 +207,6 @@ export default function EnchantingWorkstation() {
 
   const isOverCapacity = totalPoints > capacity;
   const hasEffect = calculatedEffects.length > 0;
-  const isCeEligible = soul >= 400;
 
   return (
     <div className="enchanting-workstation p-4 sm:p-5 border border-line-9 bg-surface-3 text-fg-2 space-y-6">
@@ -346,6 +353,12 @@ export default function EnchantingWorkstation() {
                   </option>
                 ))}
               </select>
+              {baseItem?.type === 'Custom' && <>
+                <label htmlFor="enchant-custom-kind" className="text-xs font-serif text-fg-7 block mt-2 mb-1">Custom item kind</label>
+                <select id="enchant-custom-kind" className="w-full mw-select p-2 text-xs" value={customKind} onChange={e => setCustomKind(e.target.value)}>
+                  {CUSTOM_ENCHANT_KINDS.map(kind => <option key={kind.id} value={kind.id}>{kind.label}</option>)}
+                </select>
+              </>}
             </div>
 
             <div>
@@ -397,8 +410,11 @@ export default function EnchantingWorkstation() {
                 {[
                   { id: "used", label: "When Used" },
                   { id: "strike", label: "On Strike" },
-                  { id: "const", label: "Constant", disabled: !isCeEligible }
-                ].map((t) => (
+                  { id: "const", label: "Constant" },
+                  ...(itemKind === 'book' ? [{id:'once',label:'Cast Once'}] : [])
+                ].map((choice) => {
+                  const t = {...choice, disabled: !allowedTypes.includes(choice.id)};
+                  return (
                   <button
                     key={t.id}
                     type="button"
@@ -412,12 +428,13 @@ export default function EnchantingWorkstation() {
                         : "bg-surface-3 border-line-9 text-fg-13 hover:text-accent"
                     }`}
                     onClick={() => setEnchantType(t.id)}
-                    title={t.disabled ? "Constant Effect requires soul size of 400 or greater" : t.label}
+                    title={t.disabled ? (t.id === 'const' && ['melee','ranged','apparel'].includes(itemKind) ? `Constant Effect requires soul size of ${mathSettings.iSoulAmountForConstantEffect} or greater` : "Unavailable for this item kind") : t.label}
                   >
                     {t.label}
                   </button>
-                ))}
+                );})}
               </div>
+              <p className="text-[11px] text-fg-9 mt-1" role="status">{itemKind === 'apparel' ? 'Armor and clothing use When Used or Constant; On Strike requires a melee weapon, thrown weapon or ammunition.' : itemKind === 'ranged' ? 'Bows and crossbows use When Used or Constant.' : ['ammo','thrown'].includes(itemKind) ? 'Thrown weapons and ammunition use On Strike only.' : itemKind === 'book' ? 'Books and scrolls use Cast Once only.' : 'Melee weapons can use When Used, On Strike or Constant.'}</p>
             </div>
           </div>
 

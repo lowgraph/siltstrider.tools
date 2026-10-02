@@ -211,7 +211,10 @@ test('reset all clears account scopes and preferences while retaining the genera
     datasetOverrides: [{ world: 'tr', modpackId: null, modVersionId: null, toolDefaults: { gear: { theft: true } } }] };
   const ui = await mount(t, { settings, revision: 6 });
   await act(async () => ui.observe().challenge.setRun(run => ({ ...run, race: 'Nord', major: 'Keep this run' })));
+  const beforeReset = structuredClone(ui.observe().preferences.settings);
   await act(async () => [...document.querySelectorAll('button')].find(button => button.textContent === 'Reset all settings').click());
+  assert.deepEqual(ui.observe().preferences.settings, beforeReset, 'opening confirmation preserves settings');
+  await act(async () => [...document.querySelectorAll('[role=alertdialog] button')].find(button => button.textContent === 'Reset settings').click());
   assert.deepEqual(ui.observe().preferences.settings, defaultAccountSettings());
   assert.equal(ui.observe().shell.profile, 'vanilla');
   assert.equal(ui.observe().challenge.run.major, 'Keep this run');

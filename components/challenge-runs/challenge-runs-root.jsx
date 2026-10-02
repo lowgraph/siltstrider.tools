@@ -88,6 +88,7 @@ export default function ChallengeRunsRoot() {
         fallback: { allowedBands, restrictionCount, objectiveCount }
       });
       setRun(next);
+      setSeedError(null);
       setMobileTab("sheet");
       return next;
     },
