@@ -1,5 +1,16 @@
 # Changelog
 
+## Launch polish — 2026-10-02
+
+- Alchemy apparatus choices show their full selected names and quality multipliers on phones in both themes.
+
+- Premade category names, build counts and Expand/Collapse labels stay readable on phones in both themes.
+
+- The Health chart marks the level where Endurance reaches 100 even when it is the final level in your forecast.
+
+- Health forecasts show clean totals with at most one decimal, including Bitter Cup plans. Fractional level-up gains remain intact.
+
+
 ## Ingredient sources and remote journeys — 2026-10-01
 
 - After you edit a premade character, Gear Advisor ranks the whole endgame kit for your current choices, including armour, clothing and jewellery. The kit uses the same character name as Builder and Home; unchanged premades keep their published picks.

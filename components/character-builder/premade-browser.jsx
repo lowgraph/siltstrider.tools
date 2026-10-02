@@ -162,21 +162,21 @@ export default function PremadeBrowser({ onSelectBuild, activeProfile = "vanilla
               <button
                 type="button"
                 onClick={() => toggleCategory(cat)}
-                className="w-full flex items-center justify-between p-3 bg-surface-3 hover:bg-surface-9 border-b border-line-12 transition-colors text-left group"
+                className="w-full flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between p-3 bg-surface-3 hover:bg-surface-9 border-b border-line-12 transition-colors text-left group"
                 aria-expanded={isExpanded}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-mono text-accent transition-transform duration-200">
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 min-w-0">
+                  <span className="shrink-0 text-xs font-mono text-accent transition-transform duration-200">
                     {isExpanded ? "▼" : "▶"}
                   </span>
-                  <span className="font-serif text-sm uppercase tracking-wider text-accent font-bold group-hover:text-fg-2 transition-colors">
+                  <span className="break-normal [overflow-wrap:normal] font-serif text-sm uppercase tracking-wider text-accent font-bold group-hover:text-fg-2 transition-colors">
                     {cat}
                   </span>
-                  <span className="text-xs font-mono text-fg-14">
+                  <span className="shrink-0 whitespace-nowrap text-xs font-mono text-fg-14">
                     ({inCat.length} {inCat.length === 1 ? "build" : "builds"})
                   </span>
                 </div>
-                <span className="text-xs text-fg-14 font-serif group-hover:text-accent transition-colors">
+                <span className="shrink-0 whitespace-nowrap text-xs text-fg-14 font-serif group-hover:text-accent transition-colors">
                   {isExpanded ? "Collapse ▲" : "Expand ▼"}
                 </span>
               </button>
