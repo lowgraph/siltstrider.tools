@@ -2,6 +2,8 @@
 
 ## Ingredient sources and remote journeys — 2026-10-01
 
+- Deleting a cloud save now opens a keyboard-accessible confirmation and restores focus afterward.
+
 - Travel now explains why rounded in-game leg estimates can differ slightly from the total.
 
 - Search now uses singular and plural faction rank labels correctly.

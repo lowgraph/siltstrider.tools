@@ -460,7 +460,7 @@ Low:
 From the signed-in QA (1 October):
 - [ ] **C** F-6 (Medium): email sign-in reloads the page (4 of 4). The character comes back
       through the hand-off; the world was QA-23.
-- [ ] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body (started 2026-10-02 01:27 UTC, Codex, on polish/f-7)
+- [x] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body (started 2026-10-02 01:27 UTC, Codex, on polish/f-7) (completed on branch with this commit; not merged or live)
       and "Delete save?" is not announced; Confirm is 15 Tabs away. Focus the prompt.
 - [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
       returns on every load until something is saved.

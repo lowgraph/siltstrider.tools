@@ -110,7 +110,9 @@ async function open(route) {
 async function viewport(width) { await send('Emulation.setDeviceMetricsOverride', { width, height: width < 600 ? 844 : 900, deviceScaleFactor: 1, mobile: false }); }
 async function screenshot(name) { fs.writeFileSync(path.join(output, `${name}.png`), Buffer.from((await send('Page.captureScreenshot', { format: 'png' })).data, 'base64')); }
 async function key(keyName, code, number, modifiers = 0) {
-  for (const type of ['keyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: keyName, code, windowsVirtualKeyCode: number, modifiers });
+  const text = !modifiers && keyName === 'Enter' ? '\r' : !modifiers && keyName === ' ' ? ' ' : undefined;
+  await send('Input.dispatchKeyEvent', { type: 'keyDown', key: keyName, code, windowsVirtualKeyCode: number, modifiers, ...(text ? { text } : {}) });
+  await send('Input.dispatchKeyEvent', { type: 'keyUp', key: keyName, code, windowsVirtualKeyCode: number, modifiers });
   await pause(60);
 }
 async function click(selector) {
@@ -318,6 +320,7 @@ async function cases() {
     if (args.includes('--character-preservation')) await require('./character-preservation-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,click,evaluate,check,pause,screenshot});
     else if (args.includes('--signout-preservation')) await require('./signout-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,button,click,evaluate,check,screenshot});
     else if (args.includes('--qa-reproduction')) await require('./qa-vault-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,evaluate,text,check,pause,screenshot});
+    else if (args.includes('--launch')) await require('./launch-vault-browser-cases.cjs')({request,signIn,signOut,viewport,theme,open,until,card,inCard,button,type,click,key,evaluate,text,check,pause,screenshot,audit,assertAccessible});
     else await cases();
   } finally {
     socket?.close(); chrome.kill(); worker.kill();
