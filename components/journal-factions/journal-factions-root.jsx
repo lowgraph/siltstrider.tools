@@ -330,6 +330,9 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
 
         {/* Right Pane: Dossier Detail View */}
         <div className="flex-1 h-full overflow-hidden flex flex-col">
+          <div className="faction-active-label shrink-0 px-4 py-2 border-b border-line-9 bg-surface-6 text-sm font-serif text-fg-2" role="status" aria-live="polite" aria-atomic="true">
+            {selectedFaction ? <>Viewing <strong className="text-accent">{selectedFaction.name || selectedFaction.key}</strong></> : 'Select a faction to view its details.'}
+          </div>
           <FactionDetailView
             faction={selectedFaction}
             factions={factionCatalog}

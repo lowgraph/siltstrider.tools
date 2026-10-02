@@ -7,6 +7,25 @@ module.exports = async c => {
     c.assertAccessible(await c.audit(name));
     await c.screenshot(name);
   };
+  for(const theme of ['ashfall','morrowind'])for(const width of [1366,375,390]){
+    await c.check(`SS-08/${theme}/${width}`,async()=>{
+      await read(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+      await c.viewport(width);await c.navigate('factions');await c.until('document.querySelector(".faction-detail-pane")');
+      const active=()=>read('document.querySelector(".faction-active-label")?.textContent');
+      assert.match(await active(),/Viewing Fighters Guild/);
+      await c.type('#faction-search-input','Ashlanders');await c.click('.faction-roster-item');
+      assert.match(await active(),/Viewing Ashlanders/);
+      await c.type('#faction-search-input','not-a-faction');assert.match(await active(),/Viewing Ashlanders/);
+      await c.screenshot(`SS-08-${theme}-${width}-empty-search`);
+      await c.type('#faction-search-input','Mages');assert.match(await active(),/Viewing Ashlanders/);
+      await read('document.querySelector(".faction-detail-pane").scrollTop=500');
+      await read('document.querySelector(".faction-active-label").scrollIntoView({block:"center"})');
+      assert.ok(await read(`(()=>{const r=document.querySelector('.faction-active-label').getBoundingClientRect();return r.top>=0&&r.bottom<innerHeight-55;})()`));
+      await finish(`SS-08-${theme}-${width}-search`);
+      await c.navigate('factions');assert.match(await active(),/Viewing Fighters Guild/);
+      await finish(`SS-08-${theme}-${width}-refresh`);return {initial:true,selection:true,search:true,scroll:true,refresh:true};
+    });
+  }
   for(const profile of ['vanilla','tr','tr_arce'])for(const saved of [false,true])for(const theme of ['ashfall','morrowind'])for(const width of [1366,375]){
     await c.check(`UI-05/${profile}/${saved?'save':'manual'}/${theme}/${width}`,async()=>{
       const storage={'silt-theme':theme};
