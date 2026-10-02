@@ -435,10 +435,11 @@ three are regressions of this week's release; take them before Sunday if there i
       the target level (`showMarker` uses `< endLevel`; target 16 shows "at Lv 15").
       (started 2026-10-02 03:51:01 UTC, Codex, on polish/qa-28)
       (completed on polish/qa-28; not merged into main or live)
-- [ ] **C** QA-29 (Low; regression from the Morrowind theme) In Morrowind UI at 375 px the
+- [x] **C** QA-29 (Low; regression from the Morrowind theme) In Morrowind UI at 375 px the
       Builder's premade categories break mid-word ("ALCHEMI / ST", "BATTLEMA / GE"); counts and
       Expand wrap too. Modern UI is fine. Same family as SS-09.
       (started 2026-10-02 03:53:47 UTC, Codex, on polish/qa-29)
+      (completed on polish/qa-29; not merged into main or live)
 - [ ] **C** QA-30 (Low, both themes) At 375 px Alchemy's selected apparatus is clipped
       ("Journeyman's (" for "Journeyman's (1x)"); the open list is fine.
 

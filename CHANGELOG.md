@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Premade category names, build counts and Expand/Collapse labels stay readable on phones in both themes.
+
 - The Health chart marks the level where Endurance reaches 100 even when it is the final level in your forecast.
 
 - Health forecasts show clean totals with at most one decimal, including Bitter Cup plans. Fractional level-up gains remain intact.
