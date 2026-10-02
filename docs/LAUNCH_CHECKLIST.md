@@ -230,6 +230,26 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 - [ ] **C** Copy: preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 
+*From the live retest of `250b1b5` (2 October; LAUNCH_VERIFICATION §59)*
+- [ ] **C** QA-33 (Medium, V) Gear Advisor: the weapon setup always starts One-handed + shield
+      (`gear-advisor.jsx` `useState('one-handed')`), so an unedited Spear scout is offered
+      Keening (short blade) and Darksun Shield. Start from the build's own weapon (Spear and
+      Marksman two-handed; others one-handed); the player's choice still wins.
+- [ ] **C** QA-34 (Medium) Alchemy, TR reverse pairs at 1366 in Morrowind UI: the "Show more
+      pairs" area overlaps the third pair (also after Showing 12 → 24); scrolling reveals it.
+- [ ] **C** QA-35 (Low, both themes, 375 px) Labels break mid-word: Home "Rac/e"; Builder
+      "Renam/e", "Cop/y", "Clea/r" and "Specializatio/n: Magic". Same family as SS-09/QA-29.
+- [ ] **C** QA-36 (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
+      ("TRANSIT MAP28 mapped locations"), "Azura's Coast" is clipped, and the region and legend
+      text is tiny and low-contrast.
+- [ ] **C** QA-37 (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
+      Lady Spellsword, target 55). Follow-up to QA-27's formatter.
+- [ ] **C** QA-38 (Low) Faction Journal details still say "1 ranks" (Twin Lamps); search was
+      fixed in SS-10.
+- [ ] **C** QA-39 (Low, copy) For an edited premade the endgame kit's line reads "ranked …
+      for your build's … class archetype (Based on Argonian male — Spear scout)". Say it is
+      ranked for this character, without naming the source as its archetype.
+
 *Sunday: check first, fix only if contained*
 - [ ] **C** FLOW-04: a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
@@ -277,6 +297,7 @@ acceptance and release preparation remain separate checks against the final rele
 | 15 | **QA-15 — About attribution and licence** | Low risk, straightforward, and explicitly requested. |
 | 16 | **Freeze acceptance and release preparation** | Run against the final build after the fixes, then prepare the release and rollback records. |
 | 17 | **Live retest (2 October): QA-26** | An edited premade's endgame kit is the premade's, not the player's (wrong answer). Cheap Lows QA-27–30 if time allows. |
+| 18 | **Live retest of `250b1b5`: QA-31, QA-32** | One click deletes a signed-out player's saved character; the global search misses "Ald'ruhn". |
 
 Reproduction (Codex, 1 October, `qa/reproduce`, LAUNCH_VERIFICATION §27): the
 original suite had 41 tests marked `{ todo: '<QA-id> not fixed yet' }` in `test/qa-*`.
@@ -488,6 +509,25 @@ three are regressions of this week's release; take them before Sunday if there i
 No action: Modern UI "unchanged beyond the toggle" could not be judged live without a
 baseline; the screenshot comparison against `main` (LAUNCH_VERIFICATION §47) covers it.
 The raw ingredient IDs in TR pair names are F10 / CALC-4-01 (section 6).
+
+#### 18. Live retest of `250b1b5` (2 October) — before the freeze
+
+The signed-out retest of `250b1b5` / `73df6e58` (LAUNCH_VERIFICATION §59) passed QA-28–30,
+SS-08/09/10, UI-03/04/05, SUS-02, FLOW-01, F10 labels, and the QA-01/09/16 spot checks.
+QA-26 passes: the kit re-ranks after edits (cuirass and TR rings change); the "Based on …"
+title is QA-05's intended wording. Its "FAIL" on F-7 and QA-07 tested other surfaces, which
+gave the two items below. Merge by Sunday 4 October, then retest.
+
+- [ ] **C** **QA-31** (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
+      saved with "Save this character" (the Builder's list, `local-characters-panel.jsx`
+      `handleDelete`) removes it at once: no confirmation, no undo, and focus drops to the
+      page. This is a signed-out player's only save. Reuse F-7's `ConfirmationDialog` and
+      focus recovery from the cloud Vault card (`cloud-vault-card.jsx`).
+- [ ] **C** **QA-32** (Medium, R, N; confirmed in code; QA-07 on another surface) The global
+      search (header / Ctrl K, `lib/site-search.mjs` `normalizeText`) finds nothing for
+      "Ald'ruhn" in every world: apostrophes are dropped ("aldruhn") but hyphens become spaces
+      ("ald ruhn"). Match the same way as Travel's QA-07 fix (ignore apostrophes, hyphens and
+      spaces when comparing). Check Ald'ruhn, Ald-ruhn, Aldruhn, Sadrith Mora, Vos.
 
 #### Already resolved by other work
 
