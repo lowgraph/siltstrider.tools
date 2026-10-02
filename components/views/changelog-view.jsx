@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-02">October 2, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Account profile help says a username is required to save the profile, including the chosen icon.</li>
             <li>Gear Advisor explains that beast races can wear compatible open helmets, including Helm of Oreyn Bearclaw, while closed helmets and boots remain excluded.</li>
             <li>Alchemy explains that the effect finder suggests pairs only, extra ingredients belong in the calculator, and changing worlds clears the recipe while keeping typed stats on the open page.</li>
             <li>Premades explain the separate By Playstyle and By Race collections, show filtered counts, and give the right first-visit hint for each group.</li>

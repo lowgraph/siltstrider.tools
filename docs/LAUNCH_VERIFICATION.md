@@ -3108,3 +3108,22 @@ High Elf as a non-beast control. They check both notes (absent for the control),
 both weapon setups, all runner-ups and equipped transfers. Zero runtime/server
 errors. Evidence: `A:/Cache/clarity-batch/gear-unit.log`, `gear-argonian`,
 `gear-khajiit`, `gear-arce` and `gear-control`.
+
+
+### F-11 — required username for profile icons
+
+Account help explicitly requires a username to save the profile, including its
+icon. Profile validation and account/preference behavior are unchanged.
+
+22 relevant account/profile/preference unit tests passed, with empty, invalid
+and valid username cases. Initial component stubs had incorrect default exports
+and unstable mock profile identity; those test fixtures are corrected. Four
+signed-in local Worker Chrome cases passed in both themes at 1366/375 px: choose
+an icon with an empty username, confirm native required-field blocking and an
+unchanged API profile, enter a valid username, save and read back icon 4. The
+initial browser assertion expected null instead of the API's empty string;
+the final cases compare the whole profile before/after the blocked save.
+Scoped axe/overflow checks pass; zero runtime/server errors; phone screenshot
+reviewed. Only `user_qa_clarity` was used, with its local saves, settings, profile
+and tier removed after every case. Evidence:
+`A:/Cache/clarity-batch/profile-unit-final.log` and `profile-browser-final/`.

@@ -24,7 +24,7 @@ export default function AccountPage(){
  {account.loading?<p>Loading account…</p>:!account.user?<button onClick={()=>auth('openSignIn')}>Sign in</button>:<form onSubmit={submit}>
  <div className="account-preview"><ProfileIcon id={iconId} size={80} premium={account.profile?.premium === true}/><strong>{username||'Adventurer'}</strong></div>
  <label>Username<input value={username} onChange={e=>setUsername(e.target.value)} minLength={3} maxLength={24} pattern="[A-Za-z0-9_]{3,24}" required autoComplete="username" aria-describedby="username-help"/></label>
- <p id="username-help">3–24 letters, numbers or underscores. Usernames are unique, ignoring capitalization.</p>
+ <p id="username-help">A username is required to save your profile, including your icon. Use 3–24 letters, numbers or underscores. Usernames are unique, ignoring capitalization.</p>
  <fieldset><legend>Choose your icon</legend><div className="account-icons">{PROFILE_ICONS.map((label,id)=><label key={id} className={iconId===id?'selected':''}><input type="radio" name="profile-icon" value={id} checked={iconId===id} onChange={()=>setIcon(id)}/><ProfileIcon id={id} size={56}/><span>{label}</span></label>)}</div></fieldset>
  <button type="submit" disabled={busy}>{busy?'Saving…':'Save profile'}</button><button type="button" onClick={()=>auth('signOut')}>Sign out</button></form>}
  {account.user&&!account.profile?.premium&&<section aria-label="Premium" className="account-premium"><h2>Become a Premium supporter</h2><p>25 shared cloud-save slots and a gold border around your icon. One-time support, no subscription. Pay what you want on Ko-fi; suggested US$3.</p>
