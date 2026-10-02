@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- New-player guidance explains where to start, world choices, Builder numbers and game-entry steps, gear alternatives, save differences, Travel options, potion recovery and leveling terms.
+
 - Gear Advisor describes the endgame kit as ranked for the current character, without calling an edited premade its class archetype.
 
 - Faction Journal uses 1 rank for factions such as Twin Lamps.

@@ -3028,3 +3028,37 @@ The checklist marks all seven items merged with this commit. COORDINATION and
 UI_TRANSFORMATION remain byte-identical in both repositories. No migration,
 dataset rebuild, production write or deployment; production's existing release
 and rollback records are unchanged.
+
+## 65. Beginner clarity and copy batch — 2 October 2026
+
+Branch `polish/beginner-clarity-batch`, from freshly fetched main `d3e33ea`.
+The owner requested one branch, seven ordered item commits with relevant tests
+only between items, then full merge preparation after the final Copy item.
+No data rebuild, schema, migration or production changes.
+
+### Beginner clarity
+
+| Finding | What the player now sees |
+|---|---|
+| U01 / U02 / F09 | Start with Builder; choose installed content; Vanilla is the unsure/new-player choice; ARCE is All Races and Classes Enabled. |
+| U03 | The unsupported `.ess` notice explains manual entry, with a Builder button beside save-opening flows. |
+| U05 | Configure help puts loaded race attributes for the selected sex, skill bonuses and birthsign bonuses/powers before lore. Missing facts get a generic explanation, not invented numbers. |
+| U06 / U08 | Sheet numbers explain included bonuses and vitals; a game-entry checklist carries the chosen race, class, specialization, favored attributes, skills and birthsign. It says the site does not edit the game or save. |
+| U10–U13 | Home names the Gear Advisor path; its guide distinguishes one wearable kit from alternatives, plan transfer from in-game acquisition, purchase/find/theft, and absent/capped evidence. |
+| U14 | Import differences explain site fallbacks, extra mods, selected world and possible changed results, while the original save file is untouched. |
+| U16 / U17 / U19 | Current save position differs from a named stop; legs/objectives/spells are defined; No Route offers world, stop, options and movement checks, including enabling walking when it is off. |
+| U21 / U22 | Alchemy defines tools, quality, magnitude and duration, and explains recovery from no shared effect, zero chance and zero-strength output. Apparatus does not change brew chance. |
+| U24 / U25 / U27 | Leveling explains the ten class-skill increases, Miscellaneous skills, +5 attribute points, step order, Endurance and the practical skill-cap difference between views. |
+
+163 relevant unit tests passed, including six new cases for frozen catalog facts,
+sex-specific help, no-bonus/missing/nonnumeric records, actual game-entry choices,
+manual navigation and save differences. The 60 new Chrome guidance cases pass
+across all worlds, both themes and 1366/375 px. Initial Home wording differed in
+capitalization from the retained first-step check; its existing wording is kept.
+One initial Builder axe audit sampled still-loading disabled gear controls; the
+runner now waits for both gear tables and the complete 12-case rerun passes.
+Screenshots of phone Home and No Route recovery reviewed. Evidence:
+`A:/Cache/clarity-batch/beginner-unit-final.log`, `beginner-home`,
+`beginner-builder-final`, `beginner-travel`, `beginner-alchemy`, `beginner-leveler`.
+The retained 12 identity and 30 phone/desktop popover cases also passed:
+102 complete browser cases accepted, zero runtime/server errors.

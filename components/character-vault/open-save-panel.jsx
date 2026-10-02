@@ -2,12 +2,14 @@
 import { useRef } from "react";
 import SaveImportNotice from "./save-import-notice";
 import CompatibilityNotice from "../compatibility-notice";
+import { useShell } from "../shell-context";
 
 /**
  * Open a .omwsave in Silt Strider without an account. The file is parsed in the browser
  * and never uploaded; uploading to the Cloud Vault stays a separate, signed-in step.
  */
 export default function OpenSavePanel({ vault }) {
+  const shell = useShell();
   const inputRef = useRef(null);
 
   const handleChange = async (event) => {
@@ -28,7 +30,7 @@ export default function OpenSavePanel({ vault }) {
           Loads an OpenMW .omwsave into the Character Builder, Level Simulator, Equipped Loadouts
           and Journal. It stays in this browser; nothing is uploaded and no account is needed.
         </p>
-        <CompatibilityNotice />
+        <CompatibilityNotice onConfigure={() => shell.navigate?.("builder")} />
       </div>
       <input
         type="file"

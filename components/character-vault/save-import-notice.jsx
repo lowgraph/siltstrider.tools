@@ -34,6 +34,12 @@ export default function SaveImportNotice({ compact = false }) {
           Clear save
         </button>
       </div>
+      {!compact && issues > 0 && <p className="save-difference-help mt-2 text-fg-7">
+        These are differences between your save and the site’s published data, not damage to your save.
+        The site uses the kept values below or its own rules where something cannot be matched;
+        results for those fields may differ in your game. Check the selected world and any extra mods.
+        Your original file is unchanged. You can adjust the build manually or clear this loaded copy.
+      </p>}
       {!compact && issues > 0 && (
         <details className="mt-2">
           <summary className="cursor-pointer text-fg-2">

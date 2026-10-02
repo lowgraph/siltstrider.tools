@@ -607,6 +607,13 @@ export default function TravelWorkstation() {
       </div>
 
       <section aria-label="Plan a journey" className="space-y-3">
+        <p className="travel-beginner-help text-xs text-fg-7">
+          A leg is one ride, spell or movement step. Fewest legs uses the fewest steps;
+          Cheapest compares fares; Fastest compares in-game time; Least real time compares
+          estimated outdoor movement and breaks ties with transport or spell transitions.
+          Guild Guides teleport between Mages Guild halls. Intervention spells take you to a
+          shrine or temple; Recall returns to your Mark. Enable only spells and items you have.
+        </p>
         <p id="travel-network-status" role={gameData.status === "error" ? "alert" : "status"} className="m-0 text-xs text-fg-9">
           Network: {isTr ? profile === "tr_arce" ? "Tamriel Rebuilt + ARCE" : "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"} · {gameData.status === "ready"
             ? `${availableStops.length} routing ${availableStops.length === 1 ? "stop" : "stops"}`
@@ -832,7 +839,15 @@ export default function TravelWorkstation() {
             )
           ) : (
             <div className="p-4 text-center text-sm font-serif text-danger-7 bg-danger-surface-2 border border-danger-line-3">
-              {gameData.status === 'error' ? "Travel network unavailable. Use Retry above to load it again." : route.message || "No fast-travel route found between these locations."}
+              {gameData.status === 'error' ? "Travel network unavailable. Use Retry above to load it again." : <>
+                {route.message || "No fast-travel route found between these locations."}
+                <p className="travel-no-route-help mt-2 mb-0 text-xs">
+                  Try a nearby town or a named transport stop, and check that the selected world matches your game.
+                  Open Your character &amp; route options to check Guild membership, spells and remaining item uses.
+                  {!walking && ' Enable walking to connect places without direct transport.'}
+                  {walking && ' If walking is on, check carried weight and movement restrictions; some destinations may still be unreachable.'}
+                </p>
+              </>}
             </div>
           )}
         </div>
@@ -1023,6 +1038,11 @@ export default function TravelWorkstation() {
 
       <details className="p-3 bg-surface-5 border border-line-11 space-y-2">
         <summary className="min-h-11 text-xs font-serif font-bold text-fg-7 cursor-pointer">Quick starting places</summary>
+        <p className="travel-position-help text-xs text-fg-7">
+          Your save’s current position is where the character was standing, not the nearest Silt Strider stop.
+          A town starts or ends the journey at a suitable arrival point; select a named stop or building
+          to include movement to that specific place.
+        </p>
         <div className="flex flex-wrap items-center gap-2">
           {saveOrigin && (
             <button

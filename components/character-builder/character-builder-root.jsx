@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import Configurator from "./configurator";
 import CharacterSheet from "./character-sheet";
+import GameEntryChecklist from "./game-entry-checklist";
 import PremadeBrowser from "./premade-browser";
 import GearAdvisor from "./gear-advisor";
 import LocalCharactersPanel from "./local-characters-panel";
@@ -157,6 +158,8 @@ export default function CharacterBuilderRoot() {
           </a>
         )}
       </div>
+
+      <GameEntryChecklist build={build} />
 
       {/* MOB-4: below 1024 px, where the configurator and the sheet take turns, one row of
           four sections replaces this bar and the Configurator / Character Sheet toggle. */}

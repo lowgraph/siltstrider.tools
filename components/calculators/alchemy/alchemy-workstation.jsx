@@ -293,6 +293,12 @@ export default function AlchemyWorkstation() {
         )}
       </div>
 
+      <p className="alchemy-beginner-help text-xs text-fg-7">
+        Start with two different ingredients that share an effect, or use the effect finder below.
+        Your Mortar &amp; Pestle is required; the other tools are optional. Quality is the tool’s
+        effectiveness multiplier. Magnitude means effect strength; duration means how many seconds it lasts.
+        A Retort strengthens helpful effects, an Alembic reduces harmful ones, and a Calcinator increases potency.
+      </p>
       <p className="ingredient-label-note text-xs text-fg-9">Variants use catalog weight, value, effects and origin. A &ldquo;scripted variant&rdquo; has an attached script whose behavior the ingredient catalog does not describe. Identical labels remain separate ingredients with their own sources.</p>
       <ReverseAlchemy ingredients={allIngredients} sources={sources} onWantSources={() => setWantSources(true)} onUsePair={([first, second]) => {
         setSlot1(first); setSlot2(second); setSlot3(null); setSlot4(null); setCustomPotionName("");
@@ -500,6 +506,13 @@ export default function AlchemyWorkstation() {
             </div>
 
             {/* Combined Effects List */}
+            <p className="alchemy-recovery-help text-xs text-fg-7">
+              No shared effect? Replace an ingredient or choose a pair from the effect finder.
+              At 0% brew chance, raise Alchemy, Intelligence or Luck; better apparatus changes
+              the potion’s effects, not that chance. If an effect rounds down to zero, improve
+              Alchemy or apparatus quality and check the new preview before using ingredients in-game.
+              A failed in-game brew consumes ingredients; this page is only a preview.
+            </p>
             <div className="space-y-2 pt-2 border-t border-line-11">
               <span className="text-xs uppercase font-serif font-bold text-accent block">
                 Resulting Potion Effects ({potion.effects.length})

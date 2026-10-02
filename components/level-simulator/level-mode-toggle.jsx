@@ -35,8 +35,8 @@ export default function LevelModeToggle({ mode, onModeChange }) {
       </div>
       <p className="text-[11px] text-fg-11 italic font-sans m-0">
         {isStatsOnly
-          ? "Focuses on the 8 Primary Attributes, Vitals, and Health Growth projection."
-          : "Full 27-skill matrix tracking Major, Minor, and Misc training points up to 100."}
+          ? "Projects attributes and Health, even beyond your remaining class-skill levels; it does not guarantee those levels are reachable."
+          : "Also tracks all skills up to 100 and limits the target to levels supported by your remaining Major and Minor skill increases."}
       </p>
     </div>
   );

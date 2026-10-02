@@ -93,7 +93,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
           Every tool now works with this character.
           {issues > 0 && ` ${issues} thing${issues === 1 ? "" : "s"} from the save's mods could not be matched; the Character Builder lists them.`}
         </div>
-        <CompatibilityNotice />
+        <CompatibilityNotice onConfigure={() => onNavigate("builder")} />
         <div className="home-save-actions">
           <button type="button" className="mw-btn home-cta home-cta--primary" onClick={() => onNavigate("builder")}>Open the character</button>
           <button type="button" className="mw-btn home-cta" onClick={() => onNavigate("leveler")}>Plan level-ups</button>

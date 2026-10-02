@@ -230,7 +230,7 @@ export default function LevelSimulatorRoot() {
             Level Simulator
           </h2>
           <p className="text-xs text-fg-11 mt-0.5 m-0 font-sans">
-            Simulate leveling to theoretical cap, calculate non-retroactive Health growth, and generate 5x multiplier Misc training itineraries.
+            Choose a target level and plan which skills to raise and which three attributes to increase at each level-up.
           </p>
           <p className="text-xs text-fg-9 mt-1.5 m-0 font-serif">
             Planning for <ActiveCharacterLink build={build} />
@@ -256,6 +256,13 @@ export default function LevelSimulatorRoot() {
         </div>
       </div>
 
+      <p className="level-beginner-help text-xs font-serif text-fg-7">
+        Ten total Major or Minor skill increases earn a level-up. Miscellaneous skills are outside
+        your class: raising them helps attribute bonuses without advancing that level counter.
+        A ×5 bonus means +5 attribute points, not five times your attribute. Follow each step’s
+        skill increases before resting to level up, then choose its three attribute increases.
+        Raising Endurance earlier improves Health gains on later levels. Training costs are estimates.
+      </p>
       <LevelModeToggle mode={mode} onModeChange={setMode} />
 
       {/* LVL-2: the Bitter Cup, a niche artifact trick, waits under Advanced options instead of

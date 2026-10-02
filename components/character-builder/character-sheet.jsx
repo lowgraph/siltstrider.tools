@@ -60,6 +60,13 @@ export default function CharacterSheet({ build, sheet, catalogs, onOpenEquipment
         </h3>
       </div>
 
+      <p className="sheet-number-legend text-xs text-fg-7">
+        Attribute and skill numbers are totals, already including race, class and birthsign bonuses.
+        Notes such as +10 favored explain a bonus already counted; do not add it again.
+        Health is damage you can survive, Magicka fuels spells, and Fatigue is your stamina.
+        Major and Minor skills count toward leveling; Miscellaneous skills do not.
+      </p>
+
       {/* Warnings */}
       {sheet.duplicates.length > 0 && (
         <div className="mw-warning-scroll p-3 text-xs space-y-0.5">
