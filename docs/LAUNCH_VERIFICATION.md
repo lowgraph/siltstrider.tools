@@ -2931,3 +2931,13 @@ are unchanged. 38 relevant map/layout tests and 18 Chrome cases passed across
 all worlds, both themes, 375/390/1366 px. Three new edge tests cover resizing,
 region edges, empty/singular maps. Browser waits for measured SVG sizing before
 checking containment and font size. Evidence: A:/Cache/qa33-39/qa36-accepted/.
+
+### QA-37
+
+Cause: the loss caption prepended a minus sign outside formatHealth, producing
+-0 even though the formatter already collapses signed zero. It now formats the
+signed value itself. Precision and progression calculations are unchanged.
+27 relevant Health/chart tests passed, with three new component regressions for
+zero at level 55, a short zero-loss forecast and a nonzero fractional-start case.
+Four Chrome cases with an Endurance-100 synthetic save passed at desktop/phone
+widths in both themes. Evidence: A:/Cache/qa33-39/qa37-final/.

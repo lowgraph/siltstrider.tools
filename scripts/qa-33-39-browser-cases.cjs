@@ -7,6 +7,18 @@ async function setup(c,route,profile,width,theme,build){
 async function finish(c,name){assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Page fits the viewport');c.assertAccessible(await c.audit(name));await c.screenshot(name);}
 async function wholeWords(c,selector){return c.evaluate(`(()=>{const root=document.querySelector(${JSON.stringify(selector)}),walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),broken=[];while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);const boxes=[...range.getClientRects()].filter(r=>r.width>0);if(new Set(boxes.map(r=>Math.round(r.top))).size>1)broken.push(m[0]);}}return broken})()`);}
 module.exports=async c=>{
+  for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-37/vanilla/${width}/${theme}`,async()=>{
+    await setup(c,'leveler','vanilla',width,theme);
+    const raw=require('../test/helpers/qa-staged-data.cjs').save();raw.build.attributes.find(a=>a.id==='Endurance').base=100;raw.build.attributes.find(a=>a.id==='Endurance').value=100;
+    const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};await rememberSave(raw,{setItem:(k,v)=>storage[k]=v});
+    await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v)`);
+    await c.navigate('leveler');await c.until('document.querySelector("#target-level-slider")');
+    await c.click('#target-level-slider');await c.key('Home','Home',36);for(let i=4;i<=55;i++)await c.key('ArrowRight','ArrowRight',39);
+    if(width<1024)await c.button('Leveled Character Sheet');await c.until('document.querySelector(".health-growth-chart-wrap")');
+    const text=await c.evaluate('document.querySelector(".health-growth-chart-wrap").textContent');
+    assert.match(text,/Permanent HP lost if Endurance is delayed: 0 HP/);assert.doesNotMatch(text,/-0 HP/);
+    await c.evaluate('document.querySelector(".health-growth-chart-wrap").scrollIntoView({block:"center"})');await finish(c,`QA-37-${width}-${theme}`);return {zeroLoss:true};
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [375,390,1366])for(const theme of ['ashfall','morrowind'])await c.check(`QA-36/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'travel',profile,width,theme);await c.until('document.querySelector(".transit-map svg[role=img]")');
     await c.until(`(()=>{const s=document.querySelector('.transit-map svg[role=img]');return Math.abs(s.viewBox.baseVal.width-s.getBoundingClientRect().width)<3})()`);

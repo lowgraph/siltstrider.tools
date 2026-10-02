@@ -2,6 +2,8 @@
 
 ## Launch polish — 2026-10-02
 
+- Level Simulator shows 0 HP, rather than -0 HP, when delaying Endurance loses no Health.
+
 - Travel maps keep their heading and counts separate, with larger, clearer region labels and legends on phones.
 
 - Home identity labels, loadout actions and premade Specialization descriptions stay whole on phones.

@@ -237,7 +237,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
           </div>
         </div>
         <div className="text-[11px] text-fg-11 font-sans">
-          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-fg-2">-{formatHealth(finalDiff)} HP</strong>
+          Permanent HP lost if Endurance is delayed: <strong className="font-mono text-fg-2">{formatHealth(-finalDiff)} HP</strong>
         </div>
       </div>
       <div className="text-[11px] text-fg-13 font-sans">

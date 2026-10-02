@@ -243,7 +243,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 - [x] **C** QA-36 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
       ("TRANSIT MAP28 mapped locations"), "Azura's Coast" is clipped, and the region and legend
       text is tiny and low-contrast.
-- [ ] **C** QA-37 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
+- [x] **C** QA-37 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
       Lady Spellsword, target 55). Follow-up to QA-27's formatter.
 - [ ] **C** QA-38 (started 2026-10-02 18:50 UTC, Codex, on `fix/qa-33-39`) (Low) Faction Journal details still say "1 ranks" (Twin Lamps); search was
       fixed in SS-10.
