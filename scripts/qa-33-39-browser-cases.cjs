@@ -5,7 +5,7 @@ async function setup(c,route,profile,width,theme,build){
   else await c.navigate(route,profile);
 }
 async function finish(c,name){assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'Page fits the viewport');c.assertAccessible(await c.audit(name));await c.screenshot(name);}
-async function wholeWords(c,selector){return c.evaluate(`(()=>{const root=document.querySelector(${JSON.stringify(selector)}),walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),broken=[];while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);const boxes=[...range.getClientRects()].filter(r=>r.width>0);if(new Set(boxes.map(r=>Math.round(r.top))).size>1)broken.push(m[0]);}}return broken})()`);}
+async function wholeWords(c,selector){return c.evaluate(`(()=>{const broken=[];for(const root of document.querySelectorAll(${JSON.stringify(selector)})){const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);while(walker.nextNode()){const n=walker.currentNode;if(!n.parentElement.getClientRects().length)continue;for(const m of n.textContent.matchAll(/[A-Za-z]{3,}/g)){const range=document.createRange();range.setStart(n,m.index);range.setEnd(n,m.index+m[0].length);const boxes=[...range.getClientRects()].filter(r=>r.width>0);if(new Set(boxes.map(r=>Math.round(r.top))).size>1)broken.push(m[0]);}}}return broken})()`);}
 module.exports=async c=>{
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-39/${profile}/${width}/${theme}`,async()=>{
     const {BUILDS,premadeToBuild}=await import('../lib/premade-data.mjs');const original=premadeToBuild(BUILDS.find(b=>/Spear scout/i.test(b.name)));const captions=[];
@@ -31,10 +31,11 @@ module.exports=async c=>{
     await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v)`);
     await c.navigate('leveler');await c.until('document.querySelector("#target-level-slider")');
     await c.click('#target-level-slider');await c.key('Home','Home',36);for(let i=4;i<=55;i++)await c.key('ArrowRight','ArrowRight',39);
+    await c.until('document.querySelector("#target-level-slider").value==="55"');
     if(width<1024)await c.button('Leveled Character Sheet');await c.until('document.querySelector(".health-growth-chart-wrap")');
     const text=await c.evaluate('document.querySelector(".health-growth-chart-wrap").textContent');
     assert.match(text,/Permanent HP lost if Endurance is delayed: 0 HP/);assert.doesNotMatch(text,/-0 HP/);
-    await c.evaluate('document.querySelector(".health-growth-chart-wrap").scrollIntoView({block:"center"})');await finish(c,`QA-37-${width}-${theme}`);return {zeroLoss:true};
+    await c.evaluate('document.querySelector(".health-growth-chart-wrap").scrollIntoView({block:"center"})');await finish(c,`QA-37-${width}-${theme}`);return {zeroLoss:true,target:55};
   });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [375,390,1366])for(const theme of ['ashfall','morrowind'])await c.check(`QA-36/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'travel',profile,width,theme);await c.until('document.querySelector(".transit-map svg[role=img]")');

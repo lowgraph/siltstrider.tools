@@ -34,6 +34,7 @@ module.exports = async c => {
         await c.until(c.card(build.name));
         // Move focus to the control before scrolling the nested dialog body;
         // this also exercises the modal's keyboard focus boundary.
+        await c.until(`document.querySelector('[role="dialog"] .vault-card button[title="Load this build into Character Builder"]')?.disabled===false`);
         await c.evaluate(`document.querySelector('[role="dialog"] .vault-card button[title="Load this build into Character Builder"]').focus()`);
         await c.pause(150);
         await c.click('[role="dialog"] .vault-card button[title="Load this build into Character Builder"]');

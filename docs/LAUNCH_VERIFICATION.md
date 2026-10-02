@@ -2963,3 +2963,48 @@ each browser case checks unchanged, edited and custom characters in all worlds,
 both themes and desktop/phone widths. Existing QA-26 checks retain full-kit
 comparisons and current Builder identity while enforcing the updated copy.
 Evidence: A:/Cache/qa33-39/qa39-final/. No merge or deployment.
+
+### Full preparation after all seven items
+
+The ordered fix commits are QA-33 `43cd17c`, QA-34 `c66658e`, QA-35 `24a6b1b`,
+QA-36 `cfdc2a3`, QA-37 `9b15341`, QA-38 `4382a01` and QA-39 `319e2d8`.
+Full verification uses the completed application at `319e2d8`, the unchanged
+staged bundle `a29adea046e6086c2c7ee654` and repository build configuration.
+
+| Check | Result |
+|---|---|
+| Site `npm test -- --test-concurrency=4` | 1,221 passed; zero failed, skipped or TODO. Repeated after the final runner/planner edits. |
+| Pipeline synthetic `python -B -m unittest discover -s . -p "test_*.py"` | 685 passed; no uncaught warnings. Repeated before the docs-only handoff commit. |
+| `npm run build:cloudflare` | Passed; 24 static pages. No configuration changes. |
+| General browser matrix and tool suites | 203 passed, including every route, calculators, Builder, Travel, Journal, Simulator and settings. |
+| QA regressions | 442 passed, including 76 new QA-33–39 cases and all retained QA groups. |
+| Launch polish | 68 passed. |
+| First-navigation hydration | 432 passed across all 15 real routes, both themes, 1366/375 px, fresh/stored-world/save/build-link/challenge-link states. Home and Builder each retain ten fresh repetitions per width/theme. |
+| Real mobile touch | 31 passed, including all 20 saved-Travel repetitions, plus 30 popover regressions at 375/390/1366 px. Touch capability assertions pass before interactions. |
+| Local signed-in Vault suites | 66 passed: base, launch, character/world preservation, sign-out and sharing. Synthetic identities and disposable local databases only. |
+
+Total: 1,272 passing case executions in complete accepted Chrome reports.
+All accepted reports have zero runtime/server errors, with screenshots, overflow
+and scoped axe checks where the suite supports them. The strict missing-page
+hydration report separately records 24 intended HTTP 404 console errors and no
+other console messages, hydration warnings or exceptions. These are covered by
+the checklist's explicit expected-404 exemption; the raw report is not called green.
+The touchscreen-laptop control separately fails its capability assertion:
+Chrome reports touch=5, fine=false, coarse=true. A physical touch-plus-fine-pointer
+device remains an owner freeze check; no application patch is inferred from that.
+
+Incomplete aggregate long-walk, touch, touch-popover, QA-30 and QA-32 groups are
+excluded and replaced by complete smaller filters. Empty Cathay-raht/Suthay filters
+are excluded and replaced with matching canonical-name filters. An initial local
+Vault phone case focused a not-yet-enabled control; the runner now waits for it,
+and the complete 16-case character suite passes on rerun. QA-35 checks every
+Specialization footer and QA-37 explicitly asserts target level 55.
+
+Evidence: `A:/Cache/qa33-39/full-browser/`, `acceptance-summary.json`,
+`unit-final.log`, `pipeline-final.log`, `build-full.log` and
+`synthetic-cleanup.json`. The six local Vault databases contain zero remaining
+saves, settings, tiers or profiles after removing only the known synthetic users.
+COORDINATION and UI_TRANSFORMATION are identical across repositories; pipeline
+changes are a docs-only handoff. Freshly fetched site main remains `39a82db`;
+the merge-tree preview is conflict-free. Test servers are closed after verification.
+Prepared on branches only: no merge, push, migration, production write or deploy.

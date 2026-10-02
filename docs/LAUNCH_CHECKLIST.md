@@ -247,7 +247,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       Lady Spellsword, target 55). Follow-up to QA-27's formatter.
 - [x] **C** QA-38 (started 2026-10-02 18:50 UTC, Codex; done `4382a01`, on `fix/qa-33-39`) (Low) Faction Journal details still say "1 ranks" (Twin Lamps); search was
       fixed in SS-10.
-- [x] **C** QA-39 (started 2026-10-02 18:50 UTC, Codex; done with this commit, on `fix/qa-33-39`) (Low, copy) For an edited premade the endgame kit's line reads "ranked …
+- [x] **C** QA-39 (started 2026-10-02 18:50 UTC, Codex; done `319e2d8`, on `fix/qa-33-39`) (Low, copy) For an edited premade the endgame kit's line reads "ranked …
       for your build's … class archetype (Based on Argonian male — Spear scout)". Say it is
       ranked for this character, without naming the source as its archetype.
 
