@@ -5,6 +5,17 @@ async function target(c,level){await c.click('#target-level-slider');await press
 async function finish(c,name){assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'No page overflow');c.assertAccessible(await c.audit(name));await c.screenshot(name);}
 async function health(c,profile,width,theme,cup=false){const {encodeShareUrl}=await import('../lib/permalink-codec.mjs');await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);await c.openDocument(c.base+encodeShareUrl({view:'leveler',world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce',build:{...build,bitterCup:cup}}));await c.idle();await c.waitForFonts();await c.until('document.querySelector("#target-level-slider")');assert.equal(await c.evaluate('document.documentElement.dataset.theme'),theme);}
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-28/${profile}/${width}/${theme}`,async()=>{
+    await health(c,profile,width,theme);const states=[];
+    for(const level of [14,15,16]){
+      if(width<1024&&level!==14)await c.button('Leveling Optimizer & Stepper');
+      await target(c,level);if(width<1024)await c.button('Leveled Character Sheet');
+      await c.until('document.querySelector(".health-growth-chart-wrap svg")');
+      const state=await c.evaluate(`(()=>{const s=document.querySelector('.health-growth-chart-wrap svg'),b=s.getBoundingClientRect(),t=[...s.querySelectorAll('text')].find(t=>t.textContent.startsWith('Endurance 100 at'));if(!t)return null;const r=t.getBoundingClientRect();return {label:t.textContent,inside:r.left>=b.left-1&&r.right<=b.right+1}})()`);
+      if(level===14)assert.equal(state,null);else{assert.ok(state,'Forecast includes its Endurance milestone');assert.equal(state.label,'Endurance 100 at Lv 15');assert.equal(state.inside,true,'Milestone label fits inside the chart');}
+      states.push({level,state});if(level===15){await c.evaluate('document.querySelector(".health-growth-chart-wrap").scrollIntoView({block:"center"})');await finish(c,`QA-28-${profile}-${width}-${theme}`);}
+    }return states;
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-27/${profile}/${width}/${theme}`,async()=>{
     await health(c,profile,width,theme,true);await target(c,55);if(width<1024)await c.button('Leveled Character Sheet');await c.until('document.querySelector(".health-growth-chart-wrap svg")');
     await c.evaluate('document.querySelector(".health-growth-chart-wrap").scrollIntoView({block:"center"})');

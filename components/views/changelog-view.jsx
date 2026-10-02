@@ -17,6 +17,7 @@ export default function ChangelogView() {
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-02">October 2, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Health forecasts show clean totals with at most one decimal, including Bitter Cup plans. Fractional level-up gains remain intact.</li>
+            <li>The Health chart marks the level where Endurance reaches 100 even when it is the final level in your forecast.</li>
           </ul>
         </section>
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">

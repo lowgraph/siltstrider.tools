@@ -67,7 +67,7 @@ export default function HealthGrowthChart({ character, targetLevel, catalogs, op
     yDel = mid + (TEXT + 2) / 2;
   }
 
-  const showMarker = enduranceMaxLevel != null && enduranceMaxLevel > startLevel && enduranceMaxLevel < endLevel;
+  const showMarker = enduranceMaxLevel != null && enduranceMaxLevel > startLevel && enduranceMaxLevel <= endLevel;
   const markerX = showMarker ? getX(enduranceMaxLevel) : 0;
   const markerLabel = `Endurance 100 at Lv ${enduranceMaxLevel}`;
   const markerLabelWidth = markerLabel.length * TEXT * 0.62;
