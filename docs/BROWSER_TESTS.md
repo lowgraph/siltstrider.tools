@@ -49,7 +49,8 @@ both themes. Fresh Home and Builder are repeated ten times: 456 cases. The loade
 save is the synthetic `qa-traveller.json` packed into `silt-active-save`; Home and
 Builder must visibly restore its name. Console errors, hydration warnings and
 uncaught exceptions fail. The intentional 404's resource error currently fails
-this strict rule; keep that visible until the owner chooses the acceptance policy.
+this strict rule. Retain that raw report separately under the checklist's expected
+HTTP 404 exemption; any other console error, hydration warning or exception fails.
 
 `--suite touch --touch` sets CDP touch emulation to five points, mobile 375×812 at
 DPR 3, a mobile user agent, coarse pointer and no hover. It asserts the actual
@@ -499,6 +500,9 @@ the next navigation, rather than the user on the departing page. An isolated
 theme as the complete group. On a timed-out wait, the report records the current
 URL, theme, user, shell readiness and Vault/card state, with HTML and a screenshot
 captured before the case's cleanup navigation.
+The character-preservation modal case also focuses and checks the same enabled
+node through two animation frames. Opening refreshes a prefetched list; separate
+readiness and focus calls can span its loading replacement.
 
 ## QA-33–39 ordered polish
 
@@ -525,3 +529,45 @@ error: record it separately under the checklist's explicit exemption, only after
 confirming there are no other console errors, hydration warnings or exceptions.
 CDP touch plus a fine pointer still needs a physical touchscreen-laptop check;
 never accept a coarse-pointer control as equivalent.
+
+## Beginner clarity and contained follow-ups
+
+`--suite qa` includes 156 new cases in `scripts/clarity-browser-cases.cjs`.
+Use separate world filters and cache output folders with the same 120-second
+outer bound. All cases cover Vanilla, TR and TR + ARCE, both themes and
+1366/375 px. The groups are:
+
+- `Clarity-Beginner/<route>/<profile>/`: Home, Builder, Travel, Alchemy and
+  Level Simulator; mechanics before lore, manual game-entry help, save/manual
+  recovery, route definitions and leveling instructions (60 cases).
+- `Clarity-F04-F11/<profile>/`: separate By race/playstyle collections, real
+  visible counts and race-picking guidance (12 cases).
+- `Clarity-CALC4/<profile>/`: two-ingredient finder limits, recipe reset on world
+  changes and preservation/reset of typed calculator stats (12 cases).
+- `Clarity-Copy/<route>/<profile>/`: Builder, Home, Travel and Vault; preset
+  customization, search clearing/focus, content-file/phone help and saved gold
+  remaining/shortfall against the displayed fare (48 cases).
+- `Clarity-FLOW04/<profile>/`: a saved ordinary Andasreth index gives the real
+  Berandas connection, and a saved Master Index goes through Caldera (12 cases).
+- `Clarity-FLOW03/<profile>/`: rival Great House joins are blocked with an
+  explanation; leaving and compatible guild membership remain available (12 cases).
+
+For example:
+
+```powershell
+node scripts/test-browser.cjs --suite qa --filter 'Clarity-FLOW04/tr/' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\clarity-flow04-tr'
+npm run test:vault -- --clarity --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\clarity-vault'
+```
+
+The local Worker `--clarity` mode has twelve additional signed-in cases, four
+each for F-11 (required username before saving an icon), F-17 (unavailable
+version selection and 120-character rename boundary), and F-12 (recorded location
+and class name; missing location is not invented). Each uses only the synthetic
+`user_qa_clarity` and removes its saves, settings, profile and tier after the case.
+Names start with `QA – `. Filter with `--filter Clarity-F12/` (or F11/F17) for a
+focused run. Use `--no-build` only when the current `.next-export-vault` matches
+the implementation; build separately before applying a bounded browser run.
+
+Keep the existing QA-10 gear eligibility cases, including compatible open helmets,
+and QA-09 mouse/touch popovers. Full preparation still runs all suites and every
+local Vault mode; these additions do not replace existing regression coverage.

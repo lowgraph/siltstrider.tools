@@ -12,7 +12,9 @@ module.exports=async c=>{
       assert.match(await c.evaluate(`${c.card('QA – No Location')}.textContent`),/Not recorded/);
       const saved=(await c.request('GET','/api/saves',{user})).body.saves.find(s=>s.name===raw.identity.name);assert.equal(saved.cell,raw.identity.cell);assert.equal(saved.class_name,raw.identity.class.name);
       assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);
-      c.assertAccessible(await c.audit(`location-${theme}-${width}`));await c.screenshot(`location-${theme}-${width}`);
+      c.assertAccessible(await c.audit(`location-${theme}-${width}`));
+      await c.evaluate(`${c.card(raw.identity.name)}.scrollIntoView({block:'center'})`);
+      await c.screenshot(`location-${theme}-${width}`);
       return {recordedLocation:true,recordedClassName:true,noInventedLocation:true};
     }finally{await c.open('/about');await c.cleanup();}
   });

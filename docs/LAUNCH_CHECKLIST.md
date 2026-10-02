@@ -258,7 +258,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       Re-check: no direct link exists; the Master Index goes through Caldera. Fixed a
       separate first-load reset of valid chamber links before carried indices were restored (LAUNCH_VERIFICATION §65).
 - [x] **C** FLOW-03 (started 2026-10-02 21:54 UTC, Codex; done `b26b6b7`, on `polish/beginner-clarity-batch`): both rival Great Houses can be joined in the Faction Journal.
-- [x] **C** F-12 (started 2026-10-02 21:59 UTC, Codex; done with this commit, on `polish/beginner-clarity-batch`) (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
+- [x] **C** F-12 (started 2026-10-02 21:59 UTC, Codex; done `d1bbad9`, on `polish/beginner-clarity-batch`) (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage"). Fix only if the save already carries the location and class name;
       otherwise it goes back after launch.
       Recorded locations now display correctly; missing locations say Not recorded.

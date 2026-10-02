@@ -3240,3 +3240,62 @@ metadata is retained; scoped axe/overflow checks pass; zero runtime/server error
 phone screenshot reviewed. Only `user_qa_clarity` was used and its disposable
 records were removed after every case. Evidence:
 `A:/Cache/clarity-batch/f12-before.log`, `f12-unit.log` and `f12-browser/`.
+
+
+### Full preparation after all ten items
+
+Ordered item commits: Beginner clarity `c1f6b25`, F04/F11 `69647b1`, CALC-4 note
+`f66816b`, Gear note `833aedb`, F-11 `622b09e`, F-17 `213fa59`, Copy `692e8bb`,
+FLOW-04 `3dfafb9`, FLOW-03 `b26b6b7` and F-12 `d1bbad9`. The completed application
+was checked at `d1bbad9` with staged bundle `a29adea046e6086c2c7ee654`; the final
+preparation changes only documentation, runner readiness/captures and tests.
+Repository build configuration and published data are unchanged.
+
+| Check | Result |
+|---|---|
+| Site `npm test -- --test-concurrency=4` | 1,270 passed; zero failed, skipped or TODO. Repeated after the final runner edits. |
+| Cache-isolated pipeline synthetic tests | 685 passed; no uncaught warnings. Pipeline source is unchanged. |
+| `npm run build:cloudflare` | Passed; 24 static pages. |
+| General browser matrix and tools | 203 passed across all worlds, including every route, calculators, Builder, Travel, Journal, Simulator and settings. |
+| QA regressions | 598 passed: 442 retained cases plus 156 new public batch cases. Both themes and 1366/375 px; retained phone checks also cover 390 px. |
+| Launch polish | 68 passed. |
+| First-navigation hydration | 432 passed across all 15 real routes, both themes and widths, fresh/stored-world/save/build-link/challenge-link states. Home and Builder retain ten fresh repetitions per width/theme. |
+| Real mobile touch | 31 passed, including all 20 saved-Travel repetitions, plus 30 touch-popover regressions. Device capability assertions pass before interactions. |
+| Signed-in local Worker/Vault | 78 passed: base, launch, character/world preservation, sign-out, sharing and twelve new F-11/F-17/F-12 cases. Synthetic identities and disposable databases only. |
+
+Total: 1,440 passing case executions in complete accepted Chrome reports, all
+with zero runtime/server errors. Reports retain commit/bundle metadata, screenshots,
+loaded fonts, overflow and scoped axe checks where supported. The final F-12 phone
+capture centers the changed card and visibly shows Old Ebonheart, the recorded
+class name and Not recorded for a missing location.
+
+The first full unit pass found a stale Home-description assertion. Its required
+feature coverage now follows the plainer copy, retaining all nine tools, description
+bounds and the OpenMW 0.51 source claim. The browser planner maps the new case
+groups and lists the additional `test:vault -- --clarity` mode.
+
+One initial local character-preservation report had three modal focus failures:
+opening the dialog refreshes its prefetched list, so the runner's separate ready
+and focus reads could span a loading replacement. The runner now checks and
+focuses the same enabled node and verifies it survives paint. The complete
+sixteen-case rerun passes; the failed report is excluded. No application patch
+was needed for that runner race; every other full group completed within its bound.
+
+The strict missing-page report separately records 24 intended HTTP 404 console
+errors with no other errors, hydration warnings or exceptions, under the checklist's
+explicit exemption. Its raw report is not called green. The CDP touchscreen-laptop
+control separately fails its capability assertion (touch=5, fine=false, coarse=true);
+a physical touch-plus-fine-pointer check remains for the owner's freeze acceptance.
+Neither report is included in the 1,440 passing cases. F-12's ID-only preset class
+labels remain explicitly after launch, as recorded above.
+
+Evidence: `A:/Cache/clarity-batch/full-browser/`, `acceptance-summary.json`,
+`unit-final.log`, `pipeline-full.log`, `build-full.log` and `synthetic-cleanup.json`.
+All thirteen disposable local databases contain zero saves, settings, profiles
+or tiers after removing only the known synthetic users. Test servers are closed
+after verification; cache evidence is retained and temporary helper scripts removed.
+COORDINATION and UI_TRANSFORMATION are byte-identical across repositories;
+pipeline changes are a docs-only `handoff/beginner-clarity-batch` branch.
+Freshly fetched site main remains `d3e33ea` and pipeline master `d4867b3`;
+the site merge-tree preview is conflict-free. Prepared branches only: no merge,
+push, production write, data rebuild, migration or deployment.
