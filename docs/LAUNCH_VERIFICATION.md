@@ -2223,14 +2223,15 @@ separate browser profiles. This is the real-account check §49 did not claim.
 | QA-22 (challenge run) | **Pass 2/2** | Rolled in Vanilla, site switched to TR, link carries `world=vanilla&arce=0` and reopens the same seed and character in Vanilla |
 | QA-22 (Builder link) | **Pass 2/2** | TR + ARCE Khajiit (Suthay) link reopened field for field |
 
-No errors, lost data or wrong worlds. New or remaining observations, recorded in the
-checklist's section 6:
+No errors, lost data or wrong worlds. Observations and the owner's decisions
+(2 October), recorded in the checklist's section 6:
 
 - Once in four logged qa4 sign-ins the tab ended on `/account` instead of `/builder`
-  (character and world intact); not reproduced in the next two logged sign-ins.
+  (character and world intact): not a bug, the owner switched windows by accident (F-18).
 - A signed-in world switch is session-only; only Your account's Preferred world is
-  stored. Intended, but some players may expect the last switch to persist.
-- F-6 remains: email sign-in reloads the page; the character and world now survive it.
+  stored. After launch, offer to save the switched world as Preferred (F-19).
+- Email sign-in reloads the page; the character and world now survive it. Desired
+  behaviour, no change (F-6).
 
 Cleanup: qa1's four QA saves deleted (0/5), settings unchanged at revision 26; qa4
 saved nothing and its settings were never written. Both profiles signed out and

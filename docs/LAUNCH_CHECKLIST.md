@@ -459,8 +459,8 @@ Low:
 - [ ] **C** SUS-02: a route total of 4 h 22 min against legs summing to 4 h 23 min (rounding).
 
 From the signed-in QA (1 October):
-- [ ] **C** F-6 (Medium): email sign-in reloads the page (4 of 4; still so in the 2 October
-      retest). The character and world now survive it (QA-23 fixed).
+- [x] F-6: no change (owner, 2 October: desired behaviour). Email sign-in reloads the page;
+      the character and world survive it (QA-23 fixed).
 - [ ] **C** F-7 (Medium): after Delete on a Vault card, keyboard focus drops to the page body
       and "Delete save?" is not announced; Confirm is 15 Tabs away. Focus the prompt.
 - [ ] **C** F-8 (Low): "Keep account defaults" is not remembered; the new-account prompt
@@ -478,13 +478,14 @@ From the signed-in QA (1 October):
       Runs tab and quota; /vault does not show that tab.
 - [ ] **C** F-17 (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
-- [ ] **C** F-18 (Low, seen once): in the 2 October signed-in retest, one of four logged email
-      sign-ins ended on `/account` instead of the page signed in from (`/builder`); character
-      and world intact. Not reproduced in the next two logged sign-ins. Watch for it.
-- [ ] **O** F-19 (decision): a world switched in the header while signed in lasts only for that
-      session; after signing in again the browser's world (or the account's Preferred world,
-      once chosen) wins. Intended, but some players may expect the last switch to stick.
-      Keep it, or explain it beside the world switch, or offer to save it as Preferred.
+- [x] F-18: not a bug. One sign-in in the 2 October retest ended on `/account`; the owner had
+      switched windows by accident.
+- [ ] **C** F-19 (Low; owner decision 2 October: offer to save it): a world switched in the
+      header while signed in lasts only for that session; after signing in again the browser's
+      world (or the account's Preferred world, once chosen) wins. When a signed-in player
+      switches world, offer to save it as their Preferred world (one dismissible prompt, no
+      automatic save: an automatic save caused F-9/QA-23). Keep QA-23's rule that the
+      browser's world wins until the player chooses one on the account.
 - [x] F-14: no change. The Guild Guide warning is for a save whose character is not a member;
       when an account default turns membership off, Travel labels it "account default" and
       says "no Mages Guild", which is enough.
