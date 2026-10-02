@@ -85,7 +85,7 @@ test('QA-26 other character edits invalidate named picks and reverting restores 
   assert.equal(top(resolveBestInSlotPicks(data, build), 'robe').pick.score, 99);
   assert.equal(JSON.stringify(data), original);
 });
-test('QA-26 endgame explanation uses the shared edited character name', async () => {
+test('QA-39 endgame explanation describes the current character without calling its source an archetype', async () => {
   const React = require('react');
   const { renderToStaticMarkup } = require('react-dom/server');
   const Module = require('node:module');
@@ -95,8 +95,9 @@ test('QA-26 endgame explanation uses the shared edited character name', async ()
   const bundled = require('esbuild').buildSync({ entryPoints: [filename], bundle: true, write: false, platform: 'node', format: 'cjs', jsx: 'automatic', external: ['react', 'react/jsx-runtime'] });
   const loaded = new Module(filename, module); loaded.paths = module.paths;
   loaded._compile(bundled.outputFiles[0].text, filename);
-  for (const name of [build.name, 'QA Player']) {
+  for (const name of [build.name, 'QA Player', undefined]) {
     const html = renderToStaticMarkup(React.createElement(loaded.exports.BestInSlotView, { featureData: data, build: { ...build, race: 'Argonian', name }, beast: true, weaponSetup: 'one-handed' }));
-    assert.ok(html.includes(name === build.name ? 'Based on '+name : '(QA Player)'));
+    assert.match(html,/ranked for this character&#x27;s current attributes and skills/);
+    assert.doesNotMatch(html,/class archetype|Based on /);
   }
 });

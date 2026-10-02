@@ -194,9 +194,10 @@ exports.qa = async c => {
             const wanted=expected.groups.flatMap(g=>g.rows.map(r=>({slot:r.slotLabel,name:r.picks[0].item.name,score:r.picks[0].pick.score})));
             await c.until('document.querySelector(".best-in-slot-recommendations table")');
             const read=()=>c.evaluate(`(()=>{const e=document.querySelector('.best-in-slot-recommendations');return {title:e.querySelector('.leading-relaxed').textContent,rows:[...e.querySelectorAll('tbody tr')].filter(r=>r.querySelector('td:nth-child(2) .font-bold')).map(r=>({slot:r.querySelector('td').textContent.trim(),name:r.querySelector('td:nth-child(2) .font-bold').textContent.trim(),score:Number(r.querySelector('td:nth-child(2) .font-mono').textContent.replace('Score:','').trim())}))}})()`);
-            await c.until(`document.querySelector('.best-in-slot-recommendations .leading-relaxed').textContent.includes(${JSON.stringify(characterName(build))})`);
+            await c.until(`document.querySelector('.character-sheet h3 > span').textContent.includes(${JSON.stringify(characterName(build))})`);
             const actual=await read();assert.deepEqual(actual.rows,wanted,'Displayed whole kit agrees with the current character');
-            assert.ok(actual.title.includes('('+characterName(build)+')'),'Endgame title agrees with Builder');
+            assert.match(actual.title,/ranked for this character's current attributes and skills/,'Endgame advice describes the current character');
+            assert.doesNotMatch(actual.title,/class archetype|Based on /);
             if(unchanged){const record=picksForBuild(data.catalogs.BestInSlot,build.name);for(const row of expected.groups.flatMap(g=>g.rows).filter(r=>!['weapon','shield'].includes(r.slotKey))){const slot=row.slotKey.startsWith('ring_')?'ring':row.slotKey,index=row.slotKey==='ring_2'?1:0;assert.equal(row.picks[0].item.key,record.slots[slot][index].item,'Original premade retains its published kit');}}
             const buttons=await c.evaluate(`[...document.querySelectorAll('.best-in-slot-recommendations button')].filter(b=>/^View .*runner-up/.test(b.textContent)).map((b,i)=>{b.dataset.qa26Alt=i;return '[data-qa26-alt="'+i+'"]'})`);
             for(const button of buttons)await c.click(button);

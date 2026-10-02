@@ -499,3 +499,29 @@ the next navigation, rather than the user on the departing page. An isolated
 theme as the complete group. On a timed-out wait, the report records the current
 URL, theme, user, shell readiness and Vault/card state, with HTML and a screenshot
 captured before the case's cleanup navigation.
+
+## QA-33–39 ordered polish
+
+New cases run through `--suite qa --filter QA-33/` (substitute the item ID).
+Use the installed axe path and separate cache outputs as above, with a 120-second
+outer bound. QA-33 covers all worlds, both themes and 1366/375 px: Spear Scout
+starts two-handed, excludes Keening/Darksun Shield and permits manual overrides.
+QA-34 measures the list/footer gap before and after pagination and selects the
+last pair. QA-35 checks whole words in Home, loadout actions and every expanded
+Specialization footer. QA-36 measures map sizing, header separation, region
+containment and readable text at 375/390/1366 px. QA-37 explicitly reaches target
+55 with an Endurance-100 synthetic save and rejects `-0 HP`. QA-38 checks Twin
+Lamps' exact singular caption. QA-39 checks unchanged, edited and custom builds,
+while retained QA-26 cases still compare the complete expected kit. There are
+76 new cases. The planner includes them in their corresponding tool groups.
+
+For a full preparation pass, run `all`, `qa`, `launch`, `hydration`, `touch --touch`
+and every local Vault mode above. Split long groups by world, route or specific
+case filter so each completes within its bound. Full QA-30 can exceed the bound;
+use `QA-30/vanilla/`, `QA-30/tr/` and `QA-30/tr_arce/`. For hydration, keep Home
+and Builder's ten fresh repetitions per width/theme; check all other routes too.
+The strict hydration report includes the intended missing-page HTTP 404 console
+error: record it separately under the checklist's explicit exemption, only after
+confirming there are no other console errors, hydration warnings or exceptions.
+CDP touch plus a fine pointer still needs a physical touchscreen-laptop check;
+never accept a coarse-pointer control as equivalent.

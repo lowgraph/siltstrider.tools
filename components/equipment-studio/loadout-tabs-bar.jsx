@@ -172,7 +172,7 @@ export const LoadoutTabsBar = memo(function LoadoutTabsBar({
         </div>
 
         {/* Loadout Actions & Fast Kits */}
-        <div className="flex items-center gap-2 relative">
+        <div className="loadout-actions flex flex-wrap items-center gap-2 relative">
           {/* Rename Active Loadout */}
           <button
             type="button"

@@ -2881,3 +2881,150 @@ Synthetic Clerk sessions do not replace the live provider or physical-device
 check. Both player changelogs retain the fixes. Production release history,
 bundle `a29adea046e6086c2c7ee654`, migrations and rollback choice are unchanged.
 No data rebuild, production write or deployment.
+
+## 63. QA-33–39 ordered polish — 2 October 2026
+
+One branch: `fix/qa-33-39`, from freshly fetched main `39a82db`. Each item is
+committed after its relevant tests; full validation follows the seventh item.
+No data, schema, migration or production changes.
+
+### QA-33 — weapon setup
+
+Cause: GearAdvisorView initialized a permanent one-handed default. The default
+now uses gearRanking’s primary weapon, including restored/edited builds, until
+the player chooses. Spear/Marksman use two hands; other/missing weapons use one.
+54 relevant tests passed, including three new edge/component cases in
+`test/gear-weapon-default.test.js`; 12 Chrome QA-33 cases passed across three
+worlds, both themes and 1366/375 px, with screenshots/axe and manual overrides.
+Nine planner tests passed. An initial selector quotation error was corrected.
+Evidence: `A:/Cache/qa33-39/qa33-final/`. No merge or deployment.
+
+### QA-34 — reverse-pair pagination
+
+The TR/Morrowind 1366 px reproduction found the footer touching the 320 px
+scroll viewport exactly; the third partially visible card is clipped by that
+viewport, not covered by an overlapping button. Explicit grid spacing now puts
+12 px between list and pagination and keeps the button at its natural width.
+28 reverse-Alchemy/live/source tests and 12 Chrome cases passed in three worlds,
+both themes and 1366/375 px. All 24 measured list/button states retain at least
+8 px separation; last-pair selection and output focus pass. Screenshots reviewed.
+Evidence: `A:/Cache/qa33-39/qa34-before/` and `qa34-final/`.
+
+### QA-35
+
+Cause: body-wide anywhere wrapping plus shrinking action rows broke short labels.
+Home keeps identity labels intact; loadout actions wrap as whole buttons; premade
+Specialization footers wrap at spaces and move Load Build below when necessary.
+44 relevant Home/premade/equipment tests and six Chrome cases passed at 375/390/
+1366 px in both themes. The first browser assertion also inspected unrelated
+premade titles; the accepted case checks the requested footer and labels.
+Evidence: A:/Cache/qa33-39/qa35-accepted/. No behavior or data change.
+
+### QA-36
+
+Cause: a fixed 280 px minimum scaled SVG text down inside narrower panels; region
+width estimates omitted tracking; heading/counts could crowd one row. TransitMap
+now measures its real panel width, wraps a spaced header, uses 12 px region and
+13 px stop labels, and includes tracking/clamping in region placement. Legend
+and region copy use stronger readable text tokens. Routing and map positions
+are unchanged. 38 relevant map/layout tests and 18 Chrome cases passed across
+all worlds, both themes, 375/390/1366 px. Three new edge tests cover resizing,
+region edges, empty/singular maps. Browser waits for measured SVG sizing before
+checking containment and font size. Evidence: A:/Cache/qa33-39/qa36-accepted/.
+
+### QA-37
+
+Cause: the loss caption prepended a minus sign outside formatHealth, producing
+-0 even though the formatter already collapses signed zero. It now formats the
+signed value itself. Precision and progression calculations are unchanged.
+27 relevant Health/chart tests passed, with three new component regressions for
+zero at level 55, a short zero-loss forecast and a nonzero fractional-start case.
+Four Chrome cases with an Endurance-100 synthetic save passed at desktop/phone
+widths in both themes. Evidence: A:/Cache/qa33-39/qa37-final/.
+
+### QA-38
+
+Cause: FactionDetailView always appended ranks for any nonempty rank list.
+Its caption now uses rank for one and ranks for multiple; non-joinable factions
+remain unchanged. 24 relevant Journal/faction tests passed, including explicit
+zero/one/ten-rank component cases on frozen records. Twelve Chrome cases passed
+for Twin Lamps in all worlds, both themes and desktop/phone widths. The runner
+checks the exact caption node, avoiding concatenated neighbouring text.
+Evidence: A:/Cache/qa33-39/qa38-accepted/.
+
+### QA-39
+
+Cause: BestInSlotView described the premade source title as a class archetype.
+The explanation now says the kit is ranked for this character’s current attributes
+and skills. Edited/custom names no longer appear as archetypes. Ranking, source
+identity labels elsewhere, unchanged-premade picks and equipment eligibility are
+preserved. 42 relevant kit/loadout/identity tests and 12 Chrome cases passed;
+each browser case checks unchanged, edited and custom characters in all worlds,
+both themes and desktop/phone widths. Existing QA-26 checks retain full-kit
+comparisons and current Builder identity while enforcing the updated copy.
+Evidence: A:/Cache/qa33-39/qa39-final/. No merge or deployment.
+
+### Full preparation after all seven items
+
+The ordered fix commits are QA-33 `43cd17c`, QA-34 `c66658e`, QA-35 `24a6b1b`,
+QA-36 `cfdc2a3`, QA-37 `9b15341`, QA-38 `4382a01` and QA-39 `319e2d8`.
+Full verification uses the completed application at `319e2d8`, the unchanged
+staged bundle `a29adea046e6086c2c7ee654` and repository build configuration.
+
+| Check | Result |
+|---|---|
+| Site `npm test -- --test-concurrency=4` | 1,221 passed; zero failed, skipped or TODO. Repeated after the final runner/planner edits. |
+| Pipeline synthetic `python -B -m unittest discover -s . -p "test_*.py"` | 685 passed; no uncaught warnings. Repeated before the docs-only handoff commit. |
+| `npm run build:cloudflare` | Passed; 24 static pages. No configuration changes. |
+| General browser matrix and tool suites | 203 passed, including every route, calculators, Builder, Travel, Journal, Simulator and settings. |
+| QA regressions | 442 passed, including 76 new QA-33–39 cases and all retained QA groups. |
+| Launch polish | 68 passed. |
+| First-navigation hydration | 432 passed across all 15 real routes, both themes, 1366/375 px, fresh/stored-world/save/build-link/challenge-link states. Home and Builder each retain ten fresh repetitions per width/theme. |
+| Real mobile touch | 31 passed, including all 20 saved-Travel repetitions, plus 30 popover regressions at 375/390/1366 px. Touch capability assertions pass before interactions. |
+| Local signed-in Vault suites | 66 passed: base, launch, character/world preservation, sign-out and sharing. Synthetic identities and disposable local databases only. |
+
+Total: 1,272 passing case executions in complete accepted Chrome reports.
+All accepted reports have zero runtime/server errors, with screenshots, overflow
+and scoped axe checks where the suite supports them. The strict missing-page
+hydration report separately records 24 intended HTTP 404 console errors and no
+other console messages, hydration warnings or exceptions. These are covered by
+the checklist's explicit expected-404 exemption; the raw report is not called green.
+The touchscreen-laptop control separately fails its capability assertion:
+Chrome reports touch=5, fine=false, coarse=true. A physical touch-plus-fine-pointer
+device remains an owner freeze check; no application patch is inferred from that.
+
+Incomplete aggregate long-walk, touch, touch-popover, QA-30 and QA-32 groups are
+excluded and replaced by complete smaller filters. Empty Cathay-raht/Suthay filters
+are excluded and replaced with matching canonical-name filters. An initial local
+Vault phone case focused a not-yet-enabled control; the runner now waits for it,
+and the complete 16-case character suite passes on rerun. QA-35 checks every
+Specialization footer and QA-37 explicitly asserts target level 55.
+
+Evidence: `A:/Cache/qa33-39/full-browser/`, `acceptance-summary.json`,
+`unit-final.log`, `pipeline-final.log`, `build-full.log` and
+`synthetic-cleanup.json`. The six local Vault databases contain zero remaining
+saves, settings, tiers or profiles after removing only the known synthetic users.
+COORDINATION and UI_TRANSFORMATION are identical across repositories; pipeline
+changes are a docs-only handoff. Freshly fetched site main remains `39a82db`;
+the merge-tree preview is conflict-free. Test servers are closed after verification.
+Prepared on branches only: no merge, push, migration, production write or deploy.
+
+## 64. QA-33–39 main integration — 2 October 2026
+
+The owner authorized merging and pushing the prepared work. Freshly fetched site
+main was still `39a82db`; pipeline master was still `316f384`. Non-fast-forward
+merges integrate site `fix/qa-33-39` (`b0cab55`) and pipeline's docs-only
+`handoff/qa-33-39` (`01cd353`) without conflicts. The merged application files
+match the fully verified branch; pipeline source is unchanged.
+
+Merged-checkout unit verification: 1,221 site tests and 685 pipeline synthetic
+tests passed, with no failures. Evidence: `A:/Cache/qa33-39/unit-merged.log` and
+`pipeline-merged.log`. The unchanged application retains §63's successful
+24-page Cloudflare build and 1,272 passing complete Chrome case executions,
+including the separately recorded expected-404 exemption and the physical
+touchscreen-laptop check. No incomplete report is accepted.
+
+The checklist marks all seven items merged with this commit. COORDINATION and
+UI_TRANSFORMATION remain byte-identical in both repositories. No migration,
+dataset rebuild, production write or deployment; production's existing release
+and rollback records are unchanged.

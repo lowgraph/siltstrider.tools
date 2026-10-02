@@ -9,6 +9,14 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
+/* Keep short action/identity labels whole; larger descriptions wrap at spaces. */
+.loadout-actions > button, .loadout-actions > div { flex-shrink: 0; }
+.loadout-actions button { white-space: nowrap; word-break: normal; overflow-wrap: normal; }
+.premade-footer { word-break: normal; overflow-wrap: normal; }
+.home-character-stats-grid > div { gap: 6px; min-width: 0; }
+.home-character-stats-grid span:first-child { flex-shrink: 0; white-space: nowrap; }
+.home-character-stats-grid span:last-child { min-width: 0; word-break: normal; overflow-wrap: normal; }
+
 /* Shared element, navigation, panel and form styles. Kept unlayered to preserve
    their precedence over Tailwind utilities. Theme and component overrides follow. */
 /* Pelagiad by Isak Larborn, 2015. SIL Open Font License 1.1. Reserved Font Name "Pelagiad.ttf".

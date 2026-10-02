@@ -232,22 +232,22 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 
 *From the live retest of `250b1b5` (2 October; LAUNCH_VERIFICATION §59)*
-- [ ] **C** QA-33 (Medium, V) Gear Advisor: the weapon setup always starts One-handed + shield
+- [x] **C** QA-33 (started 2026-10-02 18:50 UTC, Codex; done `43cd17c`, merged with this commit from `fix/qa-33-39`) (Medium, V) Gear Advisor: the weapon setup always starts One-handed + shield
       (`gear-advisor.jsx` `useState('one-handed')`), so an unedited Spear scout is offered
       Keening (short blade) and Darksun Shield. Start from the build's own weapon (Spear and
       Marksman two-handed; others one-handed); the player's choice still wins.
-- [ ] **C** QA-34 (Medium) Alchemy, TR reverse pairs at 1366 in Morrowind UI: the "Show more
+- [x] **C** QA-34 (started 2026-10-02 18:50 UTC, Codex; done `c66658e`, merged with this commit from `fix/qa-33-39`) (Medium) Alchemy, TR reverse pairs at 1366 in Morrowind UI: the "Show more
       pairs" area overlaps the third pair (also after Showing 12 → 24); scrolling reveals it.
-- [ ] **C** QA-35 (Low, both themes, 375 px) Labels break mid-word: Home "Rac/e"; Builder
+- [x] **C** QA-35 (started 2026-10-02 18:50 UTC, Codex; done `24a6b1b`, merged with this commit from `fix/qa-33-39`) (Low, both themes, 375 px) Labels break mid-word: Home "Rac/e"; Builder
       "Renam/e", "Cop/y", "Clea/r" and "Specializatio/n: Magic". Same family as SS-09/QA-29.
-- [ ] **C** QA-36 (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
+- [x] **C** QA-36 (started 2026-10-02 18:50 UTC, Codex; done `cfdc2a3`, merged with this commit from `fix/qa-33-39`) (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
       ("TRANSIT MAP28 mapped locations"), "Azura's Coast" is clipped, and the region and legend
       text is tiny and low-contrast.
-- [ ] **C** QA-37 (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
+- [x] **C** QA-37 (started 2026-10-02 18:50 UTC, Codex; done `9b15341`, merged with this commit from `fix/qa-33-39`) (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
       Lady Spellsword, target 55). Follow-up to QA-27's formatter.
-- [ ] **C** QA-38 (Low) Faction Journal details still say "1 ranks" (Twin Lamps); search was
+- [x] **C** QA-38 (started 2026-10-02 18:50 UTC, Codex; done `4382a01`, merged with this commit from `fix/qa-33-39`) (Low) Faction Journal details still say "1 ranks" (Twin Lamps); search was
       fixed in SS-10.
-- [ ] **C** QA-39 (Low, copy) For an edited premade the endgame kit's line reads "ranked …
+- [x] **C** QA-39 (started 2026-10-02 18:50 UTC, Codex; done `319e2d8`, merged with this commit from `fix/qa-33-39`) (Low, copy) For an edited premade the endgame kit's line reads "ranked …
       for your build's … class archetype (Based on Argonian male — Spear scout)". Say it is
       ranked for this character, without naming the source as its archetype.
 
