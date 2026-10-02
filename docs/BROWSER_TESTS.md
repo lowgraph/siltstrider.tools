@@ -422,6 +422,40 @@ and the runners clean up records and settings in their disposable database.
 The ordinary Vault suite also removes its synthetic tier overrides. No real
 Clerk session or remote API write is part of these suites.
 
+### QA-27–30: Health display and phone labels
+
+`scripts/qa-polish-browser-cases.cjs` runs with `--suite qa`. Use a separate
+output folder and a 120-second outer process bound for each world group:
+
+```powershell
+npm test -- --test-concurrency=4
+node scripts/test-browser.cjs --suite qa --filter 'QA-27/vanilla/' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa27-vanilla'
+node scripts/test-browser.cjs --suite qa --filter 'QA-28/tr/' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa28-tr'
+node scripts/test-browser.cjs --suite qa --filter 'QA-29/tr_arce/' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa29-arce'
+node scripts/test-browser.cjs --suite qa --filter 'QA-30/tr/' --axe-path 'A:\Cache\audit-tools\node_modules\axe-core\axe.min.js' --out 'A:\Cache\qa30-tr'
+```
+
+Repeat each item for `vanilla/`, `tr/` and `tr_arce/`. QA-27/28 have four
+cases per world (both themes, 1366/375 px); QA-29/30 have six (also 390 px).
+QA-27 checks formatted legend, SVG, accessible text and hovered endpoint values,
+including containment of the narrow readout. QA-28 checks targets 14/15/16 and
+milestone-label containment using keyboard range changes. QA-29 measures whole
+words and visible label bounds in both grouping modes and checks Enter/Space
+expansion with retained focus. QA-30 selects every catalog apparatus by canonical
+ID, measures its complete selected label with the loaded font and available
+control width, and checks Home/End/Escape keyboard interaction. Identical readable
+labels can represent different apparatus records; selection must retain each ID.
+
+Retain the existing `QA-03-04/level-health/build/`,
+`QA-04/level-health/bitter-cup/`, `QA-04/level-health/save/`, `QA-12/`, `QA-06/`
+and `QA-26/` groups, plus the bounded launch and local Vault groups above.
+Split edited-kit checks using `QA-26/endgame/vanilla/`, `QA-26/endgame/tr/`
+and `QA-26/endgame/tr_arce/`; the full twelve-case group can exceed the bound.
+For hydration, check Home and Builder by scenario and Level Simulator, Alchemy
+and Changelog by route. Reports retain bundle/commit metadata, screenshots,
+loaded fonts, overflow and scoped axe results. Exclude incomplete groups and
+rerun smaller filters rather than accepting partial output.
+
 The Vault runner waits for enabled shell controls after document load before
 dispatching modal events. Theme setup uses the synthetic identity installed for
 the next navigation, rather than the user on the departing page. An isolated
