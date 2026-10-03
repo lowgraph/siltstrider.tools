@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-03">October 3, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Level Simulator keeps the three-letter attribute names whole beside their priority arrows on phones.</li>
             <li>Home Health gains and equipment weights show tidy numbers while calculations keep their full precision. Choosing an equipment slot and Unequip are separate controls, so keyboard use of Unequip cannot open the item picker.</li>
             <li>Enchanting, Spellmaking and Faction Journal show Vanilla, Tamriel Rebuilt or TR + ARCE in their data status, instead of internal world codes.</li>
             <li>Faction Journal keeps the Blades row and its eligibility badge whole when first opened on a phone. Wrapped filters have their own space above the scrollable list.</li>

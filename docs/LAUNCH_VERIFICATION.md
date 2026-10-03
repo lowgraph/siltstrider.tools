@@ -4025,3 +4025,18 @@ new/previous-item checks, 120 hydration checks and ten Vault checks, acceptance
 totals **429/429**, zero runtime/server errors. `accepted-summary.json` records
 the original failure and the exact six superseding cases; failing evidence is
 retained. This is branch verification, not the complete freeze-day suite.
+## 77. QA-48–50 and QA-52 layout follow-ups — 3 October 2026
+
+Branch `fix/qa-46-47-43-51`, continuing from `a87e698`; no merge or deployment.
+Evidence is under `A:\Cache\qa48-50-52`. Staged bundle, schemas and production
+state are unchanged.
+
+QA-48 reproduced at 375 px in the Morrowind theme: `END` occupies two lines.
+The abbreviation now stays whole; slightly tighter tile padding and spacing
+leave room for both arrows without reducing their size. Chrome checks all eight
+labels, containment, separation, reorder behavior and boundary buttons in all
+three worlds, both themes, and 375/390/1366 px with touch and axe. Final acceptance
+passes **18/18**; initial failing evidence is retained in `qa48-before/` and
+`qa48-browser/`, accepted evidence in `qa48-final/`. Three unit cases preserve
+first/middle/last swaps, boundary controls and the original priority array.
+

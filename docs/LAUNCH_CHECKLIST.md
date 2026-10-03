@@ -599,7 +599,7 @@ Merge by Sunday 4 October; Monday is the freeze.
       (`equipment-slot-card.jsx` `item.weight`). Format both with QA-27's formatter.
 
 Optional, if time allows by Sunday; otherwise after launch (all confirmed live):
-- [ ] **C** QA-48 (started 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, Morrowind UI, 375 px, 3/3) Level Simulator attribute-priority tiles break
+- [x] **C** QA-48 (started 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §77) (Low, Morrowind UI, 375 px, 3/3) Level Simulator attribute-priority tiles break
       the abbreviations: "EN/D", "ST/R", "AG/I", "SP/D", "WI/L", "PE/R", "IN/T", "LU/C".
 - [ ] **C** QA-49 (claimed 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, 375 px, 18/18) Enchanting's ranked enchanter list cuts names and places
       with ellipses ("Audenian Valius (vivec, telvanni ench…"); let them wrap.

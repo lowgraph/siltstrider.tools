@@ -46,7 +46,7 @@ const AREAS = [
     run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-Copy/'), run('qa', 'Clarity-FLOW04/'), run('qa', 'FLOW-04/save-check/'), run('qa', 'QA-42/'), run('qa', 'QA-45/')] },
   { area: 'Level Simulator', match: /level-simulator|level-math|leveler|health/i, runs: [
     run('qa', '/level-health/'), run('qa', 'QA-27/'), run('qa', 'QA-28/'), run('launch', 'SS-09/'),
-    run('tools', 'Faction and Level interactions'), run('qa', 'QA-37/'), run('qa', 'QA-41/'), run('qa', 'Clarity-Beginner/')] },
+    run('tools', 'Faction and Level interactions'), run('qa', 'QA-37/'), run('qa', 'QA-41/'), run('qa', 'QA-48/'), run('qa', 'Clarity-Beginner/')] },
   { area: 'Gear Advisor', match: /best-in-slot|gear-|equipment/i, runs: [
     run('qa', 'QA-08/'), run('qa', 'QA-10/'), run('qa', 'QA-26/'), run('qa', 'QA-33/'), run('qa', 'QA-35/'), run('qa', 'QA-39/'), run('qa', 'QA-40/'), run('qa', 'QA-45/'), run('qa', 'QA-51/')] },
   { area: 'Builder and character', match: /character-builder|character-(context|name|math|sheet)|premade|configurator|choice-help|class-|birthsign|race-/i, runs: [

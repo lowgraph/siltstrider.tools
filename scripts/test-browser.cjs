@@ -840,6 +840,7 @@ async function polishRegression() {
   if (suite === 'qa') await require('./qa40-41-flow04-browser-cases.cjs')(qaContext);
   if (suite === 'qa') await require('./qa42-45-browser-cases.cjs')(qaContext);
   if (suite === 'qa') await require('./qa46-51-browser-cases.cjs')(qaContext);
+  if (suite === 'qa') await require('./qa48-50-52-browser-cases.cjs')(qaContext);
   if (suite === 'touch') await require('./qa-browser-cases.cjs').touch(qaContext);
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) { await cityStopRegression(); await longJourneyRegression(); await travel(); }

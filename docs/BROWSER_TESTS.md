@@ -649,3 +649,10 @@ an imported ring and equipped late-game recommendations in all worlds, both
 themes and 1366/375 px (12 cases). Display has at most one decimal and the stored
 save is unchanged. Axe covers the equipped kit; click, Enter and Space open the
 slot chooser, Escape closes it, and keyboard Unequip does not open the chooser.
+## QA-48–50 and QA-52 phone and panel layout
+
+On the local server, run `node scripts/test-browser.cjs --suite qa --filter 'QA-48/' --touch`
+with the usual `--axe-path` and `--out` options. QA-48 measures all eight priority
+abbreviations and arrow boxes at 375, 390 and 1366 px in all three worlds and
+both themes, then moves an attribute down and back and checks the end controls.
+
