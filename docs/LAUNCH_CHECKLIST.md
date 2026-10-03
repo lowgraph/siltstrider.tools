@@ -590,10 +590,10 @@ Merge by Sunday 4 October; Monday is the freeze.
 - [x] **C** **QA-47** (started 2026-10-03 19:21 UTC, Codex, on `fix/qa-46-47-43-51`; done `3a03190`, LAUNCH_VERIFICATION §76) (Low; QA-45 remainder; confirmed live 3/3 and in code) "TR_ARCE" still shows
       in the Enchanting, Spellmaking and Faction Journal status lines
       (`profile.toUpperCase()`). Use `worldLabel` as Alchemy now does.
-- [x] **C** **QA-43 remainder** (started 2026-10-03 19:27 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §76) (Low-Medium, 375 px, 9/9 in Morrowind UI, also Modern) The
+- [x] **C** **QA-43 remainder** (started 2026-10-03 19:27 UTC, Codex, on `fix/qa-46-47-43-51`; done `3d7725b`, LAUNCH_VERIFICATION §76) (Low-Medium, 375 px, 9/9 in Morrowind UI, also Modern) The
       "Viewing Fighters Guild" bar still covers the lower Blades row and its "Eligible to Join"
       badge.
-- [ ] **C** **QA-51** (claimed 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`) (Low; same family as QA-27/41) Floating-point noise outside the Level
+- [x] **C** **QA-51** (started 2026-10-03 19:34 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §76) (Low; same family as QA-27/41) Floating-point noise outside the Level
       Simulator: Home's Health card "+33.400000000000034 Health by level 30"
       (`home-tools.jsx` `health.gain`), and recommended-kit ring weights "0.10000000149011612 w"
       (`equipment-slot-card.jsx` `item.weight`). Format both with QA-27's formatter.

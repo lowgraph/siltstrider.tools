@@ -71,4 +71,41 @@ module.exports=async c=>{
     c.assertAccessible(await c.audit(`QA-43-remainder-${profile}-${width}-${theme}`));await c.screenshot(`QA-43-remainder-${profile}-${width}-${theme}`);
     return {initial,visible,last,badgeHit:true,selection:true,emptySearch:true};
   });
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-51/${profile}/${width}/${theme}`,async()=>{
+    const {loader,save}=require('../test/helpers/qa-staged-data.cjs');const raw=save();raw.identity.name='QA – Fractional preview';
+    if(profile!=='vanilla')raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm');
+    if(profile==='tr_arce')raw.contentFiles.push('ARCE - All Races and Classes Enabled.esp');
+    const end=raw.build.attributes.find(a=>a.id==='Endurance');end.base=end.value=33;
+    raw.stuff.inventory.push({id:"adusamsi's_ring",count:1,soul:null,equipped:true,slot:'LeftRing'});
+    const {createCharacterCatalogService}=await import('../lib/character-catalogs.mjs');const catalogs=await createCharacterCatalogService(await loader()).prepare(profile);
+    const {sheetFromSave,buildFromSave}=await import('../lib/omwsave-import.mjs');const build=buildFromSave(raw,catalogs,{profile}).build;
+    const {healthGap}=await import('../lib/home-data.mjs');const {formatHealth}=await import('../lib/chart-scale.mjs');
+    const gain=healthGap(sheetFromSave(raw,catalogs,build),catalogs).gain;
+    assert.ok(String(gain).split('.')[1]?.length>1,'The fixture exercises a fractional forecast, not an already tidy integer');
+    const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};assert.equal(await rememberSave(raw,{setItem:(k,v)=>storage[k]=v}),true);
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)});for(const [k,v] of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v)`);
+    await c.navigate('home',profile);await c.until('document.querySelector(".home-save--loaded")&&document.querySelector(".home-tool--leveler .home-big")');
+    const health=await c.evaluate('document.querySelector(".home-tool--leveler .home-big").textContent.trim()');assert.equal(health,`+${formatHealth(gain)}`);assert.match(health,/^\+\d+(?:\.\d)?$/);
+    await c.evaluate('document.querySelector(".home-tool--leveler").scrollIntoView({block:"center"})');c.assertAccessible(await c.audit(`QA-51-home-${profile}-${width}-${theme}`));await c.screenshot(`QA-51-home-${profile}-${width}-${theme}`);
+    await c.navigate('builder',profile);await c.builderTab('equipment');await c.until('document.querySelector(".equipment-studio-root [title=Weight]")');
+    const worn=await c.evaluate('[...document.querySelectorAll(".equipment-studio-root [title=Weight]")].map(s=>s.textContent.trim())');assert.ok(worn.includes('0.1 w'),'The imported ring displays its float32 weight to one decimal');
+    await c.builderTab('builder');if(width<1024)await c.button('Sheet');await c.until('document.querySelector("#gear-advisor")');
+    await c.button('Optimize Gear');await c.until(`[...document.querySelectorAll('#gear-advisor button')].some(b=>b.textContent.trim()==='Equip late-game recommendations →'&&!b.disabled&&Number(getComputedStyle(b).opacity)>=.99)`);
+    await c.button('Equip late-game recommendations →');await c.until('document.querySelector(".equipment-studio-root")?.textContent.includes("Recommended late-game gear")');
+    const weights=await c.evaluate('[...document.querySelectorAll(".equipment-studio-root [title=Weight]")].map(s=>s.textContent.trim())');assert.ok(weights.length>0);assert.ok(weights.includes('0.1 w'),'The recommended kit includes the fractional ring weight');
+    for(const weight of weights)assert.match(weight,/^\d+(?:\.\d)? w$/,'Every equipped slot uses tidy display precision');
+    assert.equal(await c.evaluate('localStorage.getItem("silt-active-save")'),storage['silt-active-save'],'Formatting keeps the stored save unchanged');
+    await c.evaluate('document.querySelector(".equipment-studio-root").scrollIntoView({block:"center"})');await c.waitForFonts();
+    assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);c.assertAccessible(await c.audit(`QA-51-kit-${profile}-${width}-${theme}`));await c.screenshot(`QA-51-kit-${profile}-${width}-${theme}`);
+    await c.evaluate(`(()=>{const choose=[...document.querySelectorAll('.equipment-studio-root [role=button]')].find(e=>e.textContent.includes('Left Ring'));choose.dataset.qaSlot='left-ring';choose.focus()})()`);
+    for(const key of ['Enter',' ']) {
+      await c.key(key,key==='Enter'?'Enter':'Space',key==='Enter'?13:32);await c.until('document.querySelector("[role=dialog]")');
+      await c.key('Escape','Escape',27);await c.until('!document.querySelector("[role=dialog]")');
+      await c.evaluate('document.querySelector("[data-qa-slot]").focus()');
+    }
+    await c.click('[data-qa-slot]');await c.until('document.querySelector("[role=dialog]")');await c.key('Escape','Escape',27);
+    await c.evaluate('document.querySelector(\'button[aria-label="Unequip Left Ring"]\').focus()');await c.key('Enter','Enter',13);
+    await c.until('!document.querySelector(\'button[aria-label="Unequip Left Ring"]\')');assert.equal(await c.evaluate('Boolean(document.querySelector("[role=dialog]"))'),false,'Unequip does not open the chooser');
+    return {rawGain:gain,displayedGain:health,worn,weights,storageUnchanged:true,chooserMouseKeyboard:true,unequipIndependent:true};
+  });
 };

@@ -3975,3 +3975,22 @@ testing, selection, last row, empty search and axe. The original `QA-43/` filter
 cases also pass **18/18**. Initial and corrected Morrowind screenshots reviewed.
 Evidence: `qa43-before-initial/`, `qa43-tests.log`, `qa43-final-browser/` and
 `qa43-existing-browser/`. The previously released QA-43 checklist entry is retained.
+
+QA-51 applies the QA-27 `formatHealth` display formatter to Home's `health.gain`
+and slot-card `item.weight` (aliased as `formatWeight`). Forecasts, catalog values
+and saved data retain their full precision. Seventeen regressions cover the
+reported numbers, fractions, integers, zero, unavailable/non-finite values and
+absent items/forecasts; seven fail before the formatting change.
+The first twelve browser cases reached every numeric assertion but failed the
+new equipped-kit axe audit: the existing slot chooser contained the Unequip
+button. Four additional control regressions pin that defect (two fail before
+the control change). Chooser and Unequip are now siblings in the same card,
+preserving its appearance; keyboard activation of Unequip no longer opens the
+picker. This small additional fix was required by the new equipped-kit audit.
+Relevant display, Health, Home, equipment, browser-plan and licence/claim checks
+pass **81/81**. Chrome acceptance passes **12/12** with all worlds, both themes,
+1366/375 px, touch, axe, unchanged saved data and independent chooser/Unequip
+keyboard behavior. The raw forecast `130.30000000000004` shows `+130.3`; imported
+and recommended ring weights `0.10000000149011612` show `0.1 w`.
+Evidence: `qa51-before.log`, `qa51-controls-before.log`, `qa51-tests.log`,
+`qa51-browser/` (initial axe failures), and `qa51-acceptance/` (accepted).

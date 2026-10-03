@@ -643,3 +643,9 @@ tools per case), including overflow, axe and screenshots.
 on first load, full-row/badge visibility and hit testing, selection, the last
 scrollable row and empty search in all worlds, both themes and 1366/375/390 px
 (18 cases). Keep the older `QA-43/` filtered-row checks as well.
+
+`--suite qa --filter 'QA-51/' --touch` checks the Home fractional Health forecast,
+an imported ring and equipped late-game recommendations in all worlds, both
+themes and 1366/375 px (12 cases). Display has at most one decimal and the stored
+save is unchanged. Axe covers the equipped kit; click, Enter and Space open the
+slot chooser, Escape closes it, and keyboard Unequip does not open the chooser.

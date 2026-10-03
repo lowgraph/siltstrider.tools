@@ -1,6 +1,7 @@
 "use client";
 import { BUILDS } from "../../lib/premade-data.mjs";
 import { HOME_TOOLS } from "../../lib/home-data.mjs";
+import { formatHealth } from "../../lib/chart-scale.mjs";
 
 const ICONS = {
   builder: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" /></>,
@@ -58,7 +59,7 @@ function Preview({ view, character, health, route, alchemy }) {
       return health ? (
         <div className="home-preview">
           <div className="home-preview-head">
-            <span className="home-big">+{health.gain}</span> Health by level {health.level} for {character.name} when Endurance goes first
+            <span className="home-big">+{formatHealth(health.gain)}</span> Health by level {health.level} for {character.name} when Endurance goes first
           </div>
           <HealthSpark health={health} />
           <div className="home-legend">

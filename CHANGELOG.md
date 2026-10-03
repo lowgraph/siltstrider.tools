@@ -2,6 +2,8 @@
 
 ## Launch follow-ups — 2026-10-03
 
+- Home Health gains and equipment weights show tidy numbers while calculations keep their full precision. Choosing an equipment slot and Unequip are separate controls, so keyboard use of Unequip cannot open the item picker.
+
 - Faction Journal keeps the Blades row and its eligibility badge whole when first opened on a phone. Wrapped filters have their own space above the scrollable list.
 
 - Enchanting, Spellmaking and Faction Journal show Vanilla, Tamriel Rebuilt or TR + ARCE in their data status, instead of internal world codes.
