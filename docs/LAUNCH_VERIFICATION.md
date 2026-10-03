@@ -3563,3 +3563,35 @@ px. A synthetic saved character with Endurance 33 shows `+3.8 HP Gain` and, afte
 advancing, `+3.8 Total HP Gained`. No overflow, runtime/server errors or scoped
 axe blockers. Phone screenshot reviewed. Evidence: `qa41-unit.log` and
 `qa41-browser/` under `A:/Cache/qa40-41-flow04`.
+
+### FLOW-04 — actual carried-item verification; no Travel fix
+
+Parsed the owner-provided `Pe.omwsave` (Ba'Ta, TR + ARCE), 25,333,080 bytes,
+format 37, using the site's parser. SHA-256:
+`bd63759565d68ace72d832736a7d58062d3e5dcccda9abb04efb111dc8a0fae5`.
+Its player inventory has **69 records, all with positive counts**, no parser
+warnings, and **zero matches among the 39** non-quest teleport requirements.
+No Propylon index or supported teleporting item is carried. The save's installed
+`master_index.esp` does not grant an index. Four Divine Intervention and four
+Almsivi Intervention scrolls belong to the separate consumable controls.
+“Items you carry (0 of 39)” is therefore correct, including after Use save defaults.
+The original file's hash is unchanged. No Travel application code or data changed.
+
+Validation: **42 relevant tests passed**, including seven new original-file,
+reduced-inventory, staged-world and edge checks. The reduced fixture commits only
+positive-count item IDs, not the full save, identity or journal. An opt-in test
+parses the original and checks its hash, contents and scroll quantities; fixture
+checks run without the personal file. **8/8 final Chrome cases pass**: original
+file imports and fixture controls × desktop/375 px × both themes. Each checks
+zero initially, Use save defaults, a keyboard-edited positive control, then reset
+to zero. Original imports use Vault's local file input, signed out; no cloud save.
+No overflow, runtime/server errors or scoped axe blockers. Phone screenshot reviewed.
+
+The first coordinate-based variants did not reliably open the native item
+disclosure in some Morrowind-theme runs, leaving the checkbox hidden. Those runs
+are retained as diagnostics and excluded from acceptance. Final inventory cases
+explicitly open the disclosure and use real Space-key events for the positive
+control. They do **not** establish mouse/touch disclosure acceptance; existing
+Travel interaction and freeze touch checks remain required. Evidence under
+`A:/Cache/qa40-41-flow04`: `flow04-unit.log`, `flow04-inventory/`; initial
+coordinate diagnostics: `flow04-browser/`, `flow04-accepted/`, `flow04-final/`.

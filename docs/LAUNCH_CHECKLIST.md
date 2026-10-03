@@ -564,11 +564,11 @@ Travel terms. Merge by Sunday 4 October, then deploy and retest; Monday is the f
       Neb-Crescen (long blade) correctly. Reproduce with the staged catalog
       (`resolveBestInSlotPicks`, weapon tier weights, `defaultWeaponSetup`). If the ranking is
       wrong, fix it (wrong answer); if Sunder wins for a stated reason, the kit must show it.
-- [x] **C** **QA-41** (started 2026-10-03 01:33 UTC, Codex, on `fix/qa-40-41-flow-04`; done with this commit, LAUNCH_VERIFICATION §70) (Low; regression from QA-03; confirmed in code) Level Simulator "Total HP
+- [x] **C** **QA-41** (started 2026-10-03 01:33 UTC, Codex, on `fix/qa-40-41-flow-04`; done `8425079`, LAUNCH_VERIFICATION §70) (Low; regression from QA-03; confirmed in code) Level Simulator "Total HP
       Gained" shows floating-point noise ("+131.99999999999997"):
       `progression-sheet.jsx` subtracts fractional Health without QA-27's formatter. Format
       it, and the itinerary card's "+N HP Gain" (`level-itinerary-card.jsx`), the same way.
-- [ ] **C** **FLOW-04 save check** (started 2026-10-03 02:02 UTC, Codex, on `fix/qa-40-41-flow-04`; verify only) The retest's Pe.omwsave (Ba'Ta, TR + ARCE) showed
+- [x] **C** **FLOW-04 save check** (started 2026-10-03 02:02 UTC, Codex, on `fix/qa-40-41-flow-04`; verified with this commit: no listed item carried, no Travel change; LAUNCH_VERIFICATION §70) The retest's Pe.omwsave (Ba'Ta, TR + ARCE) showed
       "Items you carry (0 of 39)" with no Propylon index ticked, even after "Use save
       defaults", while the page says "A loaded save ticks the ones in its pack". Check
       whether that save carries any listed item. If it does and nothing is ticked, it is a

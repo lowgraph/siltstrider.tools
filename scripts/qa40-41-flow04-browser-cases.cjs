@@ -45,4 +45,41 @@ module.exports=async c=>{
     assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);c.assertAccessible(await c.audit(`QA-41-${profile}-${width}-${theme}`));await c.screenshot(`QA-41-${profile}-${width}-${theme}`);
     return {itinerary,total,fractionRetained:true};
   });
+  for(const source of ['fixture',...(process.env.QA_FLOW04_SAVE_PATH?['original']:[])])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`FLOW-04/save-check/${source}/${width}/${theme}`,async()=>{
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    const inventory=require('../test/fixtures/flow04-inventory.cjs');
+    if(source==='original'){
+      await c.navigate('vault','tr_arce');await c.until('document.querySelector(".open-save-panel input[type=file]")');
+      const {root}=await c.send('DOM.getDocument');const {nodeId}=await c.send('DOM.querySelector',{nodeId:root.nodeId,selector:'.open-save-panel input[type=file]'});
+      assert.ok(nodeId);await c.send('DOM.setFileInputFiles',{nodeId,files:[process.env.QA_FLOW04_SAVE_PATH]});
+      await c.until('localStorage.getItem("silt-active-save")');
+    }else{
+      const raw=require('../test/helpers/qa-staged-data.cjs').save();raw.identity.name='QA – No carried teleport items';
+      raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm','ARCE - All Races and Classes Enabled.esp','master_index.esp');
+      raw.stuff.inventory=inventory.ids.map(id=>({id,count:1}));
+      const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};assert.equal(await rememberSave(raw,{setItem:(k,v)=>storage[k]=v}),true);
+      await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v)`);
+    }
+    await c.navigate('travel','tr_arce');await c.until('document.querySelector("#travel-options")');
+    if(!await c.evaluate('document.querySelector("#travel-options").open'))await c.click('#travel-options > summary');
+    await c.until('[...document.querySelectorAll("#travel-options summary")].some(s=>s.textContent.includes("Items you carry (0 of 39)"))');
+    await c.evaluate('[...document.querySelectorAll("#travel-options summary")].find(s=>s.textContent.includes("Items you carry")).parentElement.dataset.flow04Items="true"');
+    const initiallyOpen=await c.evaluate('document.querySelector("[data-flow04-items]").open');
+    // This case verifies inventory/defaults. Pointer/touch disclosure coverage
+    // belongs to the existing Travel interaction suites, not this setup step.
+    await c.evaluate('document.querySelector("[data-flow04-items]").open=true');
+    await c.until('document.querySelector("[data-flow04-items]").open');
+    const read=()=>c.evaluate('({summary:document.querySelector("[data-flow04-items] > summary").textContent.trim(),total:document.querySelectorAll("[data-flow04-items] input").length,checked:document.querySelectorAll("[data-flow04-items] input:checked").length})');
+    assert.deepEqual(await read(),{summary:'Items you carry (0 of 39)',total:39,checked:0});
+    await c.button('Use save defaults');await c.idle();await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===0');
+    assert.equal(await c.evaluate('document.querySelector("[data-flow04-items]").open'),true,'The items disclosure remains open before editing');
+    await c.evaluate('document.querySelector("[data-flow04-items] input").focus()');await c.key(' ','Space',32);
+    await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===1');
+    await c.button('Use save defaults');await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===0');
+    assert.deepEqual(await read(),{summary:'Items you carry (0 of 39)',total:39,checked:0});
+    await c.evaluate('document.querySelector("[data-flow04-items]").scrollIntoView({block:"center"})');
+    assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);c.assertAccessible(await c.audit(`FLOW-04-${source}-${width}-${theme}`));await c.screenshot(`FLOW-04-${source}-${width}-${theme}`);
+    if(source==='original')assert.equal(require('node:crypto').createHash('sha256').update(require('node:fs').readFileSync(process.env.QA_FLOW04_SAVE_PATH)).digest('hex'),inventory.sha256);
+    return {source,initiallyOpen,carriedRecords:69,listedItems:39,matchedItems:0,resetRestoresZero:true};
+  });
 };

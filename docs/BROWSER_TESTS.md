@@ -591,3 +591,13 @@ Gained` in the sheet. All three worlds, both themes, 1366/375 px: 12 cases.
 The arithmetic remains fractional; `test/qa41-health-gain-display.test.js` pins
 the reported 131.99999999999997 total, fractional/zero baselines, unavailable
 values and unchanged inputs using the actual rendered components.
+
+`--suite qa --filter 'FLOW-04/save-check/'` checks the reduced 69-item inventory
+fixture against the 39 TR + ARCE teleport items at 1366/375 px, both themes.
+It starts with zero selected items, checks Use save defaults, uses Space to edit
+one checkbox and resets it to zero. Disclosure opening is test setup, not
+pointer/touch acceptance. Set `QA_FLOW04_SAVE_PATH` to a local `Pe.omwsave` path
+to add four original-file imports through Vault's local Open Save File input;
+the file is not uploaded or changed. The original-file unit check is likewise
+opt-in; the reduced fixture/staged checks always run. See §70 for the tested
+file's hash and the coordinate-click attempts excluded from the final results.
