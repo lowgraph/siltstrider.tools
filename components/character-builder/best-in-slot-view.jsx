@@ -1,6 +1,6 @@
 "use client";
 import { useState, Fragment } from "react";
-import { resolveBestInSlotPicks } from "../../lib/best-in-slot.mjs";
+import { resolveBestInSlotPicks, weaponScoreDetails } from "../../lib/best-in-slot.mjs";
 
 function formatQuestGrant(grant) {
   if (typeof grant !== "string") return String(grant);
@@ -33,7 +33,17 @@ function formatSource(source) {
   return "Placed in world";
 }
 
-function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
+function WeaponScoreExplanation({ entry, build, model }) {
+  const detail = weaponScoreDetails(entry.item, build, model, entry.pick?.score);
+  if (!detail) return null;
+  return (
+    <p className="weapon-score-explanation text-xs text-fg-8 leading-relaxed">
+      {detail.skill} — {detail.tier} skill. Damage score {detail.damageScore}; bonus score {detail.bonusScore}.
+    </p>
+  );
+}
+
+function BisPickRow({ slotLabel, topPick, alternatives = [], weaponBuild, model }) {
   const [showAlts, setShowAlts] = useState(false);
   const item = topPick.item || {};
   const pick = topPick.pick || {};
@@ -74,6 +84,8 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
               <span className="text-xs text-fg-11 font-mono">[{stats.join(" · ")}]</span>
             )}
           </div>
+
+          {weaponBuild && <WeaponScoreExplanation entry={topPick} build={weaponBuild} model={model} />}
 
           {/* Constant effects description */}
           {effectsSummary && (
@@ -152,6 +164,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
                 {aPick.score != null && (
                   <span className="ml-2 font-mono text-fg-10">Score: {aPick.score}</span>
                 )}
+                {weaponBuild && <WeaponScoreExplanation entry={alt} build={weaponBuild} model={model} />}
               </td>
               <td data-label="Acquisition & Location" className="py-1.5 px-3">{formatSource(aItem.source)}</td>
             </tr>
@@ -219,6 +232,13 @@ export function BestInSlotView({
               {group.label}
             </h4>
 
+            {group.label === 'Optimized Weapons' && (
+              <p className="weapon-score-help text-xs text-fg-8 leading-relaxed">
+                Score combines weapon damage and item bonuses; it is not a damage-per-second estimate.
+                Strong bonuses can outweigh using a Major or Minor weapon skill. Check the skill fit below.
+              </p>
+            )}
+
             <div className="overflow-x-auto">
               <table className="gear-table w-full text-left border-collapse border border-line-12 bg-surface-3" aria-label={`Endgame equipment: ${group.label}`}>
                 <thead>
@@ -239,6 +259,8 @@ export function BestInSlotView({
                         slotLabel={row.slotLabel}
                         topPick={topPick}
                         alternatives={alternatives}
+                        weaponBuild={row.slotKey === 'weapon' ? build : null}
+                        model={featureData.metadata?.BestInSlot?.model}
                       />
                     );
                   })}

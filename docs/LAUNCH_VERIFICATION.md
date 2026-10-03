@@ -3481,3 +3481,40 @@ sentences), the Imperial lore sentence (probably the game's own description, sho
 published; check the catalog text before editing it), and
 observations the agent itself could not reproduce. Triage: checklist section 5 item 19
 (QA-40, QA-41, FLOW-04 save check) and section 4 (QA-42 to QA-45).
+
+## 70. QA-40, QA-41 and FLOW-04 save verification — 3 October 2026
+
+Work is on `fix/qa-40-41-flow-04`, from freshly fetched main `f5ca4af`.
+The owner requested these three items in order, relevant suites between items,
+a commit after each item, then a branch push. Production stays at `672c0d3`;
+no deployment, migration, schema, scoring-policy or catalog rebuild is included.
+
+### QA-40 — explain a bonus-heavy weapon's skill fit
+
+Reproduced the exact Nord Warrior Spearman edit (Major skill 1: Spear → Long Blade).
+`defaultWeaponSetup` correctly changes to One-handed + shield. The staged model
+weights Major/Minor/Miscellaneous weapon damage at 8/5/1, capped at damage 60.
+Sunder's score 22.2 is consistent with that policy: damage contributes 1;
+Strength 20 and Endurance 20 contribute 6.4 each, Attack 30 contributes 6,
+Luck 20 contributes 2.4. Its bonuses total 21.2. TR/ARCE's Neb-Crescen wins at
+23.73: 7.73 from Major Long Blade damage and 16 from bonuses.
+
+The ranking and published candidates are unchanged. `weaponScoreDetails` shares
+the existing damage contribution with `scoreItem`; the kit now shows each weapon's
+skill tier and damage/bonus score. Primary and expanded runner-up rows have their
+own explanation. Nearby help says that strong bonuses can outweigh a class skill
+and that this score is not a DPS estimate. Missing/invalid metadata does not
+invent a breakdown; incompatible older named scores are handled conservatively.
+
+Validation: 70 relevant gear/edited-premade/weapon-default/transfer/claims tests
+passed, including 11 new QA-40 cases. Synthetic cases cover all skill tiers,
+zero/fractional damage, malformed inputs and missing/incompatible metadata;
+three staged checks pin the exact reported winners and scores. Twelve Chrome
+cases pass across Vanilla, TR and TR + ARCE, 1366/375 px and both themes, including
+runner-ups, overflow and scoped axe audits. The Vanilla phone screenshot was reviewed.
+The initial browser setup used a short skill label and then waited before opening
+the lazy gear catalogs; those harness attempts are excluded. The accepted setup
+selects the full displayed skill label, opens the intended section and loads gear.
+
+Evidence: `A:/Cache/qa40-41-flow04/qa40-model-before.jsonl`, `qa40-unit.log`,
+`qa40-relevant.log` and the complete `qa40-accepted/` report/screenshots.

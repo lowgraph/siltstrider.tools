@@ -14,6 +14,12 @@ export default function ChangelogView() {
 
       <div className="space-y-6 text-sm text-fg-2">
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
+          <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-03">October 3, 2026</time></h3>
+          <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Optimized weapons show their Major, Minor or Miscellaneous skill and explain how weapon damage and item bonuses contribute to the gear score. Powerful bonuses can put an off-skill weapon first.</li>
+          </ul>
+        </section>
+        <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-02">October 2, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
             <li>Cloud Vault cards show the location recorded by the save instead of always saying Vvardenfell; a character with no recorded location says Not recorded.</li>

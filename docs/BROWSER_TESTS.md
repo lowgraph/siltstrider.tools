@@ -571,3 +571,13 @@ the implementation; build separately before applying a bounded browser run.
 Keep the existing QA-10 gear eligibility cases, including compatible open helmets,
 and QA-09 mouse/touch popovers. Full preparation still runs all suites and every
 local Vault mode; these additions do not replace existing regression coverage.
+
+`--suite qa --filter 'QA-40/'` edits Nord Warrior Spearman's first Major skill
+from Spear to Long Blade in all three worlds, both themes and 1366/375 px (12 cases).
+It selects Configure and Sheet explicitly and opens the lazy gear catalogs before
+checking the kit. Vanilla's Sunder retains score 22.2 with Miscellaneous Blunt
+Weapon, damage score 1 and bonus score 21.2; TR/ARCE's Neb-Crescen retains 23.73
+with Major Long Blade, damage score 7.73 and bonus score 16. Runner-ups explain
+their own skill fit, and the page distinguishes gear score from expected DPS.
+Use `test/qa40-weapon-explanation.test.js` for the staged model and synthetic edge
+cases; missing data is skipped only when the bundle pointer is absent.

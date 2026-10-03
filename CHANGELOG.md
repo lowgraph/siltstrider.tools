@@ -1,5 +1,9 @@
 # Changelog
 
+## Launch follow-ups — 2026-10-03
+
+- Optimized weapons show their Major, Minor or Miscellaneous skill and explain how weapon damage and item bonuses contribute to the gear score. Powerful bonuses can put an off-skill weapon first.
+
 ## Launch polish — 2026-10-02
 
 - Cloud Vault cards show the location recorded by the save instead of always saying Vvardenfell; a character with no recorded location says Not recorded.
