@@ -2,6 +2,8 @@
 
 ## Launch follow-ups — 2026-10-03
 
+- Faction Journal gives phone roster rows room to show their full details above the Viewing bar, while keeping the roster and dossier independently scrollable. Empty searches announce that no factions were found.
+
 - Travel keeps compressed map distances in the legend, so they no longer cover region or town names on phones.
 
 - Level Simulator shows tidy Health gains in the character sheet and each level step, while retaining fractional Health in calculations.

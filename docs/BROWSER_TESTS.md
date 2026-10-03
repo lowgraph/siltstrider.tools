@@ -5,6 +5,11 @@ gap legend across all worlds, both themes and 1366/375/390 px. Gap annotations
 must not overlap region or settlement labels, and their explanation stays below
 the map. Reports and screenshots belong in `A:/Cache/qa42-45`.
 
+`--suite qa --filter 'QA-43/'` uses the same matrix for Faction Journal. It
+requires room for a whole Ashlanders row, contains roster scrolling above the
+Viewing bar, checks the attribute line by hit-testing, and audits both populated
+and empty searches while preserving the selected dossier.
+
 Start `npm run dev` on port 8765. With Node 22 or newer, an installed Chrome and
 an existing axe-core script, run from the site repository in PowerShell:
 

@@ -54,7 +54,7 @@ const AREAS = [
     run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-F04-F11/'), run('qa', 'Clarity-Copy/')] },
   { area: 'Faction Journal', match: /faction|journal/i, runs: [
     run('qa', 'QA-11/'), run('qa', 'QA-20/ranks'), run('launch', 'SS-08/'), run('launch', 'SS-10/'),
-    run('tools', 'Faction and Level interactions'), run('qa', 'QA-38/'), run('qa', 'Clarity-FLOW03/')] },
+    run('tools', 'Faction and Level interactions'), run('qa', 'QA-38/'), run('qa', 'Clarity-FLOW03/'), run('qa', 'QA-43/')] },
   { area: 'Challenge Runs', match: /challenge/i, runs: [run('launch', 'UI-03'), vault()] },
   { area: 'About', match: /about-view|seo-breadcrumbs/i, runs: [run('qa', 'QA-15/')] },
   { area: 'Search', match: /search/i, runs: [run('qa', 'QA-32/'), run('launch', 'SS-10/'), run('launch', 'ingredient-labels')] },

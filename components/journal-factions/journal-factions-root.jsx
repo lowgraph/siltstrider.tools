@@ -314,9 +314,9 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
       </p>}
 
       {/* Main Split-Pane Workspace */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
         {/* Left Pane: Roster (320px on desktop) */}
-        <div className="w-full md:w-80 md:min-w-[300px] h-64 md:h-full border-b-2 md:border-b-0 md:border-r-2 border-line-4 flex flex-col">
+        <div className="faction-roster-container w-full md:w-80 md:min-w-[300px] h-80 md:h-full shrink-0 min-h-0 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-line-4 flex flex-col">
           <FactionRoster
             factions={factionsList}
             selectedFactionKey={selectedFactionKey}
@@ -331,7 +331,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
         </div>
 
         {/* Right Pane: Dossier Detail View */}
-        <div className="flex-1 h-full overflow-hidden flex flex-col">
+        <div className="flex-1 min-h-0 md:h-full overflow-hidden flex flex-col">
           <div className="faction-active-label shrink-0 px-4 py-2 border-b border-line-9 bg-surface-6 text-sm font-serif text-fg-2" role="status" aria-live="polite" aria-atomic="true">
             {selectedFaction ? <>Viewing <strong className="text-accent">{selectedFaction.name || selectedFaction.key}</strong></> : 'Select a faction to view its details.'}
           </div>

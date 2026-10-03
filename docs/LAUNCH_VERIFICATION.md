@@ -3651,3 +3651,26 @@ in `qa42-browser/` and excluded. Accepted report: `qa42-final/`.
 Evidence under `A:/Cache/qa42-45`: `qa42-before-unit.log`, `qa42-before/`,
 `qa42-unit.log`, `qa42-final/`. Tests: `test/travel-map-break-labels.test.js`;
 Chrome group `QA-42/`, selected by the Travel browser planner.
+
+### QA-43 — room for whole faction rows
+
+Reproduced the clipping at 375 px, Morrowind: the roster's scroll viewport is
+78 px high, while Ashlanders' row is 84 px. The Viewing bar is actually below
+the roster, rather than overlapping its measured box; the row cannot fit fully
+before that boundary. The mobile roster now has a 320 px container, does not
+shrink, and contains its own scrolling list. Search and category controls retain
+their size; the workspace and dossier can shrink to their available height.
+Desktop columns, active selection, memberships and promotion rules are preserved.
+
+The empty-search audit also reproduced an invalid empty `listbox`; the empty
+roster now uses `status`, while populated rosters retain selectable options.
+**44 relevant tests pass**, including four new accessibility cases for empty
+catalog/search/memberships and a populated frozen-input selection. **18/18 final
+Chrome cases pass**, all worlds, both themes, 1366/375/390 px: whole-row space,
+contained scrolling, readable/clickable Agility · Endurance, selection and empty
+search announcements, no page overflow, runtime/server errors or axe blockers.
+TR's Morrowind phone screenshot was reviewed. The initial accessibility failure
+and the 78/84 px measurement are retained in `qa43-before/` and `qa43-before2/`.
+Layout-only `qa43-final/` passed before the empty-state change; accepted combined
+report is `qa43-accepted/`. Evidence: `qa43-final-unit.log`,
+`test/faction-roster-empty.test.js`, Chrome group `QA-43/` in the Faction planner.
