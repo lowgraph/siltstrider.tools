@@ -1,5 +1,23 @@
 # Coordination
 
+## QA-40–45 release and recovery — 3 October
+
+Site `65cbd0e` is live as Worker `e4c17cd3-29d4-40ef-950a-1ebefe21ebff` at
+100% since 2026-10-03 04:44:27 UTC. QA-40–45 and FLOW-04 verification are merged.
+Owner-selected code rollback: `56a07cb7-4daf-4e8c-8348-9da01b18cbdc` / `672c0d3`.
+Fresh D1 bookmark captured before deployment at 04:40:41 UTC:
+`00000075-00000000-000050f9-70d2f7430ff2fbd741a9720a50a676f6`.
+Preserve bundle `a29adea046e6086c2c7ee654`, migrations 0001–0007, bindings,
+secrets, API-only Worker routing and repository configuration. No data/schema
+change or migration ran; code rollback switches only the Worker version.
+All 60 signed-out live Chrome cases pass: unchanged/edited weapons in every
+world, fractional Health totals, QA-42–45 at 375 px with touch in both themes.
+TR's unchanged Spearman legitimately selects Minor-skill Askenhost (10 versus
+Blessed Spear's 8.53); preserve the bounded scoring, not a Major-only rule.
+Recovery, exact weapon results and retest evidence: site LAUNCH_VERIFICATION
+§§72–73. Shared UI_TRANSFORMATION is unchanged.
+First command: `node node_modules/wrangler/bin/wrangler.js deployments list --json`.
+
 ## Phone layout and player explanations — 3 October
 
 Continues on site `fix/qa-40-41-flow-04`: QA-42 `24d3a65`, QA-43 `1fb558f`,

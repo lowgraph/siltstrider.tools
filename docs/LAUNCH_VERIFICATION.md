@@ -11,17 +11,17 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `672c0d3` (QA-31/32, QA-33–39, beginner clarity and contained follow-ups; release verification in §68) |
-| Live Worker version | `56a07cb7-4daf-4e8c-8348-9da01b18cbdc`, tagged `672c0d3`; deployed at 100% on 2026-10-02 23:46:37 UTC (20:46:37 in São Paulo) |
+| Live commit | `65cbd0e` (QA-40–45 and FLOW-04 inventory verification; release verification in §73) |
+| Live Worker version | `e4c17cd3-29d4-40ef-950a-1ebefe21ebff`, tagged `65cbd0e`; deployed at 100% on 2026-10-03 04:44:27 UTC (01:44:27 in São Paulo) |
 | Security headers | `public/_headers` retained; nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'` and HSTS verified live after this release; existing CSP, referrer policy and permissions policy unchanged |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9…`; corrected IngredientSources, existing extraction snapshot |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
-| D1 migrations | 0001–0007 applied; none pending before the 23:46 release; no migration ran |
-| D1 Time Travel bookmark | `00000074-00000000-000050f8-6b7a252ad77140777ca900210cc70b77`, captured 2026-10-02 23:42:41 UTC before this release; recovery record in §67, historical private migration backup and preservation checks in §15 |
-| Code rollback for the next release | Owner-selected `73df6e58-912e-48db-9786-5866ce793efd` / `250b1b5` (§67); Worker version switch only, database writes and migrations retained |
-| Pipeline repo | `master` / `origin/master` at `631aa2e`; correction `41da92c` included and shared release records synchronized |
+| D1 migrations | 0001–0007 applied; none pending before the 04:44 release; no migration ran |
+| D1 Time Travel bookmark | `00000075-00000000-000050f9-70d2f7430ff2fbd741a9720a50a676f6`, captured 2026-10-03 04:40:41 UTC before this release; recovery record in §72, historical private migration backup and preservation checks in §15 |
+| Code rollback for this release | Owner-selected previous live `56a07cb7-4daf-4e8c-8348-9da01b18cbdc` / `672c0d3` (§72); Worker version switch only, database writes and migrations retained |
+| Pipeline repo | `master` / `origin/master` at `6cf264e`; correction `41da92c` retained; shared COORDINATION synchronized with this release (§73), with no implementation or dataset change |
 
 Deployment history since the last tagged release before this batch:
 
@@ -56,10 +56,12 @@ Deployment history since the last tagged release before this batch:
 | `e29663d3-68eb-45ff-bbef-13447c3b0cbf` | 10-02 00:13 | `6fab4c5` | tagged; all implemented QA fixes and Morrowind game theme, 100% traffic; same bundle and database schema; recovery recorded before deployment (§48), live verification in §49 |
 | `73df6e58-912e-48db-9786-5866ce793efd` | 10-02 04:47 | `250b1b5` | tagged; QA-26, twelve checklist polish fixes, QA-27 through QA-30 (Health display formatting, END 100 milestone target, phone premade category wrapping, Alchemy apparatus label width); 100% traffic; same bundle and D1 schema; live verification in §58 |
 | `56a07cb7-4daf-4e8c-8348-9da01b18cbdc` | 10-02 23:46 | `672c0d3` | tagged; QA-31/32, QA-33–39, beginner clarity and contained follow-ups; §68 |
+| `e4c17cd3-29d4-40ef-950a-1ebefe21ebff` | 10-03 04:44 | `65cbd0e` | tagged; QA-40–45 and FLOW-04 inventory verification; 100% traffic; unchanged bundle and D1 schema; §§72–73 |
 
-For the current release, §67 records code rollback target `73df6e58` /
-`250b1b5`: switch the Worker version only. No database restore or migration is
-part of this rollback.
+For this release, §72 records the owner-selected previous live code rollback
+target `56a07cb7` / `672c0d3`: switch the Worker version only. No database restore
+or migration is part of this rollback. §67 retains the previous release's
+recovery record (`73df6e58` / `250b1b5`).
 
 For the earlier CALC-4 release, §26 records code rollback target `d523b9ba` / `216cd90`:
 the account-settings/tool-polish release immediately before CALC-4 and the new
@@ -3785,3 +3787,105 @@ previews are clean. Site item commits: QA-42 `24d3a65`, QA-43 `1fb558f`, QA-44
 assertions and runner state guards. COORDINATION is identical in both repositories;
 UI_TRANSFORMATION is identical and unchanged. Branches are prepared for push and
 merge review only; no merge, production write, deployment or migration ran.
+
+## 72. Recovery record before deploying `65cbd0e` — 3 October 2026
+
+The owner authorized deploying **`65cbd0ed519c7c06bf013cd9061232ca8087988b`**
+and selected the current live Worker **`56a07cb7-4daf-4e8c-8348-9da01b18cbdc`**
+as the code rollback target. This recovery record was written before deployment.
+
+| Recovery fact | Checked value |
+| --- | --- |
+| Selected rollback Worker | `56a07cb7-4daf-4e8c-8348-9da01b18cbdc`, tagged `672c0d3` |
+| Rollback code | `672c0d353414f078e499e199c44ca54c739b68be`; deployed 2026-10-02 23:46:37 UTC and independently confirmed at 100% before this release |
+| Release source | Clean `main` / `origin/main` at `65cbd0ed519c7c06bf013cd9061232ca8087988b` after fetch; identical tree to the fully verified branch tip `5f24b85` |
+| Staged bundle | `a29adea046e6086c2c7ee654`; staging validates all three profiles before switching the pointer |
+| Extraction snapshot | `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f` |
+| Production D1 | UUID `141a1409-3956-4267-a078-02483bbb2bf6`, existing `DB` binding |
+| Fresh D1 bookmark | `00000075-00000000-000050f9-70d2f7430ff2fbd741a9720a50a676f6`, captured 2026-10-03 04:40:41 UTC (01:40:41 in São Paulo) |
+| Migration state | 0001–0007 applied; Wrangler confirms no pending migrations |
+
+The production queries above are read-only. No database export, restore, migration
+or account write is included. A code rollback switches the Worker version only;
+it retains D1 data and migrations. The bookmark is a separate database recovery
+point, not an instruction to restore D1 during a code rollback.
+
+The production build uses the requested source commit, existing staged catalogs,
+production Clerk public key and unchanged repository configuration. Subsequent
+release-record commits change documentation only; deploy the already-built assets
+tagged `65cbd0e`, without rebuilding from a documentation commit.
+
+Evidence retained outside Git: `A:/Cache/release-65cbd0e/`, including
+`deployments-before.json`, `d1-info.json`, `migrations-before.log`, `bookmark.json`,
+`bookmark-captured-utc.txt`, `stage.log`, `current.json` and the immutable bundle.
+
+## 73. `65cbd0e` deployed to production — 3 October 2026
+
+Worker **`e4c17cd3-29d4-40ef-950a-1ebefe21ebff`**, tagged `65cbd0e`, serves
+100% of traffic from **2026-10-03 04:44:27 UTC** (01:44:27 in São Paulo).
+The build ran at the exact requested commit with only §72's recovery record
+uncommitted. No application, configuration, dataset or migration changed during
+the release. The completed bundle was validated and staged before building;
+the export contains the same `current.json` and immutable manifest as production.
+Recovery and owner-selected rollback `56a07cb7` / `672c0d3` are in §72.
+
+The Cloudflare build generated **24 static pages**; Worker dry run passed.
+The initial full site run passed **1,331 tests**, zero failures/TODOs, with the
+single original-save opt-in skipped. Final verification enables that check:
+**1,332 site tests pass, zero failures/skips/TODOs**. Pipeline verification passes
+**685 tests**. Logs: `unit-handoff.log` and `pipeline-release.log`.
+Deployment used project-local Wrangler 4.134.0, `--keep-vars`, the existing
+production Clerk public key, D1 binding, custom domains and API-only routing.
+
+### Short signed-out live retest
+
+**60/60 Chrome cases passed**, with no console errors, hydration warnings,
+uncaught exceptions, server errors or serious/critical axe violations. Fresh
+profiles and the production-read-only runner block API writes. Synthetic save
+data remains in browser localStorage; no account was signed in or changed.
+
+| Target | Cases | Result |
+| --- | --- | --- |
+| QA-40 primary weapons | 24 | Three unchanged premades and one edited build, all worlds, 1366 px, both themes; displayed item, skill tier, hand setup and score match reviewed staged rankings |
+| QA-41 Health gains/totals | 12 | All worlds, 1366/375 px, both themes; Endurance 33 fixture shows `+3.8 HP Gain` and `+3.8 Total HP Gained`, preserving fractions without arithmetic noise |
+| QA-42 phone map | 6 | All worlds, 375 px, both themes; compressed-gap legend below SVG, no overlapping gap annotations |
+| QA-43 phone faction roster | 6 | Whole Ashlanders row and Agility · Endurance line visible, contained scrolling, Viewing bar does not intercept it; selection and empty search pass |
+| QA-44 phone effect removal | 6 | Two/three effect cards; one-line Remove labels remain within their cards; actual removal preserves other effects |
+| QA-45 wording/status | 6 | Travel definitions and shared Cheapest explanation, Alchemy additional-effects/base-value wording and friendly world names; also rival House status and closest-archetype header |
+
+Phone cases use CDP touch emulation, mobile metrics (375 × 812), mobile user
+agent and touch events. TR map, faction roster, TR + ARCE Enchanting and Alchemy
+Morrowind screenshots were also inspected visually.
+
+Primary weapon results were identical in both themes:
+
+| Build | Vanilla | TR | TR + ARCE |
+| --- | --- | --- | --- |
+| Nord Warrior Spearman, unchanged | Blessed Spear, 8.53 (Major Spear) | Askenhost, 10 (Minor Axe) | Askenhost, 10 (Minor Axe) |
+| Redguard Long Blade Duelist, unchanged | Goldbrand, 6.67 (Major Long Blade) | Neb-Crescen, 15.47 (Major Long Blade) | Neb-Crescen, 15.47 (Major Long Blade) |
+| Bosmer Archer Assassin, unchanged | Auriel's Bow, 6.67 (Major Marksman) | Sunkindler, 7.87 (Major Marksman) | Sunkindler, 7.87 (Major Marksman) |
+| Nord Spearman, Major Skill 1 changed to Long Blade | Goldbrand, 6.67 (Major Long Blade) | Neb-Crescen, 15.47 (Major Long Blade) | Neb-Crescen, 15.47 (Major Long Blade) |
+
+The temporary weapon adapter initially assumed every winner must use a Major
+skill. Its two TR Spearman checks stopped at that local-model assertion before
+checking the live build. Review confirms Askenhost's bounded 5 damage + 5 bonus
+score exceeds Blessed Spear's 8.53, consistent with the intended Minor/Major
+trade-off (§70). The corrected complete TR matrix passes 8/8; the initial report
+is retained and excluded from acceptance. No application change was made.
+
+Nine HTTP smoke checks pass: Home/Builder, identical bundle pointer and manifest,
+signed-out GETs for all four protected APIs (401, no Set-Cookie or account data),
+and the www Builder redirect (301). All eleven referenced Builder JS/CSS assets
+match the local production export by SHA-256. Security headers are retained.
+QA-40–45 item commits were checked as ancestors of `65cbd0e` before marking
+them live. COORDINATION is copied identically and pushed to pipeline master as `6cf264e`;
+UI_TRANSFORMATION stays identical and unchanged.
+
+Evidence: `A:/Cache/release-65cbd0e/`: §72 recovery files, `build-source.txt`,
+`preflight-hashes.json`, `unit-preflight.log`, `build.log`, `dry-run.log`,
+`deploy.log`, `rollback-version.json`, `release-version.json`,
+`deployments-after.json`, `live-http.json`, `weapon-model-review.json`,
+`live-summary.json`, `live-weapons-vanilla/`, `live-weapons-tr-reviewed/`,
+`live-weapons-tr-arce/`, `live-health/` and `live-phone/`. Temporary Cache adapters
+were removed after verification; repository application files and the browser
+runner are unchanged.

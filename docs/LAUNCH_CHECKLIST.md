@@ -252,13 +252,13 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       ranked for this character, without naming the source as its archetype.
 
 *From the live retest of `672c0d3` (3 October; LAUNCH_VERIFICATION §69), if time allows by Sunday*
-- [x] **C** QA-42 (started 2026-10-03 02:44 UTC, Codex, on `fix/qa-40-41-flow-04`; done `24d3a65`, LAUNCH_VERIFICATION §71) (Low, both themes, 375 px; QA-36 remainder) TR / TR + ARCE Travel map: the
+- [x] **C** QA-42 (started 2026-10-03 02:44 UTC, Codex, on `fix/qa-40-41-flow-04`; done `24d3a65`, merged `65cbd0e`, live as `e4c17cd3`; LAUNCH_VERIFICATION §§71, 73) (Low, both themes, 375 px; QA-36 remainder) TR / TR + ARCE Travel map: the
       "≈78 cells" annotation overlaps "THIRSK" (Morrowind UI) and "FELSAAD COAST" (Modern UI).
-- [x] **C** QA-43 (started 2026-10-03 02:52 UTC, Codex, on `fix/qa-40-41-flow-04`; done `1fb558f`, LAUNCH_VERIFICATION §71) (Low-Medium, Morrowind UI, 375 px) Faction Journal: the sticky "Viewing Fighters
+- [x] **C** QA-43 (started 2026-10-03 02:52 UTC, Codex, on `fix/qa-40-41-flow-04`; done `1fb558f`, merged `65cbd0e`, live as `e4c17cd3`; LAUNCH_VERIFICATION §§71, 73) (Low-Medium, Morrowind UI, 375 px) Faction Journal: the sticky "Viewing Fighters
       Guild" bar covers part of a row ("Agility · Endurance" on Ashlanders).
-- [x] **C** QA-44 (started 2026-10-03 03:00 UTC, Codex, on `fix/qa-40-41-flow-04`; done `fb21798`, LAUNCH_VERIFICATION §71) (Low, both themes, 375 px) Enchanting with two effects: the "Remove" labels
+- [x] **C** QA-44 (started 2026-10-03 03:00 UTC, Codex, on `fix/qa-40-41-flow-04`; done `fb21798`, merged `65cbd0e`, live as `e4c17cd3`; LAUNCH_VERIFICATION §§71, 73) (Low, both themes, 375 px) Enchanting with two effects: the "Remove" labels
       wrap letter by letter and are clipped at the card edge.
-- [x] **C** QA-45 (started 2026-10-03 03:05 UTC, Codex, on `fix/qa-40-41-flow-04`; done `20fea8c`, LAUNCH_VERIFICATION §71) (Low, copy) Travel help: define Mark and Recall, Propylons and their indices,
+- [x] **C** QA-45 (started 2026-10-03 03:05 UTC, Codex, on `fix/qa-40-41-flow-04`; done `20fea8c`, merged `65cbd0e`, live as `e4c17cd3`; LAUNCH_VERIFICATION §§71, 73) (Low, copy) Travel help: define Mark and Recall, Propylons and their indices,
       and make the two Cheapest sentences agree. Alchemy: say what "additional effects" and
       "ingredient value" mean in the pair order; show "TR + ARCE", not "TR_ARCE", in the status
       line. Faction Journal: a rival House row shows both "Eligible to Join" and "Rival
@@ -558,17 +558,17 @@ The signed-out retest of `672c0d3` / `56a07cb7` (LAUNCH_VERIFICATION §69) passe
 QA-37, QA-38, FLOW-03, the QA-01/09/16 spot checks and every first-visit wording check except
 Travel terms. Merge by Sunday 4 October, then deploy and retest; Monday is the freeze.
 
-- [x] **C** **QA-40** (started 2026-10-03 01:20 UTC, Codex, on `fix/qa-40-41-flow-04`; initial explanation `9ca583c`; owner authorized scoring changes; done `982fd76`, LAUNCH_VERIFICATION §70) (Medium, V; investigate first) After editing Nord Warrior Spearman's Major
+- [x] **C** **QA-40** (started 2026-10-03 01:20 UTC, Codex, on `fix/qa-40-41-flow-04`; initial explanation `9ca583c`; owner authorized scoring changes; done `982fd76`, merged `65cbd0e`, live as `e4c17cd3`; LAUNCH_VERIFICATION §§70, 73) (Medium, V; investigate first) After editing Nord Warrior Spearman's Major
       Skill 1 from Spear to Long Blade, the Vanilla Optimized kit's primary weapon is Sunder
       ("Dmg 70 (blunt weapon)", score 22.2), a misc skill for that build; TR/TR + ARCE picked
       Neb-Crescen (long blade) correctly. Reproduce with the staged catalog
       (`resolveBestInSlotPicks`, weapon tier weights, `defaultWeaponSetup`). If the ranking is
       wrong, fix it (wrong answer); if Sunder wins for a stated reason, the kit must show it.
-- [x] **C** **QA-41** (started 2026-10-03 01:33 UTC, Codex, on `fix/qa-40-41-flow-04`; done `8425079`, LAUNCH_VERIFICATION §70) (Low; regression from QA-03; confirmed in code) Level Simulator "Total HP
+- [x] **C** **QA-41** (started 2026-10-03 01:33 UTC, Codex, on `fix/qa-40-41-flow-04`; done `8425079`, merged `65cbd0e`, live as `e4c17cd3`; LAUNCH_VERIFICATION §§70, 73) (Low; regression from QA-03; confirmed in code) Level Simulator "Total HP
       Gained" shows floating-point noise ("+131.99999999999997"):
       `progression-sheet.jsx` subtracts fractional Health without QA-27's formatter. Format
       it, and the itinerary card's "+N HP Gain" (`level-itinerary-card.jsx`), the same way.
-- [x] **C** **FLOW-04 save check** (started 2026-10-03 02:02 UTC, Codex, on `fix/qa-40-41-flow-04`; verified `2f1a202`: no listed item carried, no Travel change; LAUNCH_VERIFICATION §70) The retest's Pe.omwsave (Ba'Ta, TR + ARCE) showed
+- [x] **C** **FLOW-04 save check** (started 2026-10-03 02:02 UTC, Codex, on `fix/qa-40-41-flow-04`; verified `2f1a202`: no listed item carried, no Travel change; merged `65cbd0e`; LAUNCH_VERIFICATION §70) The retest's Pe.omwsave (Ba'Ta, TR + ARCE) showed
       "Items you carry (0 of 39)" with no Propylon index ticked, even after "Use save
       defaults", while the page says "A loaded save ticks the ones in its pack". Check
       whether that save carries any listed item. If it does and nothing is ticked, it is a
