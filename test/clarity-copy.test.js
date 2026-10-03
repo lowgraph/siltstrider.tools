@@ -25,6 +25,6 @@ for(const profile of ['vanilla','tr','tr_arce'])test(`U09: Clear search restores
 });
 test('U15: content-file help describes game plugins in full and compact imported-save notices',async()=>{
   const {renderToStaticMarkup}=require('react-dom/server');const activeSave=Object.freeze({contentFileCount:7,profile:'tr',save:{identity:{name:'QA – Save'}}});
-  const Notice=(await load('components/character-vault/save-import-notice.jsx',{'../character-context':{useActiveCharacter:()=>({activeSave,clearSave(){}})}})).default;
+  const Notice=(await load('components/character-vault/save-import-notice.jsx',{'../character-context':{useActiveCharacter:()=>({activeSave,clearSave(){}})},'./use-save-clear-confirmation':require('./helpers/save-clear-confirmation.cjs')})).default;
   for(const compact of [false,true]){const html=renderToStaticMarkup(React.createElement(Notice,{compact}));assert.match(html,/game, expansion and mod files.*not extra save files/);assert.match(html,/7 content files/);}
 });

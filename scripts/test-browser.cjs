@@ -196,8 +196,10 @@ async function matrix() {
       assert.equal(headings, 1, 'Exactly one page h1');
       const themes = [];
       for (const theme of ['ashfall', 'morrowind']) {
-        await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`); await pause(100);
+        await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
         await waitForFonts();
+        // A theme swap animates colors; axe must measure their final contrast.
+        await until('!document.getAnimations().some(a=>a.playState==="running"&&Number.isFinite(a.effect?.getComputedTiming().endTime))');
         assert.equal(await evaluate('document.documentElement.scrollWidth > innerWidth + 1'), false, `Overflow in ${theme}`);
         const notices = await audit(`${route}-${profile}-${width}-${theme}`);
         themes.push({ theme, notices });

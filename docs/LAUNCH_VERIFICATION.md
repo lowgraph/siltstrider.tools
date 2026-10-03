@@ -3948,6 +3948,9 @@ fixes; the production release and rollback records in §72–73 are unchanged.
 | Item | Cause and change | Verification |
 | --- | --- | --- |
 | QA-46 | Home and `SaveImportNotice` called `clearSave` immediately. Both now use the QA-31 confirmation dialog through `useSaveClearConfirmation`. Cancel/Escape preserve the copy and restore focus; confirmation removes only the active browser save, preserves the original file, and focuses the file opener or Builder main area. Replacing a save dismisses an obsolete confirmation. | Seven new regression cases (six fail before the fix); relevant unit, storage, dialog, browser-plan and claim/licence checks pass **57/57**. Chrome **36/36**, Home/Builder/Vault in all three worlds, 1366/375 px and both themes, with touch events, Cancel, Escape, confirmation, focus, storage, overflow and axe checks. No runtime/server errors. Phone Morrowind screenshots reviewed. |
+| QA-47 (`3a03190`) | The three remaining status lines exposed canonical profile keys; they now use `worldLabel`, with a defined calculator fallback. | **40/40** relevant tests; **12/12** Chrome cases (36 tool visits). Details below. |
+| QA-43 remainder (`3d7725b`) | Wrapped phone filters squeezed the list and clipped the initial Blades row; list height is now independent of them. | **61/61** relevant tests; **18/18** new and **18/18** original Chrome cases. Details below. |
+| QA-51 (`097100c`) | Home gains and slot weights bypassed the existing formatter; both now use it. Equipped-card controls are siblings after the new audit found a nested-control defect. | **81/81** relevant tests; **12/12** Chrome cases including axe and keyboard/tap controls. Details below. |
 
 Evidence: `A:/Cache/qa46-47-43-51/`, `qa46-before.log`, `qa46-final-tests.log`,
 and `qa46-vanilla/`, `qa46-tr/`, `qa46-tr-arce/` (reports, audits and screenshots).
@@ -3994,3 +3997,31 @@ keyboard behavior. The raw forecast `130.30000000000004` shows `+130.3`; importe
 and recommended ring weights `0.10000000149011612` show `0.1 w`.
 Evidence: `qa51-before.log`, `qa51-controls-before.log`, `qa51-tests.log`,
 `qa51-browser/` (initial axe failures), and `qa51-acceptance/` (accepted).
+
+Final preflight: site `npm test` passes **1,371/1,371**, zero skips or todos, with
+`QA_FLOW04_SAVE_PATH` pointing to the owner's unchanged original Pe.omwsave.
+The first full run exposed two older import maps missing the new confirmation
+hook; both now compile the actual hook through a shared test helper. The final
+run is `full-site-final.log`. `npm run build:cloudflare` passes, **24/24** static
+pages, staged bundle and repository configuration unchanged (`build.log`).
+Pipeline tests pass **685/685** (`pipeline-tests.log`). Signed-in local Worker/Vault
+passes **10/10**, zero runtime/server errors (`vault/`, `vault.log`). No real Clerk
+account or production writes were used. Home and Builder first-navigation
+hydration/console checks pass **120/120** (six storage/link scenarios, both
+widths/themes and ten fresh premade repeats per combination; `hydration-home/`,
+`hydration-builder/`).
+
+The broad browser run initially audited a Home button during a theme color
+transition. The matrix now waits for finite animations/transitions to finish,
+without disabling contrast checks. The six Home world/width cases rerun in both
+themes pass (`home-matrix-settled/`); original evidence remains in `broad-browser/`.
+Shared COORDINATION is identical and pushed on pipeline
+`handoff/qa-46-47-43-51` as `e4a1e5a`; UI_TRANSFORMATION is identical and unchanged.
+
+The broad `--suite all` finishes **202/203** initially, with only the transient
+Home contrast audit failing. Its other 197 cases plus the six accepted Home
+reruns give **203/203** accepted broad cases. Together with the 96 dedicated
+new/previous-item checks, 120 hydration checks and ten Vault checks, acceptance
+totals **429/429**, zero runtime/server errors. `accepted-summary.json` records
+the original failure and the exact six superseding cases; failing evidence is
+retained. This is branch verification, not the complete freeze-day suite.
