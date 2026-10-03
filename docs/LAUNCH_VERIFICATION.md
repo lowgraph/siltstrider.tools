@@ -11,17 +11,17 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `65cbd0e` (QA-40–45 and FLOW-04 inventory verification; release verification in §73) |
-| Live Worker version | `e4c17cd3-29d4-40ef-950a-1ebefe21ebff`, tagged `65cbd0e`; deployed at 100% on 2026-10-03 04:44:27 UTC (01:44:27 in São Paulo) |
+| Live commit | `e4bc16c` (QA-43 remainder and QA-46–52; release verification in §79) |
+| Live Worker version | `03e8ff80-d959-4668-bfd8-4e5d1d30093d`, tagged `e4bc16c`; deployed at 100% on 2026-10-03 22:37:44 UTC (19:37:44 in São Paulo) |
 | Security headers | `public/_headers` retained; nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'` and HSTS verified live after this release; existing CSP, referrer policy and permissions policy unchanged |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9…`; corrected IngredientSources, existing extraction snapshot |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
-| D1 migrations | 0001–0007 applied; none pending before the 04:44 release; no migration ran |
-| D1 Time Travel bookmark | `00000075-00000000-000050f9-70d2f7430ff2fbd741a9720a50a676f6`, captured 2026-10-03 04:40:41 UTC before this release; recovery record in §72, historical private migration backup and preservation checks in §15 |
-| Code rollback for this release | Owner-selected previous live `56a07cb7-4daf-4e8c-8348-9da01b18cbdc` / `672c0d3` (§72); Worker version switch only, database writes and migrations retained |
-| Pipeline repo | `master` / `origin/master` at `6cf264e`; correction `41da92c` retained; shared COORDINATION synchronized with this release (§73), with no implementation or dataset change |
+| D1 migrations | 0001–0007 applied; none pending before the 22:37 release; no migration ran |
+| D1 Time Travel bookmark | `00000076-00000000-000050f9-e58d9a5e015fb2bd7b9685f4ee5859ff`, captured 2026-10-03 22:32:15 UTC before this release; recovery record in §78, historical private migration backup and preservation checks in §15 |
+| Code rollback for this release | Owner-selected previous live `e4c17cd3-29d4-40ef-950a-1ebefe21ebff` / `65cbd0e` (§78); Worker version switch only, database writes and migrations retained |
+| Pipeline repo | `master` / `origin/master` at `6cf264e`; correction `41da92c` retained; shared COORDINATION synchronized on `handoff/qa-46-47-43-51` with this release (§79), with no implementation or dataset change |
 
 Deployment history since the last tagged release before this batch:
 
@@ -57,11 +57,13 @@ Deployment history since the last tagged release before this batch:
 | `73df6e58-912e-48db-9786-5866ce793efd` | 10-02 04:47 | `250b1b5` | tagged; QA-26, twelve checklist polish fixes, QA-27 through QA-30 (Health display formatting, END 100 milestone target, phone premade category wrapping, Alchemy apparatus label width); 100% traffic; same bundle and D1 schema; live verification in §58 |
 | `56a07cb7-4daf-4e8c-8348-9da01b18cbdc` | 10-02 23:46 | `672c0d3` | tagged; QA-31/32, QA-33–39, beginner clarity and contained follow-ups; §68 |
 | `e4c17cd3-29d4-40ef-950a-1ebefe21ebff` | 10-03 04:44 | `65cbd0e` | tagged; QA-40–45 and FLOW-04 inventory verification; 100% traffic; unchanged bundle and D1 schema; §§72–73 |
+| `03e8ff80-d959-4668-bfd8-4e5d1d30093d` | 10-03 22:37 | `e4bc16c` | tagged; QA-43 remainder and QA-46–52; 100% traffic; unchanged bundle and D1 schema; §§78–79 |
 
-For this release, §72 records the owner-selected previous live code rollback
-target `56a07cb7` / `672c0d3`: switch the Worker version only. No database restore
-or migration is part of this rollback. §67 retains the previous release's
-recovery record (`73df6e58` / `250b1b5`).
+For this release, §78 records the owner-selected previous live code rollback
+target `e4c17cd3` / `65cbd0e`: switch the Worker version only. No database restore
+or migration is part of this rollback. §72 retains the previous release's
+recovery record (`56a07cb7` / `672c0d3`), and §67 retains the earlier
+`73df6e58` / `250b1b5` recovery record.
 
 For the earlier CALC-4 release, §26 records code rollback target `d523b9ba` / `216cd90`:
 the account-settings/tool-polish release immediately before CALC-4 and the new
@@ -4134,4 +4136,56 @@ the existing `DB`, `ASSETS`, origin and Clerk live-key bindings. Evidence:
 `site-tests.log`, `build.log`, `dry-run.log`. The recovery-only documentation
 commit does not change the built application; the release remains tagged
 `e4bc16c` and identified by its full SHA.
+
+## 79. QA-43 remainder and QA-46–52 live release — 3 October 2026
+
+Deployed the unchanged application built from main
+`e4bc16c68c1a48baf297d86d9283d6323f76e54c` as Worker
+`03e8ff80-d959-4668-bfd8-4e5d1d30093d`, tagged `e4bc16c`, at 100% traffic from
+2026-10-03 22:37:44 UTC (19:37:44 São Paulo). Deployment ID:
+`9b45c5da-3fc3-4e91-b769-594fcef84158`. Recovery-only commit `8785de7` was pushed
+before deployment; it changes only this document. The release retains bundle
+`a29adea046e6086c2c7ee654`, existing bindings, dashboard variables and secrets,
+repository configuration and API-only Worker routing. No migration, dataset
+rebuild, production record query or account write occurred. The rollback version
+and fresh pre-release bookmark are in §78.
+
+Signed-out live Chrome checks pass **16/16**, with real touch emulation and both
+Modern and Morrowind themes. These are focused release checks, not the full
+freeze-day acceptance or a signed-in account test:
+
+| Item | Live coverage | Result |
+| --- | --- | --- |
+| QA-46 | Vanilla Home, 375 px: confirmation, Cancel/Escape, browser copy and focus recovery | 2/2 |
+| QA-47 | TR + ARCE, 375 px: friendly world labels in Enchanting, Spellmaking and Faction Journal | 2/2 |
+| QA-43 remainder | TR, 375 px: complete initial Blades rows, filters, selection, scrolling and empty search | 2/2 |
+| QA-51 | TR + ARCE, 375 px: formatted Home Health and ring weight, keyboard chooser and Unequip | 2/2 |
+| QA-48 | TR + ARCE, 375 px: whole priority abbreviations and working reorder controls | 2/2 |
+| QA-49 | Vanilla, 375 px: full enchanter names/places, Audenian search, selection and separate prices | 2/2 |
+| QA-50 | TR + ARCE, Ebonheart → Port Telvannis, 375 px: complete labels inside SVG with no collisions | 2/2 |
+| QA-52 | TR + ARCE, 1366 px: whole action words, successful equip, contained single-line Armor Rating | 2/2 |
+
+All accepted browser reports have zero runtime/server errors and pass their axe
+checks. **15/15** HTTP checks pass: Home and retained security headers, published
+JavaScript, canonical `www` redirect, the unchanged bundle pointer, seven tool
+routes and signed-out GETs for `/api/account`, `/api/settings`, `/api/saves` and
+`/api/entitlements`. Every API response is 401 with only the existing
+`UNAUTHORIZED` error/message and no `Set-Cookie`. No production write requests
+were made; synthetic save state exists only in isolated browser profiles.
+
+The initial HTTP harness guessed the error-body casing incorrectly; it was
+corrected against `cloudflare/auth.mjs` and all four GETs passed again. The first
+Travel filter omitted the space in the runner's `Port Telvannis` case name and
+selected no cases; both correctly selected cases passed. These were test-selection
+and expectation errors, with no application or deployment change. Initial
+evidence is retained alongside accepted reports.
+
+Evidence: `A:\Cache\release-e4bc16c\`, including `deploy.log`,
+`deployments-after.json`, `released-version.json`, `http-smoke.json` and
+`qa46-live/`, `qa47-live/`, `qa43-live/`, `qa51-live/`, `qa48-live/`, `qa49-live/`,
+`qa50-live-accepted/`, `qa52-live/`. Pipeline tests pass **685/685** before the
+shared coordination update; no pipeline implementation changes. COORDINATION is
+copied identically to the pipeline handoff branch. UI_TRANSFORMATION remains
+identical and unchanged. Subsequent documentation commits do not change the
+deployed application revision.
 
