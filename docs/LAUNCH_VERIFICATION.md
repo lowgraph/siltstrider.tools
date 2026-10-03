@@ -4025,6 +4025,7 @@ new/previous-item checks, 120 hydration checks and ten Vault checks, acceptance
 totals **429/429**, zero runtime/server errors. `accepted-summary.json` records
 the original failure and the exact six superseding cases; failing evidence is
 retained. This is branch verification, not the complete freeze-day suite.
+
 ## 77. QA-48–50 and QA-52 layout follow-ups — 3 October 2026
 
 Branch `fix/qa-46-47-43-51`, continuing from `a87e698`; no merge or deployment.
@@ -4080,4 +4081,28 @@ Chrome acceptance passes **18/18** in all worlds/themes at 1366/375/390 px, with
 actual button/text boxes, successful equip, rating containment, word wrapping,
 touch and axe. Evidence: `qa52-before/`, `qa52-before-inspector/`,
 `qa52-browser/` (initial acceptance) and `qa52-acceptance/` (complete text-box checks).
+
+Final unit preflight passes **1,384/1,384**, zero skips or todos, with the unchanged
+original Pe.omwsave enabled for FLOW-04 (`full-site.log`). Cloudflare build passes
+**24/24** static pages with repository configuration and bundle
+`a29adea046e6086c2c7ee654` unchanged (`build.log`). Pipeline tests pass **685/685**
+(`pipeline-tests.log`); shared COORDINATION is identical and pushed on pipeline
+`handoff/qa-46-47-43-51` as `530e013`. UI_TRANSFORMATION remains identical and
+unchanged. Travel first-navigation hydration/console checks pass **24/24**
+across six storage/link scenarios and both widths/themes (`hydration-travel/`).
+The originally reported QA-52 1366 px Modern/TR + ARCE case also passes with
+ordinary desktop emulation (`qa52-desktop/`, **1/1**).
+
+The existing QA-08 Early/Late gear-table regressions also pass **36/36** in all
+worlds, both themes and 375/390/1366 px with touch (`qa08-regression/`).
+
+Broad Chrome `--suite all` passes **203/203**, including page/theme/world matrix,
+Travel transfers and long-journey fallback, calculators, reverse Alchemy and
+sources, Builder/gear, Faction Journal and Level Simulator interactions,
+saved-Travel navigation, settings and polish (`broad-browser/`). Together with
+84 dedicated item cases, 18 existing map-gap cases, 36 existing gear-table cases,
+24 Travel hydration checks and the ordinary desktop retest, this batch has
+**366/366** accepted browser cases, zero runtime/server errors.
+`accepted-summary.json` names every included report; initial failing evidence
+is retained. This is branch preflight, not the complete freeze-day suite.
 

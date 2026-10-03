@@ -606,7 +606,7 @@ Optional, if time allows by Sunday; otherwise after launch (all confirmed live):
 - [x] **C** QA-50 (started 2026-10-03 21:01 UTC, Codex, on `fix/qa-46-47-43-51`; done `74ba08e`, LAUNCH_VERIFICATION §77) (Low, 375 px, both themes) Travel transit map labels overlap on dense routes
       (Ebonheart → Port Telvannis in TR + ARCE, 3/3) and Vivec stop labels clip at the left edge
       (Ebonheart → Balmora, 9/9).
-- [x] **C** QA-52 (started 2026-10-03 21:09 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §77) (Low, 1366 px) Builder: the "Equip late-game recommendations →" button wraps
+- [x] **C** QA-52 (started 2026-10-03 21:09 UTC, Codex, on `fix/qa-46-47-43-51`; done `327e242`, LAUNCH_VERIFICATION §77) (Low, 1366 px) Builder: the "Equip late-game recommendations →" button wraps
       into fragments (Modern UI, TR + ARCE), and the Equipment Inspector's Total Armor Rating
       "82" stacks its digits.
 
