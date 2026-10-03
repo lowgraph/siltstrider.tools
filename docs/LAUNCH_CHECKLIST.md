@@ -599,14 +599,14 @@ Merge by Sunday 4 October; Monday is the freeze.
       (`equipment-slot-card.jsx` `item.weight`). Format both with QA-27's formatter.
 
 Optional, if time allows by Sunday; otherwise after launch (all confirmed live):
-- [ ] **C** QA-48 (Low, Morrowind UI, 375 px, 3/3) Level Simulator attribute-priority tiles break
+- [ ] **C** QA-48 (started 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, Morrowind UI, 375 px, 3/3) Level Simulator attribute-priority tiles break
       the abbreviations: "EN/D", "ST/R", "AG/I", "SP/D", "WI/L", "PE/R", "IN/T", "LU/C".
-- [ ] **C** QA-49 (Low, 375 px, 18/18) Enchanting's ranked enchanter list cuts names and places
+- [ ] **C** QA-49 (claimed 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, 375 px, 18/18) Enchanting's ranked enchanter list cuts names and places
       with ellipses ("Audenian Valius (vivec, telvanni ench…"); let them wrap.
-- [ ] **C** QA-50 (Low, 375 px, both themes) Travel transit map labels overlap on dense routes
+- [ ] **C** QA-50 (claimed 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, 375 px, both themes) Travel transit map labels overlap on dense routes
       (Ebonheart → Port Telvannis in TR + ARCE, 3/3) and Vivec stop labels clip at the left edge
       (Ebonheart → Balmora, 9/9).
-- [ ] **C** QA-52 (Low, 1366 px) Builder: the "Equip late-game recommendations →" button wraps
+- [ ] **C** QA-52 (claimed 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, 1366 px) Builder: the "Equip late-game recommendations →" button wraps
       into fragments (Modern UI, TR + ARCE), and the Equipment Inspector's Total Armor Rating
       "82" stacks its digits.
 
