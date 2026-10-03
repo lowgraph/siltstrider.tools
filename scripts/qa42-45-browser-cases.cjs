@@ -11,6 +11,24 @@ async function finish(c,name) {
 }
 
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375,390])for(const theme of ['ashfall','morrowind'])await c.check(`QA-44/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,'enchanting',profile,width,theme);await c.until('document.querySelector(\'select[aria-label="Effect 1"]\')?.options.length>20');
+    await c.select('select[aria-label="Effect 1"]','Restore Health (base 5)');
+    const first=await c.evaluate('document.querySelector(\'select[aria-label="Effect 1"]\').value');
+    const layouts=[];
+    for(const count of [2,3]) {
+      await c.button('Add Effect');await c.until(`document.querySelectorAll('button[title="Remove effect from stack"]').length===${count}`);
+      const state=await c.evaluate(`[...document.querySelectorAll('button[title="Remove effect from stack"]')].map(b=>{const r=document.createRange();r.selectNodeContents(b);const text=[...r.getClientRects()].filter(r=>r.width>0),button=b.getBoundingClientRect(),card=b.parentElement.parentElement.getBoundingClientRect(),select=b.parentElement.querySelector('select').getBoundingClientRect();return {label:b.textContent.trim(),lines:new Set(text.map(r=>Math.round(r.top))).size,inside:button.left>=card.left&&button.right<=card.right&&text.every(r=>r.left>=button.left-1&&r.right<=button.right+1),separated:select.right<=button.left+1,buttonWidth:button.width};})`);
+      assert.equal(state.length,count);for(const row of state){assert.equal(row.label,'Remove');assert.equal(row.lines,1,'Remove remains on one line: '+JSON.stringify(row));assert.equal(row.inside,true,'Remove text and button fit inside the card');assert.equal(row.separated,true,'The effect picker leaves space for Remove');}
+      layouts.push({count,state});
+    }
+    await c.evaluate('document.querySelector(\'button[title="Remove effect from stack"]\').scrollIntoView({block:"center"})');
+    await finish(c,`QA-44-${profile}-${width}-${theme}`);
+    await c.click('button[aria-label="Remove effect 2"]');await c.until('document.querySelectorAll(\'select[aria-label^="Effect "]\').length===2');
+    assert.equal(await c.evaluate('document.querySelector(\'select[aria-label="Effect 1"]\').value'),first,'Removing another effect preserves the first effect');
+    await c.click('button[aria-label="Remove effect 2"]');await c.until('document.querySelectorAll(\'button[title="Remove effect from stack"]\').length===0');
+    assert.equal(await c.evaluate('document.querySelector(\'select[aria-label="Effect 1"]\').value'),first);return {layouts,removePreservesFirst:true,lastEffectRetained:true};
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375,390])for(const theme of ['ashfall','morrowind'])await c.check(`QA-43/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'factions',profile,width,theme);await c.until('document.querySelector(".faction-roster-item")');
     const read=()=>c.evaluate(`(()=>{const pane=document.querySelector('.faction-roster-pane'),list=pane.querySelector('[aria-label="Factions List"]'),label=document.querySelector('.faction-active-label'),p=pane.getBoundingClientRect(),l=list.getBoundingClientRect(),b=label.getBoundingClientRect();return {paneBottom:p.bottom,listBottom:l.bottom,listHeight:l.height,labelTop:b.top,labelLeft:b.left,paneRight:p.right,overlap:l.left<b.right&&l.right>b.left&&l.top<b.bottom&&l.bottom>b.top,active:label.textContent.trim(),listScrollHeight:list.scrollHeight,listClientHeight:list.clientHeight};})()`);

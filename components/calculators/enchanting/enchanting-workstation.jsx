@@ -465,9 +465,9 @@ export default function EnchantingWorkstation() {
 
                 return (
                   <div key={idx} className="p-3 bg-surface-5 border border-line-11 space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="enchant-effect-header flex min-w-0 items-center justify-between gap-2">
                       <select
-                        className="flex-1 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
+                        className="flex-1 min-w-0 mw-select p-1.5 text-xs font-serif bg-surface-1 border border-line-9 text-fg-2"
                         aria-label={`Effect ${idx+1}`}
                         disabled={gameData.status !== "ready"}
                         value={row.effectKey}
@@ -484,7 +484,8 @@ export default function EnchantingWorkstation() {
                       {effectsList.length > 1 && (
                         <button
                           type="button"
-                          className="mw-btn px-2 py-1 text-xs font-serif text-danger-9 hover:text-danger-4"
+                          className="mw-btn shrink-0 whitespace-nowrap px-2 py-1 text-xs font-serif text-danger-9 hover:text-danger-4"
+                          aria-label={`Remove effect ${idx+1}`}
                           onClick={() => handleRemoveEffect(idx)}
                           title="Remove effect from stack"
                         >

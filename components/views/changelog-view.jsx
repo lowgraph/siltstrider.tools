@@ -16,6 +16,7 @@ export default function ChangelogView() {
         <section className="changelog-day bg-surface-7 p-4 border border-line-9">
           <h3 className="text-base font-serif text-accent mb-2 pb-1 border-b border-line-12"><time dateTime="2026-10-03">October 3, 2026</time></h3>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-fg-7">
+            <li>Enchanting keeps Remove buttons readable inside each effect card on phones; each button identifies the effect it removes.</li>
             <li>Faction Journal gives phone roster rows room to show their full details above the Viewing bar, while keeping the roster and dossier independently scrollable. Empty searches announce that no factions were found.</li>
             <li>Travel keeps compressed map distances in the legend, so they no longer cover region or town names on phones.</li>
             <li>Level Simulator shows tidy Health gains in the character sheet and each level step, while retaining fractional Health in calculations.</li>

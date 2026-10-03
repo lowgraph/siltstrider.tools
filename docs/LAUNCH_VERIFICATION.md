@@ -3674,3 +3674,22 @@ and the 78/84 px measurement are retained in `qa43-before/` and `qa43-before2/`.
 Layout-only `qa43-final/` passed before the empty-state change; accepted combined
 report is `qa43-accepted/`. Evidence: `qa43-final-unit.log`,
 `test/faction-roster-empty.test.js`, Chrome group `QA-43/` in the Faction planner.
+
+### QA-44 — legible effect-removal buttons
+
+Reproduced with two effects at 375 px, Morrowind: Remove takes six lines in a
+32.8 px button and its text escapes the button. The native select's minimum
+width squeezes its flex sibling. Effect headers/selects now allow shrinking,
+while Remove reserves its width and stays on one line. Buttons also identify
+their row as `Remove effect N`. Calculation rules and effect values are unchanged.
+
+**46 relevant tests pass**, including four new cases: initial single effect,
+middle-of-three removal/renumbering, first-effect removal and unselected effects
+with an empty catalog. **18/18 Chrome cases pass**, all worlds, desktop/375/390
+px and both themes, checking two and three cards, one-line text, card bounds,
+picker separation, actual removal and retained first-effect values. No overflow,
+runtime/server errors or axe blockers. TR + ARCE's Morrowind phone screenshot
+was reviewed. The first unit fixture omitted the feature's required profile;
+that setup failure is retained in `qa44-unit.log`, with the valid-envelope result
+in `qa44-final-unit.log`. Before/after Chrome: `qa44-before/`, `qa44-final/`.
+Regression file: `test/enchant-remove-controls.test.js`; planner group `QA-44/`.

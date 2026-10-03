@@ -254,9 +254,9 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 *From the live retest of `672c0d3` (3 October; LAUNCH_VERIFICATION §69), if time allows by Sunday*
 - [x] **C** QA-42 (started 2026-10-03 02:44 UTC, Codex, on `fix/qa-40-41-flow-04`; done `24d3a65`, LAUNCH_VERIFICATION §71) (Low, both themes, 375 px; QA-36 remainder) TR / TR + ARCE Travel map: the
       "≈78 cells" annotation overlaps "THIRSK" (Morrowind UI) and "FELSAAD COAST" (Modern UI).
-- [x] **C** QA-43 (started 2026-10-03 02:52 UTC, Codex, on `fix/qa-40-41-flow-04`; done with this commit, LAUNCH_VERIFICATION §71) (Low-Medium, Morrowind UI, 375 px) Faction Journal: the sticky "Viewing Fighters
+- [x] **C** QA-43 (started 2026-10-03 02:52 UTC, Codex, on `fix/qa-40-41-flow-04`; done `1fb558f`, LAUNCH_VERIFICATION §71) (Low-Medium, Morrowind UI, 375 px) Faction Journal: the sticky "Viewing Fighters
       Guild" bar covers part of a row ("Agility · Endurance" on Ashlanders).
-- [ ] **C** QA-44 (Low, both themes, 375 px) Enchanting with two effects: the "Remove" labels
+- [x] **C** QA-44 (started 2026-10-03 03:00 UTC, Codex, on `fix/qa-40-41-flow-04`; done with this commit, LAUNCH_VERIFICATION §71) (Low, both themes, 375 px) Enchanting with two effects: the "Remove" labels
       wrap letter by letter and are clipped at the card edge.
 - [ ] **C** QA-45 (Low, copy) Travel help: define Mark and Recall, Propylons and their indices,
       and make the two Cheapest sentences agree. Alchemy: say what "additional effects" and

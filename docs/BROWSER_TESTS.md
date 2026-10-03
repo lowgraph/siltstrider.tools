@@ -10,6 +10,11 @@ requires room for a whole Ashlanders row, contains roster scrolling above the
 Viewing bar, checks the attribute line by hit-testing, and audits both populated
 and empty searches while preserving the selected dossier.
 
+`--suite qa --filter 'QA-44/'` checks two/three Enchanting effect cards across
+the same matrix. Remove labels stay on one line, within their buttons/cards and
+apart from the picker. Removing the second effect preserves the first; the last
+effect remains. Row-specific accessible labels identify each removal control.
+
 Start `npm run dev` on port 8765. With Node 22 or newer, an installed Chrome and
 an existing axe-core script, run from the site repository in PowerShell:
 
