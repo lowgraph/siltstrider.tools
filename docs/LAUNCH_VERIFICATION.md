@@ -3889,3 +3889,52 @@ Evidence: `A:/Cache/release-65cbd0e/`: §72 recovery files, `build-source.txt`,
 `live-weapons-tr-arce/`, `live-health/` and `live-phone/`. Temporary Cache adapters
 were removed after verification; repository application files and the browser
 runner are unchanged.
+
+## 74. Partial live retest of `65cbd0e` — 3 October 2026
+
+The signed-out live retest of the release in §73 (`65cbd0e` / Worker `e4c17cd3`) stopped
+before its report when the agent's credits ran out. Only its failures were passed on;
+passes, the QA-40 weapon checks and the QA-41/42/44 results are not available, so this is
+not a release verdict.
+
+| Reported failure | Triage |
+| --- | --- |
+| "Clear save" removes a loaded save with no confirmation | **QA-46**, confirmed in code |
+| Enchanting status "(TR_ARCE)"; Faction Journal "LIVE: 91 FACTIONS (TR_ARCE)" | **QA-47**, confirmed in code (also Spellmaking) |
+| Morrowind UI 375 px: "Viewing Fighters Guild" bar covers the Blades "Eligible to Join" badge | **QA-43 remainder** |
+| Morrowind UI 375 px: attribute-priority abbreviations break ("EN/D") | QA-48, optional |
+| 375 px: ranked enchanter names and places cut with ellipses | QA-49, optional |
+| 375 px: Travel map labels overlap on long TR + ARCE routes; a stop label clipped at the left edge | QA-50, optional |
+| "Ald-ruhn" in Places beside "Guide to Ald'ruhn" | No action: the game's cell name and book title |
+| Travel help "you have.Cheapest" | Not reproduced in source (a space is rendered); check a screenshot |
+
+Triage: checklist section 5 item 20. A full retest of `65cbd0e` (or its successor) is still
+needed before Monday's freeze acceptance, including the QA-40 weapon checks.
+
+## 75. Full signed-out live retest of `65cbd0e` — 3 October 2026
+
+A second QA agent account reran the retest of §74 against `65cbd0e` / Worker `e4c17cd3`,
+saving results as it went: 101 recorded cases across the three worlds, 1366 and 375 px and
+both themes. First-load console history was unavailable to the agent; post-load listeners
+captured no application errors.
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| QA-40 edited Spearman | Pass | Spear → Long Blade: Vanilla Goldbrand (6.67, Dmg 50), TR / TR + ARCE Neb-Crescen (15.47, Dmg 58), "Long Blade — Major skill" |
+| QA-40 unedited premades | Pass | 18 premade/world rows. Spearman: Blessed Spear (Vanilla), Askenhost axe as a Minor skill (TR); Duelist: Goldbrand / Neb-Crescen; Berserker: Ebony War Axe / Nerevar's Axe; Crusher: Sunder (Major Blunt); Hunter: Auriel's Bow / Sunkindler; Atronach Spellweaver: Sunder, labelled "Miscellaneous skill" with its score breakdown |
+| QA-40 hands and Equip | Pass | One-/Two-handed switch changes weapons and shield and back; Equip's main hand matches the kit in every world |
+| QA-41 | Pass, partial coverage | No value beyond one decimal in 588 readings; mobile TR 31–49, ARCE and Morrowind mobile not completed |
+| QA-42, QA-44 | Pass | "≈78 cells" sits below the map, clear of labels; both Remove labels whole in all six world/theme states |
+| QA-45 | Pass | Mark/Recall and Propylon definitions; Cheapest sentences agree; Alchemy order explained; rival House shows only "Rival Joined"; Gear header says "closest archetype" |
+| QA-46 | Fail 3/3 | Clear save removes the loaded save with no prompt |
+| QA-47 | Fail (Alchemy passes) | Enchanting, Spellmaking and Faction Journal show "(TR_ARCE)", 3/3 each |
+| QA-43 | Fail 9/9 | Viewing bar covers the Blades row and badge at 375 px |
+| QA-48, QA-49, QA-50 | Fail | Abbreviations break; enchanter rows ellipsised (18/18); dense map labels overlap, Vivec labels clip |
+| Travel help spacing | Pass (withdrawn) | A visible gap on screen in every configuration |
+| QA-01, QA-16, QA-31, QA-32 | Pass | 75 / 120 points, 50,050 g; Dialogue Teleport to Mournhold; delete asks first; "Ald'ruhn" finds Ald-ruhn |
+
+New: Home's Health card "+33.400000000000034" and ring weights "0.10000000149011612 w"
+(QA-51); the 1366 px Equip button label and Equipment Inspector rating "82" wrap (QA-52).
+Observations not counted: an Alchemy Retort partly behind the phone navigation at one scroll
+position, and the rival House's disabled Join keeping its colour. Triage: checklist section 5
+item 20.
