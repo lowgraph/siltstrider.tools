@@ -375,6 +375,8 @@ test("with a save loaded the hero offers next steps and the card shows the save"
     await click(button("Plan level-ups"));
     await click(button("Factions and quests"));
     await click(button("Clear the save"));
+    assert.equal(calls.cleared, 0, "opening the confirmation keeps the loaded save");
+    await click([...document.querySelectorAll('[role=alertdialog] button')].find(b => b.textContent === 'Clear save'));
     assert.deepEqual(calls.navigate, ["builder", "leveler", "factions"]);
     assert.equal(calls.cleared, 1);
   } finally { await cleanup(); }

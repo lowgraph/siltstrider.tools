@@ -3938,3 +3938,16 @@ New: Home's Health card "+33.400000000000034" and ring weights "0.10000000149011
 Observations not counted: an Alchemy Retort partly behind the phone navigation at one scroll
 position, and the rival House's disabled Join keeping its colour. Triage: checklist section 5
 item 20.
+
+## 76. QA-46, QA-47, QA-43 remainder and QA-51 — 3 October 2026
+
+Branch `fix/qa-46-47-43-51` starts from main `e83eb09`, with the release's staged
+bundle `a29adea046e6086c2c7ee654`. Claims were pushed as `8f6000d`. These are local
+fixes; the production release and rollback records in §72–73 are unchanged.
+
+| Item | Cause and change | Verification |
+| --- | --- | --- |
+| QA-46 | Home and `SaveImportNotice` called `clearSave` immediately. Both now use the QA-31 confirmation dialog through `useSaveClearConfirmation`. Cancel/Escape preserve the copy and restore focus; confirmation removes only the active browser save, preserves the original file, and focuses the file opener or Builder main area. Replacing a save dismisses an obsolete confirmation. | Seven new regression cases (six fail before the fix); relevant unit, storage, dialog, browser-plan and claim/licence checks pass **57/57**. Chrome **36/36**, Home/Builder/Vault in all three worlds, 1366/375 px and both themes, with touch events, Cancel, Escape, confirmation, focus, storage, overflow and axe checks. No runtime/server errors. Phone Morrowind screenshots reviewed. |
+
+Evidence: `A:/Cache/qa46-47-43-51/`, `qa46-before.log`, `qa46-final-tests.log`,
+and `qa46-vanilla/`, `qa46-tr/`, `qa46-tr-arce/` (reports, audits and screenshots).

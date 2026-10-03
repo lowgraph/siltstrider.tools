@@ -628,3 +628,9 @@ to add four original-file imports through Vault's local Open Save File input;
 the file is not uploaded or changed. The original-file unit check is likewise
 opt-in; the reduced fixture/staged checks always run. See §70 for the tested
 file's hash and the coordinate-click attempts excluded from the final results.
+
+`--suite qa --filter 'QA-46/'` restores synthetic saves in all three worlds on
+Home, Builder and Vault at 1366/375 px in both themes (36 cases). Opening,
+Cancel and Escape preserve localStorage and restore focus; confirmation alone
+clears the loaded copy and focuses the file opener or Builder's main content.
+Use `--touch` for tap events. The test never uploads a file or signs in.

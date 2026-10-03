@@ -1,5 +1,6 @@
 "use client";
 import { useActiveCharacter } from "../character-context";
+import { useSaveClearConfirmation } from "./use-save-clear-confirmation";
 
 const PROFILE_LABELS = { vanilla: "Morrowind", tr: "Tamriel Rebuilt", tr_arce: "Tamriel Rebuilt + ARCE" };
 
@@ -10,6 +11,7 @@ const PROFILE_LABELS = { vanilla: "Morrowind", tr: "Tamriel Rebuilt", tr_arce: "
  */
 export default function SaveImportNotice({ compact = false }) {
   const { activeSave, clearSave } = useActiveCharacter();
+  const { requestClear, dialog } = useSaveClearConfirmation(activeSave, clearSave);
   if (!activeSave) return null;
 
   const identity = activeSave.save?.identity || {};
@@ -30,7 +32,7 @@ export default function SaveImportNotice({ compact = false }) {
           {activeSave.contentFileCount ? ` · the save loads ${activeSave.contentFileCount} content files` : ""}
           {" · kept in this browser until you clear it"}
         </span>
-        <button type="button" className="mw-btn px-2 py-1 text-[11px] font-bold" onClick={clearSave}>
+        <button type="button" className="mw-btn px-2 py-1 text-[11px] font-bold" onClick={requestClear}>
           Clear save
         </button>
       </div>
@@ -68,6 +70,7 @@ export default function SaveImportNotice({ compact = false }) {
           </ul>
         </details>
       )}
+      {dialog}
       {!compact && unchecked.map((line) => (
         <p key={line} className="mt-1 text-fg-14">{line}</p>
       ))}

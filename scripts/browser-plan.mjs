@@ -58,9 +58,9 @@ const AREAS = [
   { area: 'Challenge Runs', match: /challenge/i, runs: [run('launch', 'UI-03'), vault()] },
   { area: 'About', match: /about-view|seo-breadcrumbs/i, runs: [run('qa', 'QA-15/')] },
   { area: 'Search', match: /search/i, runs: [run('qa', 'QA-32/'), run('launch', 'SS-10/'), run('launch', 'ingredient-labels')] },
-  { area: 'Home', match: /home-hub|home-data/i, runs: [run('matrix'), run('hydration', 'QA-17/home'), run('qa', 'QA-35/'), run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-Copy/')] },
+  { area: 'Home', match: /home-hub|home-data/i, runs: [run('matrix'), run('hydration', 'QA-17/home'), run('qa', 'QA-35/'), run('qa', 'QA-46/'), run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-Copy/')] },
   { area: 'Vault, account and settings', match: /character-vault|cloud-|account|settings|sign-?in|sign-?out|local-characters|confirmation-dialog|^cloudflare\//i, runs: [
-    run('qa', 'QA-31/'), run('settings'), run('qa', 'Clarity-Copy/'), vault()],
+    run('qa', 'QA-31/'), run('qa', 'QA-46/'), run('settings'), run('qa', 'Clarity-Copy/'), vault()],
     note: 'Vault/account changes also need npm run test:vault -- --clarity (F-11, F-17, F-12).' },
 ];
 
