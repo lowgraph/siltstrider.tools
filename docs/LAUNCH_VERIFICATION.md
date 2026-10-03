@@ -3450,3 +3450,34 @@ Evidence: `A:/Cache/release-672c0d3/`: recovery metadata and retained bundle,
 under `live-home/`, `live-builder/`, `live-clarity/` and `live-qa31-39/`, plus
 `live-qa33-repeat1/`, `live-qa33-repeat2/`, `live-qa33-repeat-matrix/`,
 `live-summary.json`, `starter-collision-diagnostic.log` and `unit-handoff.log`.
+
+## 69. Signed-out live retest of `672c0d3` — 3 October 2026
+
+A live-URL QA agent retested the release in §68 (`672c0d3` / Worker `56a07cb7`), signed
+out, in all three worlds, at 1366 and 375 px, in both themes, with the supplied
+Pe.omwsave for save checks.
+
+| ID | Agent's verdict | Triage |
+| --- | --- | --- |
+| QA-31 | Pass | "Delete character?" confirmation; Cancel keeps it; focus starts on Cancel and returns to the panel; 12 combinations |
+| QA-32 | Pass | "Ald'ruhn", "Ald-ruhn" and "Aldruhn" all find Ald-ruhn in every world; Sadrith Mora and Vos found |
+| QA-33 | Pass | Spear and bow builds start Two-handed, sword-and-shield One-handed + shield; switching works |
+| QA-34 | Pass | Restore Health pairs (55 Vanilla; 2,850 TR / TR + ARCE) stay visible above "Show more" |
+| QA-35, QA-37, QA-38 | Pass | Whole labels at 375 px; no "-0 HP"; "Rank 1", "10 ranks" |
+| QA-36 | Fail | Vanilla readable; TR / TR + ARCE "≈78 cells" annotation overlaps region labels at 375 px (QA-42) |
+| QA-39 | Fail | **Triaged as copy, not stale data:** the Gear Advisor header's archetype is detected from the current skills, so an edited Spearman can still read "Melee Tank / Warrior". Wording follow-up in QA-45 |
+| QA-26 | Fail | **Partly:** the kit re-ranks in every world, but Vanilla picked Sunder (blunt) after Spear → Long Blade; TR picked a long blade. Investigate as QA-40 |
+| FLOW-03 | Pass | Join disabled for a rival House, with the reason |
+| FLOW-04 | Partial | Chamber links keep "Andasreth › Propylon Chamber" in every world (4 legs, 43 gold). The save showed 0 of 39 carried items ticked (FLOW-04 save check) |
+| F-12 | Partial | Cloud cards need an account; covered by the signed-in suite (§65) |
+| QA-01, QA-09, QA-16 | Pass | 75 / 120 points; all popovers on screen; Ebonheart → Mournhold by Dialogue Teleport |
+| First visit | Pass, except Travel terms | Home, `.ess` guidance, race and birthsign order, sheet explanation, game-entry checklist, By Race, beast note and Alchemy finder notes all read correctly. Travel terms and two Alchemy terms unclear (QA-45) |
+| Layout | Partial | Fine except Travel map at 375 px (QA-42), Faction Journal sticky bar (QA-43), Enchanting Remove labels (QA-44) |
+| Console | Partial | No application errors after load; first-load console history unavailable to the agent |
+
+Also: Level Simulator "Total HP Gained" can show "+131.99999999999997" (QA-41, confirmed in
+code). Not taken up: the `.ess` notice's missing space (the source has a space between the
+sentences), the Imperial lore sentence (probably the game's own description, shown as
+published; check the catalog text before editing it), and
+observations the agent itself could not reproduce. Triage: checklist section 5 item 19
+(QA-40, QA-41, FLOW-04 save check) and section 4 (QA-42 to QA-45).

@@ -251,6 +251,21 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       for your build's … class archetype (Based on Argonian male — Spear scout)". Say it is
       ranked for this character, without naming the source as its archetype.
 
+*From the live retest of `672c0d3` (3 October; LAUNCH_VERIFICATION §69), if time allows by Sunday*
+- [ ] **C** QA-42 (Low, both themes, 375 px; QA-36 remainder) TR / TR + ARCE Travel map: the
+      "≈78 cells" annotation overlaps "THIRSK" (Morrowind UI) and "FELSAAD COAST" (Modern UI).
+- [ ] **C** QA-43 (Low-Medium, Morrowind UI, 375 px) Faction Journal: the sticky "Viewing Fighters
+      Guild" bar covers part of a row ("Agility · Endurance" on Ashlanders).
+- [ ] **C** QA-44 (Low, both themes, 375 px) Enchanting with two effects: the "Remove" labels
+      wrap letter by letter and are clipped at the card edge.
+- [ ] **C** QA-45 (Low, copy) Travel help: define Mark and Recall, Propylons and their indices,
+      and make the two Cheapest sentences agree. Alchemy: say what "additional effects" and
+      "ingredient value" mean in the pair order; show "TR + ARCE", not "TR_ARCE", in the status
+      line. Faction Journal: a rival House row shows both "Eligible to Join" and "Rival
+      Joined"; show only the restriction. Gear Advisor: the header's "(Melee Tank / Warrior
+      archetype)" is detected from the current skills, not stale, but reads like the premade;
+      call it the closest archetype.
+
 *Sunday: check first, fix only if contained*
 - [x] **C** FLOW-04 (started 2026-10-02 21:44 UTC, Codex; done `3dfafb9`, merged `672c0d3`; live as `56a07cb7`): a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
@@ -304,6 +319,7 @@ acceptance and release preparation remain separate checks against the final rele
 | 16 | **Freeze acceptance and release preparation** | Run against the final build after the fixes, then prepare the release and rollback records. |
 | 17 | **Live retest (2 October): QA-26** | An edited premade's endgame kit is the premade's, not the player's (wrong answer). Cheap Lows QA-27–30 if time allows. |
 | 18 | **Live retest of `250b1b5`: QA-31, QA-32** | One click deletes a signed-out player's saved character; the global search misses "Ald'ruhn". |
+| 19 | **Live retest of `672c0d3`: QA-40, QA-41, FLOW-04 save check** | A possibly wrong weapon for an edited build; Health noise; a save's carried items may not be read. |
 
 Reproduction (Codex, 1 October, `qa/reproduce`, LAUNCH_VERIFICATION §27): the
 original suite had 41 tests marked `{ todo: '<QA-id> not fixed yet' }` in `test/qa-*`.
@@ -535,6 +551,28 @@ and the groups `npm run test:browser:plan` prints, plus the item's own new cases
       "Ald'ruhn" in every world: apostrophes are dropped ("aldruhn") but hyphens become spaces
       ("ald ruhn"). Match the same way as Travel's QA-07 fix (ignore apostrophes, hyphens and
       spaces when comparing). Check Ald'ruhn, Ald-ruhn, Aldruhn, Sadrith Mora, Vos.
+
+#### 19. Live retest of `672c0d3` (3 October) — before the freeze
+
+The signed-out retest of `672c0d3` / `56a07cb7` (LAUNCH_VERIFICATION §69) passed QA-31–35,
+QA-37, QA-38, FLOW-03, the QA-01/09/16 spot checks and every first-visit wording check except
+Travel terms. Merge by Sunday 4 October, then deploy and retest; Monday is the freeze.
+
+- [ ] **C** **QA-40** (Medium, V; investigate first) After editing Nord Warrior Spearman's Major
+      Skill 1 from Spear to Long Blade, the Vanilla Optimized kit's primary weapon is Sunder
+      ("Dmg 70 (blunt weapon)", score 22.2), a misc skill for that build; TR/TR + ARCE picked
+      Neb-Crescen (long blade) correctly. Reproduce with the staged catalog
+      (`resolveBestInSlotPicks`, weapon tier weights, `defaultWeaponSetup`). If the ranking is
+      wrong, fix it (wrong answer); if Sunder wins for a stated reason, the kit must show it.
+- [ ] **C** **QA-41** (Low; regression from QA-03; confirmed in code) Level Simulator "Total HP
+      Gained" shows floating-point noise ("+131.99999999999997"):
+      `progression-sheet.jsx` subtracts fractional Health without QA-27's formatter. Format
+      it, and the itinerary card's "+N HP Gain" (`level-itinerary-card.jsx`), the same way.
+- [ ] **C** **FLOW-04 save check** (verify only) The retest's Pe.omwsave (Ba'Ta, TR + ARCE) showed
+      "Items you carry (0 of 39)" with no Propylon index ticked, even after "Use save
+      defaults", while the page says "A loaded save ticks the ones in its pack". Check
+      whether that save carries any listed item. If it does and nothing is ticked, it is a
+      wrong answer (Medium, TRV-6): fix before the freeze. If it carries none, no change.
 
 #### Already resolved by other work
 
