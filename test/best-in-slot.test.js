@@ -424,8 +424,10 @@ test('BestInSlotView renders complete late-game gear tables with scores and warn
     const content = document.getElementById('root').textContent;
     assert.match(content, /Masque of Clavicus Vile/);
     assert.match(content, /Mantle of Woe/);
-    assert.match(content, /Keening/);
-    assert.match(content, /Score: 14.3/);
+    const {resolveBestInSlotPicks}=await modulePromise;
+    const weapon=resolveBestInSlotPicks(featureData,build).groups.find(g=>g.label==='Optimized Weapons').rows[0].picks[0];
+    assert.ok(content.includes(weapon.item.name));
+    assert.ok(content.includes(`Score: ${weapon.pick.score}`));
     assert.match(content, /Blind 100/);
 
     // Toggle runner-up picks
@@ -457,7 +459,7 @@ test('GearAdvisorView wires BestInSlotView and shows loading instead of stale le
   const build = premadeToBuild(BUILDS[0]);
 
   try {
-    // 1. When bisResult is ready, Optimize Gear renders BestInSlotView
+    // Both catalogs must be ready: GearRows adds obtainable non-constant weapons.
     await act(async () => {
       root.render(
         React.createElement(Gear, {
@@ -473,10 +475,19 @@ test('GearAdvisorView wires BestInSlotView and shows loading instead of stale le
     assert.ok(optBtn);
     await act(async () => optBtn.click());
 
+    assert.match(document.getElementById('root').textContent,/Loading late-game equipment/);
+    const lateEquip=[...document.querySelectorAll('button')].find(b=>b.textContent.includes('Equip late-game recommendations'));
+    assert.equal(lateEquip.disabled,true);
+    await act(async()=>root.render(React.createElement(Gear,{
+      build,result:{status:'ready',data:{catalogs:{GearRows:[],Armor:[],Clothing:[]}}},
+      bisResult:{status:'ready',data:featureData},onLoad(){}
+    })));
     const content = document.getElementById('root').textContent;
     assert.match(content, /Optimized endgame kit/);
     assert.match(content, /Masque of Clavicus Vile/);
-    assert.match(content, /Keening/);
+    const {resolveBestInSlotPicks}=await modulePromise;
+    const weapon=resolveBestInSlotPicks(featureData,build,{weaponSetup:'one-handed'}).groups.find(g=>g.label==='Optimized Weapons').rows[0].picks[0];
+    assert.ok(content.includes(weapon.item.name));
 
     // 2. A pending bundle must not display stale legacy HTML
     document.getElementById('btn-gear').onclick = () => {

@@ -4,6 +4,7 @@ import HealthGrowthChart from "./health-growth-chart";
 import SkillProgressionMatrix from "./skill-progression-matrix";
 import { ATTRS, ATTR_ABBR } from "../../lib/level-math.mjs";
 import { characterName } from "../../lib/character-name.mjs";
+import { formatHealth } from "../../lib/chart-scale.mjs";
 
 export default function ProgressionSheet({
   character,
@@ -43,6 +44,7 @@ export default function ProgressionSheet({
 
   const initAttrs = initialSheet?.attributes || attributes;
   const initSkills = initialSheet?.skills || skills;
+  const totalHealthGained = Math.max(0, health - (initialSheet?.health ?? health));
 
   return (
     <div
@@ -86,7 +88,7 @@ export default function ProgressionSheet({
             Leveled Vitals (Level {level})
           </h4>
           <span className="text-[10px] font-mono text-accent">
-            +{Math.max(0, health - (initialSheet?.health || health))} Total HP Gained
+            {Number.isFinite(totalHealthGained) ? "+" : ""}{formatHealth(totalHealthGained)} Total HP Gained
           </span>
         </div>
         <VitalsBar label="Health" kind="health" value={health} max={health} />

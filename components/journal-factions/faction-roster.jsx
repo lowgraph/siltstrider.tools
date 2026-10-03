@@ -83,9 +83,9 @@ export default function FactionRoster({
   }, [factions, searchQuery, activeCategory, joinedMap]);
 
   return (
-    <aside className="faction-roster-pane flex flex-col h-full bg-surface-6 border-2 border-line-4 shadow-inner text-fg-2">
+    <aside className="faction-roster-pane flex flex-col h-full min-h-0 overflow-hidden bg-surface-6 border-2 border-line-4 shadow-inner text-fg-2">
       {/* Search Bar */}
-      <div className="p-3 border-b border-line-9 bg-surface-3">
+      <div className="shrink-0 p-3 border-b border-line-9 bg-surface-3">
         <label htmlFor="faction-search-input" className="sr-only">Search factions</label>
         <div className="relative">
           <input
@@ -110,7 +110,7 @@ export default function FactionRoster({
       </div>
 
       {/* Category Pills */}
-      <div className="px-2 py-2 flex flex-wrap gap-1 border-b border-line-9 bg-surface-3 overflow-x-auto">
+      <div className="shrink-0 px-2 py-2 flex flex-wrap gap-1 border-b border-line-9 bg-surface-3 overflow-x-auto">
         {CATEGORIES.map(cat => {
           const isActive = activeCategory === cat.id;
           const count = cat.id === "joined" ? visibleJoinedCount : null;
@@ -132,7 +132,7 @@ export default function FactionRoster({
       </div>
 
       {/* Roster Items List */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-1.5" role="listbox" aria-label="Factions List">
+      <div className="flex-1 min-h-0 overflow-y-auto p-2 space-y-1.5" role={filteredFactions.length ? "listbox" : "status"} aria-label="Factions List">
         {filteredFactions.length === 0 ? (
           <div className="p-6 text-center text-xs text-fg-14 italic">
             No factions found matching criteria.
@@ -185,6 +185,10 @@ export default function FactionRoster({
                     <span className="px-1.5 py-0.5 text-[10px] uppercase font-bold bg-surface-22 text-accent border border-accent/50">
                       {membership.expelled ? "⚠ Expelled" : `Member · ${rankLabel}`}
                     </span>
+                  ) : conflict ? (
+                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-danger-7 bg-danger-surface-3 border border-danger-line-2" title={conflict.description}>
+                      Rival Joined
+                    </span>
                   ) : hasRanks ? (
                     isEligibleToJoin ? (
                       <span className="px-1.5 py-0.5 text-[10px] font-serif text-success-4 bg-success-surface-2 border border-success-line-4">
@@ -198,12 +202,6 @@ export default function FactionRoster({
                   ) : (
                     <span className="px-1.5 py-0.5 text-[10px] font-serif text-fg-15 bg-surface-3 border border-line-12">
                       Non-joinable
-                    </span>
-                  )}
-
-                  {conflict && !membership && (
-                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-danger-7 bg-danger-surface-3 border border-danger-line-2" title={conflict.description}>
-                      Rival Joined
                     </span>
                   )}
 

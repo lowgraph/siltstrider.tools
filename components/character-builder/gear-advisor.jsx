@@ -93,7 +93,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
   const handleEquipToLoadout = (late = false) => {
     try {
       const groups = late
-        ? resolveBestInSlotPicks(bisResult.data, build, { beast, weaponSetup, allowFormidableSources:endgameEarly }).groups
+        ? resolveBestInSlotPicks(bisResult.data, build, { beast, weaponSetup, allowFormidableSources:endgameEarly, gearRows:result.data.catalogs.GearRows }).groups
         : buildGearGroups(result.data.catalogs, build, gearToggles, displayedRanking, {beast});
       onEquip(recommendedLoadouts(groups, bisResult.data.catalogs, build, {late,beast}));
     } catch (error) { setRankError(error.message); }
@@ -134,7 +134,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
           </h3>
           <p className="text-sm text-fg-8 mt-1">
             Optimized armor, weapons, and artifact acquisition tailored to your major weapon and armor skills
-            {traits?.archetypeName ? ` (${traits.archetypeName} archetype)` : ""}.
+            {traits?.archetypeName ? ` (closest archetype: ${traits.archetypeName})` : ""}.
           </p>
         </div>
 
@@ -199,7 +199,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
           >
             Equip early recommendations →
           </button>
-          <button type="button" className="mw-btn px-5 py-2.5" disabled={!hasRun || bisResult?.status !== "ready"} onClick={() => handleEquipToLoadout(true)}>Equip late-game recommendations →</button>
+          <button type="button" className="mw-btn px-5 py-2.5" disabled={!hasRun || bisResult?.status !== "ready" || result.status !== "ready"} onClick={() => handleEquipToLoadout(true)}>Equip late-game recommendations →</button>
         </div>
       </div>
 
@@ -224,18 +224,19 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
       {hasRun ? (
         <div className="gear-results-container text-sm overflow-x-auto text-fg-2">
           <GearSourcesView ranking={displayedRanking} build={build} beast={beast} result={result} toggles={gearToggles}/>
-          {bisResult?.status === "ready" ? (
+          {bisResult?.status === "ready" && result.status === "ready" ? (
             <BestInSlotView
               featureData={bisResult.data}
               build={build}
+              gearRows={result.data.catalogs.GearRows}
               beast={beast}
               weaponSetup={weaponSetup}
               allowFormidableSources={endgameEarly}
             />
           ) : (
             <details open><summary>Optimized endgame kit</summary>
-              {bisResult?.status === "error" ? (
-                <p role="alert">Late-game equipment could not be loaded. <button type="button" className="mw-btn" onClick={bisResult.retry}>Retry</button></p>
+              {bisResult?.status === "error" || result.status === "error" ? (
+                <p role="alert">Late-game equipment could not be loaded. <button type="button" className="mw-btn" onClick={bisResult?.status === "error" ? bisResult.retry : result.retry}>Retry</button></p>
               ) : <p role="status">Loading late-game equipment...</p>}
             </details>
           )}

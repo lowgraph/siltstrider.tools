@@ -3481,3 +3481,307 @@ sentences), the Imperial lore sentence (probably the game's own description, sho
 published; check the catalog text before editing it), and
 observations the agent itself could not reproduce. Triage: checklist section 5 item 19
 (QA-40, QA-41, FLOW-04 save check) and section 4 (QA-42 to QA-45).
+
+## 70. QA-40, QA-41 and FLOW-04 save verification — 3 October 2026
+
+Work is on `fix/qa-40-41-flow-04`, from freshly fetched main `f5ca4af`.
+The owner requested these three items in order, relevant suites between items,
+a commit after each item, then a branch push. Production stays at `672c0d3`;
+no deployment, migration, schema or catalog rebuild is included. The owner later
+authorized changing QA-40's scoring instead of keeping the initial explanation.
+
+### QA-40 — score a usable primary weapon
+
+Reproduced the exact Nord Warrior Spearman edit (Major skill 1: Spear → Long Blade).
+`defaultWeaponSetup` correctly changes to One-handed + shield. The staged model
+weights Major/Minor/Miscellaneous weapon damage at 8/5/1, capped at damage 60.
+Sunder's score 22.2 is consistent with that policy: damage contributes 1;
+Strength 20 and Endurance 20 contribute 6.4 each, Attack 30 contributes 6,
+Luck 20 contributes 2.4. Its bonuses total 21.2. TR/ARCE's Neb-Crescen wins at
+23.73: 7.73 from Major Long Blade damage and 16 from bonuses.
+
+The initial explanation-only commit `9ca583c` retained that ranking; the owner
+rejected it and authorized scoring changes. A second cause is the candidate pool:
+Vanilla's BestInSlot contains no Long Blade, because it publishes only weapons
+with constant effects. The runtime now supplements weapons with the existing
+GearRows power shortlists and their acquisition evidence, resolving damage from
+Weapons. It excludes missing records, incomplete evidence and bound summons;
+constant-effect candidates keep their original sources and drawback rules.
+
+The primary-weapon policy keeps the published 8/5/1 damage weights. Bonus points
+are multiplied by the weapon's tier weight divided by the Major weight, and
+their combined contribution is capped at the skill-weighted damage contribution.
+Bonuses thus cannot turn a weak buff weapon into the strongest primary merely
+by stacking unrelated benefits. They still improve good weapons, and a strong
+off-skill weapon can beat a genuinely weak class weapon. This is an authored
+ranking policy, not an engine damage/DPS calculation. Temporary enchantments
+settle score ties using the existing build-worth function; they never become
+permanent attribute bonuses.
+
+For the reported edit, Vanilla now selects Goldbrand at **6.67**, Major Long
+Blade, from the published Museum of Artifacts source (theft is stated). TR and
+TR + ARCE select Neb-Crescen at **15.47**, Major Long Blade. Weapons are rescored
+even for unchanged premades, while their published armor/clothing/jewelry remain.
+The view and Equip late-game action share the same candidates and wait for both
+catalog features. Missing model retains the existing fallback. Known formidable
+and beast restrictions remain; GearRows does not publish actor levels, so its
+supplementary sources retain their published eligibility and never invent one.
+This is limited to the published shortlists, not every WEAP definition. No new
+GearRows, BestInSlot or real-data extraction is required for this fix.
+
+The superseded explanation passed 70 tests and 12 Chrome cases. Revised scoring:
+**113 relevant tests passed**, including three staged winner/score/equip checks
+and synthetic skill tiers, bonus saturation, weak class weapons, zero/invalid
+damage, malformed candidates, missing models and no input mutation. Twelve new
+Chrome ranking cases pass across all worlds, 1366/375 px and both themes, with
+runner-ups, overflow and scoped axe audits. Existing QA-26 whole-kit, hand setup
+and transfer regressions also pass **12/12** across the same matrix: 48 character
+configurations, 96 hand setups and 12 equip transfers. No runtime/server errors.
+The Vanilla phone screenshot was reviewed. Licence and site-claim checks pass.
+The initial browser setup used a short skill label and then waited before opening
+the lazy gear catalogs; those harness attempts are excluded. The accepted setup
+selects the full displayed skill label, opens the intended section and loads gear.
+
+Evidence: `A:/Cache/qa40-41-flow04/qa40-model-before.jsonl`,
+`qa40-scoring-unit.log`, `qa40-scoring-browser/` and `qa40-qa26-browser/`.
+
+### QA-41 — display Health gains without arithmetic noise
+
+Cause: ProgressionSheet printed its unrounded subtraction, and LevelItineraryCard
+printed the raw per-step gain. Both now use QA-27's existing `formatHealth`: at
+most one decimal, no unnecessary `.0`, and an unavailable placeholder. A zero
+starting Health is retained with `??`, instead of being replaced by the current
+Health. Negative total differences remain clamped at zero. Stored Health, curves
+and gains are not rounded or changed.
+
+Validation: **122 relevant tests passed**, including 14 new rendered-component
+cases: the reported `131.99999999999997` displays `+132`, half points survive,
+binary fractions are tidy, zero/missing baselines and completed itineraries work,
+nonfinite step values give `—`, and inputs retain their original precision.
+**12/12 Chrome cases passed** across all three worlds, both themes and 1366/375
+px. A synthetic saved character with Endurance 33 shows `+3.8 HP Gain` and, after
+advancing, `+3.8 Total HP Gained`. No overflow, runtime/server errors or scoped
+axe blockers. Phone screenshot reviewed. Evidence: `qa41-unit.log` and
+`qa41-browser/` under `A:/Cache/qa40-41-flow04`.
+
+### FLOW-04 — actual carried-item verification; no Travel fix
+
+Parsed the owner-provided `Pe.omwsave` (Ba'Ta, TR + ARCE), 25,333,080 bytes,
+format 37, using the site's parser. SHA-256:
+`bd63759565d68ace72d832736a7d58062d3e5dcccda9abb04efb111dc8a0fae5`.
+Its player inventory has **69 records, all with positive counts**, no parser
+warnings, and **zero matches among the 39** non-quest teleport requirements.
+No Propylon index or supported teleporting item is carried. The save's installed
+`master_index.esp` does not grant an index. Four Divine Intervention and four
+Almsivi Intervention scrolls belong to the separate consumable controls.
+“Items you carry (0 of 39)” is therefore correct, including after Use save defaults.
+The original file's hash is unchanged. No Travel application code or data changed.
+
+Validation: **42 relevant tests passed**, including seven new original-file,
+reduced-inventory, staged-world and edge checks. The reduced fixture commits only
+positive-count item IDs, not the full save, identity or journal. An opt-in test
+parses the original and checks its hash, contents and scroll quantities; fixture
+checks run without the personal file. **8/8 final Chrome cases pass**: original
+file imports and fixture controls × desktop/375 px × both themes. Each checks
+zero initially, Use save defaults, a keyboard-edited positive control, then reset
+to zero. Original imports use Vault's local file input, signed out; no cloud save.
+No overflow, runtime/server errors or scoped axe blockers. Phone screenshot reviewed.
+
+The first coordinate-based variants did not reliably open the native item
+disclosure in some Morrowind-theme runs, leaving the checkbox hidden. Those runs
+are retained as diagnostics and excluded from acceptance. Final inventory cases
+explicitly open the disclosure and use real Space-key events for the positive
+control. They do **not** establish mouse/touch disclosure acceptance; existing
+Travel interaction and freeze touch checks remain required. Evidence under
+`A:/Cache/qa40-41-flow04`: `flow04-unit.log`, `flow04-inventory/`; initial
+coordinate diagnostics: `flow04-browser/`, `flow04-accepted/`, `flow04-final/`.
+
+### Final branch verification and handoff
+
+The final site suite passes **1,308 tests, zero failures, skips or TODOs**, with
+the original-save opt-in enabled. The earlier full run passed 1,307; the final
+run also includes the browser-planner regression added for the three new groups.
+The pipeline suite passes **685 tests**. `npm run build:cloudflare` passes with
+**24/24 static pages**, using the unchanged repository configuration.
+
+Accepted Chrome coverage totals **104 cases**, all passing with zero reported
+runtime or server errors: QA-40 ranking 12, QA-26 whole-kit/hand/equip 12, QA-41
+Health gains 12, FLOW-04 inventory/reset 8, QA-10 beast equipment 28, QA-27 Health
+chart formatting 12, and saved-Travel touch repetitions 20. The world-aware gear
+and Health cases cover Vanilla/TR/TR + ARCE, desktop/375 px and both themes.
+The touch runner verifies mobile capabilities and uses CDP touch events. FLOW-04
+inventory setup is explicitly not pointer/touch disclosure acceptance. The two
+final regression launches before the server restart only reached connection
+refusal; no application cases ran in them. Their restarted runs pass.
+
+Reports and logs remain under `A:/Cache/qa40-41-flow04`: `site-final-test.log`,
+`pipeline-full-test.log`, `cloudflare-build.log`, the item reports above,
+`gear-beast-final/`, `health-format-regression/` and `travel-touch-final/`.
+The original save's SHA-256 is still unchanged. No personal save is committed.
+The planner now selects each new group's cases for its relevant application area.
+COORDINATION is copied identically to the pipeline's docs-only
+`handoff/qa-40-41-flow-04`; UI_TRANSFORMATION remains identical and unchanged.
+Fresh fetch still has site main `f5ca4af` and pipeline master `631aa2e`.
+Only these two branches are prepared for the authorized push; no merge or release.
+
+## 71. QA-42–45 phone layout and wording — 3 October 2026 (UTC)
+
+Continues on `fix/qa-40-41-flow-04`, after the pushed QA-40/41 and FLOW-04 batch.
+The owner requested these four items, a branch push and merge preparation.
+Relevant checks run before each item commit; full checks follow the four fixes.
+No deployment, migration, catalog/schema change or real-data rebuild is included.
+
+### QA-42 — compressed-map annotations
+
+Reproduced on TR at 375 px in Ashfall: the bounding box of `≈78 cells` intersects
+`FELSAAD COAST`. `TransitMap` places stop/region labels with collision checks,
+then adds gap annotations without reserving space. Compressed distances now
+appear in a wrapping legend below the map, including the gap direction. Dashed
+break lines, compression geometry, world positions and routing are unchanged.
+
+Validation: **31 relevant tests passed**, including three new gap regressions:
+vertical route labels, multiple gaps on both axes, and empty/ordinary networks.
+The two nonempty regression tests failed before the fix. **18/18 Chrome cases
+passed**, all three worlds × 1366/375/390 px × both themes, with no annotation
+collisions, page overflow, runtime/server errors or axe blockers. TR's Morrowind
+phone screenshot was reviewed; THIRSK remains readable above the map network.
+The first post-fix runner incorrectly expected the staged 78-cell gap to run
+north–south; it actually runs east–west. That harness-only mismatch is retained
+in `qa42-browser/` and excluded. Accepted report: `qa42-final/`.
+Evidence under `A:/Cache/qa42-45`: `qa42-before-unit.log`, `qa42-before/`,
+`qa42-unit.log`, `qa42-final/`. Tests: `test/travel-map-break-labels.test.js`;
+Chrome group `QA-42/`, selected by the Travel browser planner.
+
+### QA-43 — room for whole faction rows
+
+Reproduced the clipping at 375 px, Morrowind: the roster's scroll viewport is
+78 px high, while Ashlanders' row is 84 px. The Viewing bar is actually below
+the roster, rather than overlapping its measured box; the row cannot fit fully
+before that boundary. The mobile roster now has a 320 px container, does not
+shrink, and contains its own scrolling list. Search and category controls retain
+their size; the workspace and dossier can shrink to their available height.
+Desktop columns, active selection, memberships and promotion rules are preserved.
+
+The empty-search audit also reproduced an invalid empty `listbox`; the empty
+roster now uses `status`, while populated rosters retain selectable options.
+**44 relevant tests pass**, including four new accessibility cases for empty
+catalog/search/memberships and a populated frozen-input selection. **18/18 final
+Chrome cases pass**, all worlds, both themes, 1366/375/390 px: whole-row space,
+contained scrolling, readable/clickable Agility · Endurance, selection and empty
+search announcements, no page overflow, runtime/server errors or axe blockers.
+TR's Morrowind phone screenshot was reviewed. The initial accessibility failure
+and the 78/84 px measurement are retained in `qa43-before/` and `qa43-before2/`.
+Layout-only `qa43-final/` passed before the empty-state change; accepted combined
+report is `qa43-accepted/`. Evidence: `qa43-final-unit.log`,
+`test/faction-roster-empty.test.js`, Chrome group `QA-43/` in the Faction planner.
+
+### QA-44 — legible effect-removal buttons
+
+Reproduced with two effects at 375 px, Morrowind: Remove takes six lines in a
+32.8 px button and its text escapes the button. The native select's minimum
+width squeezes its flex sibling. Effect headers/selects now allow shrinking,
+while Remove reserves its width and stays on one line. Buttons also identify
+their row as `Remove effect N`. Calculation rules and effect values are unchanged.
+
+**46 relevant tests pass**, including four new cases: initial single effect,
+middle-of-three removal/renumbering, first-effect removal and unselected effects
+with an empty catalog. **18/18 Chrome cases pass**, all worlds, desktop/375/390
+px and both themes, checking two and three cards, one-line text, card bounds,
+picker separation, actual removal and retained first-effect values. No overflow,
+runtime/server errors or axe blockers. TR + ARCE's Morrowind phone screenshot
+was reviewed. The first unit fixture omitted the feature's required profile;
+that setup failure is retained in `qa44-unit.log`, with the valid-envelope result
+in `qa44-final-unit.log`. Before/after Chrome: `qa44-before/`, `qa44-final/`.
+Regression file: `test/enchant-remove-controls.test.js`; planner group `QA-44/`.
+
+### QA-45 — explanations and consistent status
+
+Reproduced the missing Travel definitions locally, together with uppercase world
+keys in Alchemy and simultaneous Rival Joined/Eligible to Join faction badges.
+Travel now defines Mark/Recall (not included in the planner), Propylons and their
+carried indices. One shared sentence explains Cheapest's fare priority and its
+separate Fewest legs comparison. Reverse Alchemy defines additional effects as
+other shared effects and ingredient value as the pair's combined base value,
+not a shop price. The existing world-label helper displays Vanilla, Tamriel
+Rebuilt or TR + ARCE without changing profile keys or catalog identity.
+Rival restrictions take priority over qualification badges; existing/imported
+memberships retain their member status. Gear Advisor calls its current skill
+match the closest archetype. Sorting, journey objectives and kit scores are unchanged.
+
+**159 relevant tests pass**, including twelve new copy/status cases: all three
+rival Houses, unqualified rivals, conflicting imported memberships, unrelated
+guilds, all three world labels, pair help, current gear identity and Travel help.
+The reverse-picker fixture now types a query before selecting an effect. The
+existing Alchemy test's explicit import seam includes the reused world helper.
+Before-fix evidence is retained in `qa45-before-unit.log` and `qa45-before/`;
+fixture-only setup failures are excluded from reproduction claims.
+**18/18 Chrome cases pass**, each visiting Travel, Alchemy, Factions and Builder
+in all worlds, both themes and 1366/375/390 px. No overflow, runtime/server errors
+or axe blockers. TR + ARCE phone Travel and pair-help screenshots were reviewed.
+Accepted evidence: `qa45-final-unit.log`, `qa45-final/` under `A:/Cache/qa42-45`.
+Tests: `test/qa45-help-and-status.test.js`, `test/travel-task-layout.test.js`;
+Chrome group `QA-45/` is selected by the four relevant browser-planner areas.
+
+### Full verification and merge preparation
+
+`npm test -- --test-concurrency=4` passes **1,332 tests, zero failures/skips/todos**
+with the original-save opt-in enabled. The first full run found four older Gear
+Advisor assertions tied to the replaced wording; those now assert the closest
+archetype while retaining their automatic recomputation/gear checks. Retained
+logs: `site-full-test.log` (initial), `site-full-final-test.log` (accepted).
+Pipeline `python -B -m unittest discover -s . -p 'test_*.py'` passes **685 tests**
+without uncaught warnings (`pipeline-full-test.log`). `npm run build:cloudflare`
+passes, generating **24 static pages** with repository configuration unchanged
+(`cloudflare-build.log`). The local signed-in export is separate from the release
+export (`vault-build.log`). The original Pe.omwsave hash remains the §70 value.
+
+All eight local signed-in Vault modes pass: **78 cases**, zero runtime/server
+errors. Base, launch F-7/F-10/F-13, character/world preservation, sign-out, sharing
+and clarity modes use only synthetic accounts in separate local D1 states.
+The four application tables are empty in each of the eight states after the
+runner cleanup and explicit removal of three remaining synthetic settings rows.
+Counts are retained in `synthetic-cleanup.json`; no production data was accessed.
+
+Accepted browser coverage totals **1,544 passing case executions**, zero runtime
+or server errors: general pages/tools 203, hydration 432, launch 68, existing QA
+442, additional touch popovers 30, real-touch suite 31, beginner/follow-up QA 156,
+QA-40–45/FLOW-04 104, and local Vault 78. This includes all 72 new QA-42–45
+combinations, with desktop/375/390 px, both themes and all worlds. An additional
+eight-case inventory/reset repeat passes separately. Every accepted group is
+complete; `acceptance-summary.json` lists the exact reports counted once.
+
+Keep these initial reports rather than treating them as accepted:
+
+- About hydration and the fifth touch popover each failed to launch Chrome before
+  application cases. Their complete retries pass (24 and 6 cases respectively).
+- QA-45's Vanilla/375/Ashfall gear audit caught disabled-button opacity while the
+  lazy catalogs were arriving; the failure capture already shows enabled controls.
+  The audit now scrolls first, waits for ranked tables/enabled controls and settled
+  opacity. All 18 combinations pass in `QA-45-*-ready2/`. The first readiness retry
+  waited before the scroll that enables loading; its partial run was stopped and
+  excluded as runner setup, without changing application code.
+- Two FLOW-04 matrices missed the synthetic 375/Morrowind Space edit. Added guards
+  locate the earlier failure at the outer disclosure's coordinate click: it was
+  still closed before inventory setup. The runner now waits for a settled route,
+  two frames after scrolling, open ancestors and checkbox focus. The isolated
+  trace passes; complete `flow04-current-ready/` and `flow04-current-ready2/` pass
+  **8/8 each**, including the original file. Accepted observations show no route
+  pending when sampled, so the earlier miss's precise timing cause is not proven;
+  do not claim a Travel application fix. Inner disclosure opening remains explicit
+  setup, separate from the 20/20 real-touch Travel edit/persistence cases.
+
+The strict missing-page hydration report retains **24 expected HTTP 404 errors**,
+with no hydration warnings or exceptions, under the checklist's explicit exemption.
+The laptop control still records touch with a coarse pointer rather than a fine
+pointer; a physical touchscreen-laptop check remains for freeze acceptance.
+Neither is counted as a passing application case. Raw reports, screenshots and
+logs remain under `A:/Cache/qa42-45/full-browser`; the acceptance summary records
+the startup replacements, stronger ready-state audits and both exceptions.
+
+Fresh fetch retains site main `f5ca4af` and pipeline master `631aa2e`; both are
+ancestors of their respective working branches. `git merge-tree --write-tree`
+previews are clean. Site item commits: QA-42 `24d3a65`, QA-43 `1fb558f`, QA-44
+`fb21798`, QA-45 `20fea8c`. Preparation includes the older automatic-gear copy
+assertions and runner state guards. COORDINATION is identical in both repositories;
+UI_TRANSFORMATION is identical and unchanged. Branches are prepared for push and
+merge review only; no merge, production write, deployment or migration ran.

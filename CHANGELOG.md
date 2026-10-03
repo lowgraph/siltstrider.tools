@@ -1,5 +1,19 @@
 # Changelog
 
+## Launch follow-ups — 2026-10-03
+
+- Travel explains Mark, Recall, Propylons and Cheapest; Alchemy explains pair ordering and names the selected world clearly. Rival House restrictions replace conflicting eligibility labels, and Gear Advisor calls its skill-based match the closest archetype.
+
+- Enchanting keeps Remove buttons readable inside each effect card on phones; each button identifies the effect it removes.
+
+- Faction Journal gives phone roster rows room to show their full details above the Viewing bar, while keeping the roster and dossier independently scrollable. Empty searches announce that no factions were found.
+
+- Travel keeps compressed map distances in the legend, so they no longer cover region or town names on phones.
+
+- Level Simulator shows tidy Health gains in the character sheet and each level step, while retaining fractional Health in calculations.
+
+- The endgame weapon ranking weighs your weapon skills and damage alongside constant bonuses, and now includes obtainable weapons without constant effects. Editing Spear to Long Blade can select a sword instead of a hammer chosen for its bonuses. Each weapon shows its skill fit, score breakdown and source.
+
 ## Launch polish — 2026-10-02
 
 - Cloud Vault cards show the location recorded by the save instead of always saying Vvardenfell; a character with no recorded location says Not recorded.

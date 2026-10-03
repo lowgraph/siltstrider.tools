@@ -1,0 +1,94 @@
+const assert=require('node:assert/strict');
+module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-40/${profile}/${width}/${theme}`,async()=>{
+    const {BUILDS,premadeToBuild}=await import('../lib/premade-data.mjs');const {encodeShareUrl}=await import('../lib/permalink-codec.mjs');
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    const build=premadeToBuild(BUILDS.find(b=>b.name==='Nord Warrior Spearman'));
+    await c.openDocument(c.base+encodeShareUrl({view:'builder',world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce',build}));await c.idle();await c.waitForFonts();
+    // Select the intended section explicitly, even if the linked build matches the random starter.
+    await c.builderTab('builder');await c.until('document.querySelector(\'#builder-maj-0 option[value="Long Blade"]\')');
+    const skillLabel=await c.evaluate('document.querySelector(\'#builder-maj-0 option[value="Long Blade"]\').textContent.trim()');
+    await c.select('#builder-maj-0',skillLabel);
+    if(width<1024)await c.button('Sheet');await c.until('document.querySelector("#gear-advisor")');
+    await c.evaluate('document.querySelector("#gear-advisor").scrollIntoView({block:"center"})');
+    await c.button('Optimize Gear');await c.until('document.querySelector("#gear-advisor .best-in-slot-recommendations table")');
+    const table='[aria-label="Endgame equipment: Optimized Weapons"]';await c.until(`document.querySelector('${table} .weapon-score-explanation')`);
+    const row=await c.evaluate(`document.querySelector('${table} tbody tr').textContent`);
+    if(profile==='vanilla'){
+      assert.match(row,/Goldbrand/);assert.match(row,/Score: 6\.67/);assert.match(row,/Long Blade — Major skill\. Damage score 6\.67; bonus score 0/);
+      assert.match(row,/Mournhold, Museum of Artifacts/);
+    }else{assert.match(row,/Neb-Crescen/);assert.match(row,/Score: 15\.47/);assert.match(row,/Long Blade — Major skill\. Damage score 7\.73; bonus score 7\.74/);}
+    await c.evaluate(`document.querySelector('${table} button').click()`);await c.until(`document.querySelectorAll('${table} .weapon-score-explanation').length===3`);
+    assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);
+    assert.doesNotMatch(await c.evaluate('document.querySelector(".weapon-score-help").textContent'),/Strong bonuses can outweigh|Check the skill fit/);
+    await c.evaluate(`document.querySelector('${table}').scrollIntoView({block:'center'})`);c.assertAccessible(await c.audit(`QA-40-${profile}-${width}-${theme}`));await c.screenshot(`QA-40-${profile}-${width}-${theme}`);
+    return {winner:profile==='vanilla'?'Goldbrand':'Neb-Crescen',rankingChanged:true,majorSkill:true};
+  });
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-41/${profile}/${width}/${theme}`,async()=>{
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    const raw=require('../test/helpers/qa-staged-data.cjs').save();raw.identity.name='QA – Fractional Health';
+    if(profile!=='vanilla')raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm');
+    if(profile==='tr_arce')raw.contentFiles.push('ARCE - All Races and Classes Enabled.esp');
+    const endurance=raw.build.attributes.find(a=>a.id==='Endurance');endurance.base=33;endurance.value=33;
+    const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};assert.equal(await rememberSave(raw,{setItem:(k,v)=>storage[k]=v}),true);
+    await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v)`);
+    await c.navigate('leveler',profile);await c.until('document.querySelector(".level-itinerary-card")');
+    const itinerary=await c.evaluate('document.querySelector(".level-itinerary-card > div > div > span:nth-child(2)").textContent.trim()');
+    assert.equal(itinerary,'+3.8 HP Gain');
+    await c.click('[aria-label="Next level step"]');
+    if(width<1024)await c.button('Leveled Character Sheet');
+    await c.until('document.querySelector(".vitals-section > div span")');
+    const total=await c.evaluate('document.querySelector(".vitals-section > div span").textContent.trim()');
+    assert.equal(total,'+3.8 Total HP Gained');
+    assert.match(total,/^\+\d+(?:\.\d)? Total HP Gained$/);assert.doesNotMatch(total,/\d+\.\d{2,}|NaN|Infinity/);
+    await c.evaluate('document.querySelector(".vitals-section").scrollIntoView({block:"center"})');
+    assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);c.assertAccessible(await c.audit(`QA-41-${profile}-${width}-${theme}`));await c.screenshot(`QA-41-${profile}-${width}-${theme}`);
+    return {itinerary,total,fractionRetained:true};
+  });
+  for(const source of ['fixture',...(process.env.QA_FLOW04_SAVE_PATH?['original']:[])])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`FLOW-04/save-check/${source}/${width}/${theme}`,async()=>{
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    const inventory=require('../test/fixtures/flow04-inventory.cjs');
+    if(source==='original'){
+      await c.navigate('vault','tr_arce');await c.until('document.querySelector(".open-save-panel input[type=file]")');
+      const {root}=await c.send('DOM.getDocument');const {nodeId}=await c.send('DOM.querySelector',{nodeId:root.nodeId,selector:'.open-save-panel input[type=file]'});
+      assert.ok(nodeId);await c.send('DOM.setFileInputFiles',{nodeId,files:[process.env.QA_FLOW04_SAVE_PATH]});
+      await c.until('localStorage.getItem("silt-active-save")');
+    }else{
+      const raw=require('../test/helpers/qa-staged-data.cjs').save();raw.identity.name='QA – No carried teleport items';
+      raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm','ARCE - All Races and Classes Enabled.esp','master_index.esp');
+      raw.stuff.inventory=inventory.ids.map(id=>({id,count:1}));
+      const {rememberSave}=await import('../lib/active-save-store.mjs');const storage={};assert.equal(await rememberSave(raw,{setItem:(k,v)=>storage[k]=v}),true);
+      await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v)`);
+    }
+    await c.navigate('travel','tr_arce');await c.until('document.querySelector("#travel-options")');
+    const routeStillLoading=await c.evaluate('/Loading route|Loading travel network and planning/.test(document.querySelector("#travel-results").textContent)');
+    // Worker route results can change the height above this disclosure after
+    // network idle. Wait for that layout before sending coordinate input.
+    await c.until('! /Loading route|Loading travel network and planning/.test(document.querySelector("#travel-results").textContent)');
+    await c.evaluate('document.querySelector("#travel-options > summary").scrollIntoView({block:"center"});new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');
+    if(!await c.evaluate('document.querySelector("#travel-options").open'))await c.click('#travel-options > summary');
+    assert.equal(await c.evaluate('document.querySelector("#travel-options").open'),true,'The outer options disclosure opened before inventory setup');
+    await c.until('[...document.querySelectorAll("#travel-options summary")].some(s=>s.textContent.includes("Items you carry (0 of 39)"))');
+    await c.evaluate('[...document.querySelectorAll("#travel-options summary")].find(s=>s.textContent.includes("Items you carry")).parentElement.dataset.flow04Items="true"');
+    const initiallyOpen=await c.evaluate('document.querySelector("[data-flow04-items]").open');
+    // This case verifies inventory/defaults. Pointer/touch disclosure coverage
+    // belongs to the existing Travel interaction suites, not this setup step.
+    await c.evaluate('document.querySelector("[data-flow04-items]").open=true');
+    await c.until('document.querySelector("[data-flow04-items]").open');
+    const read=()=>c.evaluate('({summary:document.querySelector("[data-flow04-items] > summary").textContent.trim(),total:document.querySelectorAll("[data-flow04-items] input").length,checked:document.querySelectorAll("[data-flow04-items] input:checked").length})');
+    assert.deepEqual(await read(),{summary:'Items you carry (0 of 39)',total:39,checked:0});
+    await c.button('Use save defaults');await c.idle();await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===0');
+    assert.equal(await c.evaluate('document.querySelector("[data-flow04-items]").open'),true,'The items disclosure remains open before editing');
+    assert.equal(await c.evaluate('document.querySelector("#travel-options").open'),true,'The outer options disclosure remains open before editing');
+    await c.evaluate('document.querySelector("[data-flow04-items] input").focus()');
+    assert.equal(await c.evaluate('document.activeElement===document.querySelector("[data-flow04-items] input")'),true,'Space is sent to the inventory checkbox');
+    await c.key(' ','Space',32);
+    await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===1');
+    await c.button('Use save defaults');await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===0');
+    assert.deepEqual(await read(),{summary:'Items you carry (0 of 39)',total:39,checked:0});
+    await c.evaluate('document.querySelector("[data-flow04-items]").scrollIntoView({block:"center"})');
+    assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);c.assertAccessible(await c.audit(`FLOW-04-${source}-${width}-${theme}`));await c.screenshot(`FLOW-04-${source}-${width}-${theme}`);
+    if(source==='original')assert.equal(require('node:crypto').createHash('sha256').update(require('node:fs').readFileSync(process.env.QA_FLOW04_SAVE_PATH)).digest('hex'),inventory.sha256);
+    return {source,initiallyOpen,routeStillLoading,carriedRecords:69,listedItems:39,matchedItems:0,resetRestoresZero:true};
+  });
+};

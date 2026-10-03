@@ -8,6 +8,7 @@ export {default as Journal} from './components/journal-factions/journal-factions
 export {default as Sheet} from './components/character-builder/character-sheet.jsx';
 export {default as HomeHero} from './components/home-hub/home-hero.jsx';
 export {default as ProgressionSheet} from './components/level-simulator/progression-sheet.jsx';
+export {default as LevelItineraryCard} from './components/level-simulator/level-itinerary-card.jsx';
 export {default as HealthGrowthChart} from './components/level-simulator/health-growth-chart.jsx';
 export {default as AccountPage} from './components/account-page.jsx';
 export {default as Challenge} from './components/challenge-runs/challenge-runs-root.jsx';

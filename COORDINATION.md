@@ -1,5 +1,49 @@
 # Coordination
 
+## Phone layout and player explanations — 3 October
+
+Continues on site `fix/qa-40-41-flow-04`: QA-42 `24d3a65`, QA-43 `1fb558f`,
+QA-44 `fb21798`, QA-45 `20fea8c`. Compressed-map distances belong below the SVG;
+preserve its break geometry, world positions and routing. Phone faction rosters
+need room for a complete row and contained scrolling above the Viewing bar;
+empty rosters announce status, populated rosters retain listbox options. Effect
+selectors may shrink, but Remove labels stay whole with row-specific names.
+Travel help shares one Cheapest explanation and excludes Mark/Recall. Alchemy
+pair ordering remains extra shared effects, then combined base value (not a shop
+price); display friendly world names without changing canonical profile keys.
+Rival House restrictions supersede qualification labels, while imported/current
+memberships remain intact. Gear's closest archetype describes current skill fit.
+Gear audits wait for ready catalogs and settled button opacity. Inventory checks
+wait for settled scroll geometry and verify outer-disclosure state and checkbox
+focus; retain the independent Travel tap/disclosure acceptance cases.
+No exported dataset/schema, bundle, migration or real-data rebuild. Shared
+UI_TRANSFORMATION remains unchanged. Verification and merge preparation are in
+site LAUNCH_VERIFICATION §71; branches only, no release.
+First command: `npm test -- --test-concurrency=4`, then BROWSER_TESTS' `QA-42/`
+through `QA-45/` and full release-candidate browser coverage before merging.
+
+## Weapon ranking, Health display and save verification — 2 October (3 October UTC)
+
+On site `fix/qa-40-41-flow-04`: QA-40 `982fd76`, QA-41 `8425079`, FLOW-04
+verification `2f1a202`. Owner-authorized primary-weapon scoring supplements
+BestInSlot's constant-effect pool with existing GearRows power shortlists and
+Weapons damage. Keep canonical IDs, acquisition evidence, theft labels, beast
+eligibility and hand setup. No exported dataset/schema, bundle, migration or
+real-data rebuild. The runtime retains 8/5/1 skill-tier damage weights; passive
+bonuses follow skill fit and cannot exceed the damage contribution. Temporary
+enchantments break score ties, never become permanent stats. This authored
+ranking is not engine DPS. Rescore weapons for unchanged premades too; retain
+their other published picks. Display and late-game equip use the same candidates
+and wait for both features. Supplementary sources have no published actor level;
+do not invent one or claim the shortlist covers every weapon.
+Health formatting changes only display; preserve fractions and zero baselines.
+The supplied Pe.omwsave has 69 positive-count inventory records and none of the
+39 listed teleport requirements; Use save defaults is correct. No Travel fix.
+Relevant and full verification is in site LAUNCH_VERIFICATION §70. Keep the
+inventory runner's explicit disclosure setup separate from pointer/touch checks.
+First command in the site: `npm test -- --test-concurrency=4`, then BROWSER_TESTS'
+`QA-40/`, `QA-41/` and `FLOW-04/save-check/` Chrome groups. Branches only; no release.
+
 ## Main release and recovery handoff — 2 October
 
 Owner-authorized `672c0d3` is live as Worker `56a07cb7-4daf-4e8c-8348-9da01b18cbdc`

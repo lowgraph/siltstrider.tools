@@ -28,7 +28,7 @@ test('an Enchanting change runs only the Enchanting groups', async () => {
   const plan = planBrowserRuns(['lib/enchant-math.mjs', 'components/calculators/enchanting/enchanting-workstation.jsx']);
   assert.equal(plan.full, false);
   assert.deepEqual(plan.areas, ['Enchanting']);
-  assert.deepEqual(commands(plan), ['qa:/enchanting/', 'launch:FLOW-01', 'polish:Polish Enchanting']);
+  assert.deepEqual(commands(plan), ['qa:/enchanting/', 'launch:FLOW-01', 'polish:Polish Enchanting', 'qa:QA-44/']);
 });
 
 test('two files in one area are not planned twice, and Windows paths match', async () => {
@@ -93,6 +93,34 @@ test('beginner clarity and contained fixes reach their dedicated browser groups'
   const account = planBrowserRuns(['components/character-vault/cloud-vault-card.jsx']);
   assert.ok(commands(account).includes('vault'));
   assert.ok(account.notes.some(note => note.includes('test:vault -- --clarity')));
+});
+
+test('weapon scoring, Health gains and Travel inventory reach their dedicated browser cases', async () => {
+  const { planBrowserRuns } = await load();
+  for (const [file, filter] of [
+    ['lib/best-in-slot.mjs', 'QA-40/'],
+    ['components/level-simulator/progression-sheet.jsx', 'QA-41/'],
+    ['lib/travel-options.mjs', 'FLOW-04/save-check/'],
+  ]) {
+    const plan = planBrowserRuns([file]);
+    assert.equal(plan.full, false, file);
+    assert.ok(commands(plan).includes(`qa:${filter}`), `${file}: ${filter}`);
+  }
+});
+
+test('QA-42–45 changes select their own browser regressions', async () => {
+  const { planBrowserRuns } = await load();
+  for (const [file, filters] of [
+    ['components/calculators/travel/transit-map.jsx', ['QA-42/', 'QA-45/']],
+    ['components/journal-factions/faction-roster.jsx', ['QA-43/', 'QA-45/']],
+    ['components/calculators/enchanting/enchanting-workstation.jsx', ['QA-44/']],
+    ['components/calculators/alchemy/reverse-alchemy.jsx', ['QA-45/']],
+    ['components/character-builder/gear-advisor.jsx', ['QA-45/']],
+  ]) {
+    const plan = planBrowserRuns([file]);
+    assert.equal(plan.full, false, file);
+    for (const filter of filters) assert.ok(commands(plan).includes(`qa:${filter}`), `${file}: ${filter}`);
+  }
 });
 
 test('every planned filter names cases that exist in the browser runners', async () => {

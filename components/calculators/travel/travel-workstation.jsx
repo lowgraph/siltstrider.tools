@@ -49,6 +49,8 @@ import { interventionAccess, withInterventionResources } from "../../../lib/trav
 
 import { buildTransitStops, addTransitInterventions, resolveTransitEndpoint, transitEndpointStops, transitStopId } from "../../../lib/travel-stops.mjs";
 
+const CHEAPEST_HELP = "Cheapest prioritizes estimated fares. Its comparison with Fewest legs shows fare and outdoor movement time.";
+
 const POPULAR_HUBS = [
   { name: "Seyda Neen", desc: "Arrival Port", vanillaOnly: false },
   { name: "Balmora", desc: "Central Hub", vanillaOnly: false },
@@ -616,10 +618,13 @@ export default function TravelWorkstation() {
       <section aria-label="Plan a journey" className="space-y-3">
         <p className="travel-beginner-help text-xs text-fg-7">
           A leg is one ride, spell or movement step. Fewest legs uses the fewest steps;
-          Cheapest compares fares; Fastest compares in-game time; Least real time compares
+          Fastest compares in-game time; Least real time compares
           estimated outdoor movement and breaks ties with transport or spell transitions.
           Guild Guides teleport between Mages Guild halls. Intervention spells take you to a
-          shrine or temple; Recall returns to your Mark. Enable only spells and items you have.
+          shrine or temple. Mark records a place and Recall returns you there; they are not included
+          in this planner. Propylons are teleporters between Dunmer stronghold chambers; their
+          indices are carried keys that open the matching connections. Enable only spells and items you have.
+          {" "}{CHEAPEST_HELP}
         </p>
         <p id="travel-network-status" role={gameData.status === "error" ? "alert" : "status"} className="m-0 text-xs text-fg-9">
           Network: {isTr ? profile === "tr_arce" ? "Tamriel Rebuilt + ARCE" : "Tamriel Rebuilt" : "Vvardenfell (Vanilla)"} · {gameData.status === "ready"
@@ -1112,7 +1117,7 @@ export default function TravelWorkstation() {
             <li>Routes include Silt Striders, boats, Guild Guides, gondolas, Pack Guar, Sky Lamps, carriages and River Striders. Guild Guides require Mages Guild membership; some mainland links also require Conjurer rank.</li>
             <li>Divine and Almsivi Intervention follow OpenMW&apos;s search through nearby map cells, so the landing point may not be the nearest in a straight line. Indoors, the search starts from the first door out. Scrolls start unticked and each route is limited to the number carried; replanning does not change the save. Known spells default on only at an estimated cast chance of at least 75% with enough current Magicka. This is a planner default, not a game rule: you can include a lower or unknown chance explicitly. Zero chance or insufficient Magicka excludes the spell. Estimates use Mysticism, Willpower, Luck, the spell&apos;s published cost and saved fatigue (full fatigue if unavailable); temporary effects such as Silence are not modeled. When cost and current Magicka are available, spell legs share that Magicka budget. Otherwise the budget cannot be checked. Routes assume successful casts and no recovery during the journey.</li>
             <li>Cities remain one choice unless you search for a specific place inside them. Without a specific starting or ending place, the route chooses the appropriate transport stop in that city. When a journey passes through a city, transfers include the outdoor walk between arrival points, platforms and guild halls; each walk shows its real movement estimate. Indoor movement remains uncounted. Walking and swimming use your Speed, Athletics and carried weight. The planner first tries nearby stops and short swims near land. Only when no route is found does it try long walks and open-water swims, using the same character and route options. Routes avoid slopes steeper than 46° and pass through the Ghostgate. Constant Water Walking times water at walking speed; constant Levitate allows direct flight when faster. Buildings and boulders may still block a planned path.</li>
-            <li>Real Time Approximation adds outdoor movement at your estimated run, swim or Levitate speed. Least real time minimizes that movement, then transport/spell transitions when movement times tie. Menus and loading times vary and are not counted, so this is an approximation. Combat, detours, pauses and movement indoors add time. Cheapest compares the fare and movement time with Fewest legs using the same options. Fastest still minimizes in-game time.</li>
+            <li>Real Time Approximation adds outdoor movement at your estimated run, swim or Levitate speed. Least real time minimizes that movement, then transport/spell transitions when movement times tie. Menus and loading times vary and are not counted, so this is an approximation. Combat, detours, pauses and movement indoors add time. {CHEAPEST_HELP} Fastest still minimizes in-game time.</li>
             <li>Indoor routes name the doors and rooms to pass through, including rooms reached by teleport. Time spent indoors is not counted.</li>
             <li>Propylons need their indices; the Master Index adds travel through Caldera. Tick the teleport items you carry. Quest teleports are left out unless you include them; check the quest conditions shown on those legs.</li>
             <li>Mark and Recall are not included.</li>

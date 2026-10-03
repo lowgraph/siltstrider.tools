@@ -12,6 +12,7 @@ import IngredientSources from "./ingredient-sources";
 import ActiveCharacterLink from "../../active-character-link";
 import { adaptAlchemy } from "../../../lib/alchemy-catalogs.mjs";
 import { sourceIndex } from "../../../lib/ingredient-sources.mjs";
+import { worldLabel } from "../../../lib/home-data.mjs";
 import {
   sharesAlchemyEffect,
   formatEffectLabel,
@@ -213,7 +214,7 @@ export default function AlchemyWorkstation() {
             {gameData.status === 'ready' ? (
               <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.data?.bundleId || ''}`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
-                <span>Live: {allIngredients.length} Ing. ({gameData.data?.profile?.toUpperCase() || profile.toUpperCase()})</span>
+                <span>Live: {allIngredients.length} Ing. ({worldLabel(gameData.data?.profile || profile)})</span>
               </span>
             ) : gameData.status === 'loading' ? (
               <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">

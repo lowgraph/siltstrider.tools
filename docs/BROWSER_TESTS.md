@@ -1,5 +1,30 @@
 # Local browser regression tests
 
+QA-42–45 follow-ups: `--suite qa --filter 'QA-42/'` checks the map's compressed
+gap legend across all worlds, both themes and 1366/375/390 px. Gap annotations
+must not overlap region or settlement labels, and their explanation stays below
+the map. Reports and screenshots belong in `A:/Cache/qa42-45`.
+
+`--suite qa --filter 'QA-43/'` uses the same matrix for Faction Journal. It
+requires room for a whole Ashlanders row, contains roster scrolling above the
+Viewing bar, checks the attribute line by hit-testing, and audits both populated
+and empty searches while preserving the selected dossier.
+
+`--suite qa --filter 'QA-44/'` checks two/three Enchanting effect cards across
+the same matrix. Remove labels stay on one line, within their buttons/cards and
+apart from the picker. Removing the second effect preserves the first; the last
+effect remains. Row-specific accessible labels identify each removal control.
+
+`--suite qa --filter 'QA-45/'` visits Travel, Alchemy, Factions and Builder for
+each world/theme/width combination. It checks the spell and Propylon definitions,
+identical Cheapest explanations, pair-order definitions, friendly world labels,
+rival restriction without a conflicting eligibility badge, and closest-archetype
+wording. Screenshots and axe audits cover all four views.
+The gear audit scrolls into view to activate lazy catalogs, then waits for the
+ranked tables, enabled controls and settled opacity. The header alone is not
+readiness. Split the four new matrices by world for 120-second bounded runs,
+for example `--filter 'QA-45/tr_arce/'` (six cases).
+
 Start `npm run dev` on port 8765. With Node 22 or newer, an installed Chrome and
 an existing axe-core script, run from the site repository in PowerShell:
 
@@ -438,8 +463,8 @@ Ingredient cases cover autocomplete, selected slots, reverse pairs and use/focus
 the canonical IDs behind source requests, and ingredient search/command previews.
 Screenshots, scoped axe results, overflow, runtime errors, fonts, commit and bundle
 metadata are saved with the report. SS-08 separately checks active identity after
-an empty search; the existing empty roster listbox has an unrelated axe
-`aria-required-children` failure, recorded in LAUNCH_VERIFICATION.
+an empty search; QA-43 now renders that empty roster as a status instead of an
+invalid empty listbox, with populated and empty states both covered by axe.
 
 Use the built Worker and fresh local D1 via `scripts/local-stack.cjs` for F-7,
 F-10 and F-13. The dedicated launch group sets the synthetic account theme and
@@ -571,3 +596,35 @@ the implementation; build separately before applying a bounded browser run.
 Keep the existing QA-10 gear eligibility cases, including compatible open helmets,
 and QA-09 mouse/touch popovers. Full preparation still runs all suites and every
 local Vault mode; these additions do not replace existing regression coverage.
+
+`--suite qa --filter 'QA-40/'` edits Nord Warrior Spearman's first Major skill
+from Spear to Long Blade in all three worlds, both themes and 1366/375 px (12 cases).
+It selects Configure and Sheet explicitly and opens the lazy gear catalogs before
+checking the kit. Vanilla selects Goldbrand (6.67, Major Long Blade); TR/ARCE
+selects Neb-Crescen (15.47, Major Long Blade). Its revised weapon score weights
+constant bonuses by weapon skill and caps their combined contribution at the
+skill-weighted damage score. Non-constant weapons come only from published
+GearRows power shortlists with acquisition evidence, using Weapons for damage;
+temporary enchantments settle ties and never become permanent bonuses. Primary
+and runner-up rows explain their skill fit; source text preserves theft flags.
+Use `test/qa40-weapon-explanation.test.js` for the staged model and synthetic edge
+cases; missing data is skipped only when the bundle pointer is absent.
+
+`--suite qa --filter 'QA-41/'` loads a synthetic save with Endurance 33, checks
+the first itinerary's `+3.8 HP Gain`, advances a step and checks `+3.8 Total HP
+Gained` in the sheet. All three worlds, both themes, 1366/375 px: 12 cases.
+The arithmetic remains fractional; `test/qa41-health-gain-display.test.js` pins
+the reported 131.99999999999997 total, fractional/zero baselines, unavailable
+values and unchanged inputs using the actual rendered components.
+
+`--suite qa --filter 'FLOW-04/save-check/'` checks the reduced 69-item inventory
+fixture against the 39 TR + ARCE teleport items at 1366/375 px, both themes.
+It starts with zero selected items, checks Use save defaults, uses Space to edit
+one checkbox and resets it to zero. It waits for the route result and two scroll
+frames before clicking the outer disclosure, then requires it to stay open and
+the checkbox to own focus before Space. Disclosure opening is test setup, not
+pointer/touch acceptance. Set `QA_FLOW04_SAVE_PATH` to a local `Pe.omwsave` path
+to add four original-file imports through Vault's local Open Save File input;
+the file is not uploaded or changed. The original-file unit check is likewise
+opt-in; the reduced fixture/staged checks always run. See §70 for the tested
+file's hash and the coordinate-click attempts excluded from the final results.

@@ -1,6 +1,7 @@
 "use client";
 import { useState, Fragment } from "react";
-import { resolveBestInSlotPicks } from "../../lib/best-in-slot.mjs";
+import { resolveBestInSlotPicks, weaponScoreDetails } from "../../lib/best-in-slot.mjs";
+import { enchantmentNote, sourceLabel } from "../../lib/gear-rows.mjs";
 
 function formatQuestGrant(grant) {
   if (typeof grant !== "string") return String(grant);
@@ -33,7 +34,23 @@ function formatSource(source) {
   return "Placed in world";
 }
 
-function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
+function WeaponScoreExplanation({ entry, build, model }) {
+  const detail = weaponScoreDetails(entry.item, build, model, entry.pick?.score);
+  if (!detail) return null;
+  return (
+    <p className="weapon-score-explanation text-xs text-fg-8 leading-relaxed">
+      {detail.skill} — {detail.tier} skill. Damage score {detail.damageScore}; bonus score {detail.bonusScore}.
+    </p>
+  );
+}
+
+function itemSource(item) {
+  return item.acquisitionPick
+    ? [...Object.values(sourceLabel(item.acquisitionPick)), item.acquisitionPick.theftRequired ? 'Theft required' : ''].filter(Boolean).join(' · ')
+    : formatSource(item.source);
+}
+
+function BisPickRow({ slotLabel, topPick, alternatives = [], weaponBuild, model }) {
   const [showAlts, setShowAlts] = useState(false);
   const item = topPick.item || {};
   const pick = topPick.pick || {};
@@ -47,7 +64,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
     stats.push(`Dmg ${item.damage} (${wLabel})`);
   }
 
-  const effectsSummary = (item.effects || [])
+  const effectsSummary = item.acquisitionPick ? enchantmentNote(item.acquisitionPick) : (item.effects || [])
     .map((e) => {
       const target = e.skill || e.attribute;
       const tStr = target ? ` (${target.replace(/_/g, " ")})` : "";
@@ -74,6 +91,8 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
               <span className="text-xs text-fg-11 font-mono">[{stats.join(" · ")}]</span>
             )}
           </div>
+
+          {weaponBuild && <WeaponScoreExplanation entry={topPick} build={weaponBuild} model={model} />}
 
           {/* Constant effects description */}
           {effectsSummary && (
@@ -125,7 +144,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
         </td>
 
         <td data-label="Acquisition & Location" className="py-2.5 px-3 align-top text-xs text-fg-8">
-          <span className="font-serif">{formatSource(item.source)}</span>
+          <span className="font-serif">{itemSource(item)}</span>
           {item.source?.easiestLevel > 30 && (
             <div className="mt-1">
               <span className="px-1.5 py-0.5 rounded text-[10px] bg-danger-surface-3 border border-danger-line-2 text-danger-2">
@@ -152,8 +171,9 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
                 {aPick.score != null && (
                   <span className="ml-2 font-mono text-fg-10">Score: {aPick.score}</span>
                 )}
+                {weaponBuild && <WeaponScoreExplanation entry={alt} build={weaponBuild} model={model} />}
               </td>
-              <td data-label="Acquisition & Location" className="py-1.5 px-3">{formatSource(aItem.source)}</td>
+              <td data-label="Acquisition & Location" className="py-1.5 px-3">{itemSource(aItem)}</td>
             </tr>
           );
         })}
@@ -164,11 +184,13 @@ function BisPickRow({ slotLabel, topPick, alternatives = [] }) {
 export function BestInSlotView({
   featureData,
   build,
+  gearRows = [],
   beast = false,
   weaponSetup = null,
   allowFormidableSources = false
 }) {
   const resolved = resolveBestInSlotPicks(featureData, build, {
+    gearRows,
     allowFormidableSources,
     weaponSetup,
     beast
@@ -181,7 +203,7 @@ export function BestInSlotView({
           Optimized endgame kit
         </summary>
         <p className="mt-3 text-sm text-fg-10 italic">
-          No constant-effect gear recommendations available for this build configuration.
+          No gear recommendations available for this build configuration.
         </p>
       </details>
     );
@@ -195,7 +217,7 @@ export function BestInSlotView({
 
       <div className="mt-3 space-y-4">
         <p className="text-sm text-fg-8 leading-relaxed">
-          Constant-effect endgame equipment ranked for this character&apos;s current attributes and skills.
+          Endgame equipment ranked for this character&apos;s current attributes and skills.
           Drawbacks that ruin a character disqualify an item; acceptable drawbacks display warnings
           and recommended mitigations.
         </p>
@@ -219,6 +241,12 @@ export function BestInSlotView({
               {group.label}
             </h4>
 
+            {group.label === 'Optimized Weapons' && (
+              <p className="weapon-score-help text-xs text-fg-8 leading-relaxed">
+                Weapons are ranked for your skill choices, damage and constant bonuses.
+              </p>
+            )}
+
             <div className="overflow-x-auto">
               <table className="gear-table w-full text-left border-collapse border border-line-12 bg-surface-3" aria-label={`Endgame equipment: ${group.label}`}>
                 <thead>
@@ -239,6 +267,8 @@ export function BestInSlotView({
                         slotLabel={row.slotLabel}
                         topPick={topPick}
                         alternatives={alternatives}
+                        weaponBuild={row.slotKey === 'weapon' ? build : null}
+                        model={featureData.metadata?.BestInSlot?.model}
                       />
                     );
                   })}

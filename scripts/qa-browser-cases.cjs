@@ -184,13 +184,13 @@ exports.qa = async c => {
       for(const profile of ['vanilla','tr','tr_arce']) await c.check(`QA-26/endgame/${profile}/${width}/${theme}`,async()=>{
         const original=premadeToBuild(getPremadeBuildPool().find(b=>b.name==='Argonian female — Marsh mage'),{world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce'});
         assert.ok(original,'The reported premade exists');
-        const l=await fixture.loader(),data=await l.loadFeature(profile,'bestInSlot'),phases=[];
+        const l=await fixture.loader(),data=await l.loadFeature(profile,'bestInSlot'),gear=await l.loadFeature(profile,'gear'),gearRows=gear.catalogs.GearRows,phases=[];
         const compare=async(build,unchanged=false)=>{
           const modes=[];
           for(const [mode,weaponSetup] of [['One-handed + shield','one-handed'],['Two-handed','two-handed']]) {
             await c.button(mode);
             // Renaming the edited character independently bypasses the old name-only lookup.
-            const expected=resolveBestInSlotPicks(data,unchanged?build:{...build,name:'QA Dynamic Reference',premadeSource:undefined},{beast:build.race==='Argonian',weaponSetup});
+            const expected=resolveBestInSlotPicks(data,unchanged?build:{...build,name:'QA Dynamic Reference',premadeSource:undefined},{beast:build.race==='Argonian',weaponSetup,gearRows});
             const wanted=expected.groups.flatMap(g=>g.rows.map(r=>({slot:r.slotLabel,name:r.picks[0].item.name,score:r.picks[0].pick.score})));
             await c.until('document.querySelector(".best-in-slot-recommendations table")');
             const read=()=>c.evaluate(`(()=>{const e=document.querySelector('.best-in-slot-recommendations');return {title:e.querySelector('.leading-relaxed').textContent,rows:[...e.querySelectorAll('tbody tr')].filter(r=>r.querySelector('td:nth-child(2) .font-bold')).map(r=>({slot:r.querySelector('td').textContent.trim(),name:r.querySelector('td:nth-child(2) .font-bold').textContent.trim(),score:Number(r.querySelector('td:nth-child(2) .font-mono').textContent.replace('Score:','').trim())}))}})()`);
@@ -221,7 +221,7 @@ exports.qa = async c => {
         await c.evaluate(`document.querySelector('.best-in-slot-recommendations').scrollIntoView({block:'start',behavior:'instant'})`);await c.screenshot(`qa26-edited-${profile}-${width}-${theme}`);
         await c.button('Equip late-game recommendations →');await c.until('document.querySelector(".equipment-studio-root")?.textContent.includes("Recommended late-game gear")');
         const equipped=await c.evaluate('document.querySelector(".equipment-studio-root").innerText');
-        const expected=resolveBestInSlotPicks(data,{...skillEdited,name:'QA Dynamic Reference',premadeSource:undefined},{beast:false,weaponSetup:'two-handed'});
+        const expected=resolveBestInSlotPicks(data,{...skillEdited,name:'QA Dynamic Reference',premadeSource:undefined},{beast:false,weaponSetup:'two-handed',gearRows});
         for(const row of expected.groups.flatMap(g=>g.rows))assert.ok(equipped.includes(row.picks[0].item.name),'Equipped kit uses current choices: '+row.slotLabel);
         await c.evaluate(`document.querySelector('.equipment-studio-root').scrollIntoView({block:'start',behavior:'instant'})`);await c.screenshot(`qa26-equipped-${profile}-${width}-${theme}`);
         const {premadeSource,...custom}=original;
