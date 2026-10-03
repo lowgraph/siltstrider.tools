@@ -28,7 +28,7 @@ test('an Enchanting change runs only the Enchanting groups', async () => {
   const plan = planBrowserRuns(['lib/enchant-math.mjs', 'components/calculators/enchanting/enchanting-workstation.jsx']);
   assert.equal(plan.full, false);
   assert.deepEqual(plan.areas, ['Enchanting']);
-  assert.deepEqual(commands(plan), ['qa:/enchanting/', 'launch:FLOW-01', 'polish:Polish Enchanting', 'qa:QA-44/']);
+  assert.deepEqual(commands(plan), ['qa:/enchanting/', 'launch:FLOW-01', 'polish:Polish Enchanting', 'qa:QA-44/', 'qa:QA-47/']);
 });
 
 test('two files in one area are not planned twice, and Windows paths match', async () => {

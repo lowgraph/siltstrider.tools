@@ -3951,3 +3951,13 @@ fixes; the production release and rollback records in §72–73 are unchanged.
 
 Evidence: `A:/Cache/qa46-47-43-51/`, `qa46-before.log`, `qa46-final-tests.log`,
 and `qa46-vanilla/`, `qa46-tr/`, `qa46-tr-arce/` (reports, audits and screenshots).
+
+QA-47 uses `worldLabel` for the live status in Enchanting, Spellmaking and Faction
+Journal, retaining the canonical profile in catalog state. The calculators'
+missing-profile fallback also uses the selected profile instead of the undefined
+`activeWorld`. Eleven new tests cover each tool/world and both calculator fallbacks;
+all fail before the fix (nine label assertions, two undefined-variable errors).
+Relevant status, copy, browser-plan and licence/claim checks pass **40/40**. Chrome
+passes **12/12** (36 tool visits): all worlds, 1366/375 px and both themes, with
+overflow, axe and screenshots. Evidence: `qa47-before.log`, `qa47-tests.log` and
+`qa47-browser/` under the same Cache directory.

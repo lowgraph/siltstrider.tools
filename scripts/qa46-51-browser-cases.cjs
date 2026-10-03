@@ -29,4 +29,18 @@ module.exports=async c=>{
     c.assertAccessible(await c.audit(`QA-46-cleared-${profile}-${view}-${width}-${theme}`));await c.screenshot(`QA-46-cleared-${profile}-${view}-${width}-${theme}`);
     return {cancel:true,escape:true,confirmed:true,focusRestored:true,world:profile};
   });
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375])for(const theme of ['ashfall','morrowind'])await c.check(`QA-47/${profile}/${width}/${theme}`,async()=>{
+    const {worldLabel}=await import('../lib/home-data.mjs');const label=worldLabel(profile),statuses={};
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    for(const tool of ['enchanting','spellmaking','factions']) {
+      await c.navigate(tool,profile);await c.until(`[...document.querySelectorAll('span')].some(s=>/Live:/.test(s.textContent))`);
+      const status=await c.evaluate(`(()=>{const b=[...document.querySelectorAll('span')].find(s=>/Live:/.test(s.textContent));b.dataset.qaStatus='true';return b.textContent.trim()})()`);
+      assert.ok(status.includes(`(${label})`),status);assert.doesNotMatch(status,/TR_ARCE|\(TR\)|\(VANILLA\)/);
+      await c.evaluate('document.querySelector("[data-qa-status]").scrollIntoView({block:"center"})');await c.waitForFonts();
+      assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false,'The world name fits at this width');
+      c.assertAccessible(await c.audit(`QA-47-${tool}-${profile}-${width}-${theme}`));await c.screenshot(`QA-47-${tool}-${profile}-${width}-${theme}`);
+      statuses[tool]=status;
+    }
+    return statuses;
+  });
 };

@@ -1,5 +1,6 @@
 "use client";
 import { factionCharacter } from "../../lib/faction-math.mjs";
+import { worldLabel } from "../../lib/home-data.mjs";
 import { useState, useMemo, useEffect } from "react";
 import { useGameData } from "../use-game-data";
 import { useSearchIntent } from "../use-search-intent";
@@ -270,7 +271,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
           {/* Live Bundle Status Badge */}
           {isLive ? (
             <span className="px-2 py-0.5 text-[11px] font-mono uppercase bg-success-surface-2 border border-success-line-4 text-success-4" title="Loaded from verified game data bundle">
-              • Live: {factionsList.length} Factions ({shell?.profile?.toUpperCase() || "VANILLA"})
+              • Live: {factionsList.length} Factions ({worldLabel(shell?.profile)})
             </span>
           ) : (
             <span className="px-2 py-0.5 text-[11px] font-mono text-fg-14 bg-surface-12 border border-line-9">

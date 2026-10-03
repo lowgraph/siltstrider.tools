@@ -583,11 +583,11 @@ setup and Equip all agree; off-skill picks are explained), QA-42, QA-44, QA-45, 
 noise in 588 readings; partial coverage), and QA-01, QA-16, QA-31, QA-32 spot checks.
 Merge by Sunday 4 October; Monday is the freeze.
 
-- [x] **C** **QA-46** (started 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §76) (Medium-Low; confirmed live 3/3 and in code) "Clear save" on a loaded save
+- [x] **C** **QA-46** (started 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`; done `9326a87`, LAUNCH_VERIFICATION §76) (Medium-Low; confirmed live 3/3 and in code) "Clear save" on a loaded save
       (`save-import-notice.jsx`) clears it at once, with no confirmation or undo. The save
       file itself is untouched and can be opened again, but the page says it is "kept in this
       browser until you clear it". Reuse QA-31's confirmation dialog and focus recovery.
-- [ ] **C** **QA-47** (claimed 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`) (Low; QA-45 remainder; confirmed live 3/3 and in code) "TR_ARCE" still shows
+- [x] **C** **QA-47** (started 2026-10-03 19:21 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §76) (Low; QA-45 remainder; confirmed live 3/3 and in code) "TR_ARCE" still shows
       in the Enchanting, Spellmaking and Faction Journal status lines
       (`profile.toUpperCase()`). Use `worldLabel` as Alchemy now does.
 - [ ] **C** **QA-43 remainder** (claimed 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`) (Low-Medium, 375 px, 9/9 in Morrowind UI, also Modern) The

@@ -634,3 +634,7 @@ Home, Builder and Vault at 1366/375 px in both themes (36 cases). Opening,
 Cancel and Escape preserve localStorage and restore focus; confirmation alone
 clears the loaded copy and focuses the file opener or Builder's main content.
 Use `--touch` for tap events. The test never uploads a file or signs in.
+
+`--suite qa --filter 'QA-47/'` checks Enchanting, Spellmaking and Faction Journal
+status names in all three worlds, both themes, and 1366/375 px (12 cases, three
+tools per case), including overflow, axe and screenshots.

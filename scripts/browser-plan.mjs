@@ -38,8 +38,8 @@ const AREAS = [
     run('launch', 'UI-04'), run('launch', 'ingredient-labels'), run('polish', 'Polish Alchemy'), run('qa', 'QA-34/'),
     run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-CALC4/'), run('qa', 'QA-45/')] },
   { area: 'Enchanting', match: /enchant/i, runs: [
-    run('qa', '/enchanting/'), run('launch', 'FLOW-01'), run('polish', 'Polish Enchanting'), run('qa', 'QA-44/')] },
-  { area: 'Spellmaking', match: /spellmak/i, runs: [run('tools', 'Tool inputs')] },
+    run('qa', '/enchanting/'), run('launch', 'FLOW-01'), run('polish', 'Polish Enchanting'), run('qa', 'QA-44/'), run('qa', 'QA-47/')] },
+  { area: 'Spellmaking', match: /spellmak/i, runs: [run('tools', 'Tool inputs'), run('qa', 'QA-47/')] },
   { area: 'Travel', match: /travel/i, runs: [
     run('travel'), run('tools', 'Travel imported save'), run('qa', 'QA-07/'), run('qa', 'QA-16/'), run('qa', 'QA-25/'),
     run('launch', 'UI-05'), run('launch', 'SUS-02/'), run('polish', 'Polish Travel'), run('touch', 'QA-18/saved-Travel', '--touch'), run('qa', 'QA-36/'),
@@ -54,7 +54,7 @@ const AREAS = [
     run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-F04-F11/'), run('qa', 'Clarity-Copy/')] },
   { area: 'Faction Journal', match: /faction|journal/i, runs: [
     run('qa', 'QA-11/'), run('qa', 'QA-20/ranks'), run('launch', 'SS-08/'), run('launch', 'SS-10/'),
-    run('tools', 'Faction and Level interactions'), run('qa', 'QA-38/'), run('qa', 'Clarity-FLOW03/'), run('qa', 'QA-43/'), run('qa', 'QA-45/')] },
+    run('tools', 'Faction and Level interactions'), run('qa', 'QA-38/'), run('qa', 'Clarity-FLOW03/'), run('qa', 'QA-43/'), run('qa', 'QA-45/'), run('qa', 'QA-47/')] },
   { area: 'Challenge Runs', match: /challenge/i, runs: [run('launch', 'UI-03'), vault()] },
   { area: 'About', match: /about-view|seo-breadcrumbs/i, runs: [run('qa', 'QA-15/')] },
   { area: 'Search', match: /search/i, runs: [run('qa', 'QA-32/'), run('launch', 'SS-10/'), run('launch', 'ingredient-labels')] },
