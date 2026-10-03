@@ -4106,3 +4106,32 @@ saved-Travel navigation, settings and polish (`broad-browser/`). Together with
 `accepted-summary.json` names every included report; initial failing evidence
 is retained. This is branch preflight, not the complete freeze-day suite.
 
+## 78. QA-46–52 release recovery record — 3 October 2026
+
+Owner-authorized release: `e4bc16c68c1a48baf297d86d9283d6323f76e54c`, the main
+merge of QA-43's remainder and QA-46 through QA-52. Recovery was recorded before
+deployment; the current production state above remains unchanged until release.
+
+| Recovery item | Verified value |
+| --- | --- |
+| Code rollback target | `e4c17cd3-29d4-40ef-950a-1ebefe21ebff`, live at 100%; built from `65cbd0ed519c7c06bf013cd9061232ca8087988b`, tag `65cbd0e` |
+| Pre-release D1 bookmark | `00000076-00000000-000050f9-e58d9a5e015fb2bd7b9685f4ee5859ff`, captured 2026-10-03 22:32:15 UTC (19:32:15 São Paulo) |
+| Database | `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6`; dashboard name `siltstrider-characters-dev` |
+| Migration state | 0001–0007 retained, none pending; no migration or schema change in this release |
+| Staged bundle | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9f5102fa3b266df33a4820d0128e9a9bdf680b8b7a1b40296fd1f`; unchanged for all three worlds |
+| Recovery evidence | `A:\Cache\release-e4bc16c\`: `deployments-before.json`, `rollback-version.json`, `d1-info.json`, `migrations.log`, `bookmark.json` |
+
+The rollback version's `DB` binding points to the same UUID. Worker source,
+configuration, dependencies and migration files are unchanged from `65cbd0e`.
+Code rollback switches the Worker version; it does not restore the database.
+No private-data export or production record query was performed. Keep the
+existing assets, bindings, secrets, dashboard variables and API-only routing.
+
+Release preflight on main at `e4bc16c`: site tests pass **1,384/1,384**, zero skips
+or todos, with the original Pe.omwsave fixture; Cloudflare build passes **24/24**
+static pages; Wrangler 4.134.0 dry-run packaging passes with 1,895 asset files and
+the existing `DB`, `ASSETS`, origin and Clerk live-key bindings. Evidence:
+`site-tests.log`, `build.log`, `dry-run.log`. The recovery-only documentation
+commit does not change the built application; the release remains tagged
+`e4bc16c` and identified by its full SHA.
+
