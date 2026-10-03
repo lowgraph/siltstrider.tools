@@ -95,6 +95,19 @@ test('beginner clarity and contained fixes reach their dedicated browser groups'
   assert.ok(account.notes.some(note => note.includes('test:vault -- --clarity')));
 });
 
+test('weapon scoring, Health gains and Travel inventory reach their dedicated browser cases', async () => {
+  const { planBrowserRuns } = await load();
+  for (const [file, filter] of [
+    ['lib/best-in-slot.mjs', 'QA-40/'],
+    ['components/level-simulator/progression-sheet.jsx', 'QA-41/'],
+    ['lib/travel-options.mjs', 'FLOW-04/save-check/'],
+  ]) {
+    const plan = planBrowserRuns([file]);
+    assert.equal(plan.full, false, file);
+    assert.ok(commands(plan).includes(`qa:${filter}`), `${file}: ${filter}`);
+  }
+});
+
 test('every planned filter names cases that exist in the browser runners', async () => {
   const { planBrowserRuns, commandFor } = await load();
   const source = fs.readdirSync(path.join(__dirname, '..', 'scripts'))

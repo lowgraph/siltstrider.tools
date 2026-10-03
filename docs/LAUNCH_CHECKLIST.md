@@ -568,7 +568,7 @@ Travel terms. Merge by Sunday 4 October, then deploy and retest; Monday is the f
       Gained" shows floating-point noise ("+131.99999999999997"):
       `progression-sheet.jsx` subtracts fractional Health without QA-27's formatter. Format
       it, and the itinerary card's "+N HP Gain" (`level-itinerary-card.jsx`), the same way.
-- [x] **C** **FLOW-04 save check** (started 2026-10-03 02:02 UTC, Codex, on `fix/qa-40-41-flow-04`; verified with this commit: no listed item carried, no Travel change; LAUNCH_VERIFICATION §70) The retest's Pe.omwsave (Ba'Ta, TR + ARCE) showed
+- [x] **C** **FLOW-04 save check** (started 2026-10-03 02:02 UTC, Codex, on `fix/qa-40-41-flow-04`; verified `2f1a202`: no listed item carried, no Travel change; LAUNCH_VERIFICATION §70) The retest's Pe.omwsave (Ba'Ta, TR + ARCE) showed
       "Items you carry (0 of 39)" with no Propylon index ticked, even after "Use save
       defaults", while the page says "A loaded save ticks the ones in its pack". Check
       whether that save carries any listed item. If it does and nothing is ticked, it is a

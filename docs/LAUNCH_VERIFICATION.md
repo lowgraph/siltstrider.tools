@@ -3595,3 +3595,31 @@ control. They do **not** establish mouse/touch disclosure acceptance; existing
 Travel interaction and freeze touch checks remain required. Evidence under
 `A:/Cache/qa40-41-flow04`: `flow04-unit.log`, `flow04-inventory/`; initial
 coordinate diagnostics: `flow04-browser/`, `flow04-accepted/`, `flow04-final/`.
+
+### Final branch verification and handoff
+
+The final site suite passes **1,308 tests, zero failures, skips or TODOs**, with
+the original-save opt-in enabled. The earlier full run passed 1,307; the final
+run also includes the browser-planner regression added for the three new groups.
+The pipeline suite passes **685 tests**. `npm run build:cloudflare` passes with
+**24/24 static pages**, using the unchanged repository configuration.
+
+Accepted Chrome coverage totals **104 cases**, all passing with zero reported
+runtime or server errors: QA-40 ranking 12, QA-26 whole-kit/hand/equip 12, QA-41
+Health gains 12, FLOW-04 inventory/reset 8, QA-10 beast equipment 28, QA-27 Health
+chart formatting 12, and saved-Travel touch repetitions 20. The world-aware gear
+and Health cases cover Vanilla/TR/TR + ARCE, desktop/375 px and both themes.
+The touch runner verifies mobile capabilities and uses CDP touch events. FLOW-04
+inventory setup is explicitly not pointer/touch disclosure acceptance. The two
+final regression launches before the server restart only reached connection
+refusal; no application cases ran in them. Their restarted runs pass.
+
+Reports and logs remain under `A:/Cache/qa40-41-flow04`: `site-final-test.log`,
+`pipeline-full-test.log`, `cloudflare-build.log`, the item reports above,
+`gear-beast-final/`, `health-format-regression/` and `travel-touch-final/`.
+The original save's SHA-256 is still unchanged. No personal save is committed.
+The planner now selects each new group's cases for its relevant application area.
+COORDINATION is copied identically to the pipeline's docs-only
+`handoff/qa-40-41-flow-04`; UI_TRANSFORMATION remains identical and unchanged.
+Fresh fetch still has site main `f5ca4af` and pipeline master `631aa2e`.
+Only these two branches are prepared for the authorized push; no merge or release.
