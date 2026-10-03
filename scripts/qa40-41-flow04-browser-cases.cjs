@@ -61,7 +61,13 @@ module.exports=async c=>{
       await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(storage)}))localStorage.setItem(k,v)`);
     }
     await c.navigate('travel','tr_arce');await c.until('document.querySelector("#travel-options")');
+    const routeStillLoading=await c.evaluate('/Loading route|Loading travel network and planning/.test(document.querySelector("#travel-results").textContent)');
+    // Worker route results can change the height above this disclosure after
+    // network idle. Wait for that layout before sending coordinate input.
+    await c.until('! /Loading route|Loading travel network and planning/.test(document.querySelector("#travel-results").textContent)');
+    await c.evaluate('document.querySelector("#travel-options > summary").scrollIntoView({block:"center"});new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');
     if(!await c.evaluate('document.querySelector("#travel-options").open'))await c.click('#travel-options > summary');
+    assert.equal(await c.evaluate('document.querySelector("#travel-options").open'),true,'The outer options disclosure opened before inventory setup');
     await c.until('[...document.querySelectorAll("#travel-options summary")].some(s=>s.textContent.includes("Items you carry (0 of 39)"))');
     await c.evaluate('[...document.querySelectorAll("#travel-options summary")].find(s=>s.textContent.includes("Items you carry")).parentElement.dataset.flow04Items="true"');
     const initiallyOpen=await c.evaluate('document.querySelector("[data-flow04-items]").open');
@@ -73,13 +79,16 @@ module.exports=async c=>{
     assert.deepEqual(await read(),{summary:'Items you carry (0 of 39)',total:39,checked:0});
     await c.button('Use save defaults');await c.idle();await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===0');
     assert.equal(await c.evaluate('document.querySelector("[data-flow04-items]").open'),true,'The items disclosure remains open before editing');
-    await c.evaluate('document.querySelector("[data-flow04-items] input").focus()');await c.key(' ','Space',32);
+    assert.equal(await c.evaluate('document.querySelector("#travel-options").open'),true,'The outer options disclosure remains open before editing');
+    await c.evaluate('document.querySelector("[data-flow04-items] input").focus()');
+    assert.equal(await c.evaluate('document.activeElement===document.querySelector("[data-flow04-items] input")'),true,'Space is sent to the inventory checkbox');
+    await c.key(' ','Space',32);
     await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===1');
     await c.button('Use save defaults');await c.until('document.querySelectorAll("[data-flow04-items] input:checked").length===0');
     assert.deepEqual(await read(),{summary:'Items you carry (0 of 39)',total:39,checked:0});
     await c.evaluate('document.querySelector("[data-flow04-items]").scrollIntoView({block:"center"})');
     assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);c.assertAccessible(await c.audit(`FLOW-04-${source}-${width}-${theme}`));await c.screenshot(`FLOW-04-${source}-${width}-${theme}`);
     if(source==='original')assert.equal(require('node:crypto').createHash('sha256').update(require('node:fs').readFileSync(process.env.QA_FLOW04_SAVE_PATH)).digest('hex'),inventory.sha256);
-    return {source,initiallyOpen,carriedRecords:69,listedItems:39,matchedItems:0,resetRestoresZero:true};
+    return {source,initiallyOpen,routeStillLoading,carriedRecords:69,listedItems:39,matchedItems:0,resetRestoresZero:true};
   });
 };

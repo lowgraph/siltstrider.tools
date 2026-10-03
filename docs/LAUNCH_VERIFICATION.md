@@ -3721,3 +3721,67 @@ or axe blockers. TR + ARCE phone Travel and pair-help screenshots were reviewed.
 Accepted evidence: `qa45-final-unit.log`, `qa45-final/` under `A:/Cache/qa42-45`.
 Tests: `test/qa45-help-and-status.test.js`, `test/travel-task-layout.test.js`;
 Chrome group `QA-45/` is selected by the four relevant browser-planner areas.
+
+### Full verification and merge preparation
+
+`npm test -- --test-concurrency=4` passes **1,332 tests, zero failures/skips/todos**
+with the original-save opt-in enabled. The first full run found four older Gear
+Advisor assertions tied to the replaced wording; those now assert the closest
+archetype while retaining their automatic recomputation/gear checks. Retained
+logs: `site-full-test.log` (initial), `site-full-final-test.log` (accepted).
+Pipeline `python -B -m unittest discover -s . -p 'test_*.py'` passes **685 tests**
+without uncaught warnings (`pipeline-full-test.log`). `npm run build:cloudflare`
+passes, generating **24 static pages** with repository configuration unchanged
+(`cloudflare-build.log`). The local signed-in export is separate from the release
+export (`vault-build.log`). The original Pe.omwsave hash remains the §70 value.
+
+All eight local signed-in Vault modes pass: **78 cases**, zero runtime/server
+errors. Base, launch F-7/F-10/F-13, character/world preservation, sign-out, sharing
+and clarity modes use only synthetic accounts in separate local D1 states.
+The four application tables are empty in each of the eight states after the
+runner cleanup and explicit removal of three remaining synthetic settings rows.
+Counts are retained in `synthetic-cleanup.json`; no production data was accessed.
+
+Accepted browser coverage totals **1,544 passing case executions**, zero runtime
+or server errors: general pages/tools 203, hydration 432, launch 68, existing QA
+442, additional touch popovers 30, real-touch suite 31, beginner/follow-up QA 156,
+QA-40–45/FLOW-04 104, and local Vault 78. This includes all 72 new QA-42–45
+combinations, with desktop/375/390 px, both themes and all worlds. An additional
+eight-case inventory/reset repeat passes separately. Every accepted group is
+complete; `acceptance-summary.json` lists the exact reports counted once.
+
+Keep these initial reports rather than treating them as accepted:
+
+- About hydration and the fifth touch popover each failed to launch Chrome before
+  application cases. Their complete retries pass (24 and 6 cases respectively).
+- QA-45's Vanilla/375/Ashfall gear audit caught disabled-button opacity while the
+  lazy catalogs were arriving; the failure capture already shows enabled controls.
+  The audit now scrolls first, waits for ranked tables/enabled controls and settled
+  opacity. All 18 combinations pass in `QA-45-*-ready2/`. The first readiness retry
+  waited before the scroll that enables loading; its partial run was stopped and
+  excluded as runner setup, without changing application code.
+- Two FLOW-04 matrices missed the synthetic 375/Morrowind Space edit. Added guards
+  locate the earlier failure at the outer disclosure's coordinate click: it was
+  still closed before inventory setup. The runner now waits for a settled route,
+  two frames after scrolling, open ancestors and checkbox focus. The isolated
+  trace passes; complete `flow04-current-ready/` and `flow04-current-ready2/` pass
+  **8/8 each**, including the original file. Accepted observations show no route
+  pending when sampled, so the earlier miss's precise timing cause is not proven;
+  do not claim a Travel application fix. Inner disclosure opening remains explicit
+  setup, separate from the 20/20 real-touch Travel edit/persistence cases.
+
+The strict missing-page hydration report retains **24 expected HTTP 404 errors**,
+with no hydration warnings or exceptions, under the checklist's explicit exemption.
+The laptop control still records touch with a coarse pointer rather than a fine
+pointer; a physical touchscreen-laptop check remains for freeze acceptance.
+Neither is counted as a passing application case. Raw reports, screenshots and
+logs remain under `A:/Cache/qa42-45/full-browser`; the acceptance summary records
+the startup replacements, stronger ready-state audits and both exceptions.
+
+Fresh fetch retains site main `f5ca4af` and pipeline master `631aa2e`; both are
+ancestors of their respective working branches. `git merge-tree --write-tree`
+previews are clean. Site item commits: QA-42 `24d3a65`, QA-43 `1fb558f`, QA-44
+`fb21798`, QA-45 `20fea8c`. Preparation includes the older automatic-gear copy
+assertions and runner state guards. COORDINATION is identical in both repositories;
+UI_TRANSFORMATION is identical and unchanged. Branches are prepared for push and
+merge review only; no merge, production write, deployment or migration ran.

@@ -110,7 +110,7 @@ test('BLD-2: Gear recommendations compute automatically on mount without clickin
     const container = document.getElementById('gear-advisor');
     assert.ok(container, 'gear-advisor container must exist with id="gear-advisor"');
     // Header should mention detected archetype
-    assert.match(rootEl.textContent, /Warrior archetype/);
+    assert.match(rootEl.textContent, /closest archetype: Melee Tank \/ Warrior/);
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
@@ -154,7 +154,7 @@ test('BLD-2: Gear recommendations automatically re-compute when character skills
     });
 
     assert.match(document.getElementById('root').textContent, /Iron Longsword/);
-    assert.match(document.getElementById('root').textContent, /Warrior archetype/);
+    assert.match(document.getElementById('root').textContent, /closest archetype: Melee Tank \/ Warrior/);
 
     // Switch build to rogue/stealth
     await act(async () => {
@@ -172,7 +172,7 @@ test('BLD-2: Gear recommendations automatically re-compute when character skills
     const content = document.getElementById('root').textContent;
     assert.match(content, /Iron Dagger/);
     assert.match(content, /Chitin Cuirass/);
-    assert.match(content, /Stealth \/ Assassin \/ Marksman archetype/);
+    assert.match(content, /closest archetype: Stealth \/ Assassin \/ Marksman/);
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
@@ -303,7 +303,7 @@ test('Adversarial QA 2: Pure non-combat skills fall back gracefully to default e
     // Should fall back to default primary equipment (Long Blade / Light Armor) safely
     assert.match(content, /Long Blade/);
     assert.match(content, /Light Armor/);
-    assert.match(content, /Pure Mage \/ Caster archetype/);
+    assert.match(content, /closest archetype: Pure Mage \/ Caster/);
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
@@ -338,7 +338,7 @@ test('Adversarial QA 3: Rapid sequential build updates recompute cleanly', async
     }
 
     const finalContent = document.getElementById('root').textContent;
-    assert.match(finalContent, /Warrior archetype/);
+    assert.match(finalContent, /closest archetype: Melee Tank \/ Warrior/);
     assert.match(finalContent, /Iron Longsword/);
   } finally {
     await act(async () => root.unmount());

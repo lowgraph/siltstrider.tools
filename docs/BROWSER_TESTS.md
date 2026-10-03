@@ -20,6 +20,10 @@ each world/theme/width combination. It checks the spell and Propylon definitions
 identical Cheapest explanations, pair-order definitions, friendly world labels,
 rival restriction without a conflicting eligibility badge, and closest-archetype
 wording. Screenshots and axe audits cover all four views.
+The gear audit scrolls into view to activate lazy catalogs, then waits for the
+ranked tables, enabled controls and settled opacity. The header alone is not
+readiness. Split the four new matrices by world for 120-second bounded runs,
+for example `--filter 'QA-45/tr_arce/'` (six cases).
 
 Start `npm run dev` on port 8765. With Node 22 or newer, an installed Chrome and
 an existing axe-core script, run from the site repository in PowerShell:
@@ -459,8 +463,8 @@ Ingredient cases cover autocomplete, selected slots, reverse pairs and use/focus
 the canonical IDs behind source requests, and ingredient search/command previews.
 Screenshots, scoped axe results, overflow, runtime errors, fonts, commit and bundle
 metadata are saved with the report. SS-08 separately checks active identity after
-an empty search; the existing empty roster listbox has an unrelated axe
-`aria-required-children` failure, recorded in LAUNCH_VERIFICATION.
+an empty search; QA-43 now renders that empty roster as a status instead of an
+invalid empty listbox, with populated and empty states both covered by axe.
 
 Use the built Worker and fresh local D1 via `scripts/local-stack.cjs` for F-7,
 F-10 and F-13. The dedicated launch group sets the synthetic account theme and
@@ -616,7 +620,9 @@ values and unchanged inputs using the actual rendered components.
 `--suite qa --filter 'FLOW-04/save-check/'` checks the reduced 69-item inventory
 fixture against the 39 TR + ARCE teleport items at 1366/375 px, both themes.
 It starts with zero selected items, checks Use save defaults, uses Space to edit
-one checkbox and resets it to zero. Disclosure opening is test setup, not
+one checkbox and resets it to zero. It waits for the route result and two scroll
+frames before clicking the outer disclosure, then requires it to stay open and
+the checkbox to own focus before Space. Disclosure opening is test setup, not
 pointer/touch acceptance. Set `QA_FLOW04_SAVE_PATH` to a local `Pe.omwsave` path
 to add four original-file imports through Vault's local Open Save File input;
 the file is not uploaded or changed. The original-file unit check is likewise

@@ -35,7 +35,11 @@ module.exports=async c=>{
     await c.evaluate('localStorage.removeItem("silt-active-save")');await c.navigate('builder',profile);await c.builderTab('builder');
     await c.until('document.querySelector("#gear-advisor")');
     const gear=await c.evaluate('document.querySelector("#gear-advisor > div > div > p").textContent');assert.match(gear,/closest archetype:/);assert.doesNotMatch(gear,/\(.* archetype\)/);
-    await c.evaluate('document.querySelector("#gear-advisor").scrollIntoView({block:"start"})');await finish(c,`QA-45-gear-${profile}-${width}-${theme}`);
+    // The header arrives before the lazy catalogs and automatic ranking finish.
+    // Audit the ready controls after their disabled-opacity transition settles.
+    await c.evaluate('document.querySelector("#gear-advisor").scrollIntoView({block:"start"})');
+    await c.until(`(()=>{const buttons=[...document.querySelectorAll('#gear-advisor button')],controls=['Optimize Gear','Equip early recommendations →','Equip late-game recommendations →'].map(label=>buttons.find(b=>b.textContent.trim()===label));return document.querySelector('#gear-advisor .best-in-slot-recommendations table')&&controls.every(b=>b&&!b.disabled&&Number(getComputedStyle(b).opacity)>=.99);})()`);
+    await finish(c,`QA-45-gear-${profile}-${width}-${theme}`);
     return {help,badge,order,rival,gear};
   });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375,390])for(const theme of ['ashfall','morrowind'])await c.check(`QA-44/${profile}/${width}/${theme}`,async()=>{

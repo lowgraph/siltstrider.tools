@@ -258,7 +258,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       Guild" bar covers part of a row ("Agility · Endurance" on Ashlanders).
 - [x] **C** QA-44 (started 2026-10-03 03:00 UTC, Codex, on `fix/qa-40-41-flow-04`; done `fb21798`, LAUNCH_VERIFICATION §71) (Low, both themes, 375 px) Enchanting with two effects: the "Remove" labels
       wrap letter by letter and are clipped at the card edge.
-- [x] **C** QA-45 (started 2026-10-03 03:05 UTC, Codex, on `fix/qa-40-41-flow-04`; done this commit, LAUNCH_VERIFICATION §71) (Low, copy) Travel help: define Mark and Recall, Propylons and their indices,
+- [x] **C** QA-45 (started 2026-10-03 03:05 UTC, Codex, on `fix/qa-40-41-flow-04`; done `20fea8c`, LAUNCH_VERIFICATION §71) (Low, copy) Travel help: define Mark and Recall, Propylons and their indices,
       and make the two Cheapest sentences agree. Alchemy: say what "additional effects" and
       "ingredient value" mean in the pair order; show "TR + ARCE", not "TR_ARCE", in the status
       line. Faction Journal: a rival House row shows both "Eligible to Join" and "Rival
