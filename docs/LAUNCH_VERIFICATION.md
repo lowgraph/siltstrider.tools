@@ -4039,4 +4039,15 @@ three worlds, both themes, and 375/390/1366 px with touch and axe. Final accepta
 passes **18/18**; initial failing evidence is retained in `qa48-before/` and
 `qa48-browser/`, accepted evidence in `qa48-final/`. Three unit cases preserve
 first/middle/last swaps, boundary controls and the original priority array.
+Relevant Level Simulator, browser-plan and licence/claim tests pass **33/33**.
+
+QA-49 reproduced on the same phone: the first full merchant/location string
+was ellipsized. Names now wrap between words and rows put the price on another
+line when needed. No merchant records, order, prices or search logic changed.
+Chrome acceptance passes **18/18** across all worlds/themes and 375/390/1366 px,
+including full initial names, Audenian Valius search/selection, Restore Health
+prices, last-row scrolling, axe and overflow. Relevant Enchanting, browser-plan
+and licence/claim tests pass **43/43**. Evidence: `qa49-before/`, `qa49-browser/`
+(initial layout pass), `qa49-final/` (a test-script quoting error), and
+`qa49-acceptance/` (corrected complete acceptance).
 

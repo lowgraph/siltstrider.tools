@@ -680,15 +680,15 @@ export default function EnchantingWorkstation() {
               {filteredEnchanters.slice(0, 15).map((enc) => (
                 <div
                   key={enc.id}
-                  className={`p-2 border text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                  className={`p-2 border text-xs flex flex-wrap items-center justify-between gap-x-2 gap-y-1 cursor-pointer transition-colors ${
                     selectedVendorId === enc.id
                       ? "bg-surface-14 border-accent text-fg-2"
                       : "bg-surface-3 border-line-12 text-fg-7 hover:border-line-7"
                   }`}
                   onClick={() => setSelectedVendorId(enc.id)}
                 >
-                  <div className="truncate mr-2">
-                    <span className="font-serif font-bold block truncate">{enc.n}</span>
+                  <div className="flex-1 min-w-[10rem]">
+                    <span className="font-serif font-bold block break-normal [overflow-wrap:normal]">{enc.n}</span>
                     <span className="text-[10px] text-fg-13 font-mono">Merc: {enc.merc} · Pers: {enc.pers}</span>
                   </div>
                   <span className="font-mono font-bold text-accent shrink-0">

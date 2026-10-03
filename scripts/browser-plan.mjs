@@ -38,7 +38,7 @@ const AREAS = [
     run('launch', 'UI-04'), run('launch', 'ingredient-labels'), run('polish', 'Polish Alchemy'), run('qa', 'QA-34/'),
     run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-CALC4/'), run('qa', 'QA-45/')] },
   { area: 'Enchanting', match: /enchant/i, runs: [
-    run('qa', '/enchanting/'), run('launch', 'FLOW-01'), run('polish', 'Polish Enchanting'), run('qa', 'QA-44/'), run('qa', 'QA-47/')] },
+    run('qa', '/enchanting/'), run('launch', 'FLOW-01'), run('polish', 'Polish Enchanting'), run('qa', 'QA-44/'), run('qa', 'QA-47/'), run('qa', 'QA-49/')] },
   { area: 'Spellmaking', match: /spellmak/i, runs: [run('tools', 'Tool inputs'), run('qa', 'QA-47/')] },
   { area: 'Travel', match: /travel/i, runs: [
     run('travel'), run('tools', 'Travel imported save'), run('qa', 'QA-07/'), run('qa', 'QA-16/'), run('qa', 'QA-25/'),

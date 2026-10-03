@@ -656,3 +656,7 @@ with the usual `--axe-path` and `--out` options. QA-48 measures all eight priori
 abbreviations and arrow boxes at 375, 390 and 1366 px in all three worlds and
 both themes, then moves an attribute down and back and checks the end controls.
 
+`--suite qa --filter 'QA-49/' --touch` uses the same matrix for full enchanter
+names and places, wrapping between words, price separation, Audenian Valius
+search and selection, a calculated Restore Health price and last-row scrolling.
+
