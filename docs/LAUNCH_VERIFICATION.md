@@ -3961,3 +3961,17 @@ Relevant status, copy, browser-plan and licence/claim checks pass **40/40**. Chr
 passes **12/12** (36 tool visits): all worlds, 1366/375 px and both themes, with
 overflow, axe and screenshots. Evidence: `qa47-before.log`, `qa47-tests.log` and
 `qa47-browser/` under the same Cache directory.
+
+QA-43 remainder is initial-row clipping rather than overlapping pane boxes.
+At 375 px the wrapped phone filters left only 136/142 px of list height; the
+Blades row's badge/attributes fell below that boundary, beside the Viewing bar.
+The phone list now has its own 256 px height, independent of the controls; the
+phone journal grows to accommodate it and gives the dossier its own scroll area.
+Desktop retains the split pane. The new initial-load assertion fails in both
+themes before the fix. Relevant faction, membership, status, browser-plan and
+licence/claim tests pass **61/61**. New Chrome cases pass **18/18**, covering all
+worlds, 1366/375/390 px and both themes with touch, initial Blades, badge hit
+testing, selection, last row, empty search and axe. The original `QA-43/` filtered
+cases also pass **18/18**. Initial and corrected Morrowind screenshots reviewed.
+Evidence: `qa43-before-initial/`, `qa43-tests.log`, `qa43-final-browser/` and
+`qa43-existing-browser/`. The previously released QA-43 checklist entry is retained.

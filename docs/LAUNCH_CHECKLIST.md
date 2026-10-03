@@ -587,10 +587,10 @@ Merge by Sunday 4 October; Monday is the freeze.
       (`save-import-notice.jsx`) clears it at once, with no confirmation or undo. The save
       file itself is untouched and can be opened again, but the page says it is "kept in this
       browser until you clear it". Reuse QA-31's confirmation dialog and focus recovery.
-- [x] **C** **QA-47** (started 2026-10-03 19:21 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §76) (Low; QA-45 remainder; confirmed live 3/3 and in code) "TR_ARCE" still shows
+- [x] **C** **QA-47** (started 2026-10-03 19:21 UTC, Codex, on `fix/qa-46-47-43-51`; done `3a03190`, LAUNCH_VERIFICATION §76) (Low; QA-45 remainder; confirmed live 3/3 and in code) "TR_ARCE" still shows
       in the Enchanting, Spellmaking and Faction Journal status lines
       (`profile.toUpperCase()`). Use `worldLabel` as Alchemy now does.
-- [ ] **C** **QA-43 remainder** (claimed 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`) (Low-Medium, 375 px, 9/9 in Morrowind UI, also Modern) The
+- [x] **C** **QA-43 remainder** (started 2026-10-03 19:27 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §76) (Low-Medium, 375 px, 9/9 in Morrowind UI, also Modern) The
       "Viewing Fighters Guild" bar still covers the lower Blades row and its "Eligible to Join"
       badge.
 - [ ] **C** **QA-51** (claimed 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`) (Low; same family as QA-27/41) Floating-point noise outside the Level

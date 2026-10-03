@@ -43,4 +43,32 @@ module.exports=async c=>{
     }
     return statuses;
   });
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375,390])for(const theme of ['ashfall','morrowind'])await c.check(`QA-43-remainder/${profile}/${width}/${theme}`,async()=>{
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    await c.navigate('factions',profile);await c.until('[...document.querySelectorAll(".faction-roster-item")].some(b=>b.textContent.includes("Blades"))');
+    await c.evaluate(`(()=>{const b=[...document.querySelectorAll('.faction-roster-item')].find(b=>b.textContent.includes('Blades'));b.dataset.qaBlades='true';document.querySelector('.journal-factions-root').scrollIntoView({block:'start'});})()`);
+    const read=()=>c.evaluate(`(()=>{const row=document.querySelector('[data-qa-blades]'),list=row.parentElement,pane=document.querySelector('.faction-roster-pane'),label=document.querySelector('.faction-active-label'),badge=[...row.querySelectorAll('span')].find(s=>/Eligible to Join|Unqualified/.test(s.textContent));const rect=e=>{const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,height:r.height}};return {row:rect(row),list:rect(list),pane:rect(pane),label:rect(label),badge:badge&&rect(badge),text:row.textContent.trim(),scrollTop:list.scrollTop,listStyle:{overflow:getComputedStyle(list).overflowY,minHeight:getComputedStyle(list).minHeight},rowFits:row.offsetHeight+16<=list.clientHeight};})()`);
+    const initial=await read();(c.report.qa43RemainderStates ||= []).push({profile,width,theme,initial});await c.screenshot(`QA-43-remainder-initial-${profile}-${width}-${theme}`);
+    if(width<768) {
+      assert.ok(initial.rowFits,'The unfiltered roster must have room for a whole Blades row: '+JSON.stringify(initial));
+      assert.ok(initial.row.top>=initial.list.top&&initial.row.bottom<=initial.list.bottom,'The initial Blades row and its badge must be whole above the Viewing bar: '+JSON.stringify(initial));
+    }
+    await c.evaluate('document.querySelector("[data-qa-blades]").scrollIntoView({block:"nearest"})');await c.waitForFonts();
+    const visible=await read();
+    assert.ok(visible.row.top>=visible.list.top-1&&visible.row.bottom<=visible.list.bottom+1,'The complete row is visible after revealing it: '+JSON.stringify(visible));
+    const hit=await c.evaluate(`(()=>{const row=document.querySelector('[data-qa-blades]'),badge=[...row.querySelectorAll('span')].find(s=>/Eligible to Join|Unqualified/.test(s.textContent)),r=badge.getBoundingClientRect();return document.elementFromPoint((r.left+r.right)/2,(r.top+r.bottom)/2)?.closest('.faction-roster-item')===row})()`);
+    assert.equal(hit,true,'The Viewing bar and phone navigation cannot intercept the badge');
+    await c.click('[data-qa-blades]');await c.until('document.querySelector(".faction-active-label").textContent.includes("Viewing Blades")');
+    await c.evaluate('document.querySelector("[data-qa-blades]").scrollIntoView({block:"nearest"})');
+    await c.evaluate(`(()=>{const list=document.querySelector('.faction-roster-pane [role=listbox]');list.scrollTop=list.scrollHeight;list.scrollIntoView({block:'center'});})()`);
+    const last=await c.evaluate(`(()=>{const list=document.querySelector('.faction-roster-pane [role=listbox]'),row=list.lastElementChild,a=row.getBoundingClientRect(),b=list.getBoundingClientRect();return {text:row.textContent.trim(),inside:a.top>=b.top-1&&a.bottom<=b.bottom+1,hit:document.elementFromPoint((a.left+a.right)/2,(a.top+a.bottom)/2)?.closest('.faction-roster-item')===row};})()`);
+    assert.equal(last.inside,true,'The last faction can be scrolled fully into view');assert.equal(last.hit,true);
+    await c.type('#faction-search-input','not-a-faction');assert.equal(await c.evaluate('document.querySelector(\'.faction-roster-pane [aria-label="Factions List"]\').getAttribute("role")'),'status');
+    assert.match(await c.evaluate('document.querySelector(".faction-active-label").textContent'),/Viewing Blades/);
+    await c.type('#faction-search-input','Blades');await c.until('document.querySelector(".faction-roster-item")?.textContent.includes("Blades")');
+    await c.evaluate('document.querySelector(".faction-roster-item").scrollIntoView({block:"center"})');
+    assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);
+    c.assertAccessible(await c.audit(`QA-43-remainder-${profile}-${width}-${theme}`));await c.screenshot(`QA-43-remainder-${profile}-${width}-${theme}`);
+    return {initial,visible,last,badgeHit:true,selection:true,emptySearch:true};
+  });
 };
