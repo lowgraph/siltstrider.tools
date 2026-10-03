@@ -320,6 +320,7 @@ acceptance and release preparation remain separate checks against the final rele
 | 17 | **Live retest (2 October): QA-26** | An edited premade's endgame kit is the premade's, not the player's (wrong answer). Cheap Lows QA-27–30 if time allows. |
 | 18 | **Live retest of `250b1b5`: QA-31, QA-32** | One click deletes a signed-out player's saved character; the global search misses "Ald'ruhn". |
 | 19 | **Live retest of `672c0d3`: QA-40, QA-41, FLOW-04 save check** | A possibly wrong weapon for an edited build; Health noise; a save's carried items may not be read. |
+| 20 | **Live retest of `65cbd0e`: QA-46, QA-47, QA-43 remainder** | Clearing a loaded save asks nothing; internal world names; a sticky bar still covers a row. |
 
 Reproduction (Codex, 1 October, `qa/reproduce`, LAUNCH_VERIFICATION §27): the
 original suite had 41 tests marked `{ todo: '<QA-id> not fixed yet' }` in `test/qa-*`.
@@ -573,6 +574,35 @@ Travel terms. Merge by Sunday 4 October, then deploy and retest; Monday is the f
       defaults", while the page says "A loaded save ticks the ones in its pack". Check
       whether that save carries any listed item. If it does and nothing is ticked, it is a
       wrong answer (Medium, TRV-6): fix before the freeze. If it carries none, no change.
+
+#### 20. Live retest of `65cbd0e` (3 October; partial, no full report) — by Sunday
+
+The QA agent ran out of credits before its report; only its failures are recorded
+(LAUNCH_VERIFICATION §74). Merge by Sunday 4 October; Monday is the freeze.
+
+- [ ] **C** **QA-46** (Medium-Low; confirmed in code) "Clear save" on a loaded save
+      (`save-import-notice.jsx`) clears it at once, with no confirmation or undo. The save
+      file itself is untouched and can be opened again, but the page says it is "kept in this
+      browser until you clear it". Reuse QA-31's confirmation dialog and focus recovery.
+- [ ] **C** **QA-47** (Low; QA-45 remainder; confirmed in code) "TR_ARCE" still shows in the
+      Enchanting, Spellmaking and Faction Journal status lines (`profile.toUpperCase()`). Use
+      `worldLabel` as Alchemy now does.
+- [ ] **C** **QA-43 remainder** (Low-Medium, Morrowind UI, 375 px) The "Viewing Fighters Guild"
+      bar still covers the lower part of the Blades row's "Eligible to Join" badge.
+
+Optional, if time allows by Sunday; otherwise after launch:
+- [ ] **C** QA-48 (Low, Morrowind UI, 375 px) Level Simulator attribute-priority tiles break the
+      abbreviations: "EN/D", "ST/R", "AG/I", "SP/D", "WI/L", "PE/R", "IN/T", "LU/C".
+- [ ] **C** QA-49 (Low, 375 px) Enchanting's ranked enchanter list cuts names and places with
+      ellipses ("Zissicheeiva (old ebonheart, guil…"); let them wrap or show them in full.
+- [ ] **C** QA-50 (Low, 375 px) Travel transit map labels crowd and overlap on long TR + ARCE
+      routes (Ebonheart → Port Telvannis, Modern UI, 5 of 10), and "Vivec, Guild of Mages" is
+      clipped at the map's left edge (Ebonheart → Balmora, Morrowind UI, 9 of 10).
+
+No action: "Ald-ruhn" in Places and Travel stops beside the book "Guide to Ald'ruhn" is the
+game's own cell name and book title. Travel help "you have.Cheapest": the source renders a
+space before the Cheapest sentence (`travel-workstation.jsx`); check a screenshot before
+changing anything.
 
 #### Already resolved by other work
 

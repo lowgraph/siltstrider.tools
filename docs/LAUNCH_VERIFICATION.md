@@ -3889,3 +3889,24 @@ Evidence: `A:/Cache/release-65cbd0e/`: §72 recovery files, `build-source.txt`,
 `live-weapons-tr-arce/`, `live-health/` and `live-phone/`. Temporary Cache adapters
 were removed after verification; repository application files and the browser
 runner are unchanged.
+
+## 74. Partial live retest of `65cbd0e` — 3 October 2026
+
+The signed-out live retest of the release in §73 (`65cbd0e` / Worker `e4c17cd3`) stopped
+before its report when the agent's credits ran out. Only its failures were passed on;
+passes, the QA-40 weapon checks and the QA-41/42/44 results are not available, so this is
+not a release verdict.
+
+| Reported failure | Triage |
+| --- | --- |
+| "Clear save" removes a loaded save with no confirmation | **QA-46**, confirmed in code |
+| Enchanting status "(TR_ARCE)"; Faction Journal "LIVE: 91 FACTIONS (TR_ARCE)" | **QA-47**, confirmed in code (also Spellmaking) |
+| Morrowind UI 375 px: "Viewing Fighters Guild" bar covers the Blades "Eligible to Join" badge | **QA-43 remainder** |
+| Morrowind UI 375 px: attribute-priority abbreviations break ("EN/D") | QA-48, optional |
+| 375 px: ranked enchanter names and places cut with ellipses | QA-49, optional |
+| 375 px: Travel map labels overlap on long TR + ARCE routes; a stop label clipped at the left edge | QA-50, optional |
+| "Ald-ruhn" in Places beside "Guide to Ald'ruhn" | No action: the game's cell name and book title |
+| Travel help "you have.Cheapest" | Not reproduced in source (a space is rendered); check a screenshot |
+
+Triage: checklist section 5 item 20. A full retest of `65cbd0e` (or its successor) is still
+needed before Monday's freeze acceptance, including the QA-40 weapon checks.
