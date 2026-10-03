@@ -584,3 +584,10 @@ temporary enchantments settle ties and never become permanent bonuses. Primary
 and runner-up rows explain their skill fit; source text preserves theft flags.
 Use `test/qa40-weapon-explanation.test.js` for the staged model and synthetic edge
 cases; missing data is skipped only when the bundle pointer is absent.
+
+`--suite qa --filter 'QA-41/'` loads a synthetic save with Endurance 33, checks
+the first itinerary's `+3.8 HP Gain`, advances a step and checks `+3.8 Total HP
+Gained` in the sheet. All three worlds, both themes, 1366/375 px: 12 cases.
+The arithmetic remains fractional; `test/qa41-health-gain-display.test.js` pins
+the reported 131.99999999999997 total, fractional/zero baselines, unavailable
+values and unchanged inputs using the actual rendered components.

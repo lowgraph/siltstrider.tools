@@ -3544,3 +3544,22 @@ selects the full displayed skill label, opens the intended section and loads gea
 
 Evidence: `A:/Cache/qa40-41-flow04/qa40-model-before.jsonl`,
 `qa40-scoring-unit.log`, `qa40-scoring-browser/` and `qa40-qa26-browser/`.
+
+### QA-41 — display Health gains without arithmetic noise
+
+Cause: ProgressionSheet printed its unrounded subtraction, and LevelItineraryCard
+printed the raw per-step gain. Both now use QA-27's existing `formatHealth`: at
+most one decimal, no unnecessary `.0`, and an unavailable placeholder. A zero
+starting Health is retained with `??`, instead of being replaced by the current
+Health. Negative total differences remain clamped at zero. Stored Health, curves
+and gains are not rounded or changed.
+
+Validation: **122 relevant tests passed**, including 14 new rendered-component
+cases: the reported `131.99999999999997` displays `+132`, half points survive,
+binary fractions are tidy, zero/missing baselines and completed itineraries work,
+nonfinite step values give `—`, and inputs retain their original precision.
+**12/12 Chrome cases passed** across all three worlds, both themes and 1366/375
+px. A synthetic saved character with Endurance 33 shows `+3.8 HP Gain` and, after
+advancing, `+3.8 Total HP Gained`. No overflow, runtime/server errors or scoped
+axe blockers. Phone screenshot reviewed. Evidence: `qa41-unit.log` and
+`qa41-browser/` under `A:/Cache/qa40-41-flow04`.

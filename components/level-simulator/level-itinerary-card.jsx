@@ -1,5 +1,6 @@
 "use client";
 import { ATTR_ABBR } from "../../lib/level-math.mjs";
+import { formatHealth } from "../../lib/chart-scale.mjs";
 
 export default function LevelItineraryCard({ step, isStatsOnly = false }) {
   if (!step) {
@@ -33,7 +34,7 @@ export default function LevelItineraryCard({ step, isStatsOnly = false }) {
             Level {level} → <span className="text-accent">Level {nextLevel}</span>
           </span>
           <span className="text-xs px-2 py-0.5 bg-surface-7 border border-line-9 text-accent font-mono font-bold">
-            +{healthGain} HP Gain
+            {Number.isFinite(healthGain) ? "+" : ""}{formatHealth(healthGain)} HP Gain
           </span>
         </div>
         {totalTrainingCost > 0 && !isStatsOnly && (
