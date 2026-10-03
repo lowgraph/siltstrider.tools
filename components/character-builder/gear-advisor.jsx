@@ -127,7 +127,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
         boxShadow: "inset 0 0 12px 3px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.5)"
       }}
     >
-      <div className="border-b border-line-11 pb-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="border-b border-line-11 pb-4 flex flex-col gap-4">
         <div>
           <h3 className="font-serif text-xl font-bold text-fg-2 tracking-wide flex items-center gap-2">
             <span>Gear Recommendations &amp; Progression Advisor</span>
@@ -139,7 +139,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
         </div>
 
         {/* Action Controls & Policy Toggles */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm pt-2 lg:pt-0">
+        <div className="flex flex-wrap items-center gap-4 text-sm pt-2">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <label className="flex items-center gap-2 cursor-pointer text-fg-2">
               <input
@@ -192,14 +192,14 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
 
           <button
             type="button"
-            className="w-full sm:w-auto mw-btn py-2.5 px-5 font-serif font-bold text-sm tracking-wide shadow-md whitespace-nowrap text-center text-accent"
+            className="w-full sm:w-auto mw-btn py-2.5 px-5 font-serif font-bold text-sm tracking-wide shadow-md break-normal [overflow-wrap:normal] text-center text-accent"
             disabled={!hasRun || result.status !== "ready" || bisResult?.status !== "ready"}
             onClick={() => handleEquipToLoadout(false)}
             title="Equip recommended gear kit directly into your active loadout"
           >
             Equip early recommendations →
           </button>
-          <button type="button" className="mw-btn px-5 py-2.5" disabled={!hasRun || bisResult?.status !== "ready" || result.status !== "ready"} onClick={() => handleEquipToLoadout(true)}>Equip late-game recommendations →</button>
+          <button type="button" className="w-full sm:w-auto mw-btn px-5 py-2.5 break-normal [overflow-wrap:normal]" disabled={!hasRun || bisResult?.status !== "ready" || result.status !== "ready"} onClick={() => handleEquipToLoadout(true)}>Equip late-game recommendations →</button>
         </div>
       </div>
 

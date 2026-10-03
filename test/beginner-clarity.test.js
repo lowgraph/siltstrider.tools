@@ -43,7 +43,7 @@ test('Beginner clarity: unsupported-save manual route invokes only the requested
 });
 test('Beginner clarity: save differences distinguish site fallbacks from damage and preserve the imported record',async()=>{
   let activeSave=null;
-  const {default:Notice}=await load('components/character-vault/save-import-notice.jsx',{'../character-context':{useActiveCharacter:()=>({activeSave,clearSave(){}})}});
+  const {default:Notice}=await load('components/character-vault/save-import-notice.jsx',{'../character-context':{useActiveCharacter:()=>({activeSave,clearSave(){}})},'./use-save-clear-confirmation':require('./helpers/save-clear-confirmation.cjs')});
   assert.equal(renderToStaticMarkup(React.createElement(Notice)), '');
   activeSave=Object.freeze({save:Object.freeze({identity:Object.freeze({name:'QA Imported'})}),profile:'vanilla',unresolved:Object.freeze([{field:'race',value:'Extra race',why:'not in this world',kept:'Breton'}]),rules:Object.freeze({differences:Object.freeze([{what:'Health',save:70,rules:65}])})});
   const text=renderToStaticMarkup(React.createElement(Notice));

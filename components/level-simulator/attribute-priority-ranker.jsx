@@ -63,15 +63,15 @@ export default function AttributePriorityRanker({
         {priority.map((attr, idx) => (
           <div
             key={attr}
-            className="flex items-center justify-between p-1.5 bg-surface-4 border border-line-11 shadow-sm text-xs"
+            className="flex items-center justify-between p-1 bg-surface-4 border border-line-11 shadow-sm text-xs"
           >
-            <div className="flex items-center gap-1.5 overflow-hidden">
+            <div className="flex items-center gap-1 overflow-hidden">
               <span className="font-mono text-[10px] text-accent font-bold w-4 shrink-0">
                 #{idx + 1}
               </span>
               {/* LVL-3: the sheet's three-letter names fit where "Endurance" was cut to
                   "Endur…"; screen readers and the tooltip keep the full name. */}
-              <span className="font-serif font-semibold text-fg-2" title={attr} aria-hidden="true">
+              <span className="font-serif font-semibold text-fg-2 whitespace-nowrap shrink-0" title={attr} aria-hidden="true">
                 {ATTR_ABBR[attr] || String(attr).slice(0, 3).toUpperCase()}
               </span>
               <span className="sr-only">{attr}</span>

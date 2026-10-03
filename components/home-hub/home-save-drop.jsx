@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { readSaveFile } from "../../lib/omwsave-import.mjs";
 import { worldLabel } from "../../lib/home-data.mjs";
 import CompatibilityNotice from "../compatibility-notice";
+import { useSaveClearConfirmation } from "../character-vault/use-save-clear-confirmation";
 
 const UploadIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -16,6 +17,7 @@ const UploadIcon = () => (
  * `onLoad` (the character context's loadSave) and `onClear` come from the page.
  */
 export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, ready }) {
+  const { requestClear, dialog } = useSaveClearConfirmation(activeSave, onClear);
   const input = useRef(null);
   const [over, setOver] = useState(false);
   const [busy, setBusy] = useState(null);
@@ -101,10 +103,11 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
         </div>
         <div className="home-save-more">
           <button type="button" className="home-link" onClick={() => input.current?.click()}>Open another save</button>
-          <button type="button" className="home-link" onClick={onClear}>Clear the save</button>
+          <button type="button" className="home-link" onClick={requestClear}>Clear the save</button>
         </div>
         {error && <div className="home-save-error" role="alert">{error}</div>}
         {picker}
+        {dialog}
       </div>
     );
   }
@@ -133,7 +136,7 @@ export default function HomeSaveDrop({ activeSave, onLoad, onClear, onNavigate, 
       </span>
       <p className="phone-save-help home-step-note">On a phone, copy your .omwsave from the device running OpenMW to a folder you can open in Files, such as Downloads. Then choose that file here.</p>
       <div className="home-step-row">
-        <button type="button" className="mw-btn home-cta home-cta--primary" disabled={!enabled || Boolean(busy)} onClick={() => input.current?.click()}>
+        <button type="button" data-open-save-file className="mw-btn home-cta home-cta--primary" disabled={!enabled || Boolean(busy)} onClick={() => input.current?.click()}>
           Choose a save file
         </button>
       </div>

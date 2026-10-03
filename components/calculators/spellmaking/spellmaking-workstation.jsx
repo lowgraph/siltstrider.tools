@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback, useId } from "react";
 import { statNumber, typedStats, typeStat, forgetTypedStats } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
+import { worldLabel } from "../../../lib/home-data.mjs";
 import { useGameData } from "../../use-game-data";
 import ActiveCharacterLink from "../../active-character-link";
 import {
@@ -23,7 +24,7 @@ export default function SpellmakingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world } = useShell();
+  const { world, profile } = useShell();
 
   // Character Magic Skills & Stats
   const baseAlt = sheet?.skills?.["Alteration"]?.v ?? 50;
@@ -285,7 +286,7 @@ export default function SpellmakingWorkstation() {
             {gameData.status === 'ready' ? (
               <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
-                <span>Live: {availableEffects.length} Spells · {spellmakersList.length} Vendors ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+                <span>Live: {availableEffects.length} Spells · {spellmakersList.length} Vendors ({worldLabel(gameData.data?.profile || profile)})</span>
               </span>
             ) : gameData.status === 'loading' ? (
               <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">

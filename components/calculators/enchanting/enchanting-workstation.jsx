@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback, useId } from "react";
 import { statNumber, typedStats, typeStat, forgetTypedStats } from "../../../lib/calculator-stats.mjs";
 import { useActiveCharacter } from "../../character-context";
 import { useShell } from "../../shell-context";
+import { worldLabel } from "../../../lib/home-data.mjs";
 import { useGameData } from "../../use-game-data";
 import ActiveCharacterLink from "../../active-character-link";
 import { CUSTOM_ENCHANT_KINDS, enchantItemKind, eligibleEnchantTypes, validEnchantType } from "../../../lib/enchant-eligibility.mjs";
@@ -32,7 +33,7 @@ export default function EnchantingWorkstation() {
   const effectFieldsId = useId();
   const { build, sheet: buildSheet, activeSave } = useActiveCharacter();
   const sheet = activeSave?.sheet || buildSheet;
-  const { world } = useShell();
+  const { world, profile } = useShell();
 
   // Character stats
   const baseSkill = sheet?.skills?.["Enchant"]?.v ?? 50;
@@ -247,7 +248,7 @@ export default function EnchantingWorkstation() {
             {gameData.status === 'ready' ? (
               <span className="text-xs px-2 py-0.5 rounded border border-success-line-5 bg-success-surface-1 text-success-3 font-mono flex items-center gap-1.5 shadow-inner" title={`Loaded from content-addressed bundle ${gameData.bundleId || ''}`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-success-surface-7 inline-block"/>
-                <span>Live: {availableEffects.length} Effects · {enchantersList.length} Vendors ({gameData.data?.profile?.toUpperCase() || activeWorld.toUpperCase()})</span>
+                <span>Live: {availableEffects.length} Effects · {enchantersList.length} Vendors ({worldLabel(gameData.data?.profile || profile)})</span>
               </span>
             ) : gameData.status === 'loading' ? (
               <span className="text-xs px-2 py-0.5 rounded border border-line-6 bg-surface-5 text-accent font-mono flex items-center gap-1.5">
@@ -679,15 +680,15 @@ export default function EnchantingWorkstation() {
               {filteredEnchanters.slice(0, 15).map((enc) => (
                 <div
                   key={enc.id}
-                  className={`p-2 border text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                  className={`p-2 border text-xs flex flex-wrap items-center justify-between gap-x-2 gap-y-1 cursor-pointer transition-colors ${
                     selectedVendorId === enc.id
                       ? "bg-surface-14 border-accent text-fg-2"
                       : "bg-surface-3 border-line-12 text-fg-7 hover:border-line-7"
                   }`}
                   onClick={() => setSelectedVendorId(enc.id)}
                 >
-                  <div className="truncate mr-2">
-                    <span className="font-serif font-bold block truncate">{enc.n}</span>
+                  <div className="flex-1 min-w-[10rem]">
+                    <span className="font-serif font-bold block break-normal [overflow-wrap:normal]">{enc.n}</span>
                     <span className="text-[10px] text-fg-13 font-mono">Merc: {enc.merc} · Pers: {enc.pers}</span>
                   </div>
                   <span className="font-mono font-bold text-accent shrink-0">

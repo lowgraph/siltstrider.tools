@@ -628,3 +628,46 @@ to add four original-file imports through Vault's local Open Save File input;
 the file is not uploaded or changed. The original-file unit check is likewise
 opt-in; the reduced fixture/staged checks always run. See §70 for the tested
 file's hash and the coordinate-click attempts excluded from the final results.
+
+`--suite qa --filter 'QA-46/'` restores synthetic saves in all three worlds on
+Home, Builder and Vault at 1366/375 px in both themes (36 cases). Opening,
+Cancel and Escape preserve localStorage and restore focus; confirmation alone
+clears the loaded copy and focuses the file opener or Builder's main content.
+Use `--touch` for tap events. The test never uploads a file or signs in.
+
+`--suite qa --filter 'QA-47/'` checks Enchanting, Spellmaking and Faction Journal
+status names in all three worlds, both themes, and 1366/375 px (12 cases, three
+tools per case), including overflow, axe and screenshots.
+
+`--suite qa --filter 'QA-43-remainder/' --touch` checks the unfiltered Blades row
+on first load, full-row/badge visibility and hit testing, selection, the last
+scrollable row and empty search in all worlds, both themes and 1366/375/390 px
+(18 cases). Keep the older `QA-43/` filtered-row checks as well.
+
+`--suite qa --filter 'QA-51/' --touch` checks the Home fractional Health forecast,
+an imported ring and equipped late-game recommendations in all worlds, both
+themes and 1366/375 px (12 cases). Display has at most one decimal and the stored
+save is unchanged. Axe covers the equipped kit; click, Enter and Space open the
+slot chooser, Escape closes it, and keyboard Unequip does not open the chooser.
+
+## QA-48–50 and QA-52 phone and panel layout
+
+On the local server, run `node scripts/test-browser.cjs --suite qa --filter 'QA-48/' --touch`
+with the usual `--axe-path` and `--out` options. QA-48 measures all eight priority
+abbreviations and arrow boxes at 375, 390 and 1366 px in all three worlds and
+both themes, then moves an attribute down and back and checks the end controls.
+
+`--suite qa --filter 'QA-49/' --touch` uses the same matrix for full enchanter
+names and places, wrapping between words, price separation, Audenian Valius
+search and selection, a calculated Restore Health price and last-row scrolling.
+
+`--suite qa --filter 'QA-50/' --touch` measures actual SVG glyph boxes on
+Ebonheart → Balmora in all worlds and Ebonheart → Port Telvannis in TR/TR + ARCE,
+at 375/390/1366 px in both themes (30 cases). Every route/region label must be
+inside the SVG and separate from other labels. Keep `QA-42/` gap-legend cases.
+
+`--suite qa --filter 'QA-52/' --touch` optimizes and equips a fixed Spearman
+premade in the full 18-case world/theme/width matrix. Action labels must stay
+whole and inside their buttons; Armor Rating digits stay on one line and apart
+from the legend. Core-statistic words stay whole, with axe and no page overflow.
+

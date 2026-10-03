@@ -2,6 +2,22 @@
 
 ## Launch follow-ups — 2026-10-03
 
+- Builder gives recommendation buttons room to wrap between words, and the Equipment Inspector keeps Armor Rating digits together in narrow columns.
+
+- Travel maps keep route labels inside the panel and apart from other names. Crowded labels get connecting lines, and long place names wrap.
+
+- Enchanting shows each enchanter's full name and location, wrapping onto more lines when needed and keeping the price separate.
+
+- Level Simulator keeps the three-letter attribute names whole beside their priority arrows on phones.
+
+- Home Health gains and equipment weights show tidy numbers while calculations keep their full precision. Choosing an equipment slot and Unequip are separate controls, so keyboard use of Unequip cannot open the item picker.
+
+- Faction Journal keeps the Blades row and its eligibility badge whole when first opened on a phone. Wrapped filters have their own space above the scrollable list.
+
+- Enchanting, Spellmaking and Faction Journal show Vanilla, Tamriel Rebuilt or TR + ARCE in their data status, instead of internal world codes.
+
+- Clearing a loaded save from Home, Builder or Vault asks first. Cancel keeps the browser copy; confirming leaves the original save file untouched and returns focus to the file opener or Builder.
+
 - Travel explains Mark, Recall, Propylons and Cheapest; Alchemy explains pair ordering and names the selected world clearly. Rival House restrictions replace conflicting eligibility labels, and Gear Advisor calls its skill-based match the closest archetype.
 
 - Enchanting keeps Remove buttons readable inside each effect card on phones; each button identifies the effect it removes.

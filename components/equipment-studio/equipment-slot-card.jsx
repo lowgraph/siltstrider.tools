@@ -1,6 +1,7 @@
 "use client";
 import { memo } from "react";
 import { SLOT_DISPLAY_NAMES, getEffectiveArmorCategory } from "../../lib/equipment-math.mjs";
+import { formatHealth as formatWeight } from "../../lib/chart-scale.mjs";
 
 /**
  * Procedural SVG icons for equipment slots.
@@ -160,15 +161,6 @@ export const EquipmentSlotCard = memo(function EquipmentSlotCard({
 
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={() => onSelectSlot(slot)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onSelectSlot(slot);
-        }
-      }}
       className={`group relative flex items-center justify-between p-2.5 transition-all text-left cursor-pointer select-none mw-groove-panel ${
         isRestricted
           ? "cursor-not-allowed bg-danger-surface-1 border-danger-line-3"
@@ -183,7 +175,19 @@ export const EquipmentSlotCard = memo(function EquipmentSlotCard({
       }}
       title={isRestricted ? restrictionReason : isEquipped ? `Equipped: ${item.name || item.id}` : `Click to equip ${displayName}`}
     >
-      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+      {/* The chooser and Unequip are siblings, never nested interactive controls. */}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => onSelectSlot(slot)}
+        onKeyDown={e => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onSelectSlot(slot);
+          }
+        }}
+        className="flex items-center gap-2.5 min-w-0 flex-1"
+      >
         {/* Slot Icon Container */}
         <div
           className={`flex items-center justify-center w-8 h-8 flex-shrink-0 border transition-colors ${
@@ -242,7 +246,7 @@ export const EquipmentSlotCard = memo(function EquipmentSlotCard({
             )}
             {item.weight !== undefined && (
               <span className="text-[9px] font-mono text-fg-14 mt-0.5 leading-none" title="Weight">
-                {item.weight} w
+                {formatWeight(item.weight)} w
               </span>
             )}
           </div>

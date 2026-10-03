@@ -28,7 +28,7 @@ test('an Enchanting change runs only the Enchanting groups', async () => {
   const plan = planBrowserRuns(['lib/enchant-math.mjs', 'components/calculators/enchanting/enchanting-workstation.jsx']);
   assert.equal(plan.full, false);
   assert.deepEqual(plan.areas, ['Enchanting']);
-  assert.deepEqual(commands(plan), ['qa:/enchanting/', 'launch:FLOW-01', 'polish:Polish Enchanting', 'qa:QA-44/']);
+  assert.deepEqual(commands(plan), ['qa:/enchanting/', 'launch:FLOW-01', 'polish:Polish Enchanting', 'qa:QA-44/', 'qa:QA-47/', 'qa:QA-49/']);
 });
 
 test('two files in one area are not planned twice, and Windows paths match', async () => {
@@ -143,5 +143,18 @@ test('every planned filter names cases that exist in the browser runners', async
       assert.ok(source.includes(item.filter), `${file}: no browser case contains "${item.filter}"`);
       assert.match(commandFor(item), /^node scripts\/test-browser\.cjs --suite \w+ --filter '/);
     }
+  }
+});
+
+test('QA-48–50 and QA-52 components select their dedicated layout cases', async () => {
+  const {planBrowserRuns}=await load();
+  for(const [file,filter] of [
+    ['components/level-simulator/attribute-priority-ranker.jsx','QA-48/'],
+    ['components/calculators/enchanting/enchanting-workstation.jsx','QA-49/'],
+    ['lib/travel-map-labels.mjs','QA-50/'],
+    ['components/equipment-studio/equipment-stats-summary.jsx','QA-52/'],
+  ]) {
+    const plan=planBrowserRuns([file]);assert.equal(plan.full,false,file);
+    assert.ok(commands(plan).includes(`qa:${filter}`),file);
   }
 });

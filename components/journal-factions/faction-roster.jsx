@@ -132,7 +132,7 @@ export default function FactionRoster({
       </div>
 
       {/* Roster Items List */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-2 space-y-1.5" role={filteredFactions.length ? "listbox" : "status"} aria-label="Factions List">
+      <div className="flex-none h-64 md:flex-1 md:h-auto min-h-0 overflow-y-auto p-2 space-y-1.5" role={filteredFactions.length ? "listbox" : "status"} aria-label="Factions List">
         {filteredFactions.length === 0 ? (
           <div className="p-6 text-center text-xs text-fg-14 italic">
             No factions found matching criteria.

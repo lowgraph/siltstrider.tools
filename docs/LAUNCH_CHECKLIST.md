@@ -583,30 +583,30 @@ setup and Equip all agree; off-skill picks are explained), QA-42, QA-44, QA-45, 
 noise in 588 readings; partial coverage), and QA-01, QA-16, QA-31, QA-32 spot checks.
 Merge by Sunday 4 October; Monday is the freeze.
 
-- [ ] **C** **QA-46** (Medium-Low; confirmed live 3/3 and in code) "Clear save" on a loaded save
+- [x] **C** **QA-46** (started 2026-10-03 19:03 UTC, Codex, on `fix/qa-46-47-43-51`; done `9326a87`, LAUNCH_VERIFICATION §76) (Medium-Low; confirmed live 3/3 and in code) "Clear save" on a loaded save
       (`save-import-notice.jsx`) clears it at once, with no confirmation or undo. The save
       file itself is untouched and can be opened again, but the page says it is "kept in this
       browser until you clear it". Reuse QA-31's confirmation dialog and focus recovery.
-- [ ] **C** **QA-47** (Low; QA-45 remainder; confirmed live 3/3 and in code) "TR_ARCE" still shows
+- [x] **C** **QA-47** (started 2026-10-03 19:21 UTC, Codex, on `fix/qa-46-47-43-51`; done `3a03190`, LAUNCH_VERIFICATION §76) (Low; QA-45 remainder; confirmed live 3/3 and in code) "TR_ARCE" still shows
       in the Enchanting, Spellmaking and Faction Journal status lines
       (`profile.toUpperCase()`). Use `worldLabel` as Alchemy now does.
-- [ ] **C** **QA-43 remainder** (Low-Medium, 375 px, 9/9 in Morrowind UI, also Modern) The
+- [x] **C** **QA-43 remainder** (started 2026-10-03 19:27 UTC, Codex, on `fix/qa-46-47-43-51`; done `3d7725b`, LAUNCH_VERIFICATION §76) (Low-Medium, 375 px, 9/9 in Morrowind UI, also Modern) The
       "Viewing Fighters Guild" bar still covers the lower Blades row and its "Eligible to Join"
       badge.
-- [ ] **C** **QA-51** (Low; same family as QA-27/41) Floating-point noise outside the Level
+- [x] **C** **QA-51** (started 2026-10-03 19:34 UTC, Codex, on `fix/qa-46-47-43-51`; done `097100c`, LAUNCH_VERIFICATION §76) (Low; same family as QA-27/41) Floating-point noise outside the Level
       Simulator: Home's Health card "+33.400000000000034 Health by level 30"
       (`home-tools.jsx` `health.gain`), and recommended-kit ring weights "0.10000000149011612 w"
       (`equipment-slot-card.jsx` `item.weight`). Format both with QA-27's formatter.
 
 Optional, if time allows by Sunday; otherwise after launch (all confirmed live):
-- [ ] **C** QA-48 (Low, Morrowind UI, 375 px, 3/3) Level Simulator attribute-priority tiles break
+- [x] **C** QA-48 (started 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`; done `97437a8`, LAUNCH_VERIFICATION §77) (Low, Morrowind UI, 375 px, 3/3) Level Simulator attribute-priority tiles break
       the abbreviations: "EN/D", "ST/R", "AG/I", "SP/D", "WI/L", "PE/R", "IN/T", "LU/C".
-- [ ] **C** QA-49 (Low, 375 px, 18/18) Enchanting's ranked enchanter list cuts names and places
+- [x] **C** QA-49 (started 2026-10-03 20:55 UTC, Codex, on `fix/qa-46-47-43-51`; done `6796a89`, LAUNCH_VERIFICATION §77) (Low, 375 px, 18/18) Enchanting's ranked enchanter list cuts names and places
       with ellipses ("Audenian Valius (vivec, telvanni ench…"); let them wrap.
-- [ ] **C** QA-50 (Low, 375 px, both themes) Travel transit map labels overlap on dense routes
+- [x] **C** QA-50 (started 2026-10-03 21:01 UTC, Codex, on `fix/qa-46-47-43-51`; done `74ba08e`, LAUNCH_VERIFICATION §77) (Low, 375 px, both themes) Travel transit map labels overlap on dense routes
       (Ebonheart → Port Telvannis in TR + ARCE, 3/3) and Vivec stop labels clip at the left edge
       (Ebonheart → Balmora, 9/9).
-- [ ] **C** QA-52 (Low, 1366 px) Builder: the "Equip late-game recommendations →" button wraps
+- [x] **C** QA-52 (started 2026-10-03 21:09 UTC, Codex, on `fix/qa-46-47-43-51`; done `327e242`, LAUNCH_VERIFICATION §77) (Low, 1366 px) Builder: the "Equip late-game recommendations →" button wraps
       into fragments (Modern UI, TR + ARCE), and the Equipment Inspector's Total Armor Rating
       "82" stacks its digits.
 

@@ -44,6 +44,7 @@ export default function OpenSavePanel({ vault }) {
       />
       <button
         type="button"
+        data-open-save-file
         className="w-full mw-btn py-2 px-3 text-xs font-serif font-bold text-fg-5 hover:text-fg-2"
         onClick={() => inputRef.current?.click()}
         disabled={vault.actionBusy}

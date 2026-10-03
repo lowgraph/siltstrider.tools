@@ -170,7 +170,7 @@ test("Equipment Studio UI: Opening ItemPickerDrawer and equipping an item update
   const updatedCuirass = Array.from(container.querySelectorAll("[role='button']")).find((el) =>
     el.textContent.includes("Cuirass")
   );
-  assert.match(updatedCuirass.textContent, /AR/);
+  assert.match(updatedCuirass.parentElement.textContent, /AR/);
 
   act(() => root.unmount());
 });

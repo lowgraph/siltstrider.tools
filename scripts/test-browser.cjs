@@ -196,8 +196,10 @@ async function matrix() {
       assert.equal(headings, 1, 'Exactly one page h1');
       const themes = [];
       for (const theme of ['ashfall', 'morrowind']) {
-        await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`); await pause(100);
+        await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
         await waitForFonts();
+        // A theme swap animates colors; axe must measure their final contrast.
+        await until('!document.getAnimations().some(a=>a.playState==="running"&&Number.isFinite(a.effect?.getComputedTiming().endTime))');
         assert.equal(await evaluate('document.documentElement.scrollWidth > innerWidth + 1'), false, `Overflow in ${theme}`);
         const notices = await audit(`${route}-${profile}-${width}-${theme}`);
         themes.push({ theme, notices });
@@ -837,6 +839,8 @@ async function polishRegression() {
   if (suite === 'qa') await require('./clarity-browser-cases.cjs')(qaContext);
   if (suite === 'qa') await require('./qa40-41-flow04-browser-cases.cjs')(qaContext);
   if (suite === 'qa') await require('./qa42-45-browser-cases.cjs')(qaContext);
+  if (suite === 'qa') await require('./qa46-51-browser-cases.cjs')(qaContext);
+  if (suite === 'qa') await require('./qa48-50-52-browser-cases.cjs')(qaContext);
   if (suite === 'touch') await require('./qa-browser-cases.cjs').touch(qaContext);
   if (['all','matrix'].includes(suite)) await matrix();
   if (['all','travel'].includes(suite)) { await cityStopRegression(); await longJourneyRegression(); await travel(); }

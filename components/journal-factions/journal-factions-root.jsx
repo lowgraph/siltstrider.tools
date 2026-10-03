@@ -1,5 +1,6 @@
 "use client";
 import { factionCharacter } from "../../lib/faction-math.mjs";
+import { worldLabel } from "../../lib/home-data.mjs";
 import { useState, useMemo, useEffect } from "react";
 import { useGameData } from "../use-game-data";
 import { useSearchIntent } from "../use-search-intent";
@@ -260,7 +261,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
   };
 
   return (
-    <div className="journal-factions-root max-w-7xl mx-auto flex flex-col h-[calc(100vh-140px)] min-h-[600px] bg-surface-3 text-fg-2 border-4 border-line-4 shadow-2xl">
+    <div className="journal-factions-root max-w-7xl mx-auto flex flex-col h-auto md:h-[calc(100vh-140px)] min-h-[600px] bg-surface-3 text-fg-2 border-4 border-line-4 shadow-2xl">
       {/* Top Bar / Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-surface-6 border-b-2 border-line-4">
         <div className="flex items-center gap-3">
@@ -270,7 +271,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
           {/* Live Bundle Status Badge */}
           {isLive ? (
             <span className="px-2 py-0.5 text-[11px] font-mono uppercase bg-success-surface-2 border border-success-line-4 text-success-4" title="Loaded from verified game data bundle">
-              • Live: {factionsList.length} Factions ({shell?.profile?.toUpperCase() || "VANILLA"})
+              • Live: {factionsList.length} Factions ({worldLabel(shell?.profile)})
             </span>
           ) : (
             <span className="px-2 py-0.5 text-[11px] font-mono text-fg-14 bg-surface-12 border border-line-9">
@@ -315,8 +316,8 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
 
       {/* Main Split-Pane Workspace */}
       <div className="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
-        {/* Left Pane: Roster (320px on desktop) */}
-        <div className="faction-roster-container w-full md:w-80 md:min-w-[300px] h-80 md:h-full shrink-0 min-h-0 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-line-4 flex flex-col">
+        {/* On phones, wrapped filters must not take height away from the list. */}
+        <div className="faction-roster-container w-full md:w-80 md:min-w-[300px] h-auto md:h-full shrink-0 min-h-0 overflow-hidden border-b-2 md:border-b-0 md:border-r-2 border-line-4 flex flex-col">
           <FactionRoster
             factions={factionsList}
             selectedFactionKey={selectedFactionKey}
@@ -331,7 +332,7 @@ export default function JournalFactionsRoot({ initialFactions, initialQuests } =
         </div>
 
         {/* Right Pane: Dossier Detail View */}
-        <div className="flex-1 min-h-0 md:h-full overflow-hidden flex flex-col">
+        <div className="flex-none h-96 md:flex-1 min-h-0 md:h-full overflow-hidden flex flex-col">
           <div className="faction-active-label shrink-0 px-4 py-2 border-b border-line-9 bg-surface-6 text-sm font-serif text-fg-2" role="status" aria-live="polite" aria-atomic="true">
             {selectedFaction ? <>Viewing <strong className="text-accent">{selectedFaction.name || selectedFaction.key}</strong></> : 'Select a faction to view its details.'}
           </div>

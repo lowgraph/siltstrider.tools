@@ -1,5 +1,37 @@
 # Coordination
 
+## Phone and panel labels — 3 October
+
+Site branch `fix/qa-46-47-43-51`: QA-48 `97437a8`, QA-49 `6796a89`,
+QA-50 `74ba08e`, QA-52 `327e242`. Priority abbreviations stay whole with
+unchanged reorder controls. Enchanter names/places wrap between words and leave
+room for prices; preserve search, ranking and merchant records. Travel measures
+the active font after loading and theme changes, wraps long names, avoids label
+collisions and links crowded callouts without moving stop dots, route edges or
+compressed gaps. Gear actions wrap below the heading; the narrow Inspector
+stacks its core cards and keeps Armor Rating digits together. Calculations,
+scoring, saved data, schemas, bundle and migrations are unchanged;
+UI_TRANSFORMATION is unchanged. Verification and evidence: site §77.
+First command: `npm test`, then BROWSER_TESTS' `QA-48/`, `QA-49/`,
+`QA-50/`, `QA-52/` and the existing `QA-42/` gap cases before acceptance.
+
+## Loaded-save safety and display follow-ups — 3 October
+
+Site branch `fix/qa-46-47-43-51`: QA-46 `9326a87`, QA-47 `3a03190`,
+QA-43 remainder `3d7725b`, QA-51 `097100c`. Clear-save buttons use the shared
+confirmation dialog: Cancel/Escape keep the browser copy, confirmation returns
+focus, and a replacement save cancels the pending action. Original files and
+cloud records are untouched. Display friendly world names with `worldLabel`;
+retain canonical profile keys. Phone faction filters cannot consume the list's
+height; preserve whole initial Blades rows, scrolling and membership behavior.
+Health gains and weights use the existing display formatter without rounding
+stored/calculated values. Equipment chooser and Unequip must remain separate
+controls for keyboard use and accessibility. Browser theme audits wait for
+finite color transitions to finish. No dataset/schema, bundle or migration
+changes; UI_TRANSFORMATION is unchanged. Verification: site §76.
+First command: `npm test`, then BROWSER_TESTS' `QA-46/`, `QA-47/`,
+`QA-43-remainder/` and `QA-51/` cases before merge/release acceptance.
+
 ## QA-40–45 release and recovery — 3 October
 
 Site `65cbd0e` is live as Worker `e4c17cd3-29d4-40ef-950a-1ebefe21ebff` at

@@ -3938,3 +3938,171 @@ New: Home's Health card "+33.400000000000034" and ring weights "0.10000000149011
 Observations not counted: an Alchemy Retort partly behind the phone navigation at one scroll
 position, and the rival House's disabled Join keeping its colour. Triage: checklist section 5
 item 20.
+
+## 76. QA-46, QA-47, QA-43 remainder and QA-51 — 3 October 2026
+
+Branch `fix/qa-46-47-43-51` starts from main `e83eb09`, with the release's staged
+bundle `a29adea046e6086c2c7ee654`. Claims were pushed as `8f6000d`. These are local
+fixes; the production release and rollback records in §72–73 are unchanged.
+
+| Item | Cause and change | Verification |
+| --- | --- | --- |
+| QA-46 | Home and `SaveImportNotice` called `clearSave` immediately. Both now use the QA-31 confirmation dialog through `useSaveClearConfirmation`. Cancel/Escape preserve the copy and restore focus; confirmation removes only the active browser save, preserves the original file, and focuses the file opener or Builder main area. Replacing a save dismisses an obsolete confirmation. | Seven new regression cases (six fail before the fix); relevant unit, storage, dialog, browser-plan and claim/licence checks pass **57/57**. Chrome **36/36**, Home/Builder/Vault in all three worlds, 1366/375 px and both themes, with touch events, Cancel, Escape, confirmation, focus, storage, overflow and axe checks. No runtime/server errors. Phone Morrowind screenshots reviewed. |
+| QA-47 (`3a03190`) | The three remaining status lines exposed canonical profile keys; they now use `worldLabel`, with a defined calculator fallback. | **40/40** relevant tests; **12/12** Chrome cases (36 tool visits). Details below. |
+| QA-43 remainder (`3d7725b`) | Wrapped phone filters squeezed the list and clipped the initial Blades row; list height is now independent of them. | **61/61** relevant tests; **18/18** new and **18/18** original Chrome cases. Details below. |
+| QA-51 (`097100c`) | Home gains and slot weights bypassed the existing formatter; both now use it. Equipped-card controls are siblings after the new audit found a nested-control defect. | **81/81** relevant tests; **12/12** Chrome cases including axe and keyboard/tap controls. Details below. |
+
+Evidence: `A:/Cache/qa46-47-43-51/`, `qa46-before.log`, `qa46-final-tests.log`,
+and `qa46-vanilla/`, `qa46-tr/`, `qa46-tr-arce/` (reports, audits and screenshots).
+
+QA-47 uses `worldLabel` for the live status in Enchanting, Spellmaking and Faction
+Journal, retaining the canonical profile in catalog state. The calculators'
+missing-profile fallback also uses the selected profile instead of the undefined
+`activeWorld`. Eleven new tests cover each tool/world and both calculator fallbacks;
+all fail before the fix (nine label assertions, two undefined-variable errors).
+Relevant status, copy, browser-plan and licence/claim checks pass **40/40**. Chrome
+passes **12/12** (36 tool visits): all worlds, 1366/375 px and both themes, with
+overflow, axe and screenshots. Evidence: `qa47-before.log`, `qa47-tests.log` and
+`qa47-browser/` under the same Cache directory.
+
+QA-43 remainder is initial-row clipping rather than overlapping pane boxes.
+At 375 px the wrapped phone filters left only 136/142 px of list height; the
+Blades row's badge/attributes fell below that boundary, beside the Viewing bar.
+The phone list now has its own 256 px height, independent of the controls; the
+phone journal grows to accommodate it and gives the dossier its own scroll area.
+Desktop retains the split pane. The new initial-load assertion fails in both
+themes before the fix. Relevant faction, membership, status, browser-plan and
+licence/claim tests pass **61/61**. New Chrome cases pass **18/18**, covering all
+worlds, 1366/375/390 px and both themes with touch, initial Blades, badge hit
+testing, selection, last row, empty search and axe. The original `QA-43/` filtered
+cases also pass **18/18**. Initial and corrected Morrowind screenshots reviewed.
+Evidence: `qa43-before-initial/`, `qa43-tests.log`, `qa43-final-browser/` and
+`qa43-existing-browser/`. The previously released QA-43 checklist entry is retained.
+
+QA-51 applies the QA-27 `formatHealth` display formatter to Home's `health.gain`
+and slot-card `item.weight` (aliased as `formatWeight`). Forecasts, catalog values
+and saved data retain their full precision. Seventeen regressions cover the
+reported numbers, fractions, integers, zero, unavailable/non-finite values and
+absent items/forecasts; seven fail before the formatting change.
+The first twelve browser cases reached every numeric assertion but failed the
+new equipped-kit axe audit: the existing slot chooser contained the Unequip
+button. Four additional control regressions pin that defect (two fail before
+the control change). Chooser and Unequip are now siblings in the same card,
+preserving its appearance; keyboard activation of Unequip no longer opens the
+picker. This small additional fix was required by the new equipped-kit audit.
+Relevant display, Health, Home, equipment, browser-plan and licence/claim checks
+pass **81/81**. Chrome acceptance passes **12/12** with all worlds, both themes,
+1366/375 px, touch, axe, unchanged saved data and independent chooser/Unequip
+keyboard behavior. The raw forecast `130.30000000000004` shows `+130.3`; imported
+and recommended ring weights `0.10000000149011612` show `0.1 w`.
+Evidence: `qa51-before.log`, `qa51-controls-before.log`, `qa51-tests.log`,
+`qa51-browser/` (initial axe failures), and `qa51-acceptance/` (accepted).
+
+Final preflight: site `npm test` passes **1,371/1,371**, zero skips or todos, with
+`QA_FLOW04_SAVE_PATH` pointing to the owner's unchanged original Pe.omwsave.
+The first full run exposed two older import maps missing the new confirmation
+hook; both now compile the actual hook through a shared test helper. The final
+run is `full-site-final.log`. `npm run build:cloudflare` passes, **24/24** static
+pages, staged bundle and repository configuration unchanged (`build.log`).
+Pipeline tests pass **685/685** (`pipeline-tests.log`). Signed-in local Worker/Vault
+passes **10/10**, zero runtime/server errors (`vault/`, `vault.log`). No real Clerk
+account or production writes were used. Home and Builder first-navigation
+hydration/console checks pass **120/120** (six storage/link scenarios, both
+widths/themes and ten fresh premade repeats per combination; `hydration-home/`,
+`hydration-builder/`).
+
+The broad browser run initially audited a Home button during a theme color
+transition. The matrix now waits for finite animations/transitions to finish,
+without disabling contrast checks. The six Home world/width cases rerun in both
+themes pass (`home-matrix-settled/`); original evidence remains in `broad-browser/`.
+Shared COORDINATION is identical and pushed on pipeline
+`handoff/qa-46-47-43-51` as `e4a1e5a`; UI_TRANSFORMATION is identical and unchanged.
+
+The broad `--suite all` finishes **202/203** initially, with only the transient
+Home contrast audit failing. Its other 197 cases plus the six accepted Home
+reruns give **203/203** accepted broad cases. Together with the 96 dedicated
+new/previous-item checks, 120 hydration checks and ten Vault checks, acceptance
+totals **429/429**, zero runtime/server errors. `accepted-summary.json` records
+the original failure and the exact six superseding cases; failing evidence is
+retained. This is branch verification, not the complete freeze-day suite.
+
+## 77. QA-48–50 and QA-52 layout follow-ups — 3 October 2026
+
+Branch `fix/qa-46-47-43-51`, continuing from `a87e698`; no merge or deployment.
+Evidence is under `A:\Cache\qa48-50-52`. Staged bundle, schemas and production
+state are unchanged.
+
+QA-48 reproduced at 375 px in the Morrowind theme: `END` occupies two lines.
+The abbreviation now stays whole; slightly tighter tile padding and spacing
+leave room for both arrows without reducing their size. Chrome checks all eight
+labels, containment, separation, reorder behavior and boundary buttons in all
+three worlds, both themes, and 375/390/1366 px with touch and axe. Final acceptance
+passes **18/18**; initial failing evidence is retained in `qa48-before/` and
+`qa48-browser/`, accepted evidence in `qa48-final/`. Three unit cases preserve
+first/middle/last swaps, boundary controls and the original priority array.
+Relevant Level Simulator, browser-plan and licence/claim tests pass **33/33**.
+
+QA-49 reproduced on the same phone: the first full merchant/location string
+was ellipsized. Names now wrap between words and rows put the price on another
+line when needed. No merchant records, order, prices or search logic changed.
+Chrome acceptance passes **18/18** across all worlds/themes and 375/390/1366 px,
+including full initial names, Audenian Valius search/selection, Restore Health
+prices, last-row scrolling, axe and overflow. Relevant Enchanting, browser-plan
+and licence/claim tests pass **43/43**. Evidence: `qa49-before/`, `qa49-browser/`
+(initial layout pass), `qa49-final/` (a test-script quoting error), and
+`qa49-acceptance/` (corrected complete acceptance).
+
+QA-50 reproduced in **12/12** TR + ARCE route/width/theme checks: labels fell
+outside the SVG or overlapped. `TransitMap` used estimated character widths,
+only four candidate positions and a fallback that ignored collisions. Layout
+now measures the active font after it loads and on theme changes, wraps long
+names, searches additional nearby positions, and reserves linked callout rows
+below the network when no clear position remains. Region widths are measured
+too; the initial route fix exposed an existing desktop region-name overlap.
+Stop positions, route edges, compression and routing are unchanged.
+Six pure regressions cover both edges, coincident stops, saturated maps, long
+names/tokens, deterministic placement and input preservation. Relevant map,
+browser-plan and licence/claim tests pass **41/41**. Chrome acceptance passes
+**30/30** on both reported routes in all applicable worlds, both themes and
+375/390/1366 px, with actual SVG boxes, touch, axe and screenshots. Existing
+QA-42 compressed-gap cases pass **18/18**. Evidence: `qa50-before/`,
+`qa50-layout/` (two remaining desktop region overlaps), `qa50-acceptance/`,
+and `qa42-regression/`.
+
+QA-52 reproduced at 1366 px with TR + ARCE/Modern: the action label split
+“recommendations”, and the fixed Spearman kit's `50.1` Armor Rating occupied two
+lines (same cause as reported `82`). Gear actions no longer compete with the
+heading for one row and wrap between words. The Inspector stacks its core cards
+in the narrow desktop column and keeps the rating whole, allowing explanatory
+text to wrap without collisions. Calculations, scoring and equipped items are
+unchanged. Three display regressions preserve `82`, `50.1`, zero and inputs.
+Relevant equipment/gear, browser-plan and licence/claim tests pass **54/54**.
+Chrome acceptance passes **18/18** in all worlds/themes at 1366/375/390 px, with
+actual button/text boxes, successful equip, rating containment, word wrapping,
+touch and axe. Evidence: `qa52-before/`, `qa52-before-inspector/`,
+`qa52-browser/` (initial acceptance) and `qa52-acceptance/` (complete text-box checks).
+
+Final unit preflight passes **1,384/1,384**, zero skips or todos, with the unchanged
+original Pe.omwsave enabled for FLOW-04 (`full-site.log`). Cloudflare build passes
+**24/24** static pages with repository configuration and bundle
+`a29adea046e6086c2c7ee654` unchanged (`build.log`). Pipeline tests pass **685/685**
+(`pipeline-tests.log`); shared COORDINATION is identical and pushed on pipeline
+`handoff/qa-46-47-43-51` as `530e013`. UI_TRANSFORMATION remains identical and
+unchanged. Travel first-navigation hydration/console checks pass **24/24**
+across six storage/link scenarios and both widths/themes (`hydration-travel/`).
+The originally reported QA-52 1366 px Modern/TR + ARCE case also passes with
+ordinary desktop emulation (`qa52-desktop/`, **1/1**).
+
+The existing QA-08 Early/Late gear-table regressions also pass **36/36** in all
+worlds, both themes and 375/390/1366 px with touch (`qa08-regression/`).
+
+Broad Chrome `--suite all` passes **203/203**, including page/theme/world matrix,
+Travel transfers and long-journey fallback, calculators, reverse Alchemy and
+sources, Builder/gear, Faction Journal and Level Simulator interactions,
+saved-Travel navigation, settings and polish (`broad-browser/`). Together with
+84 dedicated item cases, 18 existing map-gap cases, 36 existing gear-table cases,
+24 Travel hydration checks and the ordinary desktop retest, this batch has
+**366/366** accepted browser cases, zero runtime/server errors.
+`accepted-summary.json` names every included report; initial failing evidence
+is retained. This is branch preflight, not the complete freeze-day suite.
+
