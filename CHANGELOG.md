@@ -2,7 +2,7 @@
 
 ## Launch follow-ups — 2026-10-03
 
-- Optimized weapons show their Major, Minor or Miscellaneous skill and explain how weapon damage and item bonuses contribute to the gear score. Powerful bonuses can put an off-skill weapon first.
+- The endgame weapon ranking weighs your weapon skills and damage alongside constant bonuses, and now includes obtainable weapons without constant effects. Editing Spear to Long Blade can select a sword instead of a hammer chosen for its bonuses. Each weapon shows its skill fit, score breakdown and source.
 
 ## Launch polish — 2026-10-02
 

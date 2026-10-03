@@ -3487,9 +3487,10 @@ observations the agent itself could not reproduce. Triage: checklist section 5 i
 Work is on `fix/qa-40-41-flow-04`, from freshly fetched main `f5ca4af`.
 The owner requested these three items in order, relevant suites between items,
 a commit after each item, then a branch push. Production stays at `672c0d3`;
-no deployment, migration, schema, scoring-policy or catalog rebuild is included.
+no deployment, migration, schema or catalog rebuild is included. The owner later
+authorized changing QA-40's scoring instead of keeping the initial explanation.
 
-### QA-40 — explain a bonus-heavy weapon's skill fit
+### QA-40 — score a usable primary weapon
 
 Reproduced the exact Nord Warrior Spearman edit (Major skill 1: Spear → Long Blade).
 `defaultWeaponSetup` correctly changes to One-handed + shield. The staged model
@@ -3499,22 +3500,47 @@ Strength 20 and Endurance 20 contribute 6.4 each, Attack 30 contributes 6,
 Luck 20 contributes 2.4. Its bonuses total 21.2. TR/ARCE's Neb-Crescen wins at
 23.73: 7.73 from Major Long Blade damage and 16 from bonuses.
 
-The ranking and published candidates are unchanged. `weaponScoreDetails` shares
-the existing damage contribution with `scoreItem`; the kit now shows each weapon's
-skill tier and damage/bonus score. Primary and expanded runner-up rows have their
-own explanation. Nearby help says that strong bonuses can outweigh a class skill
-and that this score is not a DPS estimate. Missing/invalid metadata does not
-invent a breakdown; incompatible older named scores are handled conservatively.
+The initial explanation-only commit `9ca583c` retained that ranking; the owner
+rejected it and authorized scoring changes. A second cause is the candidate pool:
+Vanilla's BestInSlot contains no Long Blade, because it publishes only weapons
+with constant effects. The runtime now supplements weapons with the existing
+GearRows power shortlists and their acquisition evidence, resolving damage from
+Weapons. It excludes missing records, incomplete evidence and bound summons;
+constant-effect candidates keep their original sources and drawback rules.
 
-Validation: 70 relevant gear/edited-premade/weapon-default/transfer/claims tests
-passed, including 11 new QA-40 cases. Synthetic cases cover all skill tiers,
-zero/fractional damage, malformed inputs and missing/incompatible metadata;
-three staged checks pin the exact reported winners and scores. Twelve Chrome
-cases pass across Vanilla, TR and TR + ARCE, 1366/375 px and both themes, including
-runner-ups, overflow and scoped axe audits. The Vanilla phone screenshot was reviewed.
+The primary-weapon policy keeps the published 8/5/1 damage weights. Bonus points
+are multiplied by the weapon's tier weight divided by the Major weight, and
+their combined contribution is capped at the skill-weighted damage contribution.
+Bonuses thus cannot turn a weak buff weapon into the strongest primary merely
+by stacking unrelated benefits. They still improve good weapons, and a strong
+off-skill weapon can beat a genuinely weak class weapon. This is an authored
+ranking policy, not an engine damage/DPS calculation. Temporary enchantments
+settle score ties using the existing build-worth function; they never become
+permanent attribute bonuses.
+
+For the reported edit, Vanilla now selects Goldbrand at **6.67**, Major Long
+Blade, from the published Museum of Artifacts source (theft is stated). TR and
+TR + ARCE select Neb-Crescen at **15.47**, Major Long Blade. Weapons are rescored
+even for unchanged premades, while their published armor/clothing/jewelry remain.
+The view and Equip late-game action share the same candidates and wait for both
+catalog features. Missing model retains the existing fallback. Known formidable
+and beast restrictions remain; GearRows does not publish actor levels, so its
+supplementary sources retain their published eligibility and never invent one.
+This is limited to the published shortlists, not every WEAP definition. No new
+GearRows, BestInSlot or real-data extraction is required for this fix.
+
+The superseded explanation passed 70 tests and 12 Chrome cases. Revised scoring:
+**113 relevant tests passed**, including three staged winner/score/equip checks
+and synthetic skill tiers, bonus saturation, weak class weapons, zero/invalid
+damage, malformed candidates, missing models and no input mutation. Twelve new
+Chrome ranking cases pass across all worlds, 1366/375 px and both themes, with
+runner-ups, overflow and scoped axe audits. Existing QA-26 whole-kit, hand setup
+and transfer regressions also pass **12/12** across the same matrix: 48 character
+configurations, 96 hand setups and 12 equip transfers. No runtime/server errors.
+The Vanilla phone screenshot was reviewed. Licence and site-claim checks pass.
 The initial browser setup used a short skill label and then waited before opening
 the lazy gear catalogs; those harness attempts are excluded. The accepted setup
 selects the full displayed skill label, opens the intended section and loads gear.
 
-Evidence: `A:/Cache/qa40-41-flow04/qa40-model-before.jsonl`, `qa40-unit.log`,
-`qa40-relevant.log` and the complete `qa40-accepted/` report/screenshots.
+Evidence: `A:/Cache/qa40-41-flow04/qa40-model-before.jsonl`,
+`qa40-scoring-unit.log`, `qa40-scoring-browser/` and `qa40-qa26-browser/`.

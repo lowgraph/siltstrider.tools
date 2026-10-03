@@ -15,13 +15,13 @@ module.exports=async c=>{
     const table='[aria-label="Endgame equipment: Optimized Weapons"]';await c.until(`document.querySelector('${table} .weapon-score-explanation')`);
     const row=await c.evaluate(`document.querySelector('${table} tbody tr').textContent`);
     if(profile==='vanilla'){
-      assert.match(row,/Sunder/);assert.match(row,/Score: 22\.2/);assert.match(row,/Blunt Weapon — Miscellaneous skill\. Damage score 1; bonus score 21\.2/);
-      for(const reason of ['Fortify Strength 20','Fortify Endurance 20','Fortify Attack 30'])assert.ok(row.includes(reason));
-    }else{assert.match(row,/Neb-Crescen/);assert.match(row,/Long Blade — Major skill\. Damage score 7\.73; bonus score 16/);}
+      assert.match(row,/Goldbrand/);assert.match(row,/Score: 6\.67/);assert.match(row,/Long Blade — Major skill\. Damage score 6\.67; bonus score 0/);
+      assert.match(row,/Mournhold, Museum of Artifacts/);
+    }else{assert.match(row,/Neb-Crescen/);assert.match(row,/Score: 15\.47/);assert.match(row,/Long Blade — Major skill\. Damage score 7\.73; bonus score 7\.74/);}
     await c.evaluate(`document.querySelector('${table} button').click()`);await c.until(`document.querySelectorAll('${table} .weapon-score-explanation').length===3`);
     assert.equal(await c.evaluate('document.documentElement.scrollWidth>innerWidth+1'),false);
-    assert.match(await c.evaluate('document.querySelector(".weapon-score-help").textContent'),/not a damage-per-second estimate/);
+    assert.doesNotMatch(await c.evaluate('document.querySelector(".weapon-score-help").textContent'),/Strong bonuses can outweigh|Check the skill fit/);
     await c.evaluate(`document.querySelector('${table}').scrollIntoView({block:'center'})`);c.assertAccessible(await c.audit(`QA-40-${profile}-${width}-${theme}`));await c.screenshot(`QA-40-${profile}-${width}-${theme}`);
-    return {winner:profile==='vanilla'?'Sunder':'Neb-Crescen',rankingUnchanged:true,explained:true};
+    return {winner:profile==='vanilla'?'Goldbrand':'Neb-Crescen',rankingChanged:true,majorSkill:true};
   });
 };

@@ -1,6 +1,7 @@
 "use client";
 import { useState, Fragment } from "react";
 import { resolveBestInSlotPicks, weaponScoreDetails } from "../../lib/best-in-slot.mjs";
+import { enchantmentNote, sourceLabel } from "../../lib/gear-rows.mjs";
 
 function formatQuestGrant(grant) {
   if (typeof grant !== "string") return String(grant);
@@ -43,6 +44,12 @@ function WeaponScoreExplanation({ entry, build, model }) {
   );
 }
 
+function itemSource(item) {
+  return item.acquisitionPick
+    ? [...Object.values(sourceLabel(item.acquisitionPick)), item.acquisitionPick.theftRequired ? 'Theft required' : ''].filter(Boolean).join(' · ')
+    : formatSource(item.source);
+}
+
 function BisPickRow({ slotLabel, topPick, alternatives = [], weaponBuild, model }) {
   const [showAlts, setShowAlts] = useState(false);
   const item = topPick.item || {};
@@ -57,7 +64,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [], weaponBuild, model 
     stats.push(`Dmg ${item.damage} (${wLabel})`);
   }
 
-  const effectsSummary = (item.effects || [])
+  const effectsSummary = item.acquisitionPick ? enchantmentNote(item.acquisitionPick) : (item.effects || [])
     .map((e) => {
       const target = e.skill || e.attribute;
       const tStr = target ? ` (${target.replace(/_/g, " ")})` : "";
@@ -137,7 +144,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [], weaponBuild, model 
         </td>
 
         <td data-label="Acquisition & Location" className="py-2.5 px-3 align-top text-xs text-fg-8">
-          <span className="font-serif">{formatSource(item.source)}</span>
+          <span className="font-serif">{itemSource(item)}</span>
           {item.source?.easiestLevel > 30 && (
             <div className="mt-1">
               <span className="px-1.5 py-0.5 rounded text-[10px] bg-danger-surface-3 border border-danger-line-2 text-danger-2">
@@ -166,7 +173,7 @@ function BisPickRow({ slotLabel, topPick, alternatives = [], weaponBuild, model 
                 )}
                 {weaponBuild && <WeaponScoreExplanation entry={alt} build={weaponBuild} model={model} />}
               </td>
-              <td data-label="Acquisition & Location" className="py-1.5 px-3">{formatSource(aItem.source)}</td>
+              <td data-label="Acquisition & Location" className="py-1.5 px-3">{itemSource(aItem)}</td>
             </tr>
           );
         })}
@@ -177,11 +184,13 @@ function BisPickRow({ slotLabel, topPick, alternatives = [], weaponBuild, model 
 export function BestInSlotView({
   featureData,
   build,
+  gearRows = [],
   beast = false,
   weaponSetup = null,
   allowFormidableSources = false
 }) {
   const resolved = resolveBestInSlotPicks(featureData, build, {
+    gearRows,
     allowFormidableSources,
     weaponSetup,
     beast
@@ -194,7 +203,7 @@ export function BestInSlotView({
           Optimized endgame kit
         </summary>
         <p className="mt-3 text-sm text-fg-10 italic">
-          No constant-effect gear recommendations available for this build configuration.
+          No gear recommendations available for this build configuration.
         </p>
       </details>
     );
@@ -208,7 +217,7 @@ export function BestInSlotView({
 
       <div className="mt-3 space-y-4">
         <p className="text-sm text-fg-8 leading-relaxed">
-          Constant-effect endgame equipment ranked for this character&apos;s current attributes and skills.
+          Endgame equipment ranked for this character&apos;s current attributes and skills.
           Drawbacks that ruin a character disqualify an item; acceptable drawbacks display warnings
           and recommended mitigations.
         </p>
@@ -234,8 +243,7 @@ export function BestInSlotView({
 
             {group.label === 'Optimized Weapons' && (
               <p className="weapon-score-help text-xs text-fg-8 leading-relaxed">
-                Score combines weapon damage and item bonuses; it is not a damage-per-second estimate.
-                Strong bonuses can outweigh using a Major or Minor weapon skill. Check the skill fit below.
+                Weapons are ranked for your skill choices, damage and constant bonuses.
               </p>
             )}
 

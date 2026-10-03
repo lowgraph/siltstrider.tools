@@ -558,7 +558,7 @@ The signed-out retest of `672c0d3` / `56a07cb7` (LAUNCH_VERIFICATION §69) passe
 QA-37, QA-38, FLOW-03, the QA-01/09/16 spot checks and every first-visit wording check except
 Travel terms. Merge by Sunday 4 October, then deploy and retest; Monday is the freeze.
 
-- [x] **C** **QA-40** (started 2026-10-03 01:20 UTC, Codex, on `fix/qa-40-41-flow-04`; done with this commit, LAUNCH_VERIFICATION §70) (Medium, V; investigate first) After editing Nord Warrior Spearman's Major
+- [x] **C** **QA-40** (started 2026-10-03 01:20 UTC, Codex, on `fix/qa-40-41-flow-04`; initial explanation `9ca583c`; owner authorized scoring changes; done with this commit, LAUNCH_VERIFICATION §70) (Medium, V; investigate first) After editing Nord Warrior Spearman's Major
       Skill 1 from Spear to Long Blade, the Vanilla Optimized kit's primary weapon is Sunder
       ("Dmg 70 (blunt weapon)", score 22.2), a misc skill for that build; TR/TR + ARCE picked
       Neb-Crescen (long blade) correctly. Reproduce with the staged catalog
