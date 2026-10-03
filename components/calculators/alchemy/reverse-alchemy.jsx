@@ -38,7 +38,7 @@ export default function ReverseAlchemy({ ingredients, onUsePair, sources = { sta
       </ul>
       <p role="status" className="text-xs text-fg-7">{result.total ? `${result.total} ingredient pair${result.total === 1 ? "" : "s"}. Showing ${result.pairs.length}.` : "No ingredient pair makes all the chosen effects. Remove an effect to broaden the search."}</p>
       {!!result.total && <>
-        <p className="text-xs text-fg-9">Pairs with fewer additional effects come first, then lower ingredient value. &ldquo;Where to get them&rdquo; lists the shops, plants, creatures and places for each ingredient in this world. Using a pair replaces all four ingredient slots.</p>
+        <p className="reverse-alchemy-order-help text-xs text-fg-9">Additional effects are other potion effects shared by both ingredients; they can be unwanted or harmful. Pairs with fewer additional effects come first, then lower ingredient value. Ingredient value is their combined base gold value, not a shop price. &ldquo;Where to get them&rdquo; lists the shops, plants, creatures and places for each ingredient in this world. Using a pair replaces all four ingredient slots.</p>
         <div className="grid gap-3">
         <ul aria-label="Ingredient pairs" tabIndex={0} className="list-none m-0 p-0 space-y-2 max-h-80 overflow-y-auto">
           {result.pairs.map(pair => <li key={pair.id} className="reverse-alchemy-pair border border-line-9 bg-surface-1 p-3 space-y-2">

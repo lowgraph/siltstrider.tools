@@ -108,6 +108,21 @@ test('weapon scoring, Health gains and Travel inventory reach their dedicated br
   }
 });
 
+test('QA-42–45 changes select their own browser regressions', async () => {
+  const { planBrowserRuns } = await load();
+  for (const [file, filters] of [
+    ['components/calculators/travel/transit-map.jsx', ['QA-42/', 'QA-45/']],
+    ['components/journal-factions/faction-roster.jsx', ['QA-43/', 'QA-45/']],
+    ['components/calculators/enchanting/enchanting-workstation.jsx', ['QA-44/']],
+    ['components/calculators/alchemy/reverse-alchemy.jsx', ['QA-45/']],
+    ['components/character-builder/gear-advisor.jsx', ['QA-45/']],
+  ]) {
+    const plan = planBrowserRuns([file]);
+    assert.equal(plan.full, false, file);
+    for (const filter of filters) assert.ok(commands(plan).includes(`qa:${filter}`), `${file}: ${filter}`);
+  }
+});
+
 test('every planned filter names cases that exist in the browser runners', async () => {
   const { planBrowserRuns, commandFor } = await load();
   const source = fs.readdirSync(path.join(__dirname, '..', 'scripts'))

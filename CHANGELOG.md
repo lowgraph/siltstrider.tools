@@ -2,6 +2,8 @@
 
 ## Launch follow-ups — 2026-10-03
 
+- Travel explains Mark, Recall, Propylons and Cheapest; Alchemy explains pair ordering and names the selected world clearly. Rival House restrictions replace conflicting eligibility labels, and Gear Advisor calls its skill-based match the closest archetype.
+
 - Enchanting keeps Remove buttons readable inside each effect card on phones; each button identifies the effect it removes.
 
 - Faction Journal gives phone roster rows room to show their full details above the Viewing bar, while keeping the roster and dossier independently scrollable. Empty searches announce that no factions were found.

@@ -3693,3 +3693,31 @@ was reviewed. The first unit fixture omitted the feature's required profile;
 that setup failure is retained in `qa44-unit.log`, with the valid-envelope result
 in `qa44-final-unit.log`. Before/after Chrome: `qa44-before/`, `qa44-final/`.
 Regression file: `test/enchant-remove-controls.test.js`; planner group `QA-44/`.
+
+### QA-45 — explanations and consistent status
+
+Reproduced the missing Travel definitions locally, together with uppercase world
+keys in Alchemy and simultaneous Rival Joined/Eligible to Join faction badges.
+Travel now defines Mark/Recall (not included in the planner), Propylons and their
+carried indices. One shared sentence explains Cheapest's fare priority and its
+separate Fewest legs comparison. Reverse Alchemy defines additional effects as
+other shared effects and ingredient value as the pair's combined base value,
+not a shop price. The existing world-label helper displays Vanilla, Tamriel
+Rebuilt or TR + ARCE without changing profile keys or catalog identity.
+Rival restrictions take priority over qualification badges; existing/imported
+memberships retain their member status. Gear Advisor calls its current skill
+match the closest archetype. Sorting, journey objectives and kit scores are unchanged.
+
+**159 relevant tests pass**, including twelve new copy/status cases: all three
+rival Houses, unqualified rivals, conflicting imported memberships, unrelated
+guilds, all three world labels, pair help, current gear identity and Travel help.
+The reverse-picker fixture now types a query before selecting an effect. The
+existing Alchemy test's explicit import seam includes the reused world helper.
+Before-fix evidence is retained in `qa45-before-unit.log` and `qa45-before/`;
+fixture-only setup failures are excluded from reproduction claims.
+**18/18 Chrome cases pass**, each visiting Travel, Alchemy, Factions and Builder
+in all worlds, both themes and 1366/375/390 px. No overflow, runtime/server errors
+or axe blockers. TR + ARCE phone Travel and pair-help screenshots were reviewed.
+Accepted evidence: `qa45-final-unit.log`, `qa45-final/` under `A:/Cache/qa42-45`.
+Tests: `test/qa45-help-and-status.test.js`, `test/travel-task-layout.test.js`;
+Chrome group `QA-45/` is selected by the four relevant browser-planner areas.

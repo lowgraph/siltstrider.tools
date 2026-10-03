@@ -15,6 +15,12 @@ the same matrix. Remove labels stay on one line, within their buttons/cards and
 apart from the picker. Removing the second effect preserves the first; the last
 effect remains. Row-specific accessible labels identify each removal control.
 
+`--suite qa --filter 'QA-45/'` visits Travel, Alchemy, Factions and Builder for
+each world/theme/width combination. It checks the spell and Propylon definitions,
+identical Cheapest explanations, pair-order definitions, friendly world labels,
+rival restriction without a conflicting eligibility badge, and closest-archetype
+wording. Screenshots and axe audits cover all four views.
+
 Start `npm run dev` on port 8765. With Node 22 or newer, an installed Chrome and
 an existing axe-core script, run from the site repository in PowerShell:
 

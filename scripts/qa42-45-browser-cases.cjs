@@ -11,6 +11,33 @@ async function finish(c,name) {
 }
 
 module.exports=async c=>{
+  for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375,390])for(const theme of ['ashfall','morrowind'])await c.check(`QA-45/${profile}/${width}/${theme}`,async()=>{
+    await setup(c,'travel',profile,width,theme);await c.until('document.querySelector(".travel-beginner-help")');
+    const help=await c.evaluate('document.querySelector(".travel-beginner-help").textContent.replace(/\\s+/g," ").trim()');
+    assert.match(help,/Mark records a place.*Recall returns.*not included/s);assert.match(help,/Propylons are teleporters.*indices.*keys/s);
+    const cheapest='Cheapest prioritizes estimated fares. Its comparison with Fewest legs shows fare and outdoor movement time.';
+    assert.ok(help.includes(cheapest));assert.ok(await c.evaluate(`document.querySelector('.calculation-notes').textContent.includes(${JSON.stringify(cheapest)})`));
+    await c.evaluate('document.querySelector(".travel-beginner-help").scrollIntoView({block:"center"})');await finish(c,`QA-45-travel-${profile}-${width}-${theme}`);
+    await c.navigate('alchemy',profile);await c.until('document.querySelector("#reverse-alchemy-search")');
+    const badge=await c.evaluate('[...document.querySelectorAll(".alchemy-workstation span")].find(s=>s.textContent.startsWith("Live:"))?.textContent');
+    assert.match(badge,new RegExp(profile==='tr_arce'?'TR \\+ ARCE':profile==='tr'?'Tamriel Rebuilt':'Vanilla'));assert.doesNotMatch(badge,/TR_ARCE/);
+    await c.type('#reverse-alchemy-search','Restore Health');await c.button('Restore Health');await c.until('document.querySelector(".reverse-alchemy-pair")');
+    const order=await c.evaluate('document.querySelector(".reverse-alchemy-order-help").textContent');
+    assert.match(order,/Additional effects are other potion effects shared by both ingredients/);assert.match(order,/Ingredient value is their combined base gold value.*not a shop price/s);
+    await c.evaluate('document.querySelector(".reverse-alchemy-order-help").scrollIntoView({block:"center"})');await finish(c,`QA-45-alchemy-${profile}-${width}-${theme}`);
+    const raw=require('../test/helpers/qa-staged-data.cjs').save();raw.identity.name='QA – Rival House';raw.progress.factions=[{id:'hlaalu',rank:0,reputation:0,expelled:false}];
+    if(profile!=='vanilla')raw.contentFiles.push('Tamriel_Data.esm','TR_Mainland.esm');if(profile==='tr_arce')raw.contentFiles.push('ARCE - All Races and Classes Enabled.esp');
+    const {rememberSave}=await import('../lib/active-save-store.mjs'),store={};await rememberSave(raw,{setItem:(k,v)=>store[k]=v});
+    await c.evaluate(`for(const [k,v] of Object.entries(${JSON.stringify(store)}))localStorage.setItem(k,v)`);
+    await c.navigate('factions',profile);await c.type('#faction-search-input','Redoran');await c.until('document.querySelector(".faction-roster-item")');
+    const rival=await c.evaluate('document.querySelector(".faction-roster-item").textContent');assert.match(rival,/Rival Joined/);assert.doesNotMatch(rival,/Eligible to Join|Unqualified/);
+    await c.evaluate('document.querySelector(".faction-roster-pane").scrollIntoView({block:"center"})');await finish(c,`QA-45-factions-${profile}-${width}-${theme}`);
+    await c.evaluate('localStorage.removeItem("silt-active-save")');await c.navigate('builder',profile);await c.builderTab('builder');
+    await c.until('document.querySelector("#gear-advisor")');
+    const gear=await c.evaluate('document.querySelector("#gear-advisor > div > div > p").textContent');assert.match(gear,/closest archetype:/);assert.doesNotMatch(gear,/\(.* archetype\)/);
+    await c.evaluate('document.querySelector("#gear-advisor").scrollIntoView({block:"start"})');await finish(c,`QA-45-gear-${profile}-${width}-${theme}`);
+    return {help,badge,order,rival,gear};
+  });
   for(const profile of ['vanilla','tr','tr_arce'])for(const width of [1366,375,390])for(const theme of ['ashfall','morrowind'])await c.check(`QA-44/${profile}/${width}/${theme}`,async()=>{
     await setup(c,'enchanting',profile,width,theme);await c.until('document.querySelector(\'select[aria-label="Effect 1"]\')?.options.length>20');
     await c.select('select[aria-label="Effect 1"]','Restore Health (base 5)');

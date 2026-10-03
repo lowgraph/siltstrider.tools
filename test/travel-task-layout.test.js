@@ -485,6 +485,19 @@ test('TRV-7 shows real movement and clock time together, and Cheapest compares t
   } finally { await t.cleanup(); }
 });
 
+test('QA-45: Travel defines teleport terms, their availability and the same Cheapest behavior in both help areas',async()=>{
+  const t=await mount();
+  try {
+    const help=document.querySelector('.travel-beginner-help').textContent.replace(/\s+/g,' ').trim();
+    assert.match(help,/Mark records a place.*Recall returns.*not included/s);
+    assert.match(help,/Propylons are teleporters.*indices.*keys/s);
+    const cheapest='Cheapest prioritizes estimated fares. Its comparison with Fewest legs shows fare and outdoor movement time.';
+    assert.ok(help.includes(cheapest));assert.ok(document.querySelector('.calculation-notes').textContent.includes(cheapest));
+    assert.match(document.querySelector('.calculation-notes').textContent,/Master Index.*Caldera/);
+    assert.equal(document.querySelector('#travel-options').open,false,'Help does not change options');
+  } finally {await t.cleanup();}
+});
+
 test('TRV-7 unknown fares stay explicit and comparisons clear on endpoint changes or older catalogs', async () => {
   const data = mixedJourney();
   delete data.catalogs.Travel.at(-1).price;

@@ -134,7 +134,7 @@ export function GearAdvisorView({ build, beast=false, attrs={}, result, bisResul
           </h3>
           <p className="text-sm text-fg-8 mt-1">
             Optimized armor, weapons, and artifact acquisition tailored to your major weapon and armor skills
-            {traits?.archetypeName ? ` (${traits.archetypeName} archetype)` : ""}.
+            {traits?.archetypeName ? ` (closest archetype: ${traits.archetypeName})` : ""}.
           </p>
         </div>
 

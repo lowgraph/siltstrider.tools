@@ -185,6 +185,10 @@ export default function FactionRoster({
                     <span className="px-1.5 py-0.5 text-[10px] uppercase font-bold bg-surface-22 text-accent border border-accent/50">
                       {membership.expelled ? "⚠ Expelled" : `Member · ${rankLabel}`}
                     </span>
+                  ) : conflict ? (
+                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-danger-7 bg-danger-surface-3 border border-danger-line-2" title={conflict.description}>
+                      Rival Joined
+                    </span>
                   ) : hasRanks ? (
                     isEligibleToJoin ? (
                       <span className="px-1.5 py-0.5 text-[10px] font-serif text-success-4 bg-success-surface-2 border border-success-line-4">
@@ -198,12 +202,6 @@ export default function FactionRoster({
                   ) : (
                     <span className="px-1.5 py-0.5 text-[10px] font-serif text-fg-15 bg-surface-3 border border-line-12">
                       Non-joinable
-                    </span>
-                  )}
-
-                  {conflict && !membership && (
-                    <span className="px-1.5 py-0.5 text-[10px] font-serif text-danger-7 bg-danger-surface-3 border border-danger-line-2" title={conflict.description}>
-                      Rival Joined
                     </span>
                   )}
 
