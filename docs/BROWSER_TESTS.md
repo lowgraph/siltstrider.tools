@@ -665,3 +665,8 @@ Ebonheart → Balmora in all worlds and Ebonheart → Port Telvannis in TR/TR + 
 at 375/390/1366 px in both themes (30 cases). Every route/region label must be
 inside the SVG and separate from other labels. Keep `QA-42/` gap-legend cases.
 
+`--suite qa --filter 'QA-52/' --touch` optimizes and equips a fixed Spearman
+premade in the full 18-case world/theme/width matrix. Action labels must stay
+whole and inside their buttons; Armor Rating digits stay on one line and apart
+from the legend. Core-statistic words stay whole, with axe and no page overflow.
+

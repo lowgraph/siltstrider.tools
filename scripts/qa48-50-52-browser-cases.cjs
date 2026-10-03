@@ -102,4 +102,33 @@ module.exports = async c => {
     assert.ok(state.boxes.some(b=>b.text.includes(to)),'The destination stays labeled');
     await finish(c,`QA-50-${profile}-${to}-${width}-${theme}`);return state;
   });
+  for(const profile of ['vanilla','tr','tr_arce']) for(const width of [1366,375,390]) for(const theme of ['ashfall','morrowind']) await c.check(`QA-52/${profile}/${width}/${theme}`,async()=>{
+    const {BUILDS,premadeToBuild}=await import('../lib/premade-data.mjs');
+    const build=premadeToBuild(BUILDS.find(b=>b.name==='Nord Warrior Spearman'));
+    const {encodeShareUrl}=await import('../lib/permalink-codec.mjs');
+    await c.viewport(width);await c.evaluate(`localStorage.clear();localStorage.setItem('silt-theme',${JSON.stringify(theme)})`);
+    await c.openDocument(c.base+encodeShareUrl({view:'builder',world:profile==='vanilla'?'vanilla':'tr',arce:profile==='tr_arce',build}));
+    await c.until('document.querySelector("#gear-advisor")');await c.waitForFonts();
+    await c.evaluate('document.querySelector("#gear-advisor").scrollIntoView({block:"start"})');
+    await c.button('Optimize Gear');
+    await c.until(`[...document.querySelectorAll('#gear-advisor button')].some(b=>b.textContent.trim()==='Equip late-game recommendations →'&&!b.disabled&&Number(getComputedStyle(b).opacity)>=.99)`);
+    const words=await brokenWords(c,'#gear-advisor button');
+    const buttons=await c.evaluate(`([...document.querySelectorAll('#gear-advisor > div:first-child > div:last-child > button')].map(b=>{
+      const r=document.createRange();r.selectNodeContents(b);const t=b.getBoundingClientRect();return {text:b.textContent.trim(),inside:[...r.getClientRects()].filter(x=>x.width>0).every(x=>x.left>=t.left-1&&x.right<=t.right+1&&x.top>=t.top-1&&x.bottom<=t.bottom+1)};
+    }))`);
+    await c.screenshot(`QA-52-button-${profile}-${width}-${theme}`);
+    await c.button('Equip late-game recommendations →');
+    await c.until('document.querySelector(".equipment-studio-root")?.textContent.includes("Recommended late-game gear")');
+    await c.evaluate('document.querySelector(".equipment-stats-summary").scrollIntoView({block:"start"})');await c.waitForFonts();
+    const state=await c.evaluate(`(()=>{const card=document.querySelector('.equipment-stats-summary > div > div'),number=card.querySelector('.text-3xl'),range=document.createRange();range.selectNodeContents(number);
+      const a=number.getBoundingClientRect(),b=card.getBoundingClientRect(),legend=number.nextElementSibling.getBoundingClientRect();
+      return {value:number.textContent.trim(),lines:new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.top))).size,inside:a.left>=b.left&&a.right<=b.right,separate:a.right<=legend.left+1||a.bottom<=legend.top+1};})()`);
+    (c.report.gearPanelLayouts ||= []).push({profile,width,theme,state});await c.screenshot(`QA-52-inspector-${profile}-${width}-${theme}`);
+    assert.deepEqual(words,[],'Recommendation buttons wrap between words');
+    assert.equal(buttons.length,3);assert.ok(buttons.every(b=>b.inside),'All three action labels fit their buttons: '+JSON.stringify(buttons));
+    assert.match(state.value,/^\d{2,}(?:\.\d)?$/,'The equipped kit exercises a multi-digit Armor Rating');
+    assert.equal(state.lines,1,'Armor Rating digits stay on one line');assert.equal(state.inside,true);assert.equal(state.separate,true,'The number and its legend cannot overlap');
+    assert.deepEqual(await brokenWords(c,'.equipment-stats-summary > div:first-child'),[],'Core statistics wrap between words');
+    await finish(c,`QA-52-${profile}-${width}-${theme}`);return {state,equipped:true};
+  });
 };

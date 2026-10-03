@@ -40,9 +40,9 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
   }
 
   return (
-    <div className="equipment-stats-summary space-y-4">
+    <div className="equipment-stats-summary space-y-4 break-normal [overflow-wrap:normal]">
       {/* 1. Core Vitals & Defenses: Total AR & Encumbrance */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-3">
         {/* Total Armor Rating Card */}
         <div
           className="p-4 bg-surface-2 border border-line-11 mw-groove-panel flex flex-col justify-between"
@@ -50,7 +50,7 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
             boxShadow: "inset 0 0 10px 2px rgba(0, 0, 0, 0.9)",
           }}
         >
-          <div className="flex items-center justify-between border-b border-line-12 pb-2 mb-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-12 pb-2 mb-2">
             <span className="text-xs uppercase tracking-wider font-serif font-bold text-fg-14">
               Total Armor Rating
             </span>
@@ -59,8 +59,8 @@ export const EquipmentStatsSummary = memo(function EquipmentStatsSummary({
             </span>
           </div>
 
-          <div className="flex items-baseline justify-between">
-            <div className="text-3xl sm:text-4xl font-mono font-bold text-fg-2">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-2">
+            <div className="text-3xl sm:text-4xl font-mono font-bold text-fg-2 whitespace-nowrap shrink-0">
               {totalAR}
             </div>
             <div className="text-right text-[11px] text-fg-14">

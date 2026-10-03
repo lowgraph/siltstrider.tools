@@ -2,6 +2,8 @@
 
 ## Launch follow-ups — 2026-10-03
 
+- Builder gives recommendation buttons room to wrap between words, and the Equipment Inspector keeps Armor Rating digits together in narrow columns.
+
 - Travel maps keep route labels inside the panel and apart from other names. Crowded labels get connecting lines, and long place names wrap.
 
 - Enchanting shows each enchanter's full name and location, wrapping onto more lines when needed and keeping the price separate.

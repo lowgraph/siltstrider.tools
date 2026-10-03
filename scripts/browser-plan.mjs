@@ -48,7 +48,7 @@ const AREAS = [
     run('qa', '/level-health/'), run('qa', 'QA-27/'), run('qa', 'QA-28/'), run('launch', 'SS-09/'),
     run('tools', 'Faction and Level interactions'), run('qa', 'QA-37/'), run('qa', 'QA-41/'), run('qa', 'QA-48/'), run('qa', 'Clarity-Beginner/')] },
   { area: 'Gear Advisor', match: /best-in-slot|gear-|equipment/i, runs: [
-    run('qa', 'QA-08/'), run('qa', 'QA-10/'), run('qa', 'QA-26/'), run('qa', 'QA-33/'), run('qa', 'QA-35/'), run('qa', 'QA-39/'), run('qa', 'QA-40/'), run('qa', 'QA-45/'), run('qa', 'QA-51/')] },
+    run('qa', 'QA-08/'), run('qa', 'QA-10/'), run('qa', 'QA-26/'), run('qa', 'QA-33/'), run('qa', 'QA-35/'), run('qa', 'QA-39/'), run('qa', 'QA-40/'), run('qa', 'QA-45/'), run('qa', 'QA-51/'), run('qa', 'QA-52/')] },
   { area: 'Builder and character', match: /character-builder|character-(context|name|math|sheet)|premade|configurator|choice-help|class-|birthsign|race-/i, runs: [
     run('qa', 'QA-05/'), run('qa', 'QA-09/'), run('qa', 'QA-12/'), run('qa', 'QA-29/'), run('touch', 'QA-18/tap-popover', '--touch'), run('qa', 'QA-35/'),
     run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-F04-F11/'), run('qa', 'Clarity-Copy/')] },

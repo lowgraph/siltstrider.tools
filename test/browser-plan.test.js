@@ -145,3 +145,16 @@ test('every planned filter names cases that exist in the browser runners', async
     }
   }
 });
+
+test('QA-48–50 and QA-52 components select their dedicated layout cases', async () => {
+  const {planBrowserRuns}=await load();
+  for(const [file,filter] of [
+    ['components/level-simulator/attribute-priority-ranker.jsx','QA-48/'],
+    ['components/calculators/enchanting/enchanting-workstation.jsx','QA-49/'],
+    ['lib/travel-map-labels.mjs','QA-50/'],
+    ['components/equipment-studio/equipment-stats-summary.jsx','QA-52/'],
+  ]) {
+    const plan=planBrowserRuns([file]);assert.equal(plan.full,false,file);
+    assert.ok(commands(plan).includes(`qa:${filter}`),file);
+  }
+});

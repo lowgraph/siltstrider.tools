@@ -4068,3 +4068,16 @@ QA-42 compressed-gap cases pass **18/18**. Evidence: `qa50-before/`,
 `qa50-layout/` (two remaining desktop region overlaps), `qa50-acceptance/`,
 and `qa42-regression/`.
 
+QA-52 reproduced at 1366 px with TR + ARCE/Modern: the action label split
+“recommendations”, and the fixed Spearman kit's `50.1` Armor Rating occupied two
+lines (same cause as reported `82`). Gear actions no longer compete with the
+heading for one row and wrap between words. The Inspector stacks its core cards
+in the narrow desktop column and keeps the rating whole, allowing explanatory
+text to wrap without collisions. Calculations, scoring and equipped items are
+unchanged. Three display regressions preserve `82`, `50.1`, zero and inputs.
+Relevant equipment/gear, browser-plan and licence/claim tests pass **54/54**.
+Chrome acceptance passes **18/18** in all worlds/themes at 1366/375/390 px, with
+actual button/text boxes, successful equip, rating containment, word wrapping,
+touch and axe. Evidence: `qa52-before/`, `qa52-before-inspector/`,
+`qa52-browser/` (initial acceptance) and `qa52-acceptance/` (complete text-box checks).
+
