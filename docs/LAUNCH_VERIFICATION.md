@@ -11,17 +11,17 @@ details. Use [LAUNCH_OPERATIONS.md](LAUNCH_OPERATIONS.md) for procedures and
 
 | Item | Value |
 | --- | --- |
-| Live commit | `250b1b5` (QA-26 edited endgame kits, twelve-item launch polish batch, QA-27 through QA-30; release verification in §58) |
-| Live Worker version | `73df6e58-912e-48db-9786-5866ce793efd`, tagged `250b1b5`; deployed at 100% on 2026-10-02 04:47 UTC (01:47 in São Paulo) |
-| Security headers | `public/_headers` retained; nosniff, `X-Frame-Options: DENY`, and `frame-ancestors 'none'` verified live after the 04:47 release; existing CSP, referrer policy, permissions policy and host-only HSTS unchanged |
+| Live commit | `672c0d3` (QA-31/32, QA-33–39, beginner clarity and contained follow-ups; release verification in §68) |
+| Live Worker version | `56a07cb7-4daf-4e8c-8348-9da01b18cbdc`, tagged `672c0d3`; deployed at 100% on 2026-10-02 23:46:37 UTC (20:46:37 in São Paulo) |
+| Security headers | `public/_headers` retained; nosniff, `X-Frame-Options: DENY`, `frame-ancestors 'none'` and HSTS verified live after this release; existing CSP, referrer policy and permissions policy unchanged |
 | Licences | site `AGPL-3.0-or-later`, pipeline `GPL-3.0-or-later`; GitHub detects both |
 | Worker routing | only `/api/*` runs the Worker; `www` pages redirect through the zone rule "www to root" |
 | Game bundle | `a29adea046e6086c2c7ee654`, snapshot `1613a1123ed9…`; corrected IngredientSources, existing extraction snapshot |
 | D1 database | binding `DB` / configured `siltstrider-db`, UUID `141a1409-3956-4267-a078-02483bbb2bf6` (dashboard name contains "dev"; it is production) |
-| D1 migrations | 0001–0007 applied; none pending at the 04:47 release; no migration ran |
-| D1 Time Travel bookmark | `00000073-00000000-000050f8-07bcfcc5cabac281c64e4bebf751ce41`, captured before the 2026-10-02 04:47 UTC release; recovery record in §58, private migration backup and preservation checks in §15 |
+| D1 migrations | 0001–0007 applied; none pending before the 23:46 release; no migration ran |
+| D1 Time Travel bookmark | `00000074-00000000-000050f8-6b7a252ad77140777ca900210cc70b77`, captured 2026-10-02 23:42:41 UTC before this release; recovery record in §67, historical private migration backup and preservation checks in §15 |
 | Code rollback for the next release | Owner-selected `73df6e58-912e-48db-9786-5866ce793efd` / `250b1b5` (§67); Worker version switch only, database writes and migrations retained |
-| Pipeline repo | `master` / `origin/master` at `6372e65`; correction `41da92c` included and shared release records synchronized |
+| Pipeline repo | `master` / `origin/master` at `631aa2e`; correction `41da92c` included and shared release records synchronized |
 
 Deployment history since the last tagged release before this batch:
 
@@ -55,9 +55,10 @@ Deployment history since the last tagged release before this batch:
 | `3879ce7b-c397-4698-83c4-e9d185d9ed5c` | 10-01 05:22 | `ef67b3e` | tagged; CALC-4 finder and selected-ingredient sources, corrected bundle, Travel city transfers and swimming fallback, retaining main's Vault fixes; 100% traffic; no migration |
 | `e29663d3-68eb-45ff-bbef-13447c3b0cbf` | 10-02 00:13 | `6fab4c5` | tagged; all implemented QA fixes and Morrowind game theme, 100% traffic; same bundle and database schema; recovery recorded before deployment (§48), live verification in §49 |
 | `73df6e58-912e-48db-9786-5866ce793efd` | 10-02 04:47 | `250b1b5` | tagged; QA-26, twelve checklist polish fixes, QA-27 through QA-30 (Health display formatting, END 100 milestone target, phone premade category wrapping, Alchemy apparatus label width); 100% traffic; same bundle and D1 schema; live verification in §58 |
+| `56a07cb7-4daf-4e8c-8348-9da01b18cbdc` | 10-02 23:46 | `672c0d3` | tagged; QA-31/32, QA-33–39, beginner clarity and contained follow-ups; §68 |
 
-For the current release, §57 records code rollback target `e29663d3` /
-`6fab4c5`: switch the Worker version only. No database restore or migration is
+For the current release, §67 records code rollback target `73df6e58` /
+`250b1b5`: switch the Worker version only. No database restore or migration is
 part of this rollback.
 
 For the earlier CALC-4 release, §26 records code rollback target `d523b9ba` / `216cd90`:
@@ -3355,3 +3356,97 @@ Historical recovery records in §§57–58 remain unchanged.
 
 Evidence: `A:/Cache/release-672c0d3/`: `recovery.json`, `pending-migrations.log`,
 `build-source.txt`, `preflight-hashes.json`, `build.log` and `unit-preflight.log`.
+
+## 68. `672c0d3` deployed to production — 2 October 2026
+
+Owner-authorized release **`672c0d353414f078e499e199c44ca54c739b68be`** is live
+as Worker **`56a07cb7-4daf-4e8c-8348-9da01b18cbdc`**, tagged `672c0d3`, at
+**100% traffic** since **2026-10-02 23:46:37 UTC** (20:46:37 in São Paulo).
+This publishes QA-31/32, QA-33–39 and the ten bounded beginner-clarity and
+contained follow-up items recorded in §§60–66.
+
+The selected rollback target **`73df6e58-912e-48db-9786-5866ce793efd` / `250b1b5`**
+and fresh D1 bookmark **`00000074-00000000-000050f8-6b7a252ad77140777ca900210cc70b77`**
+were recorded and pushed before deployment in recovery-record commit `febbc16`
+(§67). No migration or database restore was performed. A code rollback switches
+only the Worker version; database writes, schema and Clerk accounts remain.
+
+The production build ran on clean main at exactly `672c0d3`, before the recovery
+documentation commit. Only that documentation differed when the existing build
+was deployed. Wrangler 4.134.0 used `--keep-vars` and the explicit `672c0d3` tag;
+66 changed assets uploaded, 1,685 already present. Deployment history and version
+annotations confirm the full requested commit and 100% allocation. Runtime
+inspection confirms the existing D1 UUID, production Clerk live key, secret
+bindings, compatibility date/flags, custom domains and API-only Worker routing.
+Repository configuration and bundle pointer hashes remain unchanged.
+
+| Check | Result |
+| --- | --- |
+| Release-source `npm test` | 1,270 passed; zero failed, skipped or TODO |
+| Cloudflare production build | 24 static pages generated |
+| Wrangler deployment dry run | Passed with existing configuration and bindings |
+| Pipeline tests | 685 passed cleanly before the documentation-only release handoff |
+| Live HTTP audit | 24/24 passed: fifteen public pages, expected 404, four signed-out APIs, www redirect with query, bundle pointer, manifest and JavaScript asset |
+| Security and anonymous APIs | Live page headers retained; GET account/settings/saves/entitlements each returns 401, no account data and no Set-Cookie |
+| Deployed data/assets | Bundle `a29adea046e6086c2c7ee654` retained; live manifest and sampled JavaScript bytes match the staged release |
+| First-navigation hydration | 80/80 passed: ten fresh Home and Builder loads per 1366/375 px and theme combination; no console errors, hydration warnings or uncaught exceptions |
+| Live beginner clarity and follow-ups | 156/156 passed across all three worlds, both themes and 1366/375 px; no runtime or server errors |
+| Initial live QA-30–39 regression group | 117/118 passed; one QA-33/TR + ARCE/375/Morrowind case stopped with Premades selected and no Gear Advisor node; zero runtime/server errors. Retain this report as a finding, not full acceptance |
+| QA-33 repeats | 12/12 passed in a separate complete three-world/theme/width matrix; the exact failed case passed twice separately |
+| Complete passing live reports | 250 case executions: 156 clarity, 80 first-navigation checks, 12 QA-33 matrix cases and two exact-case repeats; the initial failing group is excluded |
+
+All production browser checks are signed out, use isolated disposable Chrome
+profiles and `--production-read-only`, which blocks API writes. Synthetic saves
+and journal edits remain in browser storage; no production account/save was
+created or changed. Signed-in behavior retains the passing 78 local Worker/Vault
+cases from §65. Pre-merge acceptance recorded 1,440 passing complete Chrome
+case executions, including mobile touch emulation; the new live finding below
+is recorded separately. This release does not claim
+to replace the freeze-day physical touchscreen-laptop or real sign-in checks.
+F-12's preset labels when only a class ID is recorded remain deferred in section 6.
+
+The first standalone HTTP probe used an overly narrow unauthorized-response
+allowlist and rejected the existing public `message` field. The corrected probe
+accepted that field and verified all four responses contain only error metadata;
+no application change was made. The complete repeat is the accepted 24-check audit.
+
+### Follow-up found during live verification: shared link matches the random starter
+
+The failing QA-33 capture shows Premades selected. Its runner setup navigates to
+a shared Spear Scout build, then immediately accesses `#gear-advisor` without
+explicitly opening Sheet (`scripts/qa-33-39-browser-cases.cjs`, `setup` and QA-33).
+Two exact-case repeats and a complete twelve-case matrix passed without changes.
+No browser exception, hydration warning, server error or wrong weapon calculation
+was observed; the recorded failure is the runner accessing a missing panel.
+
+A separate deterministic, in-memory hydration diagnostic confirmed an underlying
+first-visit edge case: forcing the random draw to the linked Argonian Spear Scout
+loads the correct linked character but retains Premades. Drawing a different
+starter opens the Custom Class Builder. `CharacterProvider` derives `isStarter`
+from `sameCharacter(build, randomPick.current)` (`character-context.jsx`, line 131),
+and `CharacterBuilderRoot` selects Premades when that flag is true. Explicitly
+loading an identical character is therefore still classified as the random start.
+The live random draw was not instrumented, so its precise causal match remains
+an inference; the collision itself is reproduced by the controlled diagnostic.
+
+This is a tab-selection follow-up, not a failed two-handed default: the character
+is retained and the Sheet control remains available. No implementation or runner
+fix is included in this deployment. Proposed follow-up: track explicit character
+selection separately from value equality, cover the matching-starter link in a
+hydration test, and have the gear runner explicitly select its intended section.
+Evidence: initial failure HTML/PNG, all three rerun reports, and
+`starter-collision-diagnostic.log` (the existing nine first-visit tests plus one
+temporary diagnostic passed; the controlled collision and noncollision are logged).
+
+Nineteen newly live checklist items were confirmed as ancestors of `672c0d3`
+before marking them live. Shared coordination was copied identically to the
+pipeline and pushed as `631aa2e`; UI_TRANSFORMATION is unchanged and identical.
+Release documentation commits do not change the deployed application.
+
+Evidence: `A:/Cache/release-672c0d3/`: recovery metadata and retained bundle,
+`build.log`, `unit-preflight.log`, `dry-run.log`, `deploy.log`, `rollback-version.json`,
+`release-version.json`, `deployments-before.json`, `deployments-after.json`,
+`live-http.json`, `pipeline-release.log`, and the complete live Chrome reports
+under `live-home/`, `live-builder/`, `live-clarity/` and `live-qa31-39/`, plus
+`live-qa33-repeat1/`, `live-qa33-repeat2/`, `live-qa33-repeat-matrix/`,
+`live-summary.json`, `starter-collision-diagnostic.log` and `unit-handoff.log`.

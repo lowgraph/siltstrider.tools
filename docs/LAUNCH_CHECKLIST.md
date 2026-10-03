@@ -207,7 +207,7 @@ per day; per item run `npm test` and only the browser groups `npm run test:brows
 sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
 
 *Saturday: wording and display (QA-27–30 in section 5 first)*
-- [x] **C** Beginner clarity (started 2026-10-02 20:09 UTC, Codex; done `c1f6b25`, merged with this commit from `polish/beginner-clarity-batch`) (N): first tool to use (U01); which world to pick and what ARCE
+- [x] **C** Beginner clarity (started 2026-10-02 20:09 UTC, Codex; done `c1f6b25`, merged `672c0d3`; live as `56a07cb7`) (N): first tool to use (U01); which world to pick and what ARCE
       is (U02, F09); a manual route beside the unsupported `.ess` notice (U03); race and
       birthsign effects before lore (U05); a legend for the Builder's numbers (U06); an
       "enter this in the game" checklist (U08); Gear Advisor: findable from Home, one kit vs
@@ -216,49 +216,49 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       message that says what to change (U17); one-line Travel definitions (U19); Alchemy
       jargon and recovery from a failed or zero brew (U21, U22); Level Simulator wording
       (U24, U25, U27). If time is short, the first-visit ones first: U01, U02, U17, U19.
-- [x] **C** F04 / F11 (started 2026-10-02 20:26 UTC, Codex; done `69647b1`, merged with this commit from `polish/beginner-clarity-batch`): "By Race" shows 20 of 41 premades without saying why, and its hint
+- [x] **C** F04 / F11 (started 2026-10-02 20:26 UTC, Codex; done `69647b1`, merged `672c0d3`; live as `56a07cb7`): "By Race" shows 20 of 41 premades without saying why, and its hint
       still says "Pick a playstyle".
-- [x] **C** CALC-4 (started 2026-10-02 20:32 UTC, Codex; done `f66816b`, merged with this commit from `polish/beginner-clarity-batch`): the effect finder suggests pairs only (3 and 4 ingredients only in the
+- [x] **C** CALC-4 (started 2026-10-02 20:32 UTC, Codex; done `f66816b`, merged `672c0d3`; live as `56a07cb7`): the effect finder suggests pairs only (3 and 4 ingredients only in the
       calculator), and a world switch clears the chosen effects and ingredients. Both
       deliberate for now; say so on the page.
-- [x] **C** Gear note (started 2026-10-02 20:36 UTC, Codex; done `833aedb`, merged with this commit from `polish/beginner-clarity-batch`) (Low; from the 2 October retest): the beast-race note says closed helmets
+- [x] **C** Gear note (started 2026-10-02 20:36 UTC, Codex; done `833aedb`, merged `672c0d3`; live as `56a07cb7`) (Low; from the 2 October retest): the beast-race note says closed helmets
       are excluded but not that open ones (such as Helm of Oreyn Bearclaw) are kept, so a
       correct pick reads as a bug. Say so in the note.
-- [x] **C** F-11 (started 2026-10-02 20:40 UTC, Codex; done `622b09e`, merged with this commit from `polish/beginner-clarity-batch`) (Low): the icon cannot be saved without a username, and the help text does not
+- [x] **C** F-11 (started 2026-10-02 20:40 UTC, Codex; done `622b09e`, merged `672c0d3`; live as `56a07cb7`) (Low): the icon cannot be saved without a username, and the help text does not
       say the username is required.
-- [x] **C** F-17 (started 2026-10-02 20:45 UTC, Codex; done `213fa59`, merged with this commit from `polish/beginner-clarity-batch`) (Low): Mod version says "Current published data" while disabled; the rename box
+- [x] **C** F-17 (started 2026-10-02 20:45 UTC, Codex; done `213fa59`, merged `672c0d3`; live as `56a07cb7`) (Low): Mod version says "Current published data" while disabled; the rename box
       allows 100 characters, the API 120.
-- [x] **C** Copy (started 2026-10-02 20:48 UTC, Codex; done `692e8bb`, merged with this commit from `polish/beginner-clarity-batch`): preset-to-custom wording (U07), a Clear search button (U09), content files and
+- [x] **C** Copy (started 2026-10-02 20:48 UTC, Codex; done `692e8bb`, merged `672c0d3`; live as `56a07cb7`): preset-to-custom wording (U07), a Clear search button (U09), content files and
       phone save location (U15), gold left after a route (U18), Home card jargon (U29).
 
 *From the live retest of `250b1b5` (2 October; LAUNCH_VERIFICATION §59)*
-- [x] **C** QA-33 (started 2026-10-02 18:50 UTC, Codex; done `43cd17c`, merged with this commit from `fix/qa-33-39`) (Medium, V) Gear Advisor: the weapon setup always starts One-handed + shield
+- [x] **C** QA-33 (started 2026-10-02 18:50 UTC, Codex; done `43cd17c`, merged `d3e33ea`; live as `56a07cb7`) (Medium, V) Gear Advisor: the weapon setup always starts One-handed + shield
       (`gear-advisor.jsx` `useState('one-handed')`), so an unedited Spear scout is offered
       Keening (short blade) and Darksun Shield. Start from the build's own weapon (Spear and
       Marksman two-handed; others one-handed); the player's choice still wins.
-- [x] **C** QA-34 (started 2026-10-02 18:50 UTC, Codex; done `c66658e`, merged with this commit from `fix/qa-33-39`) (Medium) Alchemy, TR reverse pairs at 1366 in Morrowind UI: the "Show more
+- [x] **C** QA-34 (started 2026-10-02 18:50 UTC, Codex; done `c66658e`, merged `d3e33ea`; live as `56a07cb7`) (Medium) Alchemy, TR reverse pairs at 1366 in Morrowind UI: the "Show more
       pairs" area overlaps the third pair (also after Showing 12 → 24); scrolling reveals it.
-- [x] **C** QA-35 (started 2026-10-02 18:50 UTC, Codex; done `24a6b1b`, merged with this commit from `fix/qa-33-39`) (Low, both themes, 375 px) Labels break mid-word: Home "Rac/e"; Builder
+- [x] **C** QA-35 (started 2026-10-02 18:50 UTC, Codex; done `24a6b1b`, merged `d3e33ea`; live as `56a07cb7`) (Low, both themes, 375 px) Labels break mid-word: Home "Rac/e"; Builder
       "Renam/e", "Cop/y", "Clea/r" and "Specializatio/n: Magic". Same family as SS-09/QA-29.
-- [x] **C** QA-36 (started 2026-10-02 18:50 UTC, Codex; done `cfdc2a3`, merged with this commit from `fix/qa-33-39`) (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
+- [x] **C** QA-36 (started 2026-10-02 18:50 UTC, Codex; done `cfdc2a3`, merged `d3e33ea`; live as `56a07cb7`) (Low, Morrowind UI, 375 px) Travel's map heading runs into its counts
       ("TRANSIT MAP28 mapped locations"), "Azura's Coast" is clipped, and the region and legend
       text is tiny and low-contrast.
-- [x] **C** QA-37 (started 2026-10-02 18:50 UTC, Codex; done `9b15341`, merged with this commit from `fix/qa-33-39`) (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
+- [x] **C** QA-37 (started 2026-10-02 18:50 UTC, Codex; done `9b15341`, merged `d3e33ea`; live as `56a07cb7`) (Low) Level Simulator shows "-0 HP" for a zero Health difference (Redguard
       Lady Spellsword, target 55). Follow-up to QA-27's formatter.
-- [x] **C** QA-38 (started 2026-10-02 18:50 UTC, Codex; done `4382a01`, merged with this commit from `fix/qa-33-39`) (Low) Faction Journal details still say "1 ranks" (Twin Lamps); search was
+- [x] **C** QA-38 (started 2026-10-02 18:50 UTC, Codex; done `4382a01`, merged `d3e33ea`; live as `56a07cb7`) (Low) Faction Journal details still say "1 ranks" (Twin Lamps); search was
       fixed in SS-10.
-- [x] **C** QA-39 (started 2026-10-02 18:50 UTC, Codex; done `319e2d8`, merged with this commit from `fix/qa-33-39`) (Low, copy) For an edited premade the endgame kit's line reads "ranked …
+- [x] **C** QA-39 (started 2026-10-02 18:50 UTC, Codex; done `319e2d8`, merged `d3e33ea`; live as `56a07cb7`) (Low, copy) For an edited premade the endgame kit's line reads "ranked …
       for your build's … class archetype (Based on Argonian male — Spear scout)". Say it is
       ranked for this character, without naming the source as its archetype.
 
 *Sunday: check first, fix only if contained*
-- [x] **C** FLOW-04 (started 2026-10-02 21:44 UTC, Codex; done `3dfafb9`, merged with this commit from `polish/beginner-clarity-batch`): a carried Propylon index is not used in TR (Rotheran to Andasreth went by
+- [x] **C** FLOW-04 (started 2026-10-02 21:44 UTC, Codex; done `3dfafb9`, merged `672c0d3`; live as `56a07cb7`): a carried Propylon index is not used in TR (Rotheran to Andasreth went by
       Almsivi, boat, Guild Guide and walk). Re-check first: if the two are linked directly
       this is a wrong route; raise it to High and move it to section 5 (launch bar).
       Re-check: no direct link exists; the Master Index goes through Caldera. Fixed a
       separate first-load reset of valid chamber links before carried indices were restored (LAUNCH_VERIFICATION §65).
-- [x] **C** FLOW-03 (started 2026-10-02 21:54 UTC, Codex; done `b26b6b7`, merged with this commit from `polish/beginner-clarity-batch`): both rival Great Houses can be joined in the Faction Journal.
-- [x] **C** F-12 (started 2026-10-02 21:59 UTC, Codex; done `d1bbad9`, merged with this commit from `polish/beginner-clarity-batch`) (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
+- [x] **C** FLOW-03 (started 2026-10-02 21:54 UTC, Codex; done `b26b6b7`, merged `672c0d3`; live as `56a07cb7`): both rival Great Houses can be joined in the Faction Journal.
+- [x] **C** F-12 (started 2026-10-02 21:59 UTC, Codex; done `d1bbad9`, merged `672c0d3`; live as `56a07cb7`) (Low): Vault cards say "Vvardenfell" for every location and show raw class ids
       ("Lvl 3 mage"). Fix only if the save already carries the location and class name;
       otherwise it goes back after launch.
       Recorded locations now display correctly; missing locations say Not recorded.
@@ -525,12 +525,12 @@ title is QA-05's intended wording. Its "FAIL" on F-7 and QA-07 tested other surf
 gave the two items below. Merge by Sunday 4 October, then retest. Verify each with `npm test`
 and the groups `npm run test:browser:plan` prints, plus the item's own new cases.
 
-- [x] **C** **QA-31** (started 2026-10-02 17:41 UTC, Codex; done `2af6d1d`; merged locally into main, LAUNCH_VERIFICATION §§60, 62; not deployed) (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
+- [x] **C** **QA-31** (started 2026-10-02 17:41 UTC, Codex; done `2af6d1d`; merged `39a82db`, LAUNCH_VERIFICATION §§60, 62; live as `56a07cb7`) (Medium, R, N; irreversible loss; confirmed in code) Deleting a character
       saved with "Save this character" (the Builder's list, `local-characters-panel.jsx`
       `handleDelete`) removes it at once: no confirmation, no undo, and focus drops to the
       page. This is a signed-out player's only save. Reuse F-7's `ConfirmationDialog` and
       focus recovery from the cloud Vault card (`cloud-vault-card.jsx`).
-- [x] **C** **QA-32** (started 2026-10-02 17:41 UTC, Codex; done `c5eb0ab`; merged locally into main, LAUNCH_VERIFICATION §§61–62; not deployed) (Medium, R, N; confirmed in code; QA-07 on another surface) The global
+- [x] **C** **QA-32** (started 2026-10-02 17:41 UTC, Codex; done `c5eb0ab`; merged `39a82db`, LAUNCH_VERIFICATION §§61–62; live as `56a07cb7`) (Medium, R, N; confirmed in code; QA-07 on another surface) The global
       search (header / Ctrl K, `lib/site-search.mjs` `normalizeText`) finds nothing for
       "Ald'ruhn" in every world: apostrophes are dropped ("aldruhn") but hyphens become spaces
       ("ald ruhn"). Match the same way as Travel's QA-07 fix (ignore apostrophes, hyphens and
