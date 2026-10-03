@@ -1,5 +1,10 @@
 # Local browser regression tests
 
+QA-42–45 follow-ups: `--suite qa --filter 'QA-42/'` checks the map's compressed
+gap legend across all worlds, both themes and 1366/375/390 px. Gap annotations
+must not overlap region or settlement labels, and their explanation stays below
+the map. Reports and screenshots belong in `A:/Cache/qa42-45`.
+
 Start `npm run dev` on port 8765. With Node 22 or newer, an installed Chrome and
 an existing axe-core script, run from the site repository in PowerShell:
 

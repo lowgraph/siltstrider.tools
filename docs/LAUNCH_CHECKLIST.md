@@ -252,7 +252,7 @@ sign-in and saving behaviour (F-8, F-15, F-16, F-19, REG-01) stays after launch.
       ranked for this character, without naming the source as its archetype.
 
 *From the live retest of `672c0d3` (3 October; LAUNCH_VERIFICATION §69), if time allows by Sunday*
-- [ ] **C** QA-42 (Low, both themes, 375 px; QA-36 remainder) TR / TR + ARCE Travel map: the
+- [x] **C** QA-42 (started 2026-10-03 02:44 UTC, Codex, on `fix/qa-40-41-flow-04`; done with this commit, LAUNCH_VERIFICATION §71) (Low, both themes, 375 px; QA-36 remainder) TR / TR + ARCE Travel map: the
       "≈78 cells" annotation overlaps "THIRSK" (Morrowind UI) and "FELSAAD COAST" (Modern UI).
 - [ ] **C** QA-43 (Low-Medium, Morrowind UI, 375 px) Faction Journal: the sticky "Viewing Fighters
       Guild" bar covers part of a row ("Agility · Endurance" on Ashlanders).

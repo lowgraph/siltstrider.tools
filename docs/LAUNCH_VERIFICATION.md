@@ -3623,3 +3623,31 @@ COORDINATION is copied identically to the pipeline's docs-only
 `handoff/qa-40-41-flow-04`; UI_TRANSFORMATION remains identical and unchanged.
 Fresh fetch still has site main `f5ca4af` and pipeline master `631aa2e`.
 Only these two branches are prepared for the authorized push; no merge or release.
+
+## 71. QA-42–45 phone layout and wording — 3 October 2026 (UTC)
+
+Continues on `fix/qa-40-41-flow-04`, after the pushed QA-40/41 and FLOW-04 batch.
+The owner requested these four items, a branch push and merge preparation.
+Relevant checks run before each item commit; full checks follow the four fixes.
+No deployment, migration, catalog/schema change or real-data rebuild is included.
+
+### QA-42 — compressed-map annotations
+
+Reproduced on TR at 375 px in Ashfall: the bounding box of `≈78 cells` intersects
+`FELSAAD COAST`. `TransitMap` places stop/region labels with collision checks,
+then adds gap annotations without reserving space. Compressed distances now
+appear in a wrapping legend below the map, including the gap direction. Dashed
+break lines, compression geometry, world positions and routing are unchanged.
+
+Validation: **31 relevant tests passed**, including three new gap regressions:
+vertical route labels, multiple gaps on both axes, and empty/ordinary networks.
+The two nonempty regression tests failed before the fix. **18/18 Chrome cases
+passed**, all three worlds × 1366/375/390 px × both themes, with no annotation
+collisions, page overflow, runtime/server errors or axe blockers. TR's Morrowind
+phone screenshot was reviewed; THIRSK remains readable above the map network.
+The first post-fix runner incorrectly expected the staged 78-cell gap to run
+north–south; it actually runs east–west. That harness-only mismatch is retained
+in `qa42-browser/` and excluded. Accepted report: `qa42-final/`.
+Evidence under `A:/Cache/qa42-45`: `qa42-before-unit.log`, `qa42-before/`,
+`qa42-unit.log`, `qa42-final/`. Tests: `test/travel-map-break-labels.test.js`;
+Chrome group `QA-42/`, selected by the Travel browser planner.

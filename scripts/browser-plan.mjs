@@ -43,7 +43,7 @@ const AREAS = [
   { area: 'Travel', match: /travel/i, runs: [
     run('travel'), run('tools', 'Travel imported save'), run('qa', 'QA-07/'), run('qa', 'QA-16/'), run('qa', 'QA-25/'),
     run('launch', 'UI-05'), run('launch', 'SUS-02/'), run('polish', 'Polish Travel'), run('touch', 'QA-18/saved-Travel', '--touch'), run('qa', 'QA-36/'),
-    run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-Copy/'), run('qa', 'Clarity-FLOW04/'), run('qa', 'FLOW-04/save-check/')] },
+    run('qa', 'Clarity-Beginner/'), run('qa', 'Clarity-Copy/'), run('qa', 'Clarity-FLOW04/'), run('qa', 'FLOW-04/save-check/'), run('qa', 'QA-42/')] },
   { area: 'Level Simulator', match: /level-simulator|level-math|leveler|health/i, runs: [
     run('qa', '/level-health/'), run('qa', 'QA-27/'), run('qa', 'QA-28/'), run('launch', 'SS-09/'),
     run('tools', 'Faction and Level interactions'), run('qa', 'QA-37/'), run('qa', 'QA-41/'), run('qa', 'Clarity-Beginner/')] },

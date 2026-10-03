@@ -2,6 +2,8 @@
 
 ## Launch follow-ups — 2026-10-03
 
+- Travel keeps compressed map distances in the legend, so they no longer cover region or town names on phones.
+
 - Level Simulator shows tidy Health gains in the character sheet and each level step, while retaining fractional Health in calculations.
 
 - The endgame weapon ranking weighs your weapon skills and damage alongside constant bonuses, and now includes obtainable weapons without constant effects. Editing Spear to Long Blade can select a sword instead of a hammer chosen for its bonuses. Each weapon shows its skill fit, score breakdown and source.
