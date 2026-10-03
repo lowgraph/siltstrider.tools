@@ -601,9 +601,9 @@ Merge by Sunday 4 October; Monday is the freeze.
 Optional, if time allows by Sunday; otherwise after launch (all confirmed live):
 - [x] **C** QA-48 (started 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`; done `97437a8`, LAUNCH_VERIFICATION §77) (Low, Morrowind UI, 375 px, 3/3) Level Simulator attribute-priority tiles break
       the abbreviations: "EN/D", "ST/R", "AG/I", "SP/D", "WI/L", "PE/R", "IN/T", "LU/C".
-- [x] **C** QA-49 (started 2026-10-03 21:01 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §77) (Low, 375 px, 18/18) Enchanting's ranked enchanter list cuts names and places
+- [x] **C** QA-49 (started 2026-10-03 21:01 UTC, Codex, on `fix/qa-46-47-43-51`; done `6796a89`, LAUNCH_VERIFICATION §77) (Low, 375 px, 18/18) Enchanting's ranked enchanter list cuts names and places
       with ellipses ("Audenian Valius (vivec, telvanni ench…"); let them wrap.
-- [ ] **C** QA-50 (claimed 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, 375 px, both themes) Travel transit map labels overlap on dense routes
+- [x] **C** QA-50 (started 2026-10-03 21:08 UTC, Codex, on `fix/qa-46-47-43-51`; done, LAUNCH_VERIFICATION §77) (Low, 375 px, both themes) Travel transit map labels overlap on dense routes
       (Ebonheart → Port Telvannis in TR + ARCE, 3/3) and Vivec stop labels clip at the left edge
       (Ebonheart → Balmora, 9/9).
 - [ ] **C** QA-52 (claimed 2026-10-03 20:46 UTC, Codex, on `fix/qa-46-47-43-51`) (Low, 1366 px) Builder: the "Equip late-game recommendations →" button wraps

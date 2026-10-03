@@ -660,3 +660,8 @@ both themes, then moves an attribute down and back and checks the end controls.
 names and places, wrapping between words, price separation, Audenian Valius
 search and selection, a calculated Restore Health price and last-row scrolling.
 
+`--suite qa --filter 'QA-50/' --touch` measures actual SVG glyph boxes on
+Ebonheart → Balmora in all worlds and Ebonheart → Port Telvannis in TR/TR + ARCE,
+at 375/390/1366 px in both themes (30 cases). Every route/region label must be
+inside the SVG and separate from other labels. Keep `QA-42/` gap-legend cases.
+

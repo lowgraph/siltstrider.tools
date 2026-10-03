@@ -4051,3 +4051,20 @@ and licence/claim tests pass **43/43**. Evidence: `qa49-before/`, `qa49-browser/
 (initial layout pass), `qa49-final/` (a test-script quoting error), and
 `qa49-acceptance/` (corrected complete acceptance).
 
+QA-50 reproduced in **12/12** TR + ARCE route/width/theme checks: labels fell
+outside the SVG or overlapped. `TransitMap` used estimated character widths,
+only four candidate positions and a fallback that ignored collisions. Layout
+now measures the active font after it loads and on theme changes, wraps long
+names, searches additional nearby positions, and reserves linked callout rows
+below the network when no clear position remains. Region widths are measured
+too; the initial route fix exposed an existing desktop region-name overlap.
+Stop positions, route edges, compression and routing are unchanged.
+Six pure regressions cover both edges, coincident stops, saturated maps, long
+names/tokens, deterministic placement and input preservation. Relevant map,
+browser-plan and licence/claim tests pass **41/41**. Chrome acceptance passes
+**30/30** on both reported routes in all applicable worlds, both themes and
+375/390/1366 px, with actual SVG boxes, touch, axe and screenshots. Existing
+QA-42 compressed-gap cases pass **18/18**. Evidence: `qa50-before/`,
+`qa50-layout/` (two remaining desktop region overlaps), `qa50-acceptance/`,
+and `qa42-regression/`.
+

@@ -85,4 +85,21 @@ module.exports = async c => {
     await finish(c,`QA-49-${profile}-${width}-${theme}`);
     return {rows,searched,last,selection:true};
   });
+  for(const profile of ['vanilla','tr','tr_arce']) for(const to of (profile==='vanilla'?['Balmora']:['Balmora','Port Telvannis'])) for(const width of [375,390,1366]) for(const theme of ['ashfall','morrowind']) await c.check(`QA-50/${profile}/${to}/${width}/${theme}`,async()=>{
+    await setup(c,'travel',profile,width,theme,`&from=Ebonheart&to=${encodeURIComponent(to)}&plan=real`);
+    await c.until('document.querySelector(".transit-map svg[role=img]")?.getAttribute("aria-label").includes("Route:")');
+    await c.until(`(()=>{const s=document.querySelector('.transit-map svg[role=img]');return Math.abs(s.viewBox.baseVal.width-s.getBoundingClientRect().width)<3})()`);
+    await c.evaluate('document.querySelector(".transit-map").scrollIntoView({block:"start"})');await c.waitForFonts();
+    const state=await c.evaluate(`(()=>{const svg=document.querySelector('.transit-map svg[role=img]'),v=svg.viewBox.baseVal;
+      const boxes=[...svg.querySelectorAll('text')].map(e=>{const b=e.getBBox();return {text:e.textContent,x:b.x,y:b.y,w:b.width,h:b.height,region:e.hasAttribute('letter-spacing')}});
+      const clipped=boxes.filter(b=>b.x<0||b.y<0||b.x+b.w>v.width+.5||b.y+b.h>v.height+.5);
+      const overlaps=[];for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const a=boxes[i],b=boxes[j];if(a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y)overlaps.push([a.text,b.text]);}
+      return {route:svg.getAttribute('aria-label'),width:v.width,height:v.height,boxes,clipped,overlaps};})()`);
+    (c.report.mapLabels ||= []).push({profile,to,width,theme,...state});
+    await c.screenshot(`QA-50-layout-${profile}-${to}-${width}-${theme}`);
+    assert.equal(state.clipped.length,0,'Every complete map label stays inside the SVG: '+JSON.stringify(state.clipped));
+    assert.equal(state.overlaps.length,0,'Route and region labels cannot overlap: '+JSON.stringify(state.overlaps));
+    assert.ok(state.boxes.some(b=>b.text.includes(to)),'The destination stays labeled');
+    await finish(c,`QA-50-${profile}-${to}-${width}-${theme}`);return state;
+  });
 };
